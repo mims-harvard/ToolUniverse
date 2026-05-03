@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_protein\\_interactions\\_by\\_gene 模块
 #: 172130a0607d49009db3c57ef8cb3d0e of
 #: tooluniverse.tools.HPA_get_protein_interactions_by_gene:1
 msgid "HPA_get_protein_interactions_by_gene"
-msgstr ""
+msgstr "HPA_通过基因获取蛋白质相互作用"
 
 #: d842ba5ad02f4a8380e9dede2aaf6e1b ffa68a03c273460ea6917031e189ab5a of
 #: tooluniverse.tools.HPA_get_protein_interactions_by_gene:3

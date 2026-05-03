@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_when\\_using\\_info 模块"
 #: 277152629ef64fac88b0a1c2bef62629 of
 #: tooluniverse.tools.FDA_get_when_using_info:1
 msgid "FDA_get_when_using_info"
-msgstr ""
+msgstr "FDA_使用信息时获取"
 
 #: 9a984848039c42ccb68279fb2262f966 a691036420554a1492c1d2f35948d0ae of
 #: tooluniverse.tools.FDA_get_when_using_info:3

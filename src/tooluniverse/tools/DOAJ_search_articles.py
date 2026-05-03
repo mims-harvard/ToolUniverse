@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def DOAJ_search_articles(
     query: str,
     max_results: Optional[int] = 10,
-    type: Optional[str] = "articles",
+    type_: Optional[str] = "articles",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def DOAJ_search_articles(
         Search query for DOAJ articles. Supports Lucene syntax for advanced queries.
     max_results : int
         Maximum number of articles to return. Default is 10, maximum is 100.
-    type : str
+    type_ : str
         Type of search: 'articles' or 'journals'. Default is 'articles'.
     stream_callback : Callable, optional
         Callback for streaming output
@@ -41,10 +41,16 @@ def DOAJ_search_articles(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"query": query, "max_results": max_results, "type": type_}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DOAJ_search_articles",
-            "arguments": {"query": query, "max_results": max_results, "type": type},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

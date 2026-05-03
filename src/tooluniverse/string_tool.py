@@ -1,13 +1,7 @@
-"""
-STRING Database REST API Tool
-
-This tool provides access to protein-protein interaction data from the STRING
-database. STRING is a database of known and predicted protein-protein
-interactions.
-"""
+"""STRING Database REST API Tool for protein-protein interaction data."""
 
 import requests
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -16,8 +10,7 @@ STRING_BASE_URL = "https://string-db.org/api"
 
 @register_tool("STRINGRESTTool")
 class STRINGRESTTool(BaseTool):
-    """
-    STRING Database REST API tool.
+    """STRING Database REST API tool.
     Generic wrapper for STRING API endpoints defined in ppi_tools.json.
     """
 
@@ -30,10 +23,9 @@ class STRINGRESTTool(BaseTool):
         self.required: List[str] = parameter.get("required", [])
         self.output_format: str = fields.get("return_format", "TSV")
 
-    def _build_url(self, arguments: Dict[str, Any]) -> str | Dict[str, Any]:
+    def _build_url(self) -> str:
         """Build URL for STRING API request."""
-        url_path = self.endpoint_template
-        return STRING_BASE_URL + url_path
+        return STRING_BASE_URL + self.endpoint_template
 
     def _build_params(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Build parameters for STRING API request."""
@@ -57,6 +49,16 @@ class STRINGRESTTool(BaseTool):
         if "network_type" in arguments:
             params["network_type"] = arguments["network_type"]
 
+        # Additional parameters for other endpoints
+        if "caller_identity" in arguments:
+            params["caller_identity"] = arguments["caller_identity"]
+        if "echo_query" in arguments:
+            params["echo_query"] = arguments["echo_query"]
+        if "add_nodes" in arguments:
+            params["add_nodes"] = arguments["add_nodes"]
+        if "category" in arguments:
+            params["category"] = arguments["category"]
+
         return params
 
     def _make_request(self, url: str, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -67,13 +69,18 @@ class STRINGRESTTool(BaseTool):
 
             if self.output_format == "TSV":
                 return self._parse_tsv_response(response.text)
-            else:
+            if self.output_format == "JSON":
                 return response.json()
 
+            try:
+                return response.json()
+            except (ValueError, KeyError):
+                return self._parse_tsv_response(response.text)
+
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
     def _parse_tsv_response(self, text: str) -> Dict[str, Any]:
         """Parse TSV response from STRING API."""
@@ -81,32 +88,61 @@ class STRINGRESTTool(BaseTool):
         if len(lines) < 2:
             return {"data": [], "error": "No data returned"}
 
-        # Parse header
         header = lines[0].split("\t")
-
-        # Parse data rows
-        data = []
-        for line in lines[1:]:
-            if line.strip():
-                values = line.split("\t")
-                row = {}
-                for i, value in enumerate(values):
-                    if i < len(header):
-                        row[header[i]] = value
-                data.append(row)
+        data = [
+            dict(zip(header, line.split("\t"))) for line in lines[1:] if line.strip()
+        ]
 
         return {"data": data, "header": header}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
-        # Validate required parameters
         for param in self.required:
             if param not in arguments:
-                return {"error": f"Missing required parameter: {param}"}
+                error_msg = f"Missing required parameter: {param}"
+                return {
+                    "status": "error",
+                    "data": {"error": error_msg},
+                    "error": error_msg,
+                }
 
-        url = self._build_url(arguments)
-        if isinstance(url, dict) and "error" in url:
-            return url
-
+        url = self._build_url()
         params = self._build_params(arguments)
-        return self._make_request(url, params)
+        api_response = self._make_request(url, params)
+
+        if "error" in api_response:
+            return {
+                "status": "error",
+                "data": api_response,
+                "error": api_response.get("error"),
+            }
+
+        # Feature-79B: STRING /json/enrichment ignores `category` param server-side.
+        # Apply client-side filter when category is specified.
+        category_filter = arguments.get("category")
+        if category_filter:
+            if isinstance(api_response, list):
+                api_response = [
+                    r for r in api_response if r.get("category") == category_filter
+                ]
+            elif isinstance(api_response, dict):
+                data_list = api_response.get("data", [])
+                if isinstance(data_list, list):
+                    api_response["data"] = [
+                        r for r in data_list if r.get("category") == category_filter
+                    ]
+
+        # Unwrap TSV parsed responses to avoid double-nesting
+        # _parse_tsv_response returns {"data": [...], "header": [...]}
+        # Without unwrapping, result would be {"data": {"data": [...], "header": [...]}}
+        if (
+            isinstance(api_response, dict)
+            and "data" in api_response
+            and "header" in api_response
+        ):
+            return {
+                "status": "success",
+                "data": api_response["data"],
+                "metadata": {"columns": api_response["header"]},
+            }
+        return {"status": "success", "data": api_response}

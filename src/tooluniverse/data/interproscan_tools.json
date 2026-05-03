@@ -1,0 +1,134 @@
+[
+    {
+        "name": "InterProScan_scan_sequence",
+        "description": "Run InterProScan analysis on a protein sequence to predict domains, families, and functional sites. Unlike InterPro lookup (pre-computed), this runs actual sequence analysis. Returns domains, GO terms, and pathway annotations.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "sequence": {
+                    "type": "string",
+                    "description": "Protein sequence in single-letter amino acid code (e.g., 'MVLSPADKTNVKAAWGKVGAHAG...')"
+                },
+                "email": {
+                    "type": "string",
+                    "description": "Email for job notifications (optional)"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "Job title for tracking (optional)"
+                },
+                "go_terms": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Include GO term predictions"
+                },
+                "pathways": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Include pathway annotations"
+                }
+            },
+            "required": ["sequence"]
+        },
+        "fields": {
+            "operation": "scan_sequence"
+        },
+        "type": "InterProScanTool",
+        "test_examples": [
+            {
+                "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "job_id": {"type": "string"},
+                "status": {"type": "string"},
+                "message": {"type": "string"},
+                "domains": {"type": "array"},
+                "domain_count": {"type": "integer"},
+                "go_annotations": {"type": "array"},
+                "pathways": {"type": "array"}
+            }
+        },
+        "label": ["InterProScan", "Domain", "Prediction"],
+        "metadata": {
+            "tags": ["domain_prediction", "sequence_analysis", "functional_annotation"],
+            "estimated_execution_time": "30-120 seconds (job-based)"
+        }
+    },
+    {
+        "name": "InterProScan_get_job_status",
+        "description": "Check status of an InterProScan analysis job. Use if scan_sequence returns before completion. Status: RUNNING, FINISHED, FAILURE, ERROR, NOT_FOUND.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "string",
+                    "description": "InterProScan job ID returned from scan_sequence"
+                }
+            },
+            "required": ["job_id"]
+        },
+        "fields": {
+            "operation": "get_job_status"
+        },
+        "type": "InterProScanTool",
+        "test_examples": [
+            {
+                "job_id": "iprscan5-R20240101-123456-0001-12345678"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "job_id": {"type": "string"},
+                "job_status": {"type": "string"},
+                "is_finished": {"type": "boolean"}
+            }
+        },
+        "label": ["InterProScan", "Job", "Status"],
+        "metadata": {
+            "tags": ["job_status", "async"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "InterProScan_get_job_results",
+        "description": "Retrieve results from a completed InterProScan job. Returns domain predictions, GO annotations, and pathway mappings. Results available for 7 days after completion.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "string",
+                    "description": "InterProScan job ID"
+                }
+            },
+            "required": ["job_id"]
+        },
+        "fields": {
+            "operation": "get_job_results"
+        },
+        "type": "InterProScanTool",
+        "test_examples": [
+            {
+                "job_id": "iprscan5-R20240101-123456-0001-12345678"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "job_id": {"type": "string"},
+                "domains": {"type": "array"},
+                "domain_count": {"type": "integer"},
+                "go_annotations": {"type": "array"},
+                "pathways": {"type": "array"}
+            }
+        },
+        "label": ["InterProScan", "Results", "Domains"],
+        "metadata": {
+            "tags": ["results", "domains", "annotations"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    }
+]

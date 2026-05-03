@@ -34,7 +34,7 @@ msgstr "什么是ToolUniverse？"
 
 #: ../../faq.rst:9 457ba090b24c404eaae859556d25cac0
 msgid ""
-"ToolUniverse is a collection of 600+ scientific tools for AI agents, "
+"ToolUniverse is a collection of 1000+ scientific tools for AI agents, "
 "providing unified access to drug safety data, genomics, literature, "
 "clinical trials, and more."
 msgstr "ToolUniverse是为AI智能体收集的600多种科学工具，提供对药物安全数据、基因组学、文献、临床试验等的统一访问。"

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_get\\_associations\\_for\\_trait 模块"
 #: 3f85516eaeb244be9377346f71bb830a of
 #: tooluniverse.tools.gwas_get_associations_for_trait:1
 msgid "gwas_get_associations_for_trait"
-msgstr ""
+msgstr "gwas_get_associations_for_trait（获取特定性状的关联信息）"
 
 #: 7283460196514b99b290e1ba228291de 926e9ee9d14d4bf6b96e51a841b6748d of
 #: tooluniverse.tools.gwas_get_associations_for_trait:3

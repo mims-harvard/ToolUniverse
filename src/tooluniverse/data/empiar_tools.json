@@ -1,0 +1,190 @@
+[
+  {
+    "type": "EMPIARTool",
+    "name": "EMPIAR_search_entries",
+    "description": "Search the EMPIAR (Electron Microscopy Public Image Archive) for raw EM image datasets by keyword. Returns matching entries with EMPIAR IDs, titles, and release dates. Use EMPIAR_get_entry to retrieve full details for a specific entry.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query keyword (e.g., 'ribosome', 'membrane protein', 'SARS-CoV-2')"
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of results to return (default: 10, max: 100)",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "start": {
+          "type": "integer",
+          "description": "Starting offset for pagination (default: 0)",
+          "default": 0,
+          "minimum": 0
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of EMPIAR search results",
+      "items": {
+        "type": "object",
+        "properties": {
+          "empiar_id": {
+            "type": "string",
+            "description": "EMPIAR accession (e.g., EMPIAR-10028)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Entry title"
+          },
+          "release_date": {
+            "type": "string",
+            "description": "Release date (YYYYMMDD format)"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "ribosome",
+        "page_size": 3
+      },
+      {
+        "query": "SARS-CoV-2",
+        "page_size": 5
+      }
+    ]
+  },
+  {
+    "type": "EMPIARTool",
+    "name": "EMPIAR_get_entry",
+    "description": "Get detailed information about a specific EMPIAR entry including image sets, citations, cross-references to EMDB/PDB, dataset size, and principal investigator. Accepts EMPIAR accession (e.g., 'EMPIAR-10028' or '10028').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "empiar_id": {
+          "type": "string",
+          "description": "EMPIAR accession ID (e.g., 'EMPIAR-10028' or '10028')"
+        }
+      },
+      "required": ["empiar_id"]
+    },
+    "fields": {
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Detailed EMPIAR entry data",
+      "properties": {
+        "empiar_id": {
+          "type": "string",
+          "description": "EMPIAR accession"
+        },
+        "title": {
+          "type": "string",
+          "description": "Entry title"
+        },
+        "status": {
+          "type": "string",
+          "description": "Entry status (e.g., REL for released)"
+        },
+        "deposition_date": {
+          "type": ["string", "null"],
+          "description": "Date deposited"
+        },
+        "release_date": {
+          "type": ["string", "null"],
+          "description": "Date released"
+        },
+        "update_date": {
+          "type": ["string", "null"],
+          "description": "Last update date"
+        },
+        "dataset_size": {
+          "type": "string",
+          "description": "Total dataset size (e.g., '1.2 TB')"
+        },
+        "experiment_type": {
+          "type": "string",
+          "description": "Experiment type (e.g., EMDB)"
+        },
+        "scale": {
+          "type": ["string", "null"],
+          "description": "Scale of the data (e.g., molecule, cell)"
+        },
+        "entry_doi": {
+          "type": "string",
+          "description": "DOI for the EMPIAR entry"
+        },
+        "cross_references": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Cross-references to EMDB entries"
+        },
+        "related_pdb_entries": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Related PDB structure IDs"
+        },
+        "imagesets": {
+          "type": "array",
+          "description": "Image set details",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "category": {"type": "string"},
+              "data_format": {"type": "string"},
+              "num_images_or_tilt_series": {"type": ["integer", "null"]},
+              "pixel_width": {"type": ["number", "null"]},
+              "pixel_height": {"type": ["number", "null"]},
+              "image_width": {"type": ["string", "null"]},
+              "image_height": {"type": ["string", "null"]},
+              "details": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "citation": {
+          "type": "array",
+          "description": "Associated publications",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string"},
+              "journal": {"type": ["string", "null"]},
+              "year": {"type": ["string", "null"]},
+              "doi": {"type": ["string", "null"]},
+              "pubmedid": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "principal_investigator": {
+          "type": "array",
+          "description": "Principal investigators",
+          "items": {
+            "type": "object",
+            "properties": {
+              "first_name": {"type": "string"},
+              "last_name": {"type": "string"},
+              "organization": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "empiar_id": "EMPIAR-10028"
+      },
+      {
+        "empiar_id": "10061"
+      }
+    ]
+  }
+]

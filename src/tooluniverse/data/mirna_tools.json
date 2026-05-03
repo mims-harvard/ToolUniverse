@@ -1,0 +1,528 @@
+[
+  {
+    "name": "miRBase_search_mirna",
+    "description": "Search for microRNAs (miRNAs) by name, accession, or keyword using EBI Search over RNAcentral. RNAcentral aggregates miRNA data from miRBase, TarBase, LncBase, and 50+ other databases. Supports filtering by species (e.g., 'Homo sapiens', 'Mus musculus') and RNA type. Returns RNAcentral IDs, descriptions, sequence lengths, and source databases. Use this to find miRNAs like hsa-miR-21-5p, let-7, miR-155, or search by miRBase accession (e.g., MIMAT0000076). Examples: search 'hsa-miR-21' for human miR-21 family, 'let-7 AND TAXONOMY:Homo sapiens' for human let-7 family members.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: miRNA name (e.g., 'hsa-miR-21-5p'), miRBase accession (e.g., 'MIMAT0000076'), gene name, or keyword. Supports AND/OR operators."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name filter (e.g., 'Homo sapiens', 'Mus musculus', 'Drosophila melanogaster'). Leave empty for all species."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return (1-100). Default: 10."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "rna_type_filter": "miRNA"
+    },
+    "type": "miRNASearchTool",
+    "test_examples": [
+      {
+        "query": "hsa-miR-21-5p",
+        "size": 5
+      },
+      {
+        "query": "let-7",
+        "species": "Homo sapiens",
+        "size": 5
+      },
+      {
+        "query": "MIMAT0000076",
+        "size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_hits": {
+                  "type": "integer",
+                  "description": "Total number of matching miRNA entries"
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number of entries returned in this response"
+                },
+                "entries": {
+                  "type": "array",
+                  "description": "List of miRNA entries with IDs, descriptions, and metadata",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rnacentral_id": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rna_type": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": "integer"
+                      },
+                      "expert_databases": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "has_secondary_structure": {
+                        "type": "boolean"
+                      },
+                      "has_genomic_coordinates": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "miRNA",
+      "miRBase",
+      "RNAcentral",
+      "Search"
+    ],
+    "metadata": {
+      "tags": [
+        "mirna",
+        "microrna",
+        "ncrna",
+        "mirbase",
+        "rnacentral",
+        "search"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "miRBase_get_mirna",
+    "description": "Get detailed miRNA information from RNAcentral including full RNA sequence, species, RNA type, gene associations, publication count, and source databases. Use a species-specific RNAcentral ID (format: URS_TAXID, e.g., 'URS000039ED8D_9606' for human hsa-miR-21-5p) or a base URS ID with optional taxid parameter. Key miRNA IDs: URS000039ED8D_9606 (hsa-miR-21-5p), URS0000D54CAD_9606 (hsa-miR-155-5p), URS0000416056_9606 (hsa-let-7a-5p), URS000039ED8D_10090 (mmu-miR-21a-5p).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rnacentral_id": {
+          "type": "string",
+          "description": "RNAcentral URS identifier. Use species-specific format 'URS_TAXID' (e.g., 'URS000039ED8D_9606') or base URS ID (e.g., 'URS000039ED8D') with taxid parameter."
+        },
+        "taxid": {
+          "type": "integer",
+          "description": "NCBI Taxonomy ID for species-specific lookup (e.g., 9606 for human, 10090 for mouse). Optional if rnacentral_id already includes taxid."
+        }
+      },
+      "required": [
+        "rnacentral_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_rna"
+    },
+    "type": "miRNAGetTool",
+    "test_examples": [
+      {
+        "rnacentral_id": "URS000039ED8D",
+        "taxid": 9606
+      },
+      {
+        "rnacentral_id": "URS0000D54CAD",
+        "taxid": 9606
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "rnacentral_id": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "short_description": {
+                  "type": "string"
+                },
+                "sequence": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "integer"
+                },
+                "rna_type": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "taxid": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "publications_count": {
+                  "type": "integer"
+                },
+                "is_active": {
+                  "type": "boolean"
+                },
+                "distinct_databases": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "miRNA",
+      "miRBase",
+      "RNAcentral",
+      "Sequence"
+    ],
+    "metadata": {
+      "tags": [
+        "mirna",
+        "microrna",
+        "sequence",
+        "ncrna",
+        "mirbase",
+        "rnacentral"
+      ],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "miRBase_get_mirna_publications",
+    "description": "Retrieve publications associated with a microRNA from RNAcentral. Returns publication titles, authors, PubMed IDs, DOIs, and journal information. miR-21-5p (URS000039ED8D) has 344+ publications, making it one of the most-studied miRNAs. Use after miRBase_search_mirna to get the RNAcentral ID, then retrieve associated literature.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rnacentral_id": {
+          "type": "string",
+          "description": "RNAcentral URS identifier (e.g., 'URS000039ED8D' for hsa-miR-21-5p). Use base URS ID without taxid suffix."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of publications to return (1-50). Default: 10."
+        }
+      },
+      "required": [
+        "rnacentral_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_publications"
+    },
+    "type": "miRNAGetTool",
+    "test_examples": [
+      {
+        "rnacentral_id": "URS000039ED8D",
+        "page_size": 5
+      },
+      {
+        "rnacentral_id": "URS0000D54CAD",
+        "page_size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_publications": {
+                  "type": "integer",
+                  "description": "Total number of publications for this RNA"
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number returned in this page"
+                },
+                "publications": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "authors": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "publication": {
+                        "type": "string"
+                      },
+                      "pubmed_id": {
+                        "type": "string"
+                      },
+                      "doi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "expert_db": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "miRNA",
+      "miRBase",
+      "RNAcentral",
+      "Publications"
+    ],
+    "metadata": {
+      "tags": [
+        "mirna",
+        "publications",
+        "literature",
+        "pubmed",
+        "rnacentral"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "miRBase_get_mirna_xrefs",
+    "description": "Get cross-references (xrefs) for a microRNA from RNAcentral. Returns database links from miRBase, TarBase, ENA, RefSeq, piRBase, LncBase, and other sources. Includes external accession IDs, expert database URLs, species information, and miRBase-specific fields (mature products, precursor links). Essential for mapping miRNA IDs across databases and finding target interaction data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rnacentral_id": {
+          "type": "string",
+          "description": "RNAcentral URS identifier (e.g., 'URS000039ED8D' for hsa-miR-21-5p). Use base URS ID without taxid suffix."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of cross-references to return (1-50). Default: 10."
+        }
+      },
+      "required": [
+        "rnacentral_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_xrefs"
+    },
+    "type": "miRNAGetTool",
+    "test_examples": [
+      {
+        "rnacentral_id": "URS000039ED8D",
+        "page_size": 10
+      },
+      {
+        "rnacentral_id": "URS0000D54CAD",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_xrefs": {
+                  "type": "integer",
+                  "description": "Total number of cross-references"
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number returned in this page"
+                },
+                "cross_references": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "database": {
+                        "type": "string"
+                      },
+                      "accession_id": {
+                        "type": "string"
+                      },
+                      "external_id": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "rna_type": {
+                        "type": "string"
+                      },
+                      "gene": {
+                        "type": "string"
+                      },
+                      "taxid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "is_active": {
+                        "type": "boolean"
+                      },
+                      "expert_db_url": {
+                        "type": "string"
+                      },
+                      "mirbase_mature_products": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "mirbase_precursor": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "miRNA",
+      "miRBase",
+      "RNAcentral",
+      "Cross-references"
+    ],
+    "metadata": {
+      "tags": [
+        "mirna",
+        "xrefs",
+        "cross-references",
+        "database-mapping",
+        "rnacentral"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  }
+]

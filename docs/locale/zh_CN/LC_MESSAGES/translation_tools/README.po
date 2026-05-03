@@ -46,7 +46,7 @@ msgstr "命令行界面，操作简便"
 
 #: ../../translation_tools/README.md:11 3dc15af8e99e4cb98978e9d8be931339
 msgid "支持单个文件和批量翻译"
-msgstr ""
+msgstr "支持单个文件及批量翻译"
 
 #: ../../translation_tools/README.md:12 c2431316c35841529f01f1d2b6e5d416
 msgid "翻译状态查看和统计"

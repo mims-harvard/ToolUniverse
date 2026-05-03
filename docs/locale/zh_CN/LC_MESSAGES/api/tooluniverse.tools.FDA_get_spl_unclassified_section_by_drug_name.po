@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_spl\\_unclassified\\_section\\_by\\_drug\
 #: a9e01ab709604a2d8696e9501f82b211 of
 #: tooluniverse.tools.FDA_get_spl_unclassified_section_by_drug_name:1
 msgid "FDA_get_spl_unclassified_section_by_drug_name"
-msgstr ""
+msgstr "FDA_get_spl_unclassified_section_by_drug_name（根据药品名称获取FDA未分类部分）"
 
 #: 4f05f5a0388046e2b1c07d2744919994 d7389ef325b6434aa1c0a65a67787d34 of
 #: tooluniverse.tools.FDA_get_spl_unclassified_section_by_drug_name:3

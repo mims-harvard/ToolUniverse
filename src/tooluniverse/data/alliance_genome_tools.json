@@ -1,0 +1,637 @@
+[
+  {
+    "name": "Alliance_get_gene",
+    "description": "Get detailed gene information from the Alliance of Genome Resources, which integrates data from 7 model organism databases (SGD, FlyBase, WormBase, ZFIN, RGD, MGI, Xenbase) plus human. Returns gene symbol, name, species, synopsis, synonyms, genomic location, and cross-references. Example: 'HGNC:6081' returns insulin gene info.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Alliance gene ID with source prefix. Examples: 'HGNC:6081' (human INS), 'MGI:98834' (mouse Trp53), 'FB:FBgn0003996' (fly w), 'SGD:S000000259' (yeast GAL4), 'ZFIN:ZDB-GENE-990415-8' (zebrafish pax2a), 'WB:WBGene00006763' (worm unc-13)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_detail"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "HGNC:6081"
+      },
+      {
+        "gene_id": "MGI:98834"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "species": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "short_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "taxon_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data_provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "gene_synopsis": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "automated_gene_synopsis": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "so_term": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genomic_location": {
+                  "type": "object",
+                  "properties": {
+                    "chromosome": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "end": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "assembly": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "strand": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "cross_references": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "data_provider": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Alliance_search_genes",
+    "description": "Search for genes across all model organisms in the Alliance of Genome Resources. Searches by gene symbol, name, or keyword and returns matching genes from human, mouse, rat, zebrafish, fly, worm, yeast, and frog databases. Provides type-ahead suggestions. Example: 'insulin' returns INS (human), Ins1/Ins2 (mouse), ins (zebrafish), etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene name, symbol, or keyword to search for. Examples: 'insulin', 'tumor protein p53', 'hedgehog', 'notch'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (1-50). Default: 10."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_genes"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "query": "insulin",
+        "limit": 10
+      },
+      {
+        "query": "hedgehog"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "primary_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Alliance_get_gene_phenotypes",
+    "description": "Get phenotype annotations for a gene from the Alliance of Genome Resources. Returns phenotypes observed when the gene is mutated or knocked out, aggregated from model organism databases. Supports all model organisms (yeast, fly, worm, zebrafish, mouse, rat, frog). Example: 'HGNC:6081' (INS) returns phenotypes like 'Abnormal circulating insulin concentration'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Alliance gene ID with source prefix. Examples: 'HGNC:6081' (human INS), 'MGI:98834' (mouse Trp53), 'FB:FBgn0003996' (fly w)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of phenotypes to return (1-100). Default: 20."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination. Default: 1."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_phenotypes"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "HGNC:6081",
+        "limit": 10
+      },
+      {
+        "gene_id": "FB:FBgn0003996"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenotype_statement": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Alliance_get_disease_genes",
+    "description": "Get genes associated with a disease across all model organisms from the Alliance of Genome Resources. Uses Disease Ontology (DO) IDs to find genes linked to a disease from human, mouse, rat, zebrafish, fly, worm, and other organisms. Includes both direct annotations and inferred associations from model organism phenotypes. Example: 'DOID:162' (cancer) returns TP53, BRCA1, and thousands more.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease_id": {
+          "type": "string",
+          "description": "Disease Ontology (DO) ID. Examples: 'DOID:162' (cancer), 'DOID:10652' (Alzheimer's disease), 'DOID:9351' (diabetes mellitus), 'DOID:1612' (breast cancer)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of gene associations to return (1-100). Default: 20."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination. Default: 1."
+        }
+      },
+      "required": [
+        "disease_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "disease_genes"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "disease_id": "DOID:162",
+        "limit": 10
+      },
+      {
+        "disease_id": "DOID:10652",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "disease_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "disease_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "association_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query_disease_id": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Alliance_get_disease",
+    "description": "Get disease summary information from the Alliance of Genome Resources by Disease Ontology (DO) ID. Returns disease name, definition, synonyms, and classification. The Alliance integrates disease annotations from multiple model organism databases. Example: 'DOID:162' returns cancer with definition and synonyms like 'malignant neoplasm'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease_id": {
+          "type": "string",
+          "description": "Disease Ontology (DO) ID. Examples: 'DOID:162' (cancer), 'DOID:10652' (Alzheimer's disease), 'DOID:9351' (diabetes mellitus), 'DOID:1612' (breast cancer)."
+        }
+      },
+      "required": [
+        "disease_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "disease_detail"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "disease_id": "DOID:162"
+      },
+      {
+        "disease_id": "DOID:10652"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "disease_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "definition": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "category": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_disease_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

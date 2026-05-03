@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_imbalanced\\_learn\\_info 模块"
 #: d5b51b9d8c324262b13f2bd1039595e4 of
 #: tooluniverse.tools.get_imbalanced_learn_info:1
 msgid "get_imbalanced_learn_info"
-msgstr ""
+msgstr "get_imbalanced_learn_info 获取不平衡学习信息"
 
 #: 430584bfc1af4974b0b34c72fd7d997c d58323ed0826404fabe7cbbad35d32c0 of
 #: tooluniverse.tools.get_imbalanced_learn_info:3

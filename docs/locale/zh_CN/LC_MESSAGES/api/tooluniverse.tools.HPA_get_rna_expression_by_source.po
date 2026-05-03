@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_rna\\_expression\\_by\\_source 模块"
 #: 27c304a1303e4928b5448557d5618992 of
 #: tooluniverse.tools.HPA_get_rna_expression_by_source:1
 msgid "HPA_get_rna_expression_by_source"
-msgstr ""
+msgstr "HPA_按来源获取RNA表达量"
 
 #: 2a419b3d123946039b342e6eef2d20d1 af8f652d324445aaa0a34102808a26a2 of
 #: tooluniverse.tools.HPA_get_rna_expression_by_source:3

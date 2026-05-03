@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_interactions\\_by\\_drug\\_name �
 #: b9d4322a8d8244d68e8e9945510eb5fc of
 #: tooluniverse.tools.FDA_get_drug_interactions_by_drug_name:1
 msgid "FDA_get_drug_interactions_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取药物相互作用"
 
 #: 81226620b07f48a48663b3c175cc5098 f6b52845417e4f13902945722cf29f1d of
 #: tooluniverse.tools.FDA_get_drug_interactions_by_drug_name:3

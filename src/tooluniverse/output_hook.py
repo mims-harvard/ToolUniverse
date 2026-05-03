@@ -201,7 +201,7 @@ class SummarizationHookConfig:
     )
     focus_areas: str = "key_findings_and_results"
     max_summary_length: int = 3000
-    composer_timeout_sec: int = 60
+    composer_timeout_sec: int = 300
 
     def validate(self) -> "SummarizationHookConfig":
         # Validate numeric fields; clamp to sensible defaults if invalid
@@ -213,7 +213,7 @@ class SummarizationHookConfig:
             not isinstance(self.composer_timeout_sec, int)
             or self.composer_timeout_sec <= 0
         ):
-            self.composer_timeout_sec = 60
+            self.composer_timeout_sec = 300
         if not isinstance(self.composer_tool, str) or not self.composer_tool:
             self.composer_tool = "OutputSummarizationComposer"
         return self
@@ -257,10 +257,11 @@ class SummarizationHook(OutputHook):
             # Breaking change: only support composer_tool going forward
             cfg = SummarizationHookConfig(
                 composer_tool=raw.get("composer_tool", "OutputSummarizationComposer"),
-                chunk_size=raw.get("chunk_size", 2000),
+                # Default should match SummarizationHookConfig and documentation.
+                chunk_size=raw.get("chunk_size", 30000),
                 focus_areas=raw.get("focus_areas", "key_findings_and_results"),
                 max_summary_length=raw.get("max_summary_length", 3000),
-                composer_timeout_sec=raw.get("composer_timeout_sec", 60),
+                composer_timeout_sec=raw.get("composer_timeout_sec", 300),
             )
         self.config_obj = cfg.validate()
         self.composer_tool = self.config_obj.composer_tool
@@ -459,6 +460,8 @@ class HookManager:
         self.hooks_enabled = self.enabled
         self.config_path = config.get("config_path", "template/hook_config.json")
         self._pending_tools_to_load: List[str] = []
+        # Cache excluded patterns for performance
+        self._excluded_patterns_cache = None
         self._load_hook_config()
 
         # Validate LLM API keys before loading hooks
@@ -630,6 +633,7 @@ class HookManager:
         """
         if config_path:
             self.config_path = config_path
+        self._excluded_patterns_cache = None  # Clear cache on reload
         self._load_hook_config()
         self._load_hooks()
         _logger.info("Reloaded hook configuration")
@@ -667,14 +671,13 @@ class HookManager:
 
         try:
             config_file = self._get_config_file_path()
-
-            if hasattr(config_file, "read_text"):
-                content = config_file.read_text(encoding="utf-8")
-            else:
-                with open(config_file, "r", encoding="utf-8") as f:
-                    content = f.read()
-
+            content = (
+                config_file.read_text(encoding="utf-8")
+                if hasattr(config_file, "read_text")
+                else Path(config_file).read_text(encoding="utf-8")
+            )
             self.config = json.loads(content)
+            self._excluded_patterns_cache = None  # Clear cache on reload
         except Exception as e:
             print(f"Warning: Could not load hook config: {e}")
             if not self.config:
@@ -843,15 +846,23 @@ class HookManager:
         """
         Ensure that tools required by hooks are loaded.
 
-        This method is called during HookManager initialization to make sure that
+        This method is called during HookManager initialization to make sure
         the necessary tools (like output_summarization tools) are available.
+
+        Note: Hook tools (especially AgenticTool types like ToolOutputSummarizer)
+        may be filtered out during normal loading if LLM API keys are not
+        available. This method force-loads them directly from the JSON config
+        to ensure they are always available for discovery, even if they won't
+        function without API keys.
         """
         try:
-            # Ensure ComposeTool is available
+            # Ensure ComposeTool and AgenticTool are available in registry
             from .compose_tool import ComposeTool
+            from .agentic_tool import AgenticTool
             from .tool_registry import register_external_tool
 
             register_external_tool("ComposeTool", ComposeTool)
+            register_external_tool("AgenticTool", AgenticTool)
 
             # Load output_summarization tools if not already loaded
             if (
@@ -861,8 +872,25 @@ class HookManager:
                 _logger.info("Loading output_summarization tools for hooks")
                 self.tooluniverse.load_tools(["output_summarization"])
 
-            # Pre-instantiate hook tools to ensure they're available in callable_functions
+            # Required hook tools
             required_tools = ["ToolOutputSummarizer", "OutputSummarizationComposer"]
+
+            # Force-load hook tools filtered out (e.g., AgenticTool w/o API keys)
+            # This ensures tools are available for discovery even if not executable
+            missing_from_dict = [
+                t
+                for t in required_tools
+                if t not in getattr(self.tooluniverse, "all_tool_dict", {})
+            ]
+
+            if missing_from_dict:
+                _logger.info(
+                    "Force-loading hook tools that were filtered out: %s",
+                    missing_from_dict,
+                )
+                self._force_load_hook_tools_from_json(missing_from_dict)
+
+            # Pre-instantiate hook tools to ensure they're available in callable_functions
             for tool_name in required_tools:
                 if (
                     tool_name in self.tooluniverse.all_tool_dict
@@ -902,6 +930,58 @@ class HookManager:
             _logger.error("Error loading hook tools: %s", e)
             _logger.info("This will cause summarization hooks to fail")
 
+    def _force_load_hook_tools_from_json(self, tool_names: List[str]):
+        """
+        Force-load hook tools from JSON, bypassing API key checks.
+
+        This is necessary because AgenticTool types get filtered out during
+        normal loading when LLM API keys are not available. Hook tools need
+        to be available for discovery even without proper API keys.
+
+        Args:
+            tool_names: List of tool names to force-load
+        """
+        import json
+        import os
+
+        # Path to the output_summarization_tools.json file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(current_dir, "data", "output_summarization_tools.json")
+
+        if not os.path.exists(json_path):
+            _logger.warning("Hook tools JSON not found: %s", json_path)
+            return
+
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                tools_data = json.load(f)
+
+            for tool_config in tools_data:
+                tool_name = tool_config.get("name")
+                if tool_name in tool_names:
+                    # Add to all_tool_dict for discovery
+                    if hasattr(self.tooluniverse, "all_tool_dict"):
+                        self.tooluniverse.all_tool_dict[tool_name] = tool_config
+                        _logger.debug(
+                            "Force-added hook tool to all_tool_dict: %s", tool_name
+                        )
+
+                    # Add to all_tools list if not present
+                    if hasattr(self.tooluniverse, "all_tools"):
+                        existing_names = [
+                            t.get("name")
+                            for t in self.tooluniverse.all_tools
+                            if isinstance(t, dict)
+                        ]
+                        if tool_name not in existing_names:
+                            self.tooluniverse.all_tools.append(tool_config)
+                            _logger.debug(
+                                "Force-added hook tool to all_tools: %s", tool_name
+                            )
+
+        except Exception as e:
+            _logger.warning("Failed to force-load hook tools from JSON: %s", e)
+
     def _load_pending_tools(self):
         """
         Load any pending tools that were queued during initialization.
@@ -937,12 +1017,24 @@ class HookManager:
         Returns
             bool: True if the tool is a hook tool and should be excluded from hook processing
         """
-        hook_tool_names = [
-            "ToolOutputSummarizer",
-            "OutputSummarizationComposer",
-            # Add more hook tool names as needed
-        ]
-        return tool_name in hook_tool_names
+        # Cache excluded patterns for performance
+        if self._excluded_patterns_cache is None:
+            hook_tool_names = [
+                "ToolOutputSummarizer",
+                "OutputSummarizationComposer",
+            ]
+            exclude_tools = self.config.get("exclude_tools", [])
+            self._excluded_patterns_cache = hook_tool_names + exclude_tools
+
+        # Check for exact match or wildcard pattern match
+        for pattern in self._excluded_patterns_cache:
+            if pattern.endswith("*"):
+                if tool_name.startswith(pattern[:-1]):
+                    return True
+            elif tool_name == pattern:
+                return True
+
+        return False
 
     def _create_hook_instance(
         self, hook_config: Dict[str, Any]
@@ -1008,7 +1100,9 @@ class HookManager:
         if hook_type == "SummarizationHook":
             defaults = {
                 "composer_tool": "OutputSummarizationComposer",
-                "chunk_size": hook_type_defaults.get("default_chunk_size", 2000),
+                # Default chunk_size is intentionally large; chunk_size controls
+                # chunking, not whether summarization is needed.
+                "chunk_size": hook_type_defaults.get("default_chunk_size", 30000),
                 "focus_areas": hook_type_defaults.get(
                     "default_focus_areas", "key_findings_and_results"
                 ),
@@ -1200,6 +1294,7 @@ class FileSaveHook(OutputHook):
         except Exception as e:
             # Return error information instead of failing
             return {
+                "status": "error",
                 "error": f"Failed to save output to file: {str(e)}",
                 "original_output": str(result),
                 "tool_name": tool_name,

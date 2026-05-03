@@ -78,10 +78,10 @@
           "description": "Number of conformers to generate"
         }
       },
-      "required": [
-        "smiles",
-        "mol_content",
-        "sdf_content"
+      "anyOf": [
+        {"required": ["smiles"]},
+        {"required": ["mol_content"]},
+        {"required": ["sdf_content"]}
       ]
     },
     "default_width": 800,
@@ -159,6 +159,19 @@
           "description": "Type of error if visualization failed"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "style": "stick",
+        "color_scheme": "default",
+        "width": 800,
+        "height": 600,
+        "show_hydrogens": true,
+        "show_surface": false,
+        "generate_conformers": true,
+        "conformer_count": 1
+      }
+    ]
   }
 ]

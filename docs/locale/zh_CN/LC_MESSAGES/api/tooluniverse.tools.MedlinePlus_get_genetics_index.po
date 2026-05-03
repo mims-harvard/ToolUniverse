@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.MedlinePlus\\_get\\_genetics\\_index 模块"
 #: 803f110548de4d38bb23a24ff5521521 of
 #: tooluniverse.tools.MedlinePlus_get_genetics_index:1
 msgid "MedlinePlus_get_genetics_index"
-msgstr ""
+msgstr "MedlinePlus_获取遗传学索引"
 
 #: e9d0bf6157724041b83a43e4ae8c99f8 ecf87fa1300643f6b3428da87bf9d69d of
 #: tooluniverse.tools.MedlinePlus_get_genetics_index:3

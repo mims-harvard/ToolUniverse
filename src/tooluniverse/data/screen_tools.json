@@ -1,0 +1,91 @@
+[
+  {
+    "type": "SCREENRESTTool",
+    "name": "SCREEN_get_regulatory_elements",
+    "description": "Get candidate cis-regulatory elements (cCREs) from SCREEN database for specific genomic regions",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol to search for regulatory elements (e.g., BRCA1, TP53). Alias: 'query'."
+        },
+        "query": {
+          "type": "string",
+          "description": "Gene symbol to search for regulatory elements (alias for gene_name)."
+        },
+        "element_type": {
+          "type": "string",
+          "description": "Type of regulatory element (promoter, enhancer, insulator)",
+          "default": "enhancer"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of results to return",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/search/?type=Experiment&assay_title=ChIP-seq&target.label={gene_name}&biosample_ontology.classification=cell_line&format=json&limit={limit}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "regulatory_elements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "assay_title": {
+                "type": "string"
+              },
+              "target": {
+                "type": "object"
+              },
+              "biosample_ontology": {
+                "type": "object"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "gene_name": {
+          "type": "string"
+        },
+        "element_type": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_name": "BRCA1",
+        "element_type": "enhancer",
+        "limit": 5
+      },
+      {
+        "gene_name": "TP53",
+        "element_type": "promoter",
+        "limit": 3
+      },
+      {
+        "gene_name": "MYC",
+        "element_type": "enhancer",
+        "limit": 5
+      }
+    ]
+  }
+]

@@ -13,7 +13,7 @@ def MedlinePlus_get_genetics_index(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Download index file (XML) of all genetics entries in MedlinePlus, get complete list in one call.
 
@@ -29,12 +29,17 @@ def MedlinePlus_get_genetics_index(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "MedlinePlus_get_genetics_index", "arguments": {}},
+        {
+            "name": "MedlinePlus_get_genetics_index",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

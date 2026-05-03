@@ -1,0 +1,260 @@
+[
+  {
+    "name": "OMIM_search",
+    "description": "Search OMIM database for Mendelian diseases and genes. OMIM is the authoritative source for human genetic disorders. Search by gene name, disease name, or phenotype keywords. Returns MIM numbers, titles, and entry types. Requires OMIM_API_KEY env var (register at omim.org/api).",
+    "type": "OMIMTool",
+    "optional_api_keys": [
+      "OMIM_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search",
+          "description": "Operation type (fixed: search)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query - gene name (BRCA1), disease (cystic fibrosis), or phenotype (intellectual disability)"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results (default: 10, max: 20)",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 20
+        },
+        "start": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "total_results": {
+              "type": "integer",
+              "description": "Total matching entries"
+            },
+            "entries": {
+              "type": "array",
+              "description": "List of matching OMIM entries"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "BRCA1",
+        "limit": 5
+      },
+      {
+        "query": "cystic fibrosis",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "OMIM_get_entry",
+    "description": "Get detailed OMIM entry by MIM number. Returns comprehensive information including text description, clinical features, inheritance, molecular genetics, and references. MIM numbers are 6-digit identifiers (e.g., 164730 for BRAF gene). Requires OMIM_API_KEY.",
+    "type": "OMIMTool",
+    "optional_api_keys": [
+      "OMIM_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_entry",
+          "description": "Operation type (fixed: get_entry)"
+        },
+        "mim_number": {
+          "type": "string",
+          "description": "OMIM MIM number (e.g., 164730, 219700). Can include OMIM: prefix."
+        },
+        "include": {
+          "type": "string",
+          "description": "Data sections to include (default: text,clinicalSynopsis,geneMap)",
+          "default": "text,clinicalSynopsis,geneMap"
+        }
+      },
+      "required": [
+        "mim_number"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "mimNumber": {
+              "type": "integer",
+              "description": "OMIM MIM number"
+            },
+            "titles": {
+              "type": "object",
+              "description": "Entry titles"
+            },
+            "textSectionList": {
+              "type": "array",
+              "description": "Text sections with descriptions"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "mim_number": "164730"
+      },
+      {
+        "mim_number": "219700"
+      }
+    ]
+  },
+  {
+    "name": "OMIM_get_gene_map",
+    "description": "Get OMIM gene-disease mapping information. Returns genes mapped to chromosomal locations with associated phenotypes and inheritance patterns. Query by MIM number or chromosome. Useful for finding all disease genes on a chromosome.",
+    "type": "OMIMTool",
+    "optional_api_keys": [
+      "OMIM_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_gene_map",
+          "description": "Operation type (fixed: get_gene_map)"
+        },
+        "mim_number": {
+          "type": "string",
+          "description": "OMIM MIM number for specific gene (optional if chromosome provided)"
+        },
+        "chromosome": {
+          "type": "string",
+          "description": "Chromosome number (1-22, X, Y) to get all genes (optional if mim_number provided)"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results for chromosome query (default: 50, max: 100)",
+          "default": 50
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "gene_maps": {
+              "type": "array",
+              "description": "List of gene-disease mappings"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "mim_number": "164730"
+      },
+      {
+        "chromosome": "7",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "name": "OMIM_get_clinical_synopsis",
+    "description": "Get clinical synopsis (phenotype features) for an OMIM phenotype entry. Returns structured clinical features organized by body system (e.g., neurologic, cardiovascular). Essential for phenotype-based disease matching. Requires OMIM_API_KEY.",
+    "type": "OMIMTool",
+    "optional_api_keys": [
+      "OMIM_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_clinical_synopsis",
+          "description": "Operation type (fixed: get_clinical_synopsis)"
+        },
+        "mim_number": {
+          "type": "string",
+          "description": "OMIM MIM number for phenotype (e.g., 219700 for cystic fibrosis)"
+        }
+      },
+      "required": [
+        "mim_number"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "mimNumber": {
+              "type": "integer"
+            },
+            "inheritance": {
+              "type": "string",
+              "description": "Inheritance pattern"
+            },
+            "neurologicCentralNervousSystem": {
+              "type": "array",
+              "description": "CNS features"
+            },
+            "cardiovascular": {
+              "type": "array",
+              "description": "Cardiovascular features"
+            }
+          },
+          "description": "Clinical features organized by organ system"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "mim_number": "219700"
+      }
+    ]
+  }
+]

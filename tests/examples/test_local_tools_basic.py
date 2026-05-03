@@ -316,6 +316,10 @@ def main():
         print(f"❌ Error: {e}")
         import traceback
         traceback.print_exc()
+    finally:
+        # Clean up global ToolUniverse
+        if 'tu' in locals():
+            tu.close()
 
 if __name__ == "__main__":
     main()

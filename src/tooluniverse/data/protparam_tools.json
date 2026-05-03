@@ -1,0 +1,49 @@
+[
+  {
+    "name": "ProtParam_calculate",
+    "type": "ProtParamTool",
+    "description": "Calculate physicochemical properties of a protein from its amino acid sequence (similar to ExPASy ProtParam). Returns molecular weight, isoelectric point (pI), amino acid composition, extinction coefficients at 280 nm, instability index, aliphatic index, and GRAVY (grand average of hydropathicity). No external API needed.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein amino acid sequence in single-letter code. Example: 'MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPS' (partial TP53). Whitespace, numbers, and FASTA headers are stripped."
+        }
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "length": {"type": "integer"},
+        "molecular_weight_da": {"type": "number"},
+        "isoelectric_point": {"type": "number"},
+        "extinction_coefficient": {
+          "type": "object",
+          "properties": {
+            "assuming_all_cystines": {"type": "number"},
+            "assuming_all_reduced_cys": {"type": "number"}
+          }
+        },
+        "instability_index": {"type": "number"},
+        "stability_classification": {"type": "string"},
+        "aliphatic_index": {"type": "number"},
+        "gravy": {"type": "number"},
+        "positively_charged_residues": {"type": "integer"},
+        "negatively_charged_residues": {"type": "integer"},
+        "amino_acid_composition": {"type": "object"},
+        "formula_note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLHAYLDDRNTFRHSVVVPYEPPEVGSDCTTIHYNYMCNSSCMGQMNRRPILTIITLE"},
+      {"sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"}
+    ],
+    "label": ["ProtParam", "Protein", "Physicochemical", "Molecular Weight", "Isoelectric Point"],
+    "metadata": {
+      "tags": ["protein", "physicochemical", "local computation", "molecular weight", "pI"],
+      "estimated_execution_time": "<1 second"
+    }
+  }
+]

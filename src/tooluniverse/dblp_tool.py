@@ -21,7 +21,7 @@ class DBLPTool(BaseTool):
         query = arguments.get("query")
         limit = int(arguments.get("limit", 10))
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {"status": "error", "error": "`query` parameter is required."}
         return self._search(query, limit)
 
     def _search(self, query, limit):
@@ -34,12 +34,14 @@ class DBLPTool(BaseTool):
             response = requests.get(self.base_url, params=params, timeout=20)
         except requests.RequestException as e:
             return {
+                "status": "error",
                 "error": "Network error calling DBLP API",
                 "reason": str(e),
             }
 
         if response.status_code != 200:
             return {
+                "status": "error",
                 "error": f"DBLP API error {response.status_code}",
                 "reason": response.reason,
             }

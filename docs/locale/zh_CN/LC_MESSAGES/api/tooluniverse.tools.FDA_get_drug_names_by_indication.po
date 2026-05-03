@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_indication 模块"
 #: 4e9648b2d6cc4371b46d9ecf1b83088a of
 #: tooluniverse.tools.FDA_get_drug_names_by_indication:1
 msgid "FDA_get_drug_names_by_indication"
-msgstr ""
+msgstr "FDA_按适应症获取药品名称"
 
 #: 337982e62b5342b3896d344f1cfcf3bc d68ec4c490a8491b8ee293578fdb74ee of
 #: tooluniverse.tools.FDA_get_drug_names_by_indication:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_population\\_use 模�
 #: d5832327e499463ca020df985ab7d477 of
 #: tooluniverse.tools.FDA_get_drug_names_by_population_use:1
 msgid "FDA_get_drug_names_by_population_use"
-msgstr ""
+msgstr "FDA_按人群使用获取药品名称"
 
 #: 2748da7dd2fc4192b23789ba7359695a a8a1568fa40d4adf90413b3e92692367 of
 #: tooluniverse.tools.FDA_get_drug_names_by_population_use:3

@@ -1,0 +1,176 @@
+[
+    {
+        "name": "UniParc_get_entry",
+        "description": "Get a UniProt UniParc entry by its stable UPI identifier. UniParc is the most comprehensive, non-redundant protein sequence archive, storing every unique sequence ever seen across all major databases (UniProtKB, RefSeq, Ensembl, PDB, EMBL/GenBank, EPO patents, etc.). Each unique sequence gets a permanent UPI ID. Returns all active database cross-references (with gene name, protein name, organism), InterPro domain annotations, and full sequence with length/weight/checksums. Essential for tracking a protein sequence across databases and finding all records with an identical sequence. Example: UPI000002ED67 is TP53 (p53), active in Swiss-Prot (P04637), TrEMBL, RefSeq, Ensembl, PDB with 551 total cross-references.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "upi": {
+                    "type": "string",
+                    "description": "UniParc identifier (e.g., 'UPI000002ED67' for TP53/P04637). Find UPIs via UniParc_search or from UniProt protein pages."
+                }
+            },
+            "required": ["upi"]
+        },
+        "fields": {
+            "endpoint": "get_entry"
+        },
+        "type": "UniParcTool",
+        "test_examples": [
+            {
+                "upi": "UPI000002ED67"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "uniparc_id": {"type": "string"},
+                                "sequence": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {"type": "string", "description": "Full amino acid sequence"},
+                                        "length": {"type": "integer"},
+                                        "mol_weight": {"type": "integer"},
+                                        "crc64": {"type": "string"},
+                                        "md5": {"type": "string"}
+                                    }
+                                },
+                                "cross_references": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "database": {"type": "string"},
+                                            "id": {"type": "string"},
+                                            "active": {"type": "boolean"},
+                                            "gene_name": {"type": ["string", "null"]},
+                                            "protein_name": {"type": ["string", "null"]},
+                                            "organism": {"type": ["string", "null"]},
+                                            "taxon_id": {"type": ["integer", "null"]}
+                                        }
+                                    },
+                                    "description": "Active cross-references to other databases"
+                                },
+                                "sequence_features": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "database": {"type": "string"},
+                                            "database_id": {"type": "string"},
+                                            "interpro_id": {"type": ["string", "null"]},
+                                            "interpro_name": {"type": ["string", "null"]},
+                                            "locations": {"type": "array"}
+                                        }
+                                    },
+                                    "description": "InterPro domain annotations"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_cross_references": {"type": "integer"},
+                                "active_cross_references": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniParc_search",
+        "description": "Search UniProt UniParc sequence archive by gene name, organism, or database membership. Finds all unique protein sequences matching the query, returning UPI identifiers, UniProt accessions, organisms, gene names, and creation dates. Useful for finding all sequence variants of a gene across species, or identifying sequences present in specific databases (PDB, RefSeq, Ensembl). Supports Lucene query syntax: 'gene:TP53 AND organism_id:9606' for human TP53 sequences, 'database:PDB AND gene:BRCA1' for BRCA1 sequences with PDB structures. Example: gene:TP53 AND organism_id:9606 returns multiple UniParc entries including the canonical p53 and splice variants.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query in Lucene syntax. Examples: 'gene:TP53 AND organism_id:9606', 'database:PDB AND gene:BRCA1', 'accession:P04637'. Fields: gene, organism_id, organism_name, database, accession, upi, checksum."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Number of results to return (default 5, max 10)."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search"
+        },
+        "type": "UniParcTool",
+        "test_examples": [
+            {
+                "query": "gene:TP53 AND organism_id:9606",
+                "size": 3
+            },
+            {
+                "query": "accession:P04637"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "uniparc_id": {"type": "string", "description": "Stable UPI identifier"},
+                                    "uniprot_accessions": {"type": "array", "items": {"type": "string"}},
+                                    "organisms": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {"type": ["string", "null"]},
+                                                "taxon_id": {"type": ["integer", "null"]}
+                                            }
+                                        }
+                                    },
+                                    "gene_names": {"type": "array", "items": {"type": "string"}},
+                                    "oldest_created": {"type": ["string", "null"]},
+                                    "most_recent_updated": {"type": ["string", "null"]}
+                                }
+                            },
+                            "description": "Matching UniParc entries"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

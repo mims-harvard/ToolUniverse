@@ -1,0 +1,33 @@
+{
+    "api_name": "MobiDB REST API",
+    "base_url": "https://mobidb.bio.unipd.it/api/download",
+    "failure_mode": "ConnectTimeout - server does not respond",
+    "root_cause": "The MobiDB REST API at mobidb.bio.unipd.it appears to be down or unreachable. All requests to https://mobidb.bio.unipd.it/api/download time out at the TCP connection level (no HTTPS handshake, no HTTP response). Tested on 2026-03-02 with P04637 and P00533 - both time out within 10s. The MobiDB web UI at mobidb.org/P04637 returns 404 for the /entry/{acc} path, suggesting a URL schema change. Note: mobidb.org/P04637 may work differently than the bulk download API.",
+    "confirmed_broken_date": "2026-03-02",
+    "last_retry_date": "2026-03-02",
+    "retry_count": 2,
+    "github_issues": [],
+    "retry_after": "2026-06-01",
+    "retry_notes": "Check if mobidb.bio.unipd.it is back online or if a new API endpoint is available at mobidb.org. The MobiDB project may have migrated API infrastructure.",
+    "workaround": "Use UniProt /features endpoint (EBIProteins_get_features) with category=DOMAINS_AND_SITES for structural data, or DisProt API for curated disorder annotations. For PTM data, use EBIProteins_get_proteomics_ptm.",
+    "workaround_tool_file": null,
+    "investigation_notes": [
+        "mobidb.bio.unipd.it/api/download?acc=P04637 - ConnectTimeout after 10s",
+        "mobidb.org/api/entry/P04637 - 404 ResourceNotFound",
+        "mobidb.bio.unipd.it is unreachable at TCP level (no connection established)",
+        "Previously worked in prior sessions (agent reports from Round 26A confirm 100% timeout)",
+    ],
+    "attempted_config": {
+        "name": "MobiDB_get_protein",
+        "type": "MobiDBTool",
+        "description": "Get protein disorder data from MobiDB",
+        "endpoint": "https://mobidb.bio.unipd.it/api/download",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {"type": "string", "description": "UniProt accession"}
+            },
+            "required": ["accession"],
+        },
+    },
+}

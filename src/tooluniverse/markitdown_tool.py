@@ -29,7 +29,7 @@ class MarkItDownTool(BaseTool):
         try:
             return self._convert_to_markdown(arguments)
         except Exception as e:
-            return {"error": str(e)}
+            return {"status": "error", "error": str(e)}
 
     def _convert_to_markdown(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Convert a resource described by URI to Markdown using markitdown CLI."""
@@ -38,7 +38,7 @@ class MarkItDownTool(BaseTool):
         enable_plugins = arguments.get("enable_plugins", False)
 
         if not uri:
-            return {"error": "URI is required"}
+            return {"status": "error", "error": "URI is required"}
 
         try:
             # Parse URI
@@ -50,7 +50,10 @@ class MarkItDownTool(BaseTool):
                 # Download from URL
                 temp_file = self._download_from_url(uri)
                 if not temp_file:
-                    return {"error": f"Failed to download from URL: {uri}"}
+                    return {
+                        "status": "error",
+                        "error": f"Failed to download from URL: {uri}",
+                    }
                 input_path = temp_file
                 cleanup_temp = True
 
@@ -58,7 +61,7 @@ class MarkItDownTool(BaseTool):
                 # Local file
                 file_path = urllib.request.url2pathname(parsed_uri.path)
                 if not os.path.exists(file_path):
-                    return {"error": f"File not found: {file_path}"}
+                    return {"status": "error", "error": f"File not found: {file_path}"}
                 input_path = file_path
                 cleanup_temp = False
 
@@ -66,13 +69,17 @@ class MarkItDownTool(BaseTool):
                 # Data URI
                 temp_file = self._handle_data_uri(uri)
                 if not temp_file:
-                    return {"error": f"Failed to process data URI: {uri}"}
+                    return {
+                        "status": "error",
+                        "error": f"Failed to process data URI: {uri}",
+                    }
                 input_path = temp_file
                 cleanup_temp = True
 
             else:
                 return {
-                    "error": f"Unsupported URI scheme: {scheme}. Supported schemes: http, https, file, data"
+                    "status": "error",
+                    "error": f"Unsupported URI scheme: {scheme}. Supported schemes: http, https, file, data",
                 }
 
             # Build markitdown command
@@ -89,7 +96,7 @@ class MarkItDownTool(BaseTool):
                 error_msg = f"MarkItDown failed: {result.stderr}"
                 if cleanup_temp and os.path.exists(input_path):
                     os.unlink(input_path)
-                return {"error": error_msg}
+                return {"status": "error", "error": error_msg}
 
             # Get markdown content
             if output_path and os.path.exists(output_path):
@@ -119,7 +126,7 @@ class MarkItDownTool(BaseTool):
             return response
 
         except Exception as e:
-            return {"error": f"URI processing failed: {str(e)}"}
+            return {"status": "error", "error": f"URI processing failed: {str(e)}"}
 
     def _download_from_url(self, url: str) -> str:
         """Download content from URL to temporary file."""

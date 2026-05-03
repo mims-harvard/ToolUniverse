@@ -1,7 +1,7 @@
 Contributing to ToolUniverse
 ============================
 
-We welcome contributions to ToolUniverse! This Tutorial explains how to contribute effectively.
+We welcome contributions to ToolUniverse! 
 
 Getting Started
 ---------------
@@ -454,4 +454,4 @@ Contributors are recognized in:
 - Documentation acknowledgments
 - Annual contributor highlights
 
-Thank you for contributing to ToolUniverse! 🧬🔬
+Thank you for contributing to ToolUniverse! 

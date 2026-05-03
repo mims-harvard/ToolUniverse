@@ -1,0 +1,288 @@
+[
+  {
+    "name": "ClinGen_search_gene_validity",
+    "description": "Search ClinGen gene-disease validity curations by gene symbol. Returns classification (Definitive, Strong, Moderate, Limited, Disputed, Refuted), disease associations, and inheritance patterns. Essential for ACMG variant classification. Example: BRCA1 returns validity scores for hereditary breast/ovarian cancer.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to search (e.g., BRCA1, TP53, CFTR)"
+        }
+      },
+      "required": ["gene"]
+    },
+    "fields": {
+      "operation": "search_gene_validity",
+      "timeout": 60
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "GENE SYMBOL": {"type": ["string", "null"]},
+          "GENE ID (HGNC)": {"type": ["string", "null"]},
+          "DISEASE LABEL": {"type": ["string", "null"]},
+          "DISEASE ID (MONDO)": {"type": ["string", "null"]},
+          "CLASSIFICATION": {"type": ["string", "null"]},
+          "MOI": {"type": ["string", "null"]},
+          "SOP": {"type": ["string", "null"]},
+          "GCEP": {"type": ["string", "null"]},
+          "ONLINE REPORT": {"type": ["string", "null"]},
+          "CLASSIFICATION DATE": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "test_examples": [
+      {"gene": "BRCA1"},
+      {"gene": "TP53"}
+    ]
+  },
+  {
+    "name": "ClinGen_get_gene_validity",
+    "description": "Get all ClinGen gene-disease validity curations. Returns comprehensive list of gene-disease relationships with classifications (Definitive, Strong, Moderate, Limited). Useful for batch analysis or exploring curated genes. Optional gene filter available.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Optional: Filter by gene symbol"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_gene_validity",
+      "timeout": 120
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "test_examples": [
+      {},
+      {"gene": "CFTR"}
+    ]
+  },
+  {
+    "name": "ClinGen_search_dosage_sensitivity",
+    "description": "Search ClinGen dosage sensitivity curations by gene symbol. Returns haploinsufficiency (HI) and triplosensitivity (TS) scores (0-3 scale). Score 3 = Sufficient evidence for dosage pathogenicity. Critical for CNV interpretation. Example: MECP2 has HI score of 3.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to search (e.g., MECP2, PMP22, RAI1)"
+        }
+      },
+      "required": ["gene"]
+    },
+    "fields": {
+      "operation": "search_dosage_sensitivity",
+      "timeout": 60
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "GENE SYMBOL": {"type": ["string", "null"]},
+          "HGNC ID": {"type": ["string", "null"]},
+          "HAPLOINSUFFICIENCY": {"type": ["string", "null"]},
+          "TRIPLOSENSITIVITY": {"type": ["string", "null"]},
+          "ONLINE REPORT": {"type": ["string", "null"]},
+          "DATE": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "test_examples": [
+      {"gene": "MECP2"},
+      {"gene": "PMP22"}
+    ]
+  },
+  {
+    "name": "ClinGen_get_dosage_sensitivity",
+    "description": "Get all ClinGen dosage sensitivity curations. Returns haploinsufficiency and triplosensitivity scores for curated genes. Set include_regions=true to also get recurrent CNV regions. Scores: 0=No evidence, 1=Little, 2=Emerging, 3=Sufficient evidence.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Optional: Filter by gene symbol"
+        },
+        "include_regions": {
+          "type": "boolean",
+          "description": "Include recurrent CNV regions (default: false)",
+          "default": false
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_dosage_sensitivity",
+      "timeout": 120
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "test_examples": [
+      {},
+      {"include_regions": true}
+    ]
+  },
+  {
+    "name": "ClinGen_get_actionability_adult",
+    "description": "Get ClinGen clinical actionability curations for adult context. Returns genes with actionable findings, intervention scores, and outcome scores. Actionability scores help prioritize which incidental findings to return. Example: BRCA1/2 have high actionability for cancer screening.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Optional: Filter by gene symbol"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_actionability_adult",
+      "timeout": 60
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": ["array", "object"]
+        },
+        "total": {"type": "integer"},
+        "context": {"type": "string"},
+        "source": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {},
+      {"gene": "BRCA1"}
+    ]
+  },
+  {
+    "name": "ClinGen_get_actionability_pediatric",
+    "description": "Get ClinGen clinical actionability curations for pediatric context. Returns genes with actionable findings in children, intervention recommendations, and evidence scores. Pediatric curations may differ from adult context due to age-specific interventions.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Optional: Filter by gene symbol"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_actionability_pediatric",
+      "timeout": 60
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": ["array", "object"]
+        },
+        "total": {"type": "integer"},
+        "context": {"type": "string"},
+        "source": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {},
+      {"gene": "RB1"}
+    ]
+  },
+  {
+    "name": "ClinGen_search_actionability",
+    "description": "Search ClinGen clinical actionability across both adult and pediatric contexts by gene. Returns actionability data from both contexts for comparison. Useful for comprehensive actionability assessment of a gene across age groups.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to search (e.g., BRCA1, MLH1, LDLR)"
+        }
+      },
+      "required": ["gene"]
+    },
+    "fields": {
+      "operation": "search_actionability",
+      "timeout": 120
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "Adult": {"type": "array"},
+            "Pediatric": {"type": "array"}
+          }
+        },
+        "gene_searched": {"type": "string"},
+        "adult_count": {"type": "integer"},
+        "pediatric_count": {"type": "integer"},
+        "source": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"gene": "BRCA1"},
+      {"gene": "MLH1"}
+    ]
+  },
+  {
+    "name": "ClinGen_get_variant_classifications",
+    "description": "Get variant pathogenicity classifications from ClinGen Evidence Repository. Returns expert-curated variant classifications with supporting evidence. Optional filters by gene or variant. Classifications follow ACMG/AMP guidelines with expert review.",
+    "type": "ClinGenTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Optional: Filter by gene symbol"
+        },
+        "variant": {
+          "type": "string",
+          "description": "Optional: Filter by variant (HGVS notation or protein change)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_variant_classifications",
+      "timeout": 120
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Variation": {"type": ["string", "null"]},
+          "ClinVar Variation Id": {"type": ["string", "null"]},
+          "HGNC Gene Symbol": {"type": ["string", "null"]},
+          "Disease": {"type": ["string", "null"]},
+          "Mondo Id": {"type": ["string", "null"]},
+          "Assertion": {"type": ["string", "null"]},
+          "Expert Panel": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "test_examples": [
+      {"gene": "BRCA1"},
+      {"gene": "PAH"}
+    ]
+  }
+]

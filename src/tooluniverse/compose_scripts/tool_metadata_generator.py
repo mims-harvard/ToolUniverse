@@ -129,9 +129,7 @@ def compose(arguments, tooluniverse, call_tool):
                             for tag in tags:
                                 if isinstance(tag, str) and tag.strip():
                                     tool_labels_set.add(tag.strip())
-        except (
-            Exception
-        ) as e:  # Fail gracefully; downstream logic will just proceed without enrichment
+        except Exception as e:  # Fail gracefully; downstream logic will just proceed without enrichment
             print(f"Failed to load existing ToolUniverse labels: {e}")
 
     if not tool_configs:
@@ -357,7 +355,7 @@ def compose(arguments, tooluniverse, call_tool):
                     )
                     break
 
-                print(f"Pass {i+1}: Standardizing {num_tags} tags.")
+                print(f"Pass {i + 1}: Standardizing {num_tags} tags.")
 
                 # Set the limit for the standardizer tool.
                 # Use a default high limit if max_new_tooluniverse_labels is not set, otherwise use the specified limit.
@@ -372,7 +370,7 @@ def compose(arguments, tooluniverse, call_tool):
                     "limit": limit,
                 }
 
-                print(f"Pass {i+1} input tags: ", current_tags_to_standardize)
+                print(f"Pass {i + 1} input tags: ", current_tags_to_standardize)
 
                 # Call the standardizer tool and parse the output, with retries.
                 pass_output_map = {}
@@ -386,7 +384,7 @@ def compose(arguments, tooluniverse, call_tool):
                     if pass_output_map:  # If the result is not empty, break
                         break
 
-                print(f"Pass {i+1} standardized tags mapping:", pass_output_map)
+                print(f"Pass {i + 1} standardized tags mapping:", pass_output_map)
 
                 # Create a reverse map for the current pass for easy lookup.
                 # Maps a tag from the input list to its new standardized version.

@@ -31,6 +31,8 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_animal\\_pharmacology
 #: tooluniverse.tools.FDA_get_drug_names_by_animal_pharmacology_info:1
 msgid "FDA_get_drug_names_by_animal_pharmacology_info"
 msgstr ""
+"FDA_get_drug_names_by_animal_pharmacology_info  \n"
+"获取基于动物药理学信息的药物名称"
 
 #: 2a7d65a3bba043389a5a6ba179459e8a 3bce8e32dee240ae8eed309650ac4724 of
 #: tooluniverse.tools.FDA_get_drug_names_by_animal_pharmacology_info:3

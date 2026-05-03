@@ -3,12 +3,46 @@ Gwas Tools
 
 **Configuration File**: ``gwas_tools.json``
 **Tool Type**: Local
-**Tools Count**: 12
+**Tools Count**: 13
 
 This page contains all tools defined in the ``gwas_tools.json`` configuration file.
 
 Available Tools
 ---------------
+
+**GWAS_search_associations_by_gene** (Type: GWASGeneSearch)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Search GWAS Catalog associations by gene name (returns strongest risk allele and p-value fields).
+
+.. dropdown:: GWAS_search_associations_by_gene tool specification
+
+   **Tool Information:**
+
+   * **Name**: ``GWAS_search_associations_by_gene``
+   * **Type**: ``GWASGeneSearch``
+   * **Description**: Search GWAS Catalog associations by gene name (returns strongest risk allele and p-value fields).
+
+   **Parameters:**
+
+   * ``gene_name`` (string) (required)
+     Gene symbol (e.g., BRCA1).
+
+   * ``size`` (integer) (optional)
+     Max associations to return.
+
+   **Example Usage:**
+
+   .. code-block:: python
+
+      query = {
+          "name": "GWAS_search_associations_by_gene",
+          "arguments": {
+              "gene_name": "example_value"
+          }
+      }
+      result = tu.run(query)
+
 
 **gwas_get_association_by_id** (Type: GWASAssociationByID)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,0 +1,369 @@
+[
+  {
+    "name": "OpenNeuro_list_datasets",
+    "description": "List publicly available neuroimaging datasets on OpenNeuro. OpenNeuro hosts 1000+ BIDS-formatted brain imaging datasets (fMRI, MRI, EEG, MEG, PET). Returns dataset metadata including modalities, subject counts, file counts, download statistics. Supports cursor-based pagination. Use after parameter for next page.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "first": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of datasets to return (default 10, max 25)"
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Cursor for pagination - use endCursor from previous response"
+        }
+      }
+    },
+    "query_schema": "query ListDatasets($first: Int, $after: String) {\n  datasets(first: $first, after: $after) {\n    edges {\n      node {\n        id\n        created\n        name\n        public\n        publishDate\n        analytics { downloads views }\n        latestSnapshot {\n          id\n          summary { modalities subjects totalFiles size primaryModality }\n          description { Name BIDSVersion License Authors DatasetDOI }\n        }\n      }\n    }\n    pageInfo { hasNextPage endCursor }\n  }\n}",
+    "fields": {},
+    "type": "OpenNeuroTool",
+    "test_examples": [
+      {
+        "first": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GraphQL response with datasets list and pagination info",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "datasets": {
+                  "type": "object",
+                  "properties": {
+                    "edges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "node": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": ["string", "null"]
+                              },
+                              "public": {
+                                "type": ["boolean", "null"]
+                              },
+                              "analytics": {
+                                "type": ["object", "null"]
+                              },
+                              "latestSnapshot": {
+                                "type": ["object", "null"]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "pageInfo": {
+                      "type": ["object", "null"]
+                    }
+                  }
+                }
+              }
+            },
+            "extensions": {
+              "type": ["object", "null"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenNeuro_get_dataset",
+    "description": "Get detailed information about a specific neuroimaging dataset on OpenNeuro by its dataset ID (e.g., 'ds000114', 'ds000224'). Returns full metadata including modalities, tasks, subject list, BIDS version, authors, DOI, README, and download statistics.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "datasetId": {
+          "type": "string",
+          "description": "OpenNeuro dataset ID (e.g., 'ds000114', 'ds000224', 'ds003097')"
+        }
+      },
+      "required": [
+        "datasetId"
+      ]
+    },
+    "query_schema": "query GetDataset($datasetId: ID!) {\n  dataset(id: $datasetId) {\n    id\n    created\n    name\n    public\n    publishDate\n    analytics { downloads views }\n    latestSnapshot {\n      id\n      tag\n      created\n      size\n      summary { modalities subjects tasks totalFiles size primaryModality sessions }\n      description { Name BIDSVersion License Authors Funding ReferencesAndLinks DatasetDOI EthicsApprovals }\n      readme\n    }\n    stars { userId }\n  }\n}",
+    "fields": {},
+    "type": "OpenNeuroTool",
+    "test_examples": [
+      {
+        "datasetId": "ds000114"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GraphQL response with dataset details",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": ["string", "null"]
+                    },
+                    "public": {
+                      "type": ["boolean", "null"]
+                    },
+                    "publishDate": {
+                      "type": ["string", "null"]
+                    },
+                    "analytics": {
+                      "type": ["object", "null"]
+                    },
+                    "latestSnapshot": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "summary": {
+                          "type": ["object", "null"]
+                        },
+                        "description": {
+                          "type": ["object", "null"]
+                        },
+                        "readme": {
+                          "type": ["string", "null"]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "extensions": {
+              "type": ["object", "null"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenNeuro_get_dataset_snapshots",
+    "description": "Get all version snapshots of a specific dataset on OpenNeuro. Returns snapshot tags, creation dates, and summary information for all published versions of the dataset.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "datasetId": {
+          "type": "string",
+          "description": "OpenNeuro dataset ID (e.g., 'ds000114')"
+        }
+      },
+      "required": [
+        "datasetId"
+      ]
+    },
+    "query_schema": "query GetSnapshots($datasetId: ID!) {\n  dataset(id: $datasetId) {\n    id\n    name\n    snapshots {\n      id\n      tag\n      created\n      size\n      summary { modalities subjects totalFiles size }\n      description { Name BIDSVersion Authors }\n    }\n  }\n}",
+    "fields": {},
+    "type": "OpenNeuroTool",
+    "test_examples": [
+      {
+        "datasetId": "ds000114"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GraphQL response with dataset snapshots",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": ["string", "null"]
+                    },
+                    "snapshots": {
+                      "type": ["array", "null"],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "tag": {
+                            "type": "string"
+                          },
+                          "created": {
+                            "type": ["string", "null"]
+                          },
+                          "summary": {
+                            "type": ["object", "null"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "extensions": {
+              "type": ["object", "null"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenNeuro_search_by_modality",
+    "description": "Search OpenNeuro neuroimaging datasets filtered by imaging modality. Supported modalities include: 'MRI' (structural and functional MRI), 'EEG' (electroencephalography), 'iEEG' (intracranial EEG), 'MEG' (magnetoencephalography), 'PET' (positron emission tomography). Returns dataset IDs, names, creation dates, and total count of matching datasets. OpenNeuro hosts 1600+ BIDS-formatted brain imaging datasets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "modality": {
+          "type": "string",
+          "description": "Imaging modality to filter by. Options: 'MRI', 'EEG', 'iEEG', 'MEG', 'PET'."
+        },
+        "first": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of datasets to return (default 10, max 25)"
+        }
+      },
+      "required": [
+        "modality"
+      ]
+    },
+    "query_schema": "query SearchByModality($first: Int, $modality: String) {\n  datasets(first: $first, modality: $modality, orderBy: {created: descending}) {\n    edges {\n      node {\n        id\n        created\n        name\n        public\n      }\n    }\n    pageInfo { count }\n  }\n}",
+    "fields": {},
+    "type": "OpenNeuroTool",
+    "test_examples": [
+      {
+        "modality": "EEG",
+        "first": 5
+      },
+      {
+        "modality": "MRI",
+        "first": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GraphQL response with filtered datasets",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "datasets": {
+                  "type": "object",
+                  "properties": {
+                    "edges": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "node": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": ["string", "null"]
+                              },
+                              "created": {
+                                "type": ["string", "null"]
+                              },
+                              "public": {
+                                "type": ["boolean", "null"]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "pageInfo": {
+                      "type": ["object", "null"],
+                      "properties": {
+                        "count": {
+                          "type": ["integer", "null"],
+                          "description": "Total matching datasets"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "extensions": {
+              "type": ["object", "null"]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

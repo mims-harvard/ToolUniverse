@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_safe\\_handling\\_warnings\\_by\\_drug\\_
 #: f5e770c59cd74e538c7e1a2bdc2f5852 of
 #: tooluniverse.tools.FDA_get_safe_handling_warnings_by_drug_name:1
 msgid "FDA_get_safe_handling_warnings_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取安全处理警告"
 
 #: 546708cb19a14a4187fa0ba1f88eda3b d17bea8aa39941d89dd8d5e1e85473f2 of
 #: tooluniverse.tools.FDA_get_safe_handling_warnings_by_drug_name:3

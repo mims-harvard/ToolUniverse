@@ -1,0 +1,240 @@
+[
+  {
+    "type": "WebSearchTool",
+    "name": "web_search",
+    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query string"
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Type of search to perform",
+          "enum": ["general", "api_documentation", "python_packages", "github"],
+          "default": "general"
+        },
+        "backend": {
+          "type": "string",
+          "description": "Search engine backend to use",
+          "enum": ["auto", "google", "bing", "brave", "yahoo", "duckduckgo"],
+          "default": "auto"
+        },
+        "region": {
+          "type": "string",
+          "description": "Search region/locale",
+          "enum": ["us-en", "cn-zh", "uk-en", "de-de", "fr-fr", "ja-jp"],
+          "default": "us-en"
+        },
+        "safesearch": {
+          "type": "string",
+          "description": "Safe search level",
+          "enum": ["on", "moderate", "off"],
+          "default": "moderate"
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the search operation",
+          "enum": ["success", "error"]
+        },
+        "query": {
+          "type": "string",
+          "description": "The search query that was executed"
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Type of search that was performed"
+        },
+        "total_results": {
+          "type": "integer",
+          "description": "Total number of results found"
+        },
+        "results": {
+          "type": "array",
+          "description": "Array of search results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the search result"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL of the search result"
+              },
+              "snippet": {
+                "type": "string",
+                "description": "Snippet or description of the result"
+              },
+              "rank": {
+                "type": "integer",
+                "description": "Rank of the result in search results"
+              }
+            },
+            "required": ["title", "url", "snippet", "rank"]
+          }
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is error"
+        }
+      },
+      "required": ["status", "query", "total_results", "results"]
+    },
+    "test_examples": [
+      {
+        "query": "python requests library",
+        "max_results": 5,
+        "expected_output_type": "object",
+        "description": "Search for Python requests library information"
+      },
+      {
+        "query": "machine learning APIs",
+        "search_type": "api_documentation",
+        "max_results": 3,
+        "expected_output_type": "object",
+        "description": "Search for machine learning API documentation"
+      }
+    ],
+    "metadata": {
+      "tags": ["web-search", "multi-engine", "no-api-key", "ddgs"],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "2-5 seconds"
+    }
+  },
+  {
+    "type": "WebAPIDocumentationSearchTool",
+    "name": "web_api_documentation_search",
+    "description": "Specialized web search for API documentation, Python packages, and technical resources using DDGS with multiple search engines. Optimized for finding official documentation and library information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query string (e.g., tool name, library name, API name)"
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "focus": {
+          "type": "string",
+          "description": "Focus area for the search",
+          "enum": ["api_docs", "python_packages", "github_repos"],
+          "default": "api_docs"
+        },
+        "backend": {
+          "type": "string",
+          "description": "Search engine backend to use",
+          "enum": ["auto", "google", "bing", "brave", "yahoo", "duckduckgo"],
+          "default": "auto"
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the search operation",
+          "enum": ["success", "error"]
+        },
+        "query": {
+          "type": "string",
+          "description": "The search query that was executed"
+        },
+        "focus": {
+          "type": "string",
+          "description": "Focus area that was used for the search"
+        },
+        "enhanced_query": {
+          "type": "string",
+          "description": "Enhanced query that was actually executed"
+        },
+        "total_results": {
+          "type": "integer",
+          "description": "Total number of results found"
+        },
+        "results": {
+          "type": "array",
+          "description": "Array of search results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the search result"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL of the search result"
+              },
+              "snippet": {
+                "type": "string",
+                "description": "Snippet or description of the result"
+              },
+              "rank": {
+                "type": "integer",
+                "description": "Rank of the result in search results"
+              }
+            },
+            "required": ["title", "url", "snippet", "rank"]
+          }
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is error"
+        }
+      },
+      "required": ["status", "query", "total_results", "results"]
+    },
+    "test_examples": [
+      {
+        "query": "pandas",
+        "focus": "api_docs",
+        "max_results": 5,
+        "expected_output_type": "object",
+        "description": "Search for pandas API documentation"
+      },
+      {
+        "query": "requests",
+        "focus": "python_packages",
+        "max_results": 3,
+        "expected_output_type": "object",
+        "description": "Search for requests Python package information"
+      },
+      {
+        "query": "scikit-learn",
+        "focus": "github_repos",
+        "max_results": 3,
+        "expected_output_type": "object",
+        "description": "Search for scikit-learn GitHub repositories"
+      }
+    ],
+    "metadata": {
+      "tags": ["web-search", "api-documentation", "python-packages", "technical-resources", "multi-engine", "ddgs"],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "2-5 seconds"
+    }
+  }
+]

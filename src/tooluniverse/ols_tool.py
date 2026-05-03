@@ -17,13 +17,34 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 OLS_BASE_URL = "https://www.ebi.ac.uk/ols4"
-REQUEST_TIMEOUT = 30.0
+REQUEST_TIMEOUT = 30.0  # 30 second timeout to prevent hanging on slow API responses
 
 
 def url_encode_iri(iri: str) -> str:
     """Double URL encode an IRI as required by the OLS API."""
 
     return urllib.parse.quote(urllib.parse.quote(iri, safe=""), safe="")
+
+
+def _expand_short_term_id(term_id: str) -> str:
+    """Convert short ontology IDs (e.g. GO:0006338) to full OBO IRIs.
+
+    Handles standard OBO ontologies (GO, HP, MONDO, CHEBI, etc.).
+    EFO and other non-OBO ontologies keep their original form.
+    """
+    if not term_id or term_id.startswith("http"):
+        return term_id
+    if ":" in term_id:
+        prefix, local = term_id.split(":", 1)
+        return f"http://purl.obolibrary.org/obo/{prefix}_{local}"
+    return term_id
+
+
+def _infer_ontology_from_term_id(term_id: str) -> str:
+    """Infer OLS ontology identifier from a CURIE prefix (e.g. 'HP:0001234' → 'hp')."""
+    if term_id and ":" in term_id and not term_id.startswith("http"):
+        return term_id.split(":", 1)[0].lower()
+    return ""
 
 
 class OntologyInfo(BaseModel):
@@ -146,8 +167,12 @@ class OLSTool(BaseTool):
 
         arguments = arguments or {}
         operation = arguments.get("operation")
+        # Auto-fill operation from tool config const if not provided by user
+        if not operation:
+            operation = self.get_schema_const_operation()
         if not operation:
             return {
+                "status": "error",
                 "error": "`operation` argument is required.",
                 "available_operations": sorted(self._OPERATIONS.keys()),
             }
@@ -155,17 +180,22 @@ class OLSTool(BaseTool):
         handler_name = self._OPERATIONS.get(operation)
         if not handler_name:
             return {
+                "status": "error",
                 "error": f"Unsupported operation '{operation}'.",
                 "available_operations": sorted(self._OPERATIONS.keys()),
             }
 
         handler = getattr(self, handler_name)
         try:
-            return handler(arguments)
+            result = handler(arguments)
+            if isinstance(result, dict) and "status" not in result:
+                return {"status": "success", **result}
+            return result
         except requests.RequestException as exc:
-            return {"error": "OLS API request failed.", "details": str(exc)}
+            return {"status": "error", "error": str(exc)}
         except ValidationError as exc:
             return {
+                "status": "error",
                 "error": "Failed to validate OLS response.",
                 "details": exc.errors(),
             }
@@ -173,9 +203,17 @@ class OLSTool(BaseTool):
     def _handle_search_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         query = arguments.get("query")
         if not query:
-            return {"error": "`query` parameter is required for `search_terms`."}
+            return {
+                "status": "error",
+                "error": "`query` parameter is required for `search_terms`.",
+            }
 
-        rows = int(arguments.get("rows", 10))
+        rows = int(
+            arguments.get("rows")
+            or arguments.get("limit")
+            or arguments.get("size")
+            or 10
+        )
         ontology = arguments.get("ontology")
         exact_match = bool(arguments.get("exact_match", False))
         include_obsolete = bool(arguments.get("include_obsolete", False))
@@ -191,7 +229,25 @@ class OLSTool(BaseTool):
             params["ontology"] = ontology
 
         data = self._get_json("/api/search", params=params)
-        formatted = self._format_term_collection(data, rows)
+
+        # OLS /api/search returns a Solr-style envelope: {"response": {"docs": [...], "numFound": N}, ...}
+        # Extract docs and numFound directly to avoid returning noisy facet_counts.
+        solr_response = data.get("response") if isinstance(data, dict) else None
+        if isinstance(solr_response, dict) and "docs" in solr_response:
+            docs = solr_response.get("docs", [])
+            num_found = solr_response.get("numFound", len(docs))
+            term_models = [self._build_term_model(item) for item in docs[:rows]]
+            term_models = [m for m in term_models if m is not None]
+            formatted: Dict[str, Any] = {
+                "terms": [
+                    m.model_dump(by_alias=True, mode="json") for m in term_models
+                ],
+                "total_items": num_found,
+                "showing": len(term_models),
+            }
+        else:
+            formatted = self._format_term_collection(data, rows)
+
         formatted["query"] = query
         formatted["filters"] = {
             "ontology": ontology,
@@ -201,15 +257,19 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_get_ontology_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        ontology_id = arguments.get("ontology_id")
+        # Feature-120A-003: accept 'ontology' alias for consistency with other OLS tools
+        ontology_id = arguments.get("ontology_id") or arguments.get("ontology")
         if not ontology_id:
             return {
-                "error": "`ontology_id` parameter is required for `get_ontology_info`."
+                "status": "error",
+                "error": "`ontology_id` (or `ontology`) is required. E.g. 'mondo', 'hp', 'go'.",
             }
 
         data = self._get_json(f"/api/v2/ontologies/{ontology_id}")
         ontology = OntologyInfo.model_validate(data)
-        return ontology.model_dump(by_alias=True)
+        # Convert HttpUrl objects to strings for JSON compatibility
+        result = ontology.model_dump(by_alias=True, mode="json")
+        return result
 
     def _handle_search_ontologies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         search = arguments.get("search")
@@ -221,40 +281,64 @@ class OLSTool(BaseTool):
             params["search"] = search
 
         data = self._get_json("/api/v2/ontologies", params=params)
-        embedded = data.get("_embedded", {})
-        ontologies = embedded.get("ontologies", [])
+        # Feature-120A-001: OLS v4 returns ontologies in top-level 'elements', not '_embedded'
+        ontologies = data.get(
+            "elements", data.get("_embedded", {}).get("ontologies", [])
+        )
 
         validated: List[Dict[str, Any]] = []
         for item in ontologies:
             try:
                 validated.append(
-                    OntologyInfo.model_validate(item).model_dump(by_alias=True)
+                    OntologyInfo.model_validate(item).model_dump(
+                        by_alias=True, mode="json"
+                    )
                 )
             except ValidationError:
                 continue
 
-        page_info = data.get("page", {})
         return {
+            "status": "success",
             "results": validated or ontologies,
             "pagination": {
-                "page": page_info.get("number", page),
-                "size": page_info.get("size", size),
-                "total_pages": page_info.get("totalPages", 0),
-                "total_items": page_info.get("totalElements", len(ontologies)),
+                "page": page,
+                "size": size,
+                "total_pages": data.get("totalPages", 0),
+                "total_items": data.get("totalElements", len(ontologies)),
             },
             "search": search,
         }
 
     def _handle_get_term_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        identifier = arguments.get("id")
+        # Feature-111A-003: term_iri alias for id (consistent with sibling OLS tools)
+        identifier = (
+            arguments.get("id") or arguments.get("term_id") or arguments.get("term_iri")
+        )
         if not identifier:
-            return {"error": "`id` parameter is required for `get_term_info`."}
+            return {
+                "status": "error",
+                "error": "`id` parameter is required for `get_term_info`. Use HP:0001903 style IDs.",
+            }
 
-        data = self._get_json("/api/terms", params={"id": identifier})
-        embedded = data.get("_embedded", {})
-        terms = embedded.get("terms") if isinstance(embedded, dict) else None
+        # Use ontology-specific endpoint when a CURIE prefix is known (e.g. GO:, HP:)
+        # to avoid getting a term from an importing ontology (e.g. bcgo) instead of canonical source.
+        ontology = arguments.get("ontology") or _infer_ontology_from_term_id(identifier)
+        terms = None
+        if ontology:
+            data = self._get_json(
+                f"/api/ontologies/{ontology}/terms", params={"obo_id": identifier}
+            )
+            embedded = data.get("_embedded", {})
+            terms = embedded.get("terms") if isinstance(embedded, dict) else None
         if not terms:
-            return {"error": f"Term with ID '{identifier}' was not found in OLS."}
+            data = self._get_json("/api/terms", params={"id": identifier})
+            embedded = data.get("_embedded", {})
+            terms = embedded.get("terms") if isinstance(embedded, dict) else None
+        if not terms:
+            return {
+                "status": "error",
+                "error": f"Term with ID '{identifier}' was not found in OLS.",
+            }
 
         # Normalize the term data before validation
         term_data = terms[0]
@@ -262,14 +346,19 @@ class OLSTool(BaseTool):
             term_data["ontologyName"] = term_data["ontologyId"]
 
         term = DetailedTermInfo.model_validate(term_data)
-        return term.model_dump(by_alias=True)
+        # Convert HttpUrl objects to strings for JSON compatibility
+        return term.model_dump(by_alias=True, mode="json")
 
     def _handle_get_term_children(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = arguments.get("term_iri")
-        ontology = arguments.get("ontology")
+        raw_term_id = arguments.get("term_iri") or arguments.get("term_id", "")
+        term_iri = _expand_short_term_id(raw_term_id)
+        ontology = arguments.get("ontology") or _infer_ontology_from_term_id(
+            raw_term_id
+        )
         if not term_iri or not ontology:
             return {
-                "error": "`term_iri` and `ontology` parameters are required for `get_term_children`."
+                "status": "error",
+                "error": "`term_iri` (or `term_id`) and `ontology` are required for `get_term_children`. Tip: if you pass `term_id` like 'HP:0001234', the ontology is inferred automatically.",
             }
 
         include_obsolete = bool(arguments.get("include_obsolete", False))
@@ -292,11 +381,15 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_get_term_ancestors(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = arguments.get("term_iri")
-        ontology = arguments.get("ontology")
+        raw_term_id = arguments.get("term_iri") or arguments.get("term_id", "")
+        term_iri = _expand_short_term_id(raw_term_id)
+        ontology = arguments.get("ontology") or _infer_ontology_from_term_id(
+            raw_term_id
+        )
         if not term_iri or not ontology:
             return {
-                "error": "`term_iri` and `ontology` parameters are required for `get_term_ancestors`."
+                "status": "error",
+                "error": "`term_iri` (or `term_id`) and `ontology` are required for `get_term_ancestors`. Tip: if you pass `term_id` like 'HP:0001234', the ontology is inferred automatically.",
             }
 
         include_obsolete = bool(arguments.get("include_obsolete", False))
@@ -319,33 +412,91 @@ class OLSTool(BaseTool):
         return formatted
 
     def _handle_find_similar_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        term_iri = arguments.get("term_iri")
+        # Feature-120A-002: /llm_similar does not exist in OLS v4; use text search instead.
+        # Resolve the term to get its label, then search within the ontology.
+        term_iri = _expand_short_term_id(
+            arguments.get("term_iri") or arguments.get("term_id", "")
+        )
         ontology = arguments.get("ontology")
         if not term_iri or not ontology:
             return {
-                "error": "`term_iri` and `ontology` parameters are required for `find_similar_terms`."
+                "status": "error",
+                "error": "`term_iri` (or `term_id`) and `ontology` are required for `find_similar_terms`.",
             }
 
         size = int(arguments.get("size", 10))
-        encoded = url_encode_iri(term_iri)
 
-        params = {"page": 0, "size": size}
-        data = self._get_json(
-            f"/api/v2/ontologies/{ontology}/classes/{encoded}/llm_similar",
-            params=params,
-        )
-        formatted = self._format_term_collection(data, size)
-        formatted["term_iri"] = term_iri
-        formatted["ontology"] = ontology
-        return formatted
+        # Step 1: get the term's label to use as search query
+        label = ""
+        try:
+            encoded = url_encode_iri(term_iri)
+            term_data = self._get_json(
+                f"/api/v2/ontologies/{ontology}/classes/{encoded}"
+            )
+            label = term_data.get("label", "")
+        except Exception:
+            pass
+
+        if not label:
+            return {
+                "status": "error",
+                "error": f"Could not retrieve label for term '{term_iri}' in ontology '{ontology}'. Verify the term ID is correct.",
+            }
+
+        # Step 2: search within the ontology for terms with similar labels
+        params = {"q": label, "ontology": ontology, "type": "class", "rows": size + 1}
+        data = self._get_json("/api/search", params=params)
+        docs = data.get("response", {}).get("docs", [])
+
+        # Exclude the query term itself
+        similar = [d for d in docs if d.get("iri") != term_iri][:size]
+
+        return {
+            "status": "success",
+            "term_iri": term_iri,
+            "source_label": label,
+            "ontology": ontology,
+            "similar_terms": similar,
+            "total": len(similar),
+            "note": "Results via text search (OLS v4 semantic similarity endpoint unavailable).",
+        }
 
     def _get_json(
         self, path: str, params: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
+        """Make a GET request to the OLS API and return JSON response.
+
+        Args:
+            path: API endpoint path
+            params: Optional query parameters
+
+        Returns:
+            JSON response as dictionary
+
+        Raises:
+            requests.RequestException: On network errors or timeouts
+            requests.HTTPError: On HTTP errors (4xx, 5xx)
+        """
         url = f"{self.base_url}{path}"
-        response = self.session.get(url, params=params, timeout=self.timeout)
-        response.raise_for_status()
-        return response.json()
+        try:
+            response = self.session.get(url, params=params, timeout=self.timeout)
+            if response.status_code == 503:
+                raise requests.RequestException(
+                    "EBI OLS4 service is temporarily unavailable (HTTP 503). "
+                    "Try again later. Alternatives: search HPO phenotypes via "
+                    "Orphanet_get_phenotypes, or look up disease terms via "
+                    "Orphanet_search_by_name or EuropePMC."
+                )
+            response.raise_for_status()
+            return response.json()
+        except requests.Timeout as e:
+            raise requests.RequestException(
+                f"OLS API request timed out after {self.timeout}s: {url}"
+            ) from e
+        except requests.RequestException as e:
+            raise requests.RequestException(
+                f"OLS API request failed for {url}: {str(e)}"
+            ) from e
 
     def _format_term_collection(
         self, data: Dict[str, Any], size: int
@@ -358,7 +509,9 @@ class OLSTool(BaseTool):
             else:
                 embedded = data.get("_embedded")
                 if isinstance(embedded, dict):
-                    for key in ("terms", "children", "ancestors"):
+                    # OLS responses can use different embedded keys depending on endpoint/version.
+                    # Keep this list conservative but inclusive for OLS4 v2 term hierarchy endpoints.
+                    for key in ("terms", "children", "ancestors", "classes"):
                         if key in embedded and isinstance(embedded[key], list):
                             elements = embedded[key]
                             break
@@ -385,7 +538,9 @@ class OLSTool(BaseTool):
         )
 
         result: Dict[str, Any] = {
-            "terms": [model.model_dump(by_alias=True) for model in term_models],
+            "terms": [
+                model.model_dump(by_alias=True, mode="json") for model in term_models
+            ],
             "total_items": total,
             "showing": len(term_models),
         }
@@ -403,15 +558,34 @@ class OLSTool(BaseTool):
 
     @staticmethod
     def _build_term_model(item: Dict[str, Any]) -> Optional[TermInfo]:
+        # OLS4 v2 endpoints may represent the identifier as `iri`, `@id`, or `id`.
+        iri = item.get("iri") or item.get("@id") or item.get("id")
+        # OLS4 v2 often returns `label` as a list (e.g. ["lymphocyte"]).
+        label = item.get("label")
+        if isinstance(label, list):
+            label = next(
+                (val for val in label if isinstance(val, str) and val.strip()), ""
+            )
+        elif not isinstance(label, str):
+            label = ""
+
+        # Prefer CURIE if present (more human-friendly), otherwise fall back to shortForm.
+        short_form = (
+            item.get("curie") or item.get("shortForm") or item.get("short_form") or ""
+        )
         payload = {
-            "iri": item.get("iri"),
+            "iri": iri,
             "ontology_name": item.get("ontologyName")
             or item.get("ontology_name")
             or item.get("ontologyId")
             or "",
-            "short_form": item.get("shortForm") or item.get("short_form") or "",
-            "label": item.get("label") or "",
-            "oboId": item.get("oboId") or item.get("obo_id"),
+            "short_form": short_form,
+            "label": label,
+            "oboId": item.get("oboId")
+            or item.get("obo_id")
+            or item.get("curie")
+            or short_form
+            or None,
             "isObsolete": item.get("isObsolete") or item.get("is_obsolete", False),
         }
 

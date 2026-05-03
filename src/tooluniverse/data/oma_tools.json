@@ -1,0 +1,601 @@
+[
+  {
+    "name": "OMA_get_protein",
+    "description": "Get protein information from the OMA (Orthologous MAtrix) Browser by UniProt accession or OMA ID. OMA is a comprehensive orthology database covering 2,600+ complete genomes. Returns protein details including species, genomic location, OMA group membership, and Hierarchical Orthologous Group (HOG) assignment. Example: P04637 returns human TP53 with OMA ID HUMAN31534, HOG:E0739094.3a.3b.3b, and genomic locus on chromosome 17.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_id": {
+          "type": "string",
+          "description": "UniProt accession (e.g., 'P04637' for human p53) or OMA ID (e.g., 'HUMAN31534'). UniProt accessions are recommended for cross-database compatibility."
+        }
+      },
+      "required": [
+        "protein_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "protein"
+    },
+    "type": "OMATool",
+    "test_examples": [
+      {
+        "protein_id": "P04637"
+      },
+      {
+        "protein_id": "P00533"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "entry_nr": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "OMA internal entry number"
+                },
+                "oma_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OMA identifier (species code + number)"
+                },
+                "canonical_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "UniProt canonical ID"
+                },
+                "sequence_length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Protein sequence length"
+                },
+                "species_code": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OMA 5-letter species code"
+                },
+                "species_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Full species name"
+                },
+                "taxon_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "NCBI taxonomy ID"
+                },
+                "oma_group": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "OMA Group number (strict 1:1 orthologs)"
+                },
+                "oma_hog_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Hierarchical Orthologous Group ID"
+                },
+                "chromosome": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Chromosome/scaffold"
+                },
+                "locus_start": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Genomic start position"
+                },
+                "locus_end": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Genomic end position"
+                },
+                "locus_strand": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Strand (1 or -1)"
+                },
+                "is_main_isoform": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether this is the main isoform"
+                },
+                "roothog_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Root HOG identifier"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OMA_get_orthologs",
+    "description": "Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologous proteins across species with relationship type (1:1, 1:many, many:1, many:many), evolutionary distance, and alignment score. OMA orthologs are inferred using a rigorous algorithm that provides high-confidence predictions. Example: P04637 (human p53) returns orthologs in 200+ species including Mus musculus, Danio rerio, and Drosophila melanogaster.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_id": {
+          "type": "string",
+          "description": "UniProt accession (e.g., 'P04637' for human p53) or OMA ID."
+        },
+        "rel_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by orthology relationship type. Options: '1:1' (one-to-one), '1:n' (one-to-many), 'n:1' (many-to-one), 'n:m' (many-to-many). Leave empty for all types."
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of orthologs to return (default: 20, max: 100)."
+        }
+      },
+      "required": [
+        "protein_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "orthologs"
+    },
+    "type": "OMATool",
+    "test_examples": [
+      {
+        "protein_id": "P04637",
+        "per_page": 10
+      },
+      {
+        "protein_id": "P00533",
+        "rel_type": "1:1",
+        "per_page": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "oma_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OMA identifier"
+                  },
+                  "canonical_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt canonical ID"
+                  },
+                  "species_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species name"
+                  },
+                  "species_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OMA species code"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI taxonomy ID"
+                  },
+                  "rel_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Orthology relationship type"
+                  },
+                  "distance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Evolutionary distance"
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Alignment score"
+                  },
+                  "sequence_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Protein length"
+                  },
+                  "chromosome": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chromosome/scaffold"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_orthologs": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OMA_get_hog",
+    "description": "Get Hierarchical Orthologous Group (HOG) information from OMA. HOGs represent groups of genes that descended from a single ancestral gene within a given taxonomic range. HOGs capture the full evolutionary history of gene families including gene duplications. Example: HOG:E0739094 returns the p53 HOG at the Euteleostomi level with description 'cellular tumor antigen p53', completeness score 0.65, and child HOGs for fish, mammals, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hog_id": {
+          "type": "string",
+          "description": "Hierarchical Orthologous Group ID. Examples: 'HOG:E0739094' (p53 family), 'HOG:E0817124' (insulin family). Use OMA_get_protein to find the HOG ID for a specific protein."
+        }
+      },
+      "required": [
+        "hog_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "hog"
+    },
+    "type": "OMATool",
+    "test_examples": [
+      {
+        "hog_id": "HOG:E0739094"
+      },
+      {
+        "hog_id": "HOG:E0817124"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hog_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HOG identifier"
+                  },
+                  "level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic level of the HOG"
+                  },
+                  "roothog_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Root HOG identifier"
+                  },
+                  "completeness_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Completeness score (0-1)"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HOG description"
+                  },
+                  "parent_hogs": {
+                    "type": "array",
+                    "description": "Parent HOG entries"
+                  },
+                  "children_hogs": {
+                    "type": "array",
+                    "description": "Child HOG entries"
+                  },
+                  "alternative_levels": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Alternative taxonomic levels"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_entries": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OMA_get_group",
+    "description": "Get OMA Group details including member proteins. OMA Groups contain sets of strict 1:1 orthologs across all genomes, ensuring each species contributes at most one gene. This is the most stringent orthology definition in OMA. Example: group 1388790 returns the p53 OMA Group with fingerprint 'HKKGEPC', description 'cellular tumor antigen p53', and members from fish, mammals, and other vertebrates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string",
+          "description": "OMA Group number (numeric ID). Examples: '1388790' (p53 group), '839588' (EGFR group). Use OMA_get_protein to find the group ID for a specific protein."
+        }
+      },
+      "required": [
+        "group_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "group"
+    },
+    "type": "OMATool",
+    "test_examples": [
+      {
+        "group_id": "1388790"
+      },
+      {
+        "group_id": "839588"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "group_nr": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "OMA Group number"
+                },
+                "fingerprint": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Group fingerprint (conserved sequence motif)"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Group description"
+                },
+                "members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "oma_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "canonical_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "species_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "species_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "taxon_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "sequence_length": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "chromosome": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_members": {
+                  "type": "integer"
+                },
+                "returned_members": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

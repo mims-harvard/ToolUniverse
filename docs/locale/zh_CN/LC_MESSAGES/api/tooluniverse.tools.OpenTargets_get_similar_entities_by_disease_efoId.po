@@ -32,7 +32,7 @@ msgstr ""
 #: 89a7c466e9484e9292f6e605cf7c0e60 of
 #: tooluniverse.tools.OpenTargets_get_similar_entities_by_disease_efoId:1
 msgid "OpenTargets_get_similar_entities_by_disease_efoId"
-msgstr ""
+msgstr "OpenTargets_通过疾病EFO ID获取相似实体"
 
 #: 39ca1065f7c74138ab8f0a2e1dab6fd6 f0d1d2d40ae04d22bcb3db56f6a1414e of
 #: tooluniverse.tools.OpenTargets_get_similar_entities_by_disease_efoId:3

@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_flowio\\_info 模块"
 
 #: 2b91aec679d04b6fb60f1c3587fe2a24 of tooluniverse.tools.get_flowio_info:1
 msgid "get_flowio_info"
-msgstr ""
+msgstr "获取_flowio_信息"
 
 #: 212f7e53f0ba49d4a6e8aac824bc1e2f ab647614ae1846459240d67e09d63942 of
 #: tooluniverse.tools.get_flowio_info:3

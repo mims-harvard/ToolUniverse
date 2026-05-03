@@ -1,0 +1,405 @@
+[
+    {
+        "name": "PubChemTox_get_ghs_classification",
+        "description": "Get GHS (Globally Harmonized System) hazard classification for a chemical compound from PubChem. Returns hazard pictograms, signal words (Danger/Warning), GHS hazard statements (e.g., H301 'Toxic if swallowed'), and precautionary statements. GHS is the UN system for identifying hazardous chemicals. Can look up by PubChem CID or compound name. For example, arsenic (CID 5359596) has pictograms for Acute Toxic and Environmental Hazard with signal word 'Danger', while aspirin (CID 2244) has signal word 'Warning' with H302 'Harmful if swallowed'. Use this to assess chemical hazards and safety requirements.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 5359596 (arsenic), 2244 (aspirin), 702 (ethanol), 5462309 (cadmium), 24524 (formaldehyde)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'arsenic', 'aspirin', 'formaldehyde', 'benzene', 'mercury'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "ghs_classification"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 2244
+            },
+            {
+                "compound_name": "arsenic"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer", "description": "PubChem Compound ID"},
+                                "compound_name": {"type": "string", "description": "Compound name from PubChem record"},
+                                "ghs_classification": {
+                                    "type": "array",
+                                    "description": "GHS hazard classification entries",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {"type": "string", "description": "Classification field name (Pictogram, Signal, GHS Hazard Statements, etc.)"},
+                                            "value": {"type": "string", "description": "Classification value"},
+                                            "pictogram_labels": {
+                                                "type": "array",
+                                                "description": "Pictogram labels if applicable",
+                                                "items": {"type": "string"}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PubChemTox_get_toxicity_values",
+        "description": "Get non-human toxicity values (LD50, LC50, etc.) for a chemical compound from PubChem. Returns lethal dose/concentration data from animal studies, typically including LD50 (dose lethal to 50% of test animals) values for different species and routes of exposure. Data sourced from HSDB (Hazardous Substances Data Bank) and other toxicological databases. For example, aspirin (CID 2244) has LD50 values of 1800 mg/kg (rabbit, oral) and 1500 mg/kg (rat, oral). Arsenic (CID 5359596) has much lower LD50 values indicating higher toxicity. Use this to assess acute toxicity and compare chemical hazard levels.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 5359596 (arsenic), 2244 (aspirin), 702 (ethanol), 887 (methanol)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'aspirin', 'methanol', 'caffeine', 'lead'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "toxicity_values"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 2244
+            },
+            {
+                "compound_name": "caffeine"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer"},
+                                "compound_name": {"type": "string"},
+                                "toxicity_values_count": {"type": "integer", "description": "Number of toxicity values found"},
+                                "toxicity_values": {
+                                    "type": "array",
+                                    "description": "LD50/LC50 values and other toxicity measurements",
+                                    "items": {"type": "string"}
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PubChemTox_get_carcinogen_classification",
+        "description": "Get carcinogen classification data for a chemical compound from PubChem. Returns classifications from authoritative bodies including IARC (International Agency for Research on Cancer), NTP (National Toxicology Program), EPA, and others. IARC groups: Group 1 (Carcinogenic to humans), Group 2A (Probably carcinogenic), Group 2B (Possibly carcinogenic), Group 3 (Not classifiable). For example, arsenic (CID 5359596) is IARC Group 1 (Carcinogenic to humans), benzene (CID 241) is also Group 1, while caffeine (CID 2519) is Group 3. Use this to assess cancer risk associated with chemical exposure.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 5359596 (arsenic), 241 (benzene), 24524 (formaldehyde), 5462309 (cadmium)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'arsenic', 'benzene', 'formaldehyde', 'vinyl chloride'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "carcinogen_classification"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 5359596
+            },
+            {
+                "compound_name": "benzene"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer"},
+                                "compound_name": {"type": "string"},
+                                "classification_count": {"type": "integer", "description": "Number of classification entries"},
+                                "classifications": {
+                                    "type": "array",
+                                    "description": "Carcinogen classification entries from various sources",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "source": {"type": ["string", "null"], "description": "Source organization (e.g., IARC, NTP)"},
+                                            "classification": {"type": "string", "description": "Classification text"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PubChemTox_get_target_organs",
+        "description": "Get the target organs affected by a toxic chemical compound from PubChem. Returns the organs and body systems known to be damaged by exposure to the chemical, based on toxicological studies and clinical evidence. For example, arsenic (CID 5359596) targets cardiovascular, dermal, endocrine, gastrointestinal, hematological, neurological, and renal systems, as well as liver, kidneys, skin, lungs, and lymphatic system. Lead (CID 5352425) primarily targets the nervous system, kidneys, and hematological system. Use this to understand which body systems are at risk from chemical exposure.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 5359596 (arsenic), 5352425 (lead), 23978 (mercury), 5462309 (cadmium)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'arsenic', 'lead', 'mercury', 'cadmium', 'chromium'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "target_organs"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 5359596
+            },
+            {
+                "compound_name": "lead"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer"},
+                                "compound_name": {"type": "string"},
+                                "target_organs_count": {"type": "integer"},
+                                "target_organs": {
+                                    "type": "array",
+                                    "description": "Affected organs and body systems",
+                                    "items": {"type": "string"}
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PubChemTox_get_acute_effects",
+        "description": "Get acute toxicity effects for a chemical compound from PubChem. Returns documented acute (short-term) health effects from exposure, including symptoms, clinical observations, and effects from different exposure routes (oral, inhalation, dermal). Data comes from toxicological databases and clinical case reports. For example, arsenic acute effects include severe gastrointestinal damage, cardiovascular collapse, and multi-organ failure. Methanol (CID 887) causes visual disturbances, metabolic acidosis, and CNS depression. Use this to understand immediate health risks from chemical exposure.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 5359596 (arsenic), 887 (methanol), 702 (ethanol), 241 (benzene)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'arsenic', 'methanol', 'cyanide', 'chlorine'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "acute_effects"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 5359596
+            },
+            {
+                "compound_name": "methanol"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer"},
+                                "compound_name": {"type": "string"},
+                                "effects_count": {"type": "integer"},
+                                "acute_effects": {
+                                    "type": "array",
+                                    "description": "Acute toxicity effects",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "source": {"type": ["string", "null"]},
+                                            "effect": {"type": "string", "description": "Description of the acute effect"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "PubChemTox_get_toxicity_summary",
+        "description": "Get a comprehensive toxicity data summary for a chemical compound from PubChem. Returns an overview of all available toxicity data sections and subsections, including previews of each data type. This acts as a table of contents for all toxicological data available in PubChem for a compound. Sections include: Toxicological Information (EPA IRIS, hepatotoxicity, carcinogen classification, exposure routes, target organs, LD50 values, human/non-human toxicity excerpts), and Ecological Information (environmental screening levels, environmental fate, exposure routes). Use this as a first step to understand what toxicity data is available before querying specific sections.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": ["integer", "null"],
+                    "description": "PubChem Compound ID. Examples: 5359596 (arsenic), 2244 (aspirin), 241 (benzene), 702 (ethanol)."
+                },
+                "compound_name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name (used if cid is not provided). Examples: 'arsenic', 'benzene', 'formaldehyde', 'acetaminophen'."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "toxicity_summary"
+        },
+        "type": "PubChemToxTool",
+        "test_examples": [
+            {
+                "cid": 5359596
+            },
+            {
+                "compound_name": "benzene"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cid": {"type": "integer"},
+                                "compound_name": {"type": "string"},
+                                "toxicity_sections": {
+                                    "type": "array",
+                                    "description": "Toxicity data sections with subsection details",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "section": {"type": "string", "description": "Main section name"},
+                                            "topics": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "heading": {"type": "string"},
+                                                        "info_count": {"type": "integer", "description": "Number of data entries in this topic"},
+                                                        "preview": {"type": ["string", "null"], "description": "Preview of first data entry"}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

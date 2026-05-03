@@ -14,7 +14,7 @@ def PubChem_get_CID_by_SMILES(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve corresponding CID list by SMILES string.
 
@@ -31,12 +31,17 @@ def PubChem_get_CID_by_SMILES(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"smiles": smiles}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "PubChem_get_CID_by_SMILES", "arguments": {"smiles": smiles}},
+        {
+            "name": "PubChem_get_CID_by_SMILES",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

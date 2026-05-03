@@ -1,0 +1,275 @@
+[
+  {
+    "type": "dbSNPGetVariantByRsID",
+    "name": "dbsnp_get_variant_by_rsid",
+    "description": "Get variant information from dbSNP by rsID. Returns genomic coordinates, alleles, and basic variant information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID (e.g., 'rs12345', '12345')"
+        }
+      },
+      "required": ["rsid"]
+    },
+    "fields": {
+      "endpoint": "/beta/refsnp",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "dbSNP variant information",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Variant information from dbSNP",
+          "properties": {
+            "refsnp_id": {
+              "type": "string",
+              "description": "dbSNP reference ID"
+            },
+            "primary_snapshot_data": {
+              "type": "object",
+              "description": "Primary variant data",
+              "properties": {
+                "placements_with_allele": {
+                  "type": "array",
+                  "description": "Genomic placements",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "seq_id": {
+                        "type": "string",
+                        "description": "Chromosome"
+                      },
+                      "position": {
+                        "type": "integer",
+                        "description": "Genomic position"
+                      },
+                      "alleles": {
+                        "type": "array",
+                        "description": "Allele information"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "rsid": {
+          "type": "string",
+          "description": "Input rsID"
+        },
+        "url": {
+          "type": "string",
+          "description": "API URL used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "rsid": "rs12345"
+      },
+      {
+        "rsid": "rs429358"
+      }
+    ],
+    "label": [
+      "dbSNP",
+      "Variant",
+      "RsID"
+    ],
+    "metadata": {
+      "tags": ["snp", "variant", "genomics"],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "type": "dbSNPSearchByGene",
+    "name": "dbsnp_search_by_gene",
+    "description": "Search for variants in a specific gene. Returns variants associated with the gene symbol.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'BRCA1', 'TP53', 'APOE')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": ["gene_symbol"]
+    },
+    "fields": {
+      "endpoint": "/beta/refsnp",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "dbSNP gene search results",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Search results from dbSNP",
+          "properties": {
+            "variants": {
+              "type": "array",
+              "description": "Array of variant information",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "refsnp_id": {
+                    "type": "string",
+                    "description": "dbSNP reference ID"
+                  },
+                  "gene": {
+                    "type": "string",
+                    "description": "Gene symbol"
+                  },
+                  "position": {
+                    "type": "integer",
+                    "description": "Genomic position"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Input gene symbol"
+        },
+        "url": {
+          "type": "string",
+          "description": "API URL used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_symbol": "BRCA1",
+        "limit": 10
+      },
+      {
+        "gene_symbol": "TP53",
+        "limit": 5
+      }
+    ],
+    "label": [
+      "dbSNP",
+      "Gene",
+      "Search"
+    ],
+    "metadata": {
+      "tags": ["gene", "search", "variants"],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "type": "dbSNPGetFrequencies",
+    "name": "dbsnp_get_frequencies",
+    "description": "Get allele frequencies for a variant from dbSNP. Returns population-specific allele frequency data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID (e.g., 'rs12345', '12345')"
+        }
+      },
+      "required": ["rsid"]
+    },
+    "fields": {
+      "endpoint": "/beta/refsnp",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "dbSNP allele frequency data",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Frequency data from dbSNP",
+          "properties": {
+            "frequencies": {
+              "type": "array",
+              "description": "Array of allele frequency data",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "study": {
+                    "type": "string",
+                    "description": "Study/population name"
+                  },
+                  "allele": {
+                    "type": "string",
+                    "description": "Allele"
+                  },
+                  "frequency": {
+                    "type": "number",
+                    "description": "Allele frequency"
+                  },
+                  "sample_count": {
+                    "type": "integer",
+                    "description": "Sample count"
+                  }
+                }
+              }
+            },
+            "total_studies": {
+              "type": "integer",
+              "description": "Number of studies with frequency data"
+            }
+          }
+        },
+        "rsid": {
+          "type": "string",
+          "description": "Input rsID"
+        },
+        "url": {
+          "type": "string",
+          "description": "API URL used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "rsid": "rs429358"
+      },
+      {
+        "rsid": "rs7412"
+      }
+    ],
+    "label": [
+      "dbSNP",
+      "Frequency",
+      "Population"
+    ],
+    "metadata": {
+      "tags": ["frequency", "population", "allele"],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 2 seconds"
+    }
+  }
+]

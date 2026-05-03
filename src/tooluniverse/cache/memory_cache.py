@@ -80,6 +80,7 @@ class SingleFlight:
 
     def __init__(self):
         self._locks: Dict[str, threading.Lock] = {}
+        self._refcounts: Dict[str, int] = {}
         self._global = threading.Lock()
 
     @contextmanager
@@ -89,11 +90,17 @@ class SingleFlight:
             if lock is None:
                 lock = threading.Lock()
                 self._locks[key] = lock
+                self._refcounts[key] = 0
+            self._refcounts[key] += 1
+
         lock.acquire()
         try:
             yield
         finally:
             lock.release()
             with self._global:
-                if not lock.locked():
+                self._refcounts[key] -= 1
+                # Only remove if no one is waiting and lock is not held
+                if self._refcounts[key] == 0:
                     self._locks.pop(key, None)
+                    self._refcounts.pop(key, None)

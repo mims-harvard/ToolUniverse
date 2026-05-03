@@ -1,0 +1,183 @@
+[
+  {
+    "name": "VEuPathDB_list_record_types",
+    "type": "BaseRESTTool",
+    "description": "List all available record types in VEuPathDB (Eukaryotic Pathogen, Vector and Host Informatics Resources). VEuPathDB is a unified bioinformatics resource for eukaryotic pathogen and host genomics covering Plasmodium (malaria), Toxoplasma, Cryptosporidium, Trypanosoma, Leishmania, fungi, and vector organisms. Returns the available record types (gene, transcript, organism, genomic-sequence, etc.) that can be queried through VEuPathDB's search API. Encompasses sub-databases: PlasmoDB, ToxoDB, CryptoDB, TriTrypDB, FungiDB, AmoebaDB, MicrosporidiaDB, PiroplasmaDB, GiardiaDB, TrichDB, HostDB, VectorBase, and SchistoDB.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://veupathdb.org/veupathdb/service/record-types",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of available record types in VEuPathDB",
+          "items": {
+            "type": "string",
+            "description": "Record type name (e.g., 'gene', 'transcript', 'organism', 'genomic-sequence', 'dataset')"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "name": "VEuPathDB_list_gene_searches",
+    "type": "BaseRESTTool",
+    "description": "List all available gene search strategies in VEuPathDB. Returns the search types that can be used to query genes across pathogen, vector, and host genomes. Each search has a URL segment, display name, description, and the parameters it accepts. Common searches include: GenesByTaxonGene (by organism), GenesFromTranscripts (transform transcript results to genes), and single gene lookups. Use this to discover what types of gene queries are available before constructing searches.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://veupathdb.org/veupathdb/service/record-types/gene/searches",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Available gene search strategies",
+          "items": {
+            "type": "object",
+            "properties": {
+              "urlSegment": {
+                "type": "string",
+                "description": "URL path segment for this search"
+              },
+              "displayName": {
+                "type": "string",
+                "description": "Human-readable name"
+              },
+              "shortDisplayName": {
+                "type": "string",
+                "description": "Short display name"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Search description"
+              },
+              "fullName": {
+                "type": "string",
+                "description": "Fully qualified search name"
+              },
+              "paramNames": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Required parameter names"
+              },
+              "outputRecordClassName": {
+                "type": "string",
+                "description": "Output record class"
+              },
+              "isAnalyzable": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "name": "VEuPathDB_list_organism_searches",
+    "type": "BaseRESTTool",
+    "description": "List all available organism search strategies in VEuPathDB. Returns the search types that can be used to query organisms in the VEuPathDB database, covering 785+ pathogen, vector, and host organism genomes. Useful for discovering what organism queries are available. Common searches include: AllOrganisms (list all), GenomeDataTypes (genome statistics), GeneMetrics (gene counts), and OrganismsByText (text search).",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://veupathdb.org/veupathdb/service/record-types/organism/searches",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Available organism search strategies",
+          "items": {
+            "type": "object",
+            "properties": {
+              "urlSegment": {
+                "type": "string",
+                "description": "URL path segment for this search"
+              },
+              "displayName": {
+                "type": "string",
+                "description": "Human-readable name"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Search description"
+              },
+              "paramNames": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Required parameter names"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  }
+]

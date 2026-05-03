@@ -1,0 +1,59 @@
+[
+  {
+    "type": "WoRMSRESTTool",
+    "name": "WoRMS_search_species",
+    "description": "Search marine species in World Register of Marine Species",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Species name or search term"},
+        "limit": {"type": "integer", "default": 20, "description": "Number of results"}
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "https://www.marinespecies.org/rest/AphiaIDByName/{query}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "AphiaID": {"type": "integer"},
+          "url": {"type": "string"},
+          "scientificname": {"type": "string"},
+          "authority": {"type": ["string", "null"]},
+          "status": {"type": "string"},
+          "unacceptreason": {"type": ["string", "null"]},
+          "taxonRankID": {"type": "integer"},
+          "rank": {"type": "string"},
+          "valid_AphiaID": {"type": "integer"},
+          "valid_name": {"type": "string"},
+          "valid_authority": {"type": ["string", "null"]},
+          "parentNameUsageID": {"type": "integer"},
+          "originalNameUsageID": {"type": ["integer", "null"]},
+          "kingdom": {"type": "string"},
+          "phylum": {"type": "string"},
+          "class": {"type": "string"},
+          "order": {"type": "string"},
+          "family": {"type": ["string", "null"]},
+          "genus": {"type": ["string", "null"]},
+          "citation": {"type": "string"},
+          "lsid": {"type": "string"},
+          "isMarine": {"type": ["integer", "null"]},
+          "isBrackish": {"type": ["integer", "null"]},
+          "isFreshwater": {"type": ["integer", "null"]},
+          "isTerrestrial": {"type": ["integer", "null"]},
+          "isExtinct": {"type": ["integer", "null"]},
+          "match_type": {"type": "string"},
+          "modified": {"type": "string"}
+        }
+      }
+    },
+    "test_examples": [
+      {"query": "Actinia equina", "limit": 5},
+      {"query": "Scleractinia", "limit": 10}
+    ]
+  }
+]

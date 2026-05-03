@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.PubChem\\_get\\_CID\\_by\\_SMILES 模块"
 #: cc10ce7a3b7d41b0b90c92c89083b7b0 of
 #: tooluniverse.tools.PubChem_get_CID_by_SMILES:1
 msgid "PubChem_get_CID_by_SMILES"
-msgstr ""
+msgstr "PubChem_通过SMILES获取CID"
 
 #: 4b09a405061542f4844df7e1e3265a87 8d37ff94918b4853ab84866bed505b48 of
 #: tooluniverse.tools.PubChem_get_CID_by_SMILES:3

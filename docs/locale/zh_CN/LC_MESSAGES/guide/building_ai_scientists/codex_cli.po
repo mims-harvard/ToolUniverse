@@ -7,17 +7,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-18 22:16-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../guide/building_ai_scientists/codex_cli.rst:2
@@ -39,10 +39,10 @@ msgstr "概述"
 #: 51a534c66aac409dacc0dfa4d3e1cab7
 msgid ""
 "GPT Codex CLI integration enables powerful command-line-based scientific "
-"research through the Model Context Protocol (MCP). This approach provides"
-" a terminal-based interface for scientific research while leveraging "
-"Codex's advanced reasoning capabilities and ToolUniverse's comprehensive "
-"scientific tools ecosystem."
+"research through the Model Context Protocol (MCP). This approach provides a "
+"terminal-based interface for scientific research while leveraging Codex's "
+"advanced reasoning capabilities and ToolUniverse's comprehensive scientific "
+"tools ecosystem."
 msgstr ""
 "GPT Codex CLI 集成通过模型上下文协议（MCP）实现了强大的基于命令行的科学研究。该方法提供了一个基于终端的科学研究界面，同时利用了 "
 "Codex 的先进推理能力和 ToolUniverse 的全面科学工具生态系统。"
@@ -55,8 +55,7 @@ msgstr "**Codex CLI 集成的优势**："
 #: ../../guide/building_ai_scientists/codex_cli.rst:31
 #: a904d2c40c354c50be447b487d977cfa
 msgid ""
-"**Command-Line Efficiency**: Fast, scriptable scientific research "
-"workflows"
+"**Command-Line Efficiency**: Fast, scriptable scientific research workflows"
 msgstr "**命令行效率**：快速且可脚本化的科学研究工作流程"
 
 #: ../../guide/building_ai_scientists/codex_cli.rst:32
@@ -69,7 +68,7 @@ msgstr "**高级推理**：Codex 针对复杂科学问题的高级推理能力"
 #: ../../guide/building_ai_scientists/codex_cli.rst:33
 #: 539e82c21fda438ca921165cb6262a90
 msgid ""
-"**Comprehensive Tools**: Access to 600+ scientific tools across multiple "
+"**Comprehensive Tools**: Access to 1000+ scientific tools across multiple "
 "domains"
 msgstr "**综合工具**：可访问涵盖多个领域的600多种科学工具"
 
@@ -148,15 +147,15 @@ msgstr "**配置优势：**"
 #: ../../guide/building_ai_scientists/codex_cli.rst:122
 #: 3b32137962314a8b9765aa4add9adbff
 msgid ""
-"``--exclude-tool-types PackageTool``: Removes package management tools to"
-" save context window space if you don't have coding needs"
+"``--exclude-tool-types PackageTool``: Removes package management tools to "
+"save context window space if you don't have coding needs"
 msgstr "``--exclude-tool-types PackageTool``：移除包管理工具，以节省上下文窗口空间，适用于无编码需求的情况。"
 
 #: ../../guide/building_ai_scientists/codex_cli.rst:123
 #: 92c755ad454546378ef7c650458c65df
 msgid ""
-"``--hook-type SummarizationHook``: Provides summary of the output that is"
-" too long to fit in the context window"
+"``--hook-type SummarizationHook``: Provides summary of the output that is "
+"too long to fit in the context window"
 msgstr "``--hook-type SummarizationHook``：提供对超出上下文窗口长度的输出内容的摘要。"
 
 #: ../../guide/building_ai_scientists/codex_cli.rst:124
@@ -251,8 +250,8 @@ msgstr "Codex CLI 与 ToolUniverse 提供全面的科学研究功能："
 #: ../../guide/building_ai_scientists/codex_cli.rst:181
 #: 66db61bce713473286e1ecb1cdc9017c
 msgid ""
-"**Drug Discovery and Development** - Target identification and validation"
-" - Drug information retrieval and analysis - Safety profile analysis and "
+"**Drug Discovery and Development** - Target identification and validation - "
+"Drug information retrieval and analysis - Safety profile analysis and "
 "clinical trial data"
 msgstr ""
 "**药物发现与开发**  \n"
@@ -263,8 +262,8 @@ msgstr ""
 #: ../../guide/building_ai_scientists/codex_cli.rst:186
 #: 7fa67daffb6e4cb094c670a0cdde51f9
 msgid ""
-"**Genomics and Molecular Biology** - Gene analysis from UniProt - Protein"
-" structure and interaction analysis - Pathway analysis and functional "
+"**Genomics and Molecular Biology** - Gene analysis from UniProt - Protein "
+"structure and interaction analysis - Pathway analysis and functional "
 "annotation"
 msgstr ""
 "**基因组学与分子生物学**  \n"
@@ -275,9 +274,8 @@ msgstr ""
 #: ../../guide/building_ai_scientists/codex_cli.rst:191
 #: f664ac529e3d43fa99e0f6c87e68e4af
 msgid ""
-"**Literature Research** - PubMed and Semantic Scholar searches - Abstract"
-" summarization and trend analysis - Citation analysis and gap "
-"identification"
+"**Literature Research** - PubMed and Semantic Scholar searches - Abstract "
+"summarization and trend analysis - Citation analysis and gap identification"
 msgstr ""
 "**文献研究**  \n"
 "- PubMed 和 Semantic Scholar 检索  \n"
@@ -298,8 +296,8 @@ msgstr ""
 #: ../../guide/building_ai_scientists/codex_cli.rst:201
 #: de129c0110274958bd5dad8078f368de
 msgid ""
-"**Multi-Step Workflows** - Hypothesis-driven research - Comparative "
-"analysis - Complex research task automation"
+"**Multi-Step Workflows** - Hypothesis-driven research - Comparative analysis"
+" - Complex research task automation"
 msgstr "**多步骤工作流程** - 假设驱动的研究 - 比较分析 - 复杂研究任务自动化"
 
 #: ../../guide/building_ai_scientists/codex_cli.rst:208
@@ -350,8 +348,8 @@ msgstr "codex --版本"
 #: ../../guide/building_ai_scientists/codex_cli.rst:255
 #: e348a2181e824d78b4be11c5e98947ef
 msgid ""
-"Ensure you're using the latest version. Older versions may have MCP "
-"server issues."
+"Ensure you're using the latest version. Older versions may have MCP server "
+"issues."
 msgstr "确保您使用的是最新版本。旧版本可能存在 MCP 服务器问题。"
 
 #: ../../guide/building_ai_scientists/codex_cli.rst:257
@@ -487,8 +485,7 @@ msgstr "Codex CLI GitHub 仓库 <https://github.com/openai/codex>`_"
 #: ../../guide/building_ai_scientists/codex_cli.rst:311
 #: 6e446f12468c4e0d865592446f02cd1b
 msgid ""
-"`Codex CLI Documentation "
-"<https://github.com/openai/codex/tree/main/docs>`_"
+"`Codex CLI Documentation <https://github.com/openai/codex/tree/main/docs>`_"
 msgstr "Codex CLI 文档 <https://github.com/openai/codex/tree/main/docs>`_"
 
 #: ../../guide/building_ai_scientists/codex_cli.rst:312
@@ -503,4 +500,3 @@ msgstr "ToolUniverse 文档 <https://tooluniverse.readthedocs.io/>_"
 
 #~ msgid "codex /mcp"
 #~ msgstr ""
-

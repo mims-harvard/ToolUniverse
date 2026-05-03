@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pyvis\\_info 模块"
 
 #: 03b166d9e8e247a9a3e695cdd13f23d6 of tooluniverse.tools.get_pyvis_info:1
 msgid "get_pyvis_info"
-msgstr ""
+msgstr "获取_pyvis_信息"
 
 #: 2b2bf9ca602a487a905016537943f026 b0b8341e88114e20aab162175e595aae of
 #: tooluniverse.tools.get_pyvis_info:3

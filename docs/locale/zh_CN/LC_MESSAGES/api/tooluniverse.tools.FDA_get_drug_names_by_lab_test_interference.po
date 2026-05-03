@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_lab\\_test\\_interfer
 #: 48bb175c7ac74c5c951636312c3c0406 of
 #: tooluniverse.tools.FDA_get_drug_names_by_lab_test_interference:1
 msgid "FDA_get_drug_names_by_lab_test_interference"
-msgstr ""
+msgstr "FDA_按实验室检测干扰获取药物名称"
 
 #: 27a24d07eb7f462582e63caf47e428f8 8d04d966f3184326965cfb826cd5e8d2 of
 #: tooluniverse.tools.FDA_get_drug_names_by_lab_test_interference:3

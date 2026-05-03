@@ -1,0 +1,212 @@
+[
+  {
+    "name": "CRAN_get_package",
+    "description": "Get metadata for a CRAN R package from the CRAN database (crandb). Returns package title, version, description, authors, license, dependencies (Imports, Suggests, Depends), URL, publication date, and release history. CRAN hosts 20,000+ R packages for statistical computing, bioinformatics, data visualization, and machine learning. Use for discovering R package information, checking versions, and finding dependencies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "package": {
+          "type": "string",
+          "description": "R package name (case-sensitive). Examples: 'ggplot2', 'dplyr', 'Seurat', 'DESeq2', 'tidyr', 'data.table', 'BiocManager', 'limma'"
+        }
+      },
+      "required": [
+        "package"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://crandb.r-pkg.org/{package}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "package": "ggplot2"
+      },
+      {
+        "package": "dplyr"
+      },
+      {
+        "package": "Seurat"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "R package metadata from CRAN",
+          "properties": {
+            "Package": {
+              "type": "string",
+              "description": "Package name"
+            },
+            "Title": {
+              "type": "string",
+              "description": "Short title"
+            },
+            "Version": {
+              "type": "string",
+              "description": "Current CRAN version"
+            },
+            "Description": {
+              "type": "string",
+              "description": "Full package description"
+            },
+            "License": {
+              "type": "string",
+              "description": "License (e.g., 'MIT + file LICENSE', 'GPL-3')"
+            },
+            "Authors@R": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "Author": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "Maintainer": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "URL": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "Imports": {
+              "type": [
+                "object",
+                "string",
+                "null"
+              ],
+              "description": "Comma-separated list of required packages"
+            },
+            "Depends": {
+              "type": [
+                "object",
+                "string",
+                "null"
+              ],
+              "description": "Version dependencies"
+            },
+            "Suggests": {
+              "type": [
+                "object",
+                "string",
+                "null"
+              ],
+              "description": "Optional packages"
+            },
+            "Date/Publication": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Publication date on CRAN"
+            },
+            "crandb_file_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "releases": {
+              "type": [
+                "object",
+                "array"
+              ],
+              "description": "All released versions with dates"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CRAN_get_package_versions",
+    "description": "Get all historical versions of an R package from CRAN with release dates and dependencies for each version. Useful for understanding package evolution, checking compatibility, and finding when specific features were added. Returns the full version timeline with release dates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "package": {
+          "type": "string",
+          "description": "R package name (case-sensitive). Examples: 'ggplot2', 'dplyr', 'Seurat', 'tidyverse', 'BiocManager'"
+        }
+      },
+      "required": [
+        "package"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://crandb.r-pkg.org/{package}/all"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "package": "ggplot2"
+      },
+      {
+        "package": "dplyr"
+      },
+      {
+        "package": "data.table"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "All package versions and timeline",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Package name"
+            },
+            "versions": {
+              "type": "object",
+              "description": "Map of version string to version metadata (title, description, imports, etc.)"
+            },
+            "timeline": {
+              "type": "object",
+              "description": "Map of version string to release date (ISO 8601)"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

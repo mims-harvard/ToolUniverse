@@ -1,8 +1,6 @@
 Troubleshooting Tutorial
 =====================
 
-This Tutorial helps you diagnose and resolve common issues with ToolUniverse.
-
 Quick Diagnostic
 ----------------
 
@@ -66,7 +64,7 @@ ImportError: No module named 'tooluniverse'
 
       .. code-block:: bash
 
-         git clone https://github.com/zitniklab/tooluniverse
+         git clone https://github.com/mims-harvard/ToolUniverse
          cd tooluniverse
          pip install -e .
 
@@ -131,7 +129,7 @@ Tool not found errors
 
    # List available tools
    print("Available tools:")
-   for tool_name in tu.list_tools():
+   for tool_name in tu.list_built_in_tools(mode='list_name'):
        print(f"  - {tool_name}")
 
 **Solutions:**
@@ -151,7 +149,7 @@ Tool not found errors
 
    .. code-block:: python
 
-      if "OpenTargets_tool" not in tu.list_tools():
+      if "OpenTargets_tool" not in tu.all_tool_dict:
           print("OpenTargets tool not loaded")
           # Check for missing dependencies
 
@@ -161,12 +159,43 @@ Tool not found errors
 
       from tooluniverse.opentargets_tool import OpenTargetsTool
       tool = OpenTargetsTool()
-      tu.register_tool(tool)
+      tu.register_custom_tool(tool_instance=tool)
 
 API Authentication errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Symptom:** ``401 Unauthorized`` or ``403 Forbidden`` errors.
+**Symptom:** ``401 Unauthorized``, ``403 Forbidden``, or "API key required" errors.
+
+Common API Error Codes
+^^^^^^^^^^^^^^^^^^^^^^
+
+When you encounter API errors, check this reference table:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 40 45
+
+   * - Error Code
+     - Meaning
+     - Solution
+   * - **401 Unauthorized**
+     - Invalid or missing API key
+     - Verify API key is correct and environment variable is set correctly. Check with ``echo $API_KEY_NAME``
+   * - **403 Forbidden**
+     - Valid key but insufficient permissions
+     - Check account subscription level. May need to upgrade or request additional access from API provider.
+   * - **429 Too Many Requests**
+     - Rate limit exceeded
+     - Add API key for higher limits, enable caching with ``use_cache=True``, or add delays. See :doc:`../guide/cache_system`.
+   * - **404 Not Found**
+     - Invalid resource identifier
+     - Verify ID format (e.g., UniProt accession "P05067", ChEMBL ID "CHEMBL25"). Check :doc:`../reference/glossary` for ID formats.
+   * - **502 Bad Gateway**
+     - Service temporarily unavailable
+     - Wait 30-60 seconds and retry. Check API provider's status page if error persists.
+   * - **503 Service Unavailable**
+     - API endpoint overloaded or maintenance
+     - Retry with exponential backoff (wait 2s, 4s, 8s...). Check provider status page.
 
 **Diagnosis:**
 
@@ -174,11 +203,15 @@ API Authentication errors
 
    import os
 
-   # Check if API keys are set
+   # Check if API keys are set (environment variables)
    api_keys = {
-       'OPENTARGETS_API_KEY': os.getenv('OPENTARGETS_API_KEY'),
+       'NVIDIA_API_KEY': os.getenv('NVIDIA_API_KEY'),
        'NCBI_API_KEY': os.getenv('NCBI_API_KEY'),
-       'CHEMBL_API_KEY': os.getenv('CHEMBL_API_KEY')
+       'SEMANTIC_SCHOLAR_API_KEY': os.getenv('SEMANTIC_SCHOLAR_API_KEY'),
+       'DISGENET_API_KEY': os.getenv('DISGENET_API_KEY'),
+       'USPTO_API_KEY': os.getenv('USPTO_API_KEY'),
+       'FDA_API_KEY': os.getenv('FDA_API_KEY'),
+       'OMIM_API_KEY': os.getenv('OMIM_API_KEY'),
    }
 
    for key, value in api_keys.items():
@@ -187,51 +220,85 @@ API Authentication errors
 
 **Solutions:**
 
-1. **Set API keys:**
+1. **Identify which API key you need:**
+
+ See :doc:`../guide/api_keys` for a complete list of which tools require which API keys and how to obtain them.
+
+2. **Set API keys in environment:**
 
    .. code-block:: bash
 
-      export OPENTARGETS_API_KEY="your_key_here"
+      # Linux/macOS
+      export NVIDIA_API_KEY="your_key_here"
       export NCBI_API_KEY="your_ncbi_key"
 
-2. **In Python:**
+      # Windows (Command Prompt)
+      set NVIDIA_API_KEY=your_key_here
 
-   .. code-block:: python
+      # Windows (PowerShell)
+      $env:NVIDIA_API_KEY="your_key_here"
 
-      import os
-      os.environ['OPENTARGETS_API_KEY'] = 'your_key_here'
-
-3. **Use .env file:**
+3. **Use .env file (recommended):**
 
    .. code-block:: bash
 
-      # Create .env file
-      echo "OPENTARGETS_API_KEY=your_key" >> .env
-      echo "NCBI_API_KEY=your_ncbi_key" >> .env
+      # Copy template and fill in your keys
+      cp docs/.env.template .env
+      nano .env  # or use any text editor
 
    .. code-block:: python
 
       from dotenv import load_dotenv
-      load_dotenv()
+      load_dotenv()  # Load from .env file
+
+4. **In Python code:**
+
+   .. code-block:: python
+
+      import os
+      os.environ['NVIDIA_API_KEY'] = 'your_key_here'
+      os.environ['NCBI_API_KEY'] = 'your_ncbi_key'
+
+**Common API key issues:**
+
+- **Key is expired or invalid**: Regenerate the key from the provider's dashboard
+- **Key has insufficient permissions**: Check that the key has the necessary scopes/permissions
+- **Key not loaded**: Ensure environment variables are set before importing ToolUniverse
+- **Typo in variable name**: Double-check spelling (e.g., ``NVIDIA_API_KEY`` not ``NVIDIA_KEY``)
 
 Rate limiting errors
 ~~~~~~~~~~~~~~~~~~~~
 
 **Symptom:** ``429 Too Many Requests`` or ``RateLimitExceeded``
 
-**Diagnosis:**
+**Understanding Rate Limits:**
 
-.. code-block:: python
+Many services limit how many requests you can make per second/minute. API keys typically provide much higher limits:
 
-   # Check rate limit status
-   from tooluniverse.utils import check_rate_limits
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
 
-   status = check_rate_limits()
-   print(f"Rate limit status: {status}")
+   * - Service
+     - Without API Key
+     - With API Key
+   * - NCBI E-utilities
+     - 3 req/sec
+     - 10 req/sec (3x faster, set NCBI_API_KEY)
+   * - Semantic Scholar
+     - 1 req/sec
+     - 100 req/sec (100x faster, set SEMANTIC_SCHOLAR_API_KEY)
+   * - OpenFDA
+     - 40 req/min
+     - 240 req/min (6x faster, set FDA_API_KEY)
 
 **Solutions:**
 
-1. **Add delays between requests:**
+1. **Get an API key for higher limits:**
+
+ See :doc:`../guide/api_keys` for how to obtain API keys for each service.
+
+2. **Add delays between requests:**
 
    .. code-block:: python
 
@@ -241,7 +308,7 @@ Rate limiting errors
            result = tu.run(query)
            time.sleep(1)  # Wait 1 second between requests
 
-2. **Use batch processing:**
+3. **Use batch processing:**
 
    .. code-block:: python
 
@@ -249,12 +316,16 @@ Rate limiting errors
       batch_size = 5
       for i in range(0, len(queries), batch_size):
            batch = queries[i:i+batch_size]
-           results = tu.run_batch(batch)
+           results = tu.run(batch, max_workers=4)
            time.sleep(2)  # Pause between batches
 
-3. **Get API keys for higher limits:**
+4. **Enable caching to avoid redundant requests:**
 
-   Most services offer higher rate limits with API keys.
+   .. code-block:: python
+
+      import os
+      os.environ["TOOLUNIVERSE_CACHE_DEFAULT_TTL"] = "3600"  # 1 hour
+      result = tu.run(query, use_cache=True)
 
 Network & Connectivity
 -----------------------
@@ -283,7 +354,7 @@ Connection timeouts
 
    .. code-block:: python
 
-      tu = ToolUniverse(timeout=30)  # 30 second timeout
+      tu = ToolUniverse()  # timeout is configured per-tool at the HTTP request level
 
 2. **Check network connection:**
 
@@ -322,7 +393,7 @@ SSL Certificate errors
 
 3. **Corporate firewall:**
 
-   Contact your IT department for proper certificate configuration.
+ Contact your IT department for proper certificate configuration.
 
 Performance Issues
 ------------------
@@ -352,7 +423,10 @@ Slow query performance
 
    .. code-block:: python
 
-      tu = ToolUniverse(enable_cache=True, cache_ttl=3600)
+      import os
+      os.environ["TOOLUNIVERSE_CACHE_DEFAULT_TTL"] = "3600"  # 1 hour
+      tu = ToolUniverse()
+      result = tu.run(..., use_cache=True)
 
 2. **Use async operations:**
 
@@ -361,7 +435,7 @@ Slow query performance
       import asyncio
 
       async def run_queries():
-           tasks = [tu.run_async(query) for query in queries]
+           tasks = [tu.run(query) for query in queries]  # run() is context-aware
            results = await asyncio.gather(*tasks)
            return results
 
@@ -383,7 +457,7 @@ Slow query performance
            {"name": "UniProt_get_function_by_accession", "arguments": {"accession": accession}}
            for accession in accessions
       ]
-      results = tu.run_batch(queries)
+      results = tu.run(queries, max_workers=4)
 
 Memory usage issues
 ~~~~~~~~~~~~~~~~~~~
@@ -410,7 +484,7 @@ Memory usage issues
       def process_large_dataset(data, chunk_size=100):
            for i in range(0, len(data), chunk_size):
                chunk = data[i:i+chunk_size]
-               yield tu.run_batch(chunk)
+               yield tu.run(chunk, max_workers=4)
 
 2. **Clear cache periodically:**
 
@@ -436,10 +510,10 @@ MCP server won't start
 
 **Diagnosis:**
 
-.. code-block:: bash
+   .. code-block:: bash
 
-   # Test server directly
-   python -m tooluniverse.smcp_server --debug
+      # Test server directly
+      tooluniverse-smcp --debug
 
 **Solutions:**
 
@@ -455,14 +529,14 @@ MCP server won't start
 
    .. code-block:: bash
 
-      python -m tooluniverse.smcp_server --port 3001
+      tooluniverse-smcp --port 3001
 
 3. **Check permissions:**
 
    .. code-block:: bash
 
       # Ensure user can bind to port
-      sudo python -m tooluniverse.smcp_server  # If needed
+      sudo tooluniverse-smcp  # If needed
 
 Claude/AI assistant not finding tools
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -477,7 +551,7 @@ Claude/AI assistant not finding tools
 
 2. **Check Claude configuration:**
 
-   Ensure MCP server is properly configured in Claude Desktop settings.
+ Ensure MCP server is properly configured in Claude Desktop settings.
 
 **Solutions:**
 
@@ -488,7 +562,7 @@ Claude/AI assistant not finding tools
    .. code-block:: python
 
       # In MCP server
-      tools = tu.list_tools()
+      tools = tu.return_all_loaded_tools()
       print(f"Registered {len(tools)} tools")
 
 Advanced Debugging
@@ -553,20 +627,20 @@ Getting Help
 If none of these solutions work:
 
 1. **Check the FAQ**: :doc:`faq`
-2. **Search GitHub issues**: `Issues <https://github.com/zitniklab/tooluniverse/issues>`_
+2. **Search GitHub issues**: `Issues <https://github.com/mims-harvard/ToolUniverse/issues>`_
 3. **Create a bug report** with:
 
-   - ToolUniverse version: ``tooluniverse.__version__``
-   - Python version: ``python --version``
-   - Operating system
-   - Full error message and traceback
-   - Minimal code example that reproduces the issue
+ - ToolUniverse version: ``tooluniverse.__version__``
+ - Python version: ``python --version``
+ - Operating system
+ - Full error message and traceback
+ - Minimal code example that reproduces the issue
 
 4. **Join our community**: Discord server link
 
 .. note::
 =========
-   When reporting issues, please run the diagnostic script first:
+ When reporting issues, please run the diagnostic script first:
 
    .. code-block:: python
 

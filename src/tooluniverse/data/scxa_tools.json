@@ -1,0 +1,111 @@
+[
+  {
+    "name": "SCXA_list_experiments",
+    "description": "List single-cell RNA-seq experiments from EBI Single Cell Expression Atlas. Returns 380+ curated scRNA-seq datasets with species, cell counts, technology (10x, Smart-seq2, Drop-seq), and experimental factors (cell type, tissue, disease). Filter by species or keyword. Covers Human Cell Atlas, GTEx, Tabula Sapiens, and more. Example: filtering by 'Homo sapiens' returns 159 experiments.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name to filter by (e.g., 'Homo sapiens', 'Mus musculus', 'Drosophila melanogaster'). Case-insensitive."
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Keyword to search in experiment descriptions and factors (e.g., 'pancreas', 'brain', 'cancer', 'immune')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of experiments to return (default 20, max 100).",
+          "default": 20
+        }
+      }
+    },
+    "fields": {
+      "operation": "list_experiments"
+    },
+    "type": "SCExpressionAtlasTool",
+    "test_examples": [
+      {
+        "species": "Homo sapiens",
+        "limit": 5
+      },
+      {
+        "keyword": "pancreas",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {"type": "string"},
+          "description": {"type": "string"},
+          "species": {"type": "string"},
+          "technology": {"type": "array", "items": {"type": "string"}},
+          "num_cells": {"type": "integer"},
+          "experimental_factors": {"type": "array", "items": {"type": "string"}},
+          "experiment_type": {"type": "string"},
+          "last_updated": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "label": ["Single Cell Expression Atlas", "scRNA-seq", "Cell Type"],
+    "metadata": {
+      "tags": ["single_cell", "rna_seq", "cell_type", "expression", "experiment_discovery"],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "SCXA_search_gene",
+    "description": "Search the EBI Single Cell Expression Atlas for single-cell experiments where a specific gene is expressed. Accepts gene symbols (TP53, BRCA1) or Ensembl IDs (ENSG00000141510). Returns matching scRNA-seq experiments with cell counts, technology, PubMed IDs, and DOIs. Useful for finding single-cell datasets studying a gene of interest. Example: TP53 returns 15 experiments including ovarian cancer, lung atlas datasets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'TP53', 'BRCA1', 'INS') or Ensembl gene ID (e.g., 'ENSG00000141510')."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name to filter (e.g., 'Homo sapiens', 'Mus musculus'). Optional."
+        }
+      },
+      "required": ["gene"]
+    },
+    "fields": {
+      "operation": "search_gene"
+    },
+    "type": "SCExpressionAtlasTool",
+    "test_examples": [
+      {
+        "gene": "TP53",
+        "species": "Homo sapiens"
+      },
+      {
+        "gene": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {"type": "string"},
+          "description": {"type": "string"},
+          "species": {"type": "string"},
+          "num_cells": {"type": "integer"},
+          "technology": {"type": ["array", "null"], "items": {"type": "string"}},
+          "experimental_factors": {"type": ["array", "null"], "items": {"type": "string"}},
+          "pubmed_ids": {"type": ["array", "null"]},
+          "dois": {"type": ["array", "null"]}
+        }
+      }
+    },
+    "label": ["Single Cell Expression Atlas", "Gene Expression", "scRNA-seq"],
+    "metadata": {
+      "tags": ["single_cell", "gene_expression", "scRNA_seq", "cell_type", "gene_search"],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  }
+]

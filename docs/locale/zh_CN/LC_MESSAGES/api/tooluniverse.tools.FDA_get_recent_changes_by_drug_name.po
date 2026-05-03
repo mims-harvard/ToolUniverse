@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.FDA\\_get\\_recent\\_changes\\_by\\_drug\\_name 模�
 #: tooluniverse.tools.FDA_get_recent_changes_by_drug_name:1
 msgid "FDA_get_recent_changes_by_drug_name"
 msgstr ""
+"FDA_get_recent_changes_by_drug_name  \n"
+"获取药品名称的最新变更"
 
 #: 38ef07911f4b4dc1b437a226d0e723f1 99a01e3e5e274e5bae80cd00efa8b9a5 of
 #: tooluniverse.tools.FDA_get_recent_changes_by_drug_name:3

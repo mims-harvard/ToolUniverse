@@ -1,6 +1,7 @@
 name: Publish to PyPI
 
 on:
+  workflow_dispatch:  # Allow manual trigger
   push:
     branches:
       - main
@@ -22,18 +23,28 @@ jobs:
       - name: Check if version changed
         id: check_version
         run: |
-          # Get current version
-          CURRENT_VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml)
+          # Get current version using Python (portable, no grep -P dependency)
+          CURRENT_VERSION=$(python3 -c "
+          import re
+          with open('pyproject.toml') as f:
+              m = re.search(r'version\s*=\s*\"([^\"]+)\"', f.read())
+              print(m.group(1) if m else '')
+          ")
           echo "Current version: $CURRENT_VERSION"
-          
+
           # Get previous commit version
           git checkout HEAD~1 -- pyproject.toml 2>/dev/null || true
-          PREVIOUS_VERSION=$(grep -oP '(?<=version = ")[^"]+' pyproject.toml 2>/dev/null || echo "none")
+          PREVIOUS_VERSION=$(python3 -c "
+          import re
+          with open('pyproject.toml') as f:
+              m = re.search(r'version\s*=\s*\"([^\"]+)\"', f.read())
+              print(m.group(1) if m else 'none')
+          " 2>/dev/null || echo "none")
           echo "Previous version: $PREVIOUS_VERSION"
-          
+
           # Restore current version
           git checkout HEAD -- pyproject.toml
-          
+
           # Check if version has changed
           if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
             echo "Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
@@ -80,6 +91,28 @@ jobs:
           password: ${{ secrets.PYPI_API_TOKEN }}
           skip-existing: true
 
+      - name: Sync server.json version from pyproject.toml
+        run: |
+          VERSION="${{ needs.check-version-change.outputs.new_version }}"
+          python3 -c "
+          import json
+          version = '$VERSION'
+          with open('server.json') as f:
+              data = json.load(f)
+          data['version'] = version
+          for pkg in data.get('packages', []):
+              pkg['version'] = version
+          with open('server.json', 'w') as f:
+              json.dump(data, f, indent=2)
+              f.write('\n')
+          print(f'Updated server.json to version {version}')
+          "
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add server.json
+          git diff --cached --quiet || git commit -m "chore: sync server.json version to $VERSION [skip ci]"
+          git push origin HEAD:main
+
       - name: Create version branch
         run: |
           VERSION="${{ needs.check-version-change.outputs.new_version }}"
@@ -107,3 +140,14 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Publish to MCP Registry after PyPI publish succeeds
+  publish-mcp:
+    needs: [check-version-change, publish]
+    if: needs.check-version-change.outputs.version_changed == 'true'
+    uses: ./.github/workflows/publish-mcp-registry.yml
+    with:
+      version: ${{ needs.check-version-change.outputs.new_version }}
+    permissions:
+      id-token: write
+      contents: read

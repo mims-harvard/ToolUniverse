@@ -31,7 +31,12 @@ class EnrichrTool(BaseTool):
                 "GO_Biological_Process_2023",
             ],
         )
-        return self.enrichr_api(genes, libs)
+        connected_path, connections = self.enrichr_api(genes, libs)
+        # Convert to JSON string for schema compatibility
+        import json
+
+        result = {"connected_paths": connected_path, "connections": connections}
+        return {"status": "success", "data": json.dumps(result, indent=2)}
 
     def get_official_gene_name(self, gene_name):
         """
@@ -238,19 +243,19 @@ class EnrichrTool(BaseTool):
         # Build the graph from the gene list and enrichment results
         G = self.build_graph(genes, enrichment_results)
 
-        # Rank paths from the first gene to the second
+        # Rank paths from the first gene to the second (limit to top 20)
         ranked_paths = self.rank_paths_by_weight(G, genes[0], genes[1])
         connected_path = {}
-        for path, weight in ranked_paths:
+        for path, weight in ranked_paths[:20]:
             connected_path[f"Path: {path}"] = f"Total Weight: {weight}"
 
-        # Compute connectivity data for each gene and graph node
+        # Compute connectivity data for each gene and graph node (limit per pair)
         connections = {}
         for gene in genes:
             for term in G.nodes:
                 paths_to_term = self.rank_paths_to_term(G, gene, term)
                 if paths_to_term is not None:
-                    connections[f"Connectivity: {gene} - {term}"] = paths_to_term
+                    connections[f"Connectivity: {gene} - {term}"] = paths_to_term[:5]
 
         # Check for empty outputs and print helper messages
         if not connected_path:

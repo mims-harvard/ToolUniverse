@@ -19,7 +19,8 @@ class TestLiteratureTools:
         """Initialize ToolUniverse for testing."""
         tu = ToolUniverse()
         tu.load_tools()
-        return tu
+        yield tu
+        tu.close()
 
     def test_literature_tools_exist(self, tu):
         """Test that literature search tools are registered."""
@@ -315,7 +316,7 @@ class TestLiteratureTools:
             # Create multiple search calls
             for i in range(5):
                 try:
-                    result = tu.run({
+                    _ = tu.run({
                         "name": "ArXiv_search_papers",
                         "arguments": {
                             "query": f"test query {i}",

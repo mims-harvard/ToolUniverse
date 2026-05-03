@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pytdc\\_info 模块"
 
 #: 8e3f9190a9dc4c0585f88c57c49a1c9c of tooluniverse.tools.get_pytdc_info:1
 msgid "get_pytdc_info"
-msgstr ""
+msgstr "获取_pytdc_信息"
 
 #: 625ae0f902994974a0fc11703e30d5c0 d50f873910de41b48010a9096b350a4b of
 #: tooluniverse.tools.get_pytdc_info:3

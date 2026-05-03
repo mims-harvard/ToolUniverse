@@ -1,0 +1,152 @@
+#!/bin/bash
+# Documentation validation pre-commit hook
+# Validates documentation changes before committing
+
+set -e
+
+echo "📚 Validating documentation changes..."
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Track validation status
+ERRORS=0
+WARNINGS=0
+
+# Get list of modified .rst and .md files
+MODIFIED_DOCS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(rst|md)$' || true)
+
+if [ -z "$MODIFIED_DOCS" ]; then
+    echo -e "${GREEN}✅ No documentation files modified${NC}"
+    exit 0
+fi
+
+echo -e "${YELLOW}Modified documentation files:${NC}"
+echo "$MODIFIED_DOCS" | sed 's/^/  - /'
+echo
+
+# Function to check for common issues
+validate_doc_file() {
+    local file="$1"
+    local file_errors=0
+    
+    if [ ! -f "$file" ]; then
+        return 0
+    fi
+    
+    # Check 1: Validate RST syntax (basic check)
+    if [[ "$file" == *.rst ]]; then
+        # Check for common RST syntax errors
+        if grep -q "^=\+$" "$file" || grep -q "^-\+$" "$file" || grep -q "^~\+$" "$file"; then
+            # Has headings, check if they match the title length
+            local title_line=""
+            local underline_line=""
+            local line_num=0
+            
+            while IFS= read -r line; do
+                ((line_num++))
+                if [[ -n "$title_line" && -z "$underline_line" ]]; then
+                    # This should be the underline
+                    if [[ "$line" =~ ^[=\-~\^\"]+$ ]]; then
+                        underline_line="$line"
+                        local title_len=${#title_line}
+                        local underline_len=${#underline_line}
+                        
+                        if [ "$title_len" -ne "$underline_len" ]; then
+                            echo -e "${YELLOW}⚠️  Line $((line_num-1)): Title/underline length mismatch in $file${NC}"
+                            echo -e "   Title: '$title_line' (length: $title_len)"
+                            echo -e "   Underline: '$underline_line' (length: $underline_len)"
+                            ((WARNINGS++))
+                        fi
+                    fi
+                    title_line=""
+                    underline_line=""
+                elif [[ -n "$line" && ! "$line" =~ ^[[:space:]]*\.\. ]]; then
+                    title_line="$line"
+                fi
+            done < "$file"
+        fi
+    fi
+    
+    # Check 2: Look for broken internal references
+    if grep -q ":doc:\`[^\`]*\`" "$file"; then
+        local broken_refs=$(grep -o ":doc:\`[^\`]*\`" "$file" | sed "s/:doc:\`//g" | sed "s/\`//g")
+        while IFS= read -r ref; do
+            if [ -n "$ref" ]; then
+                # Check if referenced file exists (approximate check)
+                local ref_file="docs/${ref}.rst"
+                if [ ! -f "$ref_file" ] && [ ! -f "docs/${ref}/index.rst" ]; then
+                    echo -e "${YELLOW}⚠️  Possibly broken reference in $file: :doc:\`$ref\`${NC}"
+                    echo -e "   (Note: This is a basic check; false positives possible)"
+                    ((WARNINGS++))
+                fi
+            fi
+        done <<< "$broken_refs"
+    fi
+    
+    # Check 3: Check for TODO/FIXME markers
+    if grep -i -n "TODO\|FIXME\|XXX" "$file" | grep -v "^#" | grep -v "^\.\." | head -5; then
+        echo -e "${YELLOW}⚠️  Found TODO/FIXME markers in $file${NC}"
+        ((WARNINGS++))
+    fi
+    
+    # Check 4: Check for excessively long lines (> 120 chars, excluding code blocks and links)
+    local long_lines=$(grep -v "^\.\. code-block::" "$file" | grep -v "^   " | grep -v "http" | awk 'length>120' | wc -l | tr -d ' ')
+    if [ "$long_lines" -gt 5 ]; then
+        echo -e "${YELLOW}⚠️  $file has $long_lines lines longer than 120 characters${NC}"
+        echo -e "   Consider breaking long lines for readability"
+        ((WARNINGS++))
+    fi
+    
+    return $file_errors
+}
+
+# Validate each modified documentation file
+for doc_file in $MODIFIED_DOCS; do
+    validate_doc_file "$doc_file"
+done
+
+# Check if auto-generated files are being manually edited
+AUTO_GEN_FILES=$(echo "$MODIFIED_DOCS" | grep -E "docs/(tools|api)/.+\.rst$" || true)
+if [ -n "$AUTO_GEN_FILES" ]; then
+    echo -e "${YELLOW}⚠️  Warning: You are modifying auto-generated files:${NC}"
+    echo "$AUTO_GEN_FILES" | sed 's/^/  - /'
+    echo
+    echo -e "${YELLOW}These files should be regenerated using:${NC}"
+    echo "  cd docs"
+    echo "  python generate_config_index.py"
+    echo "  python generate_tool_reference.py"
+    echo "  python generate_remote_tools_docs.py"
+    echo
+    ((WARNINGS++))
+fi
+
+# Check if tool count mentions are consistent
+TOOL_COUNT_FILES=$(echo "$MODIFIED_DOCS" | xargs grep -l "tools" 2>/dev/null || true)
+if [ -n "$TOOL_COUNT_FILES" ]; then
+    # Look for tool count mentions
+    inconsistent_counts=$(echo "$TOOL_COUNT_FILES" | xargs grep -o -E "[0-9]+ tools" 2>/dev/null | cut -d: -f2 | sort -u | wc -l | tr -d ' ')
+    if [ "$inconsistent_counts" -gt 2 ]; then
+        echo -e "${YELLOW}⚠️  Found multiple different tool counts in documentation${NC}"
+        echo -e "   Consider using '1000+ tools' consistently"
+        ((WARNINGS++))
+    fi
+fi
+
+# Summary
+echo
+echo "================================"
+if [ $ERRORS -gt 0 ]; then
+    echo -e "${RED}❌ Validation failed with $ERRORS error(s)${NC}"
+    exit 1
+elif [ $WARNINGS -gt 0 ]; then
+    echo -e "${YELLOW}⚠️  Validation completed with $WARNINGS warning(s)${NC}"
+    echo -e "${YELLOW}You can still commit, but consider fixing these issues${NC}"
+    exit 0
+else
+    echo -e "${GREEN}✅ Documentation validation passed!${NC}"
+    exit 0
+fi

@@ -32,7 +32,7 @@ msgstr ""
 #: ed131b98884b43a9ab808100eac1985c of
 #: tooluniverse.tools.FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name:1
 msgid "FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取医生咨询条件信息"
 
 #: 95708a0e4dc5462491636d56976bf32f f6f2091ced0a468aabda66ad4d26ed6f of
 #: tooluniverse.tools.FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name:3

@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_storage\\_and\\_handling\\_info\\_by\\_dr
 #: b7eb8207188542ab8fe9b9ec07792be5 of
 #: tooluniverse.tools.FDA_get_storage_and_handling_info_by_drug_name:1
 msgid "FDA_get_storage_and_handling_info_by_drug_name"
-msgstr ""
+msgstr "FDA_通过药品名称获取存储和处理信息"
 
 #: d4f6b58b68d84085a44292300c52805f d7bbea5909e14fa594fcff92212ac5dd of
 #: tooluniverse.tools.FDA_get_storage_and_handling_info_by_drug_name:3

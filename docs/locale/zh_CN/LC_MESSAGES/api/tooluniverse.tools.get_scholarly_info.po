@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_scholarly\\_info 模块"
 
 #: 2dbdf874d8b34f90a529981cffb9fe8e of tooluniverse.tools.get_scholarly_info:1
 msgid "get_scholarly_info"
-msgstr ""
+msgstr "获取学术信息"
 
 #: 17ee1755d6574e358010adae926a4bad 75cc6bcbade348db99600f9488d3bbb6 of
 #: tooluniverse.tools.get_scholarly_info:3

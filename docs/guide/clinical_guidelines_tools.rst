@@ -9,7 +9,7 @@ Tool List
 **Search Tools (6):**
 
 * ``NICE_Clinical_Guidelines_Search`` - UK NICE official guidelines
-* ``WHO_Guidelines_Search`` - WHO international guidelines  
+* ``WHO_Guidelines_Search`` - WHO international guidelines 
 * ``PubMed_Guidelines_Search`` - PubMed peer-reviewed guidelines
 * ``EuropePMC_Guidelines_Search`` - Europe PMC guidelines
 * ``TRIP_Database_Guidelines_Search`` - TRIP evidence-based database
@@ -51,19 +51,19 @@ Tool Comparison
 ---------------
 
 +---------------------------+----------------------------------+---------------------------------------+
-| Tool                      | Data Source                      | Features                              |
+| Tool | Data Source | Features |
 +===========================+==================================+=======================================+
-| NICE_Clinical_Guidelines  | UK NICE official website         | Official UK guidelines with summaries |
+| NICE_Clinical_Guidelines | UK NICE official website | Official UK guidelines with summaries |
 +---------------------------+----------------------------------+---------------------------------------+
-| WHO_Guidelines            | WHO publications database        | International health guidelines       |
+| WHO_Guidelines | WHO publications database | International health guidelines |
 +---------------------------+----------------------------------+---------------------------------------+
-| PubMed_Guidelines         | NCBI PubMed database             | Peer-reviewed with abstracts & PMIDs  |
+| PubMed_Guidelines | NCBI PubMed database | Peer-reviewed with abstracts & PMIDs |
 +---------------------------+----------------------------------+---------------------------------------+
-| EuropePMC_Guidelines      | Europe PMC database              | European & international research     |
+| EuropePMC_Guidelines | Europe PMC database | European & international research |
 +---------------------------+----------------------------------+---------------------------------------+
-| TRIP_Database             | TRIP evidence database           | Evidence-based medicine focus         |
+| TRIP_Database | TRIP evidence database | Evidence-based medicine focus |
 +---------------------------+----------------------------------+---------------------------------------+
-| OpenAlex_Guidelines       | OpenAlex scholarly database      | Comprehensive with citation counts    |
+| OpenAlex_Guidelines | OpenAlex scholarly database | Comprehensive with citation counts |
 +---------------------------+----------------------------------+---------------------------------------+
 
 Usage Examples
@@ -236,22 +236,3 @@ Return Fields
 - ``metadata``: Publication info
 - ``success``: Boolean status
 
-Summary
--------
-
-**8 Tools Covering:**
-
-- ✅ 6 search tools - Quick search across multiple sources
-- ✅ 2 full-text tools - Deep content extraction
-- ✅ Official sources - NICE (UK), WHO (International)
-- ✅ Academic databases - PubMed, Europe PMC, OpenAlex
-- ✅ Evidence-based - TRIP Database
-- ✅ Complete extraction - 5,000-20,000+ characters
-- ✅ PDF downloads - WHO guidelines
-- ✅ 100% test coverage - 23/23 tests passing
-
-**For More Information:**
-
-- Complete demo: ``examples/clinical_guidelines_demo.py``
-- Source code: ``src/tooluniverse/unified_guideline_tools.py``
-- Tests: ``tests/test_guideline_tools.py``

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_retrieve\\_device\\_use\\_by\\_drug\\_name 模�
 #: c463e11595314db0a9d0baf4b81c85d6 of
 #: tooluniverse.tools.FDA_retrieve_device_use_by_drug_name:1
 msgid "FDA_retrieve_device_use_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称检索设备使用情况"
 
 #: 3f93b9f27d4d40c2b521d434a61c39f9 ca9223d7234141c5a76e2601f2a5c14a of
 #: tooluniverse.tools.FDA_retrieve_device_use_by_drug_name:3

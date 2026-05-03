@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get_cobra_info 模块"
 
 #: 8842c6d3aaac46568c28a29d5cdfb701 of tooluniverse.tools.get_cobra_info:1
 msgid "get_cobra_info"
-msgstr ""
+msgstr "获取_cobra_信息"
 
 #: 16afa9c440344965a7dbbd104a56865a 51e80f4e896146d9ad2792a15030dc08 of
 #: tooluniverse.tools.get_cobra_info:3

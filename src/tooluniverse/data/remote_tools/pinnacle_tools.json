@@ -53,6 +53,12 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/pinnacle.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/pinnacle",
       "mcp_tool_name": "run_pinnacle_ppi_retrieval"
-    }
+    },
+    "test_examples": [
+      {
+        "cell_type": "example_string",
+        "embed_path": "example_string"
+      }
+    ]
   }
 ]

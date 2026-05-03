@@ -32,7 +32,7 @@ msgstr ""
 #: d4f6dbeee37a4ced8410acfb367edeb8 of
 #: tooluniverse.tools.FDA_get_drug_names_by_application_number_NDC_number:1
 msgid "FDA_get_drug_names_by_application_number_NDC_number"
-msgstr ""
+msgstr "FDA_通过申请号_NDC号获取药品名称"
 
 #: 76223f9386a9460a968eab2e8e7d8682 7ea17398d1e8431e90cb7ac00d5063b8 of
 #: tooluniverse.tools.FDA_get_drug_names_by_application_number_NDC_number:3

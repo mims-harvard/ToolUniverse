@@ -36,7 +36,7 @@ msgstr "简介"
 
 #: ../../tutorials/finding_tools.rst:10 34aba4e2ab1d43ad95a9516eb78f3fe6
 msgid ""
-"ToolUniverse contains a vast repository of over 600+ scientific tools. To "
+"ToolUniverse contains a vast repository of over 1000+ scientific tools. To "
 "help you quickly find the right tools for your research tasks, ToolUniverse "
 "provides three sophisticated tool finder methods, each optimized for "
 "different use cases and computational requirements."

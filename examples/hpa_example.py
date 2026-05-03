@@ -70,6 +70,13 @@ comprehensive_test_queries = [
         "biological_context": "TP53 basic info should include transcription regulation functions",
         "expected_output": "Gene name, synonyms, Uniprot ID, biological processes",
     },
+    {
+        "name": "HPA_get_gene_tsv_data_by_ensembl_id",
+        "arguments": {"ensembl_id": VALID_ENSEMBL_ID_2},
+        "description": "Get detailed gene data in TSV format for TP53",
+        "biological_context": "Legacy format often used for bulk data processing",
+        "expected_output": "TSV string containing gene data",
+    },
     # === EXPRESSION ANALYSIS TOOLS ===
     {
         "name": "HPA_get_comparative_expression_by_gene_and_cellline",
@@ -372,6 +379,18 @@ comprehensive_test_queries = [
         "biological_context": "Should provide example of correct format",
         "expected_output": "Error with tissue name examples",
     },
+    # === GENERIC SEARCH TOOL ===
+    {
+        "name": "HPA_generic_search",
+        "arguments": {
+            "search_query": "Insulin",
+            "columns": "g,gs,gd",
+            "format": "json"
+        },
+        "description": "Generic search for Insulin using the new HPASearchTool",
+        "biological_context": "Testing the generic search capability for a well-known protein",
+        "expected_output": "List of entries matching 'Insulin' with specified columns",
+    },
 ]
 
 # Execute all test cases with detailed output
@@ -623,3 +642,4 @@ print("🔍 Results include functional interpretation")
 print("⚡ Both original and optimized tools available")
 print("🛡️ Error handling demonstrates robustness")
 print("\n" + "=" * 80)
+

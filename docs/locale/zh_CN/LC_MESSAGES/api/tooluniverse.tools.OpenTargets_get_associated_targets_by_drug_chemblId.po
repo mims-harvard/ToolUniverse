@@ -32,7 +32,7 @@ msgstr ""
 #: 6ec43f24de584212a1bd85fdc77bee96 of
 #: tooluniverse.tools.OpenTargets_get_associated_targets_by_drug_chemblId:1
 msgid "OpenTargets_get_associated_targets_by_drug_chemblId"
-msgstr ""
+msgstr "OpenTargets_通过_drug_chemblId_获取相关靶点"
 
 #: d594b20e46594858b2b8a8448e142786 e36b8c2d1eb842e49db248147d29adff of
 #: tooluniverse.tools.OpenTargets_get_associated_targets_by_drug_chemblId:3

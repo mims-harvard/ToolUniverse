@@ -377,10 +377,10 @@ msgstr "**查看常见问题解答**：:doc:`faq`"
 #: ../../help/troubleshooting.rst:556 36d95d0cd7ff4bfebf59b08f7e9c2f8a
 msgid ""
 "**Search GitHub issues**: `Issues "
-"<https://github.com/zitniklab/tooluniverse/issues>`_"
+"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
 msgstr ""
 "**搜索 GitHub 问题**：`Issues "
-"<https://github.com/zitniklab/tooluniverse/issues>`_"
+"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
 
 #: ../../help/troubleshooting.rst:557 5251fd407586454d9bdc10ed296b3a45
 msgid "**Create a bug report** with:"

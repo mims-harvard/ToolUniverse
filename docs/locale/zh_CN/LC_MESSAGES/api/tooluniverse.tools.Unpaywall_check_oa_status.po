@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.Unpaywall\\_check\\_oa\\_status 模块"
 #: 2c07e1117f614a40a646ab00e27b607f of
 #: tooluniverse.tools.Unpaywall_check_oa_status:1
 msgid "Unpaywall_check_oa_status"
-msgstr ""
+msgstr "Unpaywall_检查_开放获取状态"
 
 #: b43012db2b644250a0006116fbf0ecb9 e9a2aa38ef144c70b802f77285cf4897 of
 #: tooluniverse.tools.Unpaywall_check_oa_status:3

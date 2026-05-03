@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_abuse\\_dependence\\_
 #: tooluniverse.tools.FDA_get_drug_names_by_abuse_dependence_info:1
 msgid "FDA_get_drug_names_by_abuse_dependence_info"
 msgstr ""
+"FDA_get_drug_names_by_abuse_dependence_info  \n"
+"FDA_根据滥用和依赖信息获取药物名称"
 
 #: de8ba6f8eda240738fc8cb387a7db042 fb086dea223e4758a4272d0f7c6660a7 of
 #: tooluniverse.tools.FDA_get_drug_names_by_abuse_dependence_info:3

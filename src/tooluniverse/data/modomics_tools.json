@@ -1,0 +1,131 @@
+[
+  {
+    "name": "MODOMICS_list_modifications",
+    "description": "List all known RNA modifications from the MODOMICS database. Returns modification names, chemical formulas, molecular masses, SMILES structures, and reference moieties (which standard nucleoside the modification derives from: A, C, G, U). MODOMICS catalogs 430+ distinct RNA modifications found across all domains of life. Use limit parameter to control the number of results returned.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of modifications to return (default: 50, max: 500)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "list_modifications"
+    },
+    "type": "MODOMICSTool",
+    "test_examples": [
+      {"limit": 10},
+      {"limit": 5}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "modifications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer"},
+              "name": {"type": "string"},
+              "short_name": {"type": ["string", "null"]},
+              "formula": {"type": ["string", "null"]},
+              "mass_avg": {"type": ["number", "null"]},
+              "reference_moiety": {"type": "array"}
+            }
+          }
+        },
+        "total": {"type": "integer"},
+        "returned": {"type": "integer"}
+      }
+    }
+  },
+  {
+    "name": "MODOMICS_get_modification",
+    "description": "Get detailed information about a specific RNA modification from MODOMICS by its numeric ID. Returns the full chemical structure (SMILES), molecular formula, average and monoisotopic masses, protonated mass (for mass spectrometry), reference moiety, abbreviation, product ions, and LC elution data. Useful for identifying RNA modifications in mass spectrometry experiments.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "modification_id": {
+          "type": "integer",
+          "description": "MODOMICS modification numeric ID. Examples: 78 (pseudouridine), 2 (5,2'-O-dimethylcytidine), 58 (N6-methyladenosine/m6A), 22 (5-methylcytidine/m5C)"
+        }
+      },
+      "required": ["modification_id"]
+    },
+    "fields": {
+      "endpoint_type": "get_modification"
+    },
+    "type": "MODOMICSTool",
+    "test_examples": [
+      {"modification_id": 78},
+      {"modification_id": 58}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "integer"},
+        "name": {"type": "string"},
+        "short_name": {"type": ["string", "null"]},
+        "new_abbrev": {"type": ["string", "null"]},
+        "formula": {"type": ["string", "null"]},
+        "mass_avg": {"type": ["number", "null"]},
+        "mass_monoiso": {"type": ["number", "null"]},
+        "mass_prot": {"type": ["number", "null"]},
+        "reference_moiety": {"type": "array"},
+        "smiles": {"type": ["string", "null"]},
+        "product_ions": {"type": ["string", "null"]},
+        "lc_elution_comment": {"type": ["string", "null"]},
+        "lc_elution_time": {"type": ["string", "null"]}
+      }
+    }
+  },
+  {
+    "name": "MODOMICS_search_modifications",
+    "description": "Search MODOMICS RNA modifications by name, short name, or chemical formula. Searches across the full MODOMICS database of 430+ RNA modifications. Query matches against modification name (e.g., 'pseudouridine', 'methyladenosine'), short name (e.g., 'm6A', 'm5C'), or formula. Returns matching modifications with their chemical details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search term to match against modification name, short name, or formula. Examples: 'pseudouridine', 'methyl', 'm6A', 'inosine', 'thio'"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20)"
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint_type": "search_modifications"
+    },
+    "type": "MODOMICSTool",
+    "test_examples": [
+      {"query": "pseudouridine"},
+      {"query": "methyl", "limit": 10}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer"},
+              "name": {"type": "string"},
+              "short_name": {"type": ["string", "null"]},
+              "formula": {"type": ["string", "null"]},
+              "mass_avg": {"type": ["number", "null"]}
+            }
+          }
+        },
+        "total_matches": {"type": "integer"},
+        "returned": {"type": "integer"}
+      }
+    }
+  }
+]

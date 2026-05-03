@@ -1,0 +1,323 @@
+[
+  {
+    "name": "MedGen_search_conditions",
+    "description": "Search NCBI MedGen for genetic conditions, diseases, or syndromes by keyword. Returns condition names, definitions, OMIM IDs, and associated genes. MedGen aggregates data from OMIM, Orphanet, ClinVar, HPO, GTR, and GeneReviews. Example: query='cystic fibrosis' returns CF entry with CFTR gene, OMIM 219700.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search term (e.g., 'cystic fibrosis', 'BRCA1', 'Marfan syndrome', 'autosomal recessive')."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results (default 10, max 50).",
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "type": "MedGenTool",
+    "test_examples": [
+      {
+        "query": "cystic fibrosis",
+        "max_results": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uid": {
+                    "type": "string"
+                  },
+                  "concept_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "semantic_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "omim_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "associated_genes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "gene_id": {
+                          "type": "string"
+                        },
+                        "symbol": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "total_count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "conditions",
+            "total_count"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MedGen_get_condition",
+    "description": "Get detailed information about a specific genetic condition from NCBI MedGen by UID or UMLS CUI. Returns full definition, associated genes, OMIM IDs, synonyms, modes of inheritance, and clinical features (HPO phenotypes). Example: uid='41393' returns cystic fibrosis with CFTR/TGFB1/FCGR2A genes, autosomal recessive inheritance, 30+ clinical features.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "MedGen UID (e.g., '41393' for cystic fibrosis). Get from MedGen_search_conditions."
+        },
+        "cui": {
+          "type": "string",
+          "description": "UMLS Concept Unique Identifier (e.g., 'C0010674' for cystic fibrosis). Alternative to uid."
+        },
+        "concept_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for cui. UMLS CUI identifier (e.g., \"C0017205\" for Gaucher disease)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_condition"
+    },
+    "type": "MedGenTool",
+    "test_examples": [
+      {
+        "uid": "41393"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "uid": {
+              "type": "string"
+            },
+            "concept_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "semantic_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "omim_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "associated_genes": {
+              "type": "array"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "modes_of_inheritance": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "clinical_features": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "uid",
+            "title"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MedGen_get_clinical_features",
+    "description": "Get HPO clinical features (phenotypes) associated with a genetic condition from NCBI MedGen. Returns feature names, HPO IDs, UMLS CUIs, and definitions. Useful for phenotype-driven diagnosis. Example: uid='41393' (cystic fibrosis) returns bronchiectasis, meconium ileus, male infertility, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "MedGen UID (e.g., '41393' for cystic fibrosis)."
+        },
+        "cui": {
+          "type": "string",
+          "description": "UMLS CUI (e.g., 'C0010674' for cystic fibrosis). Alternative to uid."
+        },
+        "concept_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for cui. UMLS CUI identifier (e.g., \"C0017205\" for Gaucher disease)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_clinical_features"
+    },
+    "type": "MedGenTool",
+    "test_examples": [
+      {
+        "uid": "41393"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "condition_title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "condition_uid": {
+              "type": "string"
+            },
+            "clinical_features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "cui": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hpo_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_features": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "condition_uid",
+            "clinical_features"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

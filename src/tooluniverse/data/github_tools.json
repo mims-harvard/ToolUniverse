@@ -1,0 +1,455 @@
+[
+  {
+    "name": "GitHub_search_repositories",
+    "description": "Search GitHub public repositories using GitHub's search API. Returns repository metadata including name, description, language, star count, fork count, topics, license, and creation/update dates. Supports filtering by language, topic, stars, forks, and creation date. Useful for finding open-source bioinformatics tools, scientific computing packages, and research codebases. Rate limit: 10 requests/minute unauthenticated.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query with optional qualifiers. Examples: 'bioinformatics language:python stars:>100', 'protein structure prediction', 'topic:machine-learning language:python', 'alphafold protein', 'single cell RNA sequencing', 'user:deepmind'"
+        },
+        "sort": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sort by: 'stars', 'forks', 'help-wanted-issues', 'updated'. Default: best match."
+        },
+        "order": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sort direction: 'desc' (default) or 'asc'"
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Results per page (default 30, max 100)"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.github.com/search/repositories",
+      "headers": {
+        "Accept": "application/vnd.github.v3+json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "bioinformatics language:python stars:>500",
+        "sort": "stars",
+        "per_page": 5
+      },
+      {
+        "q": "protein structure prediction deep learning",
+        "sort": "stars",
+        "per_page": 5
+      },
+      {
+        "q": "single cell RNA sequencing topic:bioinformatics",
+        "per_page": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GitHub repository search results",
+          "properties": {
+            "total_count": {
+              "type": "integer",
+              "description": "Total matching repositories"
+            },
+            "incomplete_results": {
+              "type": "boolean"
+            },
+            "items": {
+              "type": "array",
+              "description": "List of matching repositories",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Repository name"
+                  },
+                  "full_name": {
+                    "type": "string",
+                    "description": "owner/repo format"
+                  },
+                  "html_url": {
+                    "type": "string",
+                    "description": "Repository URL"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "stargazers_count": {
+                    "type": "integer",
+                    "description": "GitHub stars"
+                  },
+                  "forks_count": {
+                    "type": "integer"
+                  },
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "topics": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "license": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "created_at": {
+                    "type": "string"
+                  },
+                  "updated_at": {
+                    "type": "string"
+                  },
+                  "pushed_at": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "integer"
+                  },
+                  "open_issues_count": {
+                    "type": "integer"
+                  },
+                  "default_branch": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GitHub_get_repository",
+    "description": "Get detailed metadata for a specific GitHub public repository. Returns full repository information including description, statistics (stars, forks, watchers, open issues), programming language, topics, license, README existence, and recent activity. Use full_name in owner/repo format (e.g., 'deepmind/alphafold'). Useful for getting repository details for scientific software tools.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "string",
+          "description": "Repository owner (username or organization). Examples: 'deepmind', 'bioconductor', 'pytorch', 'tensorflow', 'pandas-dev'"
+        },
+        "repo": {
+          "type": "string",
+          "description": "Repository name. Examples: 'alphafold', 'pytorch', 'pandas', 'scikit-learn', 'biopython'"
+        }
+      },
+      "required": [
+        "owner",
+        "repo"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.github.com/repos/{owner}/{repo}",
+      "headers": {
+        "Accept": "application/vnd.github.v3+json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "owner": "deepmind",
+        "repo": "alphafold"
+      },
+      {
+        "owner": "scikit-learn",
+        "repo": "scikit-learn"
+      },
+      {
+        "owner": "biopython",
+        "repo": "biopython"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GitHub repository details",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "full_name": {
+              "type": "string"
+            },
+            "html_url": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "stargazers_count": {
+              "type": "integer"
+            },
+            "forks_count": {
+              "type": "integer"
+            },
+            "watchers_count": {
+              "type": "integer"
+            },
+            "open_issues_count": {
+              "type": "integer"
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "license": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            },
+            "pushed_at": {
+              "type": "string"
+            },
+            "default_branch": {
+              "type": "string"
+            },
+            "size": {
+              "type": "integer"
+            },
+            "homepage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_wiki": {
+              "type": "boolean"
+            },
+            "has_pages": {
+              "type": "boolean"
+            },
+            "archived": {
+              "type": "boolean"
+            },
+            "fork": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GitHub_get_user_profile",
+    "description": "Get a public GitHub user profile by username. Returns user metadata including name, bio, company, location, public repository and gist counts, follower/following counts, and account creation date. No API key required (rate limited to 60 requests/hour unauthenticated). Useful for looking up developer profiles, finding researchers' GitHub activity, and exploring contributors to scientific software projects.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "GitHub username. Examples: 'torvalds' (Linus Torvalds), 'gvanrossum' (Guido van Rossum), 'hadley' (Hadley Wickham), 'jlord' (Jessica Lord)"
+        }
+      },
+      "required": [
+        "username"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.github.com/users/{username}",
+      "headers": {
+        "Accept": "application/vnd.github.v3+json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "username": "torvalds"
+      },
+      {
+        "username": "gvanrossum"
+      },
+      {
+        "username": "hadley"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GitHub user profile information",
+          "properties": {
+            "login": {
+              "type": "string",
+              "description": "GitHub username"
+            },
+            "id": {
+              "type": "integer",
+              "description": "GitHub user ID"
+            },
+            "avatar_url": {
+              "type": "string",
+              "description": "URL to user's avatar image"
+            },
+            "html_url": {
+              "type": "string",
+              "description": "URL to user's GitHub profile page"
+            },
+            "type": {
+              "type": "string",
+              "description": "'User' or 'Organization'"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Display name"
+            },
+            "company": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Company/organization affiliation"
+            },
+            "blog": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Website or blog URL"
+            },
+            "location": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "User's location"
+            },
+            "email": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Public email address"
+            },
+            "bio": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "User's bio/description"
+            },
+            "twitter_username": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Twitter/X username"
+            },
+            "public_repos": {
+              "type": "integer",
+              "description": "Number of public repositories"
+            },
+            "public_gists": {
+              "type": "integer",
+              "description": "Number of public gists"
+            },
+            "followers": {
+              "type": "integer",
+              "description": "Number of followers"
+            },
+            "following": {
+              "type": "integer",
+              "description": "Number of users being followed"
+            },
+            "created_at": {
+              "type": "string",
+              "description": "Account creation date (ISO 8601)"
+            },
+            "updated_at": {
+              "type": "string",
+              "description": "Last profile update date (ISO 8601)"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

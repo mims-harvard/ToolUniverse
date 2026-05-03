@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_get\\_associations\\_for\\_snp 模块"
 #: a1f761bd3af14a9fb5014d68a269f170 of
 #: tooluniverse.tools.gwas_get_associations_for_snp:1
 msgid "gwas_get_associations_for_snp"
-msgstr ""
+msgstr "gwas_get_associations_for_snp（获取SNP的关联信息）"
 
 #: 06de6d1661af4f3084d58c60225fff8b 405d0b8fda0c410ba7b3b80651fd8c8f of
 #: tooluniverse.tools.gwas_get_associations_for_snp:3

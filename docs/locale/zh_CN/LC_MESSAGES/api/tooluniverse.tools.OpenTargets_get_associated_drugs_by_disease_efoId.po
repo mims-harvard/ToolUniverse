@@ -32,7 +32,7 @@ msgstr ""
 #: ee3d4ed97ea74e659fc03de9a019b691 of
 #: tooluniverse.tools.OpenTargets_get_associated_drugs_by_disease_efoId:1
 msgid "OpenTargets_get_associated_drugs_by_disease_efoId"
-msgstr ""
+msgstr "OpenTargets_根据疾病EFO ID获取相关药物"
 
 #: 4f97a497d59148689e5f506333017cc8 827f0ae82dcc4c9fa73c54d9de6ee7cd of
 #: tooluniverse.tools.OpenTargets_get_associated_drugs_by_disease_efoId:3

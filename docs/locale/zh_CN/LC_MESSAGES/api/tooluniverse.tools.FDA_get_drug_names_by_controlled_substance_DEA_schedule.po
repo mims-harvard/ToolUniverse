@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.FDA_get_drug_names_by_controlled_substance_DEA_schedule:1
 msgid "FDA_get_drug_names_by_controlled_substance_DEA_schedule"
 msgstr ""
+"FDA_get_drug_names_by_controlled_substance_DEA_schedule  \n"
+"FDA_通过受控物质DEA分类获取药物名称"
 
 #: 6c611b2c2b82447da214a3632979039f a9449c260fb54a4abc164340a8ec4ac3 of
 #: tooluniverse.tools.FDA_get_drug_names_by_controlled_substance_DEA_schedule:3

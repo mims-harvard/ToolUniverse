@@ -3,8 +3,6 @@ Tool Caller Tutorial
 
 The Tool Caller is ToolUniverse's execution engine that handles tool instantiation, validation, and execution. It uses dynamic loading to efficiently manage hundreds of tools without loading them all at startup.
 
-This guide covers how to use the Tool Caller through ToolUniverse's Python API.
-
 Python API Usage
 ----------------
 
@@ -135,7 +133,7 @@ SMCP Server Overview
 The SMCP (Scientific Model Context Protocol) server extends standard MCP with scientific domain expertise and intelligent tool discovery.
 
 Key Features:
-- **Scientific Tool Integration**: Access to 600+ specialized tools
+- **Scientific Tool Integration**: Access to 1000+ specialized tools
 - **AI-Powered Tool Discovery**: Multi-tiered intelligent search system
 - **Full MCP Protocol Support**: Complete implementation of MCP specification
 - **High-Performance Architecture**: Production-ready features
@@ -307,29 +305,8 @@ Important Notes for MCP Clients
 3. **Tool Arguments**: When calling tools, arguments must match the tool's parameter schema exactly.
 
 .. seealso::
-   For detailed MCP server setup and usage, see :doc:`../tutorials/aiscientists/adding_mcp_tools_en`
+   For detailed MCP server setup and usage, see :doc:`building_ai_scientists/mcp_support`
 
-Summary
---------
+.. seealso::
 
-The Tool Caller is ToolUniverse's execution engine that provides:
-
-- **Three API approaches**: Direct import, dynamic access, and JSON format
-- **Dynamic loading**: Tools are loaded on-demand and cached for performance
-- **Comprehensive validation**: Ensures tool names and arguments are correct
-- **Error handling**: Provides clear error messages for debugging
-- **MCP integration**: Supports AI agent integration through MCP servers
-
-**Quick Start:**
-
-.. code-block:: python
-
-    from tooluniverse import ToolUniverse
-    
-    tu = ToolUniverse()
-    result = tu.run({
-        "name": "UniProt_get_entry_by_accession",
-        "arguments": {"accession": "P05067"}
-    })
-
-For more information, see the :doc:`api_comprehensive` documentation.
+   :doc:`../api/modules` - Complete API reference

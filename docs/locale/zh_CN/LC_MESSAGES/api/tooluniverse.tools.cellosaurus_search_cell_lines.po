@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.cellosaurus\\_search\\_cell\\_lines 模块"
 #: d795ad5da1f844d08aa06152fc992161 of
 #: tooluniverse.tools.cellosaurus_search_cell_lines:1
 msgid "cellosaurus_search_cell_lines"
-msgstr ""
+msgstr "cellosaurus_细胞系搜索"
 
 #: 700f121354a94e13aa10695740883ff8 c46bb9fd00be45e9a33081565272a4b9 of
 #: tooluniverse.tools.cellosaurus_search_cell_lines:3

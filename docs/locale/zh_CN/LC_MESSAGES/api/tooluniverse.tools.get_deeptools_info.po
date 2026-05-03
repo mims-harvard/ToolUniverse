@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_deeptools\\_info 模块"
 
 #: 194bc81de73f4fcfaaaafa4602dc5721 of tooluniverse.tools.get_deeptools_info:1
 msgid "get_deeptools_info"
-msgstr ""
+msgstr "get_deeptools_info 获取_deeptools_信息"
 
 #: 4f4a7ed873874619a5fd4e43a6bd491b b39d17e8b98346d29e38128d9f92b349 of
 #: tooluniverse.tools.get_deeptools_info:3

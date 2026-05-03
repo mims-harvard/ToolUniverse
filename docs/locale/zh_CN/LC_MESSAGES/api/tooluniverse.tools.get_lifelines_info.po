@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_lifelines\\_info 模块"
 
 #: 630632f40c5d467bb0967bfc867f7875 of tooluniverse.tools.get_lifelines_info:1
 msgid "get_lifelines_info"
-msgstr ""
+msgstr "get_lifelines_info 获取生命线信息"
 
 #: 7da7e34ad1014fb0ac2999545c3f892f a954b28dbfe14c569affc3ed0b859cc5 of
 #: tooluniverse.tools.get_lifelines_info:3

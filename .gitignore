@@ -148,4 +148,29 @@ docs/api/tooluniverse.*.rst
 src/tooluniverse/web_tools/
 
 # Auto-generated tool files (moved to temporary folder)
-src/tooluniverse/tools_generated/
+src/tooluniverse/tools_generated/FILE_ORGANIZATION_LIST.md
+temp_docs_and_tests/
+
+# Parked tools pending API keys (not ready for publishing)
+temp_tools/
+
+# Session documentation (temporary - never push)
+*_SUMMARY.md
+*_REPORT.md
+SESSION_*.md
+IMPLEMENTATION_*.md
+BUG_ANALYSIS_*.md
+FIX_SUMMARY.md
+CORRECT_FIX.md
+AGENT_*.md
+DEVTU_*.md
+!README.md
+!CHANGELOG.md
+!LICENSE.md
+
+# Root-level ad-hoc test scripts (not part of test suite)
+/test_*.py
+
+# Claude Code configuration
+.claude/
+.tooluniverse/

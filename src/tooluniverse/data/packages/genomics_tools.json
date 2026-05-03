@@ -2,7 +2,7 @@
   {
     "type": "PackageTool",
     "name": "get_pysam_info",
-    "description": "Get comprehensive information about pysam – interface to SAM/BAM/CRAM files",
+    "description": "Get comprehensive information about pysam \u2013 interface to SAM/BAM/CRAM files",
     "parameter": {
       "type": "object",
       "properties": {
@@ -44,12 +44,98 @@
         "Fetch reads: bamfile.fetch('chr1', start, end)",
         "Analyze: get coverage, extract sequences"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_pyfaidx_info",
-    "description": "Get comprehensive information about pyfaidx – efficient FASTA file indexing and random access",
+    "description": "Get comprehensive information about pyfaidx \u2013 efficient FASTA file indexing and random access",
     "parameter": {
       "type": "object",
       "properties": {
@@ -91,12 +177,98 @@
         "List contigs: list(fa.keys())",
         "Command line: faidx genome.fa chr1:1000-2000"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_pyranges_info",
-    "description": "Get comprehensive information about PyRanges – efficient genomic interval operations",
+    "description": "Get comprehensive information about PyRanges \u2013 efficient genomic interval operations",
     "parameter": {
       "type": "object",
       "properties": {
@@ -138,12 +310,98 @@
         "Operations: intersect(), subtract(), nearest()",
         "Filter and manipulate with pandas-like syntax"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_pybedtools_info",
-    "description": "Get comprehensive information about pybedtools – Python wrapper for BEDTools",
+    "description": "Get comprehensive information about pybedtools \u2013 Python wrapper for BEDTools",
     "parameter": {
       "type": "object",
       "properties": {
@@ -185,12 +443,98 @@
         "Chain operations: a.intersect(b).subtract(c)",
         "Save results: result.saveas('output.bed')"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_pyliftover_info",
-    "description": "Get comprehensive information about PyLiftover – genomic coordinate conversion between assemblies",
+    "description": "Get comprehensive information about PyLiftover \u2013 genomic coordinate conversion between assemblies",
     "parameter": {
       "type": "object",
       "properties": {
@@ -232,12 +576,98 @@
         "Check result: if result: new_chr, new_pos = result[0]",
         "Batch convert: Use loops for multiple coordinates"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_deeptools_info",
-    "description": "Get comprehensive information about deepTools – deep sequencing data processing",
+    "description": "Get comprehensive information about deepTools \u2013 deep sequencing data processing",
     "parameter": {
       "type": "object",
       "properties": {
@@ -286,12 +716,98 @@
         "Quality control: plotFingerprint -b *.bam",
         "Correlation: plotCorrelation -in matrix.npz"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_clair3_info",
-    "description": "Get comprehensive information about Clair3 – variant calling for long-read sequencing",
+    "description": "Get comprehensive information about Clair3 \u2013 variant calling for long-read sequencing",
     "parameter": {
       "type": "object",
       "properties": {
@@ -338,12 +854,98 @@
         "Platform: --platform=ont (Nanopore) or hifi (PacBio)",
         "Output: VCF files with variants and quality scores"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_arboreto_info",
-    "description": "Get comprehensive information about Arboreto – gene regulatory network inference",
+    "description": "Get comprehensive information about Arboreto \u2013 gene regulatory network inference",
     "parameter": {
       "type": "object",
       "properties": {
@@ -391,12 +993,98 @@
         "Filter by importance: network[network['importance'] > threshold]",
         "Export for downstream analysis (e.g., pySCENIC)"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_cyvcf2_info",
-    "description": "Get comprehensive information about cyvcf2 – fast VCF/BCF file processing",
+    "description": "Get comprehensive information about cyvcf2 \u2013 fast VCF/BCF file processing",
     "parameter": {
       "type": "object",
       "properties": {
@@ -438,12 +1126,98 @@
         "4. Iterate: for variant in vcf:",
         "5. Access: variant.CHROM, variant.POS, variant.gt_types"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_gseapy_info",
-    "description": "Get comprehensive information about GSEApy – Gene Set Enrichment Analysis in Python",
+    "description": "Get comprehensive information about GSEApy \u2013 Gene Set Enrichment Analysis in Python",
     "parameter": {
       "type": "object",
       "properties": {
@@ -485,12 +1259,98 @@
         "4. GSEA: gp.prerank(ranked_genes, gene_sets)",
         "5. Visualize: plot enrichment results"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_jcvi_info",
-    "description": "Get comprehensive information about JCVI – genome assembly and comparative genomics",
+    "description": "Get comprehensive information about JCVI \u2013 genome assembly and comparative genomics",
     "parameter": {
       "type": "object",
       "properties": {
@@ -538,12 +1398,98 @@
         "Graphics: jcvi.graphics modules",
         "Use command-line tools for complex analyses"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_pydeseq2_info",
-    "description": "Get comprehensive information about PyDESeq2 – RNA-seq differential expression analysis",
+    "description": "Get comprehensive information about PyDESeq2 \u2013 RNA-seq differential expression analysis",
     "parameter": {
       "type": "object",
       "properties": {
@@ -582,7 +1528,7 @@
         "pip": "pip install pydeseq2",
         "conda": "conda install -c conda-forge pydeseq2"
       },
-      "usage_example": "import pandas as pd\nimport numpy as np\nfrom pydeseq2 import DeseqDataSet\nfrom pydeseq2.dds import DeseqStats\nfrom pydeseq2.default_inference import DefaultInference\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nprint('PyDESeq2 - RNA-seq Differential Expression Analysis')\nprint('=' * 55)\n\n# Create synthetic RNA-seq count data\nprint('Creating synthetic RNA-seq count data...')\n\n# Set random seed for reproducibility\nnp.random.seed(42)\n\n# Parameters\nn_genes = 1000\nn_samples_per_condition = 6\nconditions = ['control', 'treatment']\ntotal_samples = n_samples_per_condition * len(conditions)\n\n# Generate gene names\ngene_names = [f'Gene_{i:04d}' for i in range(1, n_genes + 1)]\n\n# Generate sample names and metadata\nsample_names = []\ncondition_labels = []\nfor condition in conditions:\n    for i in range(n_samples_per_condition):\n        sample_names.append(f'{condition}_rep{i+1}')\n        condition_labels.append(condition)\n\n# Create metadata DataFrame\nmetadata = pd.DataFrame({\n    'sample_id': sample_names,\n    'condition': condition_labels\n})\nmetadata.set_index('sample_id', inplace=True)\n\nprint(f'Created metadata for {len(sample_names)} samples:')\nprint(metadata.groupby('condition').size())\n\n# Generate count matrix\nprint('\\nGenerating count matrix...')\n\n# Base expression levels (log scale)\nbase_expression = np.random.negative_binomial(n=5, p=0.3, size=n_genes)\n\n# Create count matrix\ncounts = np.zeros((n_genes, total_samples))\n\n# Generate counts for each sample\nfor i, condition in enumerate(condition_labels):\n    # Add some noise and condition-specific effects\n    if condition == 'control':\n        # Control condition - use base expression\n        sample_counts = np.random.negative_binomial(\n            n=base_expression, \n            p=0.1,  # Dispersion parameter\n            size=n_genes\n        )\n    else:\n        # Treatment condition - add differential expression\n        # Select ~10% of genes to be differentially expressed\n        de_genes = np.random.choice(n_genes, size=int(0.1 * n_genes), replace=False)\n        \n        modified_expression = base_expression.copy()\n        \n        # Half upregulated, half downregulated\n        up_genes = de_genes[:len(de_genes)//2]\n        down_genes = de_genes[len(de_genes)//2:]\n        \n        # Upregulate (2-4 fold)\n        modified_expression[up_genes] *= np.random.uniform(2, 4, len(up_genes))\n        \n        # Downregulate (0.25-0.5 fold)\n        modified_expression[down_genes] *= np.random.uniform(0.25, 0.5, len(down_genes))\n        \n        sample_counts = np.random.negative_binomial(\n            n=modified_expression.astype(int), \n            p=0.1,\n            size=n_genes\n        )\n    \n    counts[:, i] = sample_counts\n\n# Create count DataFrame\ncount_df = pd.DataFrame(counts, index=gene_names, columns=sample_names)\ncount_df = count_df.astype(int)\n\nprint(f'Count matrix shape: {count_df.shape}')\nprint(f'Total reads per sample:')\nfor sample in count_df.columns:\n    total_reads = count_df[sample].sum()\n    print(f'  {sample}: {total_reads:} reads')\n\nprint(f'\\nCount statistics:')\nprint(f'  Mean counts per gene: {count_df.mean(axis=1).mean():.1f}')\nprint(f'  Median counts per gene: {count_df.median(axis=1).median():.1f}')\nprint(f'  Genes with zero counts: {(count_df.sum(axis=1) == 0).sum()}')\n\n# Filter low-count genes\nprint('\\nFiltering low-count genes...')\nmin_count = 10\nmin_samples = 3\n\n# Keep genes with at least min_count reads in at least min_samples samples\nkeep_genes = (count_df >= min_count).sum(axis=1) >= min_samples\nfiltered_counts = count_df[keep_genes]\n\nprint(f'Genes before filtering: {len(count_df)}')\nprint(f'Genes after filtering: {len(filtered_counts)}')\nprint(f'Genes removed: {len(count_df) - len(filtered_counts)}')\n\n# Create DESeq2 dataset\nprint('\\n=== DESeq2 Analysis ===')\nprint('Creating DESeq2 dataset...')\n\n# Prepare data for PyDESeq2\ninference = DefaultInference(n_cpus=1)\n\n# Create DESeq2 dataset\ndds = DeseqDataSet(\n    counts=filtered_counts,\n    metadata=metadata,\n    design_factors=['condition'],\n    refit_cooks=True,\n    inference=inference\n)\n\nprint(f'DESeq2 dataset created with {dds.n_obs} genes and {dds.n_vars} samples')\n\n# Run DESeq2 analysis\nprint('\\nRunning DESeq2 analysis...')\nprint('1. Estimating size factors...')\ndds.fit_size_factors()\n\nprint('2. Estimating dispersions...')\ndds.fit_genewise_dispersions()\ndds.fit_dispersion_trend()\ndds.fit_dispersion_prior()\ndds.fit_MAP_dispersions()\n\nprint('3. Fitting generalized linear model...')\ndds.fit_LFC()\n\nprint('4. Running statistical tests...')\nstat_res = DeseqStats(dds, inference=inference)\nstat_res.summary()\n\n# Get results\nprint('\\n=== Results Analysis ===')\nresults_df = stat_res.results_df\n\nprint(f'Results shape: {results_df.shape}')\nprint(f'Columns: {list(results_df.columns)}')\n\n# Filter for significant genes\nalpha = 0.05\nlog2fc_threshold = 1.0\n\nsignificant = (\n    (results_df['padj'] < alpha) & \n    (np.abs(results_df['log2FoldChange']) > log2fc_threshold)\n)\n\nupregulated = (\n    (results_df['padj'] < alpha) & \n    (results_df['log2FoldChange'] > log2fc_threshold)\n)\n\ndownregulated = (\n    (results_df['padj'] < alpha) & \n    (results_df['log2FoldChange'] < -log2fc_threshold)\n)\n\nprint(f'\\nDifferential expression results:')\nprint(f'  Total genes tested: {len(results_df)}')\nprint(f'  Significant genes (padj < {alpha}, |log2FC| > {log2fc_threshold}): {significant.sum()}')\nprint(f'  Upregulated genes: {upregulated.sum()}')\nprint(f'  Downregulated genes: {downregulated.sum()}')\n\n# Show top differentially expressed genes\nprint('\\nTop 10 upregulated genes:')\ntop_up = results_df[upregulated].nlargest(10, 'log2FoldChange')\nfor gene, row in top_up.iterrows():\n    print(f'  {gene}: log2FC={row[\"log2FoldChange\"]:.2f}, padj={row[\"padj\"]:.2e}')\n\nprint('\\nTop 10 downregulated genes:')\ntop_down = results_df[downregulated].nsmallest(10, 'log2FoldChange')\nfor gene, row in top_down.iterrows():\n    print(f'  {gene}: log2FC={row[\"log2FoldChange\"]:.2f}, padj={row[\"padj\"]:.2e}')\n\n# Quality control plots\nprint('\\n=== Quality Control Plots ===')\n\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\n# 1. MA plot\naxes[0, 0].scatter(results_df['baseMean'], results_df['log2FoldChange'], \n                  alpha=0.5, s=1, color='gray')\naxes[0, 0].scatter(results_df.loc[significant, 'baseMean'], \n                  results_df.loc[significant, 'log2FoldChange'], \n                  alpha=0.7, s=2, color='red')\naxes[0, 0].axhline(y=0, color='blue', linestyle='--', alpha=0.7)\naxes[0, 0].axhline(y=log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 0].axhline(y=-log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 0].set_xlabel('Mean Expression')\naxes[0, 0].set_ylabel('Log2 Fold Change')\naxes[0, 0].set_title('MA Plot')\naxes[0, 0].set_xscale('log')\n\n# 2. Volcano plot\np_values = -np.log10(results_df['padj'].fillna(1))\naxes[0, 1].scatter(results_df['log2FoldChange'], p_values, \n                  alpha=0.5, s=1, color='gray')\naxes[0, 1].scatter(results_df.loc[significant, 'log2FoldChange'], \n                  p_values[significant], \n                  alpha=0.7, s=2, color='red')\naxes[0, 1].axhline(y=-np.log10(alpha), color='green', linestyle='--', alpha=0.7)\naxes[0, 1].axvline(x=log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 1].axvline(x=-log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 1].set_xlabel('Log2 Fold Change')\naxes[0, 1].set_ylabel('-Log10 Adjusted P-value')\naxes[0, 1].set_title('Volcano Plot')\n\n# 3. P-value histogram\naxes[1, 0].hist(results_df['pvalue'].dropna(), bins=50, alpha=0.7, color='skyblue')\naxes[1, 0].set_xlabel('P-value')\naxes[1, 0].set_ylabel('Frequency')\naxes[1, 0].set_title('P-value Distribution')\n\n# 4. Dispersion plot\naxes[1, 1].scatter(dds.layers['normed_counts'].mean(axis=1), \n                  dds.varm['dispersions'], \n                  alpha=0.5, s=1, color='gray')\naxes[1, 1].set_xlabel('Mean Normalized Counts')\naxes[1, 1].set_ylabel('Dispersion')\naxes[1, 1].set_title('Dispersion Estimates')\naxes[1, 1].set_xscale('log')\naxes[1, 1].set_yscale('log')\n\nplt.tight_layout()\n\n# Save plots\nimport tempfile\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    plot_file = tmp.name\n\nplt.close()\nprint(f'QC plots saved to: {plot_file}')\n\n# Summary statistics\nprint('\\n' + '=' * 55)\nprint('DIFFERENTIAL EXPRESSION ANALYSIS SUMMARY')\nprint('=' * 55)\nprint(f'Total genes analyzed: {len(results_df):}')\nprint(f'Significant DE genes: {significant.sum():} ({significant.sum()/len(results_df)*100:.1f}%)')\nprint(f'Upregulated genes: {upregulated.sum():}')\nprint(f'Downregulated genes: {downregulated.sum():}')\nprint(f'Significance threshold: padj < {alpha}')\nprint(f'Fold change threshold: |log2FC| > {log2fc_threshold}')\n\n# Effect size distribution\nif significant.sum() > 0:\n    sig_lfc = results_df.loc[significant, 'log2FoldChange']\n    print(f'\\nEffect size statistics (significant genes):')\n    print(f'  Mean |log2FC|: {np.abs(sig_lfc).mean():.2f}')\n    print(f'  Max upregulation: {sig_lfc.max():.2f} log2FC')\n    print(f'  Max downregulation: {sig_lfc.min():.2f} log2FC')\n\n# Cleanup\nimport os\nos.unlink(plot_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nPyDESeq2 provides:')\nprint('• Python implementation of DESeq2')\nprint('• Differential expression analysis')\nprint('• Size factor normalization')\nprint('• Dispersion estimation')\nprint('• Statistical testing with multiple correction')\nprint('• Integration with pandas and numpy')\nprint('• Visualization and quality control')",
+      "usage_example": "import pandas as pd\nimport numpy as np\nfrom pydeseq2 import DeseqDataSet\nfrom pydeseq2.dds import DeseqStats\nfrom pydeseq2.default_inference import DefaultInference\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nprint('PyDESeq2 - RNA-seq Differential Expression Analysis')\nprint('=' * 55)\n\n# Create synthetic RNA-seq count data\nprint('Creating synthetic RNA-seq count data...')\n\n# Set random seed for reproducibility\nnp.random.seed(42)\n\n# Parameters\nn_genes = 1000\nn_samples_per_condition = 6\nconditions = ['control', 'treatment']\ntotal_samples = n_samples_per_condition * len(conditions)\n\n# Generate gene names\ngene_names = [f'Gene_{i:04d}' for i in range(1, n_genes + 1)]\n\n# Generate sample names and metadata\nsample_names = []\ncondition_labels = []\nfor condition in conditions:\n    for i in range(n_samples_per_condition):\n        sample_names.append(f'{condition}_rep{i+1}')\n        condition_labels.append(condition)\n\n# Create metadata DataFrame\nmetadata = pd.DataFrame({\n    'sample_id': sample_names,\n    'condition': condition_labels\n})\nmetadata.set_index('sample_id', inplace=True)\n\nprint(f'Created metadata for {len(sample_names)} samples:')\nprint(metadata.groupby('condition').size())\n\n# Generate count matrix\nprint('\\nGenerating count matrix...')\n\n# Base expression levels (log scale)\nbase_expression = np.random.negative_binomial(n=5, p=0.3, size=n_genes)\n\n# Create count matrix\ncounts = np.zeros((n_genes, total_samples))\n\n# Generate counts for each sample\nfor i, condition in enumerate(condition_labels):\n    # Add some noise and condition-specific effects\n    if condition == 'control':\n        # Control condition - use base expression\n        sample_counts = np.random.negative_binomial(\n            n=base_expression, \n            p=0.1,  # Dispersion parameter\n            size=n_genes\n        )\n    else:\n        # Treatment condition - add differential expression\n        # Select ~10% of genes to be differentially expressed\n        de_genes = np.random.choice(n_genes, size=int(0.1 * n_genes), replace=False)\n        \n        modified_expression = base_expression.copy()\n        \n        # Half upregulated, half downregulated\n        up_genes = de_genes[:len(de_genes)//2]\n        down_genes = de_genes[len(de_genes)//2:]\n        \n        # Upregulate (2-4 fold)\n        modified_expression[up_genes] *= np.random.uniform(2, 4, len(up_genes))\n        \n        # Downregulate (0.25-0.5 fold)\n        modified_expression[down_genes] *= np.random.uniform(0.25, 0.5, len(down_genes))\n        \n        sample_counts = np.random.negative_binomial(\n            n=modified_expression.astype(int), \n            p=0.1,\n            size=n_genes\n        )\n    \n    counts[:, i] = sample_counts\n\n# Create count DataFrame\ncount_df = pd.DataFrame(counts, index=gene_names, columns=sample_names)\ncount_df = count_df.astype(int)\n\nprint(f'Count matrix shape: {count_df.shape}')\nprint(f'Total reads per sample:')\nfor sample in count_df.columns:\n    total_reads = count_df[sample].sum()\n    print(f'  {sample}: {total_reads:} reads')\n\nprint(f'\\nCount statistics:')\nprint(f'  Mean counts per gene: {count_df.mean(axis=1).mean():.1f}')\nprint(f'  Median counts per gene: {count_df.median(axis=1).median():.1f}')\nprint(f'  Genes with zero counts: {(count_df.sum(axis=1) == 0).sum()}')\n\n# Filter low-count genes\nprint('\\nFiltering low-count genes...')\nmin_count = 10\nmin_samples = 3\n\n# Keep genes with at least min_count reads in at least min_samples samples\nkeep_genes = (count_df >= min_count).sum(axis=1) >= min_samples\nfiltered_counts = count_df[keep_genes]\n\nprint(f'Genes before filtering: {len(count_df)}')\nprint(f'Genes after filtering: {len(filtered_counts)}')\nprint(f'Genes removed: {len(count_df) - len(filtered_counts)}')\n\n# Create DESeq2 dataset\nprint('\\n=== DESeq2 Analysis ===')\nprint('Creating DESeq2 dataset...')\n\n# Prepare data for PyDESeq2\ninference = DefaultInference(n_cpus=1)\n\n# Create DESeq2 dataset\ndds = DeseqDataSet(\n    counts=filtered_counts,\n    metadata=metadata,\n    design_factors=['condition'],\n    refit_cooks=True,\n    inference=inference\n)\n\nprint(f'DESeq2 dataset created with {dds.n_obs} genes and {dds.n_vars} samples')\n\n# Run DESeq2 analysis\nprint('\\nRunning DESeq2 analysis...')\nprint('1. Estimating size factors...')\ndds.fit_size_factors()\n\nprint('2. Estimating dispersions...')\ndds.fit_genewise_dispersions()\ndds.fit_dispersion_trend()\ndds.fit_dispersion_prior()\ndds.fit_MAP_dispersions()\n\nprint('3. Fitting generalized linear model...')\ndds.fit_LFC()\n\nprint('4. Running statistical tests...')\nstat_res = DeseqStats(dds, inference=inference)\nstat_res.summary()\n\n# Get results\nprint('\\n=== Results Analysis ===')\nresults_df = stat_res.results_df\n\nprint(f'Results shape: {results_df.shape}')\nprint(f'Columns: {list(results_df.columns)}')\n\n# Filter for significant genes\nalpha = 0.05\nlog2fc_threshold = 1.0\n\nsignificant = (\n    (results_df['padj'] < alpha) & \n    (np.abs(results_df['log2FoldChange']) > log2fc_threshold)\n)\n\nupregulated = (\n    (results_df['padj'] < alpha) & \n    (results_df['log2FoldChange'] > log2fc_threshold)\n)\n\ndownregulated = (\n    (results_df['padj'] < alpha) & \n    (results_df['log2FoldChange'] < -log2fc_threshold)\n)\n\nprint(f'\\nDifferential expression results:')\nprint(f'  Total genes tested: {len(results_df)}')\nprint(f'  Significant genes (padj < {alpha}, |log2FC| > {log2fc_threshold}): {significant.sum()}')\nprint(f'  Upregulated genes: {upregulated.sum()}')\nprint(f'  Downregulated genes: {downregulated.sum()}')\n\n# Show top differentially expressed genes\nprint('\\nTop 10 upregulated genes:')\ntop_up = results_df[upregulated].nlargest(10, 'log2FoldChange')\nfor gene, row in top_up.iterrows():\n    print(f'  {gene}: log2FC={row[\"log2FoldChange\"]:.2f}, padj={row[\"padj\"]:.2e}')\n\nprint('\\nTop 10 downregulated genes:')\ntop_down = results_df[downregulated].nsmallest(10, 'log2FoldChange')\nfor gene, row in top_down.iterrows():\n    print(f'  {gene}: log2FC={row[\"log2FoldChange\"]:.2f}, padj={row[\"padj\"]:.2e}')\n\n# Quality control plots\nprint('\\n=== Quality Control Plots ===')\n\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\n# 1. MA plot\naxes[0, 0].scatter(results_df['baseMean'], results_df['log2FoldChange'], \n                  alpha=0.5, s=1, color='gray')\naxes[0, 0].scatter(results_df.loc[significant, 'baseMean'], \n                  results_df.loc[significant, 'log2FoldChange'], \n                  alpha=0.7, s=2, color='red')\naxes[0, 0].axhline(y=0, color='blue', linestyle='--', alpha=0.7)\naxes[0, 0].axhline(y=log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 0].axhline(y=-log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 0].set_xlabel('Mean Expression')\naxes[0, 0].set_ylabel('Log2 Fold Change')\naxes[0, 0].set_title('MA Plot')\naxes[0, 0].set_xscale('log')\n\n# 2. Volcano plot\np_values = -np.log10(results_df['padj'].fillna(1))\naxes[0, 1].scatter(results_df['log2FoldChange'], p_values, \n                  alpha=0.5, s=1, color='gray')\naxes[0, 1].scatter(results_df.loc[significant, 'log2FoldChange'], \n                  p_values[significant], \n                  alpha=0.7, s=2, color='red')\naxes[0, 1].axhline(y=-np.log10(alpha), color='green', linestyle='--', alpha=0.7)\naxes[0, 1].axvline(x=log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 1].axvline(x=-log2fc_threshold, color='green', linestyle='--', alpha=0.7)\naxes[0, 1].set_xlabel('Log2 Fold Change')\naxes[0, 1].set_ylabel('-Log10 Adjusted P-value')\naxes[0, 1].set_title('Volcano Plot')\n\n# 3. P-value histogram\naxes[1, 0].hist(results_df['pvalue'].dropna(), bins=50, alpha=0.7, color='skyblue')\naxes[1, 0].set_xlabel('P-value')\naxes[1, 0].set_ylabel('Frequency')\naxes[1, 0].set_title('P-value Distribution')\n\n# 4. Dispersion plot\naxes[1, 1].scatter(dds.layers['normed_counts'].mean(axis=1), \n                  dds.varm['dispersions'], \n                  alpha=0.5, s=1, color='gray')\naxes[1, 1].set_xlabel('Mean Normalized Counts')\naxes[1, 1].set_ylabel('Dispersion')\naxes[1, 1].set_title('Dispersion Estimates')\naxes[1, 1].set_xscale('log')\naxes[1, 1].set_yscale('log')\n\nplt.tight_layout()\n\n# Save plots\nimport tempfile\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    plot_file = tmp.name\n\nplt.close()\nprint(f'QC plots saved to: {plot_file}')\n\n# Summary statistics\nprint('\\n' + '=' * 55)\nprint('DIFFERENTIAL EXPRESSION ANALYSIS SUMMARY')\nprint('=' * 55)\nprint(f'Total genes analyzed: {len(results_df):}')\nprint(f'Significant DE genes: {significant.sum():} ({significant.sum()/len(results_df)*100:.1f}%)')\nprint(f'Upregulated genes: {upregulated.sum():}')\nprint(f'Downregulated genes: {downregulated.sum():}')\nprint(f'Significance threshold: padj < {alpha}')\nprint(f'Fold change threshold: |log2FC| > {log2fc_threshold}')\n\n# Effect size distribution\nif significant.sum() > 0:\n    sig_lfc = results_df.loc[significant, 'log2FoldChange']\n    print(f'\\nEffect size statistics (significant genes):')\n    print(f'  Mean |log2FC|: {np.abs(sig_lfc).mean():.2f}')\n    print(f'  Max upregulation: {sig_lfc.max():.2f} log2FC')\n    print(f'  Max downregulation: {sig_lfc.min():.2f} log2FC')\n\n# Cleanup\nimport os\nos.unlink(plot_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nPyDESeq2 provides:')\nprint('\u2022 Python implementation of DESeq2')\nprint('\u2022 Differential expression analysis')\nprint('\u2022 Size factor normalization')\nprint('\u2022 Dispersion estimation')\nprint('\u2022 Statistical testing with multiple correction')\nprint('\u2022 Integration with pandas and numpy')\nprint('\u2022 Visualization and quality control')",
       "quick_start": [
         "Install: pip install pydeseq2",
         "Create dataset: dds = DeseqDataSet(counts, metadata, design_factors)",
@@ -591,12 +1537,98 @@
         "Get results: results_df = stat_res.results_df",
         "Filter significant: results_df[results_df['padj'] < 0.05]"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_cellxgene_census_info",
-    "description": "Get comprehensive information about cellxgene-census – access to the CELLxGENE Census single-cell data",
+    "description": "Get comprehensive information about cellxgene-census \u2013 access to the CELLxGENE Census single-cell data",
     "parameter": {
       "type": "object",
       "properties": {
@@ -644,12 +1676,98 @@
         "Filter and download subsets of data",
         "Integrate with scanpy and other analysis tools"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_viennarna_info",
-    "description": "Get comprehensive information about ViennaRNA – RNA structure prediction and analysis",
+    "description": "Get comprehensive information about ViennaRNA \u2013 RNA structure prediction and analysis",
     "parameter": {
       "type": "object",
       "properties": {
@@ -691,12 +1809,98 @@
         "4. Partition function: RNA.pf_fold(sequence)",
         "5. Analyze: base pair probabilities, energy"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_reportlab_info",
-    "description": "Get comprehensive information about ReportLab – PDF generation library",
+    "description": "Get comprehensive information about ReportLab \u2013 PDF generation library",
     "parameter": {
       "type": "object",
       "properties": {
@@ -738,6 +1942,92 @@
         "4. Add content: c.drawString(x, y, 'text')",
         "5. Save: c.save()"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
@@ -750,7 +2040,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -762,7 +2136,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -774,7 +2232,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -786,7 +2328,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -798,6 +2424,90 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   }
 ]

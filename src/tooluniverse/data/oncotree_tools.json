@@ -1,0 +1,192 @@
+[
+  {
+    "name": "OncoTree_search",
+    "type": "OncoTreeSearchTool",
+    "description": "Search the OncoTree cancer type ontology by name, code, main type, or tissue. OncoTree is a hierarchical cancer classification system developed at Memorial Sloan Kettering with 897+ cancer types. Returns standardized cancer type codes with UMLS and NCI Thesaurus cross-references. Use to identify the correct OncoTree code for a cancer type, find all cancer subtypes under a tissue, or map free-text cancer names to structured identifiers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search term. Interpreted according to the 'field' parameter. Examples: 'breast cancer', 'BRCA', 'Lung', 'Non-Small Cell Lung Cancer'."
+        },
+        "field": {
+          "type": "string",
+          "description": "Field to search in. One of: 'name' (cancer type name), 'code' (OncoTree code), 'main_type' (main cancer category), 'tissue' (tissue of origin). Default: 'name'.",
+          "enum": ["name", "code", "main_type", "tissue"],
+          "default": "name"
+        },
+        "exact_match": {
+          "type": "boolean",
+          "description": "If true, requires exact match. If false (default), performs substring/prefix matching.",
+          "default": false
+        },
+        "version": {
+          "type": "string",
+          "description": "OncoTree version identifier. Use 'oncotree_latest_stable' (default) for the current production version.",
+          "default": "oncotree_latest_stable"
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {"type": ["string", "null"]},
+                  "name": {"type": ["string", "null"]},
+                  "main_type": {"type": ["string", "null"]},
+                  "tissue": {"type": ["string", "null"]},
+                  "parent": {"type": ["string", "null"]},
+                  "level": {"type": ["integer", "null"]},
+                  "external_references": {"type": "object"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "breast cancer", "field": "name"},
+      {"query": "LUAD", "field": "code", "exact_match": true},
+      {"query": "Lung", "field": "tissue"}
+    ],
+    "label": ["OncoTree", "Cancer", "Oncology", "Classification"],
+    "metadata": {
+      "tags": ["cancer", "oncology", "tumor type", "classification", "MSK", "UMLS", "NCI"],
+      "estimated_execution_time": "1-2 seconds"
+    }
+  },
+  {
+    "name": "OncoTree_get_type",
+    "type": "OncoTreeGetTypeTool",
+    "description": "Get detailed information about a specific OncoTree cancer type by its exact code (e.g. 'BRCA', 'LUAD', 'GBM'). Returns the cancer name, main type, tissue, parent node in the hierarchy, hierarchy level, color used in MSK visualizations, revision history, and cross-references to UMLS and NCI Thesaurus. Use after OncoTree_search to get complete details for a known code.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "OncoTree cancer type code (case-insensitive). Examples: 'BRCA' (Invasive Breast Carcinoma), 'LUAD' (Lung Adenocarcinoma), 'GBM' (Glioblastoma Multiforme), 'PAAD' (Pancreatic Adenocarcinoma)."
+        },
+        "version": {
+          "type": "string",
+          "description": "OncoTree version. Default: 'oncotree_latest_stable'.",
+          "default": "oncotree_latest_stable"
+        }
+      },
+      "required": ["code"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "code": {"type": ["string", "null"]},
+                "name": {"type": ["string", "null"]},
+                "main_type": {"type": ["string", "null"]},
+                "tissue": {"type": ["string", "null"]},
+                "color": {"type": ["string", "null"]},
+                "parent": {"type": ["string", "null"]},
+                "level": {"type": ["integer", "null"]},
+                "history": {"type": "array"},
+                "external_references": {"type": "object"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"code": "BRCA"},
+      {"code": "LUAD"},
+      {"code": "GBM"}
+    ],
+    "label": ["OncoTree", "Cancer", "Oncology", "Classification"],
+    "metadata": {
+      "tags": ["cancer", "oncology", "tumor type", "code lookup", "MSK", "UMLS", "NCI"],
+      "estimated_execution_time": "1-2 seconds"
+    }
+  },
+  {
+    "name": "OncoTree_list_tissues",
+    "type": "OncoTreeListTissuesTool",
+    "description": "List all tissue categories in the OncoTree hierarchy. Returns the unique set of tissue/organ names used as top-level groupings (e.g. 'Breast', 'Lung', 'Brain/CNS', 'Bladder/Urinary Tract'). Use to discover what tissues are represented in OncoTree before searching by tissue, or to enumerate all supported cancer tissue origins.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "OncoTree version. Default: 'oncotree_latest_stable'.",
+          "default": "oncotree_latest_stable"
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ],
+    "label": ["OncoTree", "Cancer", "Oncology", "Classification"],
+    "metadata": {
+      "tags": ["cancer", "tissue", "oncology", "MSK"],
+      "estimated_execution_time": "2-3 seconds"
+    }
+  }
+]

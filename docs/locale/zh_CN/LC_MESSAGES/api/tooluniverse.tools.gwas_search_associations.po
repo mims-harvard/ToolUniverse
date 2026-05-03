@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_search\\_associations 模块"
 #: c11b9153e3974fbaae3b4b73f83e8e39 of
 #: tooluniverse.tools.gwas_search_associations:1
 msgid "gwas_search_associations"
-msgstr ""
+msgstr "gwas_search_associations（GWAS关联搜索）"
 
 #: 52c6e5822ffe4e72bf8895fc1864e04f ac808ccc48764f14ab0da5bcedfd504c of
 #: tooluniverse.tools.gwas_search_associations:3

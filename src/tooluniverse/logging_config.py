@@ -178,6 +178,17 @@ class ToolUniverseLogger:
 _logger_manager = ToolUniverseLogger()
 
 
+def reconfigure_for_quiet() -> None:
+    """
+    Reconfigure logging to suppress INFO-level messages (quiet mode).
+
+    This function should be called after TOOLUNIVERSE_QUIET is set to ensure
+    that ℹ️ info lines are suppressed even if the logger singleton was already
+    initialized before the env var was exported.
+    """
+    _logger_manager.set_level("WARNING")
+
+
 def reconfigure_for_stdio() -> None:
     """
     Reconfigure logging to output to stderr for stdio mode.
@@ -207,8 +218,11 @@ def reconfigure_for_stdio() -> None:
     try:
         import warnings
 
-        warnings.showwarning = lambda *args, **kwargs: print(
-            warnings.formatwarning(*args, **kwargs), file=sys.stderr
+        warnings.showwarning = (
+            lambda message, category, filename, lineno, file=None, line=None: print(
+                warnings.formatwarning(message, category, filename, lineno, line),
+                file=sys.stderr,
+            )
         )
     except Exception:
         pass

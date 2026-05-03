@@ -1,8 +1,8 @@
 [
   {
-    "type": "ZenodoTool",
+    "type": "ZenodoRESTTool",
     "name": "Zenodo_search_records",
-    "description": "Search Zenodo for research data, publications, and datasets. Zenodo is an open-access repository that hosts research outputs from all fields of science, including papers, datasets, software, and more.",
+    "description": "Search Zenodo for research data, publications, and datasets. Zenodo is an open-access repository that hosts research outputs from all fields of science, including papers, datasets, software, and more. Returns records with title, authors, DOI, and file information. Use this to discover datasets for your research topic, find citable DOIs, or explore community repositories. Find record IDs to use with Zenodo_get_record for complete metadata.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,7 +10,7 @@
           "type": "string",
           "description": "Free text search query for Zenodo records. Use keywords to search across titles, descriptions, authors, and other metadata."
         },
-        "max_results": {
+        "limit": {
           "type": "integer",
           "description": "Maximum number of results to return. Must be between 1 and 200.",
           "default": 10,
@@ -23,67 +23,286 @@
         }
       },
       "required": [
-        "query",
-        "max_results"
+        "query"
       ]
     },
+    "fields": {
+      "endpoint": "https://zenodo.org/api/records",
+      "method": "GET",
+      "params": {
+        "all_versions": 1
+      }
+    },
     "return_schema": {
-      "type": "array",
-      "description": "List of Zenodo records matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the record"
-          },
-          "authors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of author/creator names"
-          },
-          "date": {
-            "type": "string",
-            "description": "Publication date"
-          },
-          "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier (DOI)"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the record on Zenodo"
-          },
-          "files": {
-            "type": [
-              "array",
-              "string"
-            ],
-            "description": "List of files or link to files associated with the record"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source identifier (always 'Zenodo')"
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"]
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Zenodo API search response",
+          "properties": {
+            "hits": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "array",
+                  "description": "Array of Zenodo record objects",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "integer"},
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "title": {"type": "string"},
+                          "creators": {"type": "array"},
+                          "publication_date": {"type": "string"},
+                          "doi": {"type": "string"},
+                          "description": {"type": "string"}
+                        }
+                      },
+                      "files": {"type": "array"},
+                      "links": {"type": "object"}
+                    }
+                  }
+                },
+                "total": {"type": "integer"}
+              }
+            }
           }
+        },
+        "count": {
+          "type": ["integer", "null"],
+          "description": "Number of records in the hits array"
+        },
+        "url": {
+          "type": ["string", "null"],
+          "description": "API endpoint URL used for the request"
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Error message if status is error"
         }
       }
     },
     "test_examples": [
       {
         "query": "machine learning",
-        "max_results": 2
+        "limit": 2
       },
       {
         "query": "COVID-19",
-        "max_results": 1
+        "limit": 1
       },
       {
         "query": "climate change",
-        "max_results": 3,
+        "limit": 3,
         "community": "zenodo"
       }
+    ]
+  },
+  {
+    "type": "ZenodoRESTTool",
+    "name": "Zenodo_get_record",
+    "description": "Get detailed metadata for a specific Zenodo record by its record ID. Returns comprehensive information including title, description, authors, DOI, publication date, keywords, license, file information, citations, and related identifiers. Use this to get complete metadata for a record found via search or when you have a specific Zenodo record ID or DOI. Find record IDs from Zenodo_search_records (format: integer like 1234567).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "record_id": {
+          "type": "integer",
+          "description": "Zenodo record identifier (e.g., 1234567, 7654321). Find record IDs using Zenodo_search_records or from publication DOIs (DOI format: 10.5281/zenodo.1234567)."
+        }
+      },
+      "required": ["record_id"]
+    },
+    "fields": {
+      "endpoint": "https://zenodo.org/api/records/{record_id}",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Complete record metadata.",
+      "additionalProperties": true,
+      "properties": {
+        "id": {"type": "integer"},
+        "doi": {"type": "string"},
+        "conceptdoi": {"type": "string"},
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "title": {"type": "string"},
+            "description": {"type": "string"},
+            "creators": {"type": "array"},
+            "publication_date": {"type": "string"},
+            "keywords": {"type": "array"},
+            "license": {"type": "object"},
+            "upload_type": {"type": "string"},
+            "access_right": {"type": "string"},
+            "related_identifiers": {"type": "array"},
+            "version": {"type": "string"}
+          }
+        },
+        "links": {"type": "object"},
+        "files": {"type": "array"},
+        "created": {"type": "string"},
+        "updated": {"type": "string"},
+        "status": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"record_id": 1234567},
+      {"record_id": 7654321}
+    ]
+  },
+  {
+    "type": "ZenodoRESTTool",
+    "name": "Zenodo_get_record_files",
+    "description": "Get the list of files for a specific Zenodo record including file names, sizes, checksums, and download URLs. Returns detailed file metadata essential for downloading datasets, code, or supplementary materials. Each file includes direct download URL, MD5 checksum for verification, file type, and size in bytes. Use this to access the actual data files from a Zenodo record. Find record IDs from Zenodo_search_records or Zenodo_get_record.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "record_id": {
+          "type": "integer",
+          "description": "Zenodo record identifier (e.g., 1234567). Find record IDs using Zenodo_search_records."
+        }
+      },
+      "required": ["record_id"]
+    },
+    "fields": {
+      "endpoint": "https://zenodo.org/api/records/{record_id}",
+      "method": "GET",
+      "extract_path": "files"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of files with download URLs.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "key": {"type": "string", "description": "File name"},
+          "size": {"type": "integer", "description": "File size in bytes"},
+          "checksum": {"type": "string", "description": "MD5 checksum"},
+          "type": {"type": "string", "description": "MIME type"},
+          "links": {
+            "type": "object",
+            "properties": {
+              "self": {"type": "string", "description": "Download URL"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"record_id": 1234567},
+      {"record_id": 7654321}
+    ]
+  },
+  {
+    "type": "ZenodoRESTTool",
+    "name": "Zenodo_list_licenses",
+    "description": "List available licenses that can be applied to Zenodo uploads. Returns license metadata including license ID, title, URL, and description. Use this to discover available open licenses (e.g., Creative Commons, MIT, GPL) for your data uploads, or to understand the licensing terms of existing records. Essential for researchers planning to upload data or checking licensing compliance.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Optional search query to filter licenses by name or keyword (e.g., 'creative commons', 'MIT', 'GPL')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of licenses to return (default: 25, max: 100).",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://zenodo.org/api/vocabularies/licenses",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Zenodo licenses search response.",
+      "additionalProperties": true,
+      "properties": {
+        "hits": {
+          "type": "object",
+          "properties": {
+            "hits": {
+              "type": "array",
+              "description": "List of available licenses.",
+              "items": {
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {
+                  "id": {"type": "string"},
+                  "title": {"type": "object"},
+                  "description": {"type": "object"},
+                  "props": {"type": "object"},
+                  "tags": {"type": "array"}
+                }
+              }
+            },
+            "total": {"type": "integer"}
+          }
+        },
+        "sortBy": {"type": "string"},
+        "page": {"type": "integer"},
+        "links": {"type": "object"}
+      }
+    },
+    "test_examples": [
+      {},
+      {"query": "creative commons", "limit": 10},
+      {"query": "MIT"}
+    ]
+  },
+  {
+    "type": "ZenodoRESTTool",
+    "name": "Zenodo_get_license",
+    "description": "Get detailed information about a specific license by its license ID. Returns complete license metadata including title, URL, description, domains of applicability (content/data/software), and license status. Use this to understand the specific terms and conditions of a license before applying it to your uploads or when checking the licensing of existing records. Find license IDs using Zenodo_list_licenses (common IDs: 'cc-by-4.0', 'cc-zero', 'MIT', 'Apache-2.0', 'GPL-3.0').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "license_id": {
+          "type": "string",
+          "description": "License identifier (e.g., 'cc-by-4.0', 'MIT', 'Apache-2.0', 'GPL-3.0'). Find license IDs using Zenodo_list_licenses. Common IDs include Creative Commons licenses (cc-by, cc-by-sa, cc-zero), open source licenses (MIT, Apache, GPL), and others."
+        }
+      },
+      "required": ["license_id"]
+    },
+    "fields": {
+      "endpoint": "https://zenodo.org/api/vocabularies/licenses/{license_id}",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Detailed license information.",
+      "additionalProperties": true,
+      "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "object"},
+        "description": {"type": "object"},
+        "props": {"type": "object"},
+        "tags": {"type": "array"},
+        "created": {"type": "string"},
+        "updated": {"type": "string"},
+        "links": {"type": "object"},
+        "revision_id": {"type": "integer"},
+        "type": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"license_id": "cc-by-4.0"},
+      {"license_id": "mit"},
+      {"license_id": "apache-2.0"}
     ]
   }
 ]

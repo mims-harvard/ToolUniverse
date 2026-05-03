@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ClinVar\\_search\\_variants 模块"
 #: fd2ee0c7201141bd99d9a1acd33e815d of
 #: tooluniverse.tools.ClinVar_search_variants:1
 msgid "ClinVar_search_variants"
-msgstr ""
+msgstr "ClinVar_搜索变异"
 
 #: 3d65eb6890234f4aa61418a77282f0c0 b5aca6fa1c7c48bc94bc38b3e7b63668 of
 #: tooluniverse.tools.ClinVar_search_variants:3

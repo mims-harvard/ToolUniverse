@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_get\\_associations\\_for\\_study 模块"
 #: 89c8507fa86d4824beae02bbcd099992 of
 #: tooluniverse.tools.gwas_get_associations_for_study:1
 msgid "gwas_get_associations_for_study"
-msgstr ""
+msgstr "gwas_get_associations_for_study 获取研究关联信息"
 
 #: 0a3d201c87204215b7f42836e8707560 18643a8e913743eca6d9548e7131a33c of
 #: tooluniverse.tools.gwas_get_associations_for_study:3

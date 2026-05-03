@@ -218,6 +218,23 @@ def extract_tool_info(tools_result):
 tool_info1 = extract_tool_info(result1)
 tool_info2 = extract_tool_info(result2)
 
+
+# =============================================================================
+# Tool_Rag Test (simple, like Tool_Finder examples)
+# =============================================================================
+
+# Try: simple Tool_Rag query
+result_rag = tu.run({
+    "name": "Tool_RAG",
+    "arguments": {
+        "description": "Find tools for gene prediction.",
+        "limit": 2
+    }
+})
+print("\n[Tool_RAG] Result:")
+print(result_rag)
+
+
 # =============================================================================
 # Summary of Tool Discovery Tools
 # =============================================================================

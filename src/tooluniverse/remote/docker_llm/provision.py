@@ -129,9 +129,7 @@ def _wait_for_health(
     raise ProvisionError(f"Container health check did not succeed at {url}")
 
 
-def _write_remote_config(
-    config: List[Dict[str, object]], *, tool_name: str
-) -> Path:
+def _write_remote_config(config: List[Dict[str, object]], *, tool_name: str) -> Path:
     target_dir = _ensure_remote_dir()
     path = target_dir / f"{tool_name}.json"
     with path.open("w", encoding="utf-8") as handle:
@@ -163,7 +161,9 @@ def provision_docker_llm(
     """
     Ensure a Docker-hosted LLM is running and registered with ToolUniverse.
     """
-    container_name = container_name or f"{DEFAULT_CONTAINER_BASENAME}-{int(time.time())}"
+    container_name = (
+        container_name or f"{DEFAULT_CONTAINER_BASENAME}-{int(time.time())}"
+    )
     tool_prefix = tool_prefix or (tool_name.lower() + "_")
     if not tool_prefix.endswith("_"):
         tool_prefix += "_"
@@ -172,7 +172,9 @@ def provision_docker_llm(
     try:
         _run_docker(["version"], docker_cli=docker_cli, check=True)
     except FileNotFoundError as exc:
-        raise ProvisionError("Docker CLI not found. Please install Docker Desktop.") from exc
+        raise ProvisionError(
+            "Docker CLI not found. Please install Docker Desktop."
+        ) from exc
     except subprocess.CalledProcessError as exc:
         raise ProvisionError(f"Docker is not available: {exc.stderr.strip()}") from exc
 

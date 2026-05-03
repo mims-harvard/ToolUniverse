@@ -26,7 +26,7 @@ msgstr "tooluniverse.dbsnp\\_tool 模块"
 
 #: 40f2d0c7509f4bf89868cf20db51dfd0 of tooluniverse.dbsnp_tool.DbSnpTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: 3858d20f81d14b25a9868168a152f326 of tooluniverse.dbsnp_tool.DbSnpTool:1
 msgid ""

@@ -1,0 +1,292 @@
+[
+  {
+    "name": "LipidMaps_get_compound_by_id",
+    "description": "Get lipid structure and classification by LIPID MAPS ID (LMID). Returns full lipid record including name, formula, exact mass, SMILES, InChI, cross-references to KEGG/HMDB/ChEBI/PubChem. Example: 'LMFA08040013' returns Palmitoyl-EA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_value": {
+          "type": "string",
+          "description": "LIPID MAPS ID (LMID), e.g., 'LMFA08040013'. Format: LM + 2-letter category + 8-digit number."
+        },
+        "output_item": {
+          "type": "string",
+          "description": "Type of output. Options: 'all' (complete record), 'name', 'formula', 'exactmass', 'smiles', 'classification', 'molfile'.",
+          "default": "all"
+        }
+      },
+      "required": [
+        "input_value"
+      ]
+    },
+    "fields": {
+      "context": "compound",
+      "input_item": "lm_id"
+    },
+    "type": "LipidMapsTool",
+    "test_examples": [
+      {
+        "input_value": "LMFA08040013"
+      },
+      {
+        "input_value": "LMFA01030185",
+        "output_item": "all"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "lm_id": {
+          "type": ["string", "null"]
+        },
+        "name": {
+          "type": ["string", "null"]
+        },
+        "sys_name": {
+          "type": ["string", "null"]
+        },
+        "formula": {
+          "type": ["string", "null"]
+        },
+        "exactmass": {
+          "type": ["string", "null"]
+        },
+        "smiles": {
+          "type": ["string", "null"]
+        },
+        "inchi_key": {
+          "type": ["string", "null"]
+        },
+        "core": {
+          "type": ["string", "null"]
+        },
+        "main_class": {
+          "type": ["string", "null"]
+        },
+        "sub_class": {
+          "type": ["string", "null"]
+        },
+        "kegg_id": {
+          "type": ["string", "null"]
+        },
+        "hmdb_id": {
+          "type": ["string", "null"]
+        },
+        "chebi_id": {
+          "type": ["string", "null"]
+        },
+        "pubchem_cid": {
+          "type": ["string", "null"]
+        },
+        "input": {
+          "type": ["string", "null"]
+        },
+        "regno": {
+          "type": ["string", "null"]
+        },
+        "abbrev": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  },
+  {
+    "name": "LipidMaps_search_by_name",
+    "description": "Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact lipidomics abbreviations work (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' or 'sphingomyelin' will NOT match — use LipidMaps_search_by_formula for class-level searches. Returns matching lipid records with structures and classification.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_value": {
+          "type": "string",
+          "description": "Exact lipid abbreviation used in lipidomics (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' will not match — use exact abbreviations only."
+        },
+        "output_item": {
+          "type": "string",
+          "description": "Type of output. Options: 'all', 'name', 'formula', 'exactmass', 'smiles', 'classification'.",
+          "default": "all"
+        }
+      },
+      "required": [
+        "input_value"
+      ]
+    },
+    "fields": {
+      "context": "compound",
+      "input_item": "abbrev"
+    },
+    "type": "LipidMapsTool",
+    "test_examples": [
+      {
+        "input_value": "DHA"
+      },
+      {
+        "input_value": "EPA",
+        "output_item": "all"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "lm_id": {"type": ["string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "formula": {"type": ["string", "null"]},
+            "exactmass": {"type": ["string", "null"]},
+            "smiles": {"type": ["string", "null"]},
+            "core": {"type": ["string", "null"]},
+            "abbrev": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "lm_id": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "formula": {"type": ["string", "null"]},
+              "abbrev": {"type": ["string", "null"]}
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "LipidMaps_search_by_formula",
+    "description": "Search lipids by molecular formula in LIPID MAPS Structure Database. Returns all lipids matching the given formula. Example: 'C22H32O2' finds DHA and related C22:6 fatty acids.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_value": {
+          "type": "string",
+          "description": "Molecular formula (e.g., 'C22H32O2', 'C16H32O2'). Standard chemical formula format."
+        },
+        "output_item": {
+          "type": "string",
+          "description": "Type of output. Options: 'all', 'name', 'smiles', 'classification'.",
+          "default": "all"
+        }
+      },
+      "required": [
+        "input_value"
+      ]
+    },
+    "fields": {
+      "context": "compound",
+      "input_item": "formula"
+    },
+    "type": "LipidMapsTool",
+    "test_examples": [
+      {
+        "input_value": "C16H32O2"
+      },
+      {
+        "input_value": "C22H32O2",
+        "output_item": "all"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "lm_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "formula": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "exactmass": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "smiles": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "core": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "main_class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sub_class": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "input": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "regno": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sys_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "abbrev": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "inchi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "inchi_key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "chebi_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pubchem_cid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+]

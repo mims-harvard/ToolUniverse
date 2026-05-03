@@ -209,9 +209,9 @@ class FormattingHook(OutputHook):
             formatted_items = []
             for i, item in enumerate(data):
                 if isinstance(item, dict):
-                    formatted_items.append(f"{i+1}. {self._format_json(item)}")
+                    formatted_items.append(f"{i + 1}. {self._format_json(item)}")
                 else:
-                    formatted_items.append(f"{i+1}. {str(item)}")
+                    formatted_items.append(f"{i + 1}. {str(item)}")
             return "\n".join(formatted_items)
         return str(data)
 
@@ -419,9 +419,9 @@ Tool Execution Log:
 ==================
 Tool: {tool_name}
 Arguments: {arguments}
-Execution Time: {context.get('execution_time', 'unknown')}
+Execution Time: {context.get("execution_time", "unknown")}
 Output Length: {len(str(result))} characters
-Output Preview: {str(result)[:self.max_log_size]}{'...' if len(str(result)) > self.max_log_size else ''}
+Output Preview: {str(result)[: self.max_log_size]}{"..." if len(str(result)) > self.max_log_size else ""}
 ==================
 """
 

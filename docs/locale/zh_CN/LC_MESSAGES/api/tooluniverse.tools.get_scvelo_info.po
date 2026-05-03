@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_scvelo\\_info 模块"
 #: a74baa84b3cf499e887ddf0fad115f38 of tooluniverse.tools.get_scvelo_info:1
 msgid "get_scvelo_info"
 msgstr ""
+"get_scvelo_info\n"
+"\n"
+"获取_scvelo_信息"
 
 #: 65fa850c365845ce95f3ebbabffdc8cd fee562e745414940a0e052bcfb3e2bf9 of
 #: tooluniverse.tools.get_scvelo_info:3

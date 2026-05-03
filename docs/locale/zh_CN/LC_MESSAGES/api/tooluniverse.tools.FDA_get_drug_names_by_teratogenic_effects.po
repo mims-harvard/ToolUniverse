@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_teratogenic\\_effects
 #: 1e661fe670ee44e4a7b46243aac9a572 of
 #: tooluniverse.tools.FDA_get_drug_names_by_teratogenic_effects:1
 msgid "FDA_get_drug_names_by_teratogenic_effects"
-msgstr ""
+msgstr "FDA_根据致畸效应获取药物名称"
 
 #: 1253774e08bd4fca8df3a134b5e7ed38 e79a211c90514f13b3b83e7f206952d8 of
 #: tooluniverse.tools.FDA_get_drug_names_by_teratogenic_effects:3

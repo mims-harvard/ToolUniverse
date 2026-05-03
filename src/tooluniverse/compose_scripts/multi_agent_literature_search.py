@@ -29,7 +29,7 @@ def _format_papers_for_summary_v2(papers):
    Authors: {authors_str}
    Year: {year}
    Venue: {venue}
-   Abstract: {abstract[:200]}{'...' if len(abstract) > 200 else ''}
+   Abstract: {abstract[:200]}{"..." if len(abstract) > 200 else ""}
 """
         formatted_papers.append(formatted_paper)
 
@@ -162,7 +162,7 @@ def compose(arguments, tooluniverse, call_tool, stream_callback=None):
         search_plans = []
         for i, plan_data in enumerate(search_plans_data):
             plan = {
-                "plan_id": f"plan_{i+1}",
+                "plan_id": f"plan_{i + 1}",
                 "title": plan_data.get("title", ""),
                 "description": plan_data.get("description", ""),
                 "keywords": plan_data.get("keywords", []),
@@ -721,10 +721,10 @@ def _format_plans_for_analysis(plans):
     for plan in plans:
         formatted.append(
             f"""
-Plan: {plan['title']}
-Quality Score: {plan['quality_score']:.2f}
-Results Count: {len(plan['results'])}
-Status: {plan['status']}
+Plan: {plan["title"]}
+Quality Score: {plan["quality_score"]:.2f}
+Results Count: {len(plan["results"])}
+Status: {plan["status"]}
 """
         )
     return "\n".join(formatted)
@@ -767,11 +767,11 @@ def _format_plan_summaries(plans):
         if plan["summary"]:
             summaries.append(
                 f"""
-Plan: {plan['title']}
-Description: {plan['description']}
-Quality Score: {plan['quality_score']:.2f}
-Results: {len(plan['results'])} papers
-Summary: {plan['summary']}
+Plan: {plan["title"]}
+Description: {plan["description"]}
+Quality Score: {plan["quality_score"]:.2f}
+Results: {len(plan["results"])} papers
+Summary: {plan["summary"]}
 """
             )
     return "\n".join(summaries)

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_tiledbsoma\\_info 模块"
 #: 9657b1125a0a40179c5453bd332f76d9 of
 #: tooluniverse.tools.get_tiledbsoma_info:1
 msgid "get_tiledbsoma_info"
-msgstr ""
+msgstr "get_tiledbsoma_信息获取"
 
 #: 8f2497394f004a97b8e849a04dd0b2cd f84ff3f9fd2945f9a92f52cf71e3b0d1 of
 #: tooluniverse.tools.get_tiledbsoma_info:3

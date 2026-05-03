@@ -7,27 +7,26 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-19 14:36-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/modules.rst:2 0f52ccbc82114ad4af6092dbb14aa653
 msgid "API Reference"
-msgstr ""
+msgstr "API参考"
 
 #: ../../api/modules.rst:5 2f542b4b3f7b40088ca9b63b1fb7657c
 msgid "Core Modules"
-msgstr ""
+msgstr "核心模块"
 
 #~ msgid "tooluniverse"
 #~ msgstr "工具宇宙"
-

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_scikit\\_bio\\_info 模块"
 #: 23b3ad612d7e4a629cbf2edbaefe45a2 of
 #: tooluniverse.tools.get_scikit_bio_info:1
 msgid "get_scikit_bio_info"
-msgstr ""
+msgstr "get_scikit_bio_信息"
 
 #: 1fe382bca3be4a4c8238d5aca2062f4a 6f5ad8bdf992499aa6081b658935eadc of
 #: tooluniverse.tools.get_scikit_bio_info:3

@@ -24,7 +24,6 @@ class ComposeTool(BaseTool):
     """
 
     def __init__(self, tool_config, tooluniverse=None):
-        super().__init__(tool_config)
         """
         Initialize the ComposeTool.
 
@@ -32,6 +31,7 @@ class ComposeTool(BaseTool):
             tool_config (dict): Tool configuration containing composition code or file reference
             tooluniverse (ToolUniverse): Reference to the ToolUniverse instance
         """
+        super().__init__(tool_config)
         self.tool_config = tool_config
         self.name = tool_config.get("name", "unnamed_compose_tool")
         self.tooluniverse = tooluniverse
@@ -217,10 +217,13 @@ class ComposeTool(BaseTool):
             Any: Result from the composition execution
         """
         if not self.tooluniverse:
-            return {"error": "ToolUniverse reference is required for ComposeTool"}
+            return {
+                "status": "error",
+                "error": "ToolUniverse reference is required for ComposeTool",
+            }
 
         if not self.composition_code:
-            return {"error": "No composition code provided"}
+            return {"status": "error", "error": "No composition code provided"}
 
         # Check for missing dependencies
         all_dependencies = self.discovered_dependencies.union(set(self.required_tools))
@@ -247,6 +250,7 @@ class ComposeTool(BaseTool):
                 if still_missing:
                     if self.fail_on_missing_tools:
                         return {
+                            "status": "error",
                             "error": f"Required tools not available: {', '.join(still_missing)}",
                             "missing_tools": list(still_missing),
                             "auto_loaded": list(successfully_loaded),
@@ -258,6 +262,7 @@ class ComposeTool(BaseTool):
             else:
                 if self.fail_on_missing_tools:
                     return {
+                        "status": "error",
                         "error": f"Required tools not available: {', '.join(missing_tools)}",
                         "missing_tools": list(missing_tools),
                         "auto_load_disabled": True,
@@ -277,10 +282,14 @@ class ComposeTool(BaseTool):
 
         except Exception as e:
             error_msg = f"Error in ComposeTool '{self.name}': {str(e)}"
-            traceback.print_exc()  # 打印完整堆栈
+            traceback.print_exc()  # Print full stack trace
             print(f"\033[91m{error_msg}\033[0m")
 
-            return {"error": error_msg, "traceback": traceback.format_exc()}
+            return {
+                "status": "error",
+                "error": error_msg,
+                "traceback": traceback.format_exc(),
+            }
 
     def _emit_stream_chunk(self, chunk, stream_callback):
         """

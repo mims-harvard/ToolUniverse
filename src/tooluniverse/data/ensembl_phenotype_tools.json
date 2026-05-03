@@ -1,0 +1,378 @@
+[
+  {
+    "name": "EnsemblPheno_get_by_gene",
+    "description": "Get phenotype associations for a gene from the Ensembl REST API. Returns diseases, traits, and clinical conditions linked to the gene, aggregated from multiple sources including Cancer Gene Census, OMIM, ClinVar, NHGRI-EBI GWAS catalog, and Orphanet. Each entry includes the phenotype description, data source, genomic location, and ontology accessions (EFO, HP, Orphanet). Example: BRCA1 returns 162 phenotype associations across multiple cancer types and other conditions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.",
+          "default": "homo_sapiens"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol. Examples: 'BRCA1', 'TP53', 'EGFR', 'KRAS', 'BRAF'."
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene"
+    },
+    "type": "EnsemblPhenotypeTool",
+    "test_examples": [
+      {
+        "gene": "BRCA1"
+      },
+      {
+        "gene": "TP53",
+        "species": "homo_sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "phenotype_count": {
+                  "type": "integer"
+                },
+                "phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_ensembl_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ontology_accessions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "external_references": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblPheno_get_by_region",
+    "description": "Get phenotype associations for all variants and genes in a genomic region from the Ensembl REST API. Returns disease/trait associations from GWAS catalog, ClinVar, Cancer Gene Census, etc. for features overlapping the specified region. Useful for understanding the phenotypic landscape of a genomic interval, especially for interpreting GWAS loci or candidate regions. Example: TP53 region (chr17:7661779-7687538) returns phenotype associations from the NHGRI-EBI GWAS catalog.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.",
+          "default": "homo_sapiens"
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chromosome:start-end'. Example: '17:7661779-7687538' for TP53, '17:43044295-43125482' for BRCA1. Keep regions under 5Mb for reasonable response times."
+        },
+        "feature_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by feature type: 'Variation' (variants only), 'Gene' (genes only), 'QTL' (quantitative trait loci). Default: all types."
+        }
+      },
+      "required": [
+        "region"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "region"
+    },
+    "type": "EnsemblPhenotypeTool",
+    "test_examples": [
+      {
+        "region": "17:7661779-7687538"
+      },
+      {
+        "region": "7:140424943-140524564",
+        "species": "homo_sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "region": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "phenotype_count": {
+                  "type": "integer"
+                },
+                "phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "location": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ontology_accessions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblPheno_get_by_variant",
+    "description": "Get phenotype associations for a specific variant (by rsID) from the Ensembl REST API. Returns traits, diseases, and phenotypes associated with the variant from NHGRI-EBI GWAS catalog, ClinVar, and other sources. Includes risk alleles, beta coefficients/odds ratios, p-values, and study references. Example: rs429358 (APOE epsilon 4 variant) returns 1004 phenotype associations including Alzheimer disease, LDL cholesterol levels, and metabolite measurements.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.",
+          "default": "homo_sapiens"
+        },
+        "variant_id": {
+          "type": "string",
+          "description": "Variant rsID. Examples: 'rs429358' (APOE e4), 'rs7903146' (TCF7L2 diabetes), 'rs1801133' (MTHFR)."
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "variant"
+    },
+    "type": "EnsemblPhenotypeTool",
+    "test_examples": [
+      {
+        "variant_id": "rs429358"
+      },
+      {
+        "variant_id": "rs7903146",
+        "species": "homo_sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant_id": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "phenotype_count": {
+                  "type": "integer"
+                },
+                "phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "trait": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "risk_allele": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "pvalue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "beta_coefficient": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "study": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "genes": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ontology_accessions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

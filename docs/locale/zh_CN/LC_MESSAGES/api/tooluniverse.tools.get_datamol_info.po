@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_datamol\\_info 模块"
 
 #: 2a8c795f517e482c85e09751bc4d43ed of tooluniverse.tools.get_datamol_info:1
 msgid "get_datamol_info"
-msgstr ""
+msgstr "获取_datamol_信息"
 
 #: 4b8ccd7484894d76b0adbd0d00618f02 951d48c625254ca19118cd39f42c7646 of
 #: tooluniverse.tools.get_datamol_info:3

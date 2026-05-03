@@ -155,7 +155,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:36
 #: ca40059087f6470b8a70bc55fd31d044
 msgid "可限制每个文件的翻译条目数量"
-msgstr ""
+msgstr "每个文件的翻译条目数量可进行限制"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:37
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:142
@@ -276,7 +276,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:129
 #: e16edd4613274eb3876f52f2ca32069b
 msgid "✅ 翻译工具初始化成功"
-msgstr ""
+msgstr "✅ Translation tool initialized successfully"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:130
 #: 0794dfe33f96416b8ad5ebedbb733637
@@ -296,7 +296,7 @@ msgstr "✅ 批量翻译功能运行正常"
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:133
 #: bc1de24ae2c04956a8dbb15ab78d0691
 msgid "✅ 错误处理机制有效"
-msgstr ""
+msgstr "✅ 错误处理机制已生效"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:135
 #: 3a2c76b91d8e4bb59fb62e83b936a509
@@ -306,7 +306,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:136
 #: 486a5d4a11244aff9a1166a988bb2309
 msgid "测试翻译：\"Hello World\" → \"你好，世界\""
-msgstr ""
+msgstr "测试翻译：“Hello World” → “你好，世界”"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:137
 #: 95e8eff18a044148ae89ebb76b90f2fa
@@ -326,7 +326,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:141
 #: 80cb8b4111cf45669fa9c99d79661ad6
 msgid "支持大规模批量翻译（229个.po文件）"
-msgstr ""
+msgstr "支持大规模批量翻译（229个.po 文件）"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:143
 #: dbe47c9af2974143859c9604f14ed078
@@ -346,7 +346,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:161
 #: 1e10eb5e81864f7cb9908ef86a1fb037
 msgid "1. 无需修改源代码"
-msgstr ""
+msgstr "1. No need to modify the source code"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:162
 #: 7f1834c3f92c4f2c9226f484b11f5587
@@ -361,7 +361,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:164
 #: 656d344342974757a13b7e44883a1f72
 msgid "易于维护和更新"
-msgstr ""
+msgstr "易于维护与更新"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:166
 #: 7bc4bb6b1f8e4805b0d46188463b2bf9
@@ -391,7 +391,7 @@ msgstr "3. 生产准备就绪"
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:172
 #: 54d410a83a074e17a8526f1eb25efdd3
 msgid "完整的错误处理"
-msgstr ""
+msgstr "完整的错误处理机制"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:173
 #: 49e9c29f26f1484e9848323096eefb53
@@ -416,7 +416,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:178
 #: 212aaa06389e48669967281492ce3400
 msgid "详细的帮助信息"
-msgstr ""
+msgstr "Detailed help information"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:179
 #: 3a07988e75ae4caa993c5bfbb7ae96e3
@@ -426,7 +426,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:181
 #: 4452c5bbee7b4b8491ed1cde6fbb1cc6
 msgid "扩展可能性"
-msgstr ""
+msgstr "扩展潜力"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:183
 #: 1756d7921c6142e1909de1620fdaede0
@@ -503,6 +503,8 @@ msgstr ""
 #: f9cde4ab8c644fc6a1dac20e115694d6
 msgid "🚀 **简单易用**：命令行界面，无需编程知识"
 msgstr ""
+"🚀 **Simple and Easy to Use**: Command-line interface, no programming "
+"knowledge required"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:203
 #: 02d8d0b3989047f58147720fafe74a99
@@ -512,7 +514,7 @@ msgstr ""
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:204
 #: 4fb746526b704ee3bb16b76e9d614672
 msgid "📊 **详细统计**：完整的翻译进度和状态信息"
-msgstr ""
+msgstr "📊 **详细统计**：完整的翻译进度与状态信息"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:205
 #: 7b61ade9f7824096a5f70fd1753f3aa4
@@ -522,12 +524,12 @@ msgstr "🛡️ **错误处理**：优雅地处理各种异常情况"
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:206
 #: 1f338060717d4b79b6095db9725f46ae
 msgid "🔄 **批量处理**：支持大规模翻译任务"
-msgstr ""
+msgstr "🔄 **Batch Processing**：支持大规模翻译任务"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:207
 #: 56d5eceb253c42729f4bfd79986b54a9
 msgid "🎯 **智能翻译**：使用 LLM 进行高质量翻译"
-msgstr ""
+msgstr "🎯 **智能翻译**：利用大型语言模型（LLM）实现高质量翻译"
 
 #: ../../translation_tools/AGENTIC_TRANSLATION_TOOL_SUMMARY.md:209
 #: 48e8a5f33d9a474493fb5014890c9db7

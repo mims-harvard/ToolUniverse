@@ -400,10 +400,10 @@ msgstr "**查看文档**：:doc:`user_guide/index`"
 #: ../../help/faq.rst:365 969822d872d9465e8ece452dade68957
 msgid ""
 "**Search existing issues**: `GitHub Issues "
-"<https://github.com/zitniklab/tooluniverse/issues>`_"
+"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
 msgstr ""
 "**搜索现有问题**：`GitHub Issues "
-"<https://github.com/zitniklab/tooluniverse/issues>`_"
+"<https://github.com/mims-harvard/ToolUniverse/issues>`_"
 
 #: ../../help/faq.rst:366 d0c90635e5164cdbafd623830467685c
 msgid "**Ask the community**: Join our Discord server"

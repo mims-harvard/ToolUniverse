@@ -1,0 +1,112 @@
+[
+  {
+    "name": "DegreesOfUnsaturation_calculate",
+    "type": "DegreesOfUnsaturationTool",
+    "description": "Calculate degrees of unsaturation (DoU, also called index of hydrogen deficiency or degree of unsaturation) from a molecular formula. Uses the formula DoU = (2C + 2 + N - H - X) / 2 where X = total halogens (F, Cl, Br, I). Oxygen and sulfur do not affect DoU. Accepts either a formula string (e.g., 'C6H6') or explicit atom counts. Returns DoU value with structural interpretation: 0 = saturated, 1 = one ring or double bond, 4 = benzene ring, etc. Half-integer DoU indicates a formula error for neutral molecules.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "calculate"
+          ],
+          "description": "Operation type"
+        },
+        "formula": {
+          "type": "string",
+          "description": "Molecular formula string (e.g., 'C6H6', 'C8H15ClN2O2'). Alternative to explicit atom counts."
+        },
+        "C": {
+          "type": "integer",
+          "description": "Number of carbon atoms (use if formula not provided)"
+        },
+        "H": {
+          "type": "integer",
+          "description": "Number of hydrogen atoms (use if formula not provided)"
+        },
+        "N": {
+          "type": "integer",
+          "description": "Number of nitrogen atoms (default 0)"
+        },
+        "S": {
+          "type": "integer",
+          "description": "Number of sulfur atoms (does not affect DoU)"
+        },
+        "F": {
+          "type": "integer",
+          "description": "Number of fluorine atoms"
+        },
+        "Cl": {
+          "type": "integer",
+          "description": "Number of chlorine atoms"
+        },
+        "Br": {
+          "type": "integer",
+          "description": "Number of bromine atoms"
+        },
+        "oxygen": {
+          "type": "integer",
+          "description": "Number of oxygen atoms (does not affect DoU, tracked for formula display)"
+        },
+        "iodine": {
+          "type": "integer",
+          "description": "Number of iodine atoms"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "formula": {
+                  "type": "string"
+                },
+                "degrees_of_unsaturation": {
+                  "type": "number"
+                },
+                "calculation": {
+                  "type": "string"
+                },
+                "interpretation": {
+                  "type": "string"
+                },
+                "is_integer": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "calculate",
+        "formula": "C6H6"
+      },
+      {
+        "operation": "calculate",
+        "formula": "C8H15ClN2O2"
+      }
+    ]
+  }
+]

@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_numba\\_info 模块"
 
 #: 4352c69d8d864626a887a86cb806d557 of tooluniverse.tools.get_numba_info:1
 msgid "get_numba_info"
-msgstr ""
+msgstr "获取_numba_信息"
 
 #: 6ed73511f9d94c26a4d293abb2ff18a2 d499792a8f8a4c59930ee40845467f28 of
 #: tooluniverse.tools.get_numba_info:3

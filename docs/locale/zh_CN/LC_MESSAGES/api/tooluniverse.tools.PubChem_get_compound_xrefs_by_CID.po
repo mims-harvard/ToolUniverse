@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.PubChem\\_get\\_compound\\_xrefs\\_by\\_CID 模块"
 #: 11e9716fd98a47139c8b2d58f6b2af60 of
 #: tooluniverse.tools.PubChem_get_compound_xrefs_by_CID:1
 msgid "PubChem_get_compound_xrefs_by_CID"
-msgstr ""
+msgstr "PubChem_通过CID获取化合物交叉引用"
 
 #: c0e1177abe3a4dd5b96b96cdedd61c97 d96d04c3d992409292e6fe8be9d956fd of
 #: tooluniverse.tools.PubChem_get_compound_xrefs_by_CID:3
@@ -78,4 +78,4 @@ msgstr "返回类型"
 #: 3805fcad309f4ed39b31bbe7a7fbe9d1 of
 #: tooluniverse.tools.PubChem_get_compound_xrefs_by_CID.PubChem_get_compound_xrefs_by_CID:14
 msgid ":py:class:`Any`"
-msgstr ""
+msgstr ":py:class:`任意`"

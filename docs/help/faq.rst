@@ -1,7 +1,12 @@
-FAQ - Frequently Asked Questions
-==================================
+Comprehensive FAQ
+=================
 
-This page contains answers to the most frequently asked questions about ToolUniverse.
+This page contains detailed answers to frequently asked questions about ToolUniverse.
+
+.. tip::
+   **Need a quick answer?**
+   
+   For brief answers to the most common questions, see :doc:`faq`. This page provides comprehensive information with detailed explanations, troubleshooting tips, and advanced topics.
 
 General Questions
 -----------------
@@ -29,7 +34,7 @@ ToolUniverse is a comprehensive collection of scientific tools for Agentic AI, o
 
       .. code-block:: bash
 
-         python -m tooluniverse.smcp_server
+         tooluniverse-smcp
 
    .. tab:: Command Line
 
@@ -69,7 +74,7 @@ How do I install ToolUniverse?
 
       .. code-block:: bash
 
-         git clone https://github.com/zitniklab/tooluniverse
+         git clone https://github.com/mims-harvard/ToolUniverse
          cd tooluniverse
          pip install -e .
 
@@ -82,19 +87,15 @@ How do I install ToolUniverse?
 Do I need API keys?
 ~~~~~~~~~~~~~~~~~~~
 
-Some tools require API keys for accessing external services:
+Most tools work without API keys! However, some tools require authentication or provide higher rate limits with API keys.
 
-**Required API Keys:**
-- OpenTargets Platform API key (free registration)
-- NCBI E-utilities API key (optional but recommended)
+**Quick answer:**
 
-**How to set API keys:**
+- **No API keys needed** for most tools (PubMed, UniProt, ChEMBL, OpenTargets, etc.)
+- **Recommended for better performance**: NCBI, FDA (3-10x faster rate limits)
+- **Required for specific features**: NVIDIA NIM (structure prediction), USPTO (patents), DisGeNET, OMIM
 
-.. code-block:: python
-
-   import os
-   os.environ['OPENTARGETS_API_KEY'] = 'your_api_key_here'
-   os.environ['NCBI_API_KEY'] = 'your_ncbi_key_here'
+**For complete details**, see :doc:`../guide/api_keys` which covers all API keys, how to obtain them, rate limits, and configuration methods.
 
 Common Issues
 -------------
@@ -132,7 +133,9 @@ Many scientific APIs have rate limits. ToolUniverse implements automatic rate li
 
       .. code-block:: python
 
-         tu = ToolUniverse(enable_cache=True)
+         # Caching is enabled by default
+         tu = ToolUniverse()
+         result = tu.run(..., use_cache=True)
 Tool returns empty results?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -161,7 +164,7 @@ How do I use ToolUniverse with Claude?
 
    .. code-block:: bash
 
-      python -m tooluniverse.smcp_server
+      tooluniverse-smcp
 
 2. **Configure Claude Desktop:**
 
@@ -172,8 +175,8 @@ How do I use ToolUniverse with Claude?
       {
         "mcpServers": {
           "tooluniverse": {
-            "command": "python",
-            "args": ["-m", "tooluniverse.smcp_server"]
+            "command": "tooluniverse-smcp-stdio",
+            "args": ["--compact-mode"]
           }
         }
       }
@@ -192,12 +195,12 @@ Yes! You can run multiple ToolUniverse instances or combine with other MCP serve
    {
      "mcpServers": {
        "tooluniverse-main": {
-         "command": "python",
-         "args": ["-m", "tooluniverse.smcp_server", "--port", "3000"]
+         "command": "tooluniverse-smcp",
+         "args": ["--port", "3000", "--compact-mode"]
        },
        "tooluniverse-dev": {
-         "command": "python",
-         "args": ["-m", "tooluniverse.smcp_server", "--port", "3001", "--config", "dev"]
+         "command": "tooluniverse-smcp",
+         "args": ["--port", "3001", "--compact-mode", "--load", "community/dev-tools"]
        }
      }
    }
@@ -251,7 +254,7 @@ How do I contribute?
 3. Add your changes with tests
 4. Submit a pull request
 
-See our :doc:`about/contributing` Tutorial for detailed instructions.
+See our :doc:`../about/contributing` Tutorial for detailed instructions.
 
 Performance
 -----------
@@ -265,7 +268,10 @@ How can I speed up queries?
 
       .. code-block:: python
 
-         tu = ToolUniverse(enable_cache=True, cache_ttl=3600)
+         import os
+         os.environ["TOOLUNIVERSE_CACHE_DEFAULT_TTL"] = "3600"  # 1 hour
+         tu = ToolUniverse()
+         result = tu.run(..., use_cache=True)
 
    .. tab:: Batch Processing
 
@@ -276,7 +282,7 @@ How can I speed up queries?
              {"name": "tool1", "arguments": {"id": "1"}},
              {"name": "tool1", "arguments": {"id": "2"}},
          ]
-         results = tu.run_batch(queries)
+         results = tu.run(queries, max_workers=4)
 
    .. tab:: Async Operations
 
@@ -285,7 +291,7 @@ How can I speed up queries?
          import asyncio
 
          async def main():
-             results = await tu.run_async(query)
+             results = await tu.run(query)  # run() is context-aware
 
          asyncio.run(main())
 
@@ -353,15 +359,15 @@ Network connectivity issues?
 
    .. code-block:: python
 
-      tu = ToolUniverse(timeout=30)
+      tu = ToolUniverse()  # timeout is set per HTTP request, not at the ToolUniverse level
 
 Still Having Issues?
 --------------------
 
 If you can't find the answer here:
 
-1. **Check the documentation**: :doc:`user_guide/index`
-2. **Search existing issues**: `GitHub Issues <https://github.com/zitniklab/tooluniverse/issues>`_
+1. **Check the documentation**: :doc:`../guide/index`
+2. **Search existing issues**: `GitHub Issues <https://github.com/mims-harvard/ToolUniverse/issues>`_
 3. **Ask the community**: Join our Discord server
 4. **Report a bug**: Create a new GitHub issue with details
 

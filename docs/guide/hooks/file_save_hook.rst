@@ -245,14 +245,9 @@ Verify hook configuration:
 Next Steps
 ----------
 
-**Learn More**
+.. seealso::
 
-- **SummarizationHook** → :doc:`summarization_hook` - AI-powered output summarization
-- **Configuration** → :doc:`hook_configuration` - Advanced configuration options
-- **Hooks Overview** → :doc:`index` - Complete hooks system Tutorial
-
-**Related Topics**
-
-- **Tool Composition** → :doc:`../tool_composition` - Chain tools into workflows
-- **Best Practices** → :doc:`../best_practices` - Performance optimization tips
-- **Examples** → :doc:`../examples` - More usage examples
+   - :doc:`summarization_hook` - AI-powered output summarization
+   - :doc:`hook_configuration` - Advanced configuration options
+   - :doc:`index` - Complete hooks system overview
+   - :doc:`../tool_composition` - Chain tools into workflows

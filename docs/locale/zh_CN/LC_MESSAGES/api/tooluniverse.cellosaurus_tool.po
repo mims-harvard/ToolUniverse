@@ -31,7 +31,7 @@ msgstr "tooluniverse.cellosaurus\\_tool 模块"
 #: tooluniverse.cellosaurus_tool.CellosaurusQueryConverterTool:1
 #: tooluniverse.cellosaurus_tool.CellosaurusSearchTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: b868067f253346ac94907e62af171198 of
 #: tooluniverse.cellosaurus_tool.CellosaurusSearchTool:1

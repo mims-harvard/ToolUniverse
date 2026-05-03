@@ -1,0 +1,217 @@
+[
+  {
+    "name": "MassBank_search_by_compound",
+    "description": "Search MassBank Europe mass spectrometry spectral library by compound name. MassBank is an open-access mass spectrometry reference spectral library for metabolomics, exposomics, and environmental chemistry. Returns MS/MS spectra records with compound information (SMILES, InChI, formula, exact mass), acquisition parameters (instrument type, MS level, ionization mode, collision energy), and spectral peaks. Useful for identifying unknown metabolites or environmental contaminants.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "compound_name": {
+          "type": "string",
+          "description": "Compound name to search for (e.g., 'aspirin', 'caffeine', 'glucose', 'PFAS')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of spectra to return (default 10)"
+        }
+      },
+      "required": [
+        "compound_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://massbank.eu/MassBank-api/records"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "compound_name": "aspirin",
+        "limit": 5
+      },
+      {
+        "compound_name": "caffeine",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of mass spectra records",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string",
+                "description": "MassBank record accession (e.g., MSBNK-ACES_SU-AS000078)"
+              },
+              "title": {
+                "type": "string",
+                "description": "Spectrum title with compound and instrument info"
+              },
+              "compound": {
+                "type": "object",
+                "properties": {
+                  "names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Compound synonyms"
+                  },
+                  "formula": {
+                    "type": "string",
+                    "description": "Molecular formula"
+                  },
+                  "mass": {
+                    "type": "number",
+                    "description": "Exact monoisotopic mass"
+                  },
+                  "smiles": {
+                    "type": "string",
+                    "description": "SMILES structure"
+                  },
+                  "inchi": {
+                    "type": "string",
+                    "description": "InChI identifier"
+                  },
+                  "classes": {
+                    "type": "array",
+                    "description": "Chemical classification"
+                  }
+                }
+              },
+              "acquisition": {
+                "type": "object",
+                "description": "Instrument and MS acquisition parameters",
+                "properties": {
+                  "instrument_type": {
+                    "type": "string"
+                  },
+                  "mass_spectrometry": {
+                    "type": "object",
+                    "properties": {
+                      "ms_type": {
+                        "type": "string",
+                        "description": "MS level: MS, MS2, MS3"
+                      },
+                      "ion_mode": {
+                        "type": "string",
+                        "description": "POSITIVE or NEGATIVE"
+                      }
+                    }
+                  }
+                }
+              },
+              "peak": {
+                "type": "object",
+                "description": "Spectral peak data",
+                "properties": {
+                  "numPeak": {
+                    "type": "integer"
+                  },
+                  "splash": {
+                    "type": "string",
+                    "description": "Spectral hash identifier"
+                  },
+                  "peak": {
+                    "description": "Peak data - either array of m/z values or object with header/values"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MassBank_search_by_formula",
+    "description": "Search MassBank Europe spectral library by molecular formula. Returns all mass spectra records for compounds with the specified molecular formula. Useful when you know the formula of an unknown compound and want to find candidate matches in the MS spectral library.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "formula": {
+          "type": "string",
+          "description": "Molecular formula (e.g., 'C9H8O4' for aspirin, 'C8H10N4O2' for caffeine, 'C6H12O6' for glucose)"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of spectra to return (default 10)"
+        }
+      },
+      "required": [
+        "formula"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://massbank.eu/MassBank-api/records"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "formula": "C9H8O4",
+        "limit": 5
+      },
+      {
+        "formula": "C8H10N4O2",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Mass spectra records matching the formula",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "compound": {
+                "type": "object"
+              },
+              "acquisition": {
+                "type": "object"
+              },
+              "peak": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

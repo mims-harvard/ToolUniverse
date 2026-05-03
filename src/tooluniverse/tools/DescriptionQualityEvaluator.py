@@ -16,7 +16,7 @@ def DescriptionQualityEvaluator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Evaluates the quality of tool descriptions and parameter descriptions, providing a score and spec...
 
@@ -37,18 +37,24 @@ def DescriptionQualityEvaluator(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "tool_description": tool_description,
+            "parameter_descriptions": parameter_descriptions,
+            "test_results": test_results,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DescriptionQualityEvaluator",
-            "arguments": {
-                "tool_description": tool_description,
-                "parameter_descriptions": parameter_descriptions,
-                "test_results": test_results,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

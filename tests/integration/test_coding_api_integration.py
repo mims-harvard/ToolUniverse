@@ -10,6 +10,7 @@ import sys
 import unittest
 import tempfile
 import shutil
+import importlib
 from pathlib import Path
 import pytest
 
@@ -45,6 +46,7 @@ class TestCodingAPIIntegration(unittest.TestCase):
     
     def tearDown(self):
         """Clean up test fixtures."""
+        self.tu.close()
         shutil.rmtree(self.temp_dir)
     
     def test_dynamic_calling_integration(self):
@@ -190,11 +192,22 @@ class TestSDKIntegration(unittest.TestCase):
         # Generate SDK for testing
         generate_tools()
         
+        # Invalidate import caches to ensure newly generated modules are loaded
+        # Remove all tooluniverse.tools modules from cache
+        modules_to_remove = [
+            mod for mod in list(sys.modules.keys())
+            if mod.startswith('tooluniverse.tools')
+        ]
+        for mod in modules_to_remove:
+            del sys.modules[mod]
+        importlib.invalidate_caches()
+        
         # Add to Python path
         sys.path.insert(0, self.temp_dir)
     
     def tearDown(self):
         """Clean up test fixtures."""
+        self.tu.close()
         if self.temp_dir in sys.path:
             sys.path.remove(self.temp_dir)
         shutil.rmtree(self.temp_dir)
@@ -254,14 +267,16 @@ class TestSDKIntegration(unittest.TestCase):
 
 class TestEndToEndIntegration(unittest.TestCase):
     """Test end-to-end integration scenarios."""
-    
+
     def setUp(self):
         """Set up test fixtures."""
         self.tu = ToolUniverse()
         self.temp_dir = tempfile.mkdtemp()
+        self.tu.load_tools()
     
     def tearDown(self):
         """Clean up test fixtures."""
+        self.tu.close()
         shutil.rmtree(self.temp_dir)
     
     def test_dynamic_to_sdk_workflow(self):

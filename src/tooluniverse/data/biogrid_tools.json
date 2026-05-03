@@ -1,0 +1,520 @@
+[
+  {
+    "type": "BioGRIDRESTTool",
+    "name": "BioGRID_get_interactions",
+    "description": "Query experimentally validated protein and genetic interactions from BioGRID (Biological General Repository for Interaction Datasets). Returns curated interactions from published studies with evidence methods, PubMed citations, and throughput information. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/). BioGRID contains 2.3M+ interactions from 80+ organisms, all experimentally validated (no predictions). Use for: finding experimentally proven interactions, getting literature evidence for interactions, validating predicted interactions, finding interaction methods used, accessing high-confidence curated data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene names or protein identifiers (e.g., ['TP53', 'BRCA1', 'MYC']). Accepts official gene symbols.",
+          "minItems": 1
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for gene_names: single gene symbol (e.g., 'TP53'). Converted to gene_names list automatically."
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name (e.g., 'Homo sapiens', 'Mus musculus') or NCBI taxonomy ID (e.g., '9606' for human, '10090' for mouse). Default: 9606 (human)",
+          "default": "9606"
+        },
+        "interaction_type": {
+          "type": "string",
+          "description": "Type of interaction: 'physical' (protein-protein), 'genetic' (epistasis, synthetic lethality), 'both' (all interactions)",
+          "enum": [
+            "physical",
+            "genetic",
+            "both"
+          ],
+          "default": "both"
+        },
+        "evidence_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Filter by evidence types (e.g., ['Affinity Capture-MS', 'Two-hybrid'] for physical, ['Synthetic Lethality', 'Dosage Rescue'] for genetic). Leave empty for all evidence types."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return (default: 100, max: 10000)",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 100
+        },
+        "throughput": {
+          "type": "string",
+          "description": "Filter by throughput: 'low' (low-throughput studies), 'high' (high-throughput screens), or leave empty for all",
+          "enum": [
+            "low",
+            "high",
+            ""
+          ]
+        }
+      },
+      "required": []
+    },
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "BioGRID API response keyed by interaction ID. Each value is an interaction object.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "BIOGRID_INTERACTION_ID": {
+                "type": "integer"
+              },
+              "ENTREZ_GENE_A": {
+                "type": "string"
+              },
+              "ENTREZ_GENE_B": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_A": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_B": {
+                "type": "string"
+              },
+              "SYNONYMS_A": {
+                "type": "string"
+              },
+              "SYNONYMS_B": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM_TYPE": {
+                "type": "string"
+              },
+              "PUBMED_ID": {
+                "type": "integer"
+              },
+              "THROUGHPUT": {
+                "type": "string"
+              },
+              "ORGANISM_A_ID": {
+                "type": "integer"
+              },
+              "ORGANISM_B_ID": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "fields": {
+      "endpoint": "/interactions/",
+      "return_format": "JSON"
+    },
+    "implementation": {
+      "language": "python",
+      "dependencies": [
+        "requests"
+      ],
+      "source_file": "biogrid_tool.py",
+      "class_name": "BioGRIDRESTTool"
+    },
+    "test_examples": [
+      {
+        "gene_names": [
+          "TP53"
+        ],
+        "organism": "9606",
+        "interaction_type": "physical",
+        "limit": 10
+      },
+      {
+        "gene_names": [
+          "BRCA1",
+          "BRCA2"
+        ],
+        "organism": "9606",
+        "interaction_type": "both",
+        "limit": 50
+      }
+    ]
+  },
+  {
+    "type": "BioGRIDRESTTool",
+    "name": "BioGRID_get_chemical_interactions",
+    "description": "Query experimentally validated interactions for specific genes/proteins from BioGRID, filtered for potential chemical relevance. **Important limitation**: The BioGRID REST API does not support chemical-only queries \u2014 you MUST provide gene_names. The chemicalList parameter is unreliable. For drug-protein interaction queries, prefer ChEMBL_search_mechanisms or DGIdb_search_interactions instead. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene names to query for chemical interactions (e.g., ['TP53', 'EGFR', 'AKT1']). Leave empty to search by chemical only."
+        },
+        "chemical_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of chemical compound names (e.g., ['Aspirin', 'Metformin', 'Imatinib']). Leave empty to search by gene only."
+        },
+        "organism": {
+          "type": "string",
+          "description": "NCBI taxonomy ID (e.g., '9606' for human, '10090' for mouse). Default: 9606",
+          "default": "9606"
+        },
+        "interaction_action": {
+          "type": "string",
+          "description": "Filter by interaction action type (e.g., 'inhibitor', 'activator', 'antagonist', 'agonist'). Leave empty for all actions."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of chemical interactions to return (default: 100, max: 10000)",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 100
+        },
+        "include_evidence": {
+          "type": "boolean",
+          "description": "Include detailed evidence and publication information (default: true)",
+          "default": true
+        }
+      },
+      "required": []
+    },
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "BioGRID chemical-protein interaction data keyed by interaction ID.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "BIOGRID_INTERACTION_ID": {
+                "type": "integer"
+              },
+              "OFFICIAL_SYMBOL_A": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_B": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM_TYPE": {
+                "type": "string"
+              },
+              "PUBMED_ID": {
+                "type": "integer"
+              },
+              "THROUGHPUT": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "fields": {
+      "endpoint": "/interactions/",
+      "return_format": "JSON"
+    },
+    "implementation": {
+      "language": "python",
+      "dependencies": [
+        "requests"
+      ],
+      "source_file": "biogrid_tool.py",
+      "class_name": "BioGRIDRESTTool"
+    },
+    "test_examples": [
+      {
+        "gene_names": [
+          "EGFR"
+        ],
+        "organism": "9606",
+        "limit": 20,
+        "include_evidence": true
+      },
+      {
+        "gene_names": [
+          "ABL1"
+        ],
+        "organism": "9606",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "type": "BioGRIDRESTTool",
+    "name": "BioGRID_search_by_pubmed",
+    "description": "Retrieve all protein interactions curated from specific published studies using PubMed ID. Returns all interactions reported in that paper from BioGRID (Biological General Repository for Interaction Datasets) with experimental methods and evidence codes. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/). Each BioGRID interaction is linked to original publication - this tool retrieves all interactions from specific papers. Use for: extracting interactions from specific papers, reproducing published networks, validating your results against literature, analyzing curation quality, finding experimental methods used in study, verifying literature findings.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pubmed_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of PubMed IDs to query (e.g., ['12345678', '87654321']). Can be numeric or string format.",
+          "minItems": 1
+        },
+        "organism": {
+          "type": "string",
+          "description": "NCBI taxonomy ID to filter interactions by organism (e.g., '9606' for human, '559292' for S. cerevisiae). Leave empty for all organisms."
+        },
+        "interaction_type": {
+          "type": "string",
+          "description": "Type of interaction: 'physical', 'genetic', 'both'. Default: 'both'",
+          "enum": [
+            "physical",
+            "genetic",
+            "both"
+          ],
+          "default": "both"
+        },
+        "include_evidence": {
+          "type": "boolean",
+          "description": "Include detailed evidence information (experimental systems, methods). Default: true",
+          "default": true
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return per publication (default: 1000, max: 10000)",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 1000
+        }
+      },
+      "required": [
+        "pubmed_ids"
+      ]
+    },
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Interaction data from specified publications including genes, interaction types, experimental methods, and evidence details"
+        },
+        {
+          "type": "array",
+          "description": "Empty array when no interactions found for the given PubMed IDs"
+        }
+      ]
+    },
+    "fields": {
+      "endpoint": "/interactions/",
+      "return_format": "JSON",
+      "query_mode": "pubmed"
+    },
+    "implementation": {
+      "language": "python",
+      "dependencies": [
+        "requests"
+      ],
+      "source_file": "biogrid_tool.py",
+      "class_name": "BioGRIDRESTTool"
+    },
+    "test_examples": [
+      {
+        "pubmed_ids": [
+          "28514442"
+        ],
+        "organism": "9606",
+        "interaction_type": "both",
+        "include_evidence": true,
+        "limit": 100
+      },
+      {
+        "pubmed_ids": [
+          "23974867",
+          "24870543"
+        ],
+        "limit": 200
+      }
+    ]
+  },
+  {
+    "type": "BioGRIDRESTTool",
+    "name": "BioGRID_get_ptms",
+    "description": "Retrieve post-translational modifications (PTM = Protein modifications after translation) for proteins from BioGRID (Biological General Repository for Interaction Datasets). Returns phosphorylation, ubiquitination, acetylation, methylation, and other covalent protein modifications with site positions, modifying enzymes, and literature evidence. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/). BioGRID curates 1.1M+ PTM records from literature with experimental evidence. Use for: finding regulatory modifications of proteins, identifying kinases/enzymes that modify proteins, discovering regulation mechanisms, analyzing signaling cascades, drug target identification (kinases).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene names to query for PTMs (e.g., ['TP53', 'AKT1', 'EGFR', 'ERK1']). Accepts official gene symbols.",
+          "minItems": 1
+        },
+        "organism": {
+          "type": "string",
+          "description": "NCBI taxonomy ID (e.g., '9606' for human, '10090' for mouse). Default: 9606",
+          "default": "9606"
+        },
+        "ptm_type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Filter by PTM types (e.g., ['Phosphorylation', 'Ubiquitination', 'Acetylation', 'Methylation', 'Sumoylation']). Leave empty for all PTM types."
+        },
+        "residue": {
+          "type": "string",
+          "description": "Filter by specific amino acid residue (e.g., 'S' for serine, 'T' for threonine, 'Y' for tyrosine). Leave empty for all residues."
+        },
+        "include_enzymes": {
+          "type": "boolean",
+          "description": "Include information about enzymes responsible for the PTM (kinases, ligases, etc.). Default: true",
+          "default": true
+        },
+        "include_evidence": {
+          "type": "boolean",
+          "description": "Include experimental evidence and publication details. Default: true",
+          "default": true
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of PTMs to return (default: 500, max: 10000)",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 500
+        }
+      },
+      "required": [
+        "gene_names"
+      ]
+    },
+    "required_api_keys": [
+      "BIOGRID_ACCESS_KEY"
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "BioGRID PTM data keyed by interaction ID. Each value contains modification details, interactors, and evidence.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "BIOGRID_INTERACTION_ID": {
+                "type": "integer"
+              },
+              "OFFICIAL_SYMBOL_A": {
+                "type": "string"
+              },
+              "OFFICIAL_SYMBOL_B": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM": {
+                "type": "string"
+              },
+              "EXPERIMENTAL_SYSTEM_TYPE": {
+                "type": "string"
+              },
+              "PUBMED_ID": {
+                "type": "integer"
+              },
+              "THROUGHPUT": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "fields": {
+      "endpoint": "/interactions/",
+      "return_format": "JSON"
+    },
+    "implementation": {
+      "language": "python",
+      "dependencies": [
+        "requests"
+      ],
+      "source_file": "biogrid_tool.py",
+      "class_name": "BioGRIDRESTTool"
+    },
+    "test_examples": [
+      {
+        "gene_names": [
+          "TP53"
+        ],
+        "organism": "9606",
+        "ptm_type": [
+          "Phosphorylation"
+        ],
+        "include_enzymes": true,
+        "include_evidence": true,
+        "limit": 50
+      },
+      {
+        "gene_names": [
+          "AKT1",
+          "ERK1"
+        ],
+        "organism": "9606",
+        "ptm_type": [
+          "Phosphorylation",
+          "Ubiquitination"
+        ],
+        "residue": "S",
+        "limit": 100
+      }
+    ]
+  }
+]

@@ -23,6 +23,8 @@ class TestNICEGuidelinesTool:
         self.tu = ToolUniverse()
         self.tu.load_tools(["guidelines"])
         self.tool_name = "NICE_Clinical_Guidelines_Search"
+        yield
+        self.tu.close()
     
     def test_tool_loading(self):
         """Test that the NICE guidelines tool is loaded correctly."""

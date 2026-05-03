@@ -1,0 +1,323 @@
+[
+  {
+    "name": "IGSR_search_populations",
+    "type": "IGSRTool",
+    "description": "Search 1000 Genomes Project populations from the International Genome Sample Resource (IGSR). The 1000 Genomes Project characterized genetic variation across 26 populations grouped into 5 superpopulations: AFR (African), AMR (Admixed American), EAS (East Asian), EUR (European), SAS (South Asian). Returns population codes, names, geographic coordinates, sample counts, and superpopulation assignments. Use this to find populations for allele frequency comparisons, population stratification analysis, or ancestry-specific variant studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_populations"
+          ],
+          "default": "search_populations",
+          "description": "Operation type (fixed: search_populations)."
+        },
+        "superpopulation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by superpopulation code: AFR (African), AMR (Admixed American), EAS (East Asian), EUR (European), SAS (South Asian). Leave empty for all."
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Free-text search query to find populations by name or description (e.g., 'Chinese', 'Yoruba', 'British')."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "populations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "sample_count": {
+                    "type": "integer"
+                  },
+                  "superpopulation_code": {
+                    "type": "string"
+                  },
+                  "superpopulation_name": {
+                    "type": "string"
+                  },
+                  "latitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "longitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_populations",
+        "superpopulation": "EAS",
+        "limit": 10
+      },
+      {
+        "operation": "search_populations",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "IGSR_search_samples",
+    "type": "IGSRTool",
+    "description": "Search samples from the 1000 Genomes Project by population, data collection, or sample name. Returns sample names (e.g., HG00096, NA12878), sex, BioSample IDs, population assignments, and available data collections. Use this to find samples from specific populations for variant analysis, to identify samples with particular sequencing data types (WGS, exome, RNA-seq), or to look up specific well-characterized samples like NA12878 (reference genome sample).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_samples"
+          ],
+          "default": "search_samples",
+          "description": "Operation type (fixed: search_samples)."
+        },
+        "population": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by population code (e.g., 'CHB', 'YRI', 'GBR', 'CEU'). Use IGSR_search_populations to find valid codes."
+        },
+        "data_collection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by data collection title (e.g., '1000 Genomes 30x on GRCh38', '1000 Genomes on GRCh38')."
+        },
+        "sample_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Look up specific sample by name (e.g., 'HG00096', 'NA12878')."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "samples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "sex": {
+                    "type": "string"
+                  },
+                  "biosample_id": {
+                    "type": "string"
+                  },
+                  "populations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "superpopulation": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "data_collections": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_samples",
+        "population": "GBR",
+        "limit": 5
+      },
+      {
+        "operation": "search_samples",
+        "sample_name": "NA12878",
+        "limit": 1
+      }
+    ]
+  },
+  {
+    "name": "IGSR_list_data_collections",
+    "type": "IGSRTool",
+    "description": "List available data collections from the International Genome Sample Resource (IGSR). Data collections include the original 1000 Genomes Project phases, the 30x high-coverage resequencing, Human Genome Structural Variation Consortium (HGSVC), Human Pangenome Reference Consortium (HPRC), and other related studies. Returns collection codes, titles, sample/population counts, and available data types (sequence, alignment, variants). Use this to discover what genomics datasets are available through IGSR.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "list_data_collections"
+          ],
+          "default": "list_data_collections",
+          "description": "Operation type (fixed: list_data_collections)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "collections": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "short_title": {
+                    "type": "string"
+                  },
+                  "sample_count": {
+                    "type": "integer"
+                  },
+                  "population_count": {
+                    "type": "integer"
+                  },
+                  "data_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "website": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_data_collections",
+        "limit": 20
+      }
+    ]
+  }
+]

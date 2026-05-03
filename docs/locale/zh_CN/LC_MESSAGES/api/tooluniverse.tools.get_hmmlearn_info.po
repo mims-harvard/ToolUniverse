@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_hmmlearn\\_info 模块"
 
 #: 6493756b1a9548ee96054703d6857b46 of tooluniverse.tools.get_hmmlearn_info:1
 msgid "get_hmmlearn_info"
-msgstr ""
+msgstr "get_hmmlearn_信息"
 
 #: 906542a680cb4668bc74e57ca30fe2d7 b884b025216143158076cef398579ac7 of
 #: tooluniverse.tools.get_hmmlearn_info:3

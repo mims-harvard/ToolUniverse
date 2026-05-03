@@ -83,7 +83,7 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:22 2ebf127a1a474930bb0d5578bf14d556
 msgid "🎨 优雅的现代设计"
-msgstr ""
+msgstr "🎨 Elegant Modern Design"
 
 #: ../../old_files/SUMMARY.md:23 6518fcd9a9a647a0800beeb1337fbd6a
 msgid "🎯 直观的语言选择"
@@ -168,7 +168,7 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:108 a6662cacbb0048cdb7f67a1dcf2dfa18
 msgid "6. **📚 完整的文档系统**"
-msgstr ""
+msgstr "6. **📚 Comprehensive Documentation System**"
 
 #: ../../old_files/SUMMARY.md:110 5625ef798ed5416fb3b322ec1d2edbba
 msgid "创建的文档："
@@ -180,7 +180,7 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:112 bead9d101cd043ec98074f97d7ce35b9
 msgid "**I18N_GUIDE.md** - 详细翻译指南"
-msgstr ""
+msgstr "**I18N_GUIDE.md** - 详细国际化指南"
 
 #: ../../old_files/SUMMARY.md:113 7bc3bd4f033f46edb96a5c2eea09fe5d
 msgid "**MULTILANG_README.md** - 多语言系统说明"
@@ -209,7 +209,7 @@ msgstr ""
 #: ../../old_files/SUMMARY.md:121 ../../old_files/SUMMARY.md:312
 #: 6a274eb058784a898d6383b8410932a4 fbece7fe5b254d25b002455e5d13183d
 msgid "✅ `build_multilang.sh` - 完整双语构建"
-msgstr ""
+msgstr "✅ `build_multilang.sh` - 完整的多语言构建"
 
 #: ../../old_files/SUMMARY.md:122 c8f9671092a64a02a7549a7c100fe815
 msgid "✅ `quick_build_zh.sh` - 快速中文测试"
@@ -261,11 +261,11 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:153 df16ba53e67c45cd8492cdeda12cd964
 msgid "✅ 生成 Remote Tools 文档"
-msgstr ""
+msgstr "✅ 生成远程工具文档"
 
 #: ../../old_files/SUMMARY.md:154 315704bde5b54494b6266e49e87c1d4e
 msgid "✅ 构建英文版本"
-msgstr ""
+msgstr "✅ Build English Version"
 
 #: ../../old_files/SUMMARY.md:155 623b1bbcef4144cf98ce8b9759205327
 msgid "✅ 更新中文翻译"
@@ -273,7 +273,7 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:156 a4f7ba4c4fcc4cd8bc6c133820b7ec69
 msgid "✅ 构建中文版本"
-msgstr ""
+msgstr "✅ 构建中文版"
 
 #: ../../old_files/SUMMARY.md:158 99bf05498c89445a8c9006eb3c03235e
 msgid "✅ 显示访问链接"
@@ -305,7 +305,7 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:244 927f165db4db4fa7a3113a1cef2ad151
 msgid "🎯 关键改进"
-msgstr ""
+msgstr "🎯 关键改进点"
 
 #: ../../old_files/SUMMARY.md:246 92fb319031d245fbb723bb24819d71c3
 msgid "Before (之前)"
@@ -329,7 +329,7 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:277 aa00e4c4315747e6af81e659e2317faa
 msgid "3. 重新构建"
-msgstr ""
+msgstr "3. 重建"
 
 #: ../../old_files/SUMMARY.md:282 40d79aba5d974bc08d38f5e79fa11263
 msgid "翻译立即生效！✨"
@@ -469,7 +469,7 @@ msgstr ""
 
 #: ../../old_files/SUMMARY.md:327 d9dfd06f3e5f46c69807508a1b72adcf
 msgid "✅ `SUMMARY.md` - 本总结"
-msgstr ""
+msgstr "✅ `SUMMARY.md` - 本摘要"
 
 #: ../../old_files/SUMMARY.md:329 a588ea89eb0148f2ae79c825ba0c208d
 msgid "🎓 下一步"

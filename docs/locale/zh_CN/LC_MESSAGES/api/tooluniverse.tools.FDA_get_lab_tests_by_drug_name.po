@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.FDA\\_get\\_lab\\_tests\\_by\\_drug\\_name 模块"
 #: tooluniverse.tools.FDA_get_lab_tests_by_drug_name:1
 msgid "FDA_get_lab_tests_by_drug_name"
 msgstr ""
+"FDA_get_lab_tests_by_drug_name  \n"
+"获取药物名称相关的实验室测试"
 
 #: 97799e37a87748dcb320d6f0ef991cce e9772a69c3af40a49808ed26b458377b of
 #: tooluniverse.tools.FDA_get_lab_tests_by_drug_name:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_disease\\_variants\\_by\\_accession �
 #: fe450e30dcb74dd7b3083942d2bffca6 of
 #: tooluniverse.tools.UniProt_get_disease_variants_by_accession:1
 msgid "UniProt_get_disease_variants_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取疾病变异信息"
 
 #: 815797cd317d462597c783afdb8dd014 94c94815f3604156ab416d46e92ff0a3 of
 #: tooluniverse.tools.UniProt_get_disease_variants_by_accession:3

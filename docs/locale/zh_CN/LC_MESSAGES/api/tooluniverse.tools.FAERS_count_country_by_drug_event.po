@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_country\\_by\\_drug\\_event 模块"
 #: 440b225977634e9395a5f68a9ced06fe of
 #: tooluniverse.tools.FAERS_count_country_by_drug_event:1
 msgid "FAERS_count_country_by_drug_event"
-msgstr ""
+msgstr "FAERS_按药物事件统计国家数量"
 
 #: 29b75f2266e740a18b600d21be547278 ab4c08027bad43c3ba351e72cc449aaf of
 #: tooluniverse.tools.FAERS_count_country_by_drug_event:3

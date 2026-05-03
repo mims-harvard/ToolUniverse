@@ -14,7 +14,7 @@ def CallAgent(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Give a solution plan to the agent and let it solve the problem. Solution plan should reflect a di...
 
@@ -31,12 +31,17 @@ def CallAgent(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"solution": solution}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "CallAgent", "arguments": {"solution": solution}},
+        {
+            "name": "CallAgent",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

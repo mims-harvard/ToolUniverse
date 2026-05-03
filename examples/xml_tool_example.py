@@ -51,7 +51,7 @@ test_queries = [
         "arguments": {"query": "simvastatin", "limit": 1},
     },
     {
-        "name": "drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action",
+        "name": "drugbank_get_drug_desc_pharmacology_by_moa",
         "arguments": {"query": "receptor antagonist", "limit": 1},
     },
     {
@@ -83,7 +83,7 @@ test_queries = [
         "arguments": {"query": "aspirin", "limit": 1},
     },
     {
-        "name": "drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id",
+        "name": "drugbank_get_pathways_reactions_by_drug_or_id",
         "arguments": {"query": "glucose", "limit": 1},
     },
     {

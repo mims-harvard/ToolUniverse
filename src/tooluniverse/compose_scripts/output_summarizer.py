@@ -58,6 +58,20 @@ def compose(arguments: Dict[str, Any], tooluniverse, call_tool) -> Dict[str, Any
         focus_areas = arguments.get("focus_areas", "key_findings_and_results")
         max_summary_length = arguments.get("max_summary_length", 3000)
 
+        # Basic numeric validation (be defensive: composer can be called directly)
+        try:
+            chunk_size = int(chunk_size)
+        except Exception:
+            chunk_size = 32000
+        if chunk_size <= 0:
+            chunk_size = 32000
+        try:
+            max_summary_length = int(max_summary_length)
+        except Exception:
+            max_summary_length = 3000
+        if max_summary_length <= 0:
+            max_summary_length = 3000
+
         # Validate required arguments
         if not tool_output:
             return {
@@ -69,10 +83,12 @@ def compose(arguments: Dict[str, Any], tooluniverse, call_tool) -> Dict[str, Any
         logger.info(f"🔍 Starting output summarization for {tool_name}")
         logger.info(f"📊 Original output length: {len(tool_output)} characters")
 
-        # Check if text is long enough to warrant summarization
-        if len(tool_output) < chunk_size:
+        # Decide whether summarization is needed based on summary budget, not chunking.
+        # chunk_size controls chunking strategy; max_summary_length controls whether we
+        # should compress at all.
+        if len(tool_output) <= max_summary_length:
             logger.info(
-                f"📝 Text is shorter than chunk_size ({chunk_size}), "
+                f"📝 Text fits within max_summary_length ({max_summary_length}), "
                 f"no summarization needed"
             )
             return {
@@ -84,6 +100,39 @@ def compose(arguments: Dict[str, Any], tooluniverse, call_tool) -> Dict[str, Any
                 "tool_name": tool_name,
             }
 
+        # If the text is too long for the summary budget but still smaller than the
+        # chunking threshold, summarize it in a single call (no chunking needed).
+        if len(tool_output) <= chunk_size:
+            logger.info(
+                f"📝 Text shorter than chunk_size ({chunk_size}) but exceeds "
+                f"max_summary_length ({max_summary_length}); summarizing in one shot"
+            )
+            one_shot = _summarize_chunk(
+                tool_output,
+                query_context,
+                tool_name,
+                focus_areas,
+                call_tool,
+                max_length=max_summary_length,
+            )
+            if one_shot:
+                return {
+                    "success": True,
+                    "original_length": len(tool_output),
+                    "summary_length": len(one_shot),
+                    "chunks_processed": 1,
+                    "summary": one_shot,
+                    "tool_name": tool_name,
+                }
+            return {
+                "success": False,
+                "error": "One-shot summarization failed",
+                "original_length": len(tool_output),
+                "chunks_processed": 1,
+                "original_output": tool_output,
+                "tool_name": tool_name,
+            }
+
         # Step 1: Chunk the output
         chunks = _chunk_output(tool_output, chunk_size)
         logger.info(f"📝 Split into {len(chunks)} chunks")
@@ -91,15 +140,15 @@ def compose(arguments: Dict[str, Any], tooluniverse, call_tool) -> Dict[str, Any
         # Step 2: Summarize each chunk
         chunk_summaries = []
         for i, chunk in enumerate(chunks):
-            logger.info(f"🤖 Processing chunk {i+1}/{len(chunks)}")
+            logger.info(f"🤖 Processing chunk {i + 1}/{len(chunks)}")
             summary = _summarize_chunk(
                 chunk, query_context, tool_name, focus_areas, call_tool
             )
             if summary:
                 chunk_summaries.append(summary)
-                logger.info(f"✅ Chunk {i+1} summarized successfully")
+                logger.info(f"✅ Chunk {i + 1} summarized successfully")
             else:
-                logger.warning(f"❌ Chunk {i+1} summarization failed")
+                logger.warning(f"❌ Chunk {i + 1} summarization failed")
 
         # Step 3: Merge summaries (or gracefully fall back)
         if chunk_summaries:
@@ -132,7 +181,7 @@ def compose(arguments: Dict[str, Any], tooluniverse, call_tool) -> Dict[str, Any
             logger.warning("   2. The output_summarization tools are not loaded")
             logger.warning("   3. There was an error in the summarization process")
             logger.warning(
-                "   Please check that the SMCP server is started with hooks " "enabled."
+                "   Please check that the SMCP server is started with hooks enabled."
             )
             return {
                 "success": False,
@@ -196,7 +245,12 @@ def _chunk_output(text: str, chunk_size: int) -> List[str]:
 
 
 def _summarize_chunk(
-    chunk: str, query_context: str, tool_name: str, focus_areas: str, call_tool
+    chunk: str,
+    query_context: str,
+    tool_name: str,
+    focus_areas: str,
+    call_tool,
+    max_length: int = 500,
 ) -> str:
     """
     Summarize a single chunk using the AgenticTool summarizer.
@@ -223,13 +277,12 @@ def _summarize_chunk(
                 "query_context": query_context,
                 "tool_name": tool_name,
                 "focus_areas": focus_areas,
-                "max_length": 500,  # Shorter for individual chunks
+                "max_length": max_length,
             },
         )
 
         logger.debug(
-            f"🔍 ToolOutputSummarizer returned: {type(result)} - "
-            f"{str(result)[:100]}..."
+            f"🔍 ToolOutputSummarizer returned: {type(result)} - {str(result)[:100]}..."
         )
 
         # Handle different result formats

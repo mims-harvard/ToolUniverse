@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.gwas\\_search\\_snps 模块"
 
 #: e6d104d0f3c84537a619945f926f86e0 of tooluniverse.tools.gwas_search_snps:1
 msgid "gwas_search_snps"
-msgstr ""
+msgstr "gwas_search_snps（全基因组关联研究搜索单核苷酸多态性）"
 
 #: d0fac550561e414183e3a705e2ef5c6c d3a5cc2f6a894af48f56d9cd1f331d2f of
 #: tooluniverse.tools.gwas_search_snps:3

@@ -1,0 +1,323 @@
+[
+  {
+    "name": "GPCRdb_get_protein",
+    "description": "Get detailed GPCR protein information from GPCRdb. Returns receptor family, species, sequence, and classification. GPCRs are targets of ~35% of approved drugs. No authentication required.",
+    "type": "GPCRdbTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_protein",
+          "description": "Operation type (fixed: get_protein)"
+        },
+        "protein": {
+          "type": "string",
+          "description": "Protein entry name (e.g., adrb2_human for beta-2 adrenergic receptor) or UniProt accession (e.g., P07550)"
+        },
+        "protein_id": {
+          "type": "string",
+          "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "entry_name": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "family": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "accession": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein": "adrb2_human"
+      }
+    ]
+  },
+  {
+    "name": "GPCRdb_list_proteins",
+    "description": "List GPCR protein families or proteins in a specific family from GPCRdb. Without family parameter, returns list of protein families (Class A, Class B, etc.). With family parameter (e.g., '001') or protein_class (e.g., 'Chemokine receptors'), returns proteins in that family. No authentication required.",
+    "type": "GPCRdbTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "list_proteins",
+          "description": "Operation type (fixed: list_proteins)"
+        },
+        "protein_class": {
+          "type": "string",
+          "description": "Human-readable GPCR class or family name (e.g., 'Chemokine receptors', 'Class A', 'Adrenergic'). Alias for family that accepts plain English names."
+        },
+        "family": {
+          "type": "string",
+          "description": "GPCR family code (e.g., '001' for Class A Rhodopsin, '002' for Class B). If not provided, lists all protein families."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "proteins": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "name": "GPCRdb_get_structures",
+    "description": "Get GPCR crystal/cryo-EM structures from GPCRdb. Returns PDB codes, resolution, receptor state (active/inactive), and bound ligands. Filter by protein or receptor state.",
+    "type": "GPCRdbTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_structures",
+          "description": "Operation type (fixed: get_structures)"
+        },
+        "protein": {
+          "type": "string",
+          "description": "Protein entry name (optional - returns all structures if not specified)"
+        },
+        "state": {
+          "type": "string",
+          "description": "Receptor state filter: active, inactive, intermediate",
+          "enum": [
+            "active",
+            "inactive",
+            "intermediate"
+          ]
+        },
+        "resolution": {
+          "type": "number",
+          "description": "Maximum resolution in Angstroms (client-side filter, e.g., 2.5 returns only structures \u22642.5\u00c5)"
+        },
+        "protein_id": {
+          "type": "string",
+          "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "structures": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein": "adrb2_human"
+      },
+      {
+        "state": "active"
+      }
+    ]
+  },
+  {
+    "name": "GPCRdb_get_ligands",
+    "description": "Get ligands associated with a GPCR from GPCRdb. Returns ligand names, types (agonist/antagonist), and binding data. Essential for GPCR drug discovery.",
+    "type": "GPCRdbTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_ligands",
+          "description": "Operation type (fixed: get_ligands)"
+        },
+        "protein": {
+          "type": "string",
+          "description": "Protein entry name (e.g., adrb2_human)"
+        },
+        "protein_id": {
+          "type": "string",
+          "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "type": {
+          "type": "string",
+          "description": "Ligand class filter (e.g., small molecule, peptide, antibody)."
+        },
+        "ligand_type": {
+          "type": "string",
+          "description": "Alias for type. Ligand class filter (e.g., small molecule, peptide)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of ligands to return (default: all). Use to cap large result sets."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Alias for limit. Maximum number of ligands to return."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "protein": {
+              "type": "string"
+            },
+            "ligands": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "total_count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein": "adrb2_human",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "GPCRdb_get_mutations",
+    "description": "Get mutation data for a GPCR from GPCRdb. Returns mutation positions, effects on ligand binding and signaling. Useful for understanding structure-function relationships.",
+    "type": "GPCRdbTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_mutations",
+          "description": "Operation type (fixed: get_mutations)"
+        },
+        "protein": {
+          "type": "string",
+          "description": "Protein entry name (e.g., adrb2_human)"
+        },
+        "protein_id": {
+          "type": "string",
+          "description": "Alias for protein parameter"
+        },
+        "receptor_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for protein. GPCRdb entry name (e.g., adrb2_human)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "protein": {
+              "type": "string"
+            },
+            "mutations": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "protein": "adrb2_human"
+      }
+    ]
+  }
+]

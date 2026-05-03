@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_poliastro\\_info 模块"
 
 #: f42b3743912a41fcb9fac8597f16df77 of tooluniverse.tools.get_poliastro_info:1
 msgid "get_poliastro_info"
-msgstr ""
+msgstr "获取_poliastro_信息"
 
 #: a476813ca9184767bd276eb7863bf57a f93a588de62f4dddbb894452f0b1470c of
 #: tooluniverse.tools.get_poliastro_info:3

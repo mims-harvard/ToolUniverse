@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pyranges\\_info 模块"
 
 #: 11135fc1a19144afa2d98019ab8834a8 of tooluniverse.tools.get_pyranges_info:1
 msgid "get_pyranges_info"
-msgstr ""
+msgstr "get_pyranges_info 获取 Pyranges 信息"
 
 #: 5b69ef1f4bba44d19cbbe522c847e013 d5303cc7f5da4233ac4fe2686f2e76e1 of
 #: tooluniverse.tools.get_pyranges_info:3

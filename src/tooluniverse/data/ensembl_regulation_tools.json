@@ -1,0 +1,361 @@
+[
+  {
+    "name": "EnsemblReg_get_motif_features",
+    "description": "Get transcription factor (TF) binding motif features in a genomic region from the Ensembl REST API. Returns motif instances with their binding matrix IDs, TF complex names, scores, and genomic positions. Use this to identify which transcription factors may bind to a specific genomic region, essential for understanding gene regulation, epigenomics, and cis-regulatory elements. Example: BRAF locus (chr7:140424943-140524564) returns 50 TF binding motif instances including PAX5, NR2F1, CEBPA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name. Use 'homo_sapiens' for human, 'mus_musculus' for mouse. Default: 'homo_sapiens'.",
+          "default": "homo_sapiens"
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chromosome:start-end'. Example: '7:140424943-140524564' for the BRAF locus, '17:7661779-7687538' for the TP53 locus."
+        }
+      },
+      "required": [
+        "region"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "motif_features"
+    },
+    "type": "EnsemblRegulationTool",
+    "test_examples": [
+      {
+        "region": "7:140424943-140524564"
+      },
+      {
+        "region": "17:7661779-7687538",
+        "species": "homo_sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "region": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "motif_count": {
+                  "type": "integer"
+                },
+                "motif_features": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stable_id": {
+                        "type": "string"
+                      },
+                      "transcription_factor_complex": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "binding_matrix_stable_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "start": {
+                        "type": "integer"
+                      },
+                      "end": {
+                        "type": "integer"
+                      },
+                      "strand": {
+                        "type": "integer"
+                      },
+                      "seq_region_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblReg_get_constrained_elements",
+    "description": "Get evolutionarily constrained elements in a genomic region from the Ensembl Compara database. Constrained elements are regions under purifying selection across species, indicating functional importance. Higher scores indicate stronger conservation. Use this to identify regulatory regions, coding exons, or other functional elements that are preserved across evolution. Essential for prioritizing non-coding variants and understanding regulatory conservation. Example: TP53 locus (chr17:7661779-7687538) returns 20 constrained elements with conservation scores up to 47.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.",
+          "default": "homo_sapiens"
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chromosome:start-end'. Example: '17:7661779-7687538' for TP53, '7:140424943-140624564' for BRAF."
+        }
+      },
+      "required": [
+        "region"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "constrained_elements"
+    },
+    "type": "EnsemblRegulationTool",
+    "test_examples": [
+      {
+        "region": "17:7661779-7687538"
+      },
+      {
+        "region": "7:140424943-140524564",
+        "species": "homo_sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "region": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "element_count": {
+                  "type": "integer"
+                },
+                "constrained_elements": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "start": {
+                        "type": "integer"
+                      },
+                      "end": {
+                        "type": "integer"
+                      },
+                      "score": {
+                        "type": "number"
+                      },
+                      "strand": {
+                        "type": "integer"
+                      },
+                      "seq_region_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblReg_get_binding_matrix",
+    "description": "Get a transcription factor binding matrix (position weight matrix/PWM) by stable ID from the Ensembl REST API. Returns the nucleotide frequency matrix, threshold, associated TF complexes, and consensus sequence. Binding matrices describe the DNA sequence preferences of transcription factors and are essential for predicting TF binding sites and understanding gene regulation. Example: ENSPFM0320 returns the PAX5 binding matrix with 18 positions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.",
+          "default": "homo_sapiens"
+        },
+        "binding_matrix_id": {
+          "type": "string",
+          "description": "Ensembl binding matrix stable ID. Format: 'ENSPFM0XXX'. Examples: 'ENSPFM0320' (PAX5), 'ENSPFM0423' (NR2F1), 'ENSPFM0001' (ALX3)."
+        }
+      },
+      "required": [
+        "binding_matrix_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "binding_matrix"
+    },
+    "type": "EnsemblRegulationTool",
+    "test_examples": [
+      {
+        "binding_matrix_id": "ENSPFM0320"
+      },
+      {
+        "binding_matrix_id": "ENSPFM0001",
+        "species": "homo_sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "stable_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "length": {
+                  "type": "integer"
+                },
+                "threshold": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "unit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "max_position_sum": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "elements_string": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "associated_tfs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "matrix": {
+                  "type": "object",
+                  "description": "Position weight matrix: position -> {A, C, G, T} counts"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

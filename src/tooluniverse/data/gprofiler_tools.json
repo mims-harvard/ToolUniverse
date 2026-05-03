@@ -1,0 +1,310 @@
+[
+    {
+        "name": "gProfiler_enrichment",
+        "description": "Perform functional enrichment analysis on a gene list using g:Profiler (g:GOSt) from the University of Tartu. Identifies statistically overrepresented biological functions, pathways, and phenotypes in your gene list. Supports multiple data sources: Gene Ontology (GO:BP, GO:MF, GO:CC), KEGG pathways, Reactome, WikiPathways, Human Phenotype Ontology (HP), miRNA targets (MIRNA), CORUM protein complexes, and Transcription Factor targets (TF). Returns enriched terms with p-values (g:SCS multiple testing correction), term sizes, intersection genes, precision, and recall. Input is a list of gene symbols (e.g., ['TP53', 'BRCA1', 'EGFR', 'KRAS', 'PTEN']). Supports 500+ organisms (use NCBI taxonomy prefix, e.g., 'hsapiens', 'mmusculus', 'dmelanogaster').",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_list": {
+                    "type": "string",
+                    "description": "Comma-separated list of gene symbols. Examples: 'TP53,BRCA1,EGFR,KRAS,PTEN' or 'Trp53,Brca1,Egfr' (mouse)."
+                },
+                "organism": {
+                    "type": "string",
+                    "description": "Organism identifier. Default: 'hsapiens'. Examples: 'hsapiens' (human), 'mmusculus' (mouse), 'dmelanogaster' (fly), 'scerevisiae' (yeast), 'drerio' (zebrafish)."
+                },
+                "sources": {
+                    "type": "string",
+                    "description": "Comma-separated data sources to query. Default: 'GO:BP,GO:MF,GO:CC,KEGG,REAC,WP,HP'. Options: GO:BP, GO:MF, GO:CC, KEGG, REAC, WP, MIRNA, HPA, CORUM, HP, TF."
+                }
+            },
+            "required": ["gene_list"]
+        },
+        "fields": {
+            "endpoint": "enrichment"
+        },
+        "type": "GProfilerTool",
+        "test_examples": [
+            {
+                "gene_list": "TP53,BRCA1,EGFR,KRAS,PTEN"
+            },
+            {
+                "gene_list": "TP53,BRCA1,EGFR,KRAS,PTEN",
+                "sources": "KEGG,REAC,WP"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "source": {"type": "string", "description": "Data source (GO:BP, KEGG, REAC, etc.)"},
+                                    "native": {"type": "string", "description": "Native term ID (e.g., GO:0006915, KEGG:04115)"},
+                                    "name": {"type": "string", "description": "Term name"},
+                                    "p_value": {"type": "number", "description": "Corrected p-value (g:SCS method)"},
+                                    "significant": {"type": "boolean"},
+                                    "term_size": {"type": "integer", "description": "Total genes annotated to this term"},
+                                    "query_size": {"type": "integer", "description": "Number of input genes recognized"},
+                                    "intersection_size": {"type": "integer", "description": "Number of input genes in this term"},
+                                    "precision": {"type": "number", "description": "intersection_size / query_size"},
+                                    "recall": {"type": "number", "description": "intersection_size / term_size"}
+                                }
+                            },
+                            "description": "Enriched terms sorted by p-value"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "organism": {"type": "string"},
+                                "total_results": {"type": "integer"},
+                                "query_genes": {"type": "array", "items": {"type": "string"}}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "gProfiler_convert_ids",
+        "description": "Convert gene identifiers between different namespaces using g:Profiler (g:Convert) from the University of Tartu. Supports conversion between gene symbols, Ensembl IDs, Entrez IDs, UniProt accessions, RefSeq IDs, and many other identifiers. Input is a list of gene identifiers and a target namespace. Supports 500+ organisms. Example: convert 'TP53,BRCA1,EGFR' to Ensembl gene IDs (ENSG). Available target namespaces: ENSG (Ensembl Gene), ENST (Ensembl Transcript), ENSP (Ensembl Protein), UNIPROTSWISSPROT (UniProt reviewed), ENTREZGENE_ACC (Entrez Gene), WIKIGENE_ACC (WikiGene).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_list": {
+                    "type": "string",
+                    "description": "Comma-separated list of gene identifiers to convert. Examples: 'TP53,BRCA1,EGFR' (symbols), 'ENSG00000141510,ENSG00000012048' (Ensembl IDs)."
+                },
+                "target_namespace": {
+                    "type": "string",
+                    "description": "Target namespace for conversion. Default: 'ENSG'. Options: ENSG (Ensembl Gene), ENST (Ensembl Transcript), ENSP (Ensembl Protein), UNIPROTSWISSPROT (UniProt), ENTREZGENE_ACC (Entrez), WIKIGENE_ACC (WikiGene), REFSEQ_MRNA_ACC, REFSEQ_PEPTIDE_ACC."
+                },
+                "organism": {
+                    "type": "string",
+                    "description": "Organism identifier. Default: 'hsapiens'. Examples: 'hsapiens', 'mmusculus'."
+                }
+            },
+            "required": ["gene_list"]
+        },
+        "fields": {
+            "endpoint": "convert_ids"
+        },
+        "type": "GProfilerTool",
+        "test_examples": [
+            {
+                "gene_list": "TP53,BRCA1,EGFR",
+                "target_namespace": "ENSG"
+            },
+            {
+                "gene_list": "ENSG00000141510,ENSG00000012048",
+                "target_namespace": "UNIPROTSWISSPROT"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "incoming": {"type": "string", "description": "Original input identifier"},
+                                    "converted": {"type": "string", "description": "Converted identifier in target namespace"},
+                                    "name": {"type": ["string", "null"], "description": "Gene name/description"},
+                                    "description": {"type": ["string", "null"], "description": "Full description"},
+                                    "namespaces": {"type": ["string", "null"]}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "organism": {"type": "string"},
+                                "target_namespace": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "gProfiler_find_orthologs",
+        "description": "Find orthologous genes across species using g:Profiler (g:Orth) from the University of Tartu. Maps genes from a source organism to their orthologs in a target organism using Ensembl orthology data. Useful for translating gene lists between model organisms. Example: find mouse orthologs of human TP53 and BRCA1. Supports 500+ organisms in the Ensembl database. Input is a list of gene identifiers from the source organism, and the target organism to map to.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_list": {
+                    "type": "string",
+                    "description": "Comma-separated list of gene identifiers from the source organism. Examples: 'TP53,BRCA1,EGFR' (human genes to find mouse orthologs)."
+                },
+                "source_organism": {
+                    "type": "string",
+                    "description": "Source organism. Default: 'hsapiens'. Examples: 'hsapiens' (human), 'mmusculus' (mouse)."
+                },
+                "target_organism": {
+                    "type": "string",
+                    "description": "Target organism to find orthologs in. Default: 'mmusculus'. Examples: 'mmusculus' (mouse), 'rnorvegicus' (rat), 'drerio' (zebrafish), 'dmelanogaster' (fly), 'celegans' (worm)."
+                }
+            },
+            "required": ["gene_list"]
+        },
+        "fields": {
+            "endpoint": "find_orthologs"
+        },
+        "type": "GProfilerTool",
+        "test_examples": [
+            {
+                "gene_list": "TP53,BRCA1,EGFR",
+                "target_organism": "mmusculus"
+            },
+            {
+                "gene_list": "TP53,BRCA1",
+                "target_organism": "drerio"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "incoming": {"type": "string", "description": "Input gene identifier"},
+                                    "name": {"type": ["string", "null"], "description": "Ortholog gene name in target organism"},
+                                    "ortholog_ensg": {"type": ["string", "null"], "description": "Ensembl gene ID of ortholog"},
+                                    "description": {"type": ["string", "null"], "description": "Gene description in target organism"}
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "source_organism": {"type": "string"},
+                                "target_organism": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "gProfiler_annotate_snps",
+        "description": "Map SNP rsIDs to genes and annotate their functional consequences using g:Profiler (g:SNPense) from the University of Tartu. Given a list of SNP rsIDs, returns the chromosome, position, strand, associated Ensembl gene IDs, gene names, and predicted variant consequences (missense_variant, synonymous_variant, intron_variant, etc.) with counts. Useful for annotating GWAS hits, linking variants to genes, or understanding the functional impact of SNPs. Example: 'rs11540652' maps to chromosome 17 position 7674220, gene TP53 (ENSG00000141510), with 18 missense variant consequences; 'rs429358' maps to APOE on chromosome 19.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "snp_list": {
+                    "type": "string",
+                    "description": "Comma-separated list of SNP rsIDs. Examples: 'rs11540652,rs429358,rs7903146' or 'rs1042779,rs6792369'. Maximum ~200 SNPs per query."
+                },
+                "organism": {
+                    "type": "string",
+                    "description": "Organism identifier. Default: 'hsapiens'. Examples: 'hsapiens' (human), 'mmusculus' (mouse)."
+                }
+            },
+            "required": ["snp_list"]
+        },
+        "fields": {
+            "endpoint": "snpense"
+        },
+        "type": "GProfilerTool",
+        "test_examples": [
+            {
+                "snp_list": "rs11540652,rs429358"
+            },
+            {
+                "snp_list": "rs7903146,rs1042779"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "rs_id": {"type": "string", "description": "SNP rsID"},
+                                    "chromosome": {"type": "string", "description": "Chromosome number"},
+                                    "start": {"type": "integer", "description": "Genomic start position"},
+                                    "end": {"type": "integer", "description": "Genomic end position"},
+                                    "strand": {"type": "string"},
+                                    "ensembl_gene_ids": {"type": "array", "items": {"type": "string"}, "description": "Ensembl gene IDs overlapping this SNP"},
+                                    "gene_names": {"type": "array", "items": {"type": "string"}, "description": "Gene symbols"},
+                                    "variant_consequences": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "consequence": {"type": "string", "description": "Variant consequence type (e.g., missense_variant)"},
+                                                "count": {"type": "integer", "description": "Number of transcripts with this consequence"}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "organism": {"type": "string"},
+                                "total_snps_queried": {"type": "integer"},
+                                "total_results": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

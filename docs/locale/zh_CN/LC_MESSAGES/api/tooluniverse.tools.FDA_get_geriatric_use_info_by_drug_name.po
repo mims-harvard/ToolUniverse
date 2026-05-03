@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_geriatric\\_use\\_info\\_by\\_drug\\_name
 #: a3e377d1773b4b06b21ed157777e89b3 of
 #: tooluniverse.tools.FDA_get_geriatric_use_info_by_drug_name:1
 msgid "FDA_get_geriatric_use_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取老年用药信息"
 
 #: 32867d18dbf84e739380db80d062b3f4 8af238aead4c41e2be984e7de2b44afc of
 #: tooluniverse.tools.FDA_get_geriatric_use_info_by_drug_name:3

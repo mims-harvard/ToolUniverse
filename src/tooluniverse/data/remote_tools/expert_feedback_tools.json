@@ -14,6 +14,14 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/expert_feedback.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/expert_feedback",
       "tool_prefix": "expert_"
+    },
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -110,7 +118,16 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/expert_feedback.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/expert_feedback",
       "mcp_tool_name": "consult_human_expert"
-    }
+    },
+    "test_examples": [
+      {
+        "question": "example_string",
+        "specialty": "example_string",
+        "priority": "low",
+        "context": "The quick brown fox jumps over the lazy dog.",
+        "timeout_minutes": 5
+      }
+    ]
   },
   {
     "type": "RemoteTool",
@@ -171,7 +188,12 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/expert_feedback.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/expert_feedback",
       "mcp_tool_name": "get_expert_response"
-    }
+    },
+    "test_examples": [
+      {
+        "request_id": "example_string"
+      }
+    ]
   },
   {
     "type": "RemoteTool",
@@ -254,7 +276,10 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/expert_feedback.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/expert_feedback",
       "mcp_tool_name": "get_expert_status"
-    }
+    },
+    "test_examples": [
+      {}
+    ]
   },
   {
     "type": "RemoteTool",
@@ -328,7 +353,10 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/expert_feedback.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/expert_feedback",
       "mcp_tool_name": "list_pending_expert_requests"
-    }
+    },
+    "test_examples": [
+      {}
+    ]
   },
   {
     "type": "RemoteTool",
@@ -389,6 +417,12 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/expert_feedback.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/expert_feedback",
       "mcp_tool_name": "submit_expert_response"
-    }
+    },
+    "test_examples": [
+      {
+        "request_id": "example_string",
+        "response": "example_string"
+      }
+    ]
   }
 ]

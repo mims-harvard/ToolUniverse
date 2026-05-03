@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.drugbank_get_drug_products_by_name_or_drugbank_id:1
 msgid "drugbank_get_drug_products_by_name_or_drugbank_id"
 msgstr ""
+"drugbank_get_drug_products_by_name_or_drugbank_id  \n"
+"通过名称或DrugBank ID获取药品产品"
 
 #: 3cb25aea4f944db8b84a9627933ae9da 8a4a9ff7873f4583bd4b0e78f2ee7732 of
 #: tooluniverse.tools.drugbank_get_drug_products_by_name_or_drugbank_id:3

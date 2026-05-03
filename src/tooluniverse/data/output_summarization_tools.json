@@ -44,12 +44,22 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4o-1120",
-      "temperature": 0.3,
-      "max_new_tokens": 2048,
       "return_json": false,
       "return_metadata": false
+    },
+    "test_examples": [
+      {
+        "tool_output": "System profiling output: CPU usage peaked at 85%, memory usage stabilized at 2.3GB, disk I/O averaged 120MB/s.",
+        "query_context": "Identify peak resource usage during system profiling.",
+        "tool_name": "SystemProfiler",
+        "focus_areas": "performance_metrics",
+        "max_length": 500
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -99,6 +109,21 @@
       "ToolOutputSummarizer"
     ],
     "composition_file": "output_summarizer.py",
-    "composition_function": "compose"
+    "composition_function": "compose",
+    "test_examples": [
+      {
+        "tool_output": "The model produced a lengthy report on protein interactions and highlighted potential drug targets across multiple signaling pathways.",
+        "query_context": "Summarize the key findings of the model regarding protein-protein interactions.",
+        "tool_name": "ProteinInteractionTool",
+        "chunk_size": 2000,
+        "focus_areas": "key_findings_and_results",
+        "max_summary_length": 3000
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
   }
 ]

@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.OpenTargets_get_associated_diseases_by_drug_chemblId:1
 msgid "OpenTargets_get_associated_diseases_by_drug_chemblId"
 msgstr ""
+"OpenTargets_get_associated_diseases_by_drug_chemblId  \n"
+"获取与药物相关的疾病信息（通过 ChEMBL ID）"
 
 #: 67dbf269f29b49d8bc42f14d0c6b6554 93e2610c1627446f9f81cc223eee0819 of
 #: tooluniverse.tools.OpenTargets_get_associated_diseases_by_drug_chemblId:3

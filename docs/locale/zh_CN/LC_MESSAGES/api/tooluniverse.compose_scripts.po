@@ -7,17 +7,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-19 13:50-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.compose_scripts.rst:2
@@ -39,19 +39,19 @@ msgstr "tooluniverse.compose_scripts 包"
 #: 277bcd281eb54975b38cb6757c02c199 of
 #: tooluniverse.compose_scripts.biomarker_discovery:1
 msgid ""
-"Biomarker Discovery Workflow Discover and validate biomarkers for a "
-"specific disease condition using compose tools"
-msgstr ""
+"Biomarker Discovery Workflow Discover and validate biomarkers for a specific"
+" disease condition using compose tools"
+msgstr "生物标志物发现工作流程 使用组合工具发现并验证特定疾病状态的生物标志物"
 
 #: ae15aa230ef0411ca33b54eea515f2a1 of
 #: tooluniverse.compose_scripts.biomarker_discovery.compose:1
 msgid "Discover and validate biomarkers for a specific disease condition"
-msgstr ""
+msgstr "发现并验证特定疾病状态的生物标志物"
 
 #: ../../api/tooluniverse.compose_scripts.rst:23
 #: 529f0ac7af224af4a41a37eed18dc9c7
 msgid "tooluniverse.compose\\_scripts.comprehensive\\_drug\\_discovery module"
-msgstr ""
+msgstr "tooluniverse.compose\\_scripts.comprehensive\\_drug\\_discovery 模块"
 
 #: 4714fd14f4ab41e587eca527c534ecf4 of
 #: tooluniverse.compose_scripts.comprehensive_drug_discovery:1
@@ -59,11 +59,13 @@ msgid ""
 "Comprehensive Drug Discovery Pipeline Complete end-to-end drug discovery "
 "workflow from disease to optimized candidates"
 msgstr ""
+"综合药物研发流程  \n"
+"完整的端到端药物研发工作流程，从疾病到优化候选药物"
 
 #: c73c0ff164a04910abba3f2e28c0f5ae of
 #: tooluniverse.compose_scripts.comprehensive_drug_discovery.compose:1
 msgid "End-to-end drug discovery: Target → Lead → Optimization → Validation"
-msgstr ""
+msgstr "端到端药物研发：靶点 → 先导化合物 → 优化 → 验证"
 
 #: ../../api/tooluniverse.compose_scripts.rst:32
 #: 19bcd21a38924e52a884c752643a80f8
@@ -74,15 +76,16 @@ msgstr "tooluniverse.compose_scripts 包"
 #: 74cbb0483624467fabfc95811e1834a3 of
 #: tooluniverse.compose_scripts.drug_safety_analyzer:1
 msgid ""
-"Drug Safety Analysis Pipeline Comprehensive drug safety analysis "
-"combining adverse event data, literature review, and molecular "
-"information"
+"Drug Safety Analysis Pipeline Comprehensive drug safety analysis combining "
+"adverse event data, literature review, and molecular information"
 msgstr ""
+"药物安全分析流程  \n"
+"综合药物安全分析，结合不良事件数据、文献综述和分子信息"
 
 #: 6caa9043bfdf4e9ea2d7af20bd6361f3 of
 #: tooluniverse.compose_scripts.drug_safety_analyzer.compose:1
 msgid "Main composition function for DrugSafetyAnalyzer"
-msgstr ""
+msgstr "DrugSafetyAnalyzer 的主要组成功能"
 
 #: ../../api/tooluniverse.compose_scripts.rst 0813bc42006d48c7900cd53817121792
 #: 1f0183d5e75449bfabf05c0377b9010f 5905807b046c42a4b6436d47747f8aa4
@@ -90,12 +93,12 @@ msgstr ""
 #: c0c3d8a038024aa5abade974e175ade9 c935f1e95c204dbf99c5ffd5fc4d7fd7
 #: f01c56c1aa1641aa9cab432a6823949b
 msgid "Parameters"
-msgstr ""
+msgstr "参数"
 
 #: 8059494ce2ef4375bfb9bc098057bfb5 of
 #: tooluniverse.compose_scripts.drug_safety_analyzer.compose:3
 msgid "Input arguments containing drug_name, patient_sex, serious_events_only"
-msgstr ""
+msgstr "输入参数包括 drug_name、patient_sex、serious_events_only"
 
 #: 81e7833b2a1b46cabd4402b3bfd2ff69 e31dcf90ed304a91851c95c8d3783884
 #: f48a6f6c8e13477085cbf78ac06f14da of
@@ -103,7 +106,7 @@ msgstr ""
 #: tooluniverse.compose_scripts.tool_graph_composer.compose:4
 #: tooluniverse.compose_scripts.tool_metadata_generator.compose:5
 msgid "ToolUniverse instance"
-msgstr ""
+msgstr "ToolUniverse 实例"
 
 #: 500e171bbe84407f93298bcabff08c67 6dd3199a79464fc3829c5e3d8120e571
 #: 80667b67ba5c468e95d63249e6a4c559 abe1686aa88e4716ac38c2f375d06f91 of
@@ -112,7 +115,7 @@ msgstr ""
 #: tooluniverse.compose_scripts.tool_graph_composer.compose:5
 #: tooluniverse.compose_scripts.tool_metadata_generator.compose:6
 msgid "Function to call other tools"
-msgstr ""
+msgstr "调用其他工具的功能"
 
 #: 0cbe3a9689e2445cb2617ab5a8a18ff6 1634b4ccf719415bad2b45103e85ec8a
 #: 18eacb8a2c9b40af8ddd85e2bc03b5cf 3414aef59da841628f8eb454485f94df
@@ -127,12 +130,12 @@ msgstr ""
 #: tooluniverse.compose_scripts.tool_graph_composer.compose:7
 #: tooluniverse.compose_scripts.tool_metadata_generator.compose:8
 msgid "Returns"
-msgstr ""
+msgstr "返回"
 
 #: e92af08712034a648576f9d0c50c0f40 of
 #: tooluniverse.compose_scripts.drug_safety_analyzer.compose:9
 msgid "dict: Comprehensive drug safety analysis result"
-msgstr ""
+msgstr "dict: 综合药物安全性分析结果"
 
 #: ../../api/tooluniverse.compose_scripts.rst:41
 #: df495ceb4cc44e0a976ffc07fac82630
@@ -140,23 +143,25 @@ msgid ""
 "tooluniverse.compose\\_scripts.enhanced\\_multi\\_agent\\_literature\\_search"
 " module"
 msgstr ""
+"tooluniverse.compose\\_scripts.enhanced\\_multi\\_agent\\_literature\\_search"
+" 模块"
 
 #: 4dbd68eedb854a86b5f62aa40a21a1bd of
 #: tooluniverse.compose_scripts.enhanced_multi_agent_literature_search:1
 msgid ""
 "Enhanced Multi-Agent Literature Search System Uses MemoryManager for "
 "session-based memory management"
-msgstr ""
+msgstr "增强型多代理文献检索系统使用MemoryManager进行基于会话的内存管理"
 
 #: 21ac72b5b2554305bd721b0720c68106 of
 #: tooluniverse.compose_scripts.enhanced_multi_agent_literature_search.compose:1
 msgid "使用MemoryManager的enhanced multi-agent系统"
-msgstr ""
+msgstr "使用MemoryManager的增强型多代理系统"
 
 #: 77af05f17e1d4ac7b3c5a8c6f8411d36 of
 #: tooluniverse.compose_scripts.enhanced_multi_agent_literature_search._parse_result:1
 msgid "解析工具结果，确保返回字典格式"
-msgstr ""
+msgstr "解析工具结果，确保返回为字典格式"
 
 #: c03e4425b5e44ad88dd31b8cb0f9fd90 of
 #: tooluniverse.compose_scripts.enhanced_multi_agent_literature_search._format_papers_for_summary:1
@@ -175,11 +180,13 @@ msgid ""
 "Literature Search & Summary Tool Minimal compose tool perfect for paper "
 "screenshots"
 msgstr ""
+"文献搜索与摘要工具  \n"
+"适用于论文截图的简约编辑工具"
 
 #: 1a345c3363924f719621a47507326422 of
 #: tooluniverse.compose_scripts.literature_tool.compose:1
 msgid "Search literature and generate summary"
-msgstr ""
+msgstr "搜索文献并生成摘要"
 
 #: ../../api/tooluniverse.compose_scripts.rst:59
 #: 5efa13ff8d5e4603820e6f40d84e7fd6
@@ -190,69 +197,69 @@ msgstr "tooluniverse.compose_scripts 包"
 #: e0c4b2779ac14128a87cac903f8ab758 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search:2
 msgid "Multi-Agent Literature Search Compose Function"
-msgstr ""
+msgstr "多代理文献检索组合功能"
 
 #: e989ccdcf6a248f9a24192a7d1c5a53c of
 #: tooluniverse.compose_scripts.multi_agent_literature_search:4
 msgid ""
-"This module implements the compose function for the multi-agent "
-"literature search system."
-msgstr ""
+"This module implements the compose function for the multi-agent literature "
+"search system."
+msgstr "该模块实现了多代理文献检索系统的组合功能。"
 
 #: 9e6fb1003f814a0585fc2db6ff89c7cc of
 #: tooluniverse.compose_scripts.multi_agent_literature_search._format_papers_for_summary_v2:1
 msgid "Format papers for summary generation"
-msgstr ""
+msgstr "将论文格式化以生成摘要"
 
 #: 5d5ff8e1bcfd431d8ee0576f3c227150 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search.compose:1
 msgid "Multi-agent literature search compose function"
-msgstr ""
+msgstr "多代理文献检索组合功能"
 
 #: 7674cf68a2fe43bf8f29e3d2abbb1193 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search.compose:3
 msgid "Input parameters from the tool call"
-msgstr ""
+msgstr "工具调用的输入参数"
 
 #: 1d3a9014472645e9878b417e1f019f94 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search.compose:5
 msgid "Reference to the ToolUniverse instance"
-msgstr ""
+msgstr "引用 ToolUniverse 实例"
 
 #: 1122fb4585774c58bd6c63602c0c7ed4 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search.compose:9
 msgid "Callback function for streaming output"
-msgstr ""
+msgstr "用于流式输出的回调函数"
 
 #: f6b1983838454555b241a1fb8f01a7f8 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search.compose:13
 msgid "dict: The result of the multi-agent search"
-msgstr ""
+msgstr "dict：多智能体搜索的结果"
 
 #: baa3249ed5244cec9248fe34970ab775 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search._calculate_quality_score:1
 msgid "Calculate quality score for a search plan"
-msgstr ""
+msgstr "计算搜索计划的质量评分"
 
 #: c469f23d90984ec59b4cae40b96ce1da of
 #: tooluniverse.compose_scripts.multi_agent_literature_search._format_plans_for_analysis:1
 msgid "Format plans for quality analysis"
-msgstr ""
+msgstr "格式规划用于质量分析"
 
 #: 99c0568220c84e9ab498ac85b0e66c4d of
 #: tooluniverse.compose_scripts.multi_agent_literature_search._apply_improvements:1
 msgid "Apply improvements to existing plans and add new plans"
-msgstr ""
+msgstr "对现有计划进行改进并添加新计划"
 
 #: 251468fa4911427f9b1862652cc9eade of
 #: tooluniverse.compose_scripts.multi_agent_literature_search._format_plan_summaries:1
 msgid "Format plan summaries for overall summary generation"
-msgstr ""
+msgstr "格式化计划摘要以生成总体摘要"
 
 #: 12d83fe5684c45298ba2886568ce7094 of
 #: tooluniverse.compose_scripts.multi_agent_literature_search._create_plan_summaries:1
 msgid "Create structured plan summaries for return"
-msgstr ""
+msgstr "为退货创建结构化计划摘要"
 
 #: ../../api/tooluniverse.compose_scripts.rst:68
 #: 4707afa73ede4ece861367d7570d4e25
@@ -263,208 +270,230 @@ msgstr "tooluniverse.compose_scripts 包"
 #: 68d9682dc6d9453c8059ebf462acb0b9 of
 #: tooluniverse.compose_scripts.output_summarizer:1
 msgid "Output Summarization Composer Script"
-msgstr ""
+msgstr "输出摘要编写器脚本"
 
 #: 46bbf9a8d59d486b8cc53870fc35d355 of
 #: tooluniverse.compose_scripts.output_summarizer:3
 msgid ""
 "This script handles the intelligent summarization of tool outputs by: 1. "
-"Chunking large outputs into manageable pieces 2. Processing each chunk "
-"with AI-powered summarization 3. Merging the summarized chunks into a "
-"coherent final summary"
+"Chunking large outputs into manageable pieces 2. Processing each chunk with "
+"AI-powered summarization 3. Merging the summarized chunks into a coherent "
+"final summary"
 msgstr ""
+"该脚本通过以下方式处理工具输出的智能摘要：  \n"
+"1. 将较大的输出分块为可管理的部分  \n"
+"2. 使用人工智能驱动的摘要功能处理每个分块  \n"
+"3. 将摘要后的分块合并为连贯的最终摘要"
 
 #: 50ca4af27a74420c8d4c48246eb9c19d of
 #: tooluniverse.compose_scripts.output_summarizer:8
 msgid ""
-"The script leverages ToolUniverse's AgenticTool infrastructure to provide"
-" intelligent, context-aware summarization that focuses on information "
+"The script leverages ToolUniverse's AgenticTool infrastructure to provide "
+"intelligent, context-aware summarization that focuses on information "
 "relevant to the original query."
-msgstr ""
+msgstr "脚本利用ToolUniverse的AgenticTool基础架构，提供智能、上下文感知的摘要功能，专注于与原始查询相关的信息。"
 
 #: 221bf5bad03a4841849902fe4422b741 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:1
 msgid "Main composition function for output summarization."
-msgstr ""
+msgstr "主要组成功能用于输出摘要。"
 
 #: a38e43cdb7f34fab9dc379f42dca5f25 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:3
 msgid ""
-"This function orchestrates the complete summarization workflow: - Chunks "
-"the input text into manageable pieces - Summarizes each chunk using AI - "
-"Merges the summaries into a final coherent result"
+"This function orchestrates the complete summarization workflow: - Chunks the"
+" input text into manageable pieces - Summarizes each chunk using AI - Merges"
+" the summaries into a final coherent result"
 msgstr ""
+"此功能协调完整的摘要工作流程：  \n"
+"- 将输入文本分割为可管理的片段  \n"
+"- 使用人工智能对每个片段进行摘要  \n"
+"- 将所有摘要合并为最终连贯的结果"
 
 #: 95e6d357da5848b8980a4b8631989708 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:8
 msgid ""
-"Dictionary containing: - tool_output (str): The original tool output to "
-"be summarized - query_context (str): Context about the original query - "
+"Dictionary containing: - tool_output (str): The original tool output to be "
+"summarized - query_context (str): Context about the original query - "
 "tool_name (str): Name of the tool that generated the output - chunk_size "
 "(int, optional): Size of each chunk for processing - focus_areas (str, "
 "optional): Areas to focus on in summarization - max_summary_length (int, "
 "optional): Maximum length of final   summary"
 msgstr ""
+"字典包含：  \n"
+"- tool_output (str)：需要总结的原始工具输出  \n"
+"- query_context (str)：关于原始查询的上下文信息  \n"
+"- tool_name (str)：生成输出的工具名称  \n"
+"- chunk_size (int, 可选)：处理时每个块的大小  \n"
+"- focus_areas (str, 可选)：总结时需要关注的领域  \n"
+"- max_summary_length (int, 可选)：最终总结的最大长度"
 
 #: 9b300da08cf14ad98e19e07357f1d24b of
 #: tooluniverse.compose_scripts.output_summarizer.compose:8
 msgid ""
-"Dictionary containing: - tool_output (str): The original tool output to "
-"be summarized - query_context (str): Context about the original query - "
+"Dictionary containing: - tool_output (str): The original tool output to be "
+"summarized - query_context (str): Context about the original query - "
 "tool_name (str): Name of the tool that generated the output - chunk_size "
 "(int, optional): Size of each chunk for processing - focus_areas (str, "
 "optional): Areas to focus on in summarization - max_summary_length (int, "
 "optional): Maximum length of final"
 msgstr ""
+"字典包含：  \n"
+"- tool_output (str)：原始工具输出内容，用于摘要  \n"
+"- query_context (str)：关于原始查询的上下文信息  \n"
+"- tool_name (str)：生成输出的工具名称  \n"
+"- chunk_size (int, 可选)：处理时每个块的大小  \n"
+"- focus_areas (str, 可选)：摘要中需要关注的重点领域  \n"
+"- max_summary_length (int, 可选)：最终摘要的最大长度"
 
 #: 0d40f2851e1648e592dead9d007b4888 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:15
 msgid "summary"
-msgstr ""
+msgstr "摘要"
 
 #: c3e26a65ac2b43659ca607b82dbe2a92 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:17
 msgid "ToolUniverse instance for tool execution"
-msgstr ""
+msgstr "ToolUniverse 实例用于工具执行"
 
 #: 521f2c96f2854073b326f45ddc1753ed of
 #: tooluniverse.compose_scripts.output_summarizer.compose:18
 msgid "Function to call other tools within the composition"
-msgstr ""
+msgstr "在组合内调用其他工具的功能"
 
 #: 605e4901195847a9a81b87576f77a03c of
 #: tooluniverse.compose_scripts.output_summarizer.compose:21
 msgid "Dict[str, Any]: Dictionary containing:"
-msgstr ""
+msgstr "Dict[str, Any]：包含以下内容的字典："
 
 #: ad8d45e0f8e64cf8acd7a75649e98119 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:22
 msgid "success (bool): Whether summarization was successful"
-msgstr ""
+msgstr "success (bool)：是否成功完成摘要"
 
 #: 152e192572f14443b050924898199eaf of
 #: tooluniverse.compose_scripts.output_summarizer.compose:23
 msgid "original_length (int): Length of original output"
-msgstr ""
+msgstr "original_length (int)：原始输出的长度"
 
 #: fbc6dc8009264ac1a3bb38a9ddf94aa3 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:24
 msgid "summary_length (int): Length of final summary"
-msgstr ""
+msgstr "summary_length (int)：最终摘要的长度"
 
 #: 9d39e8175cf94f5fb62a392c4a565a43 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:25
 msgid "chunks_processed (int): Number of chunks processed"
-msgstr ""
+msgstr "chunks_processed（整数）：已处理的数据块数量"
 
 #: 8a544d15094846b097356b6e006c2e9a of
 #: tooluniverse.compose_scripts.output_summarizer.compose:26
 msgid "summary (str): The summarized output"
-msgstr ""
+msgstr "摘要 (str): 汇总输出"
 
 #: 5f0111a0bf654a489239fbff4864a694 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:27
 msgid "tool_name (str): Name of the original tool"
-msgstr ""
+msgstr "tool_name（字符串）：原始工具的名称"
 
 #: 80d62fa3f9044bcaa2f8bacf0475cff1 of
 #: tooluniverse.compose_scripts.output_summarizer.compose:28
 msgid "error (str, optional): Error message if summarization failed"
-msgstr ""
+msgstr "error（字符串，可选）：如果摘要失败，则显示错误消息"
 
 #: a6b5c2f22ffc4c05bb679dd248d3200e of
 #: tooluniverse.compose_scripts.output_summarizer._chunk_output:1
 msgid ""
 "Split text into chunks of specified size with intelligent boundary "
 "detection."
-msgstr ""
+msgstr "将文本拆分为指定大小的块，并进行智能边界检测。"
 
 #: 74b92bce5eec4e2fa42193f016eb805d of
 #: tooluniverse.compose_scripts.output_summarizer._chunk_output:4
 msgid ""
-"This function attempts to break text at natural boundaries (sentences) to"
-" maintain coherence within chunks while respecting the size limit."
-msgstr ""
+"This function attempts to break text at natural boundaries (sentences) to "
+"maintain coherence within chunks while respecting the size limit."
+msgstr "此函数尝试在自然边界（句子）处分割文本，以在保持块内连贯性的同时遵守大小限制。"
 
 #: cc4b2b3808024fcbbd7429049a293e5e of
 #: tooluniverse.compose_scripts.output_summarizer._chunk_output:7
 msgid "The text to be chunked"
-msgstr ""
+msgstr "需要翻译的文本"
 
 #: 7ed0dda1d7924293937222a1528f39f7 of
 #: tooluniverse.compose_scripts.output_summarizer._chunk_output:9
 msgid "Maximum size of each chunk"
-msgstr ""
+msgstr "每个块的最大大小"
 
 #: c2fe7d4809ee4ab1bcc2daf0e01ea0c3 of
 #: tooluniverse.compose_scripts.output_summarizer._chunk_output:13
 msgid "List[str]: List of text chunks"
-msgstr ""
+msgstr "List[str]：文本块列表"
 
 #: 335a4631e7e94e9f97b630b84d9b1ebb of
 #: tooluniverse.compose_scripts.output_summarizer._summarize_chunk:1
 msgid "Summarize a single chunk using the AgenticTool summarizer."
-msgstr ""
+msgstr "使用 AgenticTool 摘要工具对单个数据块进行总结。"
 
 #: a450548114b84a64b3b543bd26ba3e3c of
 #: tooluniverse.compose_scripts.output_summarizer._summarize_chunk:3
 msgid "The text chunk to summarize"
-msgstr ""
+msgstr "请提供您需要翻译的具体英文文本，我将为您进行准确的翻译。"
 
 #: 2809c21375f348ae8d08fb981b556968 99786b55973b4a2dbd49b82409aa3c2a of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:8
 #: tooluniverse.compose_scripts.output_summarizer._summarize_chunk:5
 msgid "Context about the original query"
-msgstr ""
+msgstr "上下文：文档"
 
 #: 5bff15e610d24d7b9a1bc860a8d186a0 a5dff25333234b9b810cfcb0d34f46cb of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:10
 #: tooluniverse.compose_scripts.output_summarizer._summarize_chunk:7
 msgid "Name of the tool that generated the output"
-msgstr ""
+msgstr "生成输出的工具名称"
 
 #: 00c4427a67d34f1496ed53fdf8b72ef5 of
 #: tooluniverse.compose_scripts.output_summarizer._summarize_chunk:9
 msgid "Areas to focus on during summarization"
-msgstr ""
+msgstr "在总结过程中需要关注的领域"
 
 #: 8576e816277a4f6eaff20f909d4e898c 8b46a5afc0424254a32906c32f3aab3a of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:14
 #: tooluniverse.compose_scripts.output_summarizer._summarize_chunk:11
 msgid "Function to call the summarizer tool"
-msgstr ""
+msgstr "调用摘要工具的函数"
 
 #: 933941ed2c2745a395dc6415c2f1baab of
 #: tooluniverse.compose_scripts.output_summarizer._summarize_chunk:14
 msgid "str: Summarized chunk text, or empty string if summarization fails"
-msgstr ""
+msgstr "str: 汇总的块文本，如果汇总失败则为空字符串"
 
 #: 8a9908f9e13e48019c0aa163d0d8955b of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:1
 msgid "Merge chunk summaries into a final coherent summary."
-msgstr ""
+msgstr "将块摘要合并为最终连贯的摘要。"
 
 #: ab1ecc7c3bc44b9d9729e57ff3118061 of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:3
 msgid ""
 "If the combined summaries exceed the maximum length, they are further "
 "summarized to create a concise final result."
-msgstr ""
+msgstr "如果合并后的摘要超过最大长度，将进一步进行总结以生成简洁的最终结果。"
 
 #: 8bb6d23b95224362ac21382bf08844d4 of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:6
 msgid "List of summarized chunks"
-msgstr ""
+msgstr "摘要块列表"
 
 #: 855b0d01391e43b3898f07a5c6da0165 of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:12
 msgid "Maximum length of final summary"
-msgstr ""
+msgstr "最终摘要的最大长度"
 
 #: 85d02a936a58456c91c28f5f47531c0e of
 #: tooluniverse.compose_scripts.output_summarizer._merge_summaries:17
 msgid "str: Final merged summary"
-msgstr ""
+msgstr "str: 最终合并摘要"
 
 #: ../../api/tooluniverse.compose_scripts.rst:77
 #: 4c5ccbf14a6c4a63a888cb0e15cb1b67
@@ -481,81 +510,82 @@ msgstr "tooluniverse.compose_scripts 包"
 #: e60086a5d6cc4478ae3a661e16f3c8e9 of
 #: tooluniverse.compose_scripts.tool_discover._discover_similar_tools:1
 msgid "Discover similar tools"
-msgstr ""
+msgstr "发现类似工具"
 
 #: e1adeaea02b742a59217b9b2dfa0fad7 of
 #: tooluniverse.compose_scripts.tool_discover._generate_tool_specification:1
 msgid "Generate tool specification"
-msgstr ""
+msgstr "生成工具规范"
 
 #: 854410b4e92249f4aca7d38807e8f047 of
 #: tooluniverse.compose_scripts.tool_discover._generate_implementation:1
 msgid "Generate implementation code for all tool types"
-msgstr ""
+msgstr "为所有工具类型生成实现代码"
 
 #: d47459d7f97d42b2b09cb12124081342 of
 #: tooluniverse.compose_scripts.tool_discover._generate_test_cases:1
 msgid "Generate test cases"
-msgstr ""
+msgstr "生成测试用例"
 
 #: 325eb42806234455b19f84c76e3bd1f7 of
 #: tooluniverse.compose_scripts.tool_discover._validate_test_cases:1
 msgid "Validate test cases"
-msgstr ""
+msgstr "验证测试用例"
 
 #: 04e36a3bdd5e42b68e1fb88ed69305d9 of
 #: tooluniverse.compose_scripts.tool_discover._execute_test_cases:1
 msgid "Execute test cases to validate code functionality"
-msgstr ""
+msgstr "执行测试用例以验证代码功能"
 
 #: 080ae05cfd69418a836753f4e5c8d8bc of
 #: tooluniverse.compose_scripts.tool_discover._evaluate_quality:1
 msgid "评估代码质量 - 使用增强的CodeQualityAnalyzer + 实际测试执行"
-msgstr ""
+msgstr "评估代码质量 - 使用增强版的CodeQualityAnalyzer + 实际测试执行"
 
 #: 30f82839ed124ad1891258b5f3ab0a77 of
 #: tooluniverse.compose_scripts.tool_discover._expand_test_coverage:1
 msgid "Expand test coverage"
-msgstr ""
+msgstr "扩展测试覆盖率"
 
 #: 88017e2daa3740b9bf23ae1bd042c313 of
 #: tooluniverse.compose_scripts.tool_discover._optimize_code:1
 msgid "General code optimization"
-msgstr ""
+msgstr "常规代码优化"
 
 #: e7a6d61fd6a14e3bb6517f6814b80e61 of
 #: tooluniverse.compose_scripts.tool_discover.iterative_code_improvement:1
 msgid ""
 "Iteratively improve code implementation until target quality score is "
 "reached"
-msgstr ""
+msgstr "迭代优化代码实现，直到达到目标质量评分"
 
 #: c1534a86c9c248b38a5bd6d6c487aa89 of
 #: tooluniverse.compose_scripts.tool_discover._save_tool_files:1
 msgid "Save tool files"
-msgstr ""
+msgstr "保存工具文件"
 
 #: bddaccfc5db94841a56744393af9146f of
 #: tooluniverse.compose_scripts.tool_discover._convert_json_to_python:1
 msgid "Recursively convert JSON object booleans and types to Python format"
-msgstr ""
+msgstr "递归地将 JSON 对象中的布尔值和类型转换为 Python 格式"
 
 #: 2cae0adc984f43da819f69942142efb7 of
 #: tooluniverse.compose_scripts.tool_discover._convert_python_types_to_strings:1
 msgid ""
-"Recursively convert Python type objects to string representations for "
-"JSON serialization"
-msgstr ""
+"Recursively convert Python type objects to string representations for JSON "
+"serialization"
+msgstr "递归地将Python类型对象转换为字符串表示形式，以用于JSON序列化"
 
 #: 420f13d0c4e942eaa1b08ca7a1c6e03b of
 #: tooluniverse.compose_scripts.tool_discover._generate_tool_code:1
-msgid "Generate Python code for all tool types using correct register_tool method"
-msgstr ""
+msgid ""
+"Generate Python code for all tool types using correct register_tool method"
+msgstr "生成针对所有工具类型的Python代码，并使用正确的register_tool方法"
 
 #: 9e7f555f6ea141a2918667bfb25bc413 of
 #: tooluniverse.compose_scripts.tool_discover.compose:1
 msgid "General tool discovery and generation system"
-msgstr ""
+msgstr "通用工具发现与生成系统"
 
 #: ../../api/tooluniverse.compose_scripts.rst:95
 #: 6b8697bb1ded413199ddd8ecceeb1136
@@ -568,52 +598,52 @@ msgstr "tooluniverse.compose_scripts 包"
 msgid ""
 "Simplified and fixed tool_graph_composer.py This version includes better "
 "error handling and avoids the 'unhashable type' issue."
-msgstr ""
+msgstr "简化并修复了 tool_graph_composer.py。本版本包含更完善的错误处理，并避免了“不可哈希类型”问题。"
 
 #: 919c0b12299f46dd99a890e13161eee4 of
 #: tooluniverse.compose_scripts.tool_graph_composer.compose:1
 msgid "Compose function for building tool compatibility graphs."
-msgstr ""
+msgstr "用于构建工具兼容性图的Compose函数。"
 
 #: df4e501a6bee458b9550d33b118ac9c6 of
 #: tooluniverse.compose_scripts.tool_graph_composer.compose:3
 msgid "Dictionary with composition parameters"
-msgstr ""
+msgstr "字典包含构成参数"
 
 #: 009d455270144eedadb7486cb3e1e10d of
 #: tooluniverse.compose_scripts.tool_graph_composer.compose:8
 msgid "Dictionary with results and file paths"
-msgstr ""
+msgstr "带有结果和文件路径的字典"
 
 #: b3da526a5ccc4f5bbc50d39482c37c8e of
 #: tooluniverse.compose_scripts.tool_graph_composer._load_all_tools:1
 msgid "Load all available tools from ToolUniverse."
-msgstr ""
+msgstr "加载来自 ToolUniverse 的所有可用工具。"
 
 #: afec3b3408774bcb92d535b92508d087 of
 #: tooluniverse.compose_scripts.tool_graph_composer._build_compatibility_graph:1
 msgid "Build the compatibility graph by analyzing tool pairs."
-msgstr ""
+msgstr "通过分析工具对来构建兼容性图。"
 
 #: b7955528c067498dbd847865be3141de of
 #: tooluniverse.compose_scripts.tool_graph_composer._extract_compatibility_info:1
 msgid "Extract structured compatibility information from analysis result."
-msgstr ""
+msgstr "从分析结果中提取结构化的兼容性信息。"
 
 #: 22e4d286d34c46b69654fa0f7f97858c of
 #: tooluniverse.compose_scripts.tool_graph_composer._save_graph:1
 msgid "Save the graph in multiple formats."
-msgstr ""
+msgstr "将图表保存为多种格式。"
 
 #: f4879bcb1bcc4a89b2827d6945291880 of
 #: tooluniverse.compose_scripts.tool_graph_composer._generate_graph_stats:1
 msgid "Generate statistics about the graph."
-msgstr ""
+msgstr "生成关于图表的统计数据。"
 
 #: b015f08a92a743868dfab7e2112e7809 of
 #: tooluniverse.compose_scripts.tool_graph_composer._load_cached_graph:1
 msgid "Load a previously cached graph."
-msgstr ""
+msgstr "加载先前缓存的图表。"
 
 #: ../../api/tooluniverse.compose_scripts.rst:104
 #: f4a16a5573444c72847157a0df60e00e
@@ -624,73 +654,73 @@ msgstr "tooluniverse.compose_scripts 包"
 #: 275b36e67bb740dc8ffc3056508042a0 of
 #: tooluniverse.compose_scripts.tool_graph_generation:1
 msgid "Tool Graph Generation Compose Script"
-msgstr ""
+msgstr "工具图生成组合脚本"
 
 #: 962c19f554f5443ea2d73cb3158296c7 of
 #: tooluniverse.compose_scripts.tool_graph_generation:3
 msgid ""
-"Efficiently evaluates directional data-flow relationships between all "
-"unique pairs of provided tool configs using one agentic tool:"
-msgstr ""
+"Efficiently evaluates directional data-flow relationships between all unique"
+" pairs of provided tool configs using one agentic tool:"
+msgstr "使用单一自主工具高效评估所有提供的工具配置之间的方向性数据流关系。"
 
 #: 69f15dd008ae47c18f22a07a01fa9ef4 of
 #: tooluniverse.compose_scripts.tool_graph_generation:5
 msgid "ToolRelationshipDetector"
-msgstr ""
+msgstr "工具关系检测器"
 
 #: 729705dc6de249de9ba63ac4373ec7d7 of
 #: tooluniverse.compose_scripts.tool_graph_generation:7
 msgid ""
 "Outputs a graph structure with edges representing valid directional "
 "relationships. Each edge stores: source, target, rationale."
-msgstr ""
+msgstr "输出一个图结构，其中的边表示有效的方向关系。每条边包含：源节点、目标节点、依据。"
 
 #: 7c33000eb2c4436f96a361930f4b14f3 of
 #: tooluniverse.compose_scripts.tool_graph_generation:10
 msgid "Performance considerations:"
-msgstr ""
+msgstr "性能注意事项："
 
 #: 216d4e3a618c4b73a1f8a4ce8a5e82ab of
 #: tooluniverse.compose_scripts.tool_graph_generation:11
 msgid "Iterates i<j once (O(N^2/2) pairs)"
-msgstr ""
+msgstr "迭代 i<j 一次（O(N^2/2) 对）。"
 
 #: d684c86e72c049ffab638e627650b953 of
 #: tooluniverse.compose_scripts.tool_graph_generation:12
 msgid "Lightweight JSON serialization of minimal fields"
-msgstr ""
+msgstr "轻量级 JSON 序列化的最小字段"
 
 #: 09ac312f7de14b50887eff53086d0760 of
 #: tooluniverse.compose_scripts.tool_graph_generation:13
 msgid ""
 "Optional batching hook (currently sequential because call_tool likely "
 "remote)"
-msgstr ""
+msgstr "可选的批处理钩子（当前为顺序执行，因为 call_tool 可能是远程调用）"
 
 #: 10a4ac9b4055440d8cd63789efd5969c of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "param tool_configs"
-msgstr ""
+msgstr "参数工具配置"
 
 #: fae9f426f50c4418a94a8d885715bf01 of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "type tool_configs"
-msgstr ""
+msgstr "类型 tool_configs"
 
 #: db250e42b4ad4e11a95aea33eca36a15 of
 #: tooluniverse.compose_scripts.tool_graph_generation:16
 msgid ":py:class:`list[dict]`"
-msgstr ""
+msgstr ":py:class:`列表[字典]`"
 
 #: 2ebc6cc07cb343348c6b4d1a695b7161 of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "param max_tools"
-msgstr ""
+msgstr "参数 max_tools"
 
 #: 092fadcd02d24ebf8ba0a7e2de933fcb of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "type max_tools"
-msgstr ""
+msgstr "类型 max_tools"
 
 #: 9b40d318b79c437c8da6cd967c53f88b of
 #: tooluniverse.compose_scripts.tool_graph_generation:18
@@ -700,12 +730,12 @@ msgstr ""
 #: e0c3f012e58a48b49c5ebde404a36239 of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "param output_path"
-msgstr ""
+msgstr "参数 output_path"
 
 #: 49700869308b4f1f84053536fbd7d346 of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "type output_path"
-msgstr ""
+msgstr "类型 output_path"
 
 #: efc7125dee14449e801118547b9b425e of
 #: tooluniverse.compose_scripts.tool_graph_generation:20
@@ -713,31 +743,33 @@ msgid ""
 ":py:class:`str) path` to write resulting graph JSON (default "
 "``'./tool_relationship_graph.json'``"
 msgstr ""
+":py:class:`str) path` 用于写入生成的图形 JSON（默认值 "
+"``'./tool_relationship_graph.json'``）"
 
 #: 8a4f177f283346999923697dc1244c9f of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "param save_intermediate_every"
-msgstr ""
+msgstr "参数 save_intermediate_every"
 
 #: f15eaaa13a924f0a94330a7f442f3d7e of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "type save_intermediate_every"
-msgstr ""
+msgstr "类型 save_intermediate_every"
 
 #: 07fd6b347c9b4a80b1dfe4b6f40b48f2 of
 #: tooluniverse.compose_scripts.tool_graph_generation:22
 msgid ":py:class:`int) checkpoint frequency (default 5000 pairs processed`"
-msgstr ""
+msgstr ":py:class:`int) 检查点频率（默认处理5000对）`"
 
 #: 5a0d09081859420abba103f222fc3ae7 of
 #: tooluniverse.compose_scripts.tool_graph_generation
 msgid "returns"
-msgstr ""
+msgstr "返回"
 
 #: 8567802cd20f432cb36a5c6216525031 of
 #: tooluniverse.compose_scripts.tool_graph_generation:24
 msgid "nodes, edges, stats"
-msgstr ""
+msgstr "节点、边、统计"
 
 #: c301a5a1306d4fb889e36a8e47eb4790 of
 #: tooluniverse.compose_scripts.tool_graph_generation
@@ -747,7 +779,7 @@ msgstr ""
 #: 9094131d62814d1ebb0ae8bd6c19a1af of
 #: tooluniverse.compose_scripts.tool_graph_generation:25
 msgid "dict with keys"
-msgstr ""
+msgstr "带有键的字典"
 
 #: ../../api/tooluniverse.compose_scripts.rst:113
 #: 89b3b8b15a7a470fbad8b9333b93c790
@@ -760,209 +792,205 @@ msgstr "tooluniverse.compose_scripts 包"
 msgid ""
 "Tool Metadata Generation Pipeline Generates comprehensive metadata for a "
 "list of tools by extracting details from their configuration files"
-msgstr ""
+msgstr "工具元数据生成管道通过从工具的配置文件中提取详细信息，为工具列表生成全面的元数据"
 
 #: 0f2bd49599e643909d1d87ca0646aeba of
 #: tooluniverse.compose_scripts.tool_metadata_generator.compose:1
 msgid "Main composition function for Tool Metadata Generation"
-msgstr ""
+msgstr "工具元数据生成的主要组成功能"
 
 #: c92f357aad7b41718842a336446d3b15 of
 #: tooluniverse.compose_scripts.tool_metadata_generator.compose:3
 #, python-brace-format
 msgid ""
 "Input arguments containing a list of tool config JSONs as well as a "
-"tool_type_mappings dict for non-API tools (e.g., {'Databases': "
-"['XMLTool']})"
+"tool_type_mappings dict for non-API tools (e.g., {'Databases': ['XMLTool']})"
 msgstr ""
+"输入参数包含工具配置JSON列表以及非API工具的tool_type_mappings字典（例如：{'Databases': ['XMLTool']})"
 
 #: f55d7b665afc432ba78d815eaf0873ec of
 #: tooluniverse.compose_scripts.tool_metadata_generator.compose:9
 msgid "list: List of tool metadata dictionaries (JSON-compatible)"
-msgstr ""
+msgstr "列表：工具元数据字典列表（兼容JSON）"
 
 #~ msgid "Comprehensive drug safety analysis result"
-#~ msgstr ""
+#~ msgstr "全面药物安全性分析结果"
 
 #~ msgid "Return type"
-#~ msgstr ""
+#~ msgstr "返回类型"
 
 #~ msgid "The result of the multi-agent search"
-#~ msgstr ""
+#~ msgstr "多代理搜索的结果"
 
 #~ msgid ""
-#~ "Dictionary containing:     - success (bool):"
-#~ " Whether summarization was successful     -"
-#~ " original_length (int): Length of original"
-#~ " output     - summary_length (int): Length"
-#~ " of final summary     - chunks_processed"
-#~ " (int): Number of chunks processed     "
-#~ "- summary (str): The summarized output"
-#~ "     - tool_name (str): Name of the"
-#~ " original tool     - error (str, "
-#~ "optional): Error message if summarization "
-#~ "failed"
+#~ "Dictionary containing:     - success (bool): Whether summarization was "
+#~ "successful     - original_length (int): Length of original output     - "
+#~ "summary_length (int): Length of final summary     - chunks_processed (int): "
+#~ "Number of chunks processed     - summary (str): The summarized output     - "
+#~ "tool_name (str): Name of the original tool     - error (str, optional): "
+#~ "Error message if summarization failed"
 #~ msgstr ""
+#~ "字典包含：  \n"
+#~ "- success (bool)：是否成功完成摘要  \n"
+#~ "- original_length (int)：原始输出的长度  \n"
+#~ "- summary_length (int)：最终摘要的长度  \n"
+#~ "- chunks_processed (int)：处理的块数量  \n"
+#~ "- summary (str)：摘要后的输出内容  \n"
+#~ "- tool_name (str)：原始工具的名称  \n"
+#~ "- error (str, 可选)：如果摘要失败，则为错误信息"
 
 #~ msgid "Dictionary containing:"
-#~ msgstr ""
+#~ msgstr "字典包含："
 
 #~ msgid "List of text chunks"
-#~ msgstr ""
+#~ msgstr "文本块列表"
 
 #~ msgid "Summarized chunk text, or empty string if summarization fails"
-#~ msgstr ""
+#~ msgstr "总结的文本块，或如果总结失败则为空字符串"
 
 #~ msgid "Final merged summary"
-#~ msgstr ""
+#~ msgstr "最终合并摘要"
 
 #~ msgid "List of tool metadata dictionaries (JSON-compatible)"
-#~ msgstr ""
+#~ msgstr "工具元数据字典列表（兼容JSON）"
 
 #~ msgid "解析工具结果，确保返回字典格式"
-#~ msgstr ""
+#~ msgstr "解析工具的结果，确保返回为字典格式"
 
 #~ msgid "格式化论文用于总结"
-#~ msgstr ""
+#~ msgstr "用于总结的格式化论文"
 
 #~ msgid "Format papers for summary generation"
-#~ msgstr ""
+#~ msgstr "格式化文档以生成摘要"
 
 #~ msgid "Calculate quality score for a search plan"
-#~ msgstr ""
+#~ msgstr "计算搜索计划的质量评分"
 
 #~ msgid "Format plans for quality analysis"
-#~ msgstr ""
+#~ msgstr "格式计划用于质量分析"
 
 #~ msgid "Apply improvements to existing plans and add new plans"
-#~ msgstr ""
+#~ msgstr "对现有计划进行改进并添加新计划"
 
 #~ msgid "Format plan summaries for overall summary generation"
-#~ msgstr ""
+#~ msgstr "格式化计划摘要以生成整体摘要"
 
 #~ msgid "Create structured plan summaries for return"
-#~ msgstr ""
+#~ msgstr "为退货创建结构化计划摘要"
 
 #~ msgid ""
-#~ "Split text into chunks of specified "
-#~ "size with intelligent boundary detection."
-#~ msgstr ""
+#~ "Split text into chunks of specified size with intelligent boundary "
+#~ "detection."
+#~ msgstr "将文本分割为指定大小的块，并智能检测边界。"
 
 #~ msgid ""
-#~ "This function attempts to break text "
-#~ "at natural boundaries (sentences) to "
-#~ "maintain coherence within chunks while "
-#~ "respecting the size limit."
-#~ msgstr ""
+#~ "This function attempts to break text at natural boundaries (sentences) to "
+#~ "maintain coherence within chunks while respecting the size limit."
+#~ msgstr "此功能尝试在自然边界（句子）处分割文本，以在保持块内连贯性的同时遵守大小限制。"
 
 #~ msgid "The text to be chunked"
-#~ msgstr ""
+#~ msgstr "需要提供具体的英文文本内容才能进行翻译。请将需要翻译的文本提供给我。"
 
 #~ msgid "Maximum size of each chunk"
-#~ msgstr ""
+#~ msgstr "每个块的最大大小"
 
 #~ msgid "List[str]: List of text chunks"
-#~ msgstr ""
+#~ msgstr "List[str]：文本块列表"
 
 #~ msgid "Summarize a single chunk using the AgenticTool summarizer."
-#~ msgstr ""
+#~ msgstr "使用 AgenticTool 摘要工具对单个数据块进行总结。"
 
 #~ msgid "The text chunk to summarize"
-#~ msgstr ""
+#~ msgstr "请提供需要翻译的具体英文文本内容，我将为您完成翻译。"
 
 #~ msgid "Context about the original query"
-#~ msgstr ""
+#~ msgstr "上下文：文档"
 
 #~ msgid "Name of the tool that generated the output"
-#~ msgstr ""
+#~ msgstr "生成输出的工具名称"
 
 #~ msgid "Areas to focus on during summarization"
-#~ msgstr ""
+#~ msgstr "在总结过程中需要关注的领域"
 
 #~ msgid "Function to call the summarizer tool"
-#~ msgstr ""
+#~ msgstr "调用摘要工具的函数"
 
 #~ msgid "str: Summarized chunk text, or empty string if summarization fails"
-#~ msgstr ""
+#~ msgstr "str：汇总的块文本，如果汇总失败则为空字符串"
 
 #~ msgid "Merge chunk summaries into a final coherent summary."
-#~ msgstr ""
+#~ msgstr "将块摘要合并为最终连贯的摘要。"
 
 #~ msgid ""
-#~ "If the combined summaries exceed the "
-#~ "maximum length, they are further "
-#~ "summarized to create a concise final "
-#~ "result."
-#~ msgstr ""
+#~ "If the combined summaries exceed the maximum length, they are further "
+#~ "summarized to create a concise final result."
+#~ msgstr "如果合并后的摘要超过最大长度，则会进一步进行总结以生成简洁的最终结果。"
 
 #~ msgid "List of summarized chunks"
-#~ msgstr ""
+#~ msgstr "摘要块列表"
 
 #~ msgid "Maximum length of final summary"
-#~ msgstr ""
+#~ msgstr "最终摘要的最大长度"
 
 #~ msgid "str: Final merged summary"
-#~ msgstr ""
+#~ msgstr "str: 最终合并摘要"
 
 #~ msgid "Discover similar tools"
-#~ msgstr ""
+#~ msgstr "发现类似工具"
 
 #~ msgid "Generate tool specification"
-#~ msgstr ""
+#~ msgstr "生成工具规范"
 
 #~ msgid "Generate implementation code for all tool types"
-#~ msgstr ""
+#~ msgstr "为所有工具类型生成实现代码"
 
 #~ msgid "Generate test cases"
-#~ msgstr ""
+#~ msgstr "生成测试用例"
 
 #~ msgid "Validate test cases"
-#~ msgstr ""
+#~ msgstr "验证测试用例"
 
 #~ msgid "Execute test cases to validate code functionality"
-#~ msgstr ""
+#~ msgstr "执行测试用例以验证代码功能"
 
 #~ msgid "评估代码质量 - 使用增强的CodeQualityAnalyzer + 实际测试执行"
-#~ msgstr ""
+#~ msgstr "评估代码质量 - 使用增强版的CodeQualityAnalyzer + 实际测试执行"
 
 #~ msgid "Expand test coverage"
-#~ msgstr ""
+#~ msgstr "扩展测试覆盖率"
 
 #~ msgid "General code optimization"
-#~ msgstr ""
+#~ msgstr "代码优化概述"
 
 #~ msgid "Save tool files"
-#~ msgstr ""
+#~ msgstr "保存工具文件"
 
 #~ msgid "Recursively convert JSON object booleans and types to Python format"
-#~ msgstr ""
+#~ msgstr "递归地将 JSON 对象中的布尔值和类型转换为 Python 格式"
 
 #~ msgid ""
-#~ "Recursively convert Python type objects "
-#~ "to string representations for JSON "
+#~ "Recursively convert Python type objects to string representations for JSON "
 #~ "serialization"
-#~ msgstr ""
+#~ msgstr "递归地将 Python 类型对象转换为字符串表示形式，以用于 JSON 序列化"
 
 #~ msgid ""
-#~ "Generate Python code for all tool "
-#~ "types using correct register_tool method"
-#~ msgstr ""
+#~ "Generate Python code for all tool types using correct register_tool method"
+#~ msgstr "生成适用于所有工具类型的 Python 代码，并使用正确的 register_tool 方法"
 
 #~ msgid "Load all available tools from ToolUniverse."
-#~ msgstr ""
+#~ msgstr "加载所有来自 ToolUniverse 的可用工具。"
 
 #~ msgid "Build the compatibility graph by analyzing tool pairs."
-#~ msgstr ""
+#~ msgstr "通过分析工具对来构建兼容性图。"
 
 #~ msgid "Extract structured compatibility information from analysis result."
-#~ msgstr ""
+#~ msgstr "从分析结果中提取结构化的兼容性信息。"
 
 #~ msgid "Save the graph in multiple formats."
-#~ msgstr ""
+#~ msgstr "将图表保存为多种格式。"
 
 #~ msgid "Generate statistics about the graph."
-#~ msgstr ""
+#~ msgstr "生成有关图表的统计数据。"
 
 #~ msgid "Load a previously cached graph."
-#~ msgstr ""
-
+#~ msgstr "加载先前缓存的图表。"

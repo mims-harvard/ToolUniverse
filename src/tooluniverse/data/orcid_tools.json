@@ -1,0 +1,145 @@
+[
+  {
+    "name": "ORCID_get_profile",
+    "type": "ORCIDTool",
+    "description": "Get a researcher's full ORCID profile by ORCID iD. Returns name, biography, email, keywords, researcher URLs, and summary counts of works and employments. ORCID iDs have format XXXX-XXXX-XXXX-XXXX (e.g., 0000-0002-1825-0097). Use for: identifying researchers, getting affiliation info, finding publication counts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_profile"],
+          "description": "Operation type"
+        },
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0002-1825-0097')"
+        }
+      },
+      "required": ["operation", "orcid"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "orcid": {"type": "string"},
+        "name": {},
+        "biography": {},
+        "emails": {},
+        "keywords": {},
+        "urls": {},
+        "works_count": {"type": "integer"},
+        "employments_count": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_profile",
+        "orcid": "0000-0002-1825-0097"
+      }
+    ]
+  },
+  {
+    "name": "ORCID_get_works",
+    "type": "ORCIDTool",
+    "description": "Get list of publications and works for an ORCID researcher. Returns titles, publication types, dates, journal names, and external identifiers (DOI, PubMed ID). Use for: finding researcher's publication history, getting DOIs, assessing research output.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_works"],
+          "description": "Operation type"
+        },
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
+        }
+      },
+      "required": ["operation", "orcid"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "test_examples": [
+      {
+        "operation": "get_works",
+        "orcid": "0000-0002-1825-0097"
+      }
+    ]
+  },
+  {
+    "name": "ORCID_search_researchers",
+    "type": "ORCIDTool",
+    "description": "Search ORCID registry for researchers by keyword query. Returns ORCID iDs matching the search. Supports full-text search across names, affiliations, publications, and keywords. Use for: finding researchers working on specific topics, identifying collaborators, disambiguating authors.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_researchers"],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Pagination offset (0-based)"
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 10,
+          "description": "Number of results to return"
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "test_examples": [
+      {
+        "operation": "search_researchers",
+        "query": "BRCA1 cancer genetics",
+        "rows": 5
+      }
+    ]
+  },
+  {
+    "name": "ORCID_get_employments",
+    "type": "ORCIDTool",
+    "description": "Get employment and affiliation history for an ORCID researcher. Returns organization names, departments, roles, and employment date ranges. Use for: verifying academic affiliations, tracing career history, finding current institution.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_employments"],
+          "description": "Operation type"
+        },
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
+        }
+      },
+      "required": ["operation", "orcid"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "test_examples": [
+      {
+        "operation": "get_employments",
+        "orcid": "0000-0002-1825-0097"
+      }
+    ]
+  }
+]

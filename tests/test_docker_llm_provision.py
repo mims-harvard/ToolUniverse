@@ -30,9 +30,17 @@ def test_provision_creates_remote_config_and_runs_docker():
     response = mock.Mock()
     response.status_code = 200
 
-    with mock.patch("tooluniverse.remote.docker_llm.provision.Path.home", return_value=temp_home):
-        with mock.patch("tooluniverse.remote.docker_llm.provision.subprocess.run", side_effect=fake_run):
-            with mock.patch("tooluniverse.remote.docker_llm.provision.requests.get", return_value=response):
+    with mock.patch(
+        "tooluniverse.remote.docker_llm.provision.Path.home", return_value=temp_home
+    ):
+        with mock.patch(
+            "tooluniverse.remote.docker_llm.provision.subprocess.run",
+            side_effect=fake_run,
+        ):
+            with mock.patch(
+                "tooluniverse.remote.docker_llm.provision.requests.get",
+                return_value=response,
+            ):
                 with mock.patch("tooluniverse.remote.docker_llm.provision.time.sleep"):
                     result = provision_docker_llm(
                         image="example/image:latest",
@@ -49,7 +57,16 @@ def test_provision_creates_remote_config_and_runs_docker():
     stored = json.loads(result.config_path.read_text(encoding="utf-8"))
     assert isinstance(stored, list)
     assert stored[1]["name"] == "DockerLLMChat"
-    assert ["docker", "run", "-d", "--name", "test-container", "-p", "127.0.0.1:9100:8000", "example/image:latest"] in commands
+    assert [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "test-container",
+        "-p",
+        "127.0.0.1:9100:8000",
+        "example/image:latest",
+    ] in commands
 
 
 def test_compose_returns_payload_and_refreshes_tooluniverse(tmp_path):
@@ -73,7 +90,10 @@ def test_compose_returns_payload_and_refreshes_tooluniverse(tmp_path):
 
     dummy_tu = DummyToolUniverse()
 
-    with mock.patch("tooluniverse.compose_scripts.docker_llm_provisioner.provision_docker_llm", side_effect=fake_provision):
+    with mock.patch(
+        "tooluniverse.compose_scripts.docker_llm_provisioner.provision_docker_llm",
+        side_effect=fake_provision,
+    ):
         result = compose({"host_port": 9005}, dummy_tu, call_tool=None)
 
     assert result["ok"] is True

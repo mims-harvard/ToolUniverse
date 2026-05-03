@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_pregnancy\\_effects\\_info\\_by\\_drug\\_
 #: 233c8cfaad344c24b950943099f44e09 of
 #: tooluniverse.tools.FDA_get_pregnancy_effects_info_by_drug_name:1
 msgid "FDA_get_pregnancy_effects_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取妊娠影响信息"
 
 #: bee333cfffa1412190ee075765583be7 cfbdefaafa1b4ba38d410e3b5d0e7bf9 of
 #: tooluniverse.tools.FDA_get_pregnancy_effects_info_by_drug_name:3

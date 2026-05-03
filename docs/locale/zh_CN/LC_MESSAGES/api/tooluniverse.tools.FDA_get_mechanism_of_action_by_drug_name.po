@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_mechanism\\_of\\_action\\_by\\_drug\\_nam
 #: 10d4f67ab3494675ab7fb74626f2ade3 of
 #: tooluniverse.tools.FDA_get_mechanism_of_action_by_drug_name:1
 msgid "FDA_get_mechanism_of_action_by_drug_name"
-msgstr ""
+msgstr "FDA_按药物名称获取作用机制"
 
 #: 444fbc2389174f50b9a6324f242187f3 ec1010aaf71f4c529cd0034e4a1e1d26 of
 #: tooluniverse.tools.FDA_get_mechanism_of_action_by_drug_name:3

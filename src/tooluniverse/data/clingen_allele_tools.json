@@ -1,0 +1,139 @@
+[
+  {
+    "name": "ClinGenAllele_lookup_hgvs",
+    "description": "Look up a genetic variant by HGVS expression in the ClinGen Allele Registry to get its canonical allele identifier (CA ID) and cross-references to ClinVar, dbSNP, COSMIC, gnomAD, and other databases. Accepts genomic (NC_*), coding (NM_*), or protein (NP_*) HGVS expressions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hgvs": {
+          "type": "string",
+          "description": "HGVS expression for the variant. Examples: 'NC_000017.11:g.7674220C>T' (genomic), 'NM_000546.6:c.743G>A' (coding). Must use a valid reference sequence accession."
+        }
+      },
+      "required": ["hgvs"]
+    },
+    "fields": {
+      "operation": "lookup_hgvs"
+    },
+    "type": "ClinGenAlleleTool",
+    "test_examples": [
+      {
+        "hgvs": "NC_000017.11:g.7674220C>T"
+      },
+      {
+        "hgvs": "NM_000546.6:c.743G>A"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "ca_id": {"type": ["string", "null"]},
+        "community_standard_title": {
+          "type": ["array", "null"],
+          "items": {"type": "string"}
+        },
+        "external_records": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "genomic_alleles": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "chromosome": {"type": ["string", "null"]},
+              "start": {"type": ["integer", "null"]},
+              "end": {"type": ["integer", "null"]},
+              "allele": {"type": ["string", "null"]},
+              "reference_allele": {"type": ["string", "null"]},
+              "reference_genome": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "transcript_alleles": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "hgvs": {"type": ["array", "null"], "items": {"type": "string"}},
+              "gene_symbol": {"type": ["string", "null"]},
+              "protein_effect": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ClinGenAllele_get_allele",
+    "description": "Get detailed information for a canonical allele by its ClinGen Allele Registry CA ID. Returns cross-references to ClinVar, dbSNP, COSMIC, gnomAD, genomic coordinates, and transcript-level HGVS expressions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ca_id": {
+          "type": ["string", "null"],
+          "description": "ClinGen canonical allele identifier (e.g., 'CA000387'). Obtain from ClinGenAllele_lookup_hgvs or ClinVar."
+        },
+        "allele_id": {
+          "type": ["string", "null"],
+          "description": "Alias for ca_id. ClinGen canonical allele identifier (e.g., 'CA000387')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_allele"
+    },
+    "type": "ClinGenAlleleTool",
+    "test_examples": [
+      {
+        "ca_id": "CA000387"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "ca_id": {"type": ["string", "null"]},
+        "community_standard_title": {
+          "type": ["array", "null"],
+          "items": {"type": "string"}
+        },
+        "external_records": {
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "genomic_alleles": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "chromosome": {"type": ["string", "null"]},
+              "start": {"type": ["integer", "null"]},
+              "end": {"type": ["integer", "null"]},
+              "allele": {"type": ["string", "null"]},
+              "reference_allele": {"type": ["string", "null"]},
+              "reference_genome": {"type": ["string", "null"]}
+            }
+          }
+        },
+        "transcript_alleles": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "hgvs": {"type": ["array", "null"], "items": {"type": "string"}},
+              "gene_symbol": {"type": ["string", "null"]},
+              "protein_effect": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    }
+  }
+]

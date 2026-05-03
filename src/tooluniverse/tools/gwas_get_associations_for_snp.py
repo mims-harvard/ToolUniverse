@@ -47,16 +47,22 @@ def gwas_get_associations_for_snp(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "rs_id": rs_id,
+            "sort": sort,
+            "direction": direction,
+            "size": size,
+            "page": page,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "gwas_get_associations_for_snp",
-            "arguments": {
-                "rs_id": rs_id,
-                "sort": sort,
-                "direction": direction,
-                "size": size,
-                "page": page,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

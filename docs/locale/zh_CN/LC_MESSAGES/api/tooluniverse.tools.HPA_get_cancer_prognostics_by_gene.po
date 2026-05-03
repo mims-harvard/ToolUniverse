@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_cancer\\_prognostics\\_by\\_gene 模块"
 #: 4d80061e24d14cf39ba343388b94c753 of
 #: tooluniverse.tools.HPA_get_cancer_prognostics_by_gene:1
 msgid "HPA_get_cancer_prognostics_by_gene"
-msgstr ""
+msgstr "HPA_按基因获取癌症预后信息"
 
 #: 0ffd98a09b1e47d6b348eb2196f0b485 7c462120c32e4bfa8e47b4fbf2c8667b of
 #: tooluniverse.tools.HPA_get_cancer_prognostics_by_gene:3

@@ -14,7 +14,7 @@ def call_agentic_human(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Produces a concise, practical answer that emulates how a well-informed human would respond to the...
 
@@ -31,12 +31,17 @@ def call_agentic_human(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"question": question}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "call_agentic_human", "arguments": {"question": question}},
+        {
+            "name": "call_agentic_human",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_host\\_organism\\_by\\_pdb\\_id 模块"
 #: 71242656f6cb4a16ad99524dd6311205 of
 #: tooluniverse.tools.get_host_organism_by_pdb_id:1
 msgid "get_host_organism_by_pdb_id"
-msgstr ""
+msgstr "get_host_organism_by_pdb_id（通过PDB ID获取宿主生物）"
 
 #: 3b30ee7ea0ca4ec896a14d92f260ddc9 6575ed8862d24a59b90185ad46f5b748 of
 #: tooluniverse.tools.get_host_organism_by_pdb_id:3

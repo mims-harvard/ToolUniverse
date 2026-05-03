@@ -1,0 +1,318 @@
+[
+  {
+    "type": "ComposeTool",
+    "name": "ToolDescriptionOptimizer",
+    "description": "Optimizes a tool's description and parameter descriptions by generating test cases, executing them, analyzing the results, and suggesting improved descriptions for both the tool and its arguments. Optionally saves a comprehensive optimization report to a file without overwriting the original.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "object",
+          "description": "The full configuration of the tool to optimize."
+        },
+        "save_to_file": {
+          "type": "boolean",
+          "description": "If true, save the optimized description to a file (do not overwrite the original).",
+          "default": false
+        },
+        "output_file": {
+          "type": "string",
+          "description": "Optional file path to save the optimized description. If not provided, use '<tool_name>_optimized_description.txt'."
+        },
+        "max_iterations": {
+          "type": "integer",
+          "description": "Maximum number of optimization rounds to perform.",
+          "default": 3
+        },
+        "satisfaction_threshold": {
+          "type": "number",
+          "description": "Quality score threshold (1-10) to consider optimization satisfactory.",
+          "default": 8
+        }
+      },
+      "required": [
+        "tool_config",
+        "save_to_file",
+        "output_file",
+        "max_iterations",
+        "satisfaction_threshold"
+      ]
+    },
+    "auto_load_dependencies": true,
+    "fail_on_missing_tools": false,
+    "required_tools": [
+      "TestCaseGenerator",
+      "DescriptionAnalyzer",
+      "ArgumentDescriptionOptimizer",
+      "DescriptionQualityEvaluator"
+    ],
+    "composition_file": "tool_description_optimizer.py",
+    "composition_function": "compose",
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "optimized_tool": {
+          "type": "object",
+          "description": "Tool with optimized descriptions"
+        },
+        "optimization_report": {
+          "type": "object",
+          "description": "Detailed optimization report",
+          "properties": {
+            "iterations_performed": {
+              "type": "integer"
+            },
+            "final_quality_score": {
+              "type": "number"
+            },
+            "improvements_made": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "saved_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "optimized_tool",
+        "optimization_report"
+      ]
+    },
+    "test_examples": [
+      {
+        "tool_config": {},
+        "save_to_file": false,
+        "output_file": "output.json",
+        "max_iterations": 3,
+        "satisfaction_threshold": 8
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "TestCaseGenerator",
+    "description": "Generates diverse and representative ToolUniverse tool call dictionaries for a given tool based on its parameter schema. Each tool call should be a JSON object with 'name' (the tool's name) and 'arguments' (a dict of input arguments), covering different parameter combinations, edge cases, and typical usage. Can generate targeted test cases based on previous optimization feedback.",
+    "prompt": "You are an expert software tester. Generate 3-5 diverse ToolUniverse tool call dictionaries for the given tool configuration. Each tool call must be a JSON object with 'name' (tool name) and 'arguments' (input parameters).\n\nFEEDBACK-DRIVEN GENERATION:\nIf tool_config contains '_optimization_feedback' and '_iteration', generate targeted test cases addressing the specific issues mentioned in the feedback. Focus on edge cases, parameter combinations, or usage patterns that need better coverage.\n\nSTANDARD GENERATION:\nCover typical usage, edge cases, and boundary conditions when possible.\n\nTool configuration: {tool_config}\n\nReturn a JSON object with key 'test_cases' containing an array of test case objects. Example format:\n{\"test_cases\": [{\"name\":\"tool_name_with_underscores\",\"arguments\":{\"param\":\"value\"}},{\"name\":\"tool_name_with_underscores\",\"arguments\":{\"param\":123}}]}",
+    "input_arguments": [
+      "tool_config"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "object",
+          "description": "The full configuration of the tool to generate test cases for. May include '_optimization_feedback' and '_iteration' fields for feedback-driven test generation."
+        }
+      },
+      "required": [
+        "tool_config"
+      ]
+    },
+    "configs": {
+      "return_json": true,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "test_cases": {
+          "type": "array",
+          "description": "Generated test cases for the tool",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Tool name"
+              },
+              "arguments": {
+                "type": "object",
+                "description": "Input arguments"
+              }
+            },
+            "required": [
+              "name",
+              "arguments"
+            ]
+          }
+        }
+      },
+      "required": [
+        "test_cases"
+      ]
+    },
+    "test_examples": [
+      {
+        "tool_config": {
+          "type": "AgenticTool",
+          "name": "ExampleTool",
+          "description": "An example tool for demonstration purposes.",
+          "parameter": {
+            "type": "object",
+            "properties": {
+              "example_param": {
+                "type": "string",
+                "description": "An example parameter."
+              }
+            },
+            "required": [
+              "example_param"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ArgumentDescriptionOptimizer",
+    "description": "Optimizes the descriptions of tool arguments/parameters based on test case results and actual usage patterns. Provides improved descriptions that are more accurate and user-friendly.",
+    "prompt": "You are an expert technical writer specializing in API documentation. Given a tool's parameter schema and test case results, analyze how each parameter is used and optimize their descriptions to be clear, accurate, and concise.\n\nCRITICAL CONSTRAINTS - PARAMETER DESCRIPTION SCOPE:\n1. If the parameter schema contains '_previous_feedback', use that feedback to address specific issues and improve the parameter descriptions accordingly.\n2. Parameter descriptions should be HIGHLY SPECIFIC to each individual parameter.\n3. NEVER repeat or reference the main tool functionality - assume the user already knows what the tool does.\n4. Focus EXCLUSIVELY on parameter-specific details: data types, formats, constraints, valid values, required formats, examples when helpful.\n5. Each description should answer: 'What should I put in this specific parameter?' not 'What does the tool do?'\n6. Avoid generic phrases like 'for this tool', 'used by the tool', 'enables functionality' unless they provide specific technical context.\n7. Be precise about technical requirements (e.g., 'JSON string', 'integer between 1-100', 'URL format', etc.)\n8. Every word must serve a purpose - eliminate filler words and redundant phrases.\n\nOriginal parameter schema:\n{parameter_schema}\n\nTest results showing parameter usage:\n{test_results}\n\nFor each parameter, suggest an improved description that:\n1. Is brief but informative (1-2 sentences max)\n2. Accurately reflects the parameter's specific purpose, data type, and constraints\n3. Uses clear, simple language with precise technical details\n4. Avoids redundancy with the parameter name\n5. Addresses any issues mentioned in previous feedback\n6. Contains only essential information about what value should be provided\n\nReturn a JSON object with keys: 'optimized_parameters' (object with parameter names as keys and optimized descriptions as values) and 'rationale' (explaining the key changes made).",
+    "input_arguments": [
+      "parameter_schema",
+      "test_results"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "parameter_schema": {
+          "type": "string",
+          "description": "JSON string of the original parameter schema with properties and descriptions."
+        },
+        "test_results": {
+          "type": "string",
+          "description": "A JSON string containing test case input/output pairs showing parameter usage."
+        }
+      },
+      "required": [
+        "parameter_schema",
+        "test_results"
+      ]
+    },
+    "configs": {
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "optimized_parameters": {
+          "type": "object",
+          "description": "Optimized parameter descriptions",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "rationale": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "optimized_parameters"
+      ]
+    },
+    "test_examples": [
+      {
+        "parameter_schema": "{\"username\": {\"type\": \"string\", \"description\": \"User login name\"}}",
+        "test_results": "[{\"input\": {\"username\": \"jdoe\"}, \"output\": \"success\"}]"
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "DescriptionAnalyzer",
+    "description": "Analyzes a tool's original description and the results of multiple test cases, then suggests an improved description that is more accurate, comprehensive, and user-friendly. Optionally provides a rationale for the changes.",
+    "prompt": "You are an expert technical writer and tool evaluator. Given the original description of a tool and the results of several test cases (inputs and outputs), analyze whether the description accurately reflects the tool's behavior. Suggest an improved description that is more precise, comprehensive, and user-friendly. Also provide a brief rationale for your changes.\n\nCRITICAL CONSTRAINTS - TOOL DESCRIPTION SCOPE:\n1. If the original description contains 'Previous optimization feedback:', use that feedback to guide your improvements and address the specific issues mentioned.\n2. The tool description should focus EXCLUSIVELY on the OVERALL PURPOSE and HIGH-LEVEL FUNCTIONALITY of the tool.\n3. NEVER include parameter-specific details, formats, or requirements in the tool description.\n4. NEVER mention specific parameter names, data types, or input requirements - these belong in parameter descriptions.\n5. Focus ONLY on: what the tool does, its primary use cases, what kind of output it provides, and its general behavior patterns.\n6. Avoid generic filler phrases like 'enabling workflows', 'supporting analysis', 'facilitating research' unless they add specific meaning.\n7. Every sentence must convey essential information about the tool's core functionality.\n8. Think of the tool description as answering 'What does this tool do?' with concrete, actionable information.\n\nOriginal description:\n{original_description}\n\nTest results:\n{test_results}\n\nReturn a JSON object with keys: 'optimized_description' and 'rationale'.",
+    "input_arguments": [
+      "original_description",
+      "test_results"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "original_description": {
+          "type": "string",
+          "description": "The original description of the tool."
+        },
+        "test_results": {
+          "type": "string",
+          "description": "A JSON string containing a list of test case input/output pairs."
+        }
+      },
+      "required": [
+        "original_description",
+        "test_results"
+      ]
+    },
+    "configs": {
+      "return_json": true
+    },
+    "test_examples": [
+      {
+        "original_description": "Extracts keywords from text and returns a ranked list of terms.",
+        "test_results": "[{\"input\":\"Analyze this sentence\",\"output\":\"[{\\\"keyword\\\": \\\"sentence\\\", \\\"score\\\": 0.95}]\"}]"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "DescriptionQualityEvaluator",
+    "description": "Evaluates the quality of tool descriptions and parameter descriptions, providing a score and specific feedback for improvements.",
+    "prompt": "You are an expert evaluator of technical documentation. Given a tool description, parameter descriptions, and test results, evaluate the quality and provide a score from 1-10 along with specific feedback.\n\nTool description:\n{tool_description}\n\nParameter descriptions:\n{parameter_descriptions}\n\nTest results:\n{test_results}\n\nEvaluate based on these criteria:\n1. Clarity and understandability (1-10)\n2. Accuracy based on test results (1-10)\n3. Completeness of information (1-10)\n4. Conciseness and meaningfulness - every sentence must serve a purpose (1-10)\n5. User-friendliness (1-10)\n6. Redundancy avoidance - tool description and parameter descriptions must not duplicate information (1-10)\n\nCRITICAL EVALUATION FOCUS:\n- Tool description should ONLY describe overall functionality and purpose, NOT parameter details\n- Parameter descriptions should ONLY describe specific parameter requirements, NOT tool functionality\n- Check for meaningless filler phrases like 'enabling workflows', 'supporting analysis', 'facilitating integration' - DEDUCT POINTS for vague language\n- Check for overlap: Does the tool description mention parameter names, formats, or specific input requirements? (DEDUCT POINTS)\n- Check for overlap: Do parameter descriptions repeat what the tool does overall? (DEDUCT POINTS)\n- Every sentence must convey essential, actionable information\n\nReturn a JSON object with:\n- 'overall_score': Average of all criteria scores (1-10)\n- 'criteria_scores': Object with individual scores for each criterion\n- 'feedback': Specific suggestions for improvement, identifying meaningless phrases and redundancy issues\n- 'is_satisfactory': Boolean indicating if quality is acceptable (score >= 8)\n- 'meaningfulness_analysis': Detailed explanation of any filler language or redundant information found",
+    "input_arguments": [
+      "tool_description",
+      "parameter_descriptions",
+      "test_results"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "The tool description to evaluate."
+        },
+        "parameter_descriptions": {
+          "type": "string",
+          "description": "JSON string of parameter names and their descriptions."
+        },
+        "test_results": {
+          "type": "string",
+          "description": "JSON string containing test case results."
+        }
+      },
+      "required": [
+        "tool_description",
+        "parameter_descriptions",
+        "test_results"
+      ]
+    },
+    "configs": {
+      "return_json": true
+    },
+    "test_examples": [
+      {
+        "tool_description": "A tool that converts temperatures between Celsius and Fahrenheit scales.",
+        "parameter_descriptions": "{\"temperature\": \"Numerical value representing the temperature to convert.\", \"scale\": \"Target scale for conversion, either 'C' or 'F'.\"}",
+        "test_results": "{\"test1\": \"passed\", \"test2\": \"failed\"}"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  }
+]

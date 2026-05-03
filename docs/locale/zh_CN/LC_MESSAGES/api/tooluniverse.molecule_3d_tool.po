@@ -38,7 +38,7 @@ msgstr "用于使用RDKit和py3Dmol可视化3D分子结构的工具。支持SMIL
 #: f0612edf4d504afe8609e000f331b4af of
 #: tooluniverse.molecule_3d_tool.Molecule3DTool:1
 msgid "Bases: :py:class:`~tooluniverse.visualization_tool.VisualizationTool`"
-msgstr ""
+msgstr "基础类：:py:class:`~tooluniverse.visualization_tool.VisualizationTool`"
 
 #: 08d6a685165e4f759ca9bd9dec2e6467 of
 #: tooluniverse.molecule_3d_tool.Molecule3DTool:1

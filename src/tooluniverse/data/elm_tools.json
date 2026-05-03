@@ -1,0 +1,121 @@
+[
+  {
+    "name": "ELM_get_instances",
+    "type": "ELMTool",
+    "description": "Get experimentally validated short linear motif (SLiM) instances for a protein from the ELM database. Returns motif positions, types (CLV=cleavage, DEG=degradation/degrons, DOC=docking, LIG=ligand binding, MOD=modification sites, TRG=targeting signals), experimental methods used for validation, PubMed references, and PDB structures where the motif was observed. SLiMs are compact protein interaction interfaces (3-11 residues) that mediate regulatory functions. Use with UniProt accession (e.g., P04637 for TP53).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_instances"],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": ["string", "null"],
+          "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P38398 (BRCA1), P42336 (PIK3CA)"
+        },
+        "uniprot_acc": {
+          "type": ["string", "null"],
+          "description": "Alias for uniprot_id. UniProt accession, e.g., P04637 (TP53)"
+        },
+        "motif_type": {
+          "type": ["string", "null"],
+          "enum": ["CLV", "DEG", "DOC", "LIG", "MOD", "TRG", null],
+          "description": "Filter by motif functional type. CLV=cleavage sites, DEG=degradation motifs, DOC=docking sites, LIG=ligand binding, MOD=modification sites, TRG=targeting signals. Omit for all types."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {"type": "string", "description": "ELM instance accession (e.g., ELMI002838)"},
+          "elm_identifier": {"type": "string", "description": "ELM class identifier (e.g., DEG_MDM2_SWIB_1)"},
+          "elm_type": {"type": "string", "description": "Functional class (CLV/DEG/DOC/LIG/MOD/TRG)"},
+          "protein_name": {"type": "string"},
+          "start": {"type": ["integer", "null"], "description": "Start residue position"},
+          "end": {"type": ["integer", "null"], "description": "End residue position"},
+          "references": {"type": "array", "items": {"type": "string"}, "description": "PubMed IDs"},
+          "methods": {"type": "array", "items": {"type": "string"}, "description": "Experimental methods"},
+          "instance_logic": {"type": "string", "description": "Validation status (true positive, etc.)"},
+          "pdb_ids": {"type": "array", "items": {"type": "string"}, "description": "PDB structure IDs"},
+          "organism": {"type": "string"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_instances",
+        "uniprot_id": "P04637"
+      },
+      {
+        "operation": "get_instances",
+        "uniprot_id": "P04637",
+        "motif_type": "MOD"
+      }
+    ]
+  },
+  {
+    "name": "ELM_list_classes",
+    "type": "ELMTool",
+    "description": "List short linear motif (SLiM) classes from the ELM database. Each class represents a distinct type of functional motif with a regex pattern, description, and statistics on known instances. Filter by functional type (CLV/DEG/DOC/LIG/MOD/TRG) or search by keyword (e.g., 'caspase', 'phosphorylation', 'nuclear', 'ubiquitin'). The regex patterns can be used to scan protein sequences for potential motif matches. ELM contains 353 motif classes covering cleavage, degradation, docking, ligand binding, modification, and targeting functions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_classes"],
+          "description": "Operation type"
+        },
+        "motif_type": {
+          "type": ["string", "null"],
+          "enum": ["CLV", "DEG", "DOC", "LIG", "MOD", "TRG", null],
+          "description": "Filter by motif functional type. CLV=cleavage, DEG=degradation, DOC=docking, LIG=ligand binding, MOD=modification, TRG=targeting. Omit for all types."
+        },
+        "query": {
+          "type": ["string", "null"],
+          "description": "Search keyword to filter by name, identifier, or description. E.g., 'caspase', 'kinase', 'ubiquitin', 'nuclear'"
+        },
+        "max_results": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 400,
+          "default": 50,
+          "description": "Maximum results to return (default: 50, max: 400 covers all classes)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {"type": "string", "description": "ELM class accession (e.g., ELME000321)"},
+          "elm_identifier": {"type": "string", "description": "ELM class name (e.g., CLV_C14_Caspase3-7)"},
+          "functional_site_name": {"type": "string", "description": "Human-readable name"},
+          "description": {"type": "string", "description": "Detailed description"},
+          "regex": {"type": "string", "description": "Regular expression pattern for the motif"},
+          "probability": {"type": "number", "description": "Random occurrence probability"},
+          "num_instances": {"type": "integer", "description": "Number of validated instances"},
+          "num_pdb_instances": {"type": "integer", "description": "Number of instances with PDB structures"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_classes",
+        "motif_type": "DEG",
+        "max_results": 10
+      },
+      {
+        "operation": "list_classes",
+        "query": "caspase",
+        "max_results": 10
+      }
+    ]
+  }
+]

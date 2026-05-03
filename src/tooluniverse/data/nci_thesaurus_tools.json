@@ -1,0 +1,316 @@
+[
+  {
+    "name": "NCIThesaurus_search",
+    "description": "Search the NCI Thesaurus (NCIt) for biomedical concepts by term. NCIt is the National Cancer Institute's reference terminology covering cancer-related terms, diseases, drugs, anatomy, genes, and biological processes. Returns matching concepts with NCI codes, names, and semantic types. Essential for standardized cancer research vocabulary. Example: searching 'melanoma' returns C3224 (Melanoma) as the primary concept.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "term": {
+          "type": "string",
+          "description": "Search term for NCI concepts. Examples: 'melanoma', 'breast cancer', 'imatinib', 'BRCA1', 'apoptosis', 'lung adenocarcinoma'."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 10, max 100)."
+        }
+      },
+      "required": [
+        "term"
+      ]
+    },
+    "fields": {
+      "endpoint": "search"
+    },
+    "type": "NCIThesaurusTool",
+    "test_examples": [
+      {
+        "term": "melanoma"
+      },
+      {
+        "term": "BRCA1",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "NCI Thesaurus concept code (e.g., C3224)"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Preferred concept name"
+                  },
+                  "terminology": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source terminology (ncit)"
+                  },
+                  "leaf": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether concept is a leaf node"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCIThesaurus_get_concept",
+    "description": "Get detailed information about an NCI Thesaurus concept by its code. Returns the concept name, definition, synonyms, semantic types, and cross-references to other terminologies (SNOMED, MedDRA, CDISC). Useful for understanding standardized cancer terminology and finding related concepts. Example: C3262 (Neoplasm) returns the definition, 17 synonyms, and links to ICD-10, SNOMED-CT.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "NCI Thesaurus concept code. Examples: 'C3224' (Melanoma), 'C3262' (Neoplasm), 'C17998' (BRCA1), 'C38009' (Apoptosis), 'C1909' (Imatinib)."
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_concept"
+    },
+    "type": "NCIThesaurusTool",
+    "test_examples": [
+      {
+        "code": "C3262"
+      },
+      {
+        "code": "C3224"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "NCI concept code"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Preferred name"
+                },
+                "definition": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Full text definition"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Synonym type (FULL_SYN, etc.)"
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Source database"
+                      }
+                    }
+                  },
+                  "description": "Synonyms from various sources"
+                },
+                "properties": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "description": "Additional properties (semantic type, etc.)"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "terminology": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCIThesaurus_get_children",
+    "description": "Get the direct child concepts of an NCI Thesaurus concept code. Returns the immediate subcategories/subtypes of a concept in the NCI ontology hierarchy. Useful for navigating the cancer terminology hierarchy and finding more specific terms. Example: C3262 (Neoplasm) has children C4741 (Neoplasm by Morphology), C3263 (Neoplasm by Site), C7062 (Neoplasm by Special Category).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "NCI Thesaurus concept code to get children for. Examples: 'C3262' (Neoplasm), 'C3224' (Melanoma), 'C2991' (Disease or Disorder), 'C12219' (Nervous System)."
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_children"
+    },
+    "type": "NCIThesaurusTool",
+    "test_examples": [
+      {
+        "code": "C3262"
+      },
+      {
+        "code": "C3224"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Child concept code"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Child concept name"
+                  },
+                  "leaf": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this is a leaf node (no children)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "parent_code": {
+                  "type": "string"
+                },
+                "total_children": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

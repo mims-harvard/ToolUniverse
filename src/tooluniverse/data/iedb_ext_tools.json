@@ -1,0 +1,271 @@
+[
+    {
+        "name": "iedb_search_tcell_assays",
+        "type": "IEDBTool",
+        "description": "Search T-cell assay data from the IEDB. Returns T-cell response assays with epitope sequences, MHC restriction, source organism, and assay results.\n\nUseful for finding T-cell epitopes for vaccine design, immunotherapy, and understanding cellular immunity. Filter by peptide sequence, MHC class, organism, or qualitative result.\n\nTip: use `select` to request only key fields for faster responses.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "sequence": {
+                    "type": "string",
+                    "description": "Exact peptide sequence to search (e.g., GILGFVFTL for influenza M1 epitope)."
+                },
+                "sequence_contains": {
+                    "type": "string",
+                    "description": "Partial peptide sequence (substring match). Example: 'SIINFEKL'."
+                },
+                "mhc_class": {
+                    "type": "string",
+                    "description": "MHC class restriction (I or II).",
+                    "enum": ["I", "II"]
+                },
+                "qualitative_measure": {
+                    "type": "string",
+                    "description": "Filter by assay result.",
+                    "enum": ["Positive", "Negative", "Positive-High", "Positive-Intermediate", "Positive-Low"]
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum rows to return.",
+                    "default": 10
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "Pagination offset.",
+                    "default": 0
+                },
+                "select": {
+                    "description": "Columns to return (array of strings). Example: ['tcell_id','linear_sequence','mhc_restriction','qualitative_measure'].",
+                    "oneOf": [
+                        {"type": "string"},
+                        {"type": "array", "items": {"type": "string"}}
+                    ]
+                },
+                "filters": {
+                    "type": "object",
+                    "description": "Advanced PostgREST filters (e.g., {\"source_organism_iri\":\"eq.NCBITaxon:11320\"}).",
+                    "additionalProperties": {"type": "string"}
+                }
+            },
+            "required": []
+        },
+        "return_schema": {
+            "type": "array",
+            "description": "List of T-cell assay records.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "tcell_id": {"type": ["integer", "null"]},
+                    "linear_sequence": {"type": ["string", "null"]},
+                    "structure_type": {"type": ["string", "null"]},
+                    "mhc_restriction": {"type": ["string", "null"]},
+                    "mhc_class": {"type": ["string", "null"]},
+                    "qualitative_measure": {"type": ["string", "null"]},
+                    "pubmed_id": {"type": ["string", "null"]},
+                    "journal_name": {"type": ["string", "null"]}
+                },
+                "additionalProperties": true
+            }
+        },
+        "test_examples": [
+            {
+                "sequence": "GILGFVFTL",
+                "limit": 3,
+                "select": ["tcell_id", "linear_sequence", "mhc_restriction", "qualitative_measure", "pubmed_id"]
+            },
+            {
+                "sequence_contains": "SIINFEKL",
+                "mhc_class": "I",
+                "limit": 3
+            }
+        ],
+        "fields": {
+            "endpoint": "/tcell_search",
+            "default_params": {"order": "tcell_id.asc"},
+            "shorthand_filters": {
+                "sequence": {"column": "linear_sequence", "op": "eq"},
+                "sequence_contains": {"column": "linear_sequence", "op": "ilike_contains"},
+                "mhc_class": {"column": "mhc_class", "op": "eq"},
+                "qualitative_measure": {"column": "qualitative_measure", "op": "eq"}
+            }
+        }
+    },
+    {
+        "name": "iedb_search_tcr_sequences",
+        "type": "IEDBTool",
+        "description": "Search T-cell receptor (TCR) sequence data from the IEDB. Returns TCR sequences paired with their cognate epitopes and MHC restriction.\n\nUseful for TCR engineering, adoptive cell therapy design, and understanding antigen-specific T-cell responses.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum rows to return.",
+                    "default": 10
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "Pagination offset.",
+                    "default": 0
+                },
+                "select": {
+                    "description": "Columns to return.",
+                    "oneOf": [
+                        {"type": "string"},
+                        {"type": "array", "items": {"type": "string"}}
+                    ]
+                },
+                "filters": {
+                    "type": "object",
+                    "description": "PostgREST filters. Key columns: receptor_group_id, receptor_type, receptor_name, cdr3_alpha, cdr3_beta, chain_type, v_gene, j_gene.",
+                    "additionalProperties": {"type": "string"}
+                }
+            },
+            "required": []
+        },
+        "return_schema": {
+            "type": "array",
+            "description": "List of TCR sequence records.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "receptor_group_id": {"type": ["integer", "null"]},
+                    "receptor_type": {"type": ["string", "null"]},
+                    "receptor_name": {"type": ["string", "null"]}
+                },
+                "additionalProperties": true
+            }
+        },
+        "test_examples": [
+            {
+                "limit": 5,
+                "select": ["receptor_group_id", "receptor_type", "receptor_name"]
+            }
+        ],
+        "fields": {
+            "endpoint": "/tcr_search",
+            "default_params": {"order": "receptor_group_id.asc"}
+        }
+    },
+    {
+        "name": "iedb_search_bcr_sequences",
+        "type": "IEDBTool",
+        "description": "Search B-cell receptor (BCR) / antibody sequence data from the IEDB. Returns antibody sequences with heavy/light chain CDR3 sequences and cognate epitope information.\n\nUseful for antibody discovery, therapeutic antibody engineering, and studying humoral immune responses.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum rows to return.",
+                    "default": 10
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "Pagination offset.",
+                    "default": 0
+                },
+                "select": {
+                    "description": "Columns to return.",
+                    "oneOf": [
+                        {"type": "string"},
+                        {"type": "array", "items": {"type": "string"}}
+                    ]
+                },
+                "filters": {
+                    "type": "object",
+                    "description": "PostgREST filters. Key columns: receptor_group_id, receptor_type, receptor_name, chain_type, v_gene, j_gene.",
+                    "additionalProperties": {"type": "string"}
+                }
+            },
+            "required": []
+        },
+        "return_schema": {
+            "type": "array",
+            "description": "List of BCR/antibody sequence records.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "receptor_group_id": {"type": ["integer", "null"]},
+                    "receptor_type": {"type": ["string", "null"]},
+                    "receptor_name": {"type": ["string", "null"]}
+                },
+                "additionalProperties": true
+            }
+        },
+        "test_examples": [
+            {
+                "limit": 5,
+                "select": ["receptor_group_id", "receptor_type", "receptor_name"]
+            }
+        ],
+        "fields": {
+            "endpoint": "/bcr_search",
+            "default_params": {"order": "receptor_group_id.asc"}
+        }
+    },
+    {
+        "name": "iedb_get_epitope_tcell_assays",
+        "type": "IEDBTool",
+        "description": "Get T-cell assay data linked to a specific epitope structure ID. Given an epitope_id (from iedb_search_epitopes), returns all T-cell assays that tested this epitope.\n\nUseful for understanding the T-cell immunogenicity of a known epitope.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "epitope_id": {
+                    "type": "integer",
+                    "description": "IEDB epitope structure ID (from iedb_search_epitopes results). Example: 20354 for GILGFVFTL."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum rows to return.",
+                    "default": 20
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "Pagination offset.",
+                    "default": 0
+                },
+                "select": {
+                    "description": "Columns to return.",
+                    "oneOf": [
+                        {"type": "string"},
+                        {"type": "array", "items": {"type": "string"}}
+                    ]
+                },
+                "filters": {
+                    "type": "object",
+                    "description": "Additional PostgREST filters.",
+                    "additionalProperties": {"type": "string"}
+                }
+            },
+            "required": ["epitope_id"]
+        },
+        "return_schema": {
+            "type": "array",
+            "description": "List of T-cell assay records for the given epitope.",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "tcell_id": {"type": ["integer", "null"]},
+                    "structure_id": {"type": ["integer", "null"]},
+                    "linear_sequence": {"type": ["string", "null"]},
+                    "mhc_restriction": {"type": ["string", "null"]},
+                    "qualitative_measure": {"type": ["string", "null"]}
+                },
+                "additionalProperties": true
+            }
+        },
+        "test_examples": [
+            {
+                "epitope_id": 20354,
+                "limit": 5,
+                "select": ["tcell_id", "linear_sequence", "mhc_restriction", "qualitative_measure", "pubmed_id"]
+            }
+        ],
+        "fields": {
+            "endpoint": "/tcell_search",
+            "default_params": {"order": "tcell_id.asc"},
+            "shorthand_filters": {
+                "epitope_id": {"column": "structure_id", "op": "eq"}
+            }
+        }
+    }
+]

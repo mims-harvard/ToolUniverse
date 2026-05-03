@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_sequence\\_by\\_accession 模块"
 #: 2dd0f573bdfc48789732b3521b309454 of
 #: tooluniverse.tools.UniProt_get_sequence_by_accession:1
 msgid "UniProt_get_sequence_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取序列"
 
 #: 2341146801ec4e858025a722e79790f2 9a2f968fc211447fbfec487b6580e928 of
 #: tooluniverse.tools.UniProt_get_sequence_by_accession:3

@@ -1,0 +1,770 @@
+[
+  {
+    "name": "EOL_search_species",
+    "description": "Search the Encyclopedia of Life (EOL) for species and taxa by name. Returns matching EOL page IDs, scientific names, and name variants. Use this to find EOL page IDs for detailed lookups with EOL_get_page. Supports exact matching. EOL aggregates data from hundreds of biodiversity databases. Example: searching 'Homo sapiens' returns page ID 327955.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search string for species or taxon name. Supports scientific names, common names, and partial matches. Examples: 'Homo sapiens', 'Arabidopsis thaliana', 'Panthera leo', 'honey bee'."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "Page number for paginated results (1-based)."
+        },
+        "exact": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, only return exact name matches."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "search"
+    },
+    "type": "EOLTool",
+    "test_examples": [
+      {
+        "query": "Homo sapiens"
+      },
+      {
+        "query": "Panthera leo",
+        "exact": true
+      },
+      {
+        "query": "Arabidopsis thaliana"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "page_id": {
+                    "type": "integer",
+                    "description": "EOL page ID for detailed lookup"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Scientific name of the taxon"
+                  },
+                  "link": {
+                    "type": "string",
+                    "description": "URL to the EOL page"
+                  },
+                  "content": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name variants and synonyms"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "start_index": {
+                  "type": "integer"
+                },
+                "items_per_page": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EOL",
+      "Biodiversity",
+      "Search"
+    ],
+    "metadata": {
+      "tags": [
+        "biodiversity",
+        "taxonomy",
+        "species",
+        "search",
+        "encyclopedia"
+      ],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "EOL_get_page",
+    "description": "Get detailed species/taxon information from an Encyclopedia of Life (EOL) page. Returns scientific name, common names in multiple languages, synonyms, images with URLs, text descriptions, and available taxonomy classifications from multiple sources (NCBI, GBIF, ITIS, Catalogue of Life). Use EOL_search_species first to get page_id. Example: page_id 327955 for Homo sapiens, 583954 for Arabidopsis thaliana, 328672 for Panthera leo.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "page_id": {
+          "type": "integer",
+          "description": "EOL page identifier. Get this from EOL_search_species. Examples: 327955 (Homo sapiens), 583954 (Arabidopsis thaliana), 328672 (Panthera leo), 1045608 (Apis mellifera)."
+        },
+        "images_per_page": {
+          "type": "integer",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 75,
+          "description": "Number of image data objects to return (0-75)."
+        },
+        "texts_per_page": {
+          "type": "integer",
+          "default": 2,
+          "minimum": 0,
+          "maximum": 75,
+          "description": "Number of text description objects to return (0-75)."
+        },
+        "common_names": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include vernacular/common names in multiple languages."
+        },
+        "synonyms": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include taxonomic synonyms."
+        },
+        "details": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include detailed data object information (media, descriptions)."
+        }
+      },
+      "required": [
+        "page_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "pages"
+    },
+    "type": "EOLTool",
+    "test_examples": [
+      {
+        "page_id": 327955
+      },
+      {
+        "page_id": 583954,
+        "images_per_page": 2,
+        "texts_per_page": 1
+      },
+      {
+        "page_id": 328672,
+        "common_names": true,
+        "synonyms": true
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "page_id": {
+                  "type": "integer",
+                  "description": "EOL page identifier"
+                },
+                "scientific_name": {
+                  "type": "string",
+                  "description": "Full scientific name with authority"
+                },
+                "richness_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Data richness score"
+                },
+                "common_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "language": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Vernacular names in various languages"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Taxonomic synonyms"
+                },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "media_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "thumbnail_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "rights_holder": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Image data objects with URLs"
+                },
+                "descriptions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Text descriptions from various sources"
+                },
+                "classifications": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hierarchy_entry_id": {
+                        "type": "integer",
+                        "description": "ID for EOL_get_hierarchy_entry"
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "rank": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Available taxonomy classifications (NCBI, GBIF, etc.)"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "num_common_names": {
+                  "type": "integer"
+                },
+                "num_synonyms": {
+                  "type": "integer"
+                },
+                "num_classifications": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EOL",
+      "Biodiversity",
+      "Species"
+    ],
+    "metadata": {
+      "tags": [
+        "biodiversity",
+        "taxonomy",
+        "species",
+        "images",
+        "descriptions",
+        "common names"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "EOL_get_hierarchy_entry",
+    "description": "Get taxonomy hierarchy (classification tree) for a species from a specific classification system in the Encyclopedia of Life. Returns ancestors (full lineage from root to species), children taxa, synonyms, and source classification (NCBI, GBIF, ITIS, Catalogue of Life). Use EOL_get_page first to find hierarchy_entry_id values from the classifications list. Example: 70872770 is the NCBI hierarchy entry for Homo sapiens, showing the complete lineage from root through Primates to species level.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hierarchy_entry_id": {
+          "type": "integer",
+          "description": "EOL hierarchy entry ID from a specific classification system. Get this from EOL_get_page 'classifications' field. Examples: 70872770 (Homo sapiens in NCBI), 86685972 (Homo sapiens in GBIF), 147191154 (Homo sapiens in ITIS)."
+        }
+      },
+      "required": [
+        "hierarchy_entry_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "hierarchy_entries"
+    },
+    "type": "EOLTool",
+    "test_examples": [
+      {
+        "hierarchy_entry_id": 70872770
+      },
+      {
+        "hierarchy_entry_id": 86685972
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "taxon_id": {
+                  "type": "integer",
+                  "description": "Hierarchy entry taxon ID"
+                },
+                "scientific_name": {
+                  "type": "string",
+                  "description": "Scientific name"
+                },
+                "rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxonomic rank (species, genus, etc.)"
+                },
+                "page_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Corresponding EOL page ID"
+                },
+                "source": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Classification source (NCBI, GBIF, etc.)"
+                },
+                "source_identifier": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Original identifier in source database"
+                },
+                "ancestors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "taxon_id": {
+                        "type": "integer"
+                      },
+                      "scientific_name": {
+                        "type": "string"
+                      },
+                      "rank": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "page_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "source_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Full taxonomic lineage from root to parent"
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "taxon_id": {
+                        "type": "integer"
+                      },
+                      "scientific_name": {
+                        "type": "string"
+                      },
+                      "rank": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "page_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Direct child taxa"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "scientific_name": {
+                        "type": "string"
+                      },
+                      "taxonomic_status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "vernacular_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "vernacularName": {
+                        "type": "string"
+                      },
+                      "language": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "num_ancestors": {
+                  "type": "integer"
+                },
+                "num_children": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EOL",
+      "Taxonomy",
+      "Hierarchy"
+    ],
+    "metadata": {
+      "tags": [
+        "biodiversity",
+        "taxonomy",
+        "classification",
+        "hierarchy",
+        "lineage"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "EOL_get_collection",
+    "description": "Get a curated collection from the Encyclopedia of Life. EOL collections are user-curated lists of species pages organized by theme (e.g., endangered species, invasive species, species of a region). Returns collection name, description, and member items with their page IDs. Supports pagination and filtering by object type (taxa, articles, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "collection_id": {
+          "type": "integer",
+          "description": "EOL collection ID. Example: 176 (Fingertip Fauna), 6 (a sample collection)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "Page number for paginated results."
+        },
+        "per_page": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Number of items per page (max 500)."
+        },
+        "filter": {
+          "type": "string",
+          "description": "Filter items by type: 'taxa', 'text', 'image', 'sound', 'video', 'collection', 'community', 'user'. Leave empty for all types.",
+          "default": ""
+        }
+      },
+      "required": [
+        "collection_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "collections"
+    },
+    "type": "EOLTool",
+    "test_examples": [
+      {
+        "collection_id": 176
+      },
+      {
+        "collection_id": 6,
+        "per_page": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Collection name"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Collection description"
+                },
+                "total_items": {
+                  "type": "integer",
+                  "description": "Total number of items in collection"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "object_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "object_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "annotation": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Collection member items"
+                },
+                "created": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "modified": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "collection_id": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EOL",
+      "Biodiversity",
+      "Collections"
+    ],
+    "metadata": {
+      "tags": [
+        "biodiversity",
+        "collections",
+        "curated",
+        "species lists"
+      ],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  }
+]

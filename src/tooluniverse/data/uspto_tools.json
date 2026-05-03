@@ -227,7 +227,16 @@
           "description": "Unique identifier for the API request"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "machine learning",
+        "exact_match": false,
+        "sort": "filingDate desc",
+        "offset": 0,
+        "limit": 1
+      }
+    ]
   },
   {
     "type": "USPTOOpenDataPortalTool",
@@ -429,7 +438,12 @@
           "description": "Unique identifier for the API request"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "16123456"
+      }
+    ]
   },
   {
     "type": "USPTOOpenDataPortalTool",
@@ -508,7 +522,12 @@
           "description": "Unique identifier for the API request"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "16123456"
+      }
+    ]
   },
   {
     "type": "USPTOOpenDataPortalTool",
@@ -653,7 +672,12 @@
           "description": "Unique identifier for the API request"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "16123456"
+      }
+    ]
   },
   {
     "type": "USPTOOpenDataPortalTool",
@@ -730,7 +754,12 @@
           "description": "Unique identifier for the API request"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "16123456"
+      }
+    ]
   },
   {
     "type": "USPTOOpenDataPortalTool",
@@ -825,6 +854,11 @@
           "description": "Unique identifier for the API request"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "16123456"
+      }
+    ]
   }
 ]

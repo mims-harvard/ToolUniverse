@@ -1,0 +1,278 @@
+[
+  {
+    "type": "ENABrowserRESTTool",
+    "name": "ena_get_sequence_fasta",
+    "description": "Get nucleotide sequence in FASTA format from ENA by accession number. Supports EMBL/GenBank accessions only (e.g., U00096, AJ312385, M15390). Does NOT support RefSeq accessions (NC_*, NM_*, NP_* prefixes). Returns sequence with header information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EMBL/GenBank accession number. Supported formats: U#####, M#####, AJ######, AL######, CP######, etc. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385', 'M15390'"
+        },
+        "download": {
+          "type": "boolean",
+          "description": "Force download instead of inline display (default: false)",
+          "default": false
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ena/browser/api/fasta/{accession}",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "FASTA sequence"
+    },
+    "test_examples": [
+      {
+        "accession": "U00096"
+      },
+      {
+        "accession": "AJ312385"
+      }
+    ]
+  },
+  {
+    "type": "ENABrowserRESTTool",
+    "name": "ena_get_sequence_embl",
+    "description": "Get nucleotide sequence in EMBL format from ENA by accession number. Supports EMBL/GenBank accessions only (e.g., U00096, AJ312385, M15390). Does NOT support RefSeq accessions (NC_*, NM_*, NP_* prefixes). Returns EMBL-formatted sequence record.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385', 'M15390'"
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ena/browser/api/embl/{accession}",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "EMBL format sequence record"
+    },
+    "test_examples": [
+      {
+        "accession": "U00096"
+      }
+    ]
+  },
+  {
+    "type": "ENABrowserRESTTool",
+    "name": "ena_get_sequence_xml",
+    "description": "Get metadata in XML format from ENA for Study, Sample, Run, Experiment, Analysis, or Taxon records. XML format is NOT available for sequence records - use ena_get_sequence_fasta or ena_get_sequence_embl for sequence accessions. Supported accession types: Study (ERP*, SRP*, PRJ*), Sample (ERS*, SRS*, SAM*), Run (ERR*, SRR*), Experiment (ERX*, SRX*), Analysis (ERZ*, SRZ*), Taxon IDs. Returns XML-formatted metadata record with submitter-provided information, cross-references, and FTP locations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "ENA metadata record accession. Supported types: Study (ERP*, SRP*, PRJ*), Sample (ERS*, SRS*, SAM*), Run (ERR*, SRR*), Experiment (ERX*, SRX*), Analysis (ERZ*, SRZ*), Taxon (numeric ID). NOT for sequence accessions (U#####, M#####, etc.). Examples: 'SAMEA2620084' (sample), 'ERX2484999' (experiment), '562' (taxon)"
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ena/browser/api/xml/{accession}",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "XML format metadata record"
+    },
+    "test_examples": [
+      {
+        "accession": "SAMEA2620084"
+      }
+    ]
+  },
+  {
+    "type": "ENABrowserRESTTool",
+    "name": "ena_get_entry",
+    "description": "Get entry information from ENA by accession number. Supports EMBL/GenBank accessions only (e.g., U00096, AJ312385, M15390). Does NOT support RefSeq accessions (NC_*, NM_*, NP_* prefixes). Currently extracts metadata from FASTA header. For comprehensive metadata including project, sample, taxon, publications, and sequence length, use ena_get_entry_summary instead. Returns sequence header information with basic metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385'"
+        },
+        "expanded": {
+          "type": "boolean",
+          "description": "Return expanded metadata (default: false)",
+          "default": false
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ena/browser/api/fasta/{accession}",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Entry metadata"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "U00096"
+      }
+    ]
+  },
+  {
+    "type": "ENABrowserRESTTool",
+    "name": "ena_get_entry_summary",
+    "description": "Get comprehensive summary information for an ENA entry by accession number. Supports EMBL/GenBank accessions only (e.g., U00096, AJ312385, M15390). Does NOT support RefSeq accessions (NC_*, NM_*, NP_* prefixes). Returns detailed metadata including description, version, project ID, sample ID, molecule type, taxon ID, data type, publication references, sequence length, and status information. This provides more complete metadata than ena_get_entry.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385', 'M15390'"
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ena/browser/api/summary/{accession}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "summaries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "integer"
+                  },
+                  "project": {
+                    "type": "string"
+                  },
+                  "sample": {
+                    "type": "string"
+                  },
+                  "moleculeType": {
+                    "type": "string"
+                  },
+                  "taxon": {
+                    "type": "integer"
+                  },
+                  "sequenceLength": {
+                    "type": "integer"
+                  },
+                  "publications": {
+                    "type": "array"
+                  }
+                }
+              }
+            },
+            "total": {
+              "type": "string"
+            }
+          },
+          "description": "Comprehensive entry summary"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "U00096"
+      },
+      {
+        "accession": "AJ312385"
+      }
+    ]
+  },
+  {
+    "type": "ENABrowserRESTTool",
+    "name": "ena_get_entry_history",
+    "description": "Get version history for an ENA entry by accession number. Supports EMBL/GenBank accessions only (e.g., U00096, AJ312385, M15390). Does NOT support RefSeq accessions (NC_*, NM_*, NP_* prefixes). Returns all versions of the entry with version numbers, dates, and status information. Each version includes sequence version number, first public date, last updated date, and current status.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EMBL/GenBank accession number. NOT RefSeq (NC_*, NM_*, NP_*). Examples: 'U00096', 'AJ312385'"
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ena/browser/api/versions/{accession}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "versions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "sequenceVersion": {
+                    "type": "integer"
+                  },
+                  "firstPublic": {
+                    "type": "string"
+                  },
+                  "lastUpdated": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Version history with details for each version"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "U00096"
+      }
+    ]
+  }
+]

@@ -1,0 +1,643 @@
+[
+  {
+    "name": "GDC_search_cases",
+    "type": "GDCCasesTool",
+    "description": "Search cancer cohort cases in NCI GDC by project and filters. Use to retrieve case-level metadata for cohort construction and downstream file queries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "GDC project identifier (e.g., 'TCGA-BRCA')."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results (1\u2013100)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Offset for pagination (0-based)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://api.gdc.cancer.gov/cases",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "GDC cases response",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "hits": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "pagination": {
+              "type": "object"
+            }
+          }
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 1
+      }
+    ],
+    "label": [
+      "GDC",
+      "Cases",
+      "Oncogenomics"
+    ],
+    "metadata": {
+      "tags": [
+        "oncogenomics",
+        "cohort",
+        "cases"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "GDC_list_files",
+    "type": "GDCFilesTool",
+    "description": "List GDC files filtered by data_type and other fields. Use to identify downloadable artifacts (e.g., expression quantification) for analysis pipelines.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "data_type": {
+          "type": "string",
+          "description": "Data type filter (e.g., 'Gene Expression Quantification')."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results (1\u2013100)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Offset for pagination (0-based)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://api.gdc.cancer.gov/files",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "GDC files response",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "hits": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "pagination": {
+              "type": "object"
+            }
+          }
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "data_type": "Gene Expression Quantification",
+        "size": 1
+      }
+    ],
+    "label": [
+      "GDC",
+      "Files",
+      "Oncogenomics"
+    ],
+    "metadata": {
+      "tags": [
+        "downloads",
+        "files",
+        "expression"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "GDC_list_projects",
+    "type": "GDCProjectsTool",
+    "description": "List GDC projects (TCGA, TARGET, etc.) with case/file counts. Use to discover available cancer cohorts and their data volume. Filter by program (TCGA, TARGET, CGCI, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "program": {
+          "type": "string",
+          "description": "Filter by program name (e.g., 'TCGA', 'TARGET')"
+        },
+        "size": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results (1\u2013100)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "program": "TCGA",
+        "size": 5
+      },
+      {
+        "size": 10
+      }
+    ],
+    "label": [
+      "GDC",
+      "Projects",
+      "TCGA"
+    ],
+    "metadata": {
+      "tags": [
+        "projects",
+        "cohorts",
+        "tcga",
+        "target"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "GDC_get_ssm_by_gene",
+    "type": "GDCSSMTool",
+    "description": "Get somatic mutations (SSMs) for a gene across TCGA/GDC projects. Returns mutation type, genomic coordinates, and amino acid changes. Essential for pan-cancer mutation analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'TP53', 'EGFR', 'BRAF', 'KRAS')"
+        },
+        "project_id": {
+          "type": "string",
+          "description": "Optional: Filter by project (e.g., 'TCGA-BRCA', 'TCGA-LUAD')"
+        },
+        "size": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results (1\u2013100)"
+        }
+      },
+      "required": [
+        "gene_symbol"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "gene": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_symbol": "TP53",
+        "size": 5
+      },
+      {
+        "gene_symbol": "BRAF",
+        "project_id": "TCGA-SKCM",
+        "size": 10
+      }
+    ],
+    "label": [
+      "GDC",
+      "SSM",
+      "Mutations"
+    ],
+    "metadata": {
+      "tags": [
+        "mutations",
+        "somatic",
+        "variants",
+        "cancer"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "GDC_get_gene_expression",
+    "type": "GDCGeneExpressionTool",
+    "description": "Query RNA-Seq gene expression files from GDC/TCGA projects. Returns file metadata for expression quantification data. Use to find expression data for downstream analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "GDC project (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TCGA-GBM')"
+        },
+        "gene_id": {
+          "type": "string",
+          "description": "Optional: Ensembl gene ID (e.g., 'ENSG00000141510' for TP53)"
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results"
+        }
+      },
+      "required": [
+        "project_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "project": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 5
+      },
+      {
+        "project_id": "TCGA-LUAD",
+        "size": 3
+      }
+    ],
+    "label": [
+      "GDC",
+      "Expression",
+      "RNA-Seq"
+    ],
+    "metadata": {
+      "tags": [
+        "expression",
+        "rnaseq",
+        "transcriptomics"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "GDC_get_cnv_data",
+    "type": "GDCCNVTool",
+    "description": "Query copy number variation (CNV) files from GDC/TCGA projects. Returns CNV segment and gene-level copy number files. Use for amplification/deletion analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "GDC project (e.g., 'TCGA-BRCA')"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Optional: Gene symbol to focus analysis"
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results"
+        }
+      },
+      "required": [
+        "project_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "project": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 5
+      },
+      {
+        "project_id": "TCGA-GBM",
+        "size": 3
+      }
+    ],
+    "label": [
+      "GDC",
+      "CNV",
+      "Copy Number"
+    ],
+    "metadata": {
+      "tags": [
+        "cnv",
+        "copy_number",
+        "amplification",
+        "deletion"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "GDC_get_mutation_frequency",
+    "type": "GDCMutationFrequencyTool",
+    "description": "Get pan-cancer mutation frequency statistics for a gene across all TCGA/GDC cancer projects. Returns total SSM occurrence count (no per-project breakdown — use GDC_get_ssm_by_gene with project_id for cancer-specific data). Answers 'How often is this gene mutated across all cancers?'",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'TP53', 'KRAS', 'EGFR')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol alias \u2014 alternative to gene_symbol"
+        }
+      },
+      "required": [
+        "gene_symbol"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "gene": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_symbol": "TP53"
+      },
+      {
+        "gene_symbol": "KRAS"
+      }
+    ],
+    "label": [
+      "GDC",
+      "Frequency",
+      "Statistics"
+    ],
+    "metadata": {
+      "tags": [
+        "mutation_frequency",
+        "statistics",
+        "pan_cancer"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "GDC_get_clinical_data",
+    "type": "GDCClinicalDataTool",
+    "description": "Get detailed clinical data for cancer cases from NCI GDC/TCGA. Returns demographics (gender, race, vital_status, age_at_index), diagnoses (primary_diagnosis, tumor_stage, age_at_diagnosis, days_to_last_follow_up), and treatments (therapeutic_agents, treatment_type). Filter by project, primary_site, disease_type, or vital_status.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "GDC project identifier (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TARGET-AML')"
+        },
+        "primary_site": {
+          "type": "string",
+          "description": "Primary anatomical site (e.g., 'Breast', 'Lung', 'Brain')"
+        },
+        "disease_type": {
+          "type": "string",
+          "description": "Disease type filter (e.g., 'Ductal and Lobular Neoplasms')"
+        },
+        "vital_status": {
+          "type": "string",
+          "description": "Vital status filter: 'Alive' or 'Dead'",
+          "enum": ["Alive", "Dead"]
+        },
+        "gender": {
+          "type": "string",
+          "description": "Gender filter: 'female' or 'male'",
+          "enum": ["female", "male"]
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of cases to return (1-100)"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Pagination offset (0-based)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "case_id": {"type": "string"},
+              "submitter_id": {"type": "string"},
+              "project_id": {"type": "string"},
+              "vital_status": {"type": ["string", "null"]},
+              "gender": {"type": ["string", "null"]},
+              "age_at_index": {"type": ["integer", "null"]},
+              "days_to_death": {"type": ["integer", "null"]},
+              "diagnoses": {"type": "array"},
+              "treatments": {"type": "array"}
+            }
+          }
+        },
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "count": {"type": "integer"}
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "project_id": "TCGA-BRCA",
+        "size": 2
+      },
+      {
+        "project_id": "TCGA-LUAD",
+        "vital_status": "Dead",
+        "size": 2
+      },
+      {
+        "primary_site": "Brain",
+        "size": 2
+      }
+    ],
+    "label": [
+      "GDC",
+      "Clinical",
+      "TCGA",
+      "Demographics",
+      "Survival"
+    ],
+    "metadata": {
+      "tags": [
+        "clinical_data",
+        "demographics",
+        "survival",
+        "diagnoses",
+        "treatments",
+        "oncogenomics"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "GDC_get_survival",
+    "type": "GDCSurvivalTool",
+    "description": "Get Kaplan-Meier survival data for a GDC/TCGA cancer cohort. Returns time-to-event data with censoring status and survival estimates for each patient. Filter by project and optionally by gene mutation status. Use for overall survival analysis of TCGA cancer types.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "description": "GDC project identifier (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TCGA-GBM')"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Optional: gene symbol to filter cases with mutations in this gene (e.g., 'TP53', 'KRAS')"
+        }
+      },
+      "required": ["project_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "project_id": {"type": "string"},
+        "gene_symbol": {"type": ["string", "null"]},
+        "total_donors": {"type": "integer"},
+        "alive_censored": {"type": "integer"},
+        "deceased": {"type": "integer"},
+        "max_follow_up_days": {"type": "number"},
+        "median_follow_up_days": {"type": "number"},
+        "donors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "time": {"type": "number"},
+              "censored": {"type": "boolean"},
+              "survivalEstimate": {"type": "number"},
+              "id": {"type": "string"},
+              "submitter_id": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "project_id": "TCGA-BRCA"
+      },
+      {
+        "project_id": "TCGA-LUAD"
+      },
+      {
+        "project_id": "TCGA-BRCA",
+        "gene_symbol": "TP53"
+      }
+    ],
+    "label": [
+      "GDC",
+      "Survival",
+      "Kaplan-Meier",
+      "TCGA"
+    ],
+    "metadata": {
+      "tags": [
+        "survival_analysis",
+        "kaplan_meier",
+        "overall_survival",
+        "oncogenomics",
+        "prognosis"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  }
+]

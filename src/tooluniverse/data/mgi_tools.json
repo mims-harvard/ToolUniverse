@@ -1,0 +1,286 @@
+[
+  {
+    "name": "MGI_search_genes",
+    "type": "AllianceGenomeTool",
+    "description": "Search for mouse (Mus musculus) genes in MGI (Mouse Genome Informatics) by gene symbol, name, or keyword. Returns matching mouse gene symbols, names, and MGI identifiers. Powered by the Alliance of Genome Resources API which integrates MGI data. Use this to find mouse gene IDs before calling MGI_get_gene or MGI_get_phenotypes. Examples: 'Trp53' (tumor protein p53), 'Brca1', 'insulin', 'Notch'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene search query: mouse gene symbol (e.g., 'Trp53', 'Brca1', 'Sox9'), gene name keyword (e.g., 'insulin', 'tumor'), or MGI ID (e.g., 'MGI:98834')."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of results to return (default: 10, max: 50)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint_type": "search_genes"
+    },
+    "test_examples": [
+      {
+        "query": "Trp53",
+        "limit": 5
+      },
+      {
+        "query": "Brca1",
+        "limit": 5
+      },
+      {
+        "query": "insulin",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "List of matching mouse genes",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "type": ["string", "null"],
+                    "description": "Official gene symbol (e.g., 'Trp53')"
+                  },
+                  "name": {
+                    "type": ["string", "null"],
+                    "description": "Gene name"
+                  },
+                  "gene_id": {
+                    "type": ["string", "null"],
+                    "description": "MGI identifier (e.g., 'MGI:98834')"
+                  },
+                  "category": {
+                    "type": ["string", "null"],
+                    "description": "Entity category (always 'gene')"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {"type": "integer"},
+                "query": {"type": "string"},
+                "source": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MGI_get_gene",
+    "type": "AllianceGenomeTool",
+    "description": "Get detailed information about a mouse gene from MGI (Mouse Genome Informatics) by its MGI identifier. Returns gene symbol, full name, species info, gene synopsis (curated and automated), synonyms, genomic location (GRCm39 assembly), SO term, and cross-references to UniProt, NCBI, Ensembl, etc. Powered by the Alliance of Genome Resources API which integrates MGI curated data. Example: 'MGI:98834' returns Trp53 (transformation related protein 53) details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "MGI gene identifier with 'MGI:' prefix. Examples: 'MGI:98834' (Trp53/p53), 'MGI:104537' (Brca1), 'MGI:96677' (Kit), 'MGI:88039' (Apoe), 'MGI:88276' (Braf)."
+        }
+      },
+      "required": ["gene_id"]
+    },
+    "fields": {
+      "endpoint_type": "gene_detail"
+    },
+    "test_examples": [
+      {
+        "gene_id": "MGI:98834"
+      },
+      {
+        "gene_id": "MGI:104537"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "description": "Mouse gene details from MGI",
+              "properties": {
+                "id": {
+                  "type": ["string", "null"],
+                  "description": "MGI identifier (e.g., 'MGI:98834')"
+                },
+                "symbol": {
+                  "type": ["string", "null"],
+                  "description": "Official gene symbol (e.g., 'Trp53')"
+                },
+                "name": {
+                  "type": ["string", "null"],
+                  "description": "Full gene name (e.g., 'transformation related protein 53')"
+                },
+                "species": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": ["string", "null"]},
+                    "short_name": {"type": ["string", "null"]},
+                    "taxon_id": {"type": ["string", "null"]},
+                    "data_provider": {"type": ["string", "null"]}
+                  }
+                },
+                "gene_synopsis": {
+                  "type": ["string", "null"],
+                  "description": "Curated gene synopsis from MGI"
+                },
+                "automated_gene_synopsis": {
+                  "type": ["string", "null"],
+                  "description": "Automatically generated gene synopsis"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "so_term": {
+                  "type": ["string", "null"],
+                  "description": "Sequence Ontology term (e.g., 'protein_coding_gene')"
+                },
+                "genomic_location": {
+                  "type": "object",
+                  "properties": {
+                    "chromosome": {"type": ["string", "null"]},
+                    "start": {"type": ["integer", "null"]},
+                    "end": {"type": ["integer", "null"]},
+                    "assembly": {"type": ["string", "null"]},
+                    "strand": {"type": ["string", "null"]}
+                  }
+                },
+                "cross_references": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {"type": ["string", "null"]},
+                      "url": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_gene_id": {"type": "string"},
+                "data_provider": {"type": ["string", "null"]},
+                "source": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MGI_get_phenotypes",
+    "type": "AllianceGenomeTool",
+    "description": "Get phenotype annotations for a mouse gene from MGI (Mouse Genome Informatics). Returns Mammalian Phenotype (MP) ontology annotations including phenotype statements derived from mutant allele studies. Uses Alliance of Genome Resources API which integrates MGI phenotype curation data. Useful for understanding mouse gene function through loss-of-function and gain-of-function phenotypes. Example: 'MGI:98834' returns Trp53 phenotypes including tumor susceptibility, apoptosis defects, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "MGI gene identifier with 'MGI:' prefix. Examples: 'MGI:98834' (Trp53), 'MGI:104537' (Brca1), 'MGI:96677' (Kit)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "description": "Number of phenotype annotations to return per page (default: 20, max: 100)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for pagination (default: 1)."
+        }
+      },
+      "required": ["gene_id"]
+    },
+    "fields": {
+      "endpoint_type": "gene_phenotypes"
+    },
+    "test_examples": [
+      {
+        "gene_id": "MGI:98834",
+        "limit": 10
+      },
+      {
+        "gene_id": "MGI:104537",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "List of phenotype annotations for the mouse gene",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": ["string", "null"],
+                    "description": "Gene symbol"
+                  },
+                  "gene_id": {
+                    "type": ["string", "null"],
+                    "description": "MGI gene ID"
+                  },
+                  "phenotype_statement": {
+                    "type": ["string", "null"],
+                    "description": "Phenotype description from MP ontology annotation"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "query_gene_id": {"type": "string"},
+                "page": {"type": "integer"},
+                "source": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

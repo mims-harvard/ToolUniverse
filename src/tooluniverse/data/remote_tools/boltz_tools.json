@@ -110,6 +110,18 @@
       "original_type": "Boltz2DockingTool",
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/boltz.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/boltz"
-    }
+    },
+    "test_examples": [
+      {
+        "sequence": "MVLSEGEWQLVLHVWAKVEADVAGHGQDILIRLFKSHPETLEKFDRVKHLKTEAEMKASEDLKKHGVTVLTALGAilKKKGHHEAELKPLAQSHATKHKIPIKYLEFISEAIIHVLHSRHPGDFGADAQGAMNKALELFRKDMASNYKELGFQG",
+        "ligands": [],
+        "recycling_steps": 3,
+        "sampling_steps": 200,
+        "diffusion_samples": 1,
+        "step_scale": 1.638,
+        "use_potentials": false,
+        "return_structure": false
+      }
+    ]
   }
 ]

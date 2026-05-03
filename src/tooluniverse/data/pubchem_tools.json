@@ -22,7 +22,165 @@
       "output_description": "Returns a JSON object (PUG View) with top-level key \"Record\". Example (abridged):\n{\n  \"Record\": {\n    \"RecordType\": \"CID\",\n    \"RecordNumber\": 2244,\n    \"RecordTitle\": \"Aspirin\",\n    \"Section\": [\n      {\n        \"TOCHeading\": \"Patents\",\n        \"Description\": \"Patent applications/documents that mention this compound.\",\n        \"DisplayControls\": {\"ListType\": \"Columns\"},\n        \"Information\": [\n          {\n            \"ReferenceNumber\": 35,\n            \"Value\": {\n              \"StringWithMarkup\": [\n                {\"String\": \"US5972916\", \"Markup\": [{\"Start\": 0, \"Length\": 9, \"URL\": \"https://pubchem.ncbi.nlm.nih.gov/patent/US5972916\"}]},\n                {\"String\": \"US6015577\", \"Markup\": [{\"Start\": 0, \"Length\": 9, \"URL\": \"https://pubchem.ncbi.nlm.nih.gov/patent/US6015577\"}]},\n                ... (additional patent IDs)\n              ]\n            }\n          }\n        ],\n        \"Section\": [\n          {\"TOCHeading\": \"Depositor-Supplied Patent Identifiers\", \"Information\": [...]},\n          {\"TOCHeading\": \"WIPO PATENTSCOPE\", \"Information\": [...]},\n          {\"TOCHeading\": \"FDA Orange Book Patents\", \"Information\": [...]},\n          {\"TOCHeading\": \"Chemical Co-Occurrences in Patents\", \"Information\": [...]},\n          {\"TOCHeading\": \"Chemical-Disease Co-Occurrences in Patents\", \"Information\": [...]},\n          {\"TOCHeading\": \"Chemical-Gene Co-Occurrences in Patents\", \"Information\": [...]},\n          {\"TOCHeading\": \"Chemical-Organism Co-Occurrences in Patents\", \"Information\": [...]}\n        ]\n      }\n    ],\n    \"Reference\": [ {\"ReferenceNumber\": 35, \"SourceName\": \"DrugBank\", ...}, ... ]\n  }\n}\nKey points:\n- Record.Section[0] (TOCHeading \"Patents\") holds patent ID list in Information[0].Value.StringWithMarkup (each element has String patent identifier and Markup[0].URL link).\n- Nested Section array contains related subsections (e.g., WIPO, FDA Orange Book, co-occurrence panels) each with its own Information entries.\n- Co-occurrence panels often provide structured headers or external table references (e.g., ExternalTableName or StringWithMarkup rows) for downstream follow-up queries.\n- Reference array cites data sources (DrugBank, FDA, PubChem, WIPO, etc.).\nLLM can extract patent identifiers by iterating Record.Section[0].Information[0].Value.StringWithMarkup[*].String and their URLs from Markup[*].URL.",
       "property_list": []
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "cid": 2244
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "Record": {
+          "type": "object",
+          "properties": {
+            "RecordType": {
+              "type": "string"
+            },
+            "RecordNumber": {
+              "type": "integer"
+            },
+            "RecordTitle": {
+              "type": "string"
+            },
+            "Section": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "TOCHeading": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "DisplayControls": {
+                    "type": "object",
+                    "properties": {
+                      "ListType": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Information": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ReferenceNumber": {
+                          "type": "integer"
+                        },
+                        "Value": {
+                          "type": "object",
+                          "properties": {
+                            "StringWithMarkup": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "String": {
+                                    "type": "string"
+                                  },
+                                  "Markup": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "Start": {
+                                          "type": "integer"
+                                        },
+                                        "Length": {
+                                          "type": "integer"
+                                        },
+                                        "URL": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Section": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "TOCHeading": {
+                          "type": "string"
+                        },
+                        "Description": {
+                          "type": "string"
+                        },
+                        "Information": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "ReferenceNumber": {
+                                "type": "integer"
+                              },
+                              "Value": {
+                                "type": "object",
+                                "properties": {
+                                  "ExternalTableName": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Reference": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ReferenceNumber": {
+                    "type": "integer"
+                  },
+                  "SourceName": {
+                    "type": "string"
+                  },
+                  "SourceID": {
+                    "type": "string"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "string"
+                  },
+                  "URL": {
+                    "type": "string"
+                  },
+                  "LicenseNote": {
+                    "type": "string"
+                  },
+                  "LicenseURL": {
+                    "type": "string"
+                  },
+                  "ANID": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "PubChem_get_compound_properties_by_CID",
@@ -50,22 +208,59 @@
         "CanonicalSMILES"
       ]
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "cid": 2244
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "PropertyTable": {
+          "type": "object",
+          "properties": {
+            "Properties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "CID": {
+                    "type": "integer"
+                  },
+                  "MolecularWeight": {
+                    "type": "string"
+                  },
+                  "ConnectivitySMILES": {
+                    "type": "string"
+                  },
+                  "IUPACName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "PubChem_get_CID_by_compound_name",
-    "description": "Retrieve corresponding CID list (IdentifierList) by chemical name.",
+    "description": "Search PubChem by compound name to get CID(s). This is the PRIMARY tool for looking up a drug or chemical by name (e.g., 'cytarabine', 'aspirin', 'metformin', 'venetoclax') to obtain PubChem Compound IDs. Use the returned CID with other PubChem tools for properties, patents, etc. Only works with chemical/drug names, not disease names.",
     "parameter": {
       "type": "object",
       "properties": {
         "name": {
           "type": "string",
-          "description": "Chemical name (e.g., \"Aspirin\" or IUPAC name)."
+          "description": "Chemical compound name (e.g., \"Aspirin\", \"Acetaminophen\") or IUPAC name. Do not use disease names or medical conditions."
+        },
+        "compound_name": {
+          "type": "string",
+          "description": "Alias for name. The compound name to look up."
         }
       },
-      "required": [
-        "name"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "/compound/name/{name}/cids/JSON",
@@ -74,7 +269,28 @@
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244, 11394, ...]\n  }\n}\n\nWhere:\n- IdentifierList.CID list: all CIDs matching the name. Usually the first one is the most common compound ID.\nAfter calling, LLM can obtain the PubChem ID list corresponding to the input chemical name, for further property or structure queries by CID.",
       "property_list": []
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "name": "aspirin"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "IdentifierList": {
+          "type": "object",
+          "properties": {
+            "CID": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "PubChem_get_CID_by_SMILES",
@@ -98,17 +314,43 @@
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244]\n  }\n}\n\nWhere: CID array contains all compound IDs that exactly match this SMILES. LLM can use this tool to map structure to CID.",
       "property_list": []
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "IdentifierList": {
+          "type": "object",
+          "properties": {
+            "CID": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "PubChem_search_compounds_by_substructure",
-    "description": "Search for all CIDs in PubChem that contain the given substructure (SMILES).",
+    "description": "Search for CIDs in PubChem that contain the given substructure (SMILES). Returns up to max_results CIDs (default 10).",
     "parameter": {
       "type": "object",
       "properties": {
         "smiles": {
           "type": "string",
           "description": "SMILES of substructure (e.g., \"c1ccccc1\" corresponds to benzene ring)."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of CIDs to return (default: 10, max: 10000).",
+          "default": 10
         }
       },
       "required": [
@@ -118,15 +360,36 @@
     "fields": {
       "endpoint": "/compound/fastsubstructure/smiles/{smiles}/cids/JSON",
       "use_pugview": false,
-      "input_description": "Input is SMILES of target substructure, PubChem will find all compounds containing this substructure, returns no more than 10 CIDs (MaxRecords=10)",
+      "input_description": "Input is SMILES of target substructure, PubChem will find all compounds containing this substructure. Returns up to max_results CIDs (default 10).",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [241, 1188, ...]\n  }\n}\n\nWhere: CID array contains all compound IDs in PubChem database that contain this substructure. LLM can use this to understand which molecules contain this group.",
       "property_list": []
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "IdentifierList": {
+          "type": "object",
+          "properties": {
+            "CID": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "PubChem_search_compounds_by_similarity",
-    "description": "Search by similarity (Tanimoto coefficient), returns CID list of compounds with similarity above threshold to given SMILES molecule, returns no more than 10 CIDs (MaxRecords=10)",
+    "description": "Search by similarity (Tanimoto coefficient), returns CID list of compounds with similarity above threshold to given SMILES molecule. Returns up to max_results CIDs (default 10).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -138,6 +401,11 @@
           "type": "number",
           "description": "Similarity threshold (between 0 and 1), e.g., 0.9 means 90% similarity.",
           "default": 0.9
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of CIDs to return (default: 10, max: 10000).",
+          "default": 10
         }
       },
       "required": [
@@ -148,11 +416,33 @@
     "fields": {
       "endpoint": "/compound/fastsimilarity_2d/smiles/{smiles}/cids/JSON",
       "use_pugview": false,
-      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity ≥ threshold.",
+      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity \u2265 threshold.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244, 2245, ...]\n  }\n}\n\nWhere: CID array contains compound IDs with similarity above specified threshold to target molecule. LLM can use this for chemical similarity analysis.",
       "property_list": []
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "threshold": 0.9
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "IdentifierList": {
+          "type": "object",
+          "properties": {
+            "CID": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "PubChem_get_compound_2D_image_by_CID",
@@ -179,9 +469,17 @@
       "endpoint": "/compound/cid/{cid}/PNG?image_size={image_size}",
       "use_pugview": false,
       "input_description": "Input is:\n- cid: compound ID;\n- image_size: desired image pixel size, format is \"widthxheight\" (e.g., \"150x150\").",
-      "output_description": "Returns binary PNG image data, conforming to PNG file header format. LLM can save this binary as image file, or provide to downstream visualization."
+      "output_description": "Returns binary PNG image data, conforming to PNG file header format. LLM can save this binary as image file, or provide to downstream visualization.",
+      "return_format": "PNG"
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "cid": 2244,
+        "image_size": "large"
+      }
+    ],
+    "return_schema": null
   },
   {
     "name": "PubChem_get_compound_synonyms_by_CID",
@@ -204,7 +502,39 @@
       "input_description": "Input is compound ID (cid), PubChem will return all synonyms recorded in database for this compound.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"InformationList\": {\n    \"Information\": [\n      {\n        \"CID\": 2244,\n        \"Synonym\": [\"Aspirin\", \"Acetylsalicylic acid\", ...]\n      }\n    ]\n  }\n}\n\nWhere: InformationList.Information[0].Synonym is a string list containing all synonyms. LLM can use this to identify various chemical nomenclature."
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "cid": 2244
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "InformationList": {
+          "type": "object",
+          "properties": {
+            "Information": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "CID": {
+                    "type": "integer"
+                  },
+                  "Synonym": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "PubChem_get_compound_xrefs_by_CID",
@@ -235,6 +565,443 @@
       "input_description": "Input is:\n- cid: compound ID;\n- xref_types: list of external database types to query.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"InformationList\": {\n    \"Information\": [\n      {\n        \"CID\": 2244,\n        \"XRef\": {\n          \"ChEBI\": \"CHEBI:15365\",\n          \"DrugBank\": \"DB00945\",\n          \"KEGG\": \"D00134\",\n          ...\n        }\n      }\n    ]\n  }\n}\n\nWhere: In XRef dictionary, keys are external resource names, values are corresponding resource IDs. LLM can use this for cross-database linking and knowledge integration."
     },
-    "type": "PubChemRESTTool"
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "cid": 2244,
+        "xref_types": []
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_get_assay_description",
+    "description": "Get bioassay description and metadata by AID. Returns assay name, source, protocol, target information, activity outcomes, and data columns. Essential for understanding what an assay measures before retrieving results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID (e.g., 1000, 504526)"
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/assay/aid/{aid}/description/JSON",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "aid": 1000
+      },
+      {
+        "aid": 504526
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "PC_AssayContainer": {
+          "type": "array"
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_get_assay_summary",
+    "description": "Get summary statistics for a bioassay by AID. Returns counts of active/inactive compounds, target information, and assay metadata. Useful for quick assessment of assay size and hit rate.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID"
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/assay/aid/{aid}/summary/JSON",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "aid": 1000
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "AssaySummaries": {
+          "type": "object",
+          "properties": {
+            "AssaySummary": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "AID": {
+                    "type": "integer"
+                  },
+                  "SourceName": {
+                    "type": "string"
+                  },
+                  "SourceID": {
+                    "type": "string"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "Description": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_get_assay_targets",
+    "description": "Get protein/gene targets for a bioassay. Returns GI numbers, protein names, gene IDs, and gene symbols. Critical for understanding what molecular targets an assay screens against.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID"
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/assay/aid/{aid}/targets/ProteinGI,ProteinName,GeneID,GeneSymbol/JSON",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "aid": 1000
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "InformationList": {
+          "type": "object",
+          "properties": {
+            "Information": {
+              "type": "array"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_search_assays_by_target_gene",
+    "description": "Search bioassays by target gene symbol. Returns AIDs of assays that screen against the specified gene. Example: USP2 returns assays targeting USP2 protease.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol to search (e.g., EGFR, USP2, TP53)"
+        }
+      },
+      "required": [
+        "gene_symbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "/assay/target/genesymbol/{gene_symbol}/aids/JSON",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "gene_symbol": "USP2"
+      },
+      {
+        "gene_symbol": "EGFR"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "IdentifierList": {
+          "type": "object",
+          "properties": {
+            "AID": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_search_assays_by_type",
+    "description": "Search bioassays by assay type. Types: screening (HTS), confirmatory, doseresponse, summary, cellbased, biochemical, invivo, invitro. Returns list of matching AIDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "assay_type": {
+          "type": "string",
+          "enum": [
+            "screening",
+            "confirmatory",
+            "doseresponse",
+            "summary",
+            "cellbased",
+            "biochemical",
+            "invivo",
+            "invitro"
+          ],
+          "description": "Type of assay to search for"
+        }
+      },
+      "required": [
+        "assay_type"
+      ]
+    },
+    "fields": {
+      "endpoint": "/assay/type/{assay_type}/aids/JSON",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "assay_type": "doseresponse"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "IdentifierList": {
+          "type": "object",
+          "properties": {
+            "AID": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_get_compound_bioactivity",
+    "description": "Get bioassay results summary for a compound by CID. Returns all assays the compound was tested in, activity outcomes (active/inactive), and target information. Critical for understanding compound's biological profile.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cid": {
+          "type": "integer",
+          "description": "PubChem Compound ID"
+        }
+      },
+      "required": [
+        "cid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/compound/cid/{cid}/assaysummary/JSON",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "cid": 2244
+      },
+      {
+        "cid": 5090
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "Table": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_get_assay_active_compounds",
+    "description": "Get CIDs of compounds that are ACTIVE in a bioassay. Returns compound IDs that passed the activity threshold. Use for hit identification from HTS screens.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID"
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/assay/aid/{aid}/cids/JSON?cids_type=active",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "aid": 1000
+      },
+      {
+        "aid": 504526
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "InformationList": {
+          "type": "object",
+          "properties": {
+            "Information": {
+              "type": "array"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_get_assay_dose_response",
+    "description": "Get dose-response data from a bioassay. Returns concentration-response curves for tested compounds. Essential for determining IC50/EC50 values. Limited to dose-response type assays.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID (must be a dose-response assay)"
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/assay/aid/{aid}/doseresponse/JSON",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "aid": 504526
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "Table": {
+          "type": "object",
+          "properties": {
+            "Columns": {
+              "type": "object",
+              "properties": {
+                "Column": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "Row": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Cell": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PubChem_get_assays_for_compound_active",
+    "description": "Get AIDs of assays where a compound is ACTIVE. Returns list of bioassay IDs where the compound showed activity. Use to understand a compound's target profile.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cid": {
+          "type": "integer",
+          "description": "PubChem Compound ID"
+        }
+      },
+      "required": [
+        "cid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/compound/cid/{cid}/aids/JSON?aids_type=active",
+      "use_pugview": false
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "cid": 2244
+      },
+      {
+        "cid": 5090
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "IdentifierList": {
+          "type": "object",
+          "properties": {
+            "AID": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 ]

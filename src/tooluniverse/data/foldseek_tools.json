@@ -1,0 +1,251 @@
+[
+  {
+    "name": "Foldseek_search_structure",
+    "description": "Search for structurally similar proteins using Foldseek. Given a PDB ID, downloads the structure from RCSB and searches against AlphaFold DB (afdb50), PDB100, or other structure databases. Returns structural alignments ranked by e-value. This is an async operation that submits a job and polls for results (typically 10-60 seconds). Example: pdb_id='4HHB' finds proteins with similar 3D fold to hemoglobin.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB ID to search (e.g., '4HHB', '1CRN'). The structure will be fetched from RCSB PDB."
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Amino acid sequence to search (alternative to pdb_id). For sequence-based structure search. Alias: 'query'."
+        },
+        "query": {
+          "type": "string",
+          "description": "Amino acid sequence to search (alias for sequence)."
+        },
+        "database": {
+          "type": "string",
+          "description": "Database to search against. Options: 'afdb50' (AlphaFold DB 50% clustered, default), 'afdb-swissprot' (AlphaFold SwissProt), 'afdb-proteome' (AlphaFold proteomes), 'pdb100' (PDB), 'gmgcl_id' (GMGC), 'bfmd' (ESMAtlas), 'cath50' (CATH), 'mgnify_esm30' (MGnify ESM).",
+          "default": "afdb50"
+        },
+        "mode": {
+          "type": "string",
+          "description": "Search mode: 'tmalign' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but more sensitive).",
+          "default": "3diaa"
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default 10, max 50).",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "type": "FoldseekTool",
+    "test_examples": [
+      {
+        "pdb_id": "1CRN",
+        "database": "afdb50",
+        "mode": "3diaa",
+        "max_results": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "alignments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "seq_identity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "e_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "query_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "query_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "target_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "target_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "alignment_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "target_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_hits": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "query",
+            "alignments"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Foldseek_get_result",
+    "description": "Get results for a previously submitted Foldseek structure search job by ticket ID. Use this if a search was submitted but results were not yet available. Returns structural alignments if the job is complete, or the current job status if still running.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ticket_id": {
+          "type": "string",
+          "description": "Foldseek job ticket ID returned from a previous search submission."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default 10, max 50).",
+          "default": 10
+        }
+      },
+      "required": [
+        "ticket_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_result"
+    },
+    "type": "FoldseekTool",
+    "test_examples": [],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "ticket_id": {
+              "type": "string"
+            },
+            "job_status": {
+              "type": "string"
+            },
+            "alignments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "seq_identity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "e_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_hits": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

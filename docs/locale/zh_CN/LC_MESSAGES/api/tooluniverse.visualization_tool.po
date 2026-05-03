@@ -40,7 +40,7 @@ msgstr ""
 #: 92c01bdea19e4215bfa51198f22e6a4f of
 #: tooluniverse.visualization_tool.VisualizationTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: a3cecef5c9b34c11a5cc59d2319f54da of
 #: tooluniverse.visualization_tool.VisualizationTool:1

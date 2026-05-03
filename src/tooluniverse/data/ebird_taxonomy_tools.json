@@ -1,0 +1,230 @@
+[
+  {
+    "name": "eBird_get_taxonomy",
+    "description": "Get bird taxonomy data from eBird (Cornell Lab of Ornithology). Returns taxonomic information including scientific name, common name, species code, taxonomic order, family, and banding codes. Can retrieve taxonomy for a specific species by code, filter by taxon type, or set locale for common names in different languages. Without parameters, returns the complete eBird taxonomy (~17,000 taxa). Use species codes like 'amerob' (American Robin), 'baleag' (Bald Eagle), 'mallar3' (Mallard). No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "eBird species code to filter to a single species (e.g., 'amerob' for American Robin, 'baleag' for Bald Eagle, 'mallar3' for Mallard, 'pilwoo' for Pileated Woodpecker). Find codes via eBird website or search."
+        },
+        "taxonType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Taxonomic category filter. Values: 'species' (full species only), 'issf' (identifiable sub-specific forms), 'spuh' (genus-level), 'slash' (species pairs), 'intergrade', 'domestic', 'hybrid', 'form'"
+        },
+        "locale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code for common names (e.g., 'en' for English, 'es' for Spanish, 'fr' for French, 'de' for German, 'zh' for Chinese). Defaults to 'en'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://api.ebird.org/v2/ref/taxonomy/ebird",
+      "params": {
+        "fmt": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "species": "amerob"
+      },
+      {
+        "species": "baleag",
+        "locale": "es"
+      },
+      {
+        "species": "mallar3"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of taxonomic records matching the query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sciName": {
+                "type": "string",
+                "description": "Scientific (Latin) name (e.g., 'Turdus migratorius')"
+              },
+              "comName": {
+                "type": "string",
+                "description": "Common name in the requested locale (e.g., 'American Robin')"
+              },
+              "speciesCode": {
+                "type": "string",
+                "description": "eBird species code (e.g., 'amerob')"
+              },
+              "category": {
+                "type": "string",
+                "description": "Taxonomic category: species, issf, spuh, slash, intergrade, domestic, hybrid, form"
+              },
+              "taxonOrder": {
+                "type": "number",
+                "description": "eBird taxonomic order number for sorting"
+              },
+              "bandingCodes": {
+                "type": "array",
+                "description": "Bird banding laboratory codes (4-letter codes)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "comNameCodes": {
+                "type": "array",
+                "description": "Common name codes",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sciNameCodes": {
+                "type": "array",
+                "description": "Scientific name codes",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxonomic order (e.g., 'Passeriformes')"
+              },
+              "familyCode": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "eBird family code (e.g., 'turdid1' for Turdidae)"
+              },
+              "familyComName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Common name of the family (e.g., 'Thrushes and Allies')"
+              },
+              "familySciName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Scientific name of the family (e.g., 'Turdidae')"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "eBird_get_taxon_groups",
+    "description": "Get the list of bird taxonomic groups from eBird (Cornell Lab of Ornithology). Returns all bird groups (e.g., Waterfowl, Raptors, Owls, Hummingbirds, Woodpeckers, Sparrows) with their taxonomic order bounds. Two grouping systems are available: 'merlin' (simplified groups used in the Merlin Bird ID app, ~30 groups) and 'ebird' (full eBird taxonomy groups, ~217 groups). Each group has a name, display order, and taxon order bounds that map to species in the full taxonomy. Useful for categorizing species into familiar bird groups. Can be localized to different languages. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "speciesGrouping": {
+          "type": "string",
+          "description": "Grouping system to use. 'merlin' returns ~30 simplified groups used in the Merlin Bird ID app (Waterfowl, Hawks/Eagles, Owls, Hummingbirds, etc.). 'ebird' returns ~217 detailed taxonomic groups (Ostriches, Kiwis, Ducks/Geese/Swans, etc.)."
+        },
+        "groupNameLocale": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code for group names (e.g., 'en' for English, 'es' for Spanish, 'fr' for French, 'de' for German). Defaults to 'en'."
+        }
+      },
+      "required": [
+        "speciesGrouping"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.ebird.org/v2/ref/sppgroup/{speciesGrouping}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "speciesGrouping": "merlin",
+        "groupNameLocale": "en"
+      },
+      {
+        "speciesGrouping": "ebird",
+        "groupNameLocale": "en"
+      },
+      {
+        "speciesGrouping": "merlin",
+        "groupNameLocale": "es"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of bird taxonomic groups with names and order bounds",
+          "items": {
+            "type": "object",
+            "properties": {
+              "groupName": {
+                "type": "string",
+                "description": "Name of the bird group (e.g., 'Waterfowl', 'Hawks and Eagles', 'Owls')"
+              },
+              "groupOrder": {
+                "type": "integer",
+                "description": "Display order number for sorting groups"
+              },
+              "taxonOrderBounds": {
+                "type": "array",
+                "description": "Array of [min, max] taxon order ranges that define which species belong to this group. Match against taxonOrder field from eBird_get_taxonomy.",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

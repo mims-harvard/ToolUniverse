@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_plotly\\_info 模块"
 #: a4c50c10d3f3414d81bf61210eae0d6a of tooluniverse.tools.get_plotly_info:1
 msgid "get_plotly_info"
 msgstr ""
+"get_plotly_info\n"
+"\n"
+"获取_plotly_信息"
 
 #: 01adb7ed089b4a24922a87b880d26eff 99ea11f704354688be6b552b70a0d63c of
 #: tooluniverse.tools.get_plotly_info:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_food\\_safety\\_warni
 #: a0bfaa026c044b6fad51910cd9c941cf of
 #: tooluniverse.tools.FDA_get_drug_names_by_food_safety_warnings:1
 msgid "FDA_get_drug_names_by_food_safety_warnings"
-msgstr ""
+msgstr "FDA_根据食品安全警告获取药品名称"
 
 #: 6adf3c3bb13b4092a31115ba7a5a7891 c5bb2f2e8b15417cb74ad63b9466757d of
 #: tooluniverse.tools.FDA_get_drug_names_by_food_safety_warnings:3

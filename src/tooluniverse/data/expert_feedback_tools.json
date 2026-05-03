@@ -1,10 +1,20 @@
 [
-    {
-        "name": "mcp_auto_loader_expert_feedback",
-        "description": "Automatically discover and load all tools from Human Expert Feedback MCP Server. Provides tools for consulting human experts on complex medical decisions.",
-        "type": "MCPAutoLoaderTool",
-        "tool_prefix": "expert_",
-        "server_url": "http://${EXPERT_FEEDBACK_MCP_SERVER_URL}/mcp",
-        "required_api_keys": ["EXPERT_FEEDBACK_MCP_SERVER_URL"]
+  {
+    "name": "mcp_auto_loader_expert_feedback",
+    "description": "Automatically discover and load all tools from Human Expert Feedback MCP Server. Provides tools for consulting human experts on complex medical decisions.",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "expert_",
+    "server_url": "http://${EXPERT_FEEDBACK_MCP_SERVER_URL}/mcp",
+    "required_api_keys": [
+      "EXPERT_FEEDBACK_MCP_SERVER_URL"
+    ],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
+  }
 ]

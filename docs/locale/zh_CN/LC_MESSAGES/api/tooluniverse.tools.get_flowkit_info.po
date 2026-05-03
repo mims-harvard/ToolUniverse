@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_flowkit\\_info 模块"
 
 #: ddb6d32eeacc4e3ebb5a2d68322aab50 of tooluniverse.tools.get_flowkit_info:1
 msgid "get_flowkit_info"
-msgstr ""
+msgstr "获取_flowkit_信息"
 
 #: 36f53b5e6c63445eb1a4ddce2ea024bd 43ebbec6edb54e68b0d2c7868235ddb3 of
 #: tooluniverse.tools.get_flowkit_info:3

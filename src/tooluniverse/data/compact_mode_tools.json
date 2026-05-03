@@ -1,0 +1,381 @@
+[
+  {
+    "type": "ListTools",
+    "name": "list_tools",
+    "description": "List tools with multiple output modes. Default mode='names' for quick scanning. Recommended workflow: start with default or mode='categories' for overview, then use 'get_tool_info' tool to get descriptions/details for specific tools (supports batch queries). Warning: modes like 'basic'/'summary' return very large payloads; use 'get_tool_info' instead for descriptions. If you must use these modes, use 'limit'/'offset' or filter by 'categories'. Modes: 'names' (default), 'basic', 'categories', 'by_category', 'summary', 'custom'.",
+    "related_tools": [
+      "grep_tools",
+      "find_tools",
+      "get_tool_info"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "names",
+            "basic",
+            "categories",
+            "by_category",
+            "summary",
+            "custom"
+          ],
+          "default": "names",
+          "description": "Output mode (default: 'names'). Warning: non-'names' modes like 'basic'/'summary' can return very large payloads when many tools are loaded. For getting tool descriptions, use 'get_tool_info' tool instead. Modes: 'names' (tool names only), 'basic' (name+description), 'categories' (category statistics), 'by_category' (grouped by category), 'summary' (name+description+type+has_parameters), 'custom' (user-specified fields)"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional list of tool categories to filter by (applies to all modes except 'categories')"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Required for mode='custom'. List of fields to include (e.g., [\"name\", \"type\", \"category\"])"
+        },
+        "group_by_category": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to group results by category (only for mode='names', 'basic', or 'summary')"
+        },
+        "brief": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to truncate description to brief (only for mode='basic' or 'summary')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of tools to return (optional, for pagination)"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Number of tools to skip (optional, for pagination, default: 0)"
+        }
+      },
+      "required": []
+    },
+    "required": [],
+    "return_schema": {
+      "type": "object",
+      "description": "Tool listing results. Format varies by mode: 'names' returns {total_tools, limit, offset, has_more, tools: string[]}, 'basic' returns {total_tools, limit, offset, has_more, tools: [{name, description}]}, 'categories' returns {categories: {category: count}}, 'by_category' returns {total_tools, limit, offset, has_more, tools_by_category: {category: [tool_names]}}, 'summary' returns {total_tools, limit, offset, has_more, tools: [{name, description, type, has_parameters}]}, 'custom' returns {total_tools, limit, offset, has_more, tools: [...]}.",
+      "properties": {
+        "total_tools": {
+          "type": "integer",
+          "description": "Total number of tools"
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Limit used for pagination"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset used for pagination"
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "Whether there are more results available"
+        },
+        "tools": {
+          "description": "List of tools (format depends on mode)"
+        },
+        "tools_by_category": {
+          "type": "object",
+          "description": "Tools grouped by category (when group_by_category=true or mode='by_category')"
+        },
+        "categories": {
+          "type": "object",
+          "description": "Category statistics (when mode='categories')"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "mode": "names"
+      },
+      {
+        "mode": "basic"
+      },
+      {
+        "mode": "categories"
+      },
+      {
+        "mode": "by_category"
+      },
+      {
+        "mode": "summary"
+      },
+      {
+        "mode": "custom",
+        "fields": [
+          "name",
+          "type",
+          "category"
+        ],
+        "categories": [
+          "uniprot"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "GrepTools",
+    "name": "grep_tools",
+    "description": "Search tools using simple text matching or regex patterns. Supports both simple text search (default, agent-friendly) and regex patterns (advanced). Independent from Tool_Finder_Keyword, uses basic text/regex matching without TF-IDF or NLP processing. Fast and simple for pattern searches.",
+    "use_case": "Quick text-based search when you know keywords or patterns to search for",
+    "workflow_hint": "Use with search_mode='text' (default) for simple searches, or 'regex' for advanced pattern matching. For natural language queries, use find_tools instead.",
+    "related_tools": [
+      "find_tools",
+      "list_tools"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Search pattern (text or regex depending on search_mode)"
+        },
+        "field": {
+          "type": "string",
+          "enum": [
+            "name",
+            "description",
+            "type",
+            "category"
+          ],
+          "default": "name",
+          "description": "Field to search in: name, description, type, or category"
+        },
+        "search_mode": {
+          "type": "string",
+          "enum": [
+            "text",
+            "regex"
+          ],
+          "default": "text",
+          "description": "Search mode: 'text' for simple case-insensitive text matching (default, agent-friendly), 'regex' for regex pattern matching"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "description": "Maximum number of tools to return (default: 100)"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "description": "Number of tools to skip (optional, for pagination, default: 0)"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional list of tool categories to filter by"
+        }
+      },
+      "required": [
+        "pattern"
+      ]
+    },
+    "required": [
+      "pattern"
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Search results containing matching tools with pagination metadata",
+      "properties": {
+        "total_matches": {
+          "type": "integer",
+          "description": "Total number of matching tools"
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Limit used for pagination"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset used for pagination"
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "Whether there are more results available"
+        },
+        "pattern": {
+          "type": "string",
+          "description": "The search pattern used"
+        },
+        "field": {
+          "type": "string",
+          "description": "The field that was searched"
+        },
+        "search_mode": {
+          "type": "string",
+          "description": "The search mode used (text or regex)"
+        },
+        "tools": {
+          "type": "array",
+          "description": "List of matching tools",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Tool name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Tool description"
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pattern": "protein",
+        "search_mode": "text",
+        "field": "name"
+      },
+      {
+        "pattern": "^UniProt",
+        "search_mode": "regex",
+        "field": "name"
+      },
+      {
+        "pattern": "drug",
+        "search_mode": "text",
+        "field": "description"
+      }
+    ]
+  },
+  {
+    "type": "GetToolInfo",
+    "name": "get_tool_info",
+    "description": "Get tool information with configurable detail level. Supports single tool (string) or multiple tools (list). Use detail_level='description' to get only the description field, or detail_level='full' to get complete tool definition including parameter schema.",
+    "use_case": "Get tool information when you need either just the description or the full definition. Supports both single and batch queries.",
+    "workflow_hint": "Use detail_level='description' for quick overviews, detail_level='full' when you need complete parameter details. Can query single tool (string) or multiple tools (list).",
+    "related_tools": [
+      "list_tools",
+      "grep_tools",
+      "find_tools"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_names": {
+          "description": "Single tool name (string) or list of tool names",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "detail_level": {
+          "type": "string",
+          "enum": [
+            "description",
+            "full"
+          ],
+          "default": "full",
+          "description": "Detail level: 'description' returns only the description field (complete, not truncated), 'full' returns complete tool definition including parameter schema"
+        }
+      },
+      "required": [
+        "tool_names"
+      ]
+    },
+    "required": [
+      "tool_names"
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Tool information. For single tool query, returns the tool info directly. For batch query, returns an object with total_requested, total_found, and tools array."
+    },
+    "test_examples": [
+      {
+        "tool_names": "UniProt_get_entry_by_accession",
+        "detail_level": "description"
+      },
+      {
+        "tool_names": "UniProt_get_entry_by_accession",
+        "detail_level": "full"
+      },
+      {
+        "tool_names": [
+          "UniProt_get_entry_by_accession",
+          "ChEMBL_get_molecule"
+        ],
+        "detail_level": "description"
+      }
+    ]
+  },
+  {
+    "type": "ExecuteTool",
+    "name": "execute_tool",
+    "description": "Execute a ToolUniverse tool directly with custom arguments. This is the primary way to run any tool in the ToolUniverse system. You must get the tool definition first to figure out the arguments to pass.",
+    "use_case": "Execute any ToolUniverse tool by name with custom arguments. Use after discovering tools via find_tools or list_tools.",
+    "workflow_hint": "First use find_tools or list_tools to discover available tools, then use execute_tool to run them with your specific parameters.",
+    "related_tools": [
+      "list_tools",
+      "find_tools",
+      "get_tool_info"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "description": "Name of the tool to execute (e.g., 'example_tool_name')"
+        },
+        "arguments": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Tool arguments as either (1) a JSON object dictionary or (2) a JSON string that decodes to an object. Object example: {\"param1\": \"value1\", \"param2\": 5}. JSON string example: \"{\\\"param1\\\": \\\"value1\\\", \\\"param2\\\": 5}\"."
+        }
+      },
+      "required": [
+        "tool_name"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Tool execution result as a structured object (dict). The actual content depends on the executed tool. May contain error information if execution failed. Returns structured data instead of JSON string for programmatic use.",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "tool_name": "list_tools",
+        "arguments": {
+          "mode": "names",
+          "limit": "3"
+        }
+      },
+      {
+        "tool_name": "get_tool_info",
+        "arguments": {
+          "tool_names": "execute_tool",
+          "detail_level": "description"
+        }
+      }
+    ]
+  }
+]

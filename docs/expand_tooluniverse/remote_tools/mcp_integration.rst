@@ -130,9 +130,9 @@ Troubleshooting
 Next Steps
 ----------
 
-* 🚀 **Contributing**: :doc:`../contributing/remote_tools` - Submit your MCP server to ToolUniverse
-* 📚 **Tutorial**: :doc:`tutorial` - Learn about remote tool integration
-* 🔍 **Architecture**: :doc:`../reference/architecture` - Understand ToolUniverse internals
+* **Contributing**: :doc:`../contributing/remote_tools` - Submit your MCP server to ToolUniverse
+* **Tutorial**: :doc:`tutorial` - Learn about remote tool integration
+* **Architecture**: :doc:`../reference/architecture` - Understand ToolUniverse internals
 
 .. tip::
    **Integration tip**: Start with simple MCP servers and gradually add complexity. Always test your integration thoroughly!

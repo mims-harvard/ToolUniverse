@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_protein\\_metadata\\_by\\_pdb\\_id 模块"
 #: 30e19992d55844e9bd8dc615c34f4964 of
 #: tooluniverse.tools.get_protein_metadata_by_pdb_id:1
 msgid "get_protein_metadata_by_pdb_id"
-msgstr ""
+msgstr "get_protein_metadata_by_pdb_id 获取蛋白质元数据（通过PDB ID）"
 
 #: 9a6c2bee0903432eb6a09351262f6821 d45abd597226400d830a3625769332c3 of
 #: tooluniverse.tools.get_protein_metadata_by_pdb_id:3

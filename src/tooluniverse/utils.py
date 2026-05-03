@@ -6,8 +6,8 @@ import os
 import time
 import sys
 from typing import Dict, Any, Union, List
-from huggingface_hub import hf_hub_download
-from pydantic._internal._model_construction import ModelMetaclass
+# Heavy optional dependencies — imported lazily inside the functions that need
+# them so that `import tooluniverse` does not pay their cost at startup.
 
 
 def download_from_hf(tool_config):
@@ -18,12 +18,10 @@ def download_from_hf(tool_config):
     # Compute absolute path to save locally
     project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-    # If not provided, default to user cache directory under datasets
-    is_missing_path = relative_local_path is None
-    is_empty_string = (
-        isinstance(relative_local_path, str) and relative_local_path.strip() == ""
-    )
-    if is_missing_path or is_empty_string:
+    # If not provided or empty, default to user cache directory under datasets
+    if not relative_local_path or (
+        isinstance(relative_local_path, str) and not relative_local_path.strip()
+    ):
         absolute_local_dir = os.path.join(get_user_cache_dir(), "datasets")
     else:
         # Expand '~' and environment variables
@@ -53,6 +51,8 @@ def download_from_hf(tool_config):
         else:
             download_args["token"] = False
 
+        from huggingface_hub import hf_hub_download
+
         downloaded_path = hf_hub_download(**download_args)
 
         # The downloaded file path is returned by hf_hub_download
@@ -64,14 +64,8 @@ def download_from_hf(tool_config):
 
 
 def get_md5(input_str):
-    # Create an MD5 hash object
-    md5_hash = hashlib.md5()
-
-    # Encode the string and update the hash object
-    md5_hash.update(input_str.encode("utf-8"))
-
-    # Return the hexadecimal MD5 digest
-    return md5_hash.hexdigest()
+    """Return the hexadecimal MD5 digest of the given string."""
+    return hashlib.md5(input_str.encode("utf-8")).hexdigest()
 
 
 def get_user_cache_dir() -> str:
@@ -114,16 +108,18 @@ def yaml_to_dict(yaml_file_path):
         yaml_file_path (str): Path to the YAML file.
 
     Returns
-        dict: Dictionary representation of the YAML file content.
+        dict or None: Dictionary representation of the YAML file content,
+                      or None if the file is not found or has YAML errors.
     """
     try:
-        with open(yaml_file_path, "r") as file:
-            yaml_dict = yaml.safe_load(file)
-            return yaml_dict
+        with open(yaml_file_path, "r", encoding="utf-8") as file:
+            return yaml.safe_load(file)
     except FileNotFoundError:
         print(f"File not found: {yaml_file_path}")
+        return None
     except yaml.YAMLError as exc:
         print(f"Error in YAML file: {exc}")
+        return None
 
 
 def read_json_list(file_path):
@@ -143,6 +139,8 @@ def read_json_list(file_path):
 
 def evaluate_function_call(tool_definition, function_call):
     # Map for type conversion
+    from pydantic._internal._model_construction import ModelMetaclass
+
     type_map = {
         "string": str,
         "integer": int,
@@ -152,6 +150,12 @@ def evaluate_function_call(tool_definition, function_call):
         "object": dict,
         "pydantic": ModelMetaclass,
     }
+
+    # Normalise arguments: missing key, None, or non-dict types all become {}
+    raw_args = function_call.get("arguments")
+    if not isinstance(raw_args, dict):
+        function_call = dict(function_call)  # shallow copy so we don't mutate caller
+        function_call["arguments"] = {}
 
     # Check if the function name matches
     if tool_definition["name"] != function_call["name"]:
@@ -196,6 +200,14 @@ def evaluate_function_call(tool_definition, function_call):
             # Case 1: Simple schema with direct "type" field
             if "type" in param_schema:
                 expected_type = param_schema["type"]
+                # Handle list-style type (e.g., ["string", "null"]) - treat as nullable
+                if isinstance(expected_type, list):
+                    # Allow None for nullable types
+                    if value is None and "null" in expected_type:
+                        continue
+                    # Extract primary non-null type
+                    non_null_types = [t for t in expected_type if t != "null"]
+                    expected_type = non_null_types[0] if non_null_types else None
 
             # Case 2: Complex schema with "anyOf" (common in MCP tools)
             elif "anyOf" in param_schema:
@@ -204,6 +216,54 @@ def evaluate_function_call(tool_definition, function_call):
                     if type_option.get("type") and type_option["type"] != "null":
                         expected_type = type_option["type"]
                         break
+
+            # Case 3: Complex schema with "oneOf" (e.g., string or array)
+            elif "oneOf" in param_schema:
+                # For oneOf, we need to check if the value matches any of the types
+                # Extract all non-null types from oneOf
+                one_of_types = []
+                for type_option in param_schema["oneOf"]:
+                    if type_option.get("type") and type_option["type"] != "null":
+                        one_of_types.append(type_option["type"])
+
+                # Check if value matches any of the oneOf types
+                value_matches = False
+                for one_of_type in one_of_types:
+                    if one_of_type == "array" and isinstance(value, list):
+                        # For array type, also check items if specified
+                        items_schema = None
+                        for type_option in param_schema["oneOf"]:
+                            if type_option.get("type") == "array":
+                                items_schema = type_option.get("items", {})
+                                break
+                        # If items schema exists, validate items (simplified check)
+                        if items_schema:
+                            items_type = items_schema.get("type", "string")
+                            if all(
+                                isinstance(item, type_map.get(items_type, str))
+                                for item in value
+                            ):
+                                value_matches = True
+                                break
+                        else:
+                            value_matches = True
+                            break
+                    elif one_of_type in type_map and isinstance(
+                        value, type_map[one_of_type]
+                    ):
+                        value_matches = True
+                        break
+
+                if value_matches:
+                    # Value matches one of the oneOf types, validation passes - skip to next parameter
+                    continue
+                else:
+                    # Value doesn't match any oneOf type
+                    type_mismatches.append(
+                        (param, f"oneOf{one_of_types}", type(value).__name__)
+                    )
+                    # Continue to next parameter (don't fall through to expected_type check)
+                    continue
 
             # If we still don't have a type, skip validation for this parameter
             if not expected_type:
@@ -231,7 +291,7 @@ def evaluate_function_call(tool_definition, function_call):
 
 def evaluate_function_call_from_toolbox(toolbox, function_call):
     tool_name = function_call["name"]
-    this_tool_dec = toolbox.get_one_tool_by_one_name(tool_name)
+    this_tool_dec = toolbox.tool_specification(tool_name, return_prompt=True)
     if this_tool_dec is None:
         return False, "Tool not found."
     results, results_message = evaluate_function_call(this_tool_dec, function_call)
@@ -313,7 +373,6 @@ def extract_function_call_json(lst, return_message=False, verbose=True, format="
                     function_call_str = result_str[
                         index_start + len("[TOOL_CALLS]") : index_end
                     ]
-                # print("function_call_str", function_call_str)
                 function_call_json = json.loads(function_call_str.strip())
             elif format == "qwen":
                 index_start = result_str.find("<tool_call>")
@@ -363,6 +422,7 @@ def format_error_response(
     # If it's already a ToolError, use its structured format
     if isinstance(error, ToolError):
         return {
+            "status": "error",
             "error": str(error),
             "error_type": error.error_type,
             "retriable": error.retriable,
@@ -374,6 +434,7 @@ def format_error_response(
 
     # For regular exceptions, create a basic structure
     return {
+        "status": "error",
         "error": str(error),
         "error_type": type(error).__name__,
         "retriable": False,

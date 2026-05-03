@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_biological\\_processes\\_by\\_gene 模块
 #: 63fa84caae6246679b8595993037e6bf of
 #: tooluniverse.tools.HPA_get_biological_processes_by_gene:1
 msgid "HPA_get_biological_processes_by_gene"
-msgstr ""
+msgstr "HPA_按基因获取生物过程"
 
 #: c347035caae041e793d79088e17d4d15 c464529d532b49c6a26bc325910605cd of
 #: tooluniverse.tools.HPA_get_biological_processes_by_gene:3

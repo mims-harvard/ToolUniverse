@@ -136,6 +136,10 @@ def test_basic_integration():
         import traceback
         traceback.print_exc()
         return False
+    finally:
+        # Clean up
+        if 'tu' in locals():
+            tu.close()
 
 def main():
     """Main function to test ToolUniverse integration."""

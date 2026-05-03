@@ -1,0 +1,138 @@
+[
+  {
+    "name": "FoodDataCentral_search_foods",
+    "description": "Search USDA FoodData Central for foods by keyword. Returns matching foods with nutrient data, brand info, and ingredients. Covers Foundation, Branded, SR Legacy, and Survey data. Example: 'banana' finds all banana products.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords (e.g., 'cheddar cheese', 'banana', 'chicken breast'). Supports multi-word search."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of results per page (default 25, max 200).",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "page_number": {
+          "type": "integer",
+          "description": "Page number for pagination (starts at 1).",
+          "default": 1
+        },
+        "data_type": {
+          "type": "string",
+          "description": "Filter by data type. Options: 'Foundation' (reference foods), 'Branded' (commercial products), 'SR Legacy' (USDA standard reference), 'Survey (FNDDS)' (national dietary survey)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "type": "FoodDataCentralTool",
+    "optional_api_keys": [
+      "FDC_API_KEY"
+    ],
+    "test_examples": [
+      {
+        "query": "cheddar cheese",
+        "page_size": 3
+      },
+      {
+        "query": "raw banana",
+        "page_size": 5,
+        "data_type": "Foundation"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fdcId": {"type": "integer"},
+              "description": {"type": "string"},
+              "dataType": {"type": "string"},
+              "brandOwner": {"type": ["string", "null"]},
+              "ingredients": {"type": ["string", "null"]},
+              "servingSize": {"type": ["number", "null"]},
+              "servingSizeUnit": {"type": ["string", "null"]},
+              "topNutrients": {"type": "array"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FoodDataCentral_get_food",
+    "description": "Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient profile, ingredients, serving size, and food attributes. Example: FDC ID 2344723 returns 'Bananas, raw' with 70+ nutrients.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fdc_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "FoodData Central food ID (e.g., 2344723 for bananas, 2012128 for branded banana product). Get IDs from FoodDataCentral_search_foods."
+        }
+      },
+      "required": [
+        "fdc_id"
+      ]
+    },
+    "fields": {
+      "operation": "detail"
+    },
+    "type": "FoodDataCentralTool",
+    "optional_api_keys": [
+      "FDC_API_KEY"
+    ],
+    "test_examples": [
+      {
+        "fdc_id": 2344723
+      },
+      {
+        "fdc_id": 2012128
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "fdcId": {"type": ["integer", "null"]},
+        "description": {"type": ["string", "null"]},
+        "dataType": {"type": ["string", "null"]},
+        "publicationDate": {"type": ["string", "null"]},
+        "brandOwner": {"type": ["string", "null"]},
+        "ingredients": {"type": ["string", "null"]},
+        "servingSize": {"type": ["number", "null"]},
+        "servingSizeUnit": {"type": ["string", "null"]},
+        "nutrients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": ["string", "null"]},
+              "number": {"type": ["string", "null"]},
+              "amount": {"type": ["number", "null"]},
+              "unit": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    }
+  }
+]

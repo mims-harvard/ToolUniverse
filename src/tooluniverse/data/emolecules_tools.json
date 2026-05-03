@@ -1,0 +1,166 @@
+[
+  {
+    "name": "eMolecules_search",
+    "description": "Generate an eMolecules search URL for a compound name or keyword. eMolecules aggregates 200+ suppliers. Returns a search_url to browse results — no API access to vendor data.",
+    "type": "EMoleculesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query - compound name or keyword"
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum results (default: 20)",
+          "default": 20
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "caffeine"
+      }
+    ]
+  },
+  {
+    "name": "eMolecules_search_smiles",
+    "description": "Generate an eMolecules structure search URL for a SMILES string. Supports exact, substructure, and similarity search types. Returns a search_url to browse matching compounds — no API access to vendor data.",
+    "type": "EMoleculesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_smiles"
+        },
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string for the query compound"
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Search type: exact, substructure, similarity (default: similarity)",
+          "default": "similarity"
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum results (default: 20)",
+          "default": 20
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "smiles": "Cn1cnc2c1c(=O)n(c(=O)n2C)C",
+        "search_type": "exact"
+      }
+    ]
+  },
+  {
+    "name": "eMolecules_get_vendors",
+    "description": "Generate an eMolecules vendor search URL for a compound by SMILES. Returns a search_url to browse 200+ supplier listings — no API access to vendor pricing data.",
+    "type": "EMoleculesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_vendors"
+        },
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string for the compound"
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      }
+    ]
+  },
+  {
+    "name": "eMolecules_get_compound",
+    "description": "Get compound details by eMolecules ID. Returns a URL linking to the compound page with vendor, pricing, and availability information.",
+    "type": "EMoleculesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_compound"
+        },
+        "emol_id": {
+          "type": "string",
+          "description": "eMolecules compound/vendor ID"
+        }
+      },
+      "required": [
+        "emol_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "emol_id": "1234567"
+      }
+    ]
+  }
+]

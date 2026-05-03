@@ -1,0 +1,122 @@
+[
+  {
+    "name": "OBIS_search_taxa",
+    "type": "OBISTaxaTool",
+    "description": "Resolve marine taxa in OBIS by scientific name to obtain standardized identifiers (AphiaID), ranks, and names. Use before querying marine occurrences.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "scientificname": {
+          "type": "string",
+          "description": "Scientific name query (e.g., 'Gadus')."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of records to return (1–100)."
+        }
+      },
+      "required": ["scientificname"]
+    },
+    "fields": {
+      "endpoint": "https://api.obis.org/v3/taxon",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "OBIS taxon search response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scientificName": {"type": "string"},
+                  "aphiaID": {"type": "integer"},
+                  "rank": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"scientificname": "Gadus", "size": 1}
+    ],
+    "label": ["OBIS", "Taxonomy", "Marine"],
+    "metadata": {
+      "tags": ["marine", "taxonomy", "aphia"],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "OBIS_search_occurrences",
+    "type": "OBISOccurrenceTool",
+    "description": "Retrieve marine species occurrence records (with coordinates/time) from OBIS using flexible filters. Use for ocean biodiversity distribution analyses.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "scientificname": {
+          "type": "string",
+          "description": "Scientific name filter to restrict occurrences."
+        },
+        "areaid": {
+          "type": "string",
+          "description": "Area identifier filter (per OBIS API)."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of records to return (1–100)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://api.obis.org/v3/occurrence",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "OBIS occurrence search response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scientificName": {"type": "string"},
+                  "decimalLatitude": {"type": "number"},
+                  "decimalLongitude": {"type": "number"},
+                  "eventDate": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"size": 1}
+    ],
+    "label": ["OBIS", "Occurrence", "Marine"],
+    "metadata": {
+      "tags": ["marine", "occurrence", "geospatial"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
+]

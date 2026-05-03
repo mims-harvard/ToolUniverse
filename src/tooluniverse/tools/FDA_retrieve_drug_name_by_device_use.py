@@ -16,7 +16,7 @@ def FDA_retrieve_drug_name_by_device_use(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the drug name based on the intended use of the device.
 
@@ -37,18 +37,24 @@ def FDA_retrieve_drug_name_by_device_use(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "intended_use_of_the_device": intended_use_of_the_device,
+            "limit": limit,
+            "skip": skip,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "FDA_retrieve_drug_name_by_device_use",
-            "arguments": {
-                "intended_use_of_the_device": intended_use_of_the_device,
-                "limit": limit,
-                "skip": skip,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

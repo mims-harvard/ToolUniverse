@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_dosage\\_info 模块"
 #: 23c199d7259d406a9c4d3725e3370462 of
 #: tooluniverse.tools.FDA_get_drug_name_by_dosage_info:1
 msgid "FDA_get_drug_name_by_dosage_info"
-msgstr ""
+msgstr "FDA_根据剂量信息获取药物名称"
 
 #: 0286a77061604ed99368b6fc2ce73e2a 1385296726074349acb2a484df2e2db1 of
 #: tooluniverse.tools.FDA_get_drug_name_by_dosage_info:3

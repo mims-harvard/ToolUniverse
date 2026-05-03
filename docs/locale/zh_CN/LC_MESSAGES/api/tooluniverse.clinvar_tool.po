@@ -26,7 +26,7 @@ msgstr "tooluniverse.clinvar\\_tool 模块"
 
 #: b6d62909d5f54741b09b894734842aff of tooluniverse.clinvar_tool.ClinVarTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: 5cbb79366e444798a52ad6abc8f084d7 of tooluniverse.clinvar_tool.ClinVarTool:1
 msgid ""

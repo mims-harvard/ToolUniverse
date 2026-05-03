@@ -9,19 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def ADMETAI_predict_physicochemical_properties(
-    smiles: list[Any],
+    smiles: list[str] | str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predicts physicochemical properties (molecular weight, logP, hydrogen bond acceptors/donors, Lipi...
 
     Parameters
     ----------
-    smiles : list[Any]
-        The list of SMILES strings.
+    smiles : list[str] | str
+        SMILES string(s) for the molecule(s). Accepts a single string or list of stri...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -31,14 +31,16 @@ def ADMETAI_predict_physicochemical_properties(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"smiles": smiles}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "ADMETAI_predict_physicochemical_properties",
-            "arguments": {"smiles": smiles},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

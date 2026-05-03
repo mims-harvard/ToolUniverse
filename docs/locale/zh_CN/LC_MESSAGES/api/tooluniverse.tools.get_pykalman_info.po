@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pykalman\\_info 模块"
 
 #: 471b5a449ede4847874df5db82166547 of tooluniverse.tools.get_pykalman_info:1
 msgid "get_pykalman_info"
-msgstr ""
+msgstr "get_pykalman_info 获取信息"
 
 #: 828f15b4843840dd9634ad2f9d305e86 b47ffbac785e423db733af5258145bb8 of
 #: tooluniverse.tools.get_pykalman_info:3

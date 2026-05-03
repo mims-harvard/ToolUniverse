@@ -1,0 +1,63 @@
+[
+  {
+    "name": "example_simple_tool",
+    "type": "SimpleToolTemplate",
+    "description": "Brief description of what this tool does. Include: purpose, inputs, outputs, and use cases. Example: Search 'aspirin' to find drug information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "param1": {
+          "type": "string",
+          "description": "First parameter description with example values"
+        },
+        "param2": {
+          "type": "string",
+          "description": "Optional second parameter. Default: 'default_value'",
+          "default": "default_value"
+        }
+      },
+      "required": ["param1"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Request status: 'success' or 'error'"
+        },
+        "data": {
+          "type": "object",
+          "description": "Response data from the API",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier"
+            },
+            "name": {
+              "type": "string",
+              "description": "Display name"
+            },
+            "value": {
+              "type": ["string", "number", "null"],
+              "description": "Data value (can be string, number, or null)"
+            }
+          },
+          "additionalProperties": true
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is 'error'"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "param1": "example_value"
+      },
+      {
+        "param1": "another_example",
+        "param2": "custom_value"
+      }
+    ]
+  }
+]

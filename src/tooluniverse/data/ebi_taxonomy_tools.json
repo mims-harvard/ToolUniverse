@@ -1,0 +1,486 @@
+[
+  {
+    "name": "EBITaxonomy_get_by_id",
+    "description": "Get taxonomy classification by NCBI Taxonomy ID from the EBI Taxonomy service. Returns scientific name, common name, rank, division, full lineage string, genetic codes, authority citation, and alternative names. Example: tax_id 9606 returns Homo sapiens with lineage from Eukaryota to Homo.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tax_id": {
+          "type": "string",
+          "description": "NCBI Taxonomy ID (numeric). Examples: '9606' (human), '10090' (mouse), '562' (E. coli), '3702' (Arabidopsis thaliana)."
+        }
+      },
+      "required": [
+        "tax_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "tax_by_id"
+    },
+    "type": "EBITaxonomyTool",
+    "test_examples": [
+      {
+        "tax_id": "9606"
+      },
+      {
+        "tax_id": "562"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "tax_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "scientific_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "common_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "division": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "lineage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genetic_code": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "mitochondrial_genetic_code": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "authority": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "other_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "submittable": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "binomial": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "formal_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_tax_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBITaxonomy_get_by_scientific_name",
+    "description": "Look up taxonomy by scientific (Latin) name using the EBI Taxonomy service. Returns taxonomy ID, lineage, rank, division, and genetic codes. Handles subspecies and strain names. Example: 'Escherichia coli' returns taxId 562 with full bacterial lineage.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "scientific_name": {
+          "type": "string",
+          "description": "Scientific name of the organism. Examples: 'Homo sapiens', 'Escherichia coli', 'Drosophila melanogaster', 'Arabidopsis thaliana'."
+        }
+      },
+      "required": [
+        "scientific_name"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "tax_by_scientific_name"
+    },
+    "type": "EBITaxonomyTool",
+    "test_examples": [
+      {
+        "scientific_name": "Escherichia coli"
+      },
+      {
+        "scientific_name": "Drosophila melanogaster"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "division": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "lineage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "genetic_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authority": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query_name": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBITaxonomy_search_by_name",
+    "description": "Search for organisms by any name (scientific, common, or synonym) in EBI Taxonomy. Unlike scientific name lookup, this accepts common names like 'mouse', 'fruit fly', or 'baker's yeast'. Returns matching taxa with their IDs, scientific names, and lineage. Example: 'mouse' returns Mus musculus (10090) and Mus (10088).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Any organism name (common name, scientific name, or synonym). Examples: 'mouse', 'fruit fly', 'yeast', 'zebrafish', 'E. coli'."
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "tax_by_any_name"
+    },
+    "type": "EBITaxonomyTool",
+    "test_examples": [
+      {
+        "name": "mouse"
+      },
+      {
+        "name": "zebrafish"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "division": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "lineage": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authority": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query_name": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBITaxonomy_suggest",
+    "description": "Get taxonomy name suggestions matching a partial query from EBI Taxonomy. Type-ahead style search that returns matching organism names and taxonomy IDs. Useful for finding the correct taxonomy ID when you only know part of the organism name. Example: 'human' suggests Homo sapiens (9606), human metagenome (646099), etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Partial organism name to get suggestions for. Examples: 'human', 'streptococc', 'salmo', 'candida'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "tax_suggest"
+    },
+    "type": "EBITaxonomyTool",
+    "test_examples": [
+      {
+        "query": "human"
+      },
+      {
+        "query": "salmo"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

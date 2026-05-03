@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.PubChem\\_get\\_associated\\_patents\\_by\\_CID 模�
 #: 5a838152e16047138faa0c8ce7b3c5bb of
 #: tooluniverse.tools.PubChem_get_associated_patents_by_CID:1
 msgid "PubChem_get_associated_patents_by_CID"
-msgstr ""
+msgstr "PubChem_通过CID获取相关专利"
 
 #: 7dfa0e4ab3fb4e268af4389408001dad 8fe70b739bd446ccb7efdcc0ad6b7761 of
 #: tooluniverse.tools.PubChem_get_associated_patents_by_CID:3

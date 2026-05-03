@@ -1,0 +1,171 @@
+[
+  {
+    "name": "MetNorway_get_forecast",
+    "description": "Get weather forecasts for any global location from the Norwegian Meteorological Institute (MET Norway) Locationforecast API. Returns hourly or 6-hourly temperature, precipitation, wind, humidity, and cloud cover forecasts for up to 9 days. No authentication required, but a User-Agent header with contact info is requested. Excellent free alternative to paid weather APIs. Used by major weather services worldwide.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (-90 to 90). Examples: 59.9139 (Oslo), 51.5074 (London), 40.7128 (New York), 48.8566 (Paris), 35.6762 (Tokyo)"
+        },
+        "lon": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (-180 to 180). Examples: 10.7522 (Oslo), -0.1278 (London), -74.0060 (New York), 2.3522 (Paris), 139.6503 (Tokyo)"
+        },
+        "altitude": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Station altitude in meters above sea level. Optional. Improves forecast accuracy for mountain locations."
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.met.no/weatherapi/locationforecast/2.0/compact",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "lat": 59.9139,
+        "lon": 10.7522
+      },
+      {
+        "lat": 51.5074,
+        "lon": -0.1278
+      },
+      {
+        "lat": 40.7128,
+        "lon": -74.006
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "MET Norway weather forecast response",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "GeoJSON type: 'Feature'"
+            },
+            "geometry": {
+              "type": "object",
+              "properties": {
+                "coordinates": {
+                  "type": "array",
+                  "description": "[longitude, latitude, altitude]"
+                }
+              }
+            },
+            "properties": {
+              "type": "object",
+              "properties": {
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "updated_at": {
+                      "type": "string",
+                      "description": "Last update timestamp"
+                    },
+                    "units": {
+                      "type": "object",
+                      "description": "Units for each variable"
+                    }
+                  }
+                },
+                "timeseries": {
+                  "type": "array",
+                  "description": "Hourly and 6-hourly forecast data points",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "time": {
+                        "type": "string",
+                        "description": "Forecast time (ISO 8601)"
+                      },
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "instant": {
+                            "type": "object",
+                            "properties": {
+                              "details": {
+                                "type": "object",
+                                "properties": {
+                                  "air_temperature": {
+                                    "type": "number",
+                                    "description": "Temperature in Celsius"
+                                  },
+                                  "wind_speed": {
+                                    "type": "number",
+                                    "description": "Wind speed in m/s"
+                                  },
+                                  "wind_from_direction": {
+                                    "type": "number",
+                                    "description": "Wind direction in degrees"
+                                  },
+                                  "relative_humidity": {
+                                    "type": "number",
+                                    "description": "Relative humidity in %"
+                                  },
+                                  "cloud_area_fraction": {
+                                    "type": "number",
+                                    "description": "Cloud cover in %"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "next_1_hours": {
+                            "type": "object",
+                            "description": "1-hour aggregate (precipitation, weather symbol)",
+                            "properties": {
+                              "summary": {
+                                "type": "object",
+                                "properties": {
+                                  "symbol_code": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "details": {
+                                "type": "object",
+                                "properties": {
+                                  "precipitation_amount": {
+                                    "type": "number"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

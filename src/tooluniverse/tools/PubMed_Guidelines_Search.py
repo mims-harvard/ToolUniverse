@@ -11,12 +11,12 @@ from ._shared_client import get_shared_client
 def PubMed_Guidelines_Search(
     query: str,
     limit: int,
-    api_key: str,
+    api_key: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search PubMed for peer-reviewed clinical practice guidelines using NCBI E-utilities. Filters resu...
 
@@ -26,7 +26,7 @@ def PubMed_Guidelines_Search(
         Medical condition, treatment, or clinical topic to search for (e.g., 'diabete...
     limit : int
         Maximum number of guidelines to return (default: 10)
-    api_key : str
+    api_key : str | Any
         Optional NCBI API key for higher rate limits. Get your free key at https://ww...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -37,14 +37,20 @@ def PubMed_Guidelines_Search(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "api_key": api_key}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "PubMed_Guidelines_Search",
-            "arguments": {"query": query, "limit": limit, "api_key": api_key},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

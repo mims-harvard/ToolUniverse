@@ -32,7 +32,7 @@ msgstr ""
 #: 0b2db85bb5744fec8659a12ad7d0ae8c of
 #: tooluniverse.tools.OpenTargets_get_disease_ancestors_parents_by_efoId:1
 msgid "OpenTargets_get_disease_ancestors_parents_by_efoId"
-msgstr ""
+msgstr "OpenTargets_通过EFO ID获取疾病祖先和父项"
 
 #: 319c349115884cf691b44428e4441527 955427d9c75c4448b5a1599948d667d1 of
 #: tooluniverse.tools.OpenTargets_get_disease_ancestors_parents_by_efoId:3

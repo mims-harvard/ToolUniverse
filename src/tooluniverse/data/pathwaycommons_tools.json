@@ -1,0 +1,315 @@
+[
+  {
+    "name": "PathwayCommons_search",
+    "type": "PathwayCommonsTool",
+    "description": "Search Pathway Commons for pathways, interactions, and molecular entities across 22 integrated databases (Reactome, KEGG, WikiPathways, PID, BioGRID, IntAct, HPRD, etc.). Search by gene symbol, protein name, or keyword. Optionally filter by BioPAX entity type (Pathway, Protein, SmallMolecule, Complex) and data source. Returns pathway URIs, names, data sources, and participant/process counts. Use PathwayCommons_get_pathway with returned URI for full pathway details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: gene symbol (BRCA1, TP53), protein name, pathway name, or keyword"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "Pathway",
+            "Protein",
+            "SmallMolecule",
+            "Complex",
+            "ProteinReference",
+            "SmallMoleculeReference",
+            "PhysicalEntity",
+            "Interaction",
+            null
+          ],
+          "description": "BioPAX entity type filter (default: all types)"
+        },
+        "datasource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Data source filter: reactome, kegg, wikipathways, pid, biogrid, intact, hprd, panther, netpath, corum, ctd, drugbank, msigdb, mirtarbase"
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Organism filter: taxonomy ID (9606 for human, 10090 for mouse) or organism name"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Page number for pagination (0-based, 100 results per page)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uri": {
+            "type": "string",
+            "description": "Pathway Commons URI (use with PathwayCommons_get_pathway)"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Entity name"
+          },
+          "biopax_class": {
+            "type": "string",
+            "description": "BioPAX entity type"
+          },
+          "data_source": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Contributing databases"
+          },
+          "organism": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Organism URIs"
+          },
+          "pathway": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Parent pathway URIs"
+          },
+          "num_participants": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Number of molecular participants"
+          },
+          "num_processes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Number of biological processes"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search",
+        "query": "BRCA1",
+        "type": "Pathway",
+        "datasource": "reactome"
+      }
+    ],
+    "fields": {
+      "operation": "search"
+    }
+  },
+  {
+    "name": "PathwayCommons_get_pathway",
+    "type": "PathwayCommonsTool",
+    "description": "Get detailed pathway information from Pathway Commons by URI. Returns the pathway name, participants (proteins, small molecules, complexes), and processes (interactions, catalysis, controls). Use URIs from PathwayCommons_search results. Covers Reactome, KEGG, WikiPathways, PID, and other sources. Response is parsed from BioPAX/JSON-LD format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": "Pathway Commons URI from search results, e.g., http://bioregistry.io/reactome:R-HSA-5693532 (DNA Double-Strand Break Repair)"
+        }
+      },
+      "required": [
+        "uri"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pathway": {
+          "type": "object",
+          "properties": {
+            "uri": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organism": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "data_source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "sub_pathways": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names of sub-pathways within this pathway"
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names of molecular participants (proteins, complexes, small molecules)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_pathway",
+        "uri": "http://bioregistry.io/reactome:R-HSA-69473"
+      }
+    ],
+    "fields": {
+      "operation": "get_pathway"
+    }
+  },
+  {
+    "name": "PathwayCommons_get_neighborhood",
+    "type": "PathwayCommonsTool",
+    "description": "Get the interaction neighborhood for a gene from Pathway Commons. Returns all known interactions (protein-protein, regulatory, catalytic, complex membership) for the query gene from 22 integrated databases. Each interaction includes the partner gene, interaction type (interacts-with, controls-state-change-of, controls-expression-of, in-complex-with, etc.), data source, and PubMed references. Useful for building gene interaction networks and finding functional partners.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., BRCA1, TP53, EGFR)"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 1,
+          "description": "Graph search depth (1 = direct neighbors, 2 = neighbors of neighbors). Default 1. Higher values return much more data."
+        },
+        "datasource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by data source: reactome, kegg, biogrid, intact, hprd, pid, corum, ctd, drugbank"
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 500,
+          "default": 100,
+          "description": "Maximum number of interactions to return (default: 100)"
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Query gene symbol"
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "participant_a": {
+                "type": "string"
+              },
+              "interaction_type": {
+                "type": "string"
+              },
+              "participant_b": {
+                "type": "string"
+              },
+              "data_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pubmed_ids": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "pathway_names": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "interaction_type_counts": {
+          "type": "object",
+          "description": "Count of each interaction type"
+        },
+        "unique_partners": {
+          "type": "integer",
+          "description": "Number of unique interaction partners"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_neighborhood",
+        "gene": "CDK2",
+        "datasource": "reactome",
+        "max_results": 20
+      }
+    ],
+    "fields": {
+      "operation": "get_neighborhood"
+    }
+  }
+]

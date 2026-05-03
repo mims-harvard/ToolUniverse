@@ -28,6 +28,7 @@ Detailed Guides
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
    :caption: Tool Contribution Guides
 
    local_tools

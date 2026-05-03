@@ -188,7 +188,7 @@ msgstr "**MCP智能体工具**"
 
 #: ../../tutorials/aiscientists/README.md a55ff7842270434698c082ed34a55096
 msgid "单工具智能体"
-msgstr ""
+msgstr "Single-Tool Agent"
 
 #: ../../tutorials/aiscientists/README.md 298611781a3044ca9cb796ae9216a385
 msgid "透明工具转发"

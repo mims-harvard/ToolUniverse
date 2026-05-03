@@ -1,0 +1,514 @@
+[
+  {
+    "type": "EMDBRESTTool",
+    "name": "EMDB_get_structure",
+    "description": "Get 3D electron microscopy (EM) structure data from the Electron Microscopy Data Bank (EMDB). Returns cryo-EM structure metadata including resolution (in \u00c5ngstr\u00f6ms), imaging method, organism, molecule details, voxel dimensions, map download URLs, and cross-references to PDB entries. Use this for structural biology research, comparing protein conformations, drug design, and downloading electron density maps for visualization or model fitting.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "emdb_id": {
+          "type": "string",
+          "description": "EMDB structure identifier in format 'EMD-####' (e.g., 'EMD-1234', 'EMD-0001'). Find IDs via EMDB search or from publications."
+        }
+      },
+      "required": [
+        "emdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/emdb/api/entry/{emdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Raw EMDB API response body.",
+      "additionalProperties": true,
+      "properties": {
+        "emdb_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "resolution": {
+          "type": "number"
+        },
+        "method": {
+          "type": "string"
+        },
+        "organism": {
+          "type": "string"
+        },
+        "molecule": {
+          "type": "string"
+        },
+        "deposition_date": {
+          "type": "string"
+        },
+        "release_date": {
+          "type": "string"
+        },
+        "authors": {
+          "type": "array"
+        },
+        "journal": {
+          "type": "string"
+        },
+        "volume": {
+          "type": "string"
+        },
+        "page": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer"
+        },
+        "doi": {
+          "type": "string"
+        },
+        "pdb_id": {
+          "type": "string"
+        },
+        "map_url": {
+          "type": "string"
+        },
+        "contour_level": {
+          "type": "number"
+        },
+        "voxel_size": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
+            }
+          }
+        },
+        "map_dimensions": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "x": {
+              "type": "integer"
+            },
+            "y": {
+              "type": "integer"
+            },
+            "z": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "emdb_id": "EMD-1234"
+      },
+      {
+        "emdb_id": "EMD-0001"
+      }
+    ]
+  },
+  {
+    "type": "EMDBRESTTool",
+    "name": "EMDB_search_structures",
+    "description": "Search the Electron Microscopy Data Bank (EMDB) for cryo-EM structures using keywords. Returns a list of matching EMDB entries with basic metadata including entry IDs, titles, organisms, methods, resolutions, and deposition dates. Use this to discover relevant structures by protein name, organism, biological process, or disease. Essential for finding structures to analyze or download.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for EMDB structures. Examples: 'ribosome', 'spike protein', 'SARS-CoV-2', 'amyloid', 'ion channel'. Searches titles, descriptions, and molecule names."
+        },
+        "rows": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of search results to return (default: 10, max: 1000)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/emdb/api/search/{query}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of EMDB entry objects from search results.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "_id": {"type": "string"},
+          "emdb_id": {"type": "string"},
+          "admin": {"type": "object", "additionalProperties": true},
+          "map": {"type": "object", "additionalProperties": true},
+          "sample": {"type": "object", "additionalProperties": true},
+          "crossreferences": {"type": "object", "additionalProperties": true},
+          "interpretation": {"type": "object", "additionalProperties": true}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "ribosome",
+        "rows": 10
+      },
+      {
+        "query": "spike protein",
+        "rows": 5
+      }
+    ]
+  },
+  {
+    "type": "EMDBRESTTool",
+    "name": "EMDB_get_publications",
+    "description": "Get publication information for an EMDB entry including journal articles, preprints, and citations that describe the cryo-EM structure. Returns publication titles, authors, journals, DOIs, PubMed IDs, and abstracts. Use this to find the research papers associated with a structure, understand experimental context, or cite the original work. Use EMDB ID from EMDB_search_structures or EMDB_get_structure.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "emdb_id": {
+          "type": "string",
+          "description": "EMDB structure identifier in format 'EMD-####' (e.g., 'EMD-1234', 'EMD-0001'). Find IDs via EMDB search or from publications."
+        }
+      },
+      "required": [
+        "emdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/emdb/api/entry/publications/{emdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "array",
+        "null"
+      ],
+      "description": "Publications associated with the EMDB entry.",
+      "additionalProperties": true,
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "authors": {
+            "type": "array"
+          },
+          "journal": {
+            "type": "string"
+          },
+          "volume": {
+            "type": "string"
+          },
+          "pages": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          },
+          "doi": {
+            "type": "string"
+          },
+          "pubmed_id": {
+            "type": "string"
+          },
+          "abstract": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "emdb_id": "EMD-1234"
+      },
+      {
+        "emdb_id": "EMD-0001"
+      }
+    ]
+  },
+  {
+    "type": "EMDBRESTTool",
+    "name": "EMDB_get_map_info",
+    "description": "Get detailed electron density map information for an EMDB entry including map statistics, contour levels, pixel spacing, dimensions, symmetry, and map file download URLs. Returns technical details essential for map visualization, model fitting, and computational analysis. Use this to prepare for structure visualization in tools like ChimeraX, Coot, or PyMOL.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "emdb_id": {
+          "type": "string",
+          "description": "EMDB structure identifier in format 'EMD-####' (e.g., 'EMD-1234', 'EMD-0001'). Find IDs via EMDB search or from publications."
+        }
+      },
+      "required": [
+        "emdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/emdb/api/entry/map/{emdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Electron density map details and statistics.",
+      "additionalProperties": true,
+      "properties": {
+        "emdb_id": {
+          "type": "string"
+        },
+        "contour_level": {
+          "type": "number"
+        },
+        "pixel_spacing": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
+            }
+          }
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "col": {
+              "type": "integer"
+            },
+            "row": {
+              "type": "integer"
+            },
+            "sec": {
+              "type": "integer"
+            }
+          }
+        },
+        "symmetry": {
+          "type": "string"
+        },
+        "map_format": {
+          "type": "string"
+        },
+        "map_url": {
+          "type": "string"
+        },
+        "map_size": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "emdb_id": "EMD-1234"
+      },
+      {
+        "emdb_id": "EMD-0001"
+      }
+    ]
+  },
+  {
+    "type": "EMDBRESTTool",
+    "name": "EMDB_get_sample_info",
+    "description": "Get detailed sample preparation information for an EMDB entry including macromolecular composition, organism source, expression system, molecular weight, oligomeric state, and ligands. Returns biological context essential for understanding the structure's physiological relevance, complex assembly, and binding partners. Use this to understand sample preparation before structural analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "emdb_id": {
+          "type": "string",
+          "description": "EMDB structure identifier in format 'EMD-####' (e.g., 'EMD-1234', 'EMD-0001'). Find IDs via EMDB search or from publications."
+        }
+      },
+      "required": [
+        "emdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/emdb/api/entry/sample/{emdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Sample preparation and composition details.",
+      "additionalProperties": true,
+      "properties": {
+        "emdb_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "organism": {
+          "type": "string"
+        },
+        "expression_system": {
+          "type": "string"
+        },
+        "molecular_weight": {
+          "type": "number"
+        },
+        "oligomeric_state": {
+          "type": "string"
+        },
+        "components": {
+          "type": "array"
+        },
+        "ligands": {
+          "type": "array"
+        },
+        "buffer": {
+          "type": "string"
+        },
+        "ph": {
+          "type": "number"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "emdb_id": "EMD-1234"
+      },
+      {
+        "emdb_id": "EMD-0001"
+      }
+    ]
+  },
+  {
+    "type": "EMDBRESTTool",
+    "name": "EMDB_get_imaging_info",
+    "description": "Get electron microscopy imaging parameters for an EMDB entry including microscope model, detector type, acceleration voltage, dose rate, total electron dose, defocus range, and data collection strategy. Returns technical details essential for understanding data quality, reproducing experiments, and optimizing imaging protocols. Use this to assess data collection quality or design similar experiments.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "emdb_id": {
+          "type": "string",
+          "description": "EMDB structure identifier in format 'EMD-####' (e.g., 'EMD-1234', 'EMD-0001'). Find IDs via EMDB search or from publications."
+        }
+      },
+      "required": [
+        "emdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/emdb/api/entry/imaging/{emdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Microscopy imaging parameters and data collection details.",
+      "additionalProperties": true,
+      "properties": {
+        "emdb_id": {
+          "type": "string"
+        },
+        "microscope": {
+          "type": "string"
+        },
+        "detector": {
+          "type": "string"
+        },
+        "acceleration_voltage": {
+          "type": "number"
+        },
+        "illumination_mode": {
+          "type": "string"
+        },
+        "imaging_mode": {
+          "type": "string"
+        },
+        "electron_dose": {
+          "type": "number"
+        },
+        "dose_rate": {
+          "type": "number"
+        },
+        "defocus_min": {
+          "type": "number"
+        },
+        "defocus_max": {
+          "type": "number"
+        },
+        "magnification": {
+          "type": "integer"
+        },
+        "temperature": {
+          "type": "number"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "emdb_id": "EMD-1234"
+      },
+      {
+        "emdb_id": "EMD-0001"
+      }
+    ]
+  },
+  {
+    "type": "EMDBRESTTool",
+    "name": "EMDB_get_validation",
+    "description": "Get validation analysis results for an EMDB entry including FSC curves, resolution estimates, map-model correlation, B-factors, geometry validation, and quality scores. Returns comprehensive quality metrics essential for assessing structure reliability, identifying artifacts, and comparing with other structures. Use this to evaluate data quality before using a structure for drug design or mechanistic studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "emdb_id": {
+          "type": "string",
+          "description": "EMDB structure identifier in format 'EMD-####' (e.g., 'EMD-1234', 'EMD-0001'). Find IDs via EMDB search or from publications."
+        }
+      },
+      "required": [
+        "emdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/emdb/api/analysis/{emdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "description": "Validation metrics keyed by EMDB ID (e.g., {'1234': {...}}).",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "emdb_id": "EMD-1234"
+      },
+      {
+        "emdb_id": "EMD-0001"
+      }
+    ]
+  }
+]

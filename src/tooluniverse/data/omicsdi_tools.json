@@ -1,0 +1,309 @@
+[
+  {
+    "name": "OmicsDI_search_datasets",
+    "description": "Search across multiple omics repositories integrated in OmicsDI (Omics Discovery Index). Searches GEO, ArrayExpress, PRIDE, MetaboLights, MetabolomicsWorkbench, PeptideAtlas, and 20+ other omics repositories. Filter by omics type, organism, tissue, or date. Returns dataset IDs, titles, sources, organisms, omics types, and citation counts. Use omics_type to filter: 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Genomics', 'Lipidomics'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query text (e.g., 'Alzheimer brain', 'BRCA1 cancer', 'gut microbiome')"
+        },
+        "start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination (default 0)"
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 10, max 100)"
+        },
+        "omics_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by omics type: 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Genomics', 'Lipidomics'"
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by organism (e.g., 'Homo sapiens', 'Mus musculus')"
+        },
+        "tissue": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by tissue/cell type (e.g., 'brain', 'liver', 'blood')"
+        },
+        "sortfield": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sort field: 'publication_date', 'id', 'title', 'views', 'downloads'"
+        },
+        "order": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Sort order: 'desc' or 'asc'"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.omicsdi.org/ws/dataset/search"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "Alzheimer brain transcriptomics",
+        "size": 5
+      },
+      {
+        "query": "gut microbiome",
+        "omics_type": "Metabolomics",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "OmicsDI search results",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching datasets"
+            },
+            "datasets": {
+              "type": "array",
+              "description": "List of matching datasets",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Dataset accession"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "Source repository (e.g., 'ArrayExpress', 'PRIDE')"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "organisms": {
+                    "type": ["array", "null"]
+                  },
+                  "publicationDate": {
+                    "type": "string"
+                  },
+                  "omicsType": {
+                    "type": "array"
+                  },
+                  "citationsCount": {
+                    "type": "integer"
+                  },
+                  "viewsCount": {
+                    "type": "integer"
+                  },
+                  "downloadCount": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "facets": {
+              "type": "array",
+              "description": "Facet information for filtering"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OmicsDI_get_dataset",
+    "description": "Get detailed information about a specific omics dataset in OmicsDI by accession number and source database. Returns full metadata including description, protocols, instruments, organisms, tissues, diseases, publication IDs, and download links. Example accessions: 'MTBLS1355' (MetaboLights), 'GSE12345' (GEO), 'PXD000001' (PRIDE).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "Dataset accession number (e.g., 'MTBLS1355', 'E-GEOD-100000', 'PXD000001')"
+        },
+        "database": {
+          "type": "string",
+          "description": "Source database name (e.g., 'metabolights_dataset', 'arrayexpress-repository', 'pride', 'geo')"
+        }
+      },
+      "required": [
+        "accession",
+        "database"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.omicsdi.org/ws/dataset/get"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "accession": "MTBLS1355",
+        "database": "metabolights_dataset"
+      },
+      {
+        "accession": "PXD000001",
+        "database": "pride"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed dataset information",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "source": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "keywords": {
+              "type": ["array", "null"]
+            },
+            "organisms": {
+              "type": ["array", "null"]
+            },
+            "tissues": {
+              "type": ["array", "null"]
+            },
+            "diseases": {
+              "type": ["array", "null"]
+            },
+            "omics_type": {
+              "type": "array"
+            },
+            "publicationDate": {
+              "type": "string"
+            },
+            "publicationIds": {
+              "type": ["array", "null"]
+            },
+            "protocols": {
+              "type": ["array", "null"]
+            },
+            "instruments": {
+              "type": "array"
+            },
+            "full_dataset_link": {
+              "type": ["string", "null"]
+            },
+            "citationsCount": {
+              "type": "integer"
+            },
+            "viewsCount": {
+              "type": "integer"
+            },
+            "downloadCount": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OmicsDI_get_statistics",
+    "description": "Get statistics about the OmicsDI omics data repositories. Returns counts of datasets across different domains (GEO, ArrayExpress, PRIDE, MetaboLights, etc.), organisms, and tissue types. Useful for discovering what data is available.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stat_type": {
+          "type": "string",
+          "description": "Type of statistics: 'domains' (list all data sources), 'organisms' (count by organism), 'tissues' (count by tissue)"
+        }
+      },
+      "required": [
+        "stat_type"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.omicsdi.org/ws/statistics/{stat_type}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "stat_type": "domains"
+      },
+      {
+        "stat_type": "organisms"
+      },
+      {
+        "stat_type": "tissues"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Statistics data",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

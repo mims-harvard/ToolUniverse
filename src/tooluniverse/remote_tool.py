@@ -60,6 +60,7 @@ class RemoteTool(BaseTool):
         )
 
         return {
+            "status": "error",
             "error": "Remote tool not available for local execution",
             "tool_name": (
                 self.tool_config.get("name", "Unknown")

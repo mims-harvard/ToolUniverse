@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_get\\_variants\\_for\\_trait 模块"
 #: 1b36926e0e2e43468064c0a9fe704a75 of
 #: tooluniverse.tools.gwas_get_variants_for_trait:1
 msgid "gwas_get_variants_for_trait"
-msgstr ""
+msgstr "gwas_get_variants_for_trait（获取特定性状的GWAS变异）"
 
 #: 616b9511616e46b9ae5697f7dbe112ad 7204b46b10dd4e53a522b16148e3e523 of
 #: tooluniverse.tools.gwas_get_variants_for_trait:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.alphafold\\_get\\_annotations 模块"
 #: 7bd22bbc4f784c58841dd4046e8741c4 of
 #: tooluniverse.tools.alphafold_get_annotations:1
 msgid "alphafold_get_annotations"
-msgstr ""
+msgstr "alphafold_获取注释"
 
 #: 887ceaabde124b469ebcad9fdbde4e1b ccef4d168020437a85a8bc626ac55746 of
 #: tooluniverse.tools.alphafold_get_annotations:3

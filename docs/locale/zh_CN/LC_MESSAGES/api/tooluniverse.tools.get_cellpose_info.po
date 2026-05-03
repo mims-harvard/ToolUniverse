@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_cellpose\\_info 模块"
 
 #: e43bcd4800a54313a125bba6700f6dde of tooluniverse.tools.get_cellpose_info:1
 msgid "get_cellpose_info"
-msgstr ""
+msgstr "get_cellpose_info 获取 Cellpose 信息"
 
 #: 547cfd9f7e9a42778f1484f2d7d02b32 8442fd734b6b4edba7cbed57ba52b8e1 of
 #: tooluniverse.tools.get_cellpose_info:3

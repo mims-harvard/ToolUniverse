@@ -10,13 +10,11 @@ from ._shared_client import get_shared_client
 
 def OpenTargets_get_associated_drugs_by_target_ensemblID(
     ensemblId: str,
-    size: int,
-    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get known drugs and information (e.g. id, name, MoA) associated with a specific target ensemblID,...
 
@@ -24,10 +22,6 @@ def OpenTargets_get_associated_drugs_by_target_ensemblID(
     ----------
     ensemblId : str
         The Ensembl ID of the target.
-    size : int
-        Number of entries to fetch.
-    cursor : str
-        Cursor for pagination.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,14 +31,16 @@ def OpenTargets_get_associated_drugs_by_target_ensemblID(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"ensemblId": ensemblId}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_get_associated_drugs_by_target_ensemblID",
-            "arguments": {"ensemblId": ensemblId, "size": size, "cursor": cursor},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

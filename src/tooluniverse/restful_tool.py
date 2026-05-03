@@ -1,4 +1,4 @@
-from .graphql_tool import GraphQLTool
+from .graphql_tool import GraphQLTool, remove_none_and_empty_values
 import requests
 import copy
 from .tool_registry import register_tool
@@ -9,19 +9,19 @@ def execute_RESTful_query(endpoint_url, variables=None):
     try:
         result = response.json()
 
-        # Check if the response contains errors
         if "error" in result:
             print("Invalid Query: ", result["error"])
             return False
-        else:
-            return result
+        return result
     except requests.exceptions.JSONDecodeError:
         print("JSONDecodeError: Could not decode the response as JSON")
         return False
     except requests.exceptions.HTTPError as e:
         print(f"HTTP error occurred: {e}")
+        return False
     except Exception as e:
         print(f"An error occurred: {e}")
+        return False
 
 
 @register_tool("RESTfulTool")
@@ -59,7 +59,6 @@ class MonarchTool(RESTfulTool):
         else:
             formatted_endpoint_url = self.endpoint_url
         if isinstance(query_schema_runtime, dict):
-            print(query_schema_runtime)
             if "query" in query_schema_runtime:
                 query_schema_runtime["q"] = query_schema_runtime[
                     "query"
@@ -70,19 +69,9 @@ class MonarchTool(RESTfulTool):
         if "facet_fields" in response:
             del response["facet_fields"]
 
-        def remove_empty_values(obj):
-            if isinstance(obj, dict):
-                return {
-                    k: remove_empty_values(v)
-                    for k, v in obj.items()
-                    if v not in [0, [], None]
-                }
-            elif isinstance(obj, list):
-                return [remove_empty_values(v) for v in obj if v not in [0, [], None]]
-            else:
-                return obj
-
-        response = remove_empty_values(response)
+        response = remove_none_and_empty_values(response)
+        if isinstance(response, dict) and "status" not in response:
+            return {"status": "success", "data": response}
         return response
 
 

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OpenTargets_get_publications_by_drug_chemblId(
     entityId: str,
-    additionalIds: Optional[list[Any]] = None,
+    additionalIds: Optional[list[str]] = None,
     startYear: Optional[int] = None,
     startMonth: Optional[int] = None,
     endYear: Optional[int] = None,
@@ -19,7 +19,7 @@ def OpenTargets_get_publications_by_drug_chemblId(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve publications related to a drug chemblId, including PubMed IDs and publication dates.
 
@@ -27,7 +27,7 @@ def OpenTargets_get_publications_by_drug_chemblId(
     ----------
     entityId : str
         The ID of the entity (chemblId).
-    additionalIds : list[Any]
+    additionalIds : list[str]
         List of additional IDs to include in the search.
     startYear : int
         Year at the lower end of the filter.
@@ -46,21 +46,27 @@ def OpenTargets_get_publications_by_drug_chemblId(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "entityId": entityId,
+            "additionalIds": additionalIds,
+            "startYear": startYear,
+            "startMonth": startMonth,
+            "endYear": endYear,
+            "endMonth": endMonth,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_get_publications_by_drug_chemblId",
-            "arguments": {
-                "entityId": entityId,
-                "additionalIds": additionalIds,
-                "startYear": startYear,
-                "startMonth": startMonth,
-                "endYear": endYear,
-                "endMonth": endMonth,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

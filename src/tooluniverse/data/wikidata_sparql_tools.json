@@ -23,22 +23,22 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "List of query results from Wikidata SPARQL endpoint",
       "items": {
         "type": "object",
-        "description": "Each result is a dictionary with variable names as keys and their values from the SPARQL query results"
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "itemLabel": {
+            "type": "string"
+          }
+        }
       }
     },
     "test_examples": [
       {
-        "sparql": "SELECT ?item ?itemLabel WHERE { ?item wdt:P31 wd:Q11424 . ?item rdfs:label ?itemLabel . FILTER(LANG(?itemLabel) = 'en') } LIMIT 5",
-        "max_results": 5
-      },
-      {
-        "sparql": "SELECT ?author ?authorLabel WHERE { ?author wdt:P31 wd:Q5 . ?author wdt:P106 wd:Q188094 . ?author rdfs:label ?authorLabel . FILTER(LANG(?authorLabel) = 'en') } LIMIT 3"
-      },
-      {
-        "sparql": "SELECT ?university ?universityLabel WHERE { ?university wdt:P31 wd:Q3918 . ?university rdfs:label ?universityLabel . FILTER(LANG(?universityLabel) = 'en') } LIMIT 3"
+        "sparql": "SELECT ?item ?itemLabel WHERE { ?item wdt:P31 wd:Q146 . SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". } } LIMIT 5",
+        "max_results": 1
       }
     ]
   }

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.genomics_england_disease_target_score 模块"
 #: 4c897db7801547c29a5a8801cdcfc3fb of
 #: tooluniverse.tools.genomics_england_disease_target_score:1
 msgid "genomics_england_disease_target_score"
-msgstr ""
+msgstr "genomics_england_疾病靶点评分"
 
 #: 0cdd0d42ba904cde8d1114e527114995 e479243d258d4dd78b5a2e3f6c394103 of
 #: tooluniverse.tools.genomics_england_disease_target_score:3

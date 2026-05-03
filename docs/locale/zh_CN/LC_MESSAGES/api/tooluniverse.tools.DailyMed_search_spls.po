@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.DailyMed\\_search\\_spls 模块"
 #: 84aeb2d58fb54719b17663f8eb3648ad of
 #: tooluniverse.tools.DailyMed_search_spls:1
 msgid "DailyMed_search_spls"
-msgstr ""
+msgstr "DailyMed_搜索_spls"
 
 #: 3a647bdd7efc4462a7d759bc6638d26e 78f4b57d0c1d4edab6c25a6312407dfd of
 #: tooluniverse.tools.DailyMed_search_spls:3

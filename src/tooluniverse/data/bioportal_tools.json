@@ -1,0 +1,505 @@
+[
+    {
+        "name": "BioPortal_search_ontology_terms",
+        "description": "Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. BioPortal is the world's largest repository of biomedical ontologies including GO (gene function), HPO (phenotypes), DOID (diseases), CHEBI (chemicals), UBERON (anatomy), SNOMED, MeSH, and 900+ more. Returns matching concepts with labels, IDs, definitions, and synonyms. Optionally filter by specific ontologies. Example: search 'melanoma' to find disease terms across DOID, NCIT, MESH, SNOMED; search 'apoptosis' in GO ontology for programmed cell death terms.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query for finding ontology terms. Can be disease names, gene functions, phenotypes, chemical names, anatomical terms, etc. Examples: 'melanoma', 'apoptosis', 'seizure', 'aspirin', 'hippocampus'."
+                },
+                "ontologies": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Comma-separated list of ontology acronyms to search within. If null, searches all ontologies. Common ontologies: GO (Gene Ontology), HP (Human Phenotype), DOID (Disease Ontology), CHEBI (Chemical Entities), UBERON (Anatomy), NCIT (NCI Thesaurus), MESH (Medical Subject Headings), SNOMEDCT (SNOMED CT), RXNORM (Drug Names)."
+                },
+                "page_size": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Number of results to return (default: 10, max: 50)."
+                },
+                "exact_match": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
+                    "description": "If true, only return exact matches (default: false)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "endpoint": "search"
+        },
+        "type": "BioPortalTool",
+        "test_examples": [
+            {
+                "query": "melanoma",
+                "ontologies": "DOID"
+            },
+            {
+                "query": "apoptosis",
+                "ontologies": "GO",
+                "page_size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "label": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Preferred label/name of the concept"
+                                    },
+                                    "id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Short concept identifier (e.g., DOID_1909)"
+                                    },
+                                    "full_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Full IRI of the concept (e.g., http://purl.obolibrary.org/obo/DOID_1909)"
+                                    },
+                                    "synonyms": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Alternative names for this concept"
+                                    },
+                                    "definition": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Definition of the concept"
+                                    },
+                                    "ontology": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Source ontology acronym"
+                                    },
+                                    "obsolete": {
+                                        "type": "boolean",
+                                        "description": "Whether this term is obsolete"
+                                    },
+                                    "match_type": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Type of match (prefLabel, synonym, etc.)"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "BioPortal_get_concept",
+        "description": "Get detailed information about a specific concept from a BioPortal ontology, including full definition, synonyms, CUI codes, and semantic types. Requires knowing the ontology acronym and concept IRI. Use BioPortal_search_ontology_terms first to find concept IDs, then use this tool for complete details. Example: get details for DOID:1909 (melanoma) from the DOID ontology, or GO:0006915 (apoptotic process) from the GO ontology.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ontology": {
+                    "type": "string",
+                    "description": "Ontology acronym in BioPortal. Examples: 'GO', 'HP', 'DOID', 'CHEBI', 'UBERON', 'NCIT', 'MESH', 'SNOMEDCT', 'RXNORM'."
+                },
+                "concept_id": {
+                    "type": "string",
+                    "description": "Full IRI of the concept. Examples: 'http://purl.obolibrary.org/obo/DOID_1909', 'http://purl.obolibrary.org/obo/GO_0006915', 'http://purl.obolibrary.org/obo/HP_0001250'."
+                }
+            },
+            "required": [
+                "ontology",
+                "concept_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_concept"
+        },
+        "type": "BioPortalTool",
+        "test_examples": [
+            {
+                "ontology": "DOID",
+                "concept_id": "http://purl.obolibrary.org/obo/DOID_1909"
+            },
+            {
+                "ontology": "GO",
+                "concept_id": "http://purl.obolibrary.org/obo/GO_0006915"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "label": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Preferred label of the concept"
+                                },
+                                "id": {
+                                    "type": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "description": "Full IRI of the concept"
+                                },
+                                "synonyms": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "All synonym names"
+                                },
+                                "definitions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "Definitions from the ontology"
+                                },
+                                "obsolete": {
+                                    "type": "boolean",
+                                    "description": "Whether this term is obsolete"
+                                },
+                                "cui": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "UMLS Concept Unique Identifiers"
+                                },
+                                "semantic_type": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "UMLS semantic types"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "BioPortal_annotate_text",
+        "description": "Annotate biomedical text with ontology terms using BioPortal's Annotator (named entity recognition). Scans free text and identifies mentions of biomedical concepts from 900+ ontologies. Useful for extracting disease mentions, drug names, gene functions, phenotypes, and anatomical terms from clinical notes, papers, or abstracts. Example: annotate 'Melanoma is a malignant tumor of melanocytes' to find DOID:1909 (melanoma) and DOID:162 (cancer).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string",
+                    "description": "Biomedical text to annotate. Can be a sentence, abstract, or clinical note. Maximum recommended length: 500 words."
+                },
+                "ontologies": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Comma-separated ontology acronyms to restrict annotation. If null, uses all ontologies. Common: 'DOID,HP,CHEBI,GO,NCIT,MESH'."
+                },
+                "longest_only": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
+                    "description": "If true (default), only return longest matching spans. Set false for all possible matches."
+                }
+            },
+            "required": [
+                "text"
+            ]
+        },
+        "fields": {
+            "endpoint": "annotate_text"
+        },
+        "type": "BioPortalTool",
+        "test_examples": [
+            {
+                "text": "Melanoma is a malignant tumor of melanocytes",
+                "ontologies": "DOID,HP"
+            },
+            {
+                "text": "The patient presents with seizures and intellectual disability",
+                "ontologies": "HP",
+                "longest_only": true
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "matched_text": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Text span that was matched"
+                                    },
+                                    "from": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "Start position in text (1-indexed)"
+                                    },
+                                    "to": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "End position in text (1-indexed)"
+                                    },
+                                    "match_type": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Match type: PREF (preferred label) or SYN (synonym)"
+                                    },
+                                    "concept_label": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Preferred label of matched concept"
+                                    },
+                                    "concept_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Short concept identifier"
+                                    },
+                                    "concept_full_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Full IRI of matched concept"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "BioPortal_get_hierarchy",
+        "description": "Get children, parents, or ancestors of a specific concept in a BioPortal ontology. Enables hierarchical browsing of ontology term relationships (is-a hierarchy). Use to explore narrower terms (children), broader terms (parents), or full ancestry path (ancestors). Example: get children of DOID:9351 (diabetes mellitus) to find type 1, type 2, gestational diabetes; get ancestors of HP:0001250 (Seizure) to see the full path to root.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ontology": {
+                    "type": "string",
+                    "description": "Ontology acronym in BioPortal. Examples: 'GO', 'HP', 'DOID', 'CHEBI', 'UBERON', 'NCIT'."
+                },
+                "concept_id": {
+                    "type": "string",
+                    "description": "Full IRI of the concept. Example: 'http://purl.obolibrary.org/obo/DOID_9351' for diabetes mellitus."
+                },
+                "direction": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Direction of hierarchy traversal: 'children' (narrower terms, default), 'parents' (direct broader terms), or 'ancestors' (all broader terms to root)."
+                },
+                "page_size": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Number of results to return (default: 25, max: 100)."
+                }
+            },
+            "required": [
+                "ontology",
+                "concept_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_hierarchy"
+        },
+        "type": "BioPortalTool",
+        "test_examples": [
+            {
+                "ontology": "DOID",
+                "concept_id": "http://purl.obolibrary.org/obo/DOID_9351",
+                "direction": "children"
+            },
+            {
+                "ontology": "HP",
+                "concept_id": "http://purl.obolibrary.org/obo/HP_0001250",
+                "direction": "ancestors"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "label": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Preferred label of the concept"
+                                    },
+                                    "id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Short concept identifier"
+                                    },
+                                    "full_id": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Full IRI of the concept"
+                                    },
+                                    "synonyms": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Alternative names (up to 3)"
+                                    },
+                                    "definition": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Definition of the concept"
+                                    },
+                                    "obsolete": {
+                                        "type": "boolean",
+                                        "description": "Whether this term is obsolete"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    }
+]

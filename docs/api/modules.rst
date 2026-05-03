@@ -11,8 +11,6 @@ Core Infrastructure
 
    tooluniverse
    tooluniverse.execute_function
-   tooluniverse.cache
-   tooluniverse.space
 
 Core Classes & Utilities
 ------------------------

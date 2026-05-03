@@ -1,0 +1,234 @@
+[
+  {
+    "name": "GeneNetwork_get_trait_info",
+    "type": "BaseRESTTool",
+    "description": "Get detailed information about a specific trait (probe/gene) in a GeneNetwork dataset. Returns trait metadata including gene symbol, description, chromosome, megabase position, mean expression value, linkage statistics (LRS score, locus), additive effect, and p-value. Requires a dataset name and trait name (probe ID). Use GeneNetwork_list_datasets to find available datasets and their names. Common datasets include BXD hippocampus, liver, and brain expression arrays.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string",
+          "description": "Dataset name/abbreviation. Examples: 'HC_M2_0606_P' (Hippocampus Consortium M430v2), 'BR_M2_1106_R' (Brain mRNA)."
+        },
+        "trait_name": {
+          "type": "string",
+          "description": "Trait/probe identifier. Examples: '1436869_at' (Shh probe), '1457211_at', '1418701_at'. These are microarray probe IDs for expression datasets."
+        }
+      },
+      "required": [
+        "dataset_name",
+        "trait_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://genenetwork.org/api/v_pre1/trait/{dataset_name}/{trait_name}.json",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Trait information",
+          "properties": {
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene symbol (e.g., 'Shh')"
+            },
+            "name": {
+              "type": "string",
+              "description": "Probe/trait name"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene/trait description"
+            },
+            "chr": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chromosome"
+            },
+            "mb": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Position in megabases"
+            },
+            "mean": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mean expression value"
+            },
+            "lrs": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Likelihood Ratio Statistic (LRS) for QTL"
+            },
+            "locus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Peak locus marker (rs ID)"
+            },
+            "additive": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Additive effect of QTL"
+            },
+            "p_value": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "P-value for expression variation"
+            },
+            "alias": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene aliases"
+            },
+            "id": {
+              "type": "integer",
+              "description": "Internal trait ID"
+            },
+            "se": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Standard error"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "dataset_name": "HC_M2_0606_P",
+        "trait_name": "1436869_at"
+      },
+      {
+        "dataset_name": "HC_M2_0606_P",
+        "trait_name": "1457211_at"
+      }
+    ]
+  },
+  {
+    "name": "GeneNetwork_get_dataset_info",
+    "type": "BaseRESTTool",
+    "description": "Get metadata about a specific GeneNetwork dataset including its full name, data type, data scale, tissue, and public access status. Returns information about expression profiling datasets from genetic crosses (BXD, LXS, etc.) covering various tissues and platforms. Use GeneNetwork_list_datasets to find available dataset names first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string",
+          "description": "Dataset name/abbreviation. Examples: 'HC_M2_0606_P' (Hippocampus Consortium M430v2), 'BR_M2_1106_R' (Brain mRNA)."
+        }
+      },
+      "required": [
+        "dataset_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://genenetwork.org/api/v_pre1/dataset/{dataset_name}.json",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Dataset metadata",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Internal dataset ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Dataset abbreviation"
+            },
+            "full_name": {
+              "type": "string",
+              "description": "Full dataset name"
+            },
+            "short_name": {
+              "type": "string",
+              "description": "Short display name"
+            },
+            "dataset_type": {
+              "type": "string",
+              "description": "Data type (e.g., 'mRNA expression', 'phenotype')"
+            },
+            "data_scale": {
+              "type": "string",
+              "description": "Data scale (e.g., 'log2', 'linear')"
+            },
+            "tissue": {
+              "type": "string",
+              "description": "Tissue/organ analyzed"
+            },
+            "tissue_id": {
+              "type": "integer",
+              "description": "Tissue ID"
+            },
+            "public": {
+              "type": "integer",
+              "description": "Public access level (0=private, 2=public)"
+            },
+            "confidential": {
+              "type": "integer",
+              "description": "Confidentiality level"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "dataset_name": "HC_M2_0606_P"
+      },
+      {
+        "dataset_name": "BR_M2_1106_R"
+      }
+    ]
+  }
+]

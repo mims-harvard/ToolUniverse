@@ -1,0 +1,227 @@
+[
+  {
+    "name": "TargetMine_search",
+    "type": "BaseRESTTool",
+    "description": "Search TargetMine, the InterMine data warehouse focused on drug target discovery and prioritization. TargetMine integrates data from UniProt, PDB, ChEMBL, Reactome, KEGG, DrugBank, TTD, and clinical trials databases. Searches across genes, proteins, pathways, disease terms, drugs, and biomarkers. Use this to find drug targets, investigate target-disease associations, and explore chemical-genomics data. Filter by facet_Category for specific entity types (e.g., 'Gene', 'Protein', 'Pathway', 'DiseaseTerm', 'IPFBiomarker', 'IPFTrial').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query: gene symbol (e.g., 'TP53', 'EGFR', 'BRCA1'), protein name, drug name, disease term, or free text."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default: 10)."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        },
+        "facet_Category": {
+          "type": "string",
+          "description": "Filter by entity category. Options: 'Gene', 'Protein', 'Pathway', 'DiseaseTerm', 'DiseaseConcept', 'IPFBiomarker', 'IPFTrial', 'WHOTrial', 'IPF', 'UMLSTerm', 'MeshTerm', 'EFOTerm', 'DOTerm', 'GOTerm', 'Transcript', 'Exon', 'MRNA', 'IntegratedPathwayCluster', 'TbcAnnotation'."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://targetmine.mizuguchilab.org/targetmine/service/search",
+      "return_format": "JSON",
+      "params": {
+        "format": "json"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "TargetMine search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total matching records"
+            },
+            "facets": {
+              "type": "object",
+              "description": "Facet counts by category, organism, and pathway"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Entity type"
+                  },
+                  "relevance": {
+                    "type": "number"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "description": "Entity-specific fields. For genes: symbol, organism.name, primaryIdentifier. For proteins: primaryAccession, organism.name. For pathways: name, identifier."
+                  }
+                }
+              }
+            },
+            "executionTime": {
+              "type": "string"
+            },
+            "wasSuccessful": {
+              "type": "boolean"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "q": "TP53",
+        "size": 5,
+        "format": "json"
+      },
+      {
+        "q": "EGFR",
+        "size": 5,
+        "format": "json",
+        "facet_Category": "Gene"
+      },
+      {
+        "q": "kinase inhibitor",
+        "size": 5,
+        "format": "json"
+      }
+    ]
+  },
+  {
+    "name": "TargetMine_search_genes",
+    "type": "BaseRESTTool",
+    "description": "Search TargetMine specifically for genes relevant to drug target discovery. This convenience wrapper filters results to the Gene category. Returns gene symbols, NCBI Gene IDs, organism information, and gene names. TargetMine covers human, rat, mouse, and other model organism genes with extensive drug target annotations. For broader searches across all entity types, use TargetMine_search instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Gene search query: gene symbol (e.g., 'TP53', 'EGFR', 'BRCA1'), Entrez Gene ID, or keyword."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default: 10)."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://targetmine.mizuguchilab.org/targetmine/service/search",
+      "return_format": "JSON",
+      "params": {
+        "format": "json",
+        "facet_Category": "Gene"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "TargetMine gene search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "relevance": {
+                    "type": "number"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "symbol": {
+                        "type": "string",
+                        "description": "Gene symbol"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Full gene name"
+                      },
+                      "primaryIdentifier": {
+                        "type": "string",
+                        "description": "NCBI Entrez Gene ID"
+                      },
+                      "organism.name": {
+                        "type": "string",
+                        "description": "Organism name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "q": "TP53",
+        "size": 5
+      },
+      {
+        "q": "BRCA1",
+        "size": 5
+      },
+      {
+        "q": "VEGFR",
+        "size": 10
+      }
+    ]
+  }
+]

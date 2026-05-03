@@ -1,0 +1,27 @@
+[
+  {
+    "name": "my_new_tool",
+    "type": "MyNewTool",
+    "description": "Convert text to uppercase",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Text to convert to uppercase"
+        }
+      },
+      "required": ["input"]
+    },
+    "examples": [
+      {
+        "description": "Convert text to uppercase",
+        "arguments": {"input": "hello world"}
+      }
+    ],
+    "tags": ["text", "utility"],
+    "author": "Your Name <your.email@example.com>",
+    "version": "1.0.0"
+  }
+]
+

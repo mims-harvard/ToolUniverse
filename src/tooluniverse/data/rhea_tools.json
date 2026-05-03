@@ -1,0 +1,308 @@
+[
+  {
+    "name": "Rhea_search_reactions",
+    "description": "Search for biochemical reactions in the Rhea database by compound name, reaction description, or keyword. Rhea is an expert-curated knowledgebase of over 15,000 chemical and transport reactions of biological interest maintained by SIB Swiss Institute of Bioinformatics. All reactions are linked to ChEBI compounds and EC enzyme numbers. Example: searching 'glucose' returns reactions like 'D-glucose + NAD(+) = D-glucono-1,5-lactone + NADH + H(+)' with EC:1.1.1.47.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keyword for reactions. Can be a compound name, reaction term, or general keyword. Examples: 'glucose', 'ATP', 'kinase', 'ethanol', 'acetyl-CoA', 'phosphorylation'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results (default 20, max 50)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_reactions"
+    },
+    "type": "RheaTool",
+    "test_examples": [
+      {
+        "query": "glucose"
+      },
+      {
+        "query": "ATP hydrolysis",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rhea_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Rhea reaction identifier (e.g., RHEA:14293)"
+                  },
+                  "equation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chemical equation with compound names"
+                  },
+                  "ec_numbers": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Enzyme Commission numbers (semicolon-separated)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Rhea_search_by_ec",
+    "description": "Search for biochemical reactions in Rhea by EC (Enzyme Commission) number. Returns all reactions catalyzed by enzymes in a given EC class. Useful for finding the specific biochemical transformations catalyzed by a class of enzymes. Example: EC:1.1.1.1 (alcohol dehydrogenase) returns reactions including 'a primary alcohol + NAD(+) = an aldehyde + NADH + H(+)' and 'ethanol + NAD(+) = acetaldehyde + NADH + H(+)'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ec_number": {
+          "type": "string",
+          "description": "EC (Enzyme Commission) number. Can include or omit 'EC:' prefix. Examples: 'EC:1.1.1.1' (alcohol dehydrogenase), '3.5.1.50' (pentanamidase), '2.7.1.1' (hexokinase), '1.14.13.39' (nitric-oxide synthase)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results (default 20, max 50)."
+        }
+      },
+      "required": [
+        "ec_number"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_by_ec"
+    },
+    "type": "RheaTool",
+    "test_examples": [
+      {
+        "ec_number": "EC:1.1.1.1"
+      },
+      {
+        "ec_number": "3.5.1.50",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rhea_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "equation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ec_numbers": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "ec_number": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Rhea_search_by_chebi",
+    "description": "Search for biochemical reactions involving a specific ChEBI compound in Rhea. Returns reactions where the given compound participates as a substrate, product, or cofactor. All Rhea reactions are linked to ChEBI compound identifiers. Example: CHEBI:17234 (glucose) returns reactions including lactose hydrolysis, glucose isomerization, and glucose oxidation with their balanced equations and EC numbers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chebi_id": {
+          "type": "string",
+          "description": "ChEBI compound identifier. Can include or omit 'CHEBI:' prefix. Examples: 'CHEBI:17234' (glucose), 'CHEBI:15377' (water), 'CHEBI:15422' (ATP), 'CHEBI:16761' (ADP)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results (default 20, max 50)."
+        }
+      },
+      "required": [
+        "chebi_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_by_chebi"
+    },
+    "type": "RheaTool",
+    "test_examples": [
+      {
+        "chebi_id": "CHEBI:17234"
+      },
+      {
+        "chebi_id": "CHEBI:15422",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rhea_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "equation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chebi_ids": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ec_numbers": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "chebi_id": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

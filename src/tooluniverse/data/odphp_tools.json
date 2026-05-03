@@ -12,7 +12,7 @@
         },
         "age": {
           "type": "integer",
-          "description": "Age in years (0–120)"
+          "description": "Age in years (0\u2013120)"
         },
         "sex": {
           "type": "string",
@@ -306,11 +306,20 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "lang": "en",
+        "age": 1,
+        "sex": "female",
+        "pregnant": "false",
+        "strip_html": true
+      }
+    ]
   },
   {
     "name": "odphp_itemlist",
-    "description": "This tools browses and returns available topics and categories and it is helpful to help narrow a broad request (e.g., “show me all topics”). For full topic content, `odphp_topicsearch` tool is helpful.",
+    "description": "This tools browses and returns available topics and categories and it is helpful to help narrow a broad request (e.g., \u201cshow me all topics\u201d). For full topic content, `odphp_topicsearch` tool is helpful.",
     "type": "ODPHPItemList",
     "parameter": {
       "type": "object",
@@ -377,11 +386,17 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "lang": "en",
+        "type": "topic"
+      }
+    ]
   },
   {
     "name": "odphp_topicsearch",
-    "description": "Find specific health topics and get their full content. Use when the user mentions a keyword (e.g., “folic acid”, “blood pressure”) or when you already have topic/category IDs from `odphp_itemlist`. Returns detailed topic pages (Title, Sections, RelatedItems) and an AccessibleVersion link. Next: to quote or summarize the actual page text, pass the AccessibleVersion (or RelatedItems URLs) to `odphp_outlink_fetch`.",
+    "description": "Find specific health topics and get their full content. Use when the user mentions a keyword (e.g., \u201cfolic acid\u201d, \u201cblood pressure\u201d) or when you already have topic/category IDs from `odphp_itemlist`. Returns detailed topic pages (Title, Sections, RelatedItems) and an AccessibleVersion link. Next: to quote or summarize the actual page text, pass the AccessibleVersion (or RelatedItems URLs) to `odphp_outlink_fetch`.",
     "type": "ODPHPTopicSearch",
     "parameter": {
       "type": "object",
@@ -551,7 +566,16 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "lang": "en",
+        "topicId": "30544",
+        "categoryId": "15",
+        "keyword": "diabetes",
+        "strip_html": true
+      }
+    ]
   },
   {
     "name": "odphp_outlink_fetch",
@@ -565,7 +589,7 @@
           "items": {
             "type": "string"
           },
-          "description": "1–3 absolute URLs from AccessibleVersion or RelatedItems.Url"
+          "description": "1\u20133 absolute URLs from AccessibleVersion or RelatedItems.Url"
         },
         "max_chars": {
           "type": "integer",
@@ -619,6 +643,13 @@
           "type": "object"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "urls": [],
+        "max_chars": 1,
+        "return_html": true
+      }
+    ]
   }
 ]

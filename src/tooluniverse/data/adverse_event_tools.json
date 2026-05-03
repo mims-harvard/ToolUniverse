@@ -26,12 +26,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o3-mini-0131",
-      "temperature": 1.0,
-      "max_new_tokens": 20480,
       "return_json": true,
       "return_metadata": false
+    },
+    "test_examples": [
+      {
+        "disease_name": "mild Alzheimer's disease",
+        "drug_name": "Kisunla"
+      }
+    ],
+    "return_schema": {
+      "type": "string"
     }
   },
   {
@@ -55,12 +60,16 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 20480,
       "return_json": false,
       "return_metadata": false
+    },
+    "test_examples": [
+      {
+        "source_text": "Patient experienced headache and nausea after taking the medication."
+      }
+    ],
+    "return_schema": {
+      "type": "string"
     }
   },
   {
@@ -96,12 +105,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o3-mini-0131",
-      "temperature": 1.0,
-      "max_new_tokens": 20480,
       "return_json": true,
       "return_metadata": false
+    },
+    "test_examples": [
+      {
+        "disease_name": "Type 2 Diabetes Mellitus",
+        "drug_name": "Metformin",
+        "context_information": "Patient is a 65-year-old male with a 10-year history of poorly controlled type 2 diabetes mellitus, stage 3 chronic kidney disease (eGFR 45 mL/min/1.73m2), and a history of diabetic neuropathy on ACE inhibitors."
+      }
+    ],
+    "return_schema": {
+      "type": "string"
     }
   }
 ]

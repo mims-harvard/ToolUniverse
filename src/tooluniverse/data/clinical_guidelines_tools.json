@@ -1,0 +1,916 @@
+[
+  {
+    "name": "MAGICapp_list_guidelines",
+    "description": "List all publicly available clinical guidelines from MAGICapp (Making GRADE the Irresistible Choice). MAGICapp hosts GRADE-based living guidelines from organizations like WHO, Stroke Foundation, American Dental Association, and others. Returns guideline metadata including name, owner organization, publication date, recommendation count, and guideline IDs for detailed lookups. Use this tool to discover available evidence-based clinical guidelines, then use MAGICapp_get_guideline or MAGICapp_get_recommendations for details.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://api.magicapp.org/api/v1/guidelines"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of publicly available GRADE-based clinical guidelines from MAGICapp",
+          "items": {
+            "type": "object",
+            "properties": {
+              "guidelineId": {
+                "type": "integer",
+                "description": "Numeric guideline ID (use published version ID for API lookups)"
+              },
+              "publishedId": {
+                "type": "integer",
+                "description": "Published version ID - use this for MAGICapp_get_guideline and MAGICapp_get_recommendations"
+              },
+              "shortCode": {
+                "type": "string",
+                "description": "Short alphanumeric code for the guideline"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full name of the clinical guideline"
+              },
+              "owner": {
+                "type": "string",
+                "description": "Organization that owns/published the guideline (e.g., WHO, ADA)"
+              },
+              "language": {
+                "type": "string",
+                "description": "Language code (e.g., 'en' for English)"
+              },
+              "countryFlag": {
+                "type": "string",
+                "description": "Country code for the guideline's origin"
+              },
+              "isPublic": {
+                "type": "boolean",
+                "description": "Whether the guideline is publicly accessible"
+              },
+              "publishedRecommendationCount": {
+                "type": "integer",
+                "description": "Number of published clinical recommendations"
+              },
+              "publishedPicoCount": {
+                "type": "integer",
+                "description": "Number of PICO (Patient/Intervention/Comparison/Outcome) questions"
+              },
+              "versionLabel": {
+                "type": "string",
+                "description": "Version number label (e.g., '1.2')"
+              },
+              "publishDate": {
+                "type": ["string", "null"],
+                "description": "Publication date"
+              },
+              "pdfPublishedPath": {
+                "type": ["string", "null"],
+                "description": "URL to the published PDF version"
+              },
+              "jsonPath": {
+                "type": ["string", "null"],
+                "description": "URL to the full JSON export of the guideline"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MAGICapp_get_guideline",
+    "description": "Get detailed information about a specific clinical guideline from MAGICapp by its numeric guideline ID. Returns comprehensive guideline metadata including title, authoring organization, contact information, version details, GRADE methodology settings, and links to PDF/JSON exports. Use MAGICapp_list_guidelines first to find guideline IDs, then use this tool to get full details. For the guideline's clinical recommendations, use MAGICapp_get_recommendations instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "guideline_id": {
+          "type": "integer",
+          "description": "Numeric guideline ID (use the publishedId from MAGICapp_list_guidelines, e.g., 10962, 10258, 7594)"
+        }
+      },
+      "required": ["guideline_id"]
+    },
+    "fields": {
+      "endpoint": "https://api.magicapp.org/api/v1/guidelines/{guideline_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"guideline_id": 10962},
+      {"guideline_id": 10258},
+      {"guideline_id": 7594}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed guideline information from MAGICapp",
+          "properties": {
+            "guidelineId": {
+              "type": "integer",
+              "description": "Guideline ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Full name of the clinical guideline"
+            },
+            "byName": {
+              "type": "string",
+              "description": "Short name or subtitle"
+            },
+            "owner": {
+              "type": "string",
+              "description": "Organization that published the guideline"
+            },
+            "mainEditor": {
+              "type": "string",
+              "description": "Main editor or lead author"
+            },
+            "language": {
+              "type": "string",
+              "description": "Language code"
+            },
+            "sponsors": {
+              "type": "string",
+              "description": "Funding/sponsorship information (may contain HTML)"
+            },
+            "description": {
+              "type": "string",
+              "description": "Guideline description"
+            },
+            "contactName": {
+              "type": "string",
+              "description": "Contact person name"
+            },
+            "contactEmail": {
+              "type": "string",
+              "description": "Contact email"
+            },
+            "institutionName": {
+              "type": "string",
+              "description": "Authoring institution name"
+            },
+            "institutionUrl": {
+              "type": ["string", "null"],
+              "description": "Institution website URL"
+            },
+            "isPublic": {
+              "type": "boolean",
+              "description": "Whether publicly accessible"
+            },
+            "versionMajor": {
+              "type": "integer",
+              "description": "Major version number"
+            },
+            "versionMinor": {
+              "type": "integer",
+              "description": "Minor version number"
+            },
+            "draftRecommendationCount": {
+              "type": "integer",
+              "description": "Number of recommendations in current draft"
+            },
+            "publishedRecommendationCount": {
+              "type": "integer",
+              "description": "Number of published recommendations"
+            },
+            "pdfPublishedPath": {
+              "type": ["string", "null"],
+              "description": "URL to published PDF"
+            },
+            "jsonPath": {
+              "type": ["string", "null"],
+              "description": "URL to full JSON export"
+            },
+            "publishDate": {
+              "type": ["string", "null"],
+              "description": "Publication date"
+            },
+            "publishLastSearchDate": {
+              "type": ["string", "null"],
+              "description": "Date of last evidence search"
+            },
+            "institutionGradeStrength": {
+              "type": "string",
+              "description": "GRADE strength scale used (e.g., 'STRONG_WEAK')"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MAGICapp_get_recommendations",
+    "description": "Get all clinical recommendations from a specific MAGICapp guideline. Returns GRADE-rated recommendations with strength levels (STRONG, WEAK, PRACTICE, NO_STRENGTH), recommendation text (HTML), supporting remarks, rationale, and key information including evidence quality assessments. This is the core tool for accessing evidence-based clinical recommendations from living guidelines hosted on MAGICapp. Use MAGICapp_list_guidelines first to find guideline IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "guideline_id": {
+          "type": "integer",
+          "description": "Numeric guideline ID (use the publishedId from MAGICapp_list_guidelines, e.g., 10962 for oral cancer screening, 10258 for WHO mpox guidelines)"
+        }
+      },
+      "required": ["guideline_id"]
+    },
+    "fields": {
+      "endpoint": "https://api.magicapp.org/api/v1/guidelines/{guideline_id}/recommendations"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"guideline_id": 10962},
+      {"guideline_id": 10258},
+      {"guideline_id": 7594}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of clinical recommendations from the guideline",
+          "items": {
+            "type": "object",
+            "properties": {
+              "recommendationId": {
+                "type": "integer",
+                "description": "Unique recommendation ID"
+              },
+              "shortCode": {
+                "type": "string",
+                "description": "Short alphanumeric code"
+              },
+              "guidelineId": {
+                "type": "integer",
+                "description": "Parent guideline ID"
+              },
+              "sectionId": {
+                "type": "integer",
+                "description": "Section containing this recommendation"
+              },
+              "strength": {
+                "type": "string",
+                "description": "GRADE recommendation strength: STRONG (high confidence), WEAK (conditional), PRACTICE (good practice statement), NO_STRENGTH (not graded)"
+              },
+              "status": {
+                "type": "string",
+                "description": "Recommendation status (NEW, UPDATED, etc.)"
+              },
+              "text": {
+                "type": "string",
+                "description": "Full recommendation text (HTML format with clinical details)"
+              },
+              "remarks": {
+                "type": "string",
+                "description": "Additional remarks and implementation notes (HTML)"
+              },
+              "advice": {
+                "type": "string",
+                "description": "Clinical advice for implementation"
+              },
+              "rational": {
+                "type": "string",
+                "description": "Rationale for the recommendation"
+              },
+              "implementation": {
+                "type": "string",
+                "description": "Implementation considerations"
+              },
+              "research": {
+                "type": "string",
+                "description": "Research priorities related to this recommendation"
+              },
+              "keyInfoType": {
+                "type": "string",
+                "description": "Key information type (e.g., 'ETD' for Evidence to Decision)"
+              },
+              "keyInfo": {
+                "type": "object",
+                "description": "Key information including benefits, evidence quality, patient preferences, and resource implications",
+                "properties": {
+                  "benefits": {
+                    "type": "string",
+                    "description": "Benefits assessment"
+                  },
+                  "evidence": {
+                    "type": "string",
+                    "description": "Evidence quality assessment"
+                  },
+                  "preferences": {
+                    "type": "string",
+                    "description": "Patient values and preferences"
+                  },
+                  "resources": {
+                    "type": "string",
+                    "description": "Resource requirements"
+                  },
+                  "benefitsStrength": {
+                    "type": "string",
+                    "description": "GRADE certainty of benefits (NOTSET, VERY_LOW, LOW, MODERATE, HIGH)"
+                  },
+                  "evidenceStrength": {
+                    "type": "string",
+                    "description": "GRADE certainty of evidence"
+                  }
+                }
+              },
+              "hideInPublish": {
+                "type": "boolean",
+                "description": "Whether hidden in published version"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MAGICapp_get_sections",
+    "description": "Get all sections (chapters) of a specific MAGICapp clinical guideline. Returns the structural organization of the guideline including section headings, text content, section types, and hierarchical ordering. Use this to understand the guideline's structure and find specific clinical topics within a guideline. Sections contain the narrative text while recommendations are accessed separately via MAGICapp_get_recommendations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "guideline_id": {
+          "type": "integer",
+          "description": "Numeric guideline ID (use the publishedId from MAGICapp_list_guidelines, e.g., 10962 for oral cancer screening, 10258 for WHO mpox guidelines)"
+        }
+      },
+      "required": ["guideline_id"]
+    },
+    "fields": {
+      "endpoint": "https://api.magicapp.org/api/v1/guidelines/{guideline_id}/sections"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"guideline_id": 10962},
+      {"guideline_id": 10258}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of guideline sections organized hierarchically",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sectionId": {
+                "type": "integer",
+                "description": "Unique section ID"
+              },
+              "guidelineId": {
+                "type": "integer",
+                "description": "Parent guideline ID"
+              },
+              "parentId": {
+                "type": "integer",
+                "description": "Parent section ID (0 for top-level sections)"
+              },
+              "order": {
+                "type": "integer",
+                "description": "Display order within parent"
+              },
+              "sectionType": {
+                "type": "string",
+                "description": "Section type (STANDARD, RECOMMENDATION, etc.)"
+              },
+              "shortCode": {
+                "type": "string",
+                "description": "Short alphanumeric code"
+              },
+              "sectionLabel": {
+                "type": "string",
+                "description": "Section label (e.g., '1', '1.1')"
+              },
+              "sectionNumber": {
+                "type": "string",
+                "description": "Section number"
+              },
+              "heading": {
+                "type": "string",
+                "description": "Section heading (HTML format)"
+              },
+              "text": {
+                "type": "string",
+                "description": "Section content text (HTML format with clinical information)"
+              },
+              "isNumbered": {
+                "type": "boolean",
+                "description": "Whether the section is numbered"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCI_search_cancer_resources",
+    "description": "Search NCI (National Cancer Institute) Resources for Researchers (R4R) for cancer research tools, databases, datasets, and clinical research resources. The R4R collection includes bioinformatics tools, clinical research tools, lab instruments, datasets, specimen repositories, and community resources. Returns resource descriptions, links, tool types, research areas, and research types. Useful for finding cancer-specific research resources, analysis tools, and clinical resources.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query for cancer research resources (e.g., 'breast cancer treatment', 'genomics analysis', 'clinical trial design')"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return (default: 20, max: 50)",
+          "default": 20
+        },
+        "from": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        },
+        "toolTypes": {
+          "type": "string",
+          "description": "Filter by tool type key: 'analysis_tools', 'datasets_databases', 'lab_tools', 'community_research_tools', 'clinical_research_tools', 'terminology'"
+        },
+        "researchAreas": {
+          "type": "string",
+          "description": "Filter by research area key: 'cancer_treatment', 'cancer_biology', 'cancer_omics', 'screening_detection', 'causes_of_cancer', 'cancer_health_disparities', 'cancer_statistics', 'cancer_prevention', 'cancer_diagnosis', 'cancer_survivorship'"
+        }
+      },
+      "required": ["q"]
+    },
+    "fields": {
+      "endpoint": "https://webapis.cancer.gov/r4r/v1/resources"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"q": "breast cancer treatment", "size": 5},
+      {"q": "genomics analysis tools", "size": 5, "toolTypes": "analysis_tools"},
+      {"q": "clinical trial", "size": 5, "researchAreas": "cancer_treatment"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "NCI R4R search results containing cancer research resources",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "description": "Result metadata",
+              "properties": {
+                "totalResults": {
+                  "type": "integer",
+                  "description": "Total number of matching resources"
+                },
+                "from": {
+                  "type": "integer",
+                  "description": "Result offset"
+                },
+                "originalQuery": {
+                  "type": "string",
+                  "description": "The query as processed by the API"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "description": "Matching cancer research resources",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Resource ID"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Resource title"
+                  },
+                  "website": {
+                    "type": "string",
+                    "description": "URL to the resource"
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Full description (HTML)"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Short description (HTML)"
+                  },
+                  "toolTypes": {
+                    "type": "array",
+                    "description": "Tool type classifications",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {"type": "string"},
+                        "label": {"type": "string"}
+                      }
+                    }
+                  },
+                  "researchAreas": {
+                    "type": "array",
+                    "description": "Research area classifications",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {"type": "string"},
+                        "label": {"type": "string"}
+                      }
+                    }
+                  },
+                  "researchTypes": {
+                    "type": "array",
+                    "description": "Research type classifications",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {"type": "string"},
+                        "label": {"type": "string"}
+                      }
+                    }
+                  },
+                  "docs": {
+                    "type": "array",
+                    "description": "Related documentation links"
+                  },
+                  "pocs": {
+                    "type": "array",
+                    "description": "Points of contact"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCI_get_drug_by_name",
+    "description": "Get detailed information about a cancer drug from the NCI Drug Dictionary by its pretty-url-name (slug). Returns comprehensive drug information including definition, aliases (brand names, chemical names, code names, CAS registry numbers), NCI concept ID, and links to drug information summaries. The pretty-url-name is a lowercase hyphenated slug (e.g., 'pembrolizumab', 'tamoxifen-citrate', 'nivolumab'). You can find drug names from NCIDrugDict_search results (prettyUrlName field).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Pretty URL name (slug) of the drug (e.g., 'pembrolizumab', 'tamoxifen-citrate', 'nivolumab', 'trastuzumab')"
+        }
+      },
+      "required": ["drug_name"]
+    },
+    "fields": {
+      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/{drug_name}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"drug_name": "pembrolizumab"},
+      {"drug_name": "tamoxifen-citrate"},
+      {"drug_name": "nivolumab"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed cancer drug information from NCI Drug Dictionary",
+          "properties": {
+            "termId": {
+              "type": "integer",
+              "description": "NCI drug term ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Preferred drug name"
+            },
+            "prettyUrlName": {
+              "type": "string",
+              "description": "URL-friendly name slug"
+            },
+            "firstLetter": {
+              "type": "string",
+              "description": "First letter of the drug name"
+            },
+            "type": {
+              "type": "string",
+              "description": "Term type (DrugTerm)"
+            },
+            "termNameType": {
+              "type": "string",
+              "description": "Name type (PreferredName)"
+            },
+            "nciConceptId": {
+              "type": "string",
+              "description": "NCI Thesaurus concept ID (e.g., 'C68814')"
+            },
+            "nciConceptName": {
+              "type": "string",
+              "description": "NCI concept name"
+            },
+            "definition": {
+              "type": "object",
+              "description": "Drug definition with HTML and plain text versions",
+              "properties": {
+                "html": {"type": "string", "description": "Definition in HTML format"},
+                "text": {"type": "string", "description": "Definition in plain text"}
+              }
+            },
+            "aliases": {
+              "type": "array",
+              "description": "Drug aliases including brand names, synonyms, code names, and CAS numbers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {"type": "string", "description": "Alias type (USBrandName, Synonym, CodeName, CASRegistryName, ChemicalStructureName, ForeignBrandName, Abbreviation, ObsoleteName)"},
+                  "name": {"type": "string", "description": "Alias value"}
+                }
+              }
+            },
+            "drugInfoSummaryLink": {
+              "type": ["object", "null"],
+              "description": "Link to NCI drug information summary page",
+              "properties": {
+                "uri": {"type": "string"},
+                "text": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCI_expand_drugs_by_letter",
+    "description": "Browse the NCI Drug Dictionary by first letter. Returns all cancer drugs and drug aliases starting with the specified letter. Each result includes the drug name, preferred name, type (DrugTerm or DrugAlias), and a pretty URL name for detailed lookups. Useful for discovering cancer drugs alphabetically or finding all drugs starting with a specific letter. Use NCI_get_drug_by_name with the prettyUrlName to get full details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "letter": {
+          "type": "string",
+          "description": "First letter to browse by (a-z, or '#' for drugs starting with numbers/special characters)"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results per page (default: 100, max: 10000)",
+          "default": 100
+        },
+        "from": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        }
+      },
+      "required": ["letter"]
+    },
+    "fields": {
+      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/expand/{letter}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"letter": "a", "size": 5},
+      {"letter": "p", "size": 5},
+      {"letter": "t", "size": 5}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "NCI Drug Dictionary browse results for a letter",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "description": "Result metadata",
+              "properties": {
+                "totalResults": {
+                  "type": "integer",
+                  "description": "Total drugs starting with this letter"
+                },
+                "from": {
+                  "type": "integer",
+                  "description": "Offset"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "description": "Drug entries starting with the specified letter",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "termId": {
+                    "type": "integer",
+                    "description": "Drug term ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Drug name or alias"
+                  },
+                  "firstLetter": {
+                    "type": "string",
+                    "description": "First letter"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Entry type: 'DrugTerm' (primary name) or 'DrugAlias' (alternative name)"
+                  },
+                  "termNameType": {
+                    "type": "string",
+                    "description": "Name classification (PreferredName, USBrandName, CodeName, etc.)"
+                  },
+                  "prettyUrlName": {
+                    "type": "string",
+                    "description": "URL-friendly name for detailed lookups via NCI_get_drug_by_name"
+                  },
+                  "preferredName": {
+                    "type": ["string", "null"],
+                    "description": "Preferred drug name (present for aliases)"
+                  }
+                }
+              }
+            },
+            "links": {
+              "type": ["object", "null"],
+              "description": "Pagination links"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "DailyMed_search_drug_classes",
+    "description": "Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns drug class names and NDF-RT codes that categorize drugs by their mechanism of action or pharmacologic effect. Use this to find drug classes for a specific therapeutic area (e.g., 'antihypertensive', 'antibiotic', 'antineoplastic') or to look up specific pharmacologic class codes. The drug class codes can be used to search DailyMed_search_spls for all drugs in that class.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_class_name": {
+          "type": "string",
+          "description": "Search term for drug class name (e.g., 'anti', 'kinase inhibitor', 'antibacterial', 'antineoplastic', 'angiotensin')"
+        },
+        "pagesize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 100)",
+          "default": 100
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1)",
+          "default": 1
+        }
+      },
+      "required": ["drug_class_name"]
+    },
+    "fields": {
+      "endpoint": "https://dailymed.nlm.nih.gov/dailymed/services/v2/drugclasses.json"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"drug_class_name": "kinase inhibitor", "pagesize": 10},
+      {"drug_class_name": "antibacterial", "pagesize": 10},
+      {"drug_class_name": "receptor", "pagesize": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "DailyMed drug class search results",
+          "properties": {
+            "data": {
+              "type": "array",
+              "description": "Matching FDA Established Pharmacologic Classes",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "NDF-RT code for the drug class (e.g., 'N0000175477')"
+                  },
+                  "codingSystem": {
+                    "type": "string",
+                    "description": "Code system OID"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Class type (EPC = Established Pharmacologic Class)"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Drug class name (e.g., 'Aminoglycoside Antibacterial')"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "description": "Pagination metadata",
+              "properties": {
+                "total_elements": {
+                  "type": "integer",
+                  "description": "Total number of matching drug classes"
+                },
+                "total_pages": {
+                  "type": "integer",
+                  "description": "Total pages"
+                },
+                "current_page": {
+                  "type": "integer",
+                  "description": "Current page number"
+                },
+                "elements_per_page": {
+                  "type": "integer",
+                  "description": "Results per page"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

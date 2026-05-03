@@ -30,7 +30,10 @@ class MedlinePlusRESTTool(BaseTool):
 
         for ph in placeholders:
             if ph not in arguments:
-                return {"error": f"Missing required parameter '{ph}'"}
+                return {
+                    "status": "error",
+                    "error": f"Missing required parameter '{ph}'",
+                }
             url_path = url_path.replace(f"{{{ph}}}", str(arguments[ph]))
 
         return url_path
@@ -104,12 +107,12 @@ class MedlinePlusRESTTool(BaseTool):
             # Extract topic information from XML structure
             nlm_result = response.get("nlmSearchResult", {})
             if not nlm_result:
-                return {"error": "nlmSearchResult node not found"}
+                return {"status": "error", "error": "nlmSearchResult node not found"}
 
             # Get document list
             document_list = nlm_result.get("list", {}).get("document", [])
             if not document_list:
-                return {"error": "document list not found"}
+                return {"status": "error", "error": "document list not found"}
 
             # Ensure document_list is a list
             if isinstance(document_list, dict):
@@ -206,21 +209,62 @@ class MedlinePlusRESTTool(BaseTool):
             }
 
         elif tool_name == "MedlinePlus_connect_lookup_by_code":
-            responses = response.get("knowledgeResponse", [])
-            return (
-                {
-                    "responses": [
-                        {
-                            "title": r.get("title", ""),
-                            "summary": r.get("summary", ""),
-                            "url": r.get("url", ""),
-                        }
-                        for r in responses
-                    ]
+            # Handle both JSON and XML response from Connect API
+            feed = response.get("feed", {})
+            entries = feed.get("entry", [])
+
+            # Ensure entries is a list
+            if isinstance(entries, dict):
+                entries = [entries]
+
+            if not entries:
+                return {
+                    "status": "error",
+                    "error": "No matching code information found",
                 }
-                if responses
-                else {"error": "No matching code information found"}
-            )
+
+            formatted_responses = []
+            for entry in entries:
+                # Extract title - handle both JSON and XML formats
+                title = entry.get("title", "")
+                if isinstance(title, dict):
+                    # JSON format: {"_value": "...", "type": "text"}
+                    # XML format: {"#text": "..."}
+                    title = title.get("_value", title.get("#text", str(title)))
+
+                # Extract link - handle both JSON and XML formats
+                link = entry.get("link", {})
+                url = ""
+                if isinstance(link, dict):
+                    # JSON format: {"href": "..."}
+                    # XML format: {"@href": "..."}
+                    url = link.get("href", link.get("@href", ""))
+                elif isinstance(link, list):
+                    # Multiple links, get the first one
+                    if link:
+                        url = link[0].get("href", link[0].get("@href", ""))
+
+                # Extract summary - handle both JSON and XML formats
+                summary_data = entry.get("summary", {})
+                summary = ""
+                if isinstance(summary_data, dict):
+                    # JSON format: {"_value": "...", "type": "html"}
+                    # XML format: {"#text": "..."}
+                    summary = summary_data.get("_value", summary_data.get("#text", ""))
+                elif isinstance(summary_data, str):
+                    summary = summary_data
+
+                formatted_responses.append(
+                    {
+                        "title": title,
+                        "summary": summary[:500] + "..."
+                        if len(summary) > 500
+                        else summary,
+                        "url": url,
+                    }
+                )
+
+            return {"responses": formatted_responses}
 
         elif tool_name == "MedlinePlus_get_genetics_index":
             topics = response.get("genetics_home_reference_topic_list", {}).get(
@@ -241,10 +285,10 @@ class MedlinePlusRESTTool(BaseTool):
 
     def run(self, arguments: dict):
         """Execute tool call"""
-        # Validate required parameters
+        # Apply default values for optional parameters
         for key, prop in self.param_schema.items():
-            if prop.get("required", False) and key not in arguments:
-                return {"error": f"Parameter '{key}' is required."}
+            if key not in arguments and "default" in prop:
+                arguments[key] = prop["default"]
 
         # Build URL
         url = self._build_url(arguments)
@@ -259,6 +303,7 @@ class MedlinePlusRESTTool(BaseTool):
             resp = requests.get(url, timeout=self.timeout)
             if resp.status_code != 200:
                 return {
+                    "status": "error",
                     "error": f"MedlinePlus returned non-200 status code: {resp.status_code}",
                     "detail": resp.text,
                 }
@@ -272,14 +317,20 @@ class MedlinePlusRESTTool(BaseTool):
             response_text = resp.text.strip()
 
             # Decide parsing method based on tool type and content format
-            if url.endswith(".json") or (arguments.get("format") == "json"):
+            format_arg = arguments.get("format", "")
+            if url.endswith(".json") or (format_arg in ["json", "application/json"]):
                 # JSON format
-                response = resp.json()
-                print("📋 Parsed as: JSON")
+                try:
+                    response = resp.json()
+                    print("📋 Parsed as: JSON")
+                except Exception:
+                    # If JSON parsing fails, fall back to XML
+                    response = xmltodict.parse(resp.text)
+                    print("📋 Parsed as: XML -> Dictionary (fallback)")
             elif (
                 url.endswith(".xml")
                 or response_text.startswith("<?xml")
-                or (arguments.get("format") == "xml")
+                or (format_arg in ["xml", "text/xml"])
             ):
                 # XML format
                 response = xmltodict.parse(resp.text)
@@ -304,7 +355,10 @@ class MedlinePlusRESTTool(BaseTool):
             return self._format_response(response, tool_name)
 
         except requests.RequestException as e:
-            return {"error": f"Failed to request MedlinePlus: {str(e)}"}
+            return {
+                "status": "error",
+                "error": f"Failed to request MedlinePlus: {str(e)}",
+            }
 
     # Tool methods
     def search_topics_by_keyword(

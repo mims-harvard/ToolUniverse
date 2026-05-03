@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_skopt\\_info 模块"
 
 #: b5d36fbf8a31412284a91073ed5e84a2 of tooluniverse.tools.get_skopt_info:1
 msgid "get_skopt_info"
-msgstr ""
+msgstr "get_skopt_info 获取信息"
 
 #: 837439d7642c4985b62002d309647550 decf2f1c46fe4541afa44cb93aeb6c7e of
 #: tooluniverse.tools.get_skopt_info:3

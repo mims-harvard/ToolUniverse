@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.drugbank\\_links\\_search 模块"
 #: 9eb022ce8880409aa5b2e2473c1012c5 of
 #: tooluniverse.tools.drugbank_links_search:1
 msgid "drugbank_links_search"
-msgstr ""
+msgstr "drugbank_链接_搜索"
 
 #: a8a36f127e0148d48b9727cf7461e54b c2ac408198fc456b9805eb8fdf5c1f3f of
 #: tooluniverse.tools.drugbank_links_search:3

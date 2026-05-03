@@ -1,0 +1,326 @@
+[
+  {
+    "name": "ENCODE_search_experiments",
+    "type": "ENCODESearchTool",
+    "description": "Search ENCODE functional genomics experiments (e.g., ChIP-seq, ATAC-seq, RNA-seq) by assay type, target protein, organism, or status. Returns experiment accessions, descriptions, and metadata. Use this to discover datasets for specific assays, transcription factors, or cell types. Find experiment accessions to use with ENCODE_get_experiment for detailed information or ENCODE_list_files for downloading data files.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "assay_title": {
+          "type": "string",
+          "description": "Assay name filter (e.g., 'TF ChIP-seq', 'Histone ChIP-seq', 'ATAC-seq', 'RNA-seq', 'Hi-C'). Leave empty to search all assays. Use 'TF ChIP-seq' for transcription factor binding experiments."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target protein/factor filter (e.g., 'CTCF', 'H3K4me3', 'POLR2A'). Use for TF ChIP-seq experiments."
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism filter — maps to ENCODE's organism scientific name field (e.g., 'Homo sapiens', 'Mus musculus', 'Drosophila melanogaster')."
+        },
+        "status": {
+          "type": "string",
+          "default": "released",
+          "description": "Record status filter. Use 'released' for public data (default), 'archived' for older data."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return (1–100)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/search/",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "ENCODE experiments search response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "@graph": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {"type": "string"},
+                  "assay_title": {"type": "string"},
+                  "target": {"type": ["object", "string"]},
+                  "organism": {"type": "string"},
+                  "status": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"assay_title": "TF ChIP-seq", "limit": 1},
+      {"assay_title": "ATAC-seq", "limit": 1}
+    ],
+    "label": ["ENCODE", "Experiment", "Search"],
+    "metadata": {
+      "tags": ["functional-genomics", "chip-seq", "atac-seq"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "ENCODE_list_files",
+    "type": "ENCODEFilesTool",
+    "description": "List ENCODE data files with filters by file format, output type, or assay. Returns file metadata including accessions, formats (FASTQ, BAM, bigWig), output types (alignments, peaks, signal), and file sizes. Use this to programmatically discover downloadable artifacts for specific experiments or data types. Find file accessions to use with ENCODE_get_file for detailed file information and download URLs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "file_type": {
+          "type": "string",
+          "description": "File format filter (e.g., 'fastq', 'bam', 'bigWig', 'bed'). Common formats: fastq (raw reads), bam (alignments), bigWig (coverage), bed (peaks/regions)."
+        },
+        "assay_title": {
+          "type": "string",
+          "description": "Assay filter (e.g., 'ChIP-seq', 'RNA-seq'). Filters files by the experimental assay that generated them."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return (1–100)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/search/",
+      "format": "json",
+      "search_type": "File"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "ENCODE files search response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "@graph": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {"type": "string"},
+                  "file_format": {"type": "string"},
+                  "output_type": {"type": "string"},
+                  "file_type": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"file_type": "fastq", "limit": 1}
+    ],
+    "label": ["ENCODE", "File", "Search"],
+    "metadata": {
+      "tags": ["downloads", "artifacts", "metadata"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "type": "ENCODERESTTool",
+    "name": "ENCODE_get_experiment",
+    "description": "Get comprehensive metadata for a specific ENCODE experiment by its accession ID. Returns detailed information including assay type, target protein, biosample details, replicates, files, quality metrics, analysis pipeline, lab, award, and publication references. Use this to understand experimental design, data quality, and available files before downloading. Find experiment accessions using ENCODE_search_experiments (format: ENCSR######).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "ENCODE experiment accession identifier (format: ENCSR######, e.g., 'ENCSR000AKS', 'ENCSR000CAG'). Find accessions using ENCODE_search_experiments."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/experiments/{accession}/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "accession": {"type": "string"},
+        "assay_title": {"type": "string"},
+        "description": {"type": "string"},
+        "biosample_summary": {"type": "string"},
+        "target": {"type": ["object", "string"]},
+        "replicates": {"type": "array"},
+        "files": {"type": "array"},
+        "status": {"type": "string"},
+        "lab": {"type": ["object", "string"]},
+        "award": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"accession": "ENCSR000AKS"},
+      {"accession": "ENCSR000CAG"}
+    ]
+  },
+  {
+    "type": "ENCODERESTTool",
+    "name": "ENCODE_get_file",
+    "description": "Get detailed metadata for a specific ENCODE file by its accession ID. Returns comprehensive file information including file format, output type, dataset accession, biological/technical replicate numbers, file size, MD5 checksum, download URL (href), genome assembly, quality metrics, and processing status. Essential for accessing download URLs, verifying file integrity, and understanding file provenance. Find file accessions using ENCODE_list_files (format: ENCFF######).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "ENCODE file accession identifier (format: ENCFF######, e.g., 'ENCFF001JXO'). Find accessions using ENCODE_list_files."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/files/{accession}/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "accession": {"type": "string"},
+        "file_format": {"type": "string"},
+        "file_type": {"type": "string"},
+        "output_type": {"type": "string"},
+        "dataset": {"type": "string"},
+        "file_size": {"type": "integer"},
+        "md5sum": {"type": "string"},
+        "href": {"type": "string"},
+        "assembly": {"type": "string"},
+        "biological_replicates": {"type": "array"},
+        "technical_replicates": {"type": "array"},
+        "status": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"accession": "ENCFF001JXO"}
+    ]
+  },
+  {
+    "type": "ENCODESearchBiosamplesTool",
+    "name": "ENCODE_search_biosamples",
+    "description": "Search ENCODE biosamples (cell lines, tissues, primary cells) by organism, biosample type, or treatment. Returns biosample accessions, types, organism, life stage, and descriptions. Use this to discover biological samples used in ENCODE experiments, find cell lines or tissues of interest, or identify treated vs. control samples. Find biosample accessions to use with ENCODE_get_biosample for detailed characterization data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "organism": {
+          "type": "string",
+          "description": "Organism filter (e.g., 'Homo sapiens', 'Mus musculus')."
+        },
+        "biosample_type": {
+          "type": "string",
+          "description": "Biosample classification filter — maps to ENCODE's biosample_ontology.classification field (e.g., 'cell line', 'tissue', 'primary cell', 'in vitro differentiated cells')."
+        },
+        "treatment": {
+          "type": "string",
+          "description": "Treatment filter (e.g., 'interferon gamma', 'ethanol'). Use '*' to find any treated samples."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results to return (1–100)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/search/",
+      "format": "json",
+      "search_type": "Biosample"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "ENCODE biosamples search response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "total": {"type": "integer"},
+            "@graph": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {"type": "string"},
+                  "biosample_ontology": {"type": ["object", "string"]},
+                  "organism": {"type": "string"},
+                  "life_stage": {"type": "string"},
+                  "summary": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"organism": "Homo sapiens", "limit": 1},
+      {"biosample_type": "cell line", "limit": 1}
+    ]
+  },
+  {
+    "type": "ENCODERESTTool",
+    "name": "ENCODE_get_biosample",
+    "description": "Get detailed metadata for a specific ENCODE biosample by its accession ID. Returns comprehensive information including biosample type, organism, life stage, age, sex, tissue/cell line name, donor information, treatments, genetic modifications, culture conditions, and characterizations. Essential for understanding sample provenance, experimental conditions, and biological context of ENCODE datasets. Find biosample accessions using ENCODE_search_biosamples (format: ENCBS######).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "ENCODE biosample accession identifier (format: ENCBS######, e.g., 'ENCBS000AAA', 'ENCBS130ENC'). Find accessions using ENCODE_search_biosamples or from experiment metadata."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/biosamples/{accession}/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "accession": {"type": "string"},
+        "biosample_ontology": {"type": ["object", "string"]},
+        "organism": {"type": "string"},
+        "life_stage": {"type": "string"},
+        "age": {"type": "string"},
+        "age_units": {"type": "string"},
+        "sex": {"type": "string"},
+        "donor": {"type": ["object", "string"]},
+        "treatments": {"type": "array"},
+        "genetic_modifications": {"type": "array"},
+        "description": {"type": "string"},
+        "summary": {"type": "string"},
+        "status": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"accession": "ENCBS000AAA"},
+      {"accession": "ENCBS130ENC"}
+    ]
+  }
+]

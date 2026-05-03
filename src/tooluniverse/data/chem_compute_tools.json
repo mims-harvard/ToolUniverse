@@ -1,0 +1,60 @@
+[
+  {
+    "name": "Chem_sa_score",
+    "type": "ChemComputeTool",
+    "description": "Compute the synthetic accessibility (SA) score for a molecule supplied as a SMILES string, using the RDKit SA_Score contribution module. The algorithm encodes synthetic complexity from fragment frequency statistics across drug-like compounds. Scores run from 1 (minimal synthetic effort, simple building blocks) to 10 (highly complex, exotic or multi-step routes); practical benchmarks: <=3 readily accessible, 3-6 moderate synthetic challenge, >6 significant complexity. Accepts any SMILES parseable by RDKit. Useful for filtering synthetically intractable hits in virtual screening workflows.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["sa_score"],
+          "description": "Operation type"
+        },
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string of the molecule (e.g., 'CC(=O)Oc1ccccc1C(=O)O' for aspirin)"
+        }
+      },
+      "required": ["operation", "smiles"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "sa_score": {
+              "type": "number",
+              "description": "Synthetic Accessibility score, range 1 (easy) to 10 (difficult)"
+            },
+            "smiles": {
+              "type": "string",
+              "description": "Input SMILES string"
+            },
+            "interpretation": {
+              "type": "string",
+              "enum": ["easy", "moderate", "difficult"],
+              "description": "Qualitative interpretation: easy (<3), moderate (3-6), difficult (>6)"
+            }
+          },
+          "required": ["sa_score"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "sa_score",
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      }
+    ]
+  }
+]

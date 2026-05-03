@@ -25,7 +25,7 @@ msgid "Tool Composition Tutorial"
 msgstr "工具组成教程"
 
 #: ../../guide/tool_composition.rst:4 038cc327bdc64350a0d7324797118101
-msgid "**Chain ToolUniverse's 600+ tools into powerful scientific workflows**"
+msgid "**Chain ToolUniverse's 1000+ tools into powerful scientific workflows**"
 msgstr "**将ToolUniverse的600多种工具整合为强大的科学工作流**"
 
 #: ../../guide/tool_composition.rst:7 1584e128fd394f49860550765972eab9

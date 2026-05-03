@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.GWAS\\_search\\_associations\\_by\\_gene 模块"
 #: ade00fc39c7041b7834a68a754770e46 of
 #: tooluniverse.tools.GWAS_search_associations_by_gene:1
 msgid "GWAS_search_associations_by_gene"
-msgstr ""
+msgstr "GWAS_按基因搜索关联结果"
 
 #: 16b2c3851caf4ebf8e8b6786f1b4c664 7bcc82bf5ba54ffeb9c4857e779c66e7 of
 #: tooluniverse.tools.GWAS_search_associations_by_gene:3

@@ -1,0 +1,258 @@
+[
+  {
+    "type": "BioStudiesRESTTool",
+    "name": "biostudies_search",
+    "description": "Search BioStudies repository for biological studies across all collections. BioStudies is a comprehensive repository at EMBL-EBI that hosts diverse study types including genomics, transcriptomics, proteomics, imaging data, and more. Supports full-text search with pagination and sorting. HTML responses are automatically converted to Markdown using markitdown.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (supports keywords, phrases, and Boolean operators). Use '*' for all studies."
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 10, max: 100)",
+          "default": 10,
+          "maximum": 100
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1, 1-based)",
+          "default": 1
+        },
+        "sortBy": {
+          "type": "string",
+          "description": "Sort field (e.g., 'relevance', 'accession', 'release_date')",
+          "enum": ["relevance", "accession", "release_date", "views"]
+        },
+        "sortOrder": {
+          "type": "string",
+          "description": "Sort order: 'ascending' or 'descending'",
+          "enum": ["ascending", "descending"]
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biostudies/api/v1/search",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "hits": {
+              "type": "array",
+              "description": "List of matching studies"
+            },
+            "totalHits": {
+              "type": "integer"
+            },
+            "page": {
+              "type": "integer"
+            },
+            "pageSize": {
+              "type": "integer"
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "cancer genomics",
+        "pageSize": 5
+      },
+      {
+        "query": "CRISPR",
+        "pageSize": 10,
+        "sortBy": "relevance"
+      }
+    ]
+  },
+  {
+    "type": "BioStudiesRESTTool",
+    "name": "biostudies_search_by_collection",
+    "description": "Search BioStudies by specific collection (e.g., ArrayExpress, BioImages, EuropePMC). Collections are curated datasets within BioStudies that focus on specific data types or domains. HTML responses are automatically converted to Markdown.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query within the collection"
+        },
+        "collection": {
+          "type": "string",
+          "description": "Collection name (e.g., 'arrayexpress', 'bioimages', 'biomodels')",
+          "enum": ["arrayexpress", "bioimages", "biomodels", "europepmc"]
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 10, max: 100)",
+          "default": 10,
+          "maximum": 100
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number (default: 1)",
+          "default": 1
+        }
+      },
+      "required": ["collection"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biostudies/api/v1/search",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "hits": {
+              "type": "array"
+            },
+            "totalHits": {
+              "type": "integer"
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "stem cells",
+        "collection": "arrayexpress",
+        "pageSize": 5
+      },
+      {
+        "query": "mouse",
+        "collection": "bioimages",
+        "pageSize": 3
+      }
+    ]
+  },
+  {
+    "type": "BioStudiesRESTTool",
+    "name": "biostudies_get_study",
+    "description": "Get detailed information about a specific BioStudies study by accession number. Returns complete study metadata including attributes, sections, files, and links. Supports various accession formats (e.g., S-BSST123, E-GEOD-12345 for ArrayExpress). HTML responses are converted to Markdown.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "BioStudies accession number (e.g., 'S-BSST123', 'E-GEOD-26319' for ArrayExpress studies)"
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biostudies/api/v1/studies/{accession}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Complete study information with nested sections"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "S-BSST1254"
+      },
+      {
+        "accession": "E-GEOD-26319"
+      }
+    ]
+  },
+  {
+    "type": "BioStudiesRESTTool",
+    "name": "biostudies_get_study_files",
+    "description": "Get list of files associated with a BioStudies study. Returns file metadata including paths, sizes, types, and attributes. Files are extracted from the study's section hierarchy.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "BioStudies accession number"
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biostudies/api/v1/studies/{accession}/files",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of file objects with path, size, and type information",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "File path within the study"
+          },
+          "size": {
+            "type": "integer",
+            "description": "File size in bytes"
+          },
+          "type": {
+            "type": "string",
+            "description": "File type (e.g., 'file', 'directory')"
+          },
+          "attributes": {
+            "type": "array",
+            "description": "File attributes/metadata",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"},
+                "value": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "S-BSST1254"
+      },
+      {
+        "accession": "E-GEOD-26319"
+      }
+    ]
+  }
+]

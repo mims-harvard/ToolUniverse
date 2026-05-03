@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_active\\_ingredient\\_info\\_by\\_drug\\_
 #: 99f2edf09d3d40da9ee9ea91b26ea9bb of
 #: tooluniverse.tools.FDA_get_active_ingredient_info_by_drug_name:1
 msgid "FDA_get_active_ingredient_info_by_drug_name"
-msgstr ""
+msgstr "FDA_根据药品名称获取活性成分信息"
 
 #: bb52f49cf68842f286d2d6df57c566ce cdbe2e3779894dd1b6dc52ec63c55f3c of
 #: tooluniverse.tools.FDA_get_active_ingredient_info_by_drug_name:3

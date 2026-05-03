@@ -1,0 +1,306 @@
+[
+  {
+    "name": "PlantReactome_search_pathways",
+    "description": "Search for plant biological pathways in Plant Reactome (Gramene). Plant Reactome is a curated resource for plant metabolic and regulatory pathways, covering model and crop species including rice (Oryza sativa), Arabidopsis thaliana, maize, wheat, and 140+ plant species. Returns pathways matching the query with their stable IDs and species. Example: 'photosynthesis' finds photosynthesis-related pathways.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for plant pathways. Examples: 'photosynthesis', 'Calvin cycle', 'flavonoid biosynthesis', 'nitrogen fixation', 'auxin signaling'."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Species name to filter results. Examples: 'Oryza sativa', 'Arabidopsis thaliana', 'Zea mays'. Default: all species."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "action": "search"
+    },
+    "type": "PlantReactomeTool",
+    "test_examples": [
+      {
+        "query": "photosynthesis"
+      },
+      {
+        "query": "flavonoid biosynthesis",
+        "species": "Oryza sativa"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stId": {
+                    "type": "string",
+                    "description": "Stable identifier (e.g., R-OSA-1119312)"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "exact_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Entity type (Pathway, Reaction, etc.)"
+                  },
+                  "compartment_names": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "total_groups": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PlantReactome_get_pathway",
+    "description": "Get detailed information about a specific Plant Reactome pathway by stable ID. Returns pathway name, species, sub-events (reactions), compartments, GO annotations, and cross-references. Example: 'R-OSA-1119312' returns the Photorespiration pathway in Oryza sativa.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pathway_id": {
+          "type": "string",
+          "description": "Plant Reactome stable identifier. Format: R-{species_code}-{number}. Examples: 'R-OSA-1119312' (Photorespiration in rice), 'R-OSA-1119519' (Calvin cycle in rice)."
+        }
+      },
+      "required": [
+        "pathway_id"
+      ]
+    },
+    "fields": {
+      "action": "get_pathway"
+    },
+    "type": "PlantReactomeTool",
+    "test_examples": [
+      {
+        "pathway_id": "R-OSA-1119312"
+      },
+      {
+        "pathway_id": "R-OSA-1119519"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "stId": {
+                  "type": "string"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "speciesName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "isInDisease": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "isInferred": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "hasEvent": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Sub-events (reactions and sub-pathways)"
+                },
+                "compartment": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "goBiologicalProcess": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "crossReference": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "pathway_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PlantReactome_list_species",
+    "description": "List all plant species available in Plant Reactome with their taxonomy IDs. Returns the complete catalog of 140+ plant species including model organisms and major crop species. Useful for discovering which species have curated pathway data available.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "action": "list_species"
+    },
+    "type": "PlantReactomeTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dbId": {
+                    "type": "integer"
+                  },
+                  "displayName": {
+                    "type": "string",
+                    "description": "Species name"
+                  },
+                  "taxId": {
+                    "type": [
+                      "string",
+                      "integer"
+                    ]
+                  },
+                  "abbreviation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_species": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

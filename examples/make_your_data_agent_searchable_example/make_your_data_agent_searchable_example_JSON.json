@@ -1,0 +1,23 @@
+[
+  {
+    "_note": "Example only — not a real registered ToolUniverse tool. Shown in the tutorial for reference.",
+    "type": "EmbeddingCollectionSearchTool",
+    "name": "<your_collection_name>_search",
+    "description": "Search the <your_collection_name> datastore by keyword/semantic similarity.",
+    "fields": { "collection": "<your_collection_name>" },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": { "type": "string", "description": "Search query" },
+        "method": {
+          "type": "string",
+          "enum": ["keyword", "embedding", "hybrid"],
+          "default": "hybrid"
+        },
+        "top_k": { "type": "integer", "default": 10 },
+        "alpha": { "type": "number", "default": 0.5 }
+      },
+      "required": ["query"]
+    }
+  }
+]

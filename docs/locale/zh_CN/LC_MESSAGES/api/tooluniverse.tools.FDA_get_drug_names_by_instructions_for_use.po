@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_instructions\\_for\\_
 #: tooluniverse.tools.FDA_get_drug_names_by_instructions_for_use:1
 msgid "FDA_get_drug_names_by_instructions_for_use"
 msgstr ""
+"FDA_get_drug_names_by_instructions_for_use  \n"
+"获取药品名称依据使用说明"
 
 #: 42ec90378cad4f95b27623dbee77bd3f 5593892122ee4dafab44a3e26cedd1b2 of
 #: tooluniverse.tools.FDA_get_drug_names_by_instructions_for_use:3

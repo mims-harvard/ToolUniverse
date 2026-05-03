@@ -164,8 +164,6 @@ def main():
     print(f"\nProcessing {relationship_graph_file.name}...")
     relationship_data = load_json_file(relationship_graph_file)
     if relationship_data is not None:
-        len(relationship_data.get("nodes", []))
-        len(relationship_data.get("edges", []))
         filtered_relationship_data = filter_tool_relationship_graph(
             relationship_data, valid_tool_names
         )

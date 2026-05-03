@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get_crystal_growth_conditions_by_pdb_id 模块"
 #: 1b5b5495a0ce4bfea54eb8e39565fd5c of
 #: tooluniverse.tools.get_crystal_growth_conditions_by_pdb_id:1
 msgid "get_crystal_growth_conditions_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取晶体生长条件"
 
 #: 76c0c16dd99544b3be7da87ec893bc31 9e85d2cfe5474633b3e1902b8b6976d0 of
 #: tooluniverse.tools.get_crystal_growth_conditions_by_pdb_id:3

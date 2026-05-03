@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_HPO\\_ID\\_by\\_phenotype 模块"
 #: 72b3c460758e452ba4f3e0fba0e9bdad of
 #: tooluniverse.tools.get_HPO_ID_by_phenotype:1
 msgid "get_HPO_ID_by_phenotype"
-msgstr ""
+msgstr "根据表型获取HPO_ID"
 
 #: 3c1716084fe94d0a897adcfe74598103 d267d7c1912648edb1fdb94177a9ad85 of
 #: tooluniverse.tools.get_HPO_ID_by_phenotype:3

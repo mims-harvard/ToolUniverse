@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_arboreto\\_info 模块"
 
 #: 890a2e2c686f4e3aa213b6a81aefce6c of tooluniverse.tools.get_arboreto_info:1
 msgid "get_arboreto_info"
-msgstr ""
+msgstr "获取_arboreto_信息"
 
 #: 256c6fee42984a4e818b377e97f61663 5dc1cbde17b44db0ace8881479217e64 of
 #: tooluniverse.tools.get_arboreto_info:3

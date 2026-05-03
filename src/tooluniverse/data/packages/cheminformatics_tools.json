@@ -2,7 +2,7 @@
   {
     "type": "PackageTool",
     "name": "get_rdkit_info",
-    "description": "Get comprehensive information about RDKit – cheminformatics and machine learning toolkit",
+    "description": "Get comprehensive information about RDKit \u2013 cheminformatics and machine learning toolkit",
     "parameter": {
       "type": "object",
       "properties": {
@@ -44,12 +44,98 @@
         "Fingerprints: rdMolDescriptors.GetMorganFingerprintAsBitVect()",
         "Substructure: mol.HasSubstructMatch(pattern)"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_openbabel_info",
-    "description": "Get comprehensive information about OpenBabel – chemical format conversion and analysis",
+    "description": "Get comprehensive information about OpenBabel \u2013 chemical format conversion and analysis",
     "parameter": {
       "type": "object",
       "properties": {
@@ -91,12 +177,98 @@
         "Convert: conv = ob.OBConversion(); conv.SetInAndOutFormats()",
         "Properties: mol.GetMolWt(), mol.GetFormula()"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_deepchem_info",
-    "description": "Get comprehensive information about DeepChem – an open-source toolkit that brings advanced AI/ML techniques to drug discovery, materials science and quantum chemistry.",
+    "description": "Get comprehensive information about DeepChem \u2013 an open-source toolkit that brings advanced AI/ML techniques to drug discovery, materials science and quantum chemistry.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -138,12 +310,98 @@
         "Train: model.fit(train_dataset)",
         "Evaluate: model.evaluate(test_dataset)"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_dscribe_info",
-    "description": "Get comprehensive information about DScribe – a library for generating machine-learning descriptors for materials and molecules.",
+    "description": "Get comprehensive information about DScribe \u2013 a library for generating machine-learning descriptors for materials and molecules.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -185,12 +443,98 @@
         "Generate: vec = soap.create(atoms)",
         "Use for ML: Train models with descriptor vectors"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_cobra_info",
-    "description": "Get comprehensive information about COBRApy – constraint-based metabolic modeling",
+    "description": "Get comprehensive information about COBRApy \u2013 constraint-based metabolic modeling",
     "parameter": {
       "type": "object",
       "properties": {
@@ -232,12 +576,98 @@
         "Analyze: Check fluxes, reactions, metabolites",
         "Modify: Add/remove reactions, change bounds"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_openchem_info",
-    "description": "Get comprehensive information about OpenChem – deep learning toolkit for drug discovery",
+    "description": "Get comprehensive information about OpenChem \u2013 deep learning toolkit for drug discovery",
     "parameter": {
       "type": "object",
       "properties": {
@@ -276,7 +706,7 @@
         "pip": "pip install openchem",
         "conda": "conda install -c conda-forge openchem"
       },
-      "usage_example": "# OpenChem deep learning for drug discovery\n# This demonstrates molecular property prediction concepts\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_squared_error, r2_score\nimport tempfile\nimport os\nfrom collections import defaultdict\n\nprint('OpenChem - Deep Learning for Drug Discovery')\nprint('=' * 45)\n\n# Overview of OpenChem capabilities\nprint('OpenChem Features:')\nprint('• Molecular property prediction (ADMET, bioactivity)')\nprint('• Graph neural networks for molecules')\nprint('• Molecular generation and optimization')\nprint('• Multi-task learning for drug discovery')\nprint('• Molecular descriptors and fingerprints')\nprint('• Integration with PyTorch and other ML frameworks')\n\nprint('\\nSupported Molecular Representations:')\nprint('• SMILES strings')\nprint('• Molecular graphs')\nprint('• 3D conformations')\nprint('• Molecular fingerprints (ECFP, MACCS, etc.)')\nprint('• Physicochemical descriptors')\n\n# Simulate molecular dataset\nprint('\\n=== Molecular Dataset Simulation ===')\n\nnp.random.seed(42)\n\n# Generate synthetic molecular data\nn_molecules = 1000\nprint(f'Generating {n_molecules} synthetic molecules...')\n\n# Molecular descriptors (simplified)\ndescriptor_names = [\n    'molecular_weight', 'logP', 'num_donors', 'num_acceptors',\n    'tpsa', 'num_rotatable_bonds', 'num_aromatic_rings',\n    'formal_charge', 'num_heteroatoms', 'fraction_csp3'\n]\n\n# Generate realistic molecular descriptors\nmolecular_data = []\nfor i in range(n_molecules):\n    # Molecular weight: 150-600 Da (drug-like range)\n    mw = np.random.normal(350, 100)\n    mw = np.clip(mw, 150, 600)\n    \n    # LogP: -2 to 6 (lipophilicity)\n    logP = np.random.normal(2.5, 1.5)\n    logP = np.clip(logP, -2, 6)\n    \n    # Hydrogen bond donors: 0-5\n    donors = np.random.poisson(2)\n    donors = np.clip(donors, 0, 5)\n    \n    # Hydrogen bond acceptors: 0-10\n    acceptors = np.random.poisson(4)\n    acceptors = np.clip(acceptors, 0, 10)\n    \n    # Topological polar surface area: 0-200 Å²\n    tpsa = np.random.gamma(2, 30)\n    tpsa = np.clip(tpsa, 0, 200)\n    \n    # Rotatable bonds: 0-15\n    rot_bonds = np.random.poisson(5)\n    rot_bonds = np.clip(rot_bonds, 0, 15)\n    \n    # Aromatic rings: 0-4\n    aromatic_rings = np.random.poisson(2)\n    aromatic_rings = np.clip(aromatic_rings, 0, 4)\n    \n    # Formal charge: typically 0, sometimes ±1\n    formal_charge = np.random.choice([0, 0, 0, 0, 1, -1])\n    \n    # Heteroatoms: 1-8\n    heteroatoms = np.random.poisson(3) + 1\n    heteroatoms = np.clip(heteroatoms, 1, 8)\n    \n    # Fraction sp3 carbons: 0-1\n    frac_csp3 = np.random.beta(2, 2)\n    \n    molecule = {\n        'id': f'MOL_{i:04d}',\n        'molecular_weight': mw,\n        'logP': logP,\n        'num_donors': donors,\n        'num_acceptors': acceptors,\n        'tpsa': tpsa,\n        'num_rotatable_bonds': rot_bonds,\n        'num_aromatic_rings': aromatic_rings,\n        'formal_charge': formal_charge,\n        'num_heteroatoms': heteroatoms,\n        'fraction_csp3': frac_csp3\n    }\n    \n    molecular_data.append(molecule)\n\n# Convert to DataFrame\ndf = pd.DataFrame(molecular_data)\nprint(f'Generated molecular dataset: {df.shape}')\nprint(f'Descriptors: {len(descriptor_names)}')\n\n# Show basic statistics\nprint('\\nDataset statistics:')\nprint(df[descriptor_names].describe().round(2))\n\n# Generate target properties\nprint('\\n=== Target Property Generation ===')\n\n# Simulate bioactivity (IC50 values)\nprint('Generating bioactivity data (IC50 values)...')\n\ndef calculate_bioactivity(row):\n    \"\"\"Simulate bioactivity based on molecular descriptors\"\"\"\n    # Lipinski's rule of five compliance\n    lipinski_score = 0\n    if row['molecular_weight'] <= 500: lipinski_score += 1\n    if row['logP'] <= 5: lipinski_score += 1\n    if row['num_donors'] <= 5: lipinski_score += 1\n    if row['num_acceptors'] <= 10: lipinski_score += 1\n    \n    # Base activity influenced by Lipinski compliance\n    base_activity = 5.0 + (lipinski_score - 2.0) * 1.5\n    \n    # Additional molecular factors\n    tpsa_factor = -0.01 * max(0, row['tpsa'] - 90)  # Penalty for high TPSA\n    flexibility_factor = -0.1 * max(0, row['num_rotatable_bonds'] - 7)  # Penalty for high flexibility\n    aromatic_factor = 0.3 * min(row['num_aromatic_rings'], 3)  # Bonus for aromatics (up to 3)\n    \n    # Combined activity (pIC50)\n    activity = base_activity + tpsa_factor + flexibility_factor + aromatic_factor\n    \n    # Add some noise\n    activity += np.random.normal(0, 0.5)\n    \n    # Ensure reasonable range (4-9 pIC50)\n    activity = np.clip(activity, 4.0, 9.0)\n    \n    return activity\n\n# Calculate bioactivity\ndf['pIC50'] = df.apply(calculate_bioactivity, axis=1)\n\n# Generate additional properties\nprint('Generating ADMET properties...')\n\n# Solubility (LogS)\ndef calculate_solubility(row):\n    \"\"\"Simulate aqueous solubility\"\"\"\n    # Lipophilicity penalty\n    logP_penalty = -0.5 * max(0, row['logP'] - 2)\n    \n    # Molecular weight penalty\n    mw_penalty = -0.005 * max(0, row['molecular_weight'] - 300)\n    \n    # TPSA bonus (polar surface area helps solubility)\n    tpsa_bonus = 0.01 * min(row['tpsa'], 100)\n    \n    # Base solubility\n    base_solubility = -2.0\n    \n    solubility = base_solubility + logP_penalty + mw_penalty + tpsa_bonus\n    solubility += np.random.normal(0, 0.3)\n    \n    return np.clip(solubility, -6.0, 1.0)\n\ndf['logS'] = df.apply(calculate_solubility, axis=1)\n\n# Permeability (Caco-2)\ndef calculate_permeability(row):\n    \"\"\"Simulate cell permeability\"\"\"\n    # LogP correlation\n    logP_factor = 0.3 * row['logP']\n    \n    # TPSA penalty\n    tpsa_penalty = -0.02 * row['tpsa']\n    \n    # Molecular weight penalty\n    mw_penalty = -0.003 * row['molecular_weight']\n    \n    # Base permeability (log Papp)\n    base_perm = -4.5\n    \n    permeability = base_perm + logP_factor + tpsa_penalty + mw_penalty\n    permeability += np.random.normal(0, 0.4)\n    \n    return np.clip(permeability, -7.0, -3.0)\n\ndf['log_Papp'] = df.apply(calculate_permeability, axis=1)\n\n# Half-life (t1/2)\ndef calculate_half_life(row):\n    \"\"\"Simulate metabolic stability\"\"\"\n    # Molecular complexity factor\n    complexity = row['num_rotatable_bonds'] + row['num_heteroatoms']\n    complexity_factor = -0.05 * complexity\n    \n    # Aromatic stabilization\n    aromatic_factor = 0.1 * row['num_aromatic_rings']\n    \n    # Base half-life (log hours)\n    base_t_half = 1.0\n    \n    t_half = base_t_half + complexity_factor + aromatic_factor\n    t_half += np.random.normal(0, 0.3)\n    \n    return np.clip(t_half, -1.0, 3.0)\n\ndf['log_t_half'] = df.apply(calculate_half_life, axis=1)\n\nprint(f'Generated properties: pIC50, logS, log_Papp, log_t_half')\nprint(f'Property value ranges:')\nfor prop in ['pIC50', 'logS', 'log_Papp', 'log_t_half']:\n    print(f'  {prop}: {df[prop].min():.2f} to {df[prop].max():.2f}')\n\n# Apply drug-likeness filters\nprint('\\n=== Drug-likeness Analysis ===')\n\ndef lipinski_filter(row):\n    \"\"\"Apply Lipinski's Rule of Five\"\"\"\n    violations = 0\n    if row['molecular_weight'] > 500: violations += 1\n    if row['logP'] > 5: violations += 1\n    if row['num_donors'] > 5: violations += 1\n    if row['num_acceptors'] > 10: violations += 1\n    return violations\n\ndef veber_filter(row):\n    \"\"\"Apply Veber's rules for oral bioavailability\"\"\"\n    violations = 0\n    if row['tpsa'] > 140: violations += 1\n    if row['num_rotatable_bonds'] > 10: violations += 1\n    return violations\n\ndf['lipinski_violations'] = df.apply(lipinski_filter, axis=1)\ndf['veber_violations'] = df.apply(veber_filter, axis=1)\ndf['drug_like'] = (df['lipinski_violations'] == 0) & (df['veber_violations'] == 0)\n\nprint(f'Drug-likeness analysis:')\nprint(f'  Lipinski compliant (0 violations): {(df[\"lipinski_violations\"] == 0).sum()}')\nprint(f'  Veber compliant (0 violations): {(df[\"veber_violations\"] == 0).sum()}')\nprint(f'  Overall drug-like: {df[\"drug_like\"].sum()}')\nprint(f'  Drug-like percentage: {df[\"drug_like\"].mean():.1%}')\n\n# Machine learning model training\nprint('\\n=== Machine Learning Model Training ===')\n\n# Prepare features and targets\nfeature_cols = descriptor_names\ntarget_cols = ['pIC50', 'logS', 'log_Papp', 'log_t_half']\n\nX = df[feature_cols].values\ny = df[target_cols].values\n\nprint(f'Feature matrix shape: {X.shape}')\nprint(f'Target matrix shape: {y.shape}')\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42\n)\n\nprint(f'Training set: {X_train.shape[0]} molecules')\nprint(f'Test set: {X_test.shape[0]} molecules')\n\n# Train models for each property\nmodels = {}\nperformance = {}\n\nfor i, target_name in enumerate(target_cols):\n    print(f'\\nTraining model for {target_name}...')\n    \n    # Random Forest model\n    model = RandomForestRegressor(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train[:, i])\n    \n    # Predictions\n    y_pred_train = model.predict(X_train)\n    y_pred_test = model.predict(X_test)\n    \n    # Performance metrics\n    train_r2 = r2_score(y_train[:, i], y_pred_train)\n    test_r2 = r2_score(y_test[:, i], y_pred_test)\n    train_rmse = np.sqrt(mean_squared_error(y_train[:, i], y_pred_train))\n    test_rmse = np.sqrt(mean_squared_error(y_test[:, i], y_pred_test))\n    \n    models[target_name] = model\n    performance[target_name] = {\n        'train_r2': train_r2,\n        'test_r2': test_r2,\n        'train_rmse': train_rmse,\n        'test_rmse': test_rmse,\n        'predictions': y_pred_test,\n        'true_values': y_test[:, i]\n    }\n    \n    print(f'  Training R²: {train_r2:.3f}')\n    print(f'  Test R²: {test_r2:.3f}')\n    print(f'  Test RMSE: {test_rmse:.3f}')\n\n# Feature importance analysis\nprint('\\n=== Feature Importance Analysis ===')\n\nfeature_importance = pd.DataFrame({\n    'feature': feature_cols,\n    **{target: models[target].feature_importances_ for target in target_cols}\n})\n\nprint('Top features for each property:')\nfor target in target_cols:\n    top_features = feature_importance.nlargest(3, target)\n    print(f'\\n{target}:')\n    for _, row in top_features.iterrows():\n        print(f'  {row[\"feature\"]}: {row[target]:.3f}')\n\n# Virtual screening simulation\nprint('\\n=== Virtual Screening Simulation ===')\n\n# Generate new molecules for screening\nn_screening = 10000\nprint(f'Generating {n_screening} molecules for virtual screening...')\n\nscreening_data = []\nfor i in range(n_screening):\n    # Generate random molecular descriptors\n    mw = np.random.normal(350, 120)\n    mw = np.clip(mw, 100, 700)\n    \n    logP = np.random.normal(2.5, 2.0)\n    logP = np.clip(logP, -3, 7)\n    \n    donors = np.random.poisson(2)\n    donors = np.clip(donors, 0, 8)\n    \n    acceptors = np.random.poisson(4)\n    acceptors = np.clip(acceptors, 0, 15)\n    \n    tpsa = np.random.gamma(2, 35)\n    tpsa = np.clip(tpsa, 0, 250)\n    \n    rot_bonds = np.random.poisson(6)\n    rot_bonds = np.clip(rot_bonds, 0, 20)\n    \n    aromatic_rings = np.random.poisson(2)\n    aromatic_rings = np.clip(aromatic_rings, 0, 5)\n    \n    formal_charge = np.random.choice([0, 0, 0, 0, 1, -1])\n    \n    heteroatoms = np.random.poisson(4) + 1\n    heteroatoms = np.clip(heteroatoms, 1, 12)\n    \n    frac_csp3 = np.random.beta(2, 2)\n    \n    screening_data.append([\n        mw, logP, donors, acceptors, tpsa, rot_bonds,\n        aromatic_rings, formal_charge, heteroatoms, frac_csp3\n    ])\n\nX_screening = np.array(screening_data)\n\n# Predict properties for screening library\nprint('Predicting properties for screening library...')\nscreening_predictions = {}\n\nfor target in target_cols:\n    predictions = models[target].predict(X_screening)\n    screening_predictions[target] = predictions\n\n# Apply filters for hit identification\nprint('\\nApplying screening filters...')\n\n# Create screening DataFrame\nscreening_df = pd.DataFrame(X_screening, columns=feature_cols)\nfor target in target_cols:\n    screening_df[f'pred_{target}'] = screening_predictions[target]\n\n# Apply drug-likeness filters\nscreening_df['lipinski_violations'] = screening_df.apply(lipinski_filter, axis=1)\nscreening_df['veber_violations'] = screening_df.apply(veber_filter, axis=1)\nscreening_df['drug_like'] = (\n    (screening_df['lipinski_violations'] == 0) & \n    (screening_df['veber_violations'] == 0)\n)\n\n# Activity filters\nactivity_threshold = 6.5  # pIC50 > 6.5 (IC50 < 316 nM)\nsolubility_threshold = -4.0  # logS > -4 (> 0.1 mM)\npermeability_threshold = -5.5  # log Papp > -5.5\n\nhits = screening_df[\n    (screening_df['pred_pIC50'] > activity_threshold) &\n    (screening_df['pred_logS'] > solubility_threshold) &\n    (screening_df['pred_log_Papp'] > permeability_threshold) &\n    (screening_df['drug_like'] == True)\n]\n\nprint(f'Screening results:')\nprint(f'  Total molecules: {len(screening_df):}')\nprint(f'  Drug-like molecules: {screening_df[\"drug_like\"].sum():}')\nprint(f'  Active hits (pIC50 > {activity_threshold}): {(screening_df[\"pred_pIC50\"] > activity_threshold).sum():}')\nprint(f'  Final hits (all criteria): {len(hits):}')\nprint(f'  Hit rate: {len(hits) / len(screening_df):.1%}')\n\nif len(hits) > 0:\n    print(f'\\nTop 5 hits:')\n    top_hits = hits.nlargest(5, 'pred_pIC50')\n    for idx, hit in top_hits.iterrows():\n        print(f'  Hit {idx}: pIC50={hit[\"pred_pIC50\"]:.2f}, '\n              f'logS={hit[\"pred_logS\"]:.2f}, MW={hit[\"molecular_weight\"]:.0f}')\n\n# Visualization\nprint('\\n=== Visualization ===')\n\nfig, axes = plt.subplots(2, 2, figsize=(15, 12))\n\n# 1. Property predictions vs true values\nfor i, target in enumerate(['pIC50', 'logS']):\n    ax = axes[0, i]\n    perf = performance[target]\n    \n    ax.scatter(perf['true_values'], perf['predictions'], alpha=0.6, s=20)\n    \n    # Perfect prediction line\n    min_val = min(perf['true_values'].min(), perf['predictions'].min())\n    max_val = max(perf['true_values'].max(), perf['predictions'].max())\n    ax.plot([min_val, max_val], [min_val, max_val], 'r--', alpha=0.8)\n    \n    ax.set_xlabel(f'True {target}')\n    ax.set_ylabel(f'Predicted {target}')\n    ax.set_title(f'{target} Prediction (R² = {perf[\"test_r2\"]:.3f})')\n    ax.grid(True, alpha=0.3)\n\n# 2. Feature importance heatmap\nax = axes[1, 0]\nimportance_matrix = feature_importance[target_cols].values.T\nim = ax.imshow(importance_matrix, cmap='viridis', aspect='auto')\nax.set_xticks(range(len(feature_cols)))\nax.set_xticklabels(feature_cols, rotation=45, ha='right')\nax.set_yticks(range(len(target_cols)))\nax.set_yticklabels(target_cols)\nax.set_title('Feature Importance Heatmap')\nplt.colorbar(im, ax=ax)\n\n# 3. Virtual screening results\nax = axes[1, 1]\nax.scatter(screening_df['pred_pIC50'], screening_df['pred_logS'], \n          alpha=0.3, s=10, color='lightblue', label='All molecules')\nif len(hits) > 0:\n    ax.scatter(hits['pred_pIC50'], hits['pred_logS'], \n              alpha=0.8, s=30, color='red', label=f'Hits ({len(hits)})')\n\nax.axvline(x=activity_threshold, color='green', linestyle='--', alpha=0.7, \n          label=f'pIC50 > {activity_threshold}')\nax.axhline(y=solubility_threshold, color='orange', linestyle='--', alpha=0.7, \n          label=f'logS > {solubility_threshold}')\n\nax.set_xlabel('Predicted pIC50')\nax.set_ylabel('Predicted logS')\nax.set_title('Virtual Screening Results')\nax.legend()\nax.grid(True, alpha=0.3)\n\nplt.tight_layout()\n\n# Save visualization\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    viz_file = tmp.name\n\nplt.close()\nprint(f'Analysis visualization saved to: {viz_file}')\n\n# Summary report\nprint('\\n' + '=' * 45)\nprint('OPENCHEM DRUG DISCOVERY SUMMARY')\nprint('=' * 45)\nprint(f'Molecules analyzed: {len(df):}')\nprint(f'Properties predicted: {len(target_cols)}')\nprint(f'Drug-like molecules: {df[\"drug_like\"].sum():} ({df[\"drug_like\"].mean():.1%})')\nprint(f'\\nModel performance (test R²):')\nfor target in target_cols:\n    print(f'  {target}: {performance[target][\"test_r2\"]:.3f}')\nprint(f'\\nVirtual screening:')\nprint(f'  Molecules screened: {len(screening_df):}')\nprint(f'  Hits identified: {len(hits):}')\nprint(f'  Hit rate: {len(hits) / len(screening_df):.2%}')\n\n# Cleanup\nos.unlink(viz_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nOpenChem provides:')\nprint('• Multi-task molecular property prediction')\nprint('• Graph neural networks for molecules')\nprint('• Molecular generation and optimization')\nprint('• ADMET property prediction')\nprint('• Virtual screening capabilities')\nprint('• Integration with PyTorch')\nprint('• Pre-trained models and datasets')\n\nprint('\\nTypical OpenChem workflow:')\nprint('1. Load molecular dataset (SMILES, SDF)')\nprint('2. Generate molecular representations')\nprint('3. Train/load prediction models')\nprint('4. Predict properties for new molecules')\nprint('5. Apply filters for drug discovery')",
+      "usage_example": "# OpenChem deep learning for drug discovery\n# This demonstrates molecular property prediction concepts\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_squared_error, r2_score\nimport tempfile\nimport os\nfrom collections import defaultdict\n\nprint('OpenChem - Deep Learning for Drug Discovery')\nprint('=' * 45)\n\n# Overview of OpenChem capabilities\nprint('OpenChem Features:')\nprint('\u2022 Molecular property prediction (ADMET, bioactivity)')\nprint('\u2022 Graph neural networks for molecules')\nprint('\u2022 Molecular generation and optimization')\nprint('\u2022 Multi-task learning for drug discovery')\nprint('\u2022 Molecular descriptors and fingerprints')\nprint('\u2022 Integration with PyTorch and other ML frameworks')\n\nprint('\\nSupported Molecular Representations:')\nprint('\u2022 SMILES strings')\nprint('\u2022 Molecular graphs')\nprint('\u2022 3D conformations')\nprint('\u2022 Molecular fingerprints (ECFP, MACCS, etc.)')\nprint('\u2022 Physicochemical descriptors')\n\n# Simulate molecular dataset\nprint('\\n=== Molecular Dataset Simulation ===')\n\nnp.random.seed(42)\n\n# Generate synthetic molecular data\nn_molecules = 1000\nprint(f'Generating {n_molecules} synthetic molecules...')\n\n# Molecular descriptors (simplified)\ndescriptor_names = [\n    'molecular_weight', 'logP', 'num_donors', 'num_acceptors',\n    'tpsa', 'num_rotatable_bonds', 'num_aromatic_rings',\n    'formal_charge', 'num_heteroatoms', 'fraction_csp3'\n]\n\n# Generate realistic molecular descriptors\nmolecular_data = []\nfor i in range(n_molecules):\n    # Molecular weight: 150-600 Da (drug-like range)\n    mw = np.random.normal(350, 100)\n    mw = np.clip(mw, 150, 600)\n    \n    # LogP: -2 to 6 (lipophilicity)\n    logP = np.random.normal(2.5, 1.5)\n    logP = np.clip(logP, -2, 6)\n    \n    # Hydrogen bond donors: 0-5\n    donors = np.random.poisson(2)\n    donors = np.clip(donors, 0, 5)\n    \n    # Hydrogen bond acceptors: 0-10\n    acceptors = np.random.poisson(4)\n    acceptors = np.clip(acceptors, 0, 10)\n    \n    # Topological polar surface area: 0-200 \u00c5\u00b2\n    tpsa = np.random.gamma(2, 30)\n    tpsa = np.clip(tpsa, 0, 200)\n    \n    # Rotatable bonds: 0-15\n    rot_bonds = np.random.poisson(5)\n    rot_bonds = np.clip(rot_bonds, 0, 15)\n    \n    # Aromatic rings: 0-4\n    aromatic_rings = np.random.poisson(2)\n    aromatic_rings = np.clip(aromatic_rings, 0, 4)\n    \n    # Formal charge: typically 0, sometimes \u00b11\n    formal_charge = np.random.choice([0, 0, 0, 0, 1, -1])\n    \n    # Heteroatoms: 1-8\n    heteroatoms = np.random.poisson(3) + 1\n    heteroatoms = np.clip(heteroatoms, 1, 8)\n    \n    # Fraction sp3 carbons: 0-1\n    frac_csp3 = np.random.beta(2, 2)\n    \n    molecule = {\n        'id': f'MOL_{i:04d}',\n        'molecular_weight': mw,\n        'logP': logP,\n        'num_donors': donors,\n        'num_acceptors': acceptors,\n        'tpsa': tpsa,\n        'num_rotatable_bonds': rot_bonds,\n        'num_aromatic_rings': aromatic_rings,\n        'formal_charge': formal_charge,\n        'num_heteroatoms': heteroatoms,\n        'fraction_csp3': frac_csp3\n    }\n    \n    molecular_data.append(molecule)\n\n# Convert to DataFrame\ndf = pd.DataFrame(molecular_data)\nprint(f'Generated molecular dataset: {df.shape}')\nprint(f'Descriptors: {len(descriptor_names)}')\n\n# Show basic statistics\nprint('\\nDataset statistics:')\nprint(df[descriptor_names].describe().round(2))\n\n# Generate target properties\nprint('\\n=== Target Property Generation ===')\n\n# Simulate bioactivity (IC50 values)\nprint('Generating bioactivity data (IC50 values)...')\n\ndef calculate_bioactivity(row):\n    \"\"\"Simulate bioactivity based on molecular descriptors\"\"\"\n    # Lipinski's rule of five compliance\n    lipinski_score = 0\n    if row['molecular_weight'] <= 500: lipinski_score += 1\n    if row['logP'] <= 5: lipinski_score += 1\n    if row['num_donors'] <= 5: lipinski_score += 1\n    if row['num_acceptors'] <= 10: lipinski_score += 1\n    \n    # Base activity influenced by Lipinski compliance\n    base_activity = 5.0 + (lipinski_score - 2.0) * 1.5\n    \n    # Additional molecular factors\n    tpsa_factor = -0.01 * max(0, row['tpsa'] - 90)  # Penalty for high TPSA\n    flexibility_factor = -0.1 * max(0, row['num_rotatable_bonds'] - 7)  # Penalty for high flexibility\n    aromatic_factor = 0.3 * min(row['num_aromatic_rings'], 3)  # Bonus for aromatics (up to 3)\n    \n    # Combined activity (pIC50)\n    activity = base_activity + tpsa_factor + flexibility_factor + aromatic_factor\n    \n    # Add some noise\n    activity += np.random.normal(0, 0.5)\n    \n    # Ensure reasonable range (4-9 pIC50)\n    activity = np.clip(activity, 4.0, 9.0)\n    \n    return activity\n\n# Calculate bioactivity\ndf['pIC50'] = df.apply(calculate_bioactivity, axis=1)\n\n# Generate additional properties\nprint('Generating ADMET properties...')\n\n# Solubility (LogS)\ndef calculate_solubility(row):\n    \"\"\"Simulate aqueous solubility\"\"\"\n    # Lipophilicity penalty\n    logP_penalty = -0.5 * max(0, row['logP'] - 2)\n    \n    # Molecular weight penalty\n    mw_penalty = -0.005 * max(0, row['molecular_weight'] - 300)\n    \n    # TPSA bonus (polar surface area helps solubility)\n    tpsa_bonus = 0.01 * min(row['tpsa'], 100)\n    \n    # Base solubility\n    base_solubility = -2.0\n    \n    solubility = base_solubility + logP_penalty + mw_penalty + tpsa_bonus\n    solubility += np.random.normal(0, 0.3)\n    \n    return np.clip(solubility, -6.0, 1.0)\n\ndf['logS'] = df.apply(calculate_solubility, axis=1)\n\n# Permeability (Caco-2)\ndef calculate_permeability(row):\n    \"\"\"Simulate cell permeability\"\"\"\n    # LogP correlation\n    logP_factor = 0.3 * row['logP']\n    \n    # TPSA penalty\n    tpsa_penalty = -0.02 * row['tpsa']\n    \n    # Molecular weight penalty\n    mw_penalty = -0.003 * row['molecular_weight']\n    \n    # Base permeability (log Papp)\n    base_perm = -4.5\n    \n    permeability = base_perm + logP_factor + tpsa_penalty + mw_penalty\n    permeability += np.random.normal(0, 0.4)\n    \n    return np.clip(permeability, -7.0, -3.0)\n\ndf['log_Papp'] = df.apply(calculate_permeability, axis=1)\n\n# Half-life (t1/2)\ndef calculate_half_life(row):\n    \"\"\"Simulate metabolic stability\"\"\"\n    # Molecular complexity factor\n    complexity = row['num_rotatable_bonds'] + row['num_heteroatoms']\n    complexity_factor = -0.05 * complexity\n    \n    # Aromatic stabilization\n    aromatic_factor = 0.1 * row['num_aromatic_rings']\n    \n    # Base half-life (log hours)\n    base_t_half = 1.0\n    \n    t_half = base_t_half + complexity_factor + aromatic_factor\n    t_half += np.random.normal(0, 0.3)\n    \n    return np.clip(t_half, -1.0, 3.0)\n\ndf['log_t_half'] = df.apply(calculate_half_life, axis=1)\n\nprint(f'Generated properties: pIC50, logS, log_Papp, log_t_half')\nprint(f'Property value ranges:')\nfor prop in ['pIC50', 'logS', 'log_Papp', 'log_t_half']:\n    print(f'  {prop}: {df[prop].min():.2f} to {df[prop].max():.2f}')\n\n# Apply drug-likeness filters\nprint('\\n=== Drug-likeness Analysis ===')\n\ndef lipinski_filter(row):\n    \"\"\"Apply Lipinski's Rule of Five\"\"\"\n    violations = 0\n    if row['molecular_weight'] > 500: violations += 1\n    if row['logP'] > 5: violations += 1\n    if row['num_donors'] > 5: violations += 1\n    if row['num_acceptors'] > 10: violations += 1\n    return violations\n\ndef veber_filter(row):\n    \"\"\"Apply Veber's rules for oral bioavailability\"\"\"\n    violations = 0\n    if row['tpsa'] > 140: violations += 1\n    if row['num_rotatable_bonds'] > 10: violations += 1\n    return violations\n\ndf['lipinski_violations'] = df.apply(lipinski_filter, axis=1)\ndf['veber_violations'] = df.apply(veber_filter, axis=1)\ndf['drug_like'] = (df['lipinski_violations'] == 0) & (df['veber_violations'] == 0)\n\nprint(f'Drug-likeness analysis:')\nprint(f'  Lipinski compliant (0 violations): {(df[\"lipinski_violations\"] == 0).sum()}')\nprint(f'  Veber compliant (0 violations): {(df[\"veber_violations\"] == 0).sum()}')\nprint(f'  Overall drug-like: {df[\"drug_like\"].sum()}')\nprint(f'  Drug-like percentage: {df[\"drug_like\"].mean():.1%}')\n\n# Machine learning model training\nprint('\\n=== Machine Learning Model Training ===')\n\n# Prepare features and targets\nfeature_cols = descriptor_names\ntarget_cols = ['pIC50', 'logS', 'log_Papp', 'log_t_half']\n\nX = df[feature_cols].values\ny = df[target_cols].values\n\nprint(f'Feature matrix shape: {X.shape}')\nprint(f'Target matrix shape: {y.shape}')\n\n# Split data\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.2, random_state=42\n)\n\nprint(f'Training set: {X_train.shape[0]} molecules')\nprint(f'Test set: {X_test.shape[0]} molecules')\n\n# Train models for each property\nmodels = {}\nperformance = {}\n\nfor i, target_name in enumerate(target_cols):\n    print(f'\\nTraining model for {target_name}...')\n    \n    # Random Forest model\n    model = RandomForestRegressor(n_estimators=100, random_state=42)\n    model.fit(X_train, y_train[:, i])\n    \n    # Predictions\n    y_pred_train = model.predict(X_train)\n    y_pred_test = model.predict(X_test)\n    \n    # Performance metrics\n    train_r2 = r2_score(y_train[:, i], y_pred_train)\n    test_r2 = r2_score(y_test[:, i], y_pred_test)\n    train_rmse = np.sqrt(mean_squared_error(y_train[:, i], y_pred_train))\n    test_rmse = np.sqrt(mean_squared_error(y_test[:, i], y_pred_test))\n    \n    models[target_name] = model\n    performance[target_name] = {\n        'train_r2': train_r2,\n        'test_r2': test_r2,\n        'train_rmse': train_rmse,\n        'test_rmse': test_rmse,\n        'predictions': y_pred_test,\n        'true_values': y_test[:, i]\n    }\n    \n    print(f'  Training R\u00b2: {train_r2:.3f}')\n    print(f'  Test R\u00b2: {test_r2:.3f}')\n    print(f'  Test RMSE: {test_rmse:.3f}')\n\n# Feature importance analysis\nprint('\\n=== Feature Importance Analysis ===')\n\nfeature_importance = pd.DataFrame({\n    'feature': feature_cols,\n    **{target: models[target].feature_importances_ for target in target_cols}\n})\n\nprint('Top features for each property:')\nfor target in target_cols:\n    top_features = feature_importance.nlargest(3, target)\n    print(f'\\n{target}:')\n    for _, row in top_features.iterrows():\n        print(f'  {row[\"feature\"]}: {row[target]:.3f}')\n\n# Virtual screening simulation\nprint('\\n=== Virtual Screening Simulation ===')\n\n# Generate new molecules for screening\nn_screening = 10000\nprint(f'Generating {n_screening} molecules for virtual screening...')\n\nscreening_data = []\nfor i in range(n_screening):\n    # Generate random molecular descriptors\n    mw = np.random.normal(350, 120)\n    mw = np.clip(mw, 100, 700)\n    \n    logP = np.random.normal(2.5, 2.0)\n    logP = np.clip(logP, -3, 7)\n    \n    donors = np.random.poisson(2)\n    donors = np.clip(donors, 0, 8)\n    \n    acceptors = np.random.poisson(4)\n    acceptors = np.clip(acceptors, 0, 15)\n    \n    tpsa = np.random.gamma(2, 35)\n    tpsa = np.clip(tpsa, 0, 250)\n    \n    rot_bonds = np.random.poisson(6)\n    rot_bonds = np.clip(rot_bonds, 0, 20)\n    \n    aromatic_rings = np.random.poisson(2)\n    aromatic_rings = np.clip(aromatic_rings, 0, 5)\n    \n    formal_charge = np.random.choice([0, 0, 0, 0, 1, -1])\n    \n    heteroatoms = np.random.poisson(4) + 1\n    heteroatoms = np.clip(heteroatoms, 1, 12)\n    \n    frac_csp3 = np.random.beta(2, 2)\n    \n    screening_data.append([\n        mw, logP, donors, acceptors, tpsa, rot_bonds,\n        aromatic_rings, formal_charge, heteroatoms, frac_csp3\n    ])\n\nX_screening = np.array(screening_data)\n\n# Predict properties for screening library\nprint('Predicting properties for screening library...')\nscreening_predictions = {}\n\nfor target in target_cols:\n    predictions = models[target].predict(X_screening)\n    screening_predictions[target] = predictions\n\n# Apply filters for hit identification\nprint('\\nApplying screening filters...')\n\n# Create screening DataFrame\nscreening_df = pd.DataFrame(X_screening, columns=feature_cols)\nfor target in target_cols:\n    screening_df[f'pred_{target}'] = screening_predictions[target]\n\n# Apply drug-likeness filters\nscreening_df['lipinski_violations'] = screening_df.apply(lipinski_filter, axis=1)\nscreening_df['veber_violations'] = screening_df.apply(veber_filter, axis=1)\nscreening_df['drug_like'] = (\n    (screening_df['lipinski_violations'] == 0) & \n    (screening_df['veber_violations'] == 0)\n)\n\n# Activity filters\nactivity_threshold = 6.5  # pIC50 > 6.5 (IC50 < 316 nM)\nsolubility_threshold = -4.0  # logS > -4 (> 0.1 mM)\npermeability_threshold = -5.5  # log Papp > -5.5\n\nhits = screening_df[\n    (screening_df['pred_pIC50'] > activity_threshold) &\n    (screening_df['pred_logS'] > solubility_threshold) &\n    (screening_df['pred_log_Papp'] > permeability_threshold) &\n    (screening_df['drug_like'] == True)\n]\n\nprint(f'Screening results:')\nprint(f'  Total molecules: {len(screening_df):}')\nprint(f'  Drug-like molecules: {screening_df[\"drug_like\"].sum():}')\nprint(f'  Active hits (pIC50 > {activity_threshold}): {(screening_df[\"pred_pIC50\"] > activity_threshold).sum():}')\nprint(f'  Final hits (all criteria): {len(hits):}')\nprint(f'  Hit rate: {len(hits) / len(screening_df):.1%}')\n\nif len(hits) > 0:\n    print(f'\\nTop 5 hits:')\n    top_hits = hits.nlargest(5, 'pred_pIC50')\n    for idx, hit in top_hits.iterrows():\n        print(f'  Hit {idx}: pIC50={hit[\"pred_pIC50\"]:.2f}, '\n              f'logS={hit[\"pred_logS\"]:.2f}, MW={hit[\"molecular_weight\"]:.0f}')\n\n# Visualization\nprint('\\n=== Visualization ===')\n\nfig, axes = plt.subplots(2, 2, figsize=(15, 12))\n\n# 1. Property predictions vs true values\nfor i, target in enumerate(['pIC50', 'logS']):\n    ax = axes[0, i]\n    perf = performance[target]\n    \n    ax.scatter(perf['true_values'], perf['predictions'], alpha=0.6, s=20)\n    \n    # Perfect prediction line\n    min_val = min(perf['true_values'].min(), perf['predictions'].min())\n    max_val = max(perf['true_values'].max(), perf['predictions'].max())\n    ax.plot([min_val, max_val], [min_val, max_val], 'r--', alpha=0.8)\n    \n    ax.set_xlabel(f'True {target}')\n    ax.set_ylabel(f'Predicted {target}')\n    ax.set_title(f'{target} Prediction (R\u00b2 = {perf[\"test_r2\"]:.3f})')\n    ax.grid(True, alpha=0.3)\n\n# 2. Feature importance heatmap\nax = axes[1, 0]\nimportance_matrix = feature_importance[target_cols].values.T\nim = ax.imshow(importance_matrix, cmap='viridis', aspect='auto')\nax.set_xticks(range(len(feature_cols)))\nax.set_xticklabels(feature_cols, rotation=45, ha='right')\nax.set_yticks(range(len(target_cols)))\nax.set_yticklabels(target_cols)\nax.set_title('Feature Importance Heatmap')\nplt.colorbar(im, ax=ax)\n\n# 3. Virtual screening results\nax = axes[1, 1]\nax.scatter(screening_df['pred_pIC50'], screening_df['pred_logS'], \n          alpha=0.3, s=10, color='lightblue', label='All molecules')\nif len(hits) > 0:\n    ax.scatter(hits['pred_pIC50'], hits['pred_logS'], \n              alpha=0.8, s=30, color='red', label=f'Hits ({len(hits)})')\n\nax.axvline(x=activity_threshold, color='green', linestyle='--', alpha=0.7, \n          label=f'pIC50 > {activity_threshold}')\nax.axhline(y=solubility_threshold, color='orange', linestyle='--', alpha=0.7, \n          label=f'logS > {solubility_threshold}')\n\nax.set_xlabel('Predicted pIC50')\nax.set_ylabel('Predicted logS')\nax.set_title('Virtual Screening Results')\nax.legend()\nax.grid(True, alpha=0.3)\n\nplt.tight_layout()\n\n# Save visualization\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    viz_file = tmp.name\n\nplt.close()\nprint(f'Analysis visualization saved to: {viz_file}')\n\n# Summary report\nprint('\\n' + '=' * 45)\nprint('OPENCHEM DRUG DISCOVERY SUMMARY')\nprint('=' * 45)\nprint(f'Molecules analyzed: {len(df):}')\nprint(f'Properties predicted: {len(target_cols)}')\nprint(f'Drug-like molecules: {df[\"drug_like\"].sum():} ({df[\"drug_like\"].mean():.1%})')\nprint(f'\\nModel performance (test R\u00b2):')\nfor target in target_cols:\n    print(f'  {target}: {performance[target][\"test_r2\"]:.3f}')\nprint(f'\\nVirtual screening:')\nprint(f'  Molecules screened: {len(screening_df):}')\nprint(f'  Hits identified: {len(hits):}')\nprint(f'  Hit rate: {len(hits) / len(screening_df):.2%}')\n\n# Cleanup\nos.unlink(viz_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nOpenChem provides:')\nprint('\u2022 Multi-task molecular property prediction')\nprint('\u2022 Graph neural networks for molecules')\nprint('\u2022 Molecular generation and optimization')\nprint('\u2022 ADMET property prediction')\nprint('\u2022 Virtual screening capabilities')\nprint('\u2022 Integration with PyTorch')\nprint('\u2022 Pre-trained models and datasets')\n\nprint('\\nTypical OpenChem workflow:')\nprint('1. Load molecular dataset (SMILES, SDF)')\nprint('2. Generate molecular representations')\nprint('3. Train/load prediction models')\nprint('4. Predict properties for new molecules')\nprint('5. Apply filters for drug discovery')",
       "quick_start": [
         "Install: pip install openchem",
         "Import: from openchem.models import build_model",
@@ -285,6 +715,92 @@
         "Predict: Apply model to new molecules",
         "Filter: Apply drug-likeness criteria"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
@@ -297,7 +813,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -309,7 +909,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -321,7 +1005,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -333,7 +1101,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -345,7 +1197,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -357,6 +1293,90 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   }
 ]

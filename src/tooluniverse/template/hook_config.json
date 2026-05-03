@@ -5,6 +5,11 @@
     "enable_hook_caching": true,
     "hook_execution_order": "priority_desc"
   },
+  "exclude_tools": [
+    "Tool_RAG",
+    "ToolFinderEmbedding",
+    "ToolFinderLLM"
+  ],
   "hook_type_defaults": {
     "SummarizationHook": {
       "default_output_length_threshold": 5000,

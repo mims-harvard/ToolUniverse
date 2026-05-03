@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_crystallographic\\_properties\\_by\\_pdb\\_id �
 #: 3bc00ba8e1d84b07bdec6426664d0730 of
 #: tooluniverse.tools.get_crystallographic_properties_by_pdb_id:1
 msgid "get_crystallographic_properties_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取晶体学属性"
 
 #: 6f3c32ba268b4cbcb3793327a37e2ab2 c4b5b97934564a119fe790f0940f0585 of
 #: tooluniverse.tools.get_crystallographic_properties_by_pdb_id:3

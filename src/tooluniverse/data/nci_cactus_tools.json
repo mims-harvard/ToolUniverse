@@ -1,0 +1,74 @@
+[
+  {
+    "name": "NCICACTUS_resolve",
+    "type": "NCICACTUSTool",
+    "description": "Convert chemical identifiers using the NCI CACTUS Chemical Identifier Resolver. Accepts chemical names (IUPAC or common), SMILES, InChI, InChIKey, or CAS registry numbers and resolves them to any supported representation: SMILES, IUPAC name, molecular formula, molecular weight, CAS number, standard InChI, InChIKey, or a list of synonyms. Set resolve_all=true to fetch SMILES, IUPAC name, formula, molecular weight, InChIKey, and CAS in a single call. Useful for chemical name standardization, identifier cross-mapping, and structure retrieval without requiring any API key.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "Chemical identifier to resolve. Accepts: common name (e.g. 'aspirin', 'ibuprofen'), IUPAC name, SMILES (e.g. 'CC(=O)Oc1ccccc1C(=O)O'), InChI, InChIKey (e.g. 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N'), or CAS number (e.g. '50-78-2')."
+        },
+        "representation": {
+          "type": "string",
+          "description": "Target representation to return. Options: 'smiles' (canonical SMILES), 'iupac_name' (IUPAC systematic name), 'formula' (molecular formula), 'mw' (molecular weight), 'cas' (CAS registry number(s)), 'stdinchi' (standard InChI), 'stdinchikey' (standard InChIKey), 'inchi', 'inchikey', 'names' (all synonyms), 'sdf' (structure data file). Default: 'smiles'.",
+          "enum": ["smiles", "iupac_name", "formula", "mw", "cas", "stdinchi", "stdinchikey", "inchi", "inchikey", "names", "sdf"],
+          "default": "smiles"
+        },
+        "resolve_all": {
+          "type": "boolean",
+          "description": "If true, resolves SMILES, IUPAC name, formula, molecular weight, InChIKey, and CAS in one call and returns all results. Overrides the 'representation' parameter.",
+          "default": false
+        }
+      },
+      "required": ["identifier"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "identifier": {"type": "string"},
+                "representation": {"type": "string"},
+                "result": {"type": ["string", "array", "null"]},
+                "smiles": {"type": ["string", "null"]},
+                "iupac_name": {"type": ["string", "null"]},
+                "formula": {"type": ["string", "null"]},
+                "mw": {"type": ["string", "null"]},
+                "cas": {"type": ["string", "array", "null"]},
+                "stdinchikey": {"type": ["string", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"identifier": "aspirin", "representation": "smiles"},
+      {"identifier": "ibuprofen", "resolve_all": true},
+      {"identifier": "50-78-2", "representation": "iupac_name"},
+      {"identifier": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N", "representation": "formula"}
+    ],
+    "label": ["NCI", "CACTUS", "Chemistry", "Chemical Identifier"],
+    "metadata": {
+      "tags": ["chemistry", "chemical structure", "SMILES", "InChI", "CAS", "identifier conversion", "NCI"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "api_name": "DECIPHER (Wellcome Sanger Institute)",
+  "base_url": "https://www.deciphergenomics.org/api/",
+  "failure_mode": "HTTP 403 - Client key not provided",
+  "root_cause": "DECIPHER API requires authentication via client key. All endpoints return 403 with JSON error: {\"errors\":[{\"title\":\"Forbidden\",\"status\":\"403\",\"detail\":\"Client key not provided\"}]}. The DDD sub-API at decipher.sanger.ac.uk returns HTML only. Registration for API access likely requires institutional affiliation with the DECIPHER consortium.",
+  "confirmed_broken_date": "2026-02-26",
+  "last_retry_date": "2026-02-26",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "never",
+  "workaround": "Orphanet provides comprehensive rare disease gene-disease associations, phenotypes, epidemiology, and ICD mappings via the Orphadata and RDcode APIs. GenCC provides gene-disease validity classifications from multiple curators including ClinGen.",
+  "workaround_tool_file": "src/tooluniverse/orphanet_tool.py",
+  "investigation_notes": [
+    "All endpoints at www.deciphergenomics.org/api/ return 403 with jsonapi error format",
+    "Tested: /api/genes/BRCA2, /api/syndromes?q=Williams, /api/variants?chr=1&start=1000000&end=2000000, /api/docs",
+    "DDD sub-API at decipher.sanger.ac.uk returns HTML pages, not JSON",
+    "API requires client key (institutional authentication)",
+    "Not viable for public ToolUniverse tools without registration"
+  ],
+  "attempted_config": null
+}

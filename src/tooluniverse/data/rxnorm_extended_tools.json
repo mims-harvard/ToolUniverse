@@ -1,0 +1,163 @@
+[
+  {
+    "name": "RxNorm_find_rxcui",
+    "description": "Resolve a drug name to its RxNorm RXCUI (RxNorm Concept Unique Identifier) using the NLM RxNorm API. Returns one or more RXCUIs that match the drug name. RXCUI is the standard identifier needed for subsequent RxNorm lookups. No API key required. Examples: 'metformin' -> RXCUI 6809; 'warfarin' -> RXCUI 11289; 'Tylenol' -> RXCUI 161 (acetaminophen).",
+    "type": "RxNormExtendedTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name to look up (generic, brand, or synonym). Examples: 'metformin', 'Lipitor', 'acetaminophen', 'warfarin sodium'."
+        }
+      },
+      "required": ["drug_name"]
+    },
+    "fields": {
+      "operation": "find_rxcui",
+      "endpoint": "https://rxnav.nlm.nih.gov/REST/rxcui.json"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug_name": {"type": "string"},
+            "rxcuis": {"type": "array", "items": {"type": "string"}},
+            "primary_rxcui": {"type": ["string", "null"]},
+            "found": {"type": "boolean"}
+          }
+        },
+        "metadata": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "test_examples": [
+      {"drug_name": "metformin"},
+      {"drug_name": "warfarin"},
+      {"drug_name": "atorvastatin"}
+    ],
+    "label": ["RxNorm", "RXCUI", "drug", "NLM", "standardization"],
+    "metadata": {
+      "tags": ["drug_standardization", "drug_identifier", "NLM", "rxnorm"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "RxNorm_get_drug_info",
+    "description": "Fetch comprehensive drug properties from NLM RxNorm by RXCUI or drug name. Returns the canonical name, term type (ingredient, brand name, clinical drug product, etc.), synonym, and language. Term types include IN (Ingredient/generic), BN (Brand Name), SCD (Semantic Clinical Drug = generic product with dose), SBD (Semantic Branded Drug). No API key required. Example: RXCUI 860975 -> '24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet' (SCD).",
+    "type": "RxNormExtendedTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rxcui": {
+          "type": "string",
+          "description": "RxNorm Concept Unique Identifier (e.g., '6809' for metformin, '11289' for warfarin). Use RxNorm_find_rxcui to obtain this."
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name to look up if RXCUI is not known. Will auto-resolve to RXCUI first."
+        }
+      }
+    },
+    "fields": {
+      "operation": "get_drug_info",
+      "endpoint": "https://rxnav.nlm.nih.gov/REST/rxcui/{rxcui}/properties.json"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "rxcui": {"type": "string"},
+            "name": {"type": ["string", "null"]},
+            "synonym": {"type": ["string", "null"]},
+            "term_type": {"type": ["string", "null"]},
+            "term_type_label": {"type": ["string", "null"]},
+            "language": {"type": ["string", "null"]}
+          }
+        },
+        "metadata": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "test_examples": [
+      {"rxcui": "6809"},
+      {"drug_name": "warfarin"},
+      {"rxcui": "860975"}
+    ],
+    "label": ["RxNorm", "drug", "properties", "NLM", "terminology"],
+    "metadata": {
+      "tags": ["drug_information", "drug_properties", "NLM", "rxnorm"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "RxNorm_get_related_drugs",
+    "description": "List all related drug products (branded names, generic products, ingredient names) for a drug RXCUI or name using the NLM RxNorm API. Returns grouped results by term type: Ingredient, Brand Name, Semantic Clinical Drug (generic product with dose/form), and Semantic Branded Drug (brand product). Useful for finding all brand names for a generic drug, or vice versa. No API key required. Example: metformin (RXCUI 6809) returns Glucophage, Glumetza, Fortamet as brand names plus dozens of generic products.",
+    "type": "RxNormExtendedTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rxcui": {
+          "type": "string",
+          "description": "RxNorm Concept Unique Identifier. Use RxNorm_find_rxcui to resolve a drug name."
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name to look up if RXCUI is not known."
+        },
+        "tty": {
+          "type": "string",
+          "default": "IN+BN+SBD+SCD",
+          "description": "Space/plus-separated term types to include. Options: IN (ingredient), BN (brand name), SBD (branded drug), SCD (generic clinical drug), PIN (precise ingredient). Default: 'IN+BN+SBD+SCD'."
+        }
+      }
+    },
+    "fields": {
+      "operation": "get_related_drugs",
+      "endpoint": "https://rxnav.nlm.nih.gov/REST/rxcui/{rxcui}/related.json"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "rxcui": {"type": "string"},
+            "related_drugs": {
+              "type": "object",
+              "description": "Grouped by term-type label. Keys are human-readable type labels.",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "rxcui": {"type": ["string", "null"]},
+                    "name": {"type": ["string", "null"]},
+                    "synonym": {"type": ["string", "null"]}
+                  }
+                }
+              }
+            },
+            "total_related": {"type": "integer"}
+          }
+        },
+        "metadata": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "test_examples": [
+      {"rxcui": "6809"},
+      {"drug_name": "atorvastatin"},
+      {"rxcui": "11289", "tty": "BN+SBD"}
+    ],
+    "label": ["RxNorm", "drug", "brand", "generic", "related", "NLM"],
+    "metadata": {
+      "tags": ["drug_products", "brand_generic", "drug_lookup", "NLM", "rxnorm"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
+]

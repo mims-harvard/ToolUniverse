@@ -6,6 +6,32 @@ expensive tool calls can be reused across runs without any extra setup. This
 page explains what is cached, how to configure the cache, and how to inspect or
 clear cached entries.
 
+Why Use Caching?
+----------------
+
+**The Problem**: Scientific API calls can be slow and rate-limited:
+
+- PubMed searches: 0.3-2 seconds per query
+- UniProt lookups: 0.5-1 second per protein
+- ChEMBL queries: 1-3 seconds per compound
+- Rate limits: 3-10 requests/second (even with API keys)
+
+**The Solution**: Cache results to avoid redundant API calls.
+
+**Benefits**:
+
+- **Speed**: Cached queries return in <1ms (vs 0.3-3 seconds)
+- **Rate limit protection**: Avoid hitting API limits in batch workflows
+- **Reproducibility**: Same query always returns same result (until source data changes)
+- **Cost savings**: Fewer API calls = lower costs for paid services
+- **Offline work**: Previously cached data available without internet
+
+**Example Impact**: A 1000-protein batch analysis:
+
+- Without cache: 1000 API calls × 0.5s = **8.3 minutes**
+- With cache (90% hit rate): 100 API calls × 0.5s + 900 cached × 0.001s = **51 seconds**
+- **10x faster** with caching!
+
 Overview
 --------
 
@@ -92,6 +118,9 @@ Variable                         Description
 ``TOOLUNIVERSE_CACHE_SINGLEFLIGHT``  Deduplicate concurrent misses (``true``)
 ``TOOLUNIVERSE_CACHE_ASYNC_PERSIST``  Write cache entries to SQLite on a background thread (``true``)
 ===============================  ==============================================
+
+.. seealso::
+   :doc:`../reference/environment_variables` for complete environment variable reference including logging, LLM, and other configuration options.
 
 Example configuration:
 

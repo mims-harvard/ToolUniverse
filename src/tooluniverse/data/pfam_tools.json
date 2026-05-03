@@ -1,0 +1,456 @@
+[
+    {
+        "name": "Pfam_search_families",
+        "description": "Search for Pfam protein family entries by keyword using the InterPro API. Pfam is the authoritative database of protein families, domains, and functional sites. Returns matching Pfam family accessions, names, types (domain, family, repeat, etc.), and integrated InterPro entries. There are over 20,000 Pfam families covering protein domains like kinases (PF00069), zinc fingers (PF00096), immunoglobulin (PF07654), and many more. Use this to find Pfam families related to a biological function or structural motif.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search keyword. Examples: 'kinase', 'zinc finger', 'helicase', 'immunoglobulin', 'rhodopsin', 'RNA binding'."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default 20, max 100).",
+                    "default": 20
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search_families"
+        },
+        "type": "PfamTool",
+        "test_examples": [
+            {
+                "query": "kinase",
+                "max_results": 10
+            },
+            {
+                "query": "zinc finger"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query": {"type": "string", "description": "Search query used"},
+                                "total_results": {"type": "integer", "description": "Total matching Pfam families"},
+                                "returned": {"type": "integer", "description": "Number of results returned"},
+                                "families": {
+                                    "type": "array",
+                                    "description": "Matching Pfam families",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string", "description": "Pfam accession (e.g., PF00069)"},
+                                            "name": {"type": "string", "description": "Full family name"},
+                                            "type": {"type": "string", "description": "Entry type: domain, family, repeat, etc."},
+                                            "integrated_interpro": {"type": ["string", "null"], "description": "Integrated InterPro accession"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Pfam_get_family_detail",
+        "description": "Get detailed information about a specific Pfam protein family by accession. Returns the full family name, short name, description, type (domain/family/repeat), protein/structure/taxa counts, clan (superfamily) membership, representative 3D structure, Wikipedia link, and GO terms. Pfam families are the fundamental units of protein classification - for example PF00001 (7tm_1) covers the rhodopsin-like GPCR superfamily with 432,000+ proteins, while PF00076 (RRM_1) is the RNA recognition motif found in 627,000+ proteins. Use this to understand what a Pfam family represents and its biological significance.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pfam_accession": {
+                    "type": "string",
+                    "description": "Pfam family accession. Examples: 'PF00001' (7tm_1, GPCR rhodopsin family), 'PF00076' (RRM_1, RNA recognition motif), 'PF00069' (Pkinase), 'PF00096' (zf-C2H2, zinc finger)."
+                }
+            },
+            "required": ["pfam_accession"]
+        },
+        "fields": {
+            "endpoint": "get_family_detail"
+        },
+        "type": "PfamTool",
+        "test_examples": [
+            {
+                "pfam_accession": "PF00001"
+            },
+            {
+                "pfam_accession": "PF00076"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string", "description": "Pfam accession"},
+                                "name": {"type": "string", "description": "Full family name"},
+                                "short_name": {"type": "string", "description": "Short name (e.g., 7tm_1)"},
+                                "type": {"type": "string", "description": "Entry type: domain, family, repeat, motif, etc."},
+                                "source_database": {"type": "string"},
+                                "integrated_interpro": {"type": ["string", "null"], "description": "InterPro accession this family is integrated into"},
+                                "description": {"type": ["string", "null"], "description": "Detailed description of the family"},
+                                "clan_accession": {"type": ["string", "null"], "description": "Pfam clan/superfamily accession (e.g., CL0221)"},
+                                "clan_name": {"type": ["string", "null"], "description": "Pfam clan name"},
+                                "counters": {
+                                    "type": "object",
+                                    "description": "Database statistics",
+                                    "properties": {
+                                        "proteins": {"type": "integer"},
+                                        "structures": {"type": "integer"},
+                                        "taxa": {"type": "integer"},
+                                        "proteomes": {"type": "integer"},
+                                        "domain_architectures": {"type": "integer"},
+                                        "matches": {"type": "integer"}
+                                    }
+                                },
+                                "representative_structure": {
+                                    "type": ["object", "null"],
+                                    "description": "Representative PDB structure"
+                                },
+                                "wikipedia_title": {"type": ["string", "null"]},
+                                "literature_count": {"type": "integer"},
+                                "go_terms": {"type": "array"}
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Pfam_get_family_proteins",
+        "description": "Get proteins containing a specific Pfam domain, optionally filtered by species. Returns protein accessions, names, gene names, lengths, organisms, and exact domain positions (start/end residues). Can filter to SwissProt-reviewed proteins only and/or specific species by NCBI taxonomy ID. For example, PF00001 (7tm_1 GPCR domain) has 289 human reviewed proteins including GPCRs like chemokine receptors, olfactory receptors, and serotonin receptors. PF00076 (RRM_1) has 199 human reviewed proteins. Use this to find which proteins in a species contain a specific domain.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pfam_accession": {
+                    "type": "string",
+                    "description": "Pfam family accession. Examples: 'PF00001' (7tm_1 GPCR), 'PF00076' (RRM_1), 'PF00069' (Pkinase), 'PF00125' (Core histone)."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of proteins to return (default 20, max 100).",
+                    "default": 20
+                },
+                "reviewed_only": {
+                    "type": "boolean",
+                    "description": "If true (default), return only SwissProt-reviewed proteins. Set false for all UniProt proteins.",
+                    "default": true
+                },
+                "tax_id": {
+                    "type": ["string", "null"],
+                    "description": "NCBI taxonomy ID to filter by species. Examples: '9606' (human), '10090' (mouse), '7227' (Drosophila), '559292' (S. cerevisiae)."
+                }
+            },
+            "required": ["pfam_accession"]
+        },
+        "fields": {
+            "endpoint": "get_family_proteins"
+        },
+        "type": "PfamTool",
+        "test_examples": [
+            {
+                "pfam_accession": "PF00125",
+                "tax_id": "9606",
+                "max_results": 10
+            },
+            {
+                "pfam_accession": "PF00076",
+                "reviewed_only": true,
+                "max_results": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pfam_accession": {"type": "string"},
+                                "total_proteins": {"type": "integer", "description": "Total proteins matching the query"},
+                                "returned": {"type": "integer"},
+                                "reviewed_only": {"type": "boolean"},
+                                "tax_id_filter": {"type": ["string", "null"]},
+                                "proteins": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string", "description": "UniProt accession"},
+                                            "name": {"type": "string"},
+                                            "gene": {"type": ["string", "null"]},
+                                            "length": {"type": ["integer", "null"]},
+                                            "organism": {"type": ["string", "null"]},
+                                            "tax_id": {"type": ["string", "null"]},
+                                            "domain_positions": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "start": {"type": "integer"},
+                                                        "end": {"type": "integer"}
+                                                    }
+                                                }
+                                            },
+                                            "in_alphafold": {"type": "boolean"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Pfam_get_protein_annotations",
+        "description": "Get all Pfam domain annotations for a specific protein by its UniProt accession. Returns every Pfam domain found in the protein with exact start/end residue positions, E-values (scores), short names, and integrated InterPro entries. This provides the complete Pfam domain architecture of a protein. For example, P04637 (TP53) has 4 Pfam domains: PF08563 (P53_TAD, 6-30), PF18521 (P53_TAD2, 35-59), PF00870 (P53, 100-288), PF07710 (P53_tetramer, 319-357). Use this to understand the domain composition of any protein.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt protein accession. Examples: 'P04637' (TP53, 4 domains), 'P00533' (EGFR), 'P68431' (Histone H3.1), 'P38398' (BRCA1), 'P01308' (Insulin)."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "get_protein_pfam"
+        },
+        "type": "PfamTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P68431"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {"type": "string", "description": "UniProt accession queried"},
+                                "protein_length": {"type": ["integer", "null"], "description": "Total protein length"},
+                                "domain_count": {"type": "integer", "description": "Number of Pfam domains found"},
+                                "domains": {
+                                    "type": "array",
+                                    "description": "Pfam domains with positions, sorted by start position",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "pfam_accession": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "short_name": {"type": "string"},
+                                            "type": {"type": "string"},
+                                            "integrated_interpro": {"type": ["string", "null"]},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "score": {"type": ["number", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Pfam_search_clans",
+        "description": "Search and list Pfam clans (superfamilies) by keyword. Pfam clans group together related Pfam families that share a common evolutionary origin but may have diverged beyond simple sequence similarity. There are 812 Pfam clans covering major protein superfamilies. For example, CL0016 (PKinase) groups 30+ kinase domain families, CL0001 (EGF) groups EGF-like domain families, CL0221 (RRM) groups RNA recognition motif families. Use this to explore protein superfamily relationships. If no query is given, returns a general listing of clans.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search keyword for clan name. Examples: 'kinase', 'EGF', 'RRM', 'immunoglobulin'. Leave empty to list all clans."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of clans to return (default 20, max 100).",
+                    "default": 20
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "search_clans"
+        },
+        "type": "PfamTool",
+        "test_examples": [
+            {
+                "query": "kinase",
+                "max_results": 10
+            },
+            {
+                "max_results": 15
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query": {"type": "string", "description": "Search query used"},
+                                "total_results": {"type": "integer", "description": "Total matching clans"},
+                                "returned": {"type": "integer"},
+                                "clans": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": "string", "description": "Clan accession (e.g., CL0016)"},
+                                            "name": {"type": "string", "description": "Clan name"},
+                                            "source_database": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Pfam_get_family_proteomes",
+        "description": "Get the proteome (organism) distribution for a Pfam protein family. Returns the list of reference proteomes that contain proteins with this Pfam domain, including organism names, taxonomy IDs, and whether the proteome is a reference proteome. This reveals the taxonomic distribution of a domain across the tree of life. For example, PF00001 (7tm_1 GPCR) is found in 1,890 proteomes spanning from early-diverging animals to humans, while PF00076 (RRM_1 RNA recognition motif) is in 6,831 proteomes. Use this to understand the evolutionary spread of a protein domain.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pfam_accession": {
+                    "type": "string",
+                    "description": "Pfam family accession. Examples: 'PF00001' (7tm_1, found in 1890 proteomes), 'PF00076' (RRM_1, 6831 proteomes), 'PF00069' (Pkinase)."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of proteomes to return (default 20, max 100).",
+                    "default": 20
+                }
+            },
+            "required": ["pfam_accession"]
+        },
+        "fields": {
+            "endpoint": "get_family_proteomes"
+        },
+        "type": "PfamTool",
+        "test_examples": [
+            {
+                "pfam_accession": "PF00001",
+                "max_results": 10
+            },
+            {
+                "pfam_accession": "PF00076",
+                "max_results": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pfam_accession": {"type": "string"},
+                                "total_proteomes": {"type": "integer", "description": "Total number of proteomes containing this domain"},
+                                "returned": {"type": "integer"},
+                                "proteomes": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "proteome_accession": {"type": "string", "description": "UniProt proteome accession"},
+                                            "organism_name": {"type": "string"},
+                                            "taxonomy_id": {"type": ["string", "null"]},
+                                            "is_reference": {"type": "boolean"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

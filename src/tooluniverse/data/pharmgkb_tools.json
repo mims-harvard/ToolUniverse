@@ -1,0 +1,425 @@
+[
+  {
+    "name": "PharmGKB_search_drugs",
+    "description": "Search for drugs in PharmGKB by name or PharmGKB ID. Returns drug name, ID, and basic metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Drug name or PharmGKB Chemical ID (e.g., 'warfarin', 'PA452637'). Aliases: drug_name, name, drug."
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Alias for query. Drug name to search (e.g., 'warfarin', 'metformin')."
+        },
+        "name": {
+          "type": "string",
+          "description": "Alias for query. Drug name to search."
+        },
+        "drug": {
+          "type": "string",
+          "description": "Alias for query. Drug name to search."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search_drugs"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "query": "warfarin"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objCls": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "inChi": {
+                "type": "string"
+              },
+              "smiles": {
+                "type": "string"
+              },
+              "types": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PharmGKB_get_drug_details",
+    "description": "Get detailed information for a drug using its PharmGKB Chemical ID. Returns structural info, cross-references, and related genes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_id": {
+          "type": "string",
+          "description": "PharmGKB Chemical ID (e.g., 'PA452637')."
+        }
+      },
+      "required": [
+        "drug_id"
+      ]
+    },
+    "fields": {
+      "operation": "drug_details"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "drug_id": "PA452637"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "objCls": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "pediatric": {
+          "type": "boolean"
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "PharmGKB_search_genes",
+    "description": "Search for genes in PharmGKB by name, symbol, or ID. Returns PharmGKB Gene ID and basic gene metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene name, symbol, or PharmGKB Accession ID (e.g., 'CYP2D6', 'PA128')."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search_genes"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "query": "CYP2D6"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objCls": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "chr": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PharmGKB_get_gene_details",
+    "description": "Get detailed information for a gene using its PharmGKB Accession ID. Returns chromosomal location, cross-references, and other metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "PharmGKB Gene Accession ID (e.g., 'PA128')."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "operation": "gene_details"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "gene_id": "PA128"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "objCls": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "chr": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "strand": {
+          "type": "string"
+        },
+        "cpicGene": {
+          "type": "boolean"
+        },
+        "pharmVarGene": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "PharmGKB_get_clinical_annotations",
+    "description": "Get clinical annotations showing gene-drug-phenotype relationships. Returns variant-level clinical significance data. Always provide annotation_id \u2014 gene_id lookup is not supported by the API and returns an error with guidance.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "annotation_id": {
+          "type": "string",
+          "description": "PharmGKB clinical annotation ID (e.g., '1447954390'). Required for reliable results."
+        },
+        "gene_id": {
+          "type": "string",
+          "description": "PharmGKB Gene Accession ID (e.g., \"PA128\"). NOTE: Gene-based lookup is not supported \u2014 will return an error with instructions to use annotation_id instead."
+        },
+        "gene": {
+          "type": "string",
+          "description": "NOT SUPPORTED: PharmGKB API requires a specific annotation_id (e.g. \"1447954390\"), not a gene symbol. Browse https://www.pharmgkb.org/clinicalAnnotation to find annotation IDs. For gene-drug dosing use CPIC_list_guidelines instead."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for gene \u2014 NOT SUPPORTED. See gene parameter."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "clinical_annotations"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "annotation_id": "1183618159"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "accessionId": {
+          "type": "string"
+        },
+        "objCls": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "levelOfEvidence": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "score": {
+          "type": "number"
+        },
+        "relatedChemicals": {
+          "type": "array"
+        },
+        "relatedDiseases": {
+          "type": "array"
+        },
+        "relatedGuidelines": {
+          "type": "array"
+        },
+        "types": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  {
+    "name": "PharmGKB_search_variants",
+    "description": "Search for genetic variants in PharmGKB by rsID or name. Returns variant IDs and associated gene info.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Variant name or rsID (e.g., 'rs1799853')."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search_variants"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "query": "rs1799853"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "objCls": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "location": {
+                "type": "object"
+              },
+              "gene": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "PharmGKB_get_dosing_guidelines",
+    "description": "Get pharmacogenetic dosing guidelines (CPIC/DPWG) from PharmGKB by guideline_id. IMPORTANT: use the 'clinpgxid' field from CPIC_list_guidelines (e.g., 'PA166251454'), NOT the 'pharmgkbid' field \u2014 old-format pharmgkbid values (e.g., 'PA166104996') return HTTP 404. The test example PA166251465 is for the warfarin guideline.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "guideline_id": {
+          "type": "string",
+          "description": "PharmGKB ClinPGx guideline ID from CPIC_list_guidelines 'clinpgxid' field (e.g., 'PA166251465' for warfarin, 'PA166251454' for opioids/codeine, 'PA166251458' for tamoxifen). Use clinpgxid, NOT pharmgkbid."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'CYP2D6'). NOTE: Filtering by gene symbol is unreliable and may return a generic prompt instead of actual guidelines. Use guideline_id instead."
+        }
+      },
+      "required": [
+        "guideline_id"
+      ]
+    },
+    "fields": {
+      "operation": "dosing_guidelines"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "guideline_id": "PA166251465"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "objCls": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "summaryMarkdown": {
+          "type": "object"
+        },
+        "textMarkdown": {
+          "type": "object"
+        },
+        "relatedChemicals": {
+          "type": "array"
+        },
+        "relatedGenes": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+]

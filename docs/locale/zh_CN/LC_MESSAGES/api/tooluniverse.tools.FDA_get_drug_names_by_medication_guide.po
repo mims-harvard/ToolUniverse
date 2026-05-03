@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_medication\\_guide �
 #: bf0c06419913426ab50a51afa1fe3b06 of
 #: tooluniverse.tools.FDA_get_drug_names_by_medication_guide:1
 msgid "FDA_get_drug_names_by_medication_guide"
-msgstr ""
+msgstr "FDA_根据用药指南获取药品名称"
 
 #: 9c3e2f728dfa431aa9835f44125e5bc5 b0757e722b3b4cb08339adbcc0e95213 of
 #: tooluniverse.tools.FDA_get_drug_names_by_medication_guide:3

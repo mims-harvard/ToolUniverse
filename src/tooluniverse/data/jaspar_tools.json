@@ -1,0 +1,688 @@
+[
+  {
+    "type": "JASPARRESTTool",
+    "name": "JASPAR_get_transcription_factors",
+    "description": "List all JASPAR transcription factor binding profiles. Returns all matrices; does NOT support filtering by TF name. To search by name, use jaspar_search_matrices with {\"name\": \"FOXA1\"}. Supports pagination via page/page_size.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "collection": {
+          "type": "string",
+          "default": "CORE",
+          "description": "JASPAR collection (e.g., CORE)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based)."
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Results per page (JASPAR `page_size`)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/matrix/",
+      "return_format": "JSON",
+      "use_params": true
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Paginated list of JASPAR matrices (summary metadata)",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "next": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "previous": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "matrix_id": {
+                "type": "string"
+              },
+              "base_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "collection": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "sequence_logo": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "collection": "CORE",
+        "page": 1,
+        "page_size": 5
+      }
+    ]
+  },
+  {
+    "type": "JASPARRESTTool",
+    "name": "jaspar_get_matrix",
+    "description": "Get full details for a single JASPAR matrix by `matrix_id` (e.g., MA0002.2). Returns metadata plus PFM/PWM. For reproducible analyses, use `jaspar_get_matrix_versions` with the corresponding `base_id` (e.g., MA0002) to see all versions and choose/cite the exact version you used.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "matrix_id": {
+          "type": "string",
+          "description": "JASPAR matrix ID (e.g., 'MA0002.2'). You can discover IDs with `JASPAR_get_transcription_factors`."
+        }
+      },
+      "required": [
+        "matrix_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/matrix/{matrix_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Full matrix detail including motif counts (PFM) and metadata",
+      "properties": {
+        "matrix_id": {
+          "type": "string"
+        },
+        "base_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "collection": {
+          "type": "string"
+        },
+        "version": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "pfm": {
+          "type": "object",
+          "description": "Position frequency matrix",
+          "properties": {
+            "A": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "C": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "G": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "T": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "tax_group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "species": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "tax_id": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "class": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "sequence_logo": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "versions_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sites_url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "matrix_id": "MA0002.2"
+      }
+    ]
+  },
+  {
+    "type": "JASPARRESTTool",
+    "name": "jaspar_get_matrix_versions",
+    "description": "List all versions available for a JASPAR matrix base ID (e.g., base_id MA0002). This is useful for reproducibility (choose a specific matrix version like MA0002.2) and for tracking updates across releases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "base_id": {
+          "type": "string",
+          "description": "JASPAR base matrix ID without version (e.g., 'MA0002'). You can get `base_id` from `jaspar_get_matrix`."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based)."
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Results per page."
+        }
+      },
+      "required": [
+        "base_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/matrix/{base_id}/versions/",
+      "return_format": "JSON",
+      "use_params": true
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Available versions for a base matrix ID",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "next": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "previous": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "matrix_id": {
+                "type": "string"
+              },
+              "base_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "collection": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "sequence_logo": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "base_id": "MA0002",
+        "page": 1,
+        "page_size": 5
+      }
+    ]
+  },
+  {
+    "type": "JASPARRESTTool",
+    "name": "jaspar_list_species",
+    "description": "List species available in JASPAR (taxonomy IDs + names). Useful for filtering matrices by `species`.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based)."
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Results per page."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/species/",
+      "return_format": "JSON",
+      "use_params": true
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Paginated list of species supported by JASPAR",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "next": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "previous": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tax_id": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "species": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "matrix_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "page": 1,
+        "page_size": 5
+      }
+    ]
+  },
+  {
+    "type": "JASPARRESTTool",
+    "name": "jaspar_list_taxa",
+    "description": "List available taxonomic groups (taxa) in JASPAR (e.g., vertebrates, plants). Useful for filtering matrices by `tax_group`.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/taxon/",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "List of taxonomic groups used by JASPAR",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "type": "JASPARRESTTool",
+    "name": "jaspar_list_collections",
+    "description": "List JASPAR collections (e.g., CORE, CNE). Useful for filtering matrices by `collection`.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/collections/",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "List of JASPAR collections",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "type": "JASPARRESTTool",
+    "name": "jaspar_list_releases",
+    "description": "List available JASPAR releases (database version history). Useful for research reproducibility: record which JASPAR release you used when selecting motifs, or check what releases exist before comparing results across versions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based)."
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Results per page."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/releases/",
+      "return_format": "JSON",
+      "use_params": true
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Paginated list of JASPAR releases",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "next": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "previous": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "release_number": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "year": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "active": {
+                "type": [
+                  "string",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "pubmed_id": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ]
+              },
+              "website": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "page": 1,
+        "page_size": 3
+      }
+    ]
+  },
+  {
+    "type": "JASPARRESTTool",
+    "name": "jaspar_search_matrices",
+    "description": "Search/filter JASPAR matrices using common query parameters. Typical filters include `search` (free text), `name`, `collection`, `tax_group`, `species`, and paging via `page`/`page_size`.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Free-text search across matrices (e.g., 'CTCF')."
+        },
+        "name": {
+          "type": "string",
+          "description": "Filter by TF name (e.g., 'CTCF')."
+        },
+        "collection": {
+          "type": "string",
+          "description": "Filter by collection (e.g., 'CORE')."
+        },
+        "tax_group": {
+          "type": "string",
+          "description": "Filter by taxonomic group (e.g., 'vertebrates')."
+        },
+        "species": {
+          "type": "string",
+          "description": "Filter by NCBI taxonomy ID (e.g., '9606' for human)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based)."
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Results per page."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://jaspar.elixir.no/api/v1/matrix/",
+      "return_format": "JSON",
+      "use_params": true
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Paginated list of JASPAR matrices matching the provided filters",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "next": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "previous": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "matrix_id": {
+                "type": "string"
+              },
+              "base_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "collection": {
+                "type": "string"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "sequence_logo": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "search": "CTCF",
+        "page": 1,
+        "page_size": 3
+      },
+      {
+        "tax_group": "vertebrates",
+        "page": 1,
+        "page_size": 3
+      }
+    ]
+  }
+]

@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pybigwig\\_info 模块"
 
 #: 2b8ec1681851487e936b03ca09da2759 of tooluniverse.tools.get_pybigwig_info:1
 msgid "get_pybigwig_info"
-msgstr ""
+msgstr "获取_pybigwig_信息"
 
 #: c737cff233f54539ab8977f00448498b ede9d03acb954a32b60da87f403829ef of
 #: tooluniverse.tools.get_pybigwig_info:3

@@ -1,0 +1,192 @@
+[
+  {
+    "name": "ClinGenAR_lookup_allele",
+    "description": "Look up a genetic variant in the ClinGen Allele Registry by HGVS notation. Returns the canonical allele identifier (CA ID), community standard title, and cross-references to ClinVar, dbSNP, COSMIC, gnomAD, and other databases. The Allele Registry normalizes variant representations across different coordinate systems and nomenclatures. Example: 'NM_000546.6:c.743G>A' returns CA000387 (TP53 p.Arg248Gln) with links to ClinVar, COSMIC, and gnomAD.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hgvs": {
+          "type": "string",
+          "description": "HGVS expression for the variant. Supports coding (c.), genomic (g.), and protein (p.) notations. Examples: 'NM_000546.6:c.743G>A' (TP53 R248Q), 'NC_000017.11:g.7674220C>T', 'NM_000059.4:c.5946delT' (BRCA2)."
+        }
+      },
+      "required": [
+        "hgvs"
+      ]
+    },
+    "fields": {
+      "endpoint": "lookup_allele"
+    },
+    "type": "ClinGenARTool",
+    "test_examples": [
+      {
+        "hgvs": "NM_000546.6:c.743G>A"
+      },
+      {
+        "hgvs": "NC_000017.11:g.7674220C>T"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "allele_id": {
+                  "type": "string",
+                  "description": "ClinGen canonical allele ID (e.g., CA000387)"
+                },
+                "allele_url": {
+                  "type": "string",
+                  "description": "Full URL to allele record"
+                },
+                "community_standard_title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Standardized HGVS title"
+                },
+                "external_records": {
+                  "type": "object",
+                  "description": "Cross-references to external databases (dbSNP, ClinVar, COSMIC, gnomAD, ExAC)"
+                },
+                "genomic_alleles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hgvs": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_genome": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Genomic coordinates in different assemblies"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_hgvs": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ClinGenAR_get_external_records",
+    "description": "Get detailed cross-references and external database records for a ClinGen canonical allele. Takes a ClinGen allele ID (CA ID) and returns links to ClinVar, dbSNP, COSMIC, gnomAD, ExAC, and other databases. Useful for finding all known database entries for a given variant. Example: CA000387 (TP53 R248Q) returns ClinVar variation IDs, COSMIC IDs, dbSNP rsIDs, and gnomAD allele frequencies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "allele_id": {
+          "type": "string",
+          "description": "ClinGen canonical allele ID. Examples: 'CA000387' (TP53 R248Q), 'CA006116' (BRCA1 variant). Use ClinGenAR_lookup_allele first to get the CA ID."
+        }
+      },
+      "required": [
+        "allele_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_external_records"
+    },
+    "type": "ClinGenARTool",
+    "test_examples": [
+      {
+        "allele_id": "CA000387"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "allele_id": {
+                  "type": "string",
+                  "description": "ClinGen canonical allele ID"
+                },
+                "community_standard_title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Standardized variant title"
+                },
+                "databases": {
+                  "type": "object",
+                  "description": "External database records keyed by database name (ClinVarAlleles, ClinVarVariations, dbSNP, COSMIC, gnomAD_2, gnomAD_3, gnomAD_4, ExAC, MyVariantInfo_hg19, MyVariantInfo_hg38)"
+                },
+                "database_count": {
+                  "type": "integer",
+                  "description": "Number of external databases with records"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_allele_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

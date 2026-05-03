@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_calibration\\_instruct
 #: 3945e70cf0ab4a6fa6c0fe9fd2cf8f14 of
 #: tooluniverse.tools.FDA_get_drug_name_by_calibration_instructions:1
 msgid "FDA_get_drug_name_by_calibration_instructions"
-msgstr ""
+msgstr "FDA_通过校准说明获取药品名称"
 
 #: 46ce38ca3455423cbc212ffb4ea28a07 907eee45bc4a4c4aac75f5b48341efa8 of
 #: tooluniverse.tools.FDA_get_drug_name_by_calibration_instructions:3

@@ -1,0 +1,448 @@
+[
+  {
+    "name": "TCIA_list_collections",
+    "description": "List all publicly available imaging collections in The Cancer Imaging Archive (TCIA). TCIA is a large archive of medical images of cancer available for public download. Returns collection names for use with other TCIA tools.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getCollectionValues"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of collection objects with Collection field",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Collection": {
+                "type": "string",
+                "description": "Collection name"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_series",
+    "description": "Get imaging series from The Cancer Imaging Archive (TCIA). A series is a set of related images from a single imaging session. Returns metadata including modality, body part, patient ID, image count, and file size. Filter by collection name, patient ID, study UID, modality, or body part. Example collections: 'TCGA-GBM', 'LIDC-IDRI', 'TCGA-LUAD', 'TCGA-BRCA'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "Collection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Collection name (e.g., 'TCGA-GBM', 'LIDC-IDRI', 'TCGA-LUAD')"
+        },
+        "PatientID": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Patient identifier"
+        },
+        "StudyInstanceUID": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "DICOM Study Instance UID"
+        },
+        "Modality": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Imaging modality (e.g., 'CT', 'MR', 'PT', 'CR', 'DX')"
+        },
+        "BodyPartExamined": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Body part examined (e.g., 'CHEST', 'BRAIN', 'ABDOMEN')"
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSeries"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "Collection": "LIDC-IDRI",
+        "Modality": "CT"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of imaging series",
+          "items": {
+            "type": "object",
+            "properties": {
+              "SeriesInstanceUID": {
+                "type": "string"
+              },
+              "StudyInstanceUID": {
+                "type": "string"
+              },
+              "Modality": {
+                "type": "string"
+              },
+              "SeriesDescription": {
+                "type": "string"
+              },
+              "BodyPartExamined": {
+                "type": "string"
+              },
+              "PatientID": {
+                "type": "string"
+              },
+              "Collection": {
+                "type": "string"
+              },
+              "ImageCount": {
+                "type": "integer"
+              },
+              "FileSize": {
+                "type": "integer"
+              },
+              "ManufacturerModelName": {
+                "type": "string"
+              },
+              "SeriesDate": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_patient_studies",
+    "description": "Get study information for patients in The Cancer Imaging Archive (TCIA). Returns study metadata including study date, description, and patient details. Filter by collection name or patient ID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "Collection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Collection name (e.g., 'TCGA-GBM', 'LIDC-IDRI')"
+        },
+        "PatientID": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Patient identifier"
+        },
+        "StudyInstanceUID": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "DICOM Study Instance UID"
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getPatientStudy"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "Collection": "LIDC-IDRI",
+        "PatientID": "LIDC-IDRI-0001"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of patient studies",
+          "items": {
+            "type": "object",
+            "properties": {
+              "StudyInstanceUID": {
+                "type": "string"
+              },
+              "StudyDate": {
+                "type": "string"
+              },
+              "StudyDescription": {
+                "type": "string"
+              },
+              "PatientAge": {
+                "type": "string"
+              },
+              "PatientID": {
+                "type": "string"
+              },
+              "PatientSex": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_modality_values",
+    "description": "Get the imaging modalities available in a specific TCIA collection or across all collections. Returns modality codes such as CT, MR, PT (PET), CR, DX, US (ultrasound), NM.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "Collection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Collection name to filter by (e.g., 'LIDC-IDRI'). Omit to get all modalities."
+        },
+        "BodyPartExamined": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Body part to filter by (e.g., 'CHEST')"
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getModalityValues"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "Collection": "LIDC-IDRI"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of modality objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Modality": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_body_part_values",
+    "description": "Get the body parts examined in TCIA imaging collections. Returns body part names for filtering series queries. Optionally filter by collection or modality.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "Collection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Collection name to filter by (e.g., 'TCGA-GBM')"
+        },
+        "Modality": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Imaging modality to filter by (e.g., 'CT', 'MR')"
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getBodyPartValues"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "Modality": "CT"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of body part objects",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_series_metadata",
+    "description": "Get detailed DICOM metadata for a specific imaging series in TCIA by its Series Instance UID. Returns equipment information, acquisition parameters, and series attributes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "SeriesInstanceUID": {
+          "type": "string",
+          "description": "DICOM Series Instance UID (e.g., '1.3.6.1.4.1.14519.5.2.1.6279.6001.141365756818074698800993818518')"
+        }
+      },
+      "required": [
+        "SeriesInstanceUID"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSeriesMetaData"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "SeriesInstanceUID": "1.3.6.1.4.1.14519.5.2.1.6834.5010.189721824525842725510380467695"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of metadata key-value pairs for the series",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_series_size",
+    "description": "Get the total file size and image count for a specific imaging series in The Cancer Imaging Archive (TCIA). Returns total size in bytes and number of DICOM objects. Use this to estimate download sizes before retrieving imaging data. Obtain SeriesInstanceUID from TCIA_get_series results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "SeriesInstanceUID": {
+          "type": "string",
+          "description": "DICOM Series Instance UID. Example: '1.3.6.1.4.1.14519.5.2.1.6279.6001.100225287222365663678666836860'. Obtain from TCIA_get_series results."
+        }
+      },
+      "required": [
+        "SeriesInstanceUID"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSeriesSize"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "SeriesInstanceUID": "1.3.6.1.4.1.14519.5.2.1.6279.6001.100225287222365663678666836860"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array with one element containing size information",
+          "items": {
+            "type": "object",
+            "properties": {
+              "TotalSizeInBytes": {
+                "type": "number",
+                "description": "Total file size in bytes"
+              },
+              "ObjectCount": {
+                "type": "integer",
+                "description": "Number of DICOM objects/images"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

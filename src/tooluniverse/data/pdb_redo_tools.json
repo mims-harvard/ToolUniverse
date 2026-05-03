@@ -1,0 +1,167 @@
+[
+  {
+    "name": "PDB_REDO_get_structure_quality",
+    "type": "BaseRESTTool",
+    "description": "Get re-refined structure quality metrics from PDB-REDO for a given PDB entry. PDB-REDO is a databank of optimized macromolecular structures: all PDB X-ray structures are re-refined using the latest crystallographic methods, improving R-factors, geometry, and fit to electron density. Returns 200+ quality metrics including: R-factor (RFIN), R-free (RFFIN), resolution (DATARESH), correlation coefficients (CCFFIN, CCWFIN), Ramachandran Z-score (ZRAMA), packing Z-score (ZPACKING), B-factor average (BAVER), number of backbone/sidechain flips (NBBFLIP/NSCFLIP), space group (SPACEGROUP), and unit cell dimensions. Only available for X-ray crystal structures. Use lowercase PDB IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID in lowercase. Examples: '1cbs' (cellular retinoic acid binding protein), '6lu7' (SARS-CoV-2 main protease), '2hhb' (hemoglobin). Note: not all PDB entries have PDB-REDO data; mainly X-ray crystal structures."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://pdb-redo.eu/db/{pdb_id}/data.json",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "PDB-REDO structure data with quality metrics",
+          "properties": {
+            "pdbid": {
+              "type": "string",
+              "description": "PDB entry ID"
+            },
+            "properties": {
+              "type": "object",
+              "description": "200+ quality metrics including R-factors, geometry scores, B-factors, cell dimensions",
+              "properties": {
+                "RFIN": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Final R-factor after re-refinement"
+                },
+                "RFFIN": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Final R-free after re-refinement"
+                },
+                "ROLD": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Original R-factor before re-refinement"
+                },
+                "RFOLD": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Original R-free before re-refinement"
+                },
+                "DATARESH": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Resolution in Angstroms"
+                },
+                "EXPTYP": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Experimental method (e.g., 'X-ray')"
+                },
+                "DYEAR": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Deposition year"
+                },
+                "SPACEGROUP": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Crystal space group"
+                },
+                "BAVER": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Average B-factor"
+                },
+                "CCFFIN": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Final correlation coefficient (Fc vs Fo)"
+                },
+                "CCWFIN": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Final weighted correlation coefficient"
+                },
+                "ZRAMA": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Ramachandran Z-score"
+                },
+                "ZPACKING": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Packing Z-score"
+                },
+                "NBBFLIP": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of backbone flips"
+                },
+                "NSCFLIP": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of sidechain flips"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1cbs"
+      },
+      {
+        "pdb_id": "6lu7"
+      }
+    ]
+  }
+]

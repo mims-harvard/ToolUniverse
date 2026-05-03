@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.OpenTargets_get_associated_targets_by_disease_efoId:1
 msgid "OpenTargets_get_associated_targets_by_disease_efoId"
 msgstr ""
+"OpenTargets_get_associated_targets_by_disease_efoId  \n"
+"获取与疾病相关的靶点_efoId"
 
 #: bc506d9eac374b95b2e79bc8cc23fb33 c185352dccca488eb8830f1abaef1fc4 of
 #: tooluniverse.tools.OpenTargets_get_associated_targets_by_disease_efoId:3

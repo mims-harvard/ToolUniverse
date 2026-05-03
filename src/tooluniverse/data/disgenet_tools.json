@@ -1,0 +1,329 @@
+[
+  {
+    "name": "DisGeNET_search_gene",
+    "description": "Search DisGeNET for diseases associated with a gene. DisGeNET is the largest public database of gene-disease associations. Returns diseases, association scores, and evidence counts. Use the 'gene' parameter (e.g., 'BRCA1', 'TP53') — note: parameter name is 'gene', not 'gene_symbol'. Requires DISGENET_API_KEY env var (register free at disgenet.org).",
+    "type": "DisGeNETTool",
+    "optional_api_keys": [
+      "DISGENET_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_gene",
+          "description": "Operation type (fixed: search_gene)"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., BRCA1, TP53, EGFR)"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum associations to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "gene": {
+              "type": "string"
+            },
+            "associations": {
+              "type": "array",
+              "description": "Gene-disease associations"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene": "BRCA1",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "DisGeNET_search_disease",
+    "description": "Search DisGeNET for genes associated with a disease. Query by disease name or UMLS CUI (e.g., C0006142 for breast cancer). Returns associated genes with scores and evidence. Requires DISGENET_API_KEY.",
+    "type": "DisGeNETTool",
+    "optional_api_keys": [
+      "DISGENET_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_disease",
+          "description": "Operation type (fixed: search_disease)"
+        },
+        "disease": {
+          "type": "string",
+          "description": "Disease name or UMLS CUI (e.g., C0006142, breast cancer)"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum associations to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": [
+        "disease"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "string"
+            },
+            "associations": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "disease": "C0006142",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "DisGeNET_get_gda",
+    "description": "Get gene-disease associations with filtering. Filter by data source (CURATED, LITERATURE, ANIMAL_MODELS) and minimum score. Returns comprehensive GDA data with evidence levels. Requires DISGENET_API_KEY.",
+    "type": "DisGeNETTool",
+    "optional_api_keys": [
+      "DISGENET_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_gda",
+          "description": "Operation type (fixed: get_gda)"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (optional if disease provided)"
+        },
+        "disease": {
+          "type": "string",
+          "description": "Disease ID/UMLS CUI (optional if gene provided)"
+        },
+        "source": {
+          "type": "string",
+          "description": "Data source filter: CURATED, ANIMAL_MODELS, LITERATURE, etc.",
+          "enum": [
+            "CURATED",
+            "ANIMAL_MODELS",
+            "LITERATURE",
+            "ALL"
+          ]
+        },
+        "min_score": {
+          "type": "number",
+          "description": "Minimum GDA score (0-1). Higher = stronger evidence.",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results (default: 25)",
+          "default": 25
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "associations": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene": "TP53",
+        "min_score": 0.3,
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "name": "DisGeNET_get_vda",
+    "description": "Get variant-disease associations from DisGeNET. Query by rsID or gene symbol to find disease-associated variants. Returns variant IDs, diseases, and evidence scores. Useful for pharmacogenomics and variant interpretation.",
+    "type": "DisGeNETTool",
+    "optional_api_keys": [
+      "DISGENET_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_vda",
+          "description": "Operation type (fixed: get_vda)"
+        },
+        "variant": {
+          "type": "string",
+          "description": "Variant rsID (e.g., rs1234) - optional if gene provided"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to get all variants - optional if variant provided"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results (default: 25)",
+          "default": 25
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "associations": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene": "BRCA1",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "name": "DisGeNET_get_disease_genes",
+    "description": "Get all genes associated with a disease from DisGeNET. Returns ranked gene list with association scores and evidence counts. Filter by minimum score to get high-confidence associations. Useful for disease gene prioritization.",
+    "type": "DisGeNETTool",
+    "optional_api_keys": [
+      "DISGENET_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_disease_genes",
+          "description": "Operation type (fixed: get_disease_genes)"
+        },
+        "disease": {
+          "type": "string",
+          "description": "Disease ID (UMLS CUI) or disease name"
+        },
+        "min_score": {
+          "type": "number",
+          "description": "Minimum association score (0-1). Default: no filter",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum genes to return (default: 50)",
+          "default": 50
+        }
+      },
+      "required": [
+        "disease"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "string"
+            },
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "number"
+                  },
+                  "evidence_count": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "gene_count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "disease": "C0006142",
+        "min_score": 0.3,
+        "limit": 30
+      }
+    ]
+  }
+]

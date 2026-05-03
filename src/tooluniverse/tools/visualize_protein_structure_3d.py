@@ -56,19 +56,25 @@ def visualize_protein_structure_3d(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "pdb_id": pdb_id,
+            "pdb_content": pdb_content,
+            "style": style,
+            "color_scheme": color_scheme,
+            "width": width,
+            "height": height,
+            "show_sidechains": show_sidechains,
+            "show_surface": show_surface,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "visualize_protein_structure_3d",
-            "arguments": {
-                "pdb_id": pdb_id,
-                "pdb_content": pdb_content,
-                "style": style,
-                "color_scheme": color_scheme,
-                "width": width,
-                "height": height,
-                "show_sidechains": show_sidechains,
-                "show_surface": show_surface,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

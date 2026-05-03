@@ -184,6 +184,74 @@ def performance_comparison():
     return result_no_hooks, result_with_hooks
 
 
+def exclude_tools_example():
+    """Exclude tools configuration example"""
+    print("\n" + "="*60)
+    print("🔧 EXCLUDE TOOLS CONFIGURATION")
+    print("="*60)
+    print("Demonstrating exclude_tools to skip specific tools from hooks")
+    print()
+
+    # Configuration with exclude_tools
+    exclude_config = {
+        "exclude_tools": [
+            "Tool_RAG",
+            "ToolFinderEmbedding",
+            "ToolFinderLLM",
+            "CustomTool_*",  # Wildcard pattern
+        ],
+        "hooks": [{
+            "name": "default_summarization_hook",
+            "type": "SummarizationHook",
+            "enabled": True,
+            "priority": 1,
+            "conditions": {
+                "output_length": {"operator": ">", "threshold": 5000}
+            },
+            "hook_config": {
+                "composer_tool": "OutputSummarizationComposer",
+                "chunk_size": 32000,
+                "focus_areas": "key_findings_and_results",
+                "max_summary_length": 3000,
+            },
+        }]
+    }
+
+    print("Step 1: Configuring exclude_tools...")
+    print("   • Excluded: Tool_RAG, ToolFinderEmbedding, ToolFinderLLM")
+    print("   • Wildcard pattern: CustomTool_*")
+
+    tu = ToolUniverse(hooks_enabled=True, hook_config=exclude_config)
+    tu.load_tools()
+    print("✅ Configuration applied")
+
+    print("\nStep 2: Verifying exclude_tools configuration...")
+    if hasattr(tu, 'hook_manager') and tu.hook_manager:
+        config = tu.hook_manager.config
+        exclude_tools = config.get("exclude_tools", [])
+        print(f"   • Configured exclude_tools: {exclude_tools}")
+
+        # Test that excluded tools are identified correctly
+        if hasattr(tu.hook_manager, '_is_hook_tool'):
+            test_tools = [
+                ("Tool_RAG", True),
+                ("ToolFinderEmbedding", True),
+                ("CustomTool_Test", True),  # Should match wildcard
+                ("OtherTool_Test", False),  # Should not match
+                ("OpenTargets_get_target_info", False),  # Regular tool
+            ]
+
+            print("\nStep 3: Testing tool exclusion...")
+            for tool_name, should_be_excluded in test_tools:
+                is_excluded = tu.hook_manager._is_hook_tool(tool_name)
+                status = "✅" if is_excluded == should_be_excluded else "❌"
+                excluded_status = 'excluded' if is_excluded else 'not excluded'
+                print(f"   {status} {tool_name}: {excluded_status}")
+
+    print("\n✅ Exclude tools configuration verified")
+    return tu
+
+
 def custom_hook_config_example():
     """Custom hook configuration example"""
     print("\n" + "="*60)
@@ -194,6 +262,10 @@ def custom_hook_config_example():
 
     # Custom configuration with specific settings
     custom_config = {
+        "exclude_tools": [
+            "Tool_RAG",
+            "ToolFinderEmbedding",
+        ],
         "hooks": [{
             "name": "custom_summary_hook",
             "type": "SummarizationHook",
@@ -256,6 +328,7 @@ def main():
     print("• Basic SummarizationHook usage")
     print("• FileSaveHook for large outputs")
     print("• Performance comparison")
+    print("• Exclude tools configuration")
     print("• Custom configuration")
     print("=" * 60)
 
@@ -264,6 +337,7 @@ def main():
         basic_hooks_example()
         file_save_hook_example()
         performance_comparison()
+        exclude_tools_example()
         custom_hook_config_example()
 
         print("\n" + "="*60)
@@ -275,6 +349,7 @@ def main():
         print("• SummarizationHook reduces output size with AI")
         print("• FileSaveHook saves large outputs to files")
         print("• Performance overhead depends on output size and AI")
+        print("• exclude_tools prevents specific tools from hook processing")
         print("• Custom configurations allow fine-tuned control")
         print()
         print("🔗 Learn more: docs/guide/hooks/")

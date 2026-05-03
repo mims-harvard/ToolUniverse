@@ -1,0 +1,253 @@
+[
+  {
+    "name": "ChIPAtlas_enrichment_analysis",
+    "type": "ChIPAtlasTool",
+    "description": "Perform enrichment analysis to identify transcription factors and histone modifications enriched in your data. **Required: Provide ONE input type** - (1) BED genomic regions, (2) DNA sequence motif (IUPAC notation: A/T/G/C/W/S/M/K/R/Y/B/D/H/V/N), or (3) gene symbol list. Compares your input against 433,000+ ChIP-seq/ATAC-seq/Bisulfite-seq experiments to identify significant enrichment. Returns ranked list of proteins bound to your regions/motif or regulating your genes. Note: Returns submission URL (web form-based analysis). Use for: identifying regulators of genomic regions, finding proteins bound to sequence motifs, discovering transcription factors regulating gene sets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["enrichment_analysis"],
+          "default": "enrichment_analysis"
+        },
+        "bed_data": {
+          "type": "string",
+          "description": "**Option 1**: BED format genomic regions (tab-separated: chr, start, end). For finding proteins bound to specific genomic regions. Example: 'chr1\\t1000\\t2000\\nchr2\\t3000\\t4000'."
+        },
+        "motif": {
+          "type": "string",
+          "description": "**Option 2**: DNA sequence motif in IUPAC notation. Use: A/T/G/C (bases), W=A|T, S=G|C, M=A|C, K=G|T, R=A|G, Y=C|T, B=C|G|T, D=A|G|T, H=A|C|T, V=A|C|G, N=any. For finding proteins bound to specific DNA sequences. Example: 'CANNTG' (E-box motif)."
+        },
+        "gene_list": {
+          "type": ["array", "string"],
+          "items": {"type": "string"},
+          "description": "**Option 3**: Gene symbols (HGNC for human, MGI for mouse, RGD for rat, FlyBase, WormBase, SGD for yeast). Provide as array or single gene. For finding transcription factors regulating genes. Example: ['TP53', 'MDM2', 'CDKN1A']."
+        },
+        "genome": {
+          "type": "string",
+          "description": "Genome assembly",
+          "enum": ["hg38", "hg19", "mm10", "mm9", "rn6", "dm6", "dm3", "ce11", "ce10", "sacCer3"],
+          "default": "hg38"
+        },
+        "antigen_class": {
+          "type": "string",
+          "description": "Filter by antigen class (e.g., 'TFs and others', 'Histone', 'RNA polymerase')"
+        },
+        "cell_type_class": {
+          "type": "string",
+          "description": "Filter by cell type class (e.g., 'Blood', 'Liver', 'Brain')"
+        },
+        "threshold": {
+          "type": "string",
+          "description": "Peak calling stringency (MACS2 Q-value). Options: '05'=1e-5 (permissive, more peaks, broader features), '10'=1e-10 (moderate, balanced), '20'=1e-20 (strict, high confidence only, narrow peaks). Default '05' suitable for most analyses. Higher values = fewer but more confident peaks.",
+          "enum": ["05", "10", "20"],
+          "default": "05"
+        },
+        "distance": {
+          "type": "string",
+          "description": "Distance from Transcription Start Site (TSS) in base pairs for gene-TF association. Defines promoter region. Default 5000 (±5kb, captures typical promoters). Use 1000-2000 for narrow promoters, 10000+ for enhancer regions.",
+          "default": "5000"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Response object with enrichment analysis URL and parameters",
+      "additionalProperties": true,
+      "properties": {
+        "message": {"type": "string"},
+        "genes": {"type": "array", "items": {"type": "string"}},
+        "distance_from_tss": {"type": "string"},
+        "url": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "enrichment_analysis",
+        "gene_list": ["TP53", "MDM2", "CDKN1A"],
+        "genome": "hg38",
+        "distance": "5000"
+      }
+    ]
+  },
+  {
+    "name": "ChIPAtlas_get_experiments",
+    "type": "ChIPAtlasTool",
+    "description": "Search ChIP-Atlas experiment metadata including experiment IDs, antigens, cell types, and processing statistics. Filter by genome, antigen (TF/histone), or cell type. Returns experiment details with SRX/ERX/DRX IDs. Use for: finding relevant experiments, getting experiment metadata, dataset discovery, batch analysis planning.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_experiment_list"],
+          "default": "get_experiment_list"
+        },
+        "genome": {
+          "type": "string",
+          "description": "Filter by genome assembly",
+          "enum": ["hg38", "hg19", "mm10", "mm9", "rn6", "dm6", "dm3", "ce11", "ce10", "sacCer3"]
+        },
+        "antigen": {
+          "type": "string",
+          "description": "Filter by antigen/protein name (e.g., 'CTCF', 'H3K4me3')"
+        },
+        "cell_type": {
+          "type": "string",
+          "description": "Filter by cell type (e.g., 'K-562', 'HepG2', 'CD4')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Response with experiment metadata including URLs and file info",
+      "additionalProperties": true,
+      "properties": {
+        "message": {"type": "string"},
+        "metadata_file_url": {"type": "string"},
+        "web_search_url": {"type": "string"},
+        "file_size": {"type": "string"},
+        "total_experiments": {"type": "string"},
+        "filters_requested": {"type": "object", "additionalProperties": true},
+        "recommendation": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_experiment_list",
+        "genome": "hg38",
+        "antigen": "CTCF",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "ChIPAtlas_get_peak_data",
+    "type": "ChIPAtlasTool",
+    "description": "Get download URLs for ChIP-Atlas peak-call data in BigWig, BED, or BigBed format. BigWig contains coverage scores in RPM (Reads Per Million). BED/BigBed contain peak regions with MACS2 (Model-based Analysis of ChIP-Seq) peak caller scores. Use for: downloading raw data, integrating with genome browsers (UCSC, IGV), custom analysis, visualization.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_peak_data"],
+          "default": "get_peak_data"
+        },
+        "experiment_id": {
+          "type": "string",
+          "description": "Experiment ID (SRX/ERX/DRX format, required)"
+        },
+        "genome": {
+          "type": "string",
+          "description": "Genome assembly",
+          "enum": ["hg38", "hg19", "mm10", "mm9", "rn6", "dm6", "dm3", "ce11", "ce10", "sacCer3"],
+          "default": "hg38"
+        },
+        "format": {
+          "type": "string",
+          "description": "Output format",
+          "enum": ["bigwig", "bed", "bigbed"],
+          "default": "bigwig"
+        },
+        "threshold": {
+          "type": "string",
+          "description": "Q-value threshold for BED/BigBed peak files. '05'=1e-5 (more peaks), '10'=1e-10 (moderate), '20'=1e-20 (high confidence only). Only applies to BED/BigBed formats. Default '05'.",
+          "enum": ["05", "10", "20"],
+          "default": "05"
+        }
+      },
+      "required": ["experiment_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Response with download URL for peak data",
+      "additionalProperties": true,
+      "properties": {
+        "experiment_id": {"type": "string"},
+        "genome": {"type": "string"},
+        "format": {"type": "string"},
+        "url": {"type": "string"},
+        "message": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_peak_data",
+        "experiment_id": "SRX097088",
+        "genome": "hg19",
+        "format": "bigwig"
+      }
+    ]
+  },
+  {
+    "name": "ChIPAtlas_search_datasets",
+    "type": "ChIPAtlasTool",
+    "description": "Search ChIP-Atlas by antigen or cell type to find available datasets. Returns number of experiments and experiment IDs. Use antigenList for finding TF/histone datasets across cell types. Use celltypeList for finding all factors in specific cell type. Use for: dataset discovery, planning comparative analysis, checking data availability.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_datasets"],
+          "default": "search_datasets"
+        },
+        "antigen": {
+          "type": "string",
+          "description": "Search by antigen/protein name (e.g., 'CTCF', 'H3K27ac')"
+        },
+        "cell_type": {
+          "type": "string",
+          "description": "Search by cell type (e.g., 'K-562', 'HeLa', 'MCF-7')"
+        },
+        "genome": {
+          "type": "string",
+          "description": "Genome assembly",
+          "enum": ["hg38", "hg19", "mm10", "mm9", "rn6", "dm6", "dm3", "ce11", "ce10", "sacCer3"],
+          "default": "hg38"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Response with search results for datasets",
+      "additionalProperties": true,
+      "properties": {
+        "search_key": {"type": "string"},
+        "search_value": {"type": "string"},
+        "genome": {"type": "string"},
+        "num_results": {"type": "integer"},
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "genome": {"type": "string"},
+              "class": {"type": "string"},
+              "name": {"type": "string"},
+              "num_experiments": {"type": "string"},
+              "experiment_ids": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_datasets",
+        "antigen": "CTCF",
+        "genome": "hg38"
+      }
+    ]
+  }
+]

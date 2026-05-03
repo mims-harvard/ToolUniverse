@@ -1,0 +1,536 @@
+[
+  {
+    "name": "PDBe_KB_get_summary_stats",
+    "description": "Get aggregated structural summary statistics for a UniProt protein from PDBe-KB. Returns the number of PDB structures, unique ligands, interaction partners, annotations, and similar proteins available for the protein. This is a quick way to assess structural coverage before diving into detailed data. Example: P04637 (TP53) has 296 PDB structures, 121 ligands, and 54 interaction partners.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_accession": {
+          "type": "string",
+          "description": "UniProt accession ID for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (insulin)."
+        }
+      },
+      "required": [
+        "uniprot_accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "summary_stats"
+    },
+    "type": "PDBe_KB_Tool",
+    "test_examples": [
+      {
+        "uniprot_accession": "P04637"
+      },
+      {
+        "uniprot_accession": "P00533"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_accession": {
+                  "type": "string",
+                  "description": "UniProt accession queried"
+                },
+                "pdbs": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of PDB structures available"
+                },
+                "ligands": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of unique ligands bound"
+                },
+                "interaction_partners": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of protein interaction partners with structural evidence"
+                },
+                "annotations": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of functional annotations"
+                },
+                "similar_proteins": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of similar proteins in PDB"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBe_KB_get_ligand_sites",
+    "description": "Get ligand binding site residues for a UniProt protein from PDBe-KB. Returns all known ligands that bind the protein, with the specific residue positions (UniProt numbering) involved in binding, the PDB structures where binding was observed, and ligand metadata (scaffold, cofactor status, drug associations). Essential for understanding protein function, drug binding, and designing mutagenesis experiments. Example: P04637 (TP53) shows NAD binding at residue 382, zinc coordination at the DNA-binding domain.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_accession": {
+          "type": "string",
+          "description": "UniProt accession ID for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        }
+      },
+      "required": [
+        "uniprot_accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "ligand_sites"
+    },
+    "type": "PDBe_KB_Tool",
+    "test_examples": [
+      {
+        "uniprot_accession": "P04637"
+      },
+      {
+        "uniprot_accession": "P00533"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_accession": {
+                  "type": "string",
+                  "description": "UniProt accession queried"
+                },
+                "protein_length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Protein sequence length"
+                },
+                "ligands": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Ligand full name"
+                      },
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Ligand chemical component ID (e.g. ATP, NAD, ZN)"
+                      },
+                      "binding_residues": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "Start residue position (UniProt numbering)"
+                            },
+                            "end": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "End residue position"
+                            },
+                            "pdb_entries": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "PDB IDs where this binding observed"
+                            }
+                          }
+                        },
+                        "description": "Residues involved in ligand binding"
+                      },
+                      "is_cofactor": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether ligand is a cofactor"
+                      },
+                      "is_solvent": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether ligand is a solvent molecule"
+                      },
+                      "chembl_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChEMBL compound ID if drug-like"
+                      },
+                      "drugbank_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "DrugBank ID if applicable"
+                      }
+                    }
+                  },
+                  "description": "Ligands with binding site details"
+                },
+                "total_ligands": {
+                  "type": "integer",
+                  "description": "Total number of unique ligands"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBe_KB_get_interface_residues",
+    "description": "Get protein-protein interaction interface residues for a UniProt protein from PDBe-KB. Returns residue positions (UniProt numbering) at interaction interfaces with other proteins, the identity of interaction partners, and PDB structures where each interface was observed. Essential for understanding protein complex formation, designing interface-disrupting mutations, and identifying functional hotspots. Example: P04637 (TP53) shows interaction interfaces with MDM2, p53BP2, and DNA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_accession": {
+          "type": "string",
+          "description": "UniProt accession ID for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        }
+      },
+      "required": [
+        "uniprot_accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "interface_residues"
+    },
+    "type": "PDBe_KB_Tool",
+    "test_examples": [
+      {
+        "uniprot_accession": "P04637"
+      },
+      {
+        "uniprot_accession": "P00533"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_accession": {
+                  "type": "string",
+                  "description": "UniProt accession queried"
+                },
+                "protein_length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Protein sequence length"
+                },
+                "interaction_partners": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "partner_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Name of the interaction partner protein"
+                      },
+                      "partner_accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "UniProt accession of interaction partner"
+                      },
+                      "interface_residues": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "start": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "Start residue position (UniProt numbering)"
+                            },
+                            "end": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "description": "End residue position"
+                            },
+                            "pdb_entries": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              },
+                              "description": "PDB IDs with this interface"
+                            }
+                          }
+                        },
+                        "description": "Residues at the interaction interface"
+                      }
+                    }
+                  },
+                  "description": "Interaction partners with interface details"
+                },
+                "total_partners": {
+                  "type": "integer",
+                  "description": "Total number of interaction partners"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBe_KB_get_superposition_clusters",
+    "description": "Get structural superposition clusters for a UniProt protein from PDBe-KB. Returns protein segments with structurally aligned PDB chains grouped into clusters based on 3D structural similarity. Each cluster has a representative structure and aligned member structures. Useful for understanding structural coverage across different conformational states, identifying the best representative structure for each domain, and comparing structural fragments from different crystal structures. Example: P04637 (TP53) shows clusters covering residues 1-93 (transactivation domain) and 94-312 (DNA-binding domain); P00533 (EGFR) has 5 segments with multiple clusters covering the extracellular and kinase domains.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_accession": {
+          "type": "string",
+          "description": "UniProt accession ID for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        }
+      },
+      "required": [
+        "uniprot_accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "superposition"
+    },
+    "type": "PDBe_KB_Tool",
+    "test_examples": [
+      {
+        "uniprot_accession": "P04637"
+      },
+      {
+        "uniprot_accession": "P00533"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_accession": {
+                  "type": "string"
+                },
+                "segments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "segment_start": {
+                        "type": "integer",
+                        "description": "Start residue position (UniProt numbering)"
+                      },
+                      "segment_end": {
+                        "type": "integer",
+                        "description": "End residue position"
+                      },
+                      "num_clusters": {
+                        "type": "integer",
+                        "description": "Number of structural clusters"
+                      },
+                      "clusters": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "representative": {
+                              "type": [
+                                "object",
+                                "null"
+                              ],
+                              "properties": {
+                                "pdb_id": {
+                                  "type": "string"
+                                },
+                                "auth_asym_id": {
+                                  "type": "string"
+                                },
+                                "is_representative": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "description": "Representative structure for this cluster"
+                            },
+                            "total_members": {
+                              "type": "integer"
+                            },
+                            "members": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "pdb_id": {
+                                    "type": "string"
+                                  },
+                                  "auth_asym_id": {
+                                    "type": "string"
+                                  },
+                                  "entity_id": {
+                                    "type": "integer"
+                                  },
+                                  "is_representative": {
+                                    "type": "boolean"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "total_segments": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

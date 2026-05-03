@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.eva\\_somatic\\_disease\\_target\\_score 模块"
 #: 40e03f3a765d47018d898899dd71a11d of
 #: tooluniverse.tools.eva_somatic_disease_target_score:1
 msgid "eva_somatic_disease_target_score"
-msgstr ""
+msgstr "eva_体细胞疾病靶点评分"
 
 #: 80a5c55b65204d09817b2f419110bd6a dc24bef04dcf47c29f33b654f5671036 of
 #: tooluniverse.tools.eva_somatic_disease_target_score:3

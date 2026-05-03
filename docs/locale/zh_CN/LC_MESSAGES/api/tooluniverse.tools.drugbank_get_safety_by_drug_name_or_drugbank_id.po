@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.drugbank\\_get\\_safety\\_by\\_drug\\_name\\_or\\_dru
 #: eed13c41d62d4a689a96e18a560eca17 of
 #: tooluniverse.tools.drugbank_get_safety_by_drug_name_or_drugbank_id:1
 msgid "drugbank_get_safety_by_drug_name_or_drugbank_id"
-msgstr ""
+msgstr "drugbank_通过药物名称或DrugBank ID获取安全性信息"
 
 #: 98ecc3cdb4494e0cbff561c1c0ebc1c3 fd348bd4b8254912a4e6ea920ca18ef0 of
 #: tooluniverse.tools.drugbank_get_safety_by_drug_name_or_drugbank_id:3

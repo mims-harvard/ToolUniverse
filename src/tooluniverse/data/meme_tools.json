@@ -1,0 +1,302 @@
+[
+  {
+    "name": "MEME_fimo_scan",
+    "type": "MEMETool",
+    "description": "Scan DNA sequences for transcription factor (TF) binding motifs using FIMO (Find Individual Motif Occurrences) from the MEME Suite. Provide sequences in FASTA format and a motif in MEME format, and FIMO returns all statistically significant binding sites with p-values, scores, strand, and matched sequences. Ideal for scanning promoter regions for known TF binding sites from JASPAR or HOCOMOCO. Note: this submits a job to meme-suite.org and polls for results (typically 10-30 seconds).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["fimo_scan"],
+          "description": "Operation type"
+        },
+        "sequences": {
+          "type": "string",
+          "description": "DNA sequences in FASTA format to scan for motif occurrences. Example: '>seq1\\nATGCATGCTATAAAAGGATCC\\n>seq2\\nGGATCCATGCATGCATGCAT'"
+        },
+        "motif_text": {
+          "type": "string",
+          "description": "Motif(s) in MEME format. Must include the full MEME header (MEME version 5, ALPHABET, strands, Background letter frequencies) followed by MOTIF blocks with letter-probability matrices. Example for a TATA box motif: 'MEME version 5\\n\\nALPHABET= ACGT\\n\\nstrands: + -\\n\\nBackground letter frequencies\\nA 0.25 C 0.25 G 0.25 T 0.25\\n\\nMOTIF TATABOX\\nletter-probability matrix: alength= 4 w= 6 nsites= 100 E= 0\\n0.00 0.00 0.00 1.00\\n1.00 0.00 0.00 0.00\\n0.00 0.00 0.00 1.00\\n1.00 0.00 0.00 0.00\\n1.00 0.00 0.00 0.00\\n1.00 0.00 0.00 0.00'"
+        },
+        "pvalue_threshold": {
+          "type": ["number", "null"],
+          "default": 0.0001,
+          "description": "P-value threshold for reporting motif occurrences. Default 1e-4. Lower values are more stringent."
+        },
+        "scan_rc": {
+          "type": ["boolean", "null"],
+          "default": true,
+          "description": "If true (default), scan both strands. Set false to scan only the given strand."
+        }
+      },
+      "required": ["operation", "sequences", "motif_text"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "hits": {
+          "type": "array",
+          "description": "List of motif occurrences found in the sequences",
+          "items": {
+            "type": "object",
+            "properties": {
+              "motif_id": {"type": "string", "description": "Motif identifier from the input"},
+              "motif_alt_id": {"type": ["string", "null"], "description": "Alternate motif name"},
+              "sequence_name": {"type": "string", "description": "Name of the sequence containing the hit"},
+              "start": {"type": "integer", "description": "Start position of the motif occurrence (1-based)"},
+              "stop": {"type": "integer", "description": "End position of the motif occurrence (1-based)"},
+              "strand": {"type": "string", "description": "Strand: + or -"},
+              "score": {"type": "number", "description": "Log-odds score of the motif occurrence"},
+              "pvalue": {"type": "number", "description": "P-value of the motif occurrence"},
+              "qvalue": {"type": "number", "description": "Q-value (FDR-adjusted p-value)"},
+              "matched_sequence": {"type": "string", "description": "DNA sequence that matched the motif"}
+            }
+          }
+        },
+        "total_hits": {"type": "integer", "description": "Number of motif occurrences found"},
+        "job_id": {"type": "string", "description": "MEME Suite job identifier"},
+        "pvalue_threshold": {"type": "number", "description": "P-value threshold used"},
+        "result_url": {"type": "string", "description": "URL to view full HTML results in browser"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "fimo_scan",
+        "sequences": ">promoter_region\nGGATCCGCGCGCTATAAAAGGATCCATGCATGATGCATGCGCGC\n>negative_control\nATGCATGCATGCATGCATGCATGCATGCATGCATGCATGCATGC",
+        "motif_text": "MEME version 5\n\nALPHABET= ACGT\n\nstrands: + -\n\nBackground letter frequencies\nA 0.25 C 0.25 G 0.25 T 0.25\n\nMOTIF TATABOX\nletter-probability matrix: alength= 4 w= 6 nsites= 100 E= 0\n0.00 0.00 0.00 1.00\n1.00 0.00 0.00 0.00\n0.00 0.00 0.00 1.00\n1.00 0.00 0.00 0.00\n1.00 0.00 0.00 0.00\n1.00 0.00 0.00 0.00",
+        "pvalue_threshold": 0.001
+      }
+    ]
+  },
+  {
+    "name": "MEME_discover_motifs",
+    "type": "MEMETool",
+    "description": "Run de novo motif discovery on a set of DNA sequences using the MEME algorithm from the MEME Suite. MEME finds overrepresented ungapped sequence patterns (motifs) that may correspond to transcription factor binding sites, splice sites, or other functional elements. Requires at least 2 FASTA sequences as input. Returns discovered motifs with consensus sequences, E-values, probability matrices, and site counts. Note: this submits a job to meme-suite.org and polls for results (typically 30-120 seconds depending on input size).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["discover_motifs"],
+          "description": "Operation type"
+        },
+        "sequences": {
+          "type": "string",
+          "description": "Multiple DNA sequences in FASTA format (minimum 2 sequences). Should contain related sequences expected to share common motifs, e.g., promoter regions of co-regulated genes."
+        },
+        "nmotifs": {
+          "type": ["integer", "null"],
+          "default": 3,
+          "description": "Maximum number of motifs to find. Default 3."
+        },
+        "minw": {
+          "type": ["integer", "null"],
+          "default": 6,
+          "description": "Minimum motif width in nucleotides. Default 6."
+        },
+        "maxw": {
+          "type": ["integer", "null"],
+          "default": 50,
+          "description": "Maximum motif width in nucleotides. Default 50."
+        },
+        "distribution": {
+          "type": ["string", "null"],
+          "default": "zoops",
+          "enum": ["oops", "zoops", "anr"],
+          "description": "Motif site distribution model. 'oops' = one per sequence, 'zoops' = zero or one per sequence (default), 'anr' = any number of repetitions."
+        },
+        "scan_rc": {
+          "type": ["boolean", "null"],
+          "default": true,
+          "description": "If true (default), search both strands."
+        }
+      },
+      "required": ["operation", "sequences"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "motifs": {
+          "type": "array",
+          "description": "List of discovered motifs",
+          "items": {
+            "type": "object",
+            "properties": {
+              "motif_number": {"type": "integer", "description": "Motif rank number (1 = most significant)"},
+              "consensus": {"type": "string", "description": "Consensus sequence of the motif"},
+              "width": {"type": "integer", "description": "Motif width in nucleotides"},
+              "sites": {"type": "integer", "description": "Number of sequences containing the motif"},
+              "log_likelihood_ratio": {"type": "integer", "description": "Log-likelihood ratio statistic"},
+              "evalue": {"type": ["number", "null"], "description": "E-value (statistical significance). Lower is better."},
+              "probability_matrix": {
+                "type": "array",
+                "description": "Position probability matrix (rows = positions, columns = A,C,G,T)",
+                "items": {
+                  "type": "array",
+                  "items": {"type": "number"}
+                }
+              }
+            }
+          }
+        },
+        "total_motifs": {"type": "integer", "description": "Number of motifs discovered"},
+        "job_id": {"type": "string", "description": "MEME Suite job identifier"},
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "nmotifs": {"type": "integer"},
+            "minw": {"type": "integer"},
+            "maxw": {"type": "integer"},
+            "distribution": {"type": "string"}
+          }
+        },
+        "result_url": {"type": "string", "description": "URL to view full HTML results with sequence logos"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "discover_motifs",
+        "sequences": ">promoter1\nGCGCGCTATAAAAGGCATGCATGCCATGCATGGCGCGC\n>promoter2\nGCGCGCGGATCCTATAAAAATGCATGCATGCATGGCGCGC\n>promoter3\nGCGCGCATGCATATAAATGCATGCATGCATGGCGCGC\n>promoter4\nGCGCGCGGTATAAAAGCATGCATGCATGCATGGCGCGC\n>promoter5\nGCGCGCTATAAACGATGCATGCATGCATGCGCGCGC\n>promoter6\nGCGCGCCTATAAAAGATGCATGCATGCATGCGCGCGC",
+        "nmotifs": 2,
+        "minw": 6,
+        "maxw": 15
+      }
+    ]
+  },
+  {
+    "name": "MEME_tomtom_compare",
+    "type": "MEMETool",
+    "description": "Compare a query motif against known motif databases (JASPAR, HOCOMOCO, CIS-BP) using TOMTOM from the MEME Suite. Given a motif in MEME format, identifies the most similar known transcription factor binding motifs. Useful for annotating de novo discovered motifs — e.g., after running MEME motif discovery, use TOMTOM to determine which TF likely binds the discovered motif. Returns matches ranked by E-value with query/target consensus sequences. Note: this submits a job to meme-suite.org and polls for results (typically 5-20 seconds).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["tomtom_compare"],
+          "description": "Operation type"
+        },
+        "query_motif": {
+          "type": "string",
+          "description": "Query motif in MEME format. Must include the full MEME header followed by one or more MOTIF blocks with letter-probability matrices."
+        },
+        "target_db": {
+          "type": ["string", "null"],
+          "default": "JASPAR2026_vertebrates",
+          "description": "Target motif database to search against. Options: 'JASPAR2026_vertebrates' (default, recommended), 'JASPAR2026_all', 'JASPAR2024_vertebrates', 'HOCOMOCO_v12'. Use MEME_list_databases to see all options."
+        },
+        "evalue_threshold": {
+          "type": ["number", "null"],
+          "default": 0.5,
+          "description": "E-value threshold for reporting matches. Default 0.5. Must be <= 1.0."
+        },
+        "comparison_function": {
+          "type": ["string", "null"],
+          "default": "pearson",
+          "enum": ["pearson", "ed", "sandelin", "allr", "allr5"],
+          "description": "Distance function for motif comparison. 'pearson' = Pearson correlation (default), 'ed' = Euclidean distance, 'sandelin' = Sandelin-Wasserman, 'allr' = average log-likelihood ratio."
+        }
+      },
+      "required": ["operation", "query_motif"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "matches": {
+          "type": "array",
+          "description": "Motif matches from the target database, ranked by E-value",
+          "items": {
+            "type": "object",
+            "properties": {
+              "query_id": {"type": "string", "description": "Query motif identifier"},
+              "target_id": {"type": "string", "description": "Matched motif ID from the database (e.g., JASPAR MA0106.3)"},
+              "optimal_offset": {"type": "integer", "description": "Optimal alignment offset between query and target"},
+              "pvalue": {"type": "number", "description": "P-value of the match"},
+              "evalue": {"type": "number", "description": "E-value of the match (corrected for multiple testing)"},
+              "qvalue": {"type": "number", "description": "Q-value (FDR-adjusted p-value)"},
+              "overlap": {"type": "integer", "description": "Number of overlapping positions in the alignment"},
+              "query_consensus": {"type": "string", "description": "Consensus sequence of the query motif"},
+              "target_consensus": {"type": "string", "description": "Consensus sequence of the matched motif"},
+              "orientation": {"type": "string", "description": "Orientation of the match: + (same) or - (reverse complement)"}
+            }
+          }
+        },
+        "total_matches": {"type": "integer", "description": "Number of matches found"},
+        "job_id": {"type": "string", "description": "MEME Suite job identifier"},
+        "target_database": {"type": "string", "description": "Target database used for comparison"},
+        "evalue_threshold": {"type": "number", "description": "E-value threshold used"},
+        "result_url": {"type": "string", "description": "URL to view full HTML results with alignment visualizations"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "tomtom_compare",
+        "query_motif": "MEME version 5\n\nALPHABET= ACGT\n\nstrands: + -\n\nBackground letter frequencies\nA 0.25 C 0.25 G 0.25 T 0.25\n\nMOTIF query_motif\nletter-probability matrix: alength= 4 w= 10 nsites= 100 E= 0\n0.30 0.20 0.20 0.30\n0.00 0.00 0.00 1.00\n0.00 0.00 1.00 0.00\n1.00 0.00 0.00 0.00\n0.00 0.00 0.00 1.00\n0.00 1.00 0.00 0.00\n1.00 0.00 0.00 0.00\n0.00 0.00 0.00 1.00\n0.00 0.00 1.00 0.00\n0.30 0.20 0.20 0.30",
+        "target_db": "JASPAR2026_vertebrates",
+        "evalue_threshold": 0.5
+      }
+    ]
+  },
+  {
+    "name": "MEME_list_databases",
+    "type": "MEMETool",
+    "description": "List available motif databases on the MEME Suite server for use with FIMO motif scanning and TOMTOM motif comparison. Returns categories (Eukaryote DNA, JASPAR, HOCOMOCO, CIS-BP, etc.) with database counts, plus shortcut names for popular databases that can be used directly with the TOMTOM target_db parameter. No remote API call is needed — this returns locally cached database metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_databases"],
+          "description": "Operation type"
+        },
+        "category_filter": {
+          "type": ["string", "null"],
+          "description": "Filter categories by name or description substring. E.g., 'JASPAR', 'human', 'RNA'. If null, returns all categories."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "description": "Available motif database categories",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "integer", "description": "Category ID for use in MEME Suite forms"},
+              "name": {"type": "string", "description": "Category name"},
+              "count": {"type": "integer", "description": "Number of databases in this category"},
+              "description": {"type": "string", "description": "Category description"}
+            }
+          }
+        },
+        "total_categories": {"type": "integer"},
+        "database_shortcuts": {
+          "type": "array",
+          "description": "Pre-configured database shortcuts for use with tomtom_compare target_db parameter",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string", "description": "Shortcut name to use as target_db value"},
+              "description": {"type": "string"},
+              "category_id": {"type": "integer"},
+              "listing_id": {"type": "integer"}
+            }
+          }
+        },
+        "note": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_databases"
+      },
+      {
+        "operation": "list_databases",
+        "category_filter": "JASPAR"
+      }
+    ]
+  }
+]

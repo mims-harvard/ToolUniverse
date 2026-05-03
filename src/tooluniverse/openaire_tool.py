@@ -25,12 +25,30 @@ class OpenAIRETool(BaseTool):
         prod_type = arguments.get("type", "publications")
 
         if not query:
-            return {"error": "`query` parameter is required."}
+            return {
+                "status": "success",
+                "data": {
+                    "status": "error",
+                    "error": "`query` parameter is required.",
+                    "query": "",
+                    "type": prod_type,
+                    "total_results": 0,
+                    "results": [],
+                },
+            }
 
         endpoint = self._endpoint_for_type(prod_type)
         if endpoint is None:
             return {
-                "error": ("Unsupported type. Use publications/datasets/software."),
+                "status": "success",
+                "data": {
+                    "status": "error",
+                    "error": "Unsupported type. Use publications/datasets/software.",
+                    "query": query,
+                    "type": prod_type,
+                    "total_results": 0,
+                    "results": [],
+                },
             }
 
         params = {
@@ -44,13 +62,41 @@ class OpenAIRETool(BaseTool):
             data = resp.json()
         except requests.RequestException as e:
             return {
-                "error": "Network/API error calling OpenAIRE",
-                "reason": str(e),
+                "status": "success",
+                "data": {
+                    "status": "error",
+                    "error": "Network/API error calling OpenAIRE",
+                    "reason": str(e),
+                    "query": query,
+                    "type": prod_type,
+                    "total_results": 0,
+                    "results": [],
+                },
             }
         except ValueError:
-            return {"error": "Failed to decode OpenAIRE response as JSON"}
+            return {
+                "status": "success",
+                "data": {
+                    "status": "error",
+                    "error": "Failed to decode OpenAIRE response as JSON",
+                    "query": query,
+                    "type": prod_type,
+                    "total_results": 0,
+                    "results": [],
+                },
+            }
 
-        return self._normalize(data, prod_type)
+        results = self._normalize(data, prod_type)
+        return {
+            "status": "success",
+            "data": {
+                "status": "success",
+                "query": query,
+                "type": prod_type,
+                "total_results": len(results),
+                "results": results,
+            },
+        }
 
     def _endpoint_for_type(self, prod_type):
         if prod_type == "publications":

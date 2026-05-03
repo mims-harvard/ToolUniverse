@@ -1,16 +1,20 @@
 import requests
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
 
 @register_tool("BioRxivTool")
 class BioRxivTool(BaseTool):
     """
-    Search bioRxiv preprints using bioRxiv's API (same interface as medRxiv).
+    Get bioRxiv or medRxiv preprint metadata by DOI.
+
+    This tool retrieves full metadata for a specific preprint using the bioRxiv API.
+    For searching preprints by keywords, use EuropePMC_search_articles with 'SRC:PPR' filter instead.
 
     Arguments:
-        query (str): Search term
-        max_results (int): Max results to return (default 10, max 200)
+        doi (str): bioRxiv or medRxiv DOI (e.g., '10.1101/2023.12.01.569554' or '2023.12.01.569554')
+        server (str): Server name - 'biorxiv' or 'medrxiv' (default: 'biorxiv')
     """
 
     def __init__(
@@ -20,97 +24,121 @@ class BioRxivTool(BaseTool):
     ):
         super().__init__(tool_config)
         self.base_url = base_url
+        self.session = requests.Session()
+        self.session.headers.update({"Accept": "application/json"})
 
     def run(self, arguments=None):
         arguments = arguments or {}
-        query = arguments.get("query")
-        max_results = int(arguments.get("max_results", 10))
-        if not query:
-            return {"error": "`query` parameter is required."}
-        return self._search(query, max_results)
+        doi = arguments.get("doi")
+        server = arguments.get("server", "biorxiv")
 
-    def _search(self, query, max_results):
-        # Use date range search for preprints
-        # Format: /biorxiv/{start_date}/{end_date}/{cursor}/json
-        from datetime import datetime, timedelta
+        if not doi:
+            return {
+                "status": "error",
+                "error": "`doi` parameter is required. Provide a bioRxiv DOI like '10.1101/2023.12.01.569554' or '2023.12.01.569554'.",
+                "data": None,
+            }
 
-        # Search last 365 days to get more comprehensive results
-        end_date = datetime.now()
-        start_date = end_date - timedelta(days=365)
+        # Validate server
+        if server not in ("biorxiv", "medrxiv"):
+            return {
+                "status": "error",
+                "error": f"Invalid server '{server}'. Must be 'biorxiv' or 'medrxiv'.",
+                "data": None,
+            }
 
-        url = (
-            f"{self.base_url}/biorxiv/"
-            f"{start_date.strftime('%Y-%m-%d')}/"
-            f"{end_date.strftime('%Y-%m-%d')}/0/json"
-        )
+        # Normalize DOI - allow partial DOIs like "2023.12.01.569554"
+        doi = str(doi).strip()
+        if not doi.startswith("10.1101/"):
+            doi = f"10.1101/{doi}"
+
+        # API format: /details/{server}/{doi}/na/json
+        url = f"{self.base_url}/{server}/{doi}/na/json"
 
         try:
-            resp = requests.get(url, timeout=20)
-            resp.raise_for_status()
+            resp = request_with_retry(
+                self.session, "GET", url, timeout=10, max_attempts=2
+            )
+
+            if resp.status_code == 404:
+                return {
+                    "status": "error",
+                    "error": f"Preprint not found with DOI: {doi}. Check the DOI is correct and the paper exists on {server}.",
+                    "data": None,
+                }
+
+            if resp.status_code != 200:
+                return {
+                    "status": "error",
+                    "error": f"{server} API returned status {resp.status_code}",
+                    "reason": resp.reason,
+                    "data": None,
+                }
+
             data = resp.json()
-        except requests.RequestException as e:
-            return {
-                "error": "Network/API error calling bioRxiv",
-                "reason": str(e),
-            }
-        except ValueError:
-            return {"error": "Failed to decode bioRxiv response as JSON"}
+            collection = data.get("collection", [])
 
-        results = []
-        # The API returns a dictionary with a 'collection' key
-        collection = data.get("collection", [])
-        if not isinstance(collection, list):
-            return {"error": "Unexpected API response format"}
+            if not collection:
+                return {
+                    "status": "error",
+                    "error": "No data returned from bioRxiv API",
+                    "data": None,
+                }
 
-        for item in collection:
-            title = item.get("title")
-            authors = item.get("authors", "")
-            if isinstance(authors, str):
-                authors = [a.strip() for a in authors.split(";") if a.strip()]
-            elif isinstance(authors, list):
-                authors = [str(a).strip() for a in authors if str(a).strip()]
+            # Get first (and only) result
+            item = collection[0]
+
+            # Parse authors string into list
+            authors_str = item.get("authors", "")
+            if isinstance(authors_str, str) and authors_str:
+                authors = [a.strip() for a in authors_str.split(";") if a.strip()]
             else:
                 authors = []
 
-            year = None
-            date = item.get("date")
-            if date and len(date) >= 4 and date[:4].isdigit():
-                year = int(date[:4])
+            # Build response with comprehensive metadata
+            doi_val = item.get("doi")
+            result = {
+                "doi": doi_val,
+                "title": item.get("title"),
+                "authors": authors,
+                "author_corresponding": item.get("author_corresponding"),
+                "author_corresponding_institution": item.get(
+                    "author_corresponding_institution"
+                ),
+                "abstract": item.get("abstract"),
+                "date": item.get("date"),
+                "version": item.get("version"),
+                "type": item.get("type"),
+                "license": item.get("license"),
+                "category": item.get("category"),
+                "published": item.get("published") or None,
+                "url": f"https://www.{server}.org/content/{doi_val}"
+                if doi_val
+                else None,
+                "pdf_url": f"https://www.{server}.org/content/{doi_val}.full.pdf"
+                if doi_val
+                else None,
+                "xml_url": item.get("jatsxml"),
+                "server": server,
+            }
 
-            doi = item.get("doi")
-            url = f"https://www.biorxiv.org/content/{doi}" if doi else None
+            return {"status": "success", "data": result}
 
-            # Filter by query if provided - search in both title and abstract
-            if query:
-                title_match = query.lower() in (title or "").lower()
-                abstract_match = (
-                    query.lower() in (item.get("abstract", "") or "").lower()
-                )
-                if not (title_match or abstract_match):
-                    continue
-
-            results.append(
-                {
-                    "title": title or "Title not available",
-                    "authors": (
-                        authors if authors else "Author information not available"
-                    ),
-                    "year": year,
-                    "doi": doi or "DOI not available",
-                    "url": url or "URL not available",
-                    "abstract": item.get("abstract", "Abstract not available"),
-                    "source": "bioRxiv",
-                    "data_quality": {
-                        "has_abstract": bool(
-                            item.get("abstract")
-                            and item.get("abstract") != "Abstract not available"
-                        ),
-                        "has_authors": bool(authors),
-                        "has_year": bool(year),
-                        "has_doi": bool(doi),
-                        "has_url": bool(url),
-                    },
-                }
-            )
-
-        return results[:max_results]
+        except requests.RequestException as e:
+            return {
+                "status": "error",
+                "error": f"Network error retrieving preprint: {str(e)}",
+                "data": None,
+            }
+        except ValueError:
+            return {
+                "status": "error",
+                "error": f"{server} API returned invalid JSON response",
+                "data": None,
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"Failed to retrieve preprint: {str(e)}",
+                "data": None,
+            }

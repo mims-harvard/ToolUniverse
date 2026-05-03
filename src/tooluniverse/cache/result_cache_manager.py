@@ -4,11 +4,13 @@ Result cache manager that coordinates in-memory and persistent storage.
 
 from __future__ import annotations
 
+import atexit
 import logging
 import os
 import queue
 import threading
 import time
+import weakref
 from dataclasses import dataclass
 from typing import Any, Dict, Iterator, Optional, Sequence
 
@@ -16,6 +18,22 @@ from .memory_cache import LRUCache, SingleFlight
 from .sqlite_backend import CacheEntry, PersistentCache
 
 logger = logging.getLogger(__name__)
+
+# Global registry for cleanup on exit
+_active_cache_managers: weakref.WeakSet["ResultCacheManager"] = weakref.WeakSet()
+
+
+def _cleanup_all_cache_managers():
+    """Cleanup all active cache managers on Python exit."""
+    for manager in list(_active_cache_managers):
+        try:
+            manager.close()
+        except Exception:
+            pass
+
+
+# Register cleanup function to run on Python exit
+atexit.register(_cleanup_all_cache_managers)
 
 
 @dataclass
@@ -61,6 +79,9 @@ class ResultCacheManager:
         self.singleflight = SingleFlight() if singleflight else None
         self._init_async_persistence(async_persist, async_queue_size)
 
+        # Register this instance for cleanup on exit
+        _active_cache_managers.add(self)
+
     # ------------------------------------------------------------------
     # Helper methods
     # ------------------------------------------------------------------
@@ -88,6 +109,8 @@ class ResultCacheManager:
 
         self._persist_queue: Optional["queue.Queue[tuple[str, Dict[str, Any]]]"] = None
         self._worker_thread: Optional[threading.Thread] = None
+        # Always initialize shutdown event for safe cleanup
+        self._shutdown_event = threading.Event()
 
         if not self.async_persist:
             return
@@ -118,7 +141,20 @@ class ResultCacheManager:
 
         entry = self._get_from_persistent(composed)
         if entry:
-            expires_at = entry.created_at + entry.ttl if entry.ttl else None
+            # Use expires_at from entry (stored in database) or calculate from ttl
+            expires_at = entry.expires_at
+            if expires_at is None and entry.ttl:
+                expires_at = entry.created_at + entry.ttl
+            # Check if entry has expired before returning
+            if expires_at and expires_at <= self._now():
+                # Entry has expired, delete from persistent cache and return None
+                if self.persistent:
+                    try:
+                        self.persistent.delete(composed)
+                    except Exception:
+                        pass
+                return None
+            # Entry is still valid, restore to memory cache and return
             self.memory.set(
                 composed,
                 CacheRecord(
@@ -158,12 +194,17 @@ class ResultCacheManager:
         )
 
         if self.persistent:
+            # Calculate expires_at and created_at here to ensure consistency
+            # between memory and persistent cache
+            now = self._now()
             payload = {
                 "composed": composed,
                 "value": value,
                 "namespace": namespace,
                 "version": version,
                 "ttl": effective_ttl,
+                "created_at": now,
+                "expires_at": expires_at,
             }
             if not self._schedule_persist("set", payload):
                 self._perform_persist_set(**payload)
@@ -287,6 +328,7 @@ class ResultCacheManager:
         return _DummyContext()
 
     def close(self):
+        """Close the cache manager and cleanup resources."""
         self.flush()
         self._shutdown_async_worker()
         if self.persistent:
@@ -294,6 +336,31 @@ class ResultCacheManager:
                 self.persistent.close()
             except Exception as exc:
                 logger.warning("Persistent cache close failed: %s", exc)
+
+        # Remove from global registry
+        _active_cache_managers.discard(self)
+
+    def __del__(self):
+        """Ensure cleanup happens even if close() is not called explicitly."""
+        try:
+            # Only shutdown if attributes exist (object not partially constructed)
+            if hasattr(self, "_shutdown_event"):
+                self._shutdown_event.set()
+            if hasattr(self, "_worker_thread") and self._worker_thread is not None:
+                if self._worker_thread.is_alive():
+                    # Signal shutdown and wait briefly
+                    if (
+                        hasattr(self, "_persist_queue")
+                        and self._persist_queue is not None
+                    ):
+                        try:
+                            self._persist_queue.put_nowait(("__STOP__", {}))
+                        except Exception:
+                            pass
+                    self._worker_thread.join(timeout=0.5)
+        except Exception:
+            # Ignore errors during destruction - Python is shutting down anyway
+            pass
 
     # ------------------------------------------------------------------
     # Async persistence helpers
@@ -320,27 +387,44 @@ class ResultCacheManager:
         if queue_ref is None:
             return
 
+        # Use shorter timeout for faster shutdown response
+        # Event.wait() can be interrupted immediately by setting the event
+        TIMEOUT = 0.5  # Check every 0.5 seconds for faster shutdown
+
         while True:
-            try:
-                op, payload = queue_ref.get()
-            except Exception:
-                continue
+            # Wait for shutdown event or timeout
+            # If shutdown is set, wait() returns immediately (True)
+            # Otherwise, wait up to TIMEOUT seconds
+            shutdown_signaled = self._shutdown_event.wait(timeout=TIMEOUT)
 
-            if op == "__STOP__":
-                queue_ref.task_done()
+            # Process all available queue items before checking shutdown
+            # Use non-blocking get to avoid blocking when shutdown is signaled
+            while True:
+                try:
+                    op, payload = queue_ref.get_nowait()
+                except queue.Empty:
+                    # No work available
+                    break
+
+                if op == "__STOP__":
+                    queue_ref.task_done()
+                    return
+
+                try:
+                    if op == "set":
+                        self._perform_persist_set(**payload)
+                    else:
+                        logger.warning("Unknown async cache operation: %s", op)
+                except Exception as exc:
+                    logger.warning("Async cache write failed: %s", exc)
+                    # Disable async persistence to avoid repeated failures
+                    self.async_persist = False
+                finally:
+                    queue_ref.task_done()
+
+            # Only break after processing all items if shutdown was signaled
+            if shutdown_signaled:
                 break
-
-            try:
-                if op == "set":
-                    self._perform_persist_set(**payload)
-                else:
-                    logger.warning("Unknown async cache operation: %s", op)
-            except Exception as exc:
-                logger.warning("Async cache write failed: %s", exc)
-                # Disable async persistence to avoid repeated failures
-                self.async_persist = False
-            finally:
-                queue_ref.task_done()
 
     def _perform_persist_set(
         self,
@@ -350,16 +434,22 @@ class ResultCacheManager:
         namespace: str,
         version: str,
         ttl: Optional[int],
+        created_at: Optional[float] = None,
+        expires_at: Optional[float] = None,
     ):
         if not self.persistent:
             return
         try:
+            # Pass created_at and expires_at to ensure consistency
+            # between memory and persistent cache
             self.persistent.set(
                 composed,
                 value,
                 namespace=namespace,
                 version=version,
                 ttl=ttl,
+                created_at=created_at,
+                expires_at=expires_at,
             )
         except Exception as exc:
             logger.warning("Persistent cache write failed: %s", exc)
@@ -367,19 +457,40 @@ class ResultCacheManager:
             raise
 
     def _shutdown_async_worker(self) -> None:
-        if not self.async_persist or self._persist_queue is None:
+        if not hasattr(self, "_worker_thread") or self._worker_thread is None:
             return
 
+        if not hasattr(self, "_persist_queue") or self._persist_queue is None:
+            return
+
+        # Signal shutdown first - this will cause worker to exit on next timeout check
+        if hasattr(self, "_shutdown_event"):
+            self._shutdown_event.set()
+
+        # Try to send stop message to worker thread (non-blocking)
         try:
             self._persist_queue.put_nowait(("__STOP__", {}))
         except queue.Full:
-            self._persist_queue.put(("__STOP__", {}))
+            # Queue is full - worker will exit due to shutdown_event being set
+            pass
+        except Exception:
+            # Queue might be closed or in invalid state - worker will exit due to shutdown_event
+            pass
 
-        if self._worker_thread is not None:
-            self._worker_thread.join(timeout=5)
+        # Wait for thread to finish with a shorter timeout to avoid test hangs
+        # Since we set the shutdown event, the worker should wake up within 1 second
+        if self._worker_thread.is_alive():
+            self._worker_thread.join(timeout=1.5)
+            if self._worker_thread.is_alive():
+                logger.debug(
+                    "Cache worker thread did not terminate within 1.5s timeout (this is normal for daemon threads)"
+                )
 
+        # Clean up references
         self._worker_thread = None
         self._persist_queue = None
+        if hasattr(self, "_shutdown_event"):
+            self._shutdown_event.clear()
 
 
 class _DummyContext:

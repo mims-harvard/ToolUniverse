@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_stop\\_use\\_info 模�
 #: efbb983631d04f38a9027c2ee0474bfe of
 #: tooluniverse.tools.FDA_get_drug_name_by_stop_use_info:1
 msgid "FDA_get_drug_name_by_stop_use_info"
-msgstr ""
+msgstr "FDA_根据停用信息获取药品名称"
 
 #: 826663c9e32f44cabc0f6e878cd8380b c558ea09beba4b67bbbc1e1e7e13d100 of
 #: tooluniverse.tools.FDA_get_drug_name_by_stop_use_info:3

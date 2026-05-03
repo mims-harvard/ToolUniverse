@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_bioservices\\_info 模块"
 #: 76637f9240a846ebaa56c0f93479a67f of
 #: tooluniverse.tools.get_bioservices_info:1
 msgid "get_bioservices_info"
-msgstr ""
+msgstr "获取_bioservices_信息"
 
 #: 43221a008d674d56b9f7cbbba9514274 53d7732fc5d54dad8493803b8d76767b of
 #: tooluniverse.tools.get_bioservices_info:3

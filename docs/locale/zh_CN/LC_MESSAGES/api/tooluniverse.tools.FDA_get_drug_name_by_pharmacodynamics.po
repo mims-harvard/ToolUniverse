@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_pharmacodynamics 模�
 #: 5eb64def3416466289bcdafb4f38f2bf of
 #: tooluniverse.tools.FDA_get_drug_name_by_pharmacodynamics:1
 msgid "FDA_get_drug_name_by_pharmacodynamics"
-msgstr ""
+msgstr "FDA_根据药效学获取药物名称"
 
 #: aaadcfb79e9d4cb0bf83b2809e0505c8 f933b375dd2b47f0861a1852d87ab4cf of
 #: tooluniverse.tools.FDA_get_drug_name_by_pharmacodynamics:3

@@ -359,7 +359,7 @@ class TestWHOGuidelinesTool:
                 assert 'is_guideline' in guideline
                 assert 'official' in guideline
                 assert guideline['source'] == 'WHO'
-                assert guideline['official'] == True
+                assert guideline['official'] is True
         else:
             # Error case
             assert 'error' in result

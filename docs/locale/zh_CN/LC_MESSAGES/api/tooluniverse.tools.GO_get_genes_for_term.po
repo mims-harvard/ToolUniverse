@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.GO\\_get\\_genes\\_for\\_term 模块"
 #: d63805cd79664ed480d2ed4941b393d1 of
 #: tooluniverse.tools.GO_get_genes_for_term:1
 msgid "GO_get_genes_for_term"
-msgstr ""
+msgstr "GO_get_genes_for_term 获取指定术语的基因"
 
 #: 86e4d1822a7c4ea095b8f4c97d03adcb 9c3ea26ed6c74d6ab907a40f4393d32f of
 #: tooluniverse.tools.GO_get_genes_for_term:3

@@ -17,7 +17,7 @@ def HPA_get_comprehensive_gene_details_by_ensembl_id(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed in-depth information from gene page using Ensembl Gene ID, including image URLs, ant...
 
@@ -40,19 +40,25 @@ def HPA_get_comprehensive_gene_details_by_ensembl_id(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "ensembl_id": ensembl_id,
+            "include_images": include_images,
+            "include_antibodies": include_antibodies,
+            "include_expression": include_expression,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "HPA_get_comprehensive_gene_details_by_ensembl_id",
-            "arguments": {
-                "ensembl_id": ensembl_id,
-                "include_images": include_images,
-                "include_antibodies": include_antibodies,
-                "include_expression": include_expression,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

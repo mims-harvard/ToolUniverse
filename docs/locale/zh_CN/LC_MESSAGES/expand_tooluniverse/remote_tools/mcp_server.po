@@ -120,7 +120,7 @@ msgstr "Docker 部署"
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:361
 #: 0f6f9577038c40d7b2a333003c35aaf6
 msgid "**Dockerfile:** .. code-block:: dockerfile"
-msgstr ""
+msgstr "**Dockerfile：** .. code-block:: dockerfile"
 
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:364
 #: 93f559ca16364f6c9b31bd26b45a2d1a
@@ -130,7 +130,7 @@ msgstr ""
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:366
 #: ce8eb469bcb249e8a64f26ff03271387
 msgid "WORKDIR /app"
-msgstr ""
+msgstr "工作目录 /app"
 
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:368
 #: a42558a828e3436885734162402a6b08
@@ -158,7 +158,7 @@ msgstr ""
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:377
 #: 2ce2bec57f094ea6b02d76ed32c2ece7
 msgid "**docker-compose.yml:** .. code-block:: yaml"
-msgstr ""
+msgstr "**docker-compose.yml：** .. code-block:: yaml"
 
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:380
 #: 7c9e9baef858410c942503b7401b96fb
@@ -285,7 +285,7 @@ msgstr "quantity\": 1, \"size\": \"基础"
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:420
 #: c2a6ed192e4b46a18e42e5837e9ea675
 msgid "**AWS Lambda (serverless.yml):** .. code-block:: yaml"
-msgstr ""
+msgstr "**AWS Lambda（serverless.yml）：** .. code-block:: yaml"
 
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:423
 #: a88139b568264ce3a2be1cb084eac115
@@ -313,12 +313,14 @@ msgstr "功能："
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:431
 #: 96c9c2a78d6b413bb8ef3bcae0ab716b
 msgid "api:"
-msgstr ""
+msgstr "api："
 
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:432
 #: ab8b60275cba4de5a0d544ae898f0a4d
 msgid "handler: server.handler events:"
 msgstr ""
+"handler: server.handler  \n"
+"events: 事件："
 
 #: ../../expand_tooluniverse/remote_tools/mcp_server.rst:434
 #: a6e733420cf74c56b7612ee10dac4917

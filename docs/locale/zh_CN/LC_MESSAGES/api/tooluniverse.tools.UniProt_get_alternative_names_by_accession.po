@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_alternative\\_names\\_by\\_accession 
 #: ec0e23c8d83941c385062eb93e859a81 of
 #: tooluniverse.tools.UniProt_get_alternative_names_by_accession:1
 msgid "UniProt_get_alternative_names_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取别名"
 
 #: c87ae5e49e41441489484195b40500ab e4d8bdd2b8df4d86b919638c55eefa78 of
 #: tooluniverse.tools.UniProt_get_alternative_names_by_accession:3

@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_molvs\\_info 模块"
 
 #: 091bdbb63d48458aa1cc19a46349a093 of tooluniverse.tools.get_molvs_info:1
 msgid "get_molvs_info"
-msgstr ""
+msgstr "get_molvs_info 获取分子信息"
 
 #: 07ee498b32d04f4bb6227295815a76b2 12b93eef38724d83ada138391a01a7bf of
 #: tooluniverse.tools.get_molvs_info:3

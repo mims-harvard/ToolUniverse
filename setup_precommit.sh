@@ -1,10 +1,18 @@
 #!/bin/bash
-# Auto-setup script for pre-commit hooks
-# This script automatically installs pre-commit hooks when users clone the repository
+# Auto-setup script for pre-commit hooks and development environment
+# Run this after cloning the repository.
+#
+# What it does:
+#   1. Installs the pre-commit framework and hooks
 
 set -e
 
-echo "🔧 Setting up pre-commit hooks for ToolUniverse..."
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$REPO_ROOT"
+
+echo "🔧 Setting up development environment for ToolUniverse..."
+
+# --- 1. Pre-commit hooks ---
 
 # Check if .pre-commit-config.yaml exists
 if [ ! -f ".pre-commit-config.yaml" ]; then
@@ -26,12 +34,7 @@ echo "Installing pre-commit hooks..."
 pre-commit install
 echo "✅ pre-commit hooks installed successfully"
 
-# Update hooks to latest versions
-echo "Updating pre-commit hooks..."
-pre-commit autoupdate
-echo "✅ pre-commit hooks updated successfully"
-
 echo ""
-echo "🎉 Pre-commit setup completed successfully!"
+echo "🎉 Setup completed successfully!"
 echo "📝 Pre-commit hooks will now run automatically on every commit."
 echo "💡 To run hooks manually: pre-commit run --all-files"

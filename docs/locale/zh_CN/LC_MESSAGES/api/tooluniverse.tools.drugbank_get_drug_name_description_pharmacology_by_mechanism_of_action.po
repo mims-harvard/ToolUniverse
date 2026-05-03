@@ -32,7 +32,7 @@ msgstr ""
 #: e103af74defd44009d08a3863b7e8bd9 of
 #: tooluniverse.tools.drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action:1
 msgid "drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action"
-msgstr ""
+msgstr "drugbank_根据作用机制获取药物名称、描述及药理信息"
 
 #: 1b6a7aa172e44dc3a07bdba534ce47a3 1f81de86b5be4174a41304e21ef9ca63 of
 #: tooluniverse.tools.drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action:3

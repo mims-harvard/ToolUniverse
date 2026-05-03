@@ -1,0 +1,152 @@
+[
+  {
+    "name": "SRA_search_experiments",
+    "description": "Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by keyword, organism, library strategy, or sequencing platform. SRA is the largest repository of raw sequencing data, containing data from Illumina, PacBio, Oxford Nanopore, and other platforms. Library strategies include: RNA-Seq, WGS (whole genome), WXS (whole exome), ChIP-Seq, ATAC-seq, Bisulfite-Seq, AMPLICON, scRNA-Seq, and more.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords (e.g., 'human gut metagenome', 'BRCA1 RNA-Seq', 'single cell lung cancer')"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name to filter by (e.g., 'Homo sapiens', 'Mus musculus', 'human gut metagenome')"
+        },
+        "library_strategy": {
+          "type": "string",
+          "description": "Sequencing strategy filter (e.g., 'RNA-Seq', 'WGS', 'WXS', 'ChIP-Seq', 'ATAC-seq', 'Bisulfite-Seq', 'AMPLICON')"
+        },
+        "platform": {
+          "type": "string",
+          "description": "Sequencing platform filter (e.g., 'ILLUMINA', 'PACBIO_SMRT', 'OXFORD_NANOPORE', 'ION_TORRENT')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (1-50, default 10)",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search"
+    },
+    "type": "SRATool",
+    "test_examples": [
+      {"query": "BRCA1", "organism": "Homo sapiens", "library_strategy": "RNA-Seq", "limit": 3},
+      {"organism": "human gut metagenome", "limit": 3},
+      {"query": "single cell kidney", "platform": "ILLUMINA", "limit": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "query_used": {"type": "string"},
+                "experiments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "uid": {"type": "string"},
+                      "title": {"type": ["string", "null"]},
+                      "organism": {"type": ["string", "null"]},
+                      "taxid": {"type": ["string", "null"]},
+                      "platform": {"type": ["string", "null"]},
+                      "library_strategy": {"type": ["string", "null"]},
+                      "library_source": {"type": ["string", "null"]},
+                      "library_layout": {"type": ["string", "null"]},
+                      "total_runs": {"type": ["string", "null"]},
+                      "total_spots": {"type": ["string", "null"]},
+                      "total_bases": {"type": ["string", "null"]},
+                      "experiment_accession": {"type": ["string", "null"]},
+                      "study_accession": {"type": ["string", "null"]},
+                      "bioproject": {"type": ["string", "null"]},
+                      "submitter": {"type": ["string", "null"]},
+                      "runs": {"type": ["array", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SRA_get_experiment",
+    "description": "Get detailed metadata for a specific SRA experiment by accession number. Returns experiment title, organism, sequencing platform, library information, study details, and run statistics. Accepts SRA experiment accessions (SRX/ERX/DRX), study accessions (SRP/ERP/DRP), or sample accessions (SRS/ERS/DRS).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "SRA accession number (e.g., 'SRX26927637', 'SRP000001', 'SRS000001')"
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "operation": "get_experiment"
+    },
+    "type": "SRATool",
+    "test_examples": [
+      {"accession": "SRX515811"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uid": {"type": "string"},
+                "title": {"type": ["string", "null"]},
+                "organism": {"type": ["string", "null"]},
+                "taxid": {"type": ["string", "null"]},
+                "platform": {"type": ["string", "null"]},
+                "library_strategy": {"type": ["string", "null"]},
+                "library_source": {"type": ["string", "null"]},
+                "library_selection": {"type": ["string", "null"]},
+                "library_layout": {"type": ["string", "null"]},
+                "total_runs": {"type": ["string", "null"]},
+                "total_spots": {"type": ["string", "null"]},
+                "total_bases": {"type": ["string", "null"]},
+                "experiment_accession": {"type": ["string", "null"]},
+                "study_accession": {"type": ["string", "null"]},
+                "study_name": {"type": ["string", "null"]},
+                "bioproject": {"type": ["string", "null"]},
+                "submitter": {"type": ["string", "null"]},
+                "runs": {"type": ["array", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

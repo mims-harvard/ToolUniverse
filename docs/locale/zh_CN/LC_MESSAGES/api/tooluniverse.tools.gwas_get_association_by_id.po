@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_get\\_association\\_by\\_id 模块"
 #: f1d2edb92b244cca9f523b34a4bf9df5 of
 #: tooluniverse.tools.gwas_get_association_by_id:1
 msgid "gwas_get_association_by_id"
-msgstr ""
+msgstr "gwas_get_association_by_id 获取关联信息（通过ID）"
 
 #: d0d20d39957d45c1af2157d6fc3500d3 f3673db652014da98a9e29c45137a25d of
 #: tooluniverse.tools.gwas_get_association_by_id:3

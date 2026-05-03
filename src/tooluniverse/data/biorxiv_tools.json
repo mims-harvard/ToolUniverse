@@ -1,74 +1,108 @@
 [
   {
     "type": "BioRxivTool",
-    "name": "BioRxiv_search_preprints",
-    "description": "Search bioRxiv preprints using the public bioRxiv API. Returns preprints with title, authors, year, DOI, and URL.",
+    "name": "BioRxiv_get_preprint",
+    "description": "Get full metadata for a specific bioRxiv or medRxiv preprint by its DOI. Returns comprehensive metadata including title, authors, abstract, publication date, version, category, corresponding author, funding information, and URLs (HTML, PDF, XML). Response time: <1 second. Use when you have a bioRxiv DOI (format: 10.1101/YYYY.MM.DD.XXXXXX). To SEARCH for preprints by keywords, use EuropePMC_search_articles with 'SRC:PPR' filter (fast, relevance-ranked), or web_search with 'site:biorxiv.org'. bioRxiv API does not support text search.",
     "parameter": {
       "type": "object",
       "properties": {
-        "query": {
+        "doi": {
           "type": "string",
-          "description": "Search query for bioRxiv preprints. Use keywords separated by spaces to refine your search."
+          "description": "bioRxiv or medRxiv DOI. Can be full DOI (e.g., '10.1101/2023.12.01.569554') or just the numeric part after '10.1101/' (e.g., '2023.12.01.569554'). Find DOIs using EuropePMC_search_articles, web_search, or from paper citations."
         },
-        "max_results": {
-          "type": "integer",
-          "description": "Maximum number of preprints to return. Default is 10, maximum is 200.",
-          "default": 10
+        "server": {
+          "type": "string",
+          "description": "Server to query: 'biorxiv' for bioRxiv preprints or 'medrxiv' for medRxiv preprints. Default is 'biorxiv'.",
+          "default": "biorxiv",
+          "enum": ["biorxiv", "medrxiv"]
         }
       },
-      "required": [
-        "query",
-        "max_results"
-      ]
+      "required": ["doi"]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of bioRxiv preprints matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the preprint"
+      "type": "object",
+      "description": "Full preprint metadata from bioRxiv/medRxiv",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "Digital Object Identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the preprint"
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "authors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of author names"
-          },
-          "year": {
-            "type": "integer",
-            "description": "Publication year"
-          },
-          "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the preprint on bioRxiv"
-          },
-          "abstract": {
-            "type": "string",
-            "description": "Abstract of the preprint"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source identifier (always 'bioRxiv')"
-          }
+          "description": "List of author names"
+        },
+        "author_corresponding": {
+          "type": ["string", "null"],
+          "description": "Corresponding author name"
+        },
+        "author_corresponding_institution": {
+          "type": ["string", "null"],
+          "description": "Corresponding author's institution"
+        },
+        "abstract": {
+          "type": "string",
+          "description": "Full abstract text"
+        },
+        "date": {
+          "type": "string",
+          "description": "Publication date (YYYY-MM-DD format)"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version number of the preprint"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of submission (e.g., 'new results', 'confirmatory')"
+        },
+        "license": {
+          "type": "string",
+          "description": "License type (e.g., 'cc_by', 'cc0')"
+        },
+        "category": {
+          "type": "string",
+          "description": "Subject category (e.g., 'microbiology', 'neuroscience')"
+        },
+        "published": {
+          "type": ["string", "null"],
+          "description": "Published DOI if the preprint has been published in a journal"
+        },
+        "url": {
+          "type": ["string", "null"],
+          "description": "URL to the preprint on bioRxiv/medRxiv"
+        },
+        "pdf_url": {
+          "type": ["string", "null"],
+          "description": "Direct PDF download URL"
+        },
+        "xml_url": {
+          "type": ["string", "null"],
+          "description": "JATS XML source URL"
+        },
+        "server": {
+          "type": "string",
+          "description": "Server the preprint is hosted on ('biorxiv' or 'medrxiv')"
         }
       }
     },
     "test_examples": [
       {
-        "query": "genetics",
-        "max_results": 2
+        "doi": "10.1101/2023.12.01.569554"
       },
       {
-        "query": "CRISPR",
-        "max_results": 1
+        "doi": "2023.12.01.569554",
+        "server": "biorxiv"
+      },
+      {
+        "doi": "10.1101/2021.04.29.21256344",
+        "server": "medrxiv"
       }
     ]
   }

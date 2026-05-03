@@ -131,7 +131,7 @@ Create ``main.py`` in the same directory:
    Input:  'ToolUniverse'
    Output: 'esrevinUlooT'
 
-That's It! 🎉
+That's It! 
 --------------
 
 You've successfully created and used your first ToolUniverse tool! Here's what happened:
@@ -169,22 +169,22 @@ Next Steps
 
 Now that you have a working tool, you can:
 
-**📚 Learn More:**
-- :doc:`local_tools/tutorial` - Comprehensive local tool development
+** Learn More:**
+- :doc:`local_tools/local_tools_tutorial` - Comprehensive local tool development
 - :doc:`remote_tools/tutorial` - Create remote tools and MCP servers
 - Review the tool type comparison table in :doc:`contributing/index`
 
-**🎁 Contribute to Community:**
+** Contribute to Community:**
 - :doc:`contributing/local_tools` - Submit your tool to ToolUniverse (requires additional steps)
 - :doc:`contributing/remote_tools` - Submit remote tools to the community
 
-**🔧 Advanced Features:**
+** Advanced Features:**
 - Add input validation with ``validate_input()`` method
 - Implement error handling and retry logic
 - Add caching and performance optimizations
 - Create more complex tools with multiple operations
 
-**💡 Pro Tips:**
+** Pro Tips:**
 - Start simple and add complexity gradually
 - Test your tools thoroughly before contributing
 - Use meaningful parameter names and descriptions
@@ -208,4 +208,4 @@ A: Add a ``validate_input()`` method to your tool class for custom validation.
 **Q: Can I make this a remote tool?**
 A: Yes! See :doc:`remote_tools/tutorial` for creating MCP servers.
 
-Ready to build something amazing? Let's go! 🚀
+Ready to build something amazing? Let's go! 

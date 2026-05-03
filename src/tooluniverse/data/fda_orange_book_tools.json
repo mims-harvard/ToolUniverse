@@ -1,0 +1,285 @@
+[
+  {
+    "type": "FDAOrangeBookTool",
+    "name": "FDA_OrangeBook_search_drug",
+    "description": "Search FDA Drugs@FDA database by brand name, generic name, or application number. Returns approval status, products, and basic regulatory info. Example: brand_name='ADVIL' finds all Advil products with NDA numbers.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "search_drug",
+          "description": "Operation type (fixed)"
+        },
+        "brand_name": {
+          "type": "string",
+          "description": "Brand/trade name of drug (e.g., 'ADVIL', 'LIPITOR')"
+        },
+        "generic_name": {
+          "type": "string",
+          "description": "Generic/active ingredient name (e.g., 'IBUPROFEN', 'ATORVASTATIN')"
+        },
+        "application_number": {
+          "type": "string",
+          "description": "FDA application number (e.g., 'NDA020402', 'ANDA078394')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (1-100, default 10)",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "drugs": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "brand_name": "ADVIL",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "FDAOrangeBookTool",
+    "name": "FDA_OrangeBook_get_approval_history",
+    "description": "Get complete approval history for a drug application including original approval date, supplements, and review documents. Returns submission timeline and links to approval letters/labels. Example: NDA020402 shows all Advil approval actions.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "application_number"
+      ],
+      "properties": {
+        "operation": {
+          "const": "get_approval_history",
+          "description": "Operation type (fixed)"
+        },
+        "application_number": {
+          "type": "string",
+          "description": "FDA application number (e.g., 'NDA020402')"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "application_number": {
+          "type": "string"
+        },
+        "sponsor_name": {
+          "type": "string"
+        },
+        "original_approval_date": {
+          "type": "string"
+        },
+        "submissions": {
+          "type": "array"
+        },
+        "submission_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "application_number": "NDA020402"
+      }
+    ]
+  },
+  {
+    "type": "FDAOrangeBookTool",
+    "name": "FDA_OrangeBook_get_patent_info",
+    "description": "Get patent information for approved drugs. Note: Full patent details (numbers, expiration dates) require Orange Book data files download. Returns guidance on accessing complete patent data. Use for regulatory exclusivity planning.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "get_patent_info",
+          "description": "Operation type (fixed)"
+        },
+        "application_number": {
+          "type": "string",
+          "description": "FDA application number"
+        },
+        "brand_name": {
+          "type": "string",
+          "description": "Brand name of drug"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "note": {
+          "type": "string"
+        },
+        "download_url": {
+          "type": "string"
+        },
+        "drugs": {
+          "type": "array"
+        },
+        "recommendation": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "brand_name": "ADVIL"
+      }
+    ]
+  },
+  {
+    "type": "FDAOrangeBookTool",
+    "name": "FDA_OrangeBook_get_exclusivity",
+    "description": "Get drug exclusivity information (NCE, orphan, pediatric). Note: Specific expiration dates require Orange Book data files. Returns exclusivity types (5-year NCE, 3-year clinical study, 7-year orphan, 180-day generic). Use for generic launch planning.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "get_exclusivity",
+          "description": "Operation type (fixed)"
+        },
+        "application_number": {
+          "type": "string",
+          "description": "FDA application number"
+        },
+        "brand_name": {
+          "type": "string",
+          "description": "Brand name of drug"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "note": {
+          "type": "string"
+        },
+        "download_url": {
+          "type": "string"
+        },
+        "drugs": {
+          "type": "array"
+        },
+        "exclusivity_types": {
+          "type": "array"
+        },
+        "recommendation": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "brand_name": "ADVIL"
+      }
+    ]
+  },
+  {
+    "type": "FDAOrangeBookTool",
+    "name": "FDA_OrangeBook_check_generic_availability",
+    "description": "Check if generic versions are FDA-approved for a brand-name drug. Returns reference drug info, approved generics count, and TE codes. Example: Query 'LIPITOR' to find atorvastatin generics. Use for competitive landscape analysis.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "check_generic_availability",
+          "description": "Operation type (fixed)"
+        },
+        "brand_name": {
+          "type": "string",
+          "description": "Brand name to check for generics"
+        },
+        "generic_name": {
+          "type": "string",
+          "description": "Generic name to check"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "reference_drugs": {
+          "type": "array"
+        },
+        "reference_count": {
+          "type": "integer"
+        },
+        "generic_drugs": {
+          "type": "array"
+        },
+        "generic_count": {
+          "type": "integer"
+        },
+        "generics_available": {
+          "type": "boolean"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "brand_name": "ADVIL"
+      }
+    ]
+  },
+  {
+    "type": "FDAOrangeBookTool",
+    "name": "FDA_OrangeBook_get_te_code",
+    "description": "Get therapeutic equivalence (TE) codes for drug products. AB=bioequivalent/substitutable, AT=topical equivalent, B*=NOT therapeutically equivalent. Returns TE codes with interpretation guide. Use for generic substitution decisions.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "get_te_code",
+          "description": "Operation type (fixed)"
+        },
+        "brand_name": {
+          "type": "string",
+          "description": "Brand name to check TE codes"
+        },
+        "generic_name": {
+          "type": "string",
+          "description": "Generic name to check TE codes"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "te_codes": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "te_code_guide": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "brand_name": "ADVIL"
+      }
+    ]
+  }
+]

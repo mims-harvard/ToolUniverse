@@ -1,0 +1,441 @@
+[
+  {
+    "type": "KEGGSearchPathway",
+    "name": "kegg_search_pathway",
+    "description": "Search KEGG pathways by keyword. Returns pathway IDs and descriptions matching the search term.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Search keyword for pathway names or descriptions (e.g., 'diabetes', 'metabolism')"
+        }
+      },
+      "required": [
+        "keyword"
+      ]
+    },
+    "fields": {
+      "endpoint": "/find/pathway",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Wrapped response with status, data (pathway list), url, count",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathway_id": {
+                    "type": "string",
+                    "description": "KEGG pathway identifier"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Pathway description"
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "keyword": "diabetes"
+      },
+      {
+        "keyword": "metabolism"
+      }
+    ],
+    "label": [
+      "KEGG",
+      "Pathway",
+      "Search"
+    ],
+    "metadata": {
+      "tags": [
+        "pathway",
+        "metabolism",
+        "search"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "type": "KEGGGetPathwayInfo",
+    "name": "kegg_get_pathway_info",
+    "description": "Get detailed pathway information from KEGG by pathway ID. Returns pathway data including genes, compounds, and reactions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pathway_id": {
+          "type": "string",
+          "description": "KEGG pathway identifier (e.g., 'hsa00010', 'path:hsa00010')"
+        }
+      },
+      "required": [
+        "pathway_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "/get",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "KEGG pathway information",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Pathway information",
+          "properties": {
+            "pathway_id": {
+              "type": "string",
+              "description": "KEGG pathway identifier"
+            },
+            "raw_data": {
+              "type": "string",
+              "description": "Raw pathway data from KEGG"
+            },
+            "line_count": {
+              "type": "integer",
+              "description": "Number of data lines"
+            }
+          }
+        },
+        "url": {
+          "type": "string",
+          "description": "API URL used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pathway_id": "hsa00010"
+      },
+      {
+        "pathway_id": "hsa04910"
+      }
+    ],
+    "label": [
+      "KEGG",
+      "Pathway",
+      "Information"
+    ],
+    "metadata": {
+      "tags": [
+        "pathway",
+        "details",
+        "genes"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "type": "KEGGFindGenes",
+    "name": "kegg_find_genes",
+    "description": "Find genes in KEGG database by keyword. Can search across all organisms or within a specific organism.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Search keyword for gene names or descriptions"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism code (e.g., 'hsa' for human, 'mmu' for mouse). Optional - searches all organisms if not specified",
+          "default": ""
+        }
+      },
+      "required": [
+        "keyword"
+      ]
+    },
+    "fields": {
+      "endpoint": "/find/genes",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Wrapped response with status, data (gene list), url, count",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_id": {
+                    "type": "string",
+                    "description": "KEGG gene identifier"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Gene description"
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "keyword": "insulin"
+      },
+      {
+        "keyword": "glucose",
+        "organism": "hsa"
+      }
+    ],
+    "label": [
+      "KEGG",
+      "Gene",
+      "Search"
+    ],
+    "metadata": {
+      "tags": [
+        "gene",
+        "search",
+        "organism"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "type": "KEGGGetGeneInfo",
+    "name": "kegg_get_gene_info",
+    "description": "Get detailed gene information from KEGG by gene ID. Returns gene data including sequence, function, and pathway associations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "KEGG gene identifier (e.g., 'hsa:348', 'hsa:3480')"
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "/get",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "KEGG gene information",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Gene information",
+          "properties": {
+            "gene_id": {
+              "type": "string",
+              "description": "KEGG gene identifier"
+            },
+            "raw_data": {
+              "type": "string",
+              "description": "Raw gene data from KEGG"
+            },
+            "line_count": {
+              "type": "integer",
+              "description": "Number of data lines"
+            }
+          }
+        },
+        "url": {
+          "type": "string",
+          "description": "API URL used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_id": "hsa:348"
+      },
+      {
+        "gene_id": "hsa:3480"
+      }
+    ],
+    "label": [
+      "KEGG",
+      "Gene",
+      "Information"
+    ],
+    "metadata": {
+      "tags": [
+        "gene",
+        "details",
+        "sequence"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "type": "KEGGListOrganisms",
+    "name": "kegg_list_organisms",
+    "description": "List all available organisms in the KEGG database. Returns organism codes, names, and descriptions.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/list/organism",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Wrapped response with status, data (organism list), url, count",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "organism_code": {
+                    "type": "string",
+                    "description": "KEGG organism code (e.g., 'hsa', 'mmu')"
+                  },
+                  "organism_name": {
+                    "type": "string",
+                    "description": "Organism scientific name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Organism description"
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ],
+    "label": [
+      "KEGG",
+      "Organism",
+      "List"
+    ],
+    "metadata": {
+      "tags": [
+        "organism",
+        "list",
+        "taxonomy"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 2 seconds"
+    }
+  }
+]

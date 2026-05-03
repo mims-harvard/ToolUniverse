@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.MedlinePlus\\_get\\_genetics\\_condition\\_by\\_name 
 #: f7da3f27da0941ed95898d20e3764f8b of
 #: tooluniverse.tools.MedlinePlus_get_genetics_condition_by_name:1
 msgid "MedlinePlus_get_genetics_condition_by_name"
-msgstr ""
+msgstr "MedlinePlus_按名称获取遗传病状况"
 
 #: cb8451fc44a34543a6d689e8172b77f8 ddf9f44f7e2f41c78b259caa05eab83d of
 #: tooluniverse.tools.MedlinePlus_get_genetics_condition_by_name:3

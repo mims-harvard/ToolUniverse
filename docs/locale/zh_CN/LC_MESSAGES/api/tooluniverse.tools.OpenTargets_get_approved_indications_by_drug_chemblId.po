@@ -32,7 +32,7 @@ msgstr ""
 #: a63949110874451da97bb6723b4d4f33 of
 #: tooluniverse.tools.OpenTargets_get_approved_indications_by_drug_chemblId:1
 msgid "OpenTargets_get_approved_indications_by_drug_chemblId"
-msgstr ""
+msgstr "OpenTargets_根据药物ChemblId获取已批准适应症"
 
 #: 185d4d084612489cbe897d732bb04f25 e82a7275a8c141fea8bd07235955147c of
 #: tooluniverse.tools.OpenTargets_get_approved_indications_by_drug_chemblId:3

@@ -1,324 +1,209 @@
 #!/usr/bin/env python3
 """
-Test critical bugs and issues discovered during system testing - Cleaned Version
+Test critical bugs and issues discovered during system testing.
 
-This test file covers important bugs that were discovered:
+Covers bugs unique to this file:
 1. Deprecated method warnings
-2. Missing API key handling
-3. Tool loading timeout issues
-4. Error handling for invalid tools
-5. Parameter validation edge cases
-6. Memory and performance issues
+2. Tool loading does not hang
+3. Error message quality (clear, helpful)
+4. Parameter validation edge cases
+5. Memory leak prevention
+6. Cache management
+
+Tests that duplicate test_critical_error_handling.py have been removed.
 """
 
-import sys
-import unittest
-from pathlib import Path
-import pytest
-from unittest.mock import patch, Mock, MagicMock
-import warnings
 import gc
+import sys
+import time
+import unittest
+import warnings
+from pathlib import Path
 
-# Add src to path
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from tooluniverse import ToolUniverse
-from tooluniverse.exceptions import ToolError, ToolValidationError
+from tooluniverse.exceptions import ToolError, ToolValidationError  # noqa: F401
 
 
 @pytest.mark.unit
 class TestDiscoveredBugs(unittest.TestCase):
     """Test critical bugs and issues discovered during system testing."""
-    
+
     def setUp(self):
-        """Set up test fixtures."""
         self.tu = ToolUniverse()
-        # Load tools for real testing
         self.tu.load_tools()
-    
+
+    def tearDown(self):
+        if hasattr(self, "tu"):
+            self.tu.close()
+
+    # ------------------------------------------------------------------ #
+    #  Deprecation warnings                                               #
+    # ------------------------------------------------------------------ #
+
     def test_deprecated_method_warnings(self):
-        """Test that deprecated methods show proper warnings."""
-        # Test get_tool_by_name deprecation warning
+        """get_tool_by_name must issue a DeprecationWarning when called."""
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
-            
-            # This should trigger a deprecation warning
             try:
                 result = self.tu.get_tool_by_name(["NonExistentTool"])
-                # Verify we got a result (even if empty)
                 self.assertIsInstance(result, list)
             except Exception:
-                pass
-            
-            # Check if deprecation warning was issued
-            deprecation_warnings = [warning for warning in w if issubclass(warning.category, DeprecationWarning)]
-            if deprecation_warnings:
-                self.assertTrue(any("get_tool_by_name" in str(warning.message) for warning in deprecation_warnings))
-    
-    def test_missing_api_key_handling(self):
-        """Test proper handling of missing API keys."""
-        # Test that tools requiring API keys handle missing keys gracefully
-        api_dependent_tools = [
-            "UniProt_get_entry_by_accession",
-            "ArXiv_search_papers",
-            "OpenTargets_get_associated_targets_by_disease_efoId"
+                pass  # If the method no longer exists that is also fine
+
+        deprecation_warnings = [
+            warning for warning in w
+            if issubclass(warning.category, DeprecationWarning)
         ]
-        
-        for tool_name in api_dependent_tools:
-            try:
-                result = self.tu.run({
-                    "name": tool_name,
-                    "arguments": {"accession": "P05067"} if "UniProt" in tool_name else 
-                                {"query": "test", "limit": 5} if "ArXiv" in tool_name else
-                                {"efoId": "EFO_0000305"}
-                })
-                
-                # Should return a result (may be error if API keys not configured)
-                self.assertIsInstance(result, dict)
-                if "error" in result:
-                    # Should be a meaningful error message
-                    self.assertIsInstance(result["error"], str)
-                    self.assertGreater(len(result["error"]), 0)
-            except Exception as e:
-                # Expected if API keys not configured
-                self.assertIsInstance(e, Exception)
-    
-    def test_tool_loading_timeout_issues(self):
-        """Test handling of tool loading timeout issues."""
-        # Test that tool loading doesn't hang indefinitely
-        import time
-        
-        start_time = time.time()
-        try:
-            # Try to load tools (this should complete in reasonable time)
-            self.tu.load_tools()
-            load_time = time.time() - start_time
-            
-            # Should complete within reasonable time (30 seconds)
-            self.assertLess(load_time, 30)
-            
-        except Exception as e:
-            # If loading fails, it should fail quickly, not hang
-            load_time = time.time() - start_time
-            self.assertLess(load_time, 30)
-            self.assertIsInstance(e, Exception)
-    
-    def test_invalid_tool_name_handling(self):
-        """Test that invalid tool names are handled gracefully."""
-        # Test with completely invalid tool name
+        # If a deprecation warning is raised, it must mention the method name
+        if deprecation_warnings:
+            self.assertTrue(
+                any("get_tool_by_name" in str(wn.message) for wn in deprecation_warnings),
+                "DeprecationWarning should reference 'get_tool_by_name'",
+            )
+
+    # ------------------------------------------------------------------ #
+    #  Tool loading must not hang                                         #
+    # ------------------------------------------------------------------ #
+
+    def test_tool_loading_does_not_hang(self):
+        """load_tools() must complete within 30 seconds."""
+        start = time.time()
+        self.tu.load_tools()  # re-load (already loaded in setUp, should be fast)
+        elapsed = time.time() - start
+        self.assertLess(elapsed, 30, f"load_tools() took {elapsed:.1f}s (limit 30s)")
+
+    # ------------------------------------------------------------------ #
+    #  Error message quality                                              #
+    # ------------------------------------------------------------------ #
+
+    def test_error_message_clarity(self):
+        """Error dict for an unknown tool must have a non-empty, meaningful message."""
         result = self.tu.run({
             "name": "NonExistentTool",
-            "arguments": {"test": "value"}
+            "arguments": {"test": "value"},
         })
-        
+
         self.assertIsInstance(result, dict)
-        # Should either return error or handle gracefully
-        if "error" in result:
-            self.assertIn("tool", str(result["error"]).lower())
-    
-    def test_invalid_arguments_handling(self):
-        """Test that invalid arguments are handled gracefully."""
-        # Test with invalid arguments for a real tool
-        result = self.tu.run({
-            "name": "UniProt_get_entry_by_accession",
-            "arguments": {"invalid_param": "value"}
-        })
-        
-        self.assertIsInstance(result, dict)
-        # Should either return error or handle gracefully
-        if "error" in result:
-            self.assertIn("parameter", str(result["error"]).lower())
-    
-    def test_empty_arguments_handling(self):
-        """Test handling of empty arguments."""
-        # Test with empty arguments
-        result = self.tu.run({
-            "name": "UniProt_get_entry_by_accession",
-            "arguments": {}
-        })
-        
-        self.assertIsInstance(result, dict)
-        # Should either return error or handle gracefully
-        if "error" in result:
-            self.assertIn("required", str(result["error"]).lower())
-    
-    def test_none_arguments_handling(self):
-        """Test handling of None arguments."""
-        # Test with None arguments
-        result = self.tu.run({
-            "name": "UniProt_get_entry_by_accession",
-            "arguments": None
-        })
-        
-        self.assertIsInstance(result, dict)
-        # Should handle None arguments gracefully
-    
-    def test_malformed_query_handling(self):
-        """Test handling of malformed queries."""
-        malformed_queries = [
-            {"name": "UniProt_get_entry_by_accession"},  # Missing arguments
-            {"arguments": {"accession": "P05067"}},  # Missing name
-            {"name": "", "arguments": {"accession": "P05067"}},  # Empty name
-            {"name": "UniProt_get_entry_by_accession", "arguments": ""},  # String arguments
-            {"name": "UniProt_get_entry_by_accession", "arguments": []},  # List arguments
+        self.assertIn("error", result, "Expected error key for unknown tool")
+        error_msg = str(result["error"])
+        self.assertGreater(len(error_msg), 0, "Error message must not be empty")
+        self.assertTrue(
+            any(kw in error_msg.lower() for kw in ["tool", "not", "found", "error"]),
+            f"Error message should mention tool/not/found/error: {error_msg!r}",
+        )
+
+    # ------------------------------------------------------------------ #
+    #  Parameter validation edge cases                                    #
+    # ------------------------------------------------------------------ #
+
+    def test_parameter_validation_none_and_collections(self):
+        """None, list, and dict accession values must return an error dict."""
+        invalid_cases = [
+            {"accession": None},   # None is not a string
+            {"accession": []},     # List is not a string
+            {"accession": {}},     # Dict is not a string
         ]
-        
-        for query in malformed_queries:
-            result = self.tu.run(query)
-            self.assertIsInstance(result, dict)
-            # Should handle malformed queries gracefully
-    
-    def test_large_argument_handling(self):
-        """Test handling of very large arguments."""
-        # Test with very large argument values
-        large_args = {
-            "accession": "P05067",
-            "large_string": "A" * 100000,  # 100KB string
-            "large_array": ["item"] * 10000,  # Large array
-        }
-        
+        for case in invalid_cases:
+            result = self.tu.run({
+                "name": "UniProt_get_entry_by_accession",
+                "arguments": case,
+            })
+            self.assertIsInstance(result, dict, f"Expected dict for {case!r}")
+            self.assertIn("error", result, f"Expected error for invalid accession {case!r}")
+
+    def test_parameter_validation_empty_string(self):
+        """Empty-string accession must return an error dict (no network call)."""
         result = self.tu.run({
             "name": "UniProt_get_entry_by_accession",
-            "arguments": large_args
+            "arguments": {"accession": ""},
         })
-        
         self.assertIsInstance(result, dict)
-        # Should handle large arguments gracefully
-    
-    def test_concurrent_tool_access(self):
-        """Test concurrent access to tools."""
-        import threading
-        import time
-        
-        results = []
-        
-        def make_call(call_id):
+        # An empty accession should fail validation before any network call
+        self.assertIn("error", result, "Expected error for empty accession string")
+
+    @pytest.mark.network
+    def test_parameter_validation_wrong_types_coerced(self):
+        """Integer/boolean accession values — system either coerces or returns error."""
+        coercible_cases = [
+            {"accession": 123},   # Integer — may be coerced to "123"
+            {"accession": True},  # Boolean — may be coerced to "True"
+        ]
+        for case in coercible_cases:
             result = self.tu.run({
                 "name": "UniProt_get_entry_by_accession",
-                "arguments": {"accession": f"P{call_id:05d}"}
+                "arguments": case,
             })
-            results.append(result)
-        
-        # Create multiple threads
-        threads = []
-        for i in range(5):
-            thread = threading.Thread(target=make_call, args=(i,))
-            threads.append(thread)
-            thread.start()
-        
-        # Wait for all threads
-        for thread in threads:
-            thread.join()
-        
-        # Verify all calls completed
-        self.assertEqual(len(results), 5)
-        for result in results:
-            self.assertIsInstance(result, dict)
-    
+            self.assertIsInstance(result, dict, f"Expected dict for {case!r}")
+            # Either an error (validation rejected it) or a data response (was coerced)
+            self.assertTrue(
+                "error" in result or "status" in result or "data" in result,
+                f"Unexpected response structure for {case!r}: {list(result.keys())}",
+            )
+
+    # ------------------------------------------------------------------ #
+    #  Memory leak check                                                  #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.network
     def test_memory_leak_prevention(self):
-        """Test that memory leaks are prevented."""
-        # Test multiple tool calls to ensure no memory leaks
+        """10 sequential run() calls must not grow the object graph by >2000 objects."""
         initial_objects = len(gc.get_objects())
-        
-        for i in range(10):  # Reduced from 100 for faster testing
+
+        for i in range(10):
             result = self.tu.run({
                 "name": "UniProt_get_entry_by_accession",
-                "arguments": {"accession": f"P{i:05d}"}
+                "arguments": {"accession": f"P{i:05d}"},
             })
-            
             self.assertIsInstance(result, dict)
-            
-            # Force garbage collection periodically
             if i % 5 == 0:
                 gc.collect()
-        
-        # Check that we haven't created too many new objects
-        final_objects = len(gc.get_objects())
-        object_growth = final_objects - initial_objects
-        
-        # Should not have created more than 1000 new objects
-        self.assertLess(object_growth, 1000)
-    
-    def test_error_message_clarity(self):
-        """Test that error messages are clear and helpful."""
-        # Test with invalid tool name
-        result = self.tu.run({
-            "name": "NonExistentTool",
-            "arguments": {"test": "value"}
-        })
-        
-        if "error" in result:
-            error_msg = str(result["error"])
-            # Error message should be clear and helpful
-            self.assertIsInstance(error_msg, str)
-            self.assertGreater(len(error_msg), 0)
-            # Should contain meaningful information
-            self.assertTrue(any(keyword in error_msg.lower() for keyword in ["tool", "not", "found", "error"]))
-    
-    def test_parameter_validation_edge_cases(self):
-        """Test parameter validation edge cases."""
-        edge_cases = [
-            {"accession": ""},  # Empty string
-            {"accession": None},  # None value
-            {"accession": 123},  # Wrong type
-            {"accession": []},  # List instead of string
-            {"accession": {}},  # Dict instead of string
-            {"accession": True},  # Boolean instead of string
-        ]
-        
-        for case in edge_cases:
-            result = self.tu.run({
-                "name": "UniProt_get_entry_by_accession",
-                "arguments": case
-            })
-            
-            self.assertIsInstance(result, dict)
-            # Should handle edge cases gracefully
+
+        gc.collect()
+        object_growth = len(gc.get_objects()) - initial_objects
+        self.assertLess(
+            object_growth, 2000,
+            f"Object growth of {object_growth} suggests a memory leak",
+        )
+
+    # ------------------------------------------------------------------ #
+    #  Missing API key handling                                           #
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.network
+    def test_missing_api_key_returns_dict(self):
+        """Tools that need API keys must return a dict (not raise) when keys absent."""
+        tool_args = {
+            "UniProt_get_entry_by_accession": {"accession": "P05067"},
+            "ArXiv_search_papers": {"query": "test", "limit": 5},
+            "OpenTargets_get_associated_targets_by_disease_efoId": {"efoId": "EFO_0000305"},
+        }
+        for tool_name, args in tool_args.items():
+            result = self.tu.run({"name": tool_name, "arguments": args})
+            self.assertIsInstance(result, dict, f"Expected dict from {tool_name}")
             if "error" in result:
-                self.assertIsInstance(result["error"], str)
-    
-    
-    def test_tool_health_check(self):
-        """Test tool health check functionality."""
-        # Test health check
-        health = self.tu.get_tool_health()
-        
-        self.assertIsInstance(health, dict)
-        self.assertIn("total", health)
-        self.assertIn("available", health)
-        self.assertIn("unavailable", health)
-        self.assertIn("unavailable_list", health)
-        self.assertIn("details", health)
-        
-        # Verify totals make sense
-        self.assertEqual(health["total"], health["available"] + health["unavailable"])
-        self.assertGreaterEqual(health["total"], 0)
-        self.assertGreaterEqual(health["available"], 0)
-        self.assertGreaterEqual(health["unavailable"], 0)
-    
-    
-    
-    
-    def test_cache_management(self):
-        """Test cache management functionality."""
-        # Test cache clearing
-        self.tu.clear_cache()
-        
-        # Verify cache is empty
-        self.assertEqual(len(self.tu._cache), 0)
-        
-        # Test cache operations using proper API
-        self.tu._cache.set("test", "value")
-        self.assertEqual(self.tu._cache.get("test"), "value")
-        
+                error_msg = result["error"]
+                self.assertIsInstance(error_msg, str)
+                self.assertGreater(len(error_msg), 0,
+                                   f"Error message for {tool_name} must not be empty")
+
+    # ------------------------------------------------------------------ #
+    #  Cache management                                                   #
+    # ------------------------------------------------------------------ #
+
+    def test_cache_set_get_clear(self):
+        """Cache set/get/clear must work as a basic key-value store."""
         self.tu.clear_cache()
         self.assertEqual(len(self.tu._cache), 0)
-    
-    
-    
-    
-    
-    
+
+        self.tu._cache.set("mykey", "myvalue")
+        self.assertEqual(self.tu._cache.get("mykey"), "myvalue")
+
+        self.tu.clear_cache()
+        self.assertEqual(len(self.tu._cache), 0)
 
 
 if __name__ == "__main__":

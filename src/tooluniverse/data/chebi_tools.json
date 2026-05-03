@@ -1,0 +1,351 @@
+[
+  {
+    "name": "ChEBI_get_compound",
+    "description": "Get detailed information about a chemical entity from ChEBI (Chemical Entities of Biological Interest) by its CHEBI ID. Returns the compound name, definition, synonyms, molecular formula, mass, InChIKey, SMILES, charge, and star rating (curation quality: 3=manually curated, 2=checked, 1=unchecked). ChEBI is maintained by EBI and is the standard reference for small molecules in biology. Example: CHEBI:15365 returns acetylsalicylic acid (aspirin).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chebi_id": {
+          "type": "integer",
+          "description": "ChEBI numeric identifier (without the 'CHEBI:' prefix). Examples: 15365 (aspirin), 17234 (glucose), 16236 (ethanol), 15377 (water), 17790 (methanol)."
+        }
+      },
+      "required": [
+        "chebi_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_compound"
+    },
+    "type": "ChEBITool",
+    "test_examples": [
+      {
+        "chebi_id": 15365
+      },
+      {
+        "chebi_id": 17234
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "chebi_id": {
+                  "type": "integer"
+                },
+                "chebi_accession": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "definition": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "stars": {
+                  "type": "integer"
+                },
+                "formula": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "mass": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "monoisotopic_mass": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "charge": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchikey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ChEBI_search",
+    "description": "Search the ChEBI database for chemical entities by name, formula, or keyword. Uses Elasticsearch-powered full-text search across compound names, synonyms, definitions, and formulas. Returns matching compounds with IDs, names, formulas, and masses. Note: smiles and inchikey are not available from the search endpoint (use ChEBI_get_compound for structural data). Compound names are HTML-stripped. ChEBI contains 195,000+ chemical entities of biological interest.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query string - compound name, synonym, formula, or keyword. Examples: 'glucose', 'caffeine', 'C9H8O4' (aspirin formula), 'kinase inhibitor'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return. Default: 10. Max: 100."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search"
+    },
+    "type": "ChEBITool",
+    "test_examples": [
+      {
+        "query": "caffeine",
+        "limit": 5
+      },
+      {
+        "query": "glucose",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                },
+                "result_count": {
+                  "type": "integer"
+                },
+                "compounds": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "chebi_accession": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "formula": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "mass": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "stars": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ChEBI_get_ontology_children",
+    "description": "Get the ontology children (is-a, has-part, has-functional-parent, etc.) of a ChEBI compound. ChEBI uses a rich ontology with relationships like 'is a', 'has part', 'has role', 'has functional parent', and 'is conjugate base/acid of'. This enables navigation of the chemical classification hierarchy. Example: CHEBI:15365 (aspirin) children include NCX-4040 (has functional parent), acetylsalicylate (conjugate base), and Yosprala (has part).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chebi_id": {
+          "type": "integer",
+          "description": "ChEBI numeric identifier (without 'CHEBI:' prefix). Examples: 15365 (aspirin), 17234 (glucose), 16236 (ethanol)."
+        }
+      },
+      "required": [
+        "chebi_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "ontology_children"
+    },
+    "type": "ChEBITool",
+    "test_examples": [
+      {
+        "chebi_id": 15365
+      },
+      {
+        "chebi_id": 17234
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "chebi_id": {
+                  "type": "integer"
+                },
+                "chebi_accession": {
+                  "type": "string"
+                },
+                "relation_count": {
+                  "type": "integer"
+                },
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "child_id": {
+                        "type": "integer"
+                      },
+                      "child_name": {
+                        "type": "string"
+                      },
+                      "relation_type": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "parent_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

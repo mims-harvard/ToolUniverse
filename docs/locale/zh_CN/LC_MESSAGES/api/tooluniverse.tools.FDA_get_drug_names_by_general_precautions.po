@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_general\\_precautions
 #: c83145b4a2ed4aada9d410e55f02aabd of
 #: tooluniverse.tools.FDA_get_drug_names_by_general_precautions:1
 msgid "FDA_get_drug_names_by_general_precautions"
-msgstr ""
+msgstr "FDA_根据一般注意事项获取药品名称"
 
 #: 7aec67cbdd2845a9b1f22ecb7177a894 a3789dd920164844827464b690947f53 of
 #: tooluniverse.tools.FDA_get_drug_names_by_general_precautions:3

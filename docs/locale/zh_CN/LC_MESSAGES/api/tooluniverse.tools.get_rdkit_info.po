@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_rdkit\\_info 模块"
 
 #: 6258406886b547f8ab85eee3cafd99c5 of tooluniverse.tools.get_rdkit_info:1
 msgid "get_rdkit_info"
-msgstr ""
+msgstr "获取_rdkit_信息"
 
 #: 8231be50e994423e882cc981a80adb1a c4c1fba17c384f0fa0131e1223cf99e3 of
 #: tooluniverse.tools.get_rdkit_info:3

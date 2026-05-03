@@ -1,0 +1,340 @@
+[
+  {
+    "name": "HPO_get_term",
+    "description": "Get detailed information about a Human Phenotype Ontology (HPO) term by its ID. HPO provides standardized descriptions of phenotypic abnormalities in human disease with over 18,000 terms. Returns the term name, definition, synonyms, cross-references to UMLS/SNOMED, descendant count, and translations. Example: HP:0001250 (Seizure) returns definition, 346 descendants, synonyms including 'Epileptic seizure' and 'Epilepsy', and cross-references to UMLS and SNOMED-CT.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "term_id": {
+          "type": "string",
+          "description": "HPO term identifier. Must start with 'HP:' followed by 7 digits. Examples: 'HP:0001250' (Seizure), 'HP:0001263' (Global developmental delay), 'HP:0000252' (Microcephaly), 'HP:0001249' (Intellectual disability)."
+        }
+      },
+      "required": [
+        "term_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_term"
+    },
+    "type": "HPOTool",
+    "test_examples": [
+      {
+        "term_id": "HP:0001250"
+      },
+      {
+        "term_id": "HP:0001263"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "HPO term ID (e.g., HP:0001250)"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Term name"
+                },
+                "definition": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Full term definition"
+                },
+                "comment": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Additional comments or notes"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Alternative names for the term"
+                },
+                "descendant_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of more specific child terms"
+                },
+                "xrefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Cross-references (UMLS, SNOMED-CT, etc.)"
+                },
+                "translations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Translations in other languages"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "term_id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HPO_search_terms",
+    "description": "Search for Human Phenotype Ontology (HPO) terms by keyword. HPO contains over 18,000 standardized phenotype terms used in clinical genetics and rare disease research. Returns matching terms with definitions, synonym counts, and descendant counts. Useful for finding the correct HPO ID for a clinical phenotype before querying disease or gene associations. Example: searching 'seizure' returns terms like 'Bilateral tonic-clonic seizure' (HP:0007334), 'Generalized-onset seizure' (HP:0002197), 'Focal-onset seizure' (HP:0007359).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keyword for phenotype terms. Examples: 'seizure', 'intellectual disability', 'cardiomyopathy', 'scoliosis', 'microcephaly'."
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 10, max 50)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_terms"
+    },
+    "type": "HPOTool",
+    "test_examples": [
+      {
+        "query": "seizure"
+      },
+      {
+        "query": "cardiomyopathy",
+        "max_results": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HPO term ID"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Term name"
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Term definition"
+                  },
+                  "descendant_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of child terms"
+                  },
+                  "synonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "First 5 synonyms"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HPO_get_term_hierarchy",
+    "description": "Get the parent or child terms of an HPO phenotype term in the ontology hierarchy. HPO is organized as a directed acyclic graph (DAG) where more specific phenotypes are children of broader terms. Use direction='children' to find more specific sub-phenotypes, or direction='parents' to find broader categories. Example: children of HP:0001250 (Seizure) include 'Bilateral tonic-clonic seizure', 'Focal-onset seizure', 'Febrile seizure', and others. Parents include 'Abnormal nervous system physiology'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "term_id": {
+          "type": "string",
+          "description": "HPO term identifier (e.g., 'HP:0001250'). Must start with 'HP:' followed by 7 digits."
+        },
+        "direction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Direction to traverse: 'children' (more specific terms, default) or 'parents' (broader terms)."
+        }
+      },
+      "required": [
+        "term_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_term_hierarchy"
+    },
+    "type": "HPOTool",
+    "test_examples": [
+      {
+        "term_id": "HP:0001250",
+        "direction": "children"
+      },
+      {
+        "term_id": "HP:0001250",
+        "direction": "parents"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HPO term ID"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Term name"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "term_id": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

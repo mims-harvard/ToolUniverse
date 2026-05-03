@@ -1,0 +1,153 @@
+[
+    {
+        "name": "UniProtTaxonomy_get_taxon",
+        "description": "Get detailed taxonomy information for a species by NCBI taxonomy ID from UniProt. Returns scientific name, common name, taxonomic rank, mnemonic code, full lineage (up to 30 levels), and protein statistics (reviewed/unreviewed counts). Essential for cross-referencing species in protein databases and understanding taxonomic relationships. Example: taxon 9606 returns Homo sapiens (Human), rank=species, mnemonic=HUMAN, 20,432 reviewed proteins (Swiss-Prot), 184,812 unreviewed (TrEMBL), with lineage from cellular organisms through Eumetazoa to Primates.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "taxon_id": {
+                    "type": "integer",
+                    "description": "NCBI taxonomy ID. Examples: 9606 (human), 10090 (mouse), 7227 (fruit fly), 6239 (C. elegans), 559292 (S. cerevisiae), 562 (E. coli)."
+                }
+            },
+            "required": ["taxon_id"]
+        },
+        "fields": {
+            "endpoint": "get_taxon"
+        },
+        "type": "UniProtTaxonomyTool",
+        "test_examples": [
+            {
+                "taxon_id": 9606
+            },
+            {
+                "taxon_id": 10090
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "taxon_id": {"type": "integer"},
+                                "scientific_name": {"type": "string"},
+                                "common_name": {"type": ["string", "null"]},
+                                "mnemonic": {"type": ["string", "null"], "description": "5-letter UniProt mnemonic (e.g., HUMAN, MOUSE)"},
+                                "rank": {"type": "string", "description": "Taxonomic rank (e.g., species, genus, family)"},
+                                "lineage": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "taxon_id": {"type": "integer"},
+                                            "scientific_name": {"type": "string"},
+                                            "rank": {"type": ["string", "null"]},
+                                            "hidden": {"type": "boolean"}
+                                        }
+                                    },
+                                    "description": "Full taxonomic lineage from root to parent"
+                                },
+                                "statistics": {
+                                    "type": "object",
+                                    "properties": {
+                                        "reviewed_protein_count": {"type": "integer", "description": "Swiss-Prot (curated) protein count"},
+                                        "unreviewed_protein_count": {"type": "integer", "description": "TrEMBL (automated) protein count"}
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "UniProtTaxonomy_search",
+        "description": "Search for taxonomic entries in UniProt by name, scientific name, or common name. Returns matching taxa with their IDs, names, ranks, and protein statistics. Useful for finding the correct NCBI taxonomy ID for a species or exploring taxonomic groups. Example: searching 'arabidopsis' returns Arabidopsis thaliana (3702), Arabidopsis lyrata (81972), and other Arabidopsis species with protein counts.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query (species name, common name, or partial match). Examples: 'homo sapiens', 'mouse', 'arabidopsis', 'escherichia'."
+                },
+                "size": {
+                    "type": "integer",
+                    "description": "Maximum number of results. Default 10, max 500."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search"
+        },
+        "type": "UniProtTaxonomyTool",
+        "test_examples": [
+            {
+                "query": "arabidopsis",
+                "size": 5
+            },
+            {
+                "query": "homo sapiens"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "taxon_id": {"type": "integer"},
+                                    "scientific_name": {"type": "string"},
+                                    "common_name": {"type": ["string", "null"]},
+                                    "mnemonic": {"type": ["string", "null"]},
+                                    "rank": {"type": ["string", "null"]},
+                                    "reviewed_protein_count": {"type": "integer"},
+                                    "unreviewed_protein_count": {"type": "integer"}
+                                }
+                            },
+                            "description": "Matching taxonomy entries"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_results": {"type": "integer"},
+                                "query": {"type": "string"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

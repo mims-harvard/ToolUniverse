@@ -43,15 +43,61 @@
         }
       },
       "required": [
-        "drug_name",
-        "ndc",
-        "rxcui",
-        "setid",
-        "published_date_gte",
-        "published_date_eq",
-        "pagesize",
-        "page"
+        "drug_name"
       ]
+    },
+    "test_examples": [
+      {
+        "drug_name": "Aspirin",
+        "ndc": "0002-3228-30",
+        "rxcui": "1191",
+        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277",
+        "pagesize": 1,
+        "page": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "db_published_date": {
+              "type": "string"
+            },
+            "elements_per_page": {
+              "type": "integer"
+            },
+            "current_url": {
+              "type": "string"
+            },
+            "next_page_url": {
+              "type": "string"
+            },
+            "total_elements": {
+              "type": "integer"
+            },
+            "total_pages": {
+              "type": "integer"
+            },
+            "current_page": {
+              "type": "integer"
+            },
+            "previous_page": {
+              "type": "string"
+            },
+            "previous_page_url": {
+              "type": "string"
+            },
+            "next_page": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -76,9 +122,330 @@
         }
       },
       "required": [
-        "setid",
-        "format"
+        "setid"
       ]
+    },
+    "test_examples": [
+      {
+        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277",
+        "format": "xml"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "setid": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "format": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "format": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "enum": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "default": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  {
+    "type": "DailyMedSPLParserTool",
+    "name": "DailyMed_parse_adverse_reactions",
+    "description": "Parse adverse reactions section from SPL XML into structured table format. Returns AE frequencies, severity, and descriptions. Example: setid='030d9bca-a934-6ef9-e063-6394a90a8277' extracts headache 10%, GI upset 5%.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "parse_adverse_reactions",
+          "description": "Operation type (fixed)"
+        },
+        "setid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "adverse_reactions": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
+      }
+    ]
+  },
+  {
+    "type": "DailyMedSPLParserTool",
+    "name": "DailyMed_parse_dosing",
+    "description": "Parse dosage and administration section from SPL XML. Returns structured dosing instructions, dose modifications, and administration guidelines. Example: standard dose, dose adjustments for renal/hepatic impairment.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "parse_dosing",
+          "description": "Operation type (fixed)"
+        },
+        "setid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "dosing_info": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
+      }
+    ]
+  },
+  {
+    "type": "DailyMedSPLParserTool",
+    "name": "DailyMed_parse_contraindications",
+    "description": "Parse contraindications section from SPL XML into structured list. Returns conditions, populations, or situations where drug should not be used. Example: pregnancy, hypersensitivity, severe renal impairment.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "parse_contraindications",
+          "description": "Operation type (fixed)"
+        },
+        "setid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "contraindications": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
+      }
+    ]
+  },
+  {
+    "type": "DailyMedSPLParserTool",
+    "name": "DailyMed_parse_drug_interactions",
+    "description": "Parse drug interactions section from SPL XML into structured format. Returns CYP substrates/inhibitors/inducers, P-gp interactions, and specific drug-drug interactions. Example: avoid with strong CYP3A4 inhibitors.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "parse_drug_interactions",
+          "description": "Operation type (fixed)"
+        },
+        "setid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "interactions": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
+      }
+    ]
+  },
+  {
+    "type": "DailyMedSPLParserTool",
+    "name": "DailyMed_parse_clinical_pharmacology",
+    "description": "Parse clinical pharmacology section from SPL XML. Returns PK parameters (Cmax, Tmax, t1/2, AUC), PD effects, metabolism pathways, and elimination. Example: absorption, distribution, metabolism tables.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "parse_clinical_pharmacology",
+          "description": "Operation type (fixed)"
+        },
+        "setid": {
+          "type": "string",
+          "format": "uuid",
+          "description": "SPL Set ID to parse"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic Set ID lookup (alternative to setid)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pharmacology": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
+      }
+    ]
   }
 ]

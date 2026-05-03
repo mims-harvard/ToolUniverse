@@ -1,9 +1,0 @@
-[
-    {
-        "name": "mcp_auto_loader_boltz",
-        "description": "Run Boltz2 docking and affinity prediction using MCP protocol",
-        "type": "MCPAutoLoaderTool",
-        "server_url": "http://${BOLTZ_MCP_SERVER_HOST}:8080/mcp",
-        "required_api_keys": ["BOLTZ_MCP_SERVER_HOST"]
-    }
-]

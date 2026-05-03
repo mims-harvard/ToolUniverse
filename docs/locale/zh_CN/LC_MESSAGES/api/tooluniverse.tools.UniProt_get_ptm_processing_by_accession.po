@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_ptm\\_processing\\_by\\_accession 模
 #: 73855791d66e4ca894ad17aaec8cc154 of
 #: tooluniverse.tools.UniProt_get_ptm_processing_by_accession:1
 msgid "UniProt_get_ptm_processing_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取PTM处理"
 
 #: 85a1000dbcf24a108e32123f9ab54255 912bd56720024f6999c1201037074f96 of
 #: tooluniverse.tools.UniProt_get_ptm_processing_by_accession:3

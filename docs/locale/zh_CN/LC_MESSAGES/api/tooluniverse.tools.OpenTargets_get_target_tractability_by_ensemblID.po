@@ -32,7 +32,7 @@ msgstr ""
 #: 389ab25169a14968a53f0e37b3c88c7c of
 #: tooluniverse.tools.OpenTargets_get_target_tractability_by_ensemblID:1
 msgid "OpenTargets_get_target_tractability_by_ensemblID"
-msgstr ""
+msgstr "OpenTargets_通过EnsemblID获取靶点可操作性"
 
 #: 31645dbc2ae843f29b54d130fabd3bf1 3738cfcc25c74a8b96513913a0ecb088 of
 #: tooluniverse.tools.OpenTargets_get_target_tractability_by_ensemblID:3

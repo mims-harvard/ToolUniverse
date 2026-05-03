@@ -1,0 +1,348 @@
+[
+  {
+    "name": "CoL_search_species",
+    "description": "Search the Catalogue of Life (CoL) for species and other taxa by scientific name. CoL is the global index of all known species, compiled from 165+ taxonomic databases covering ~2 million species. Returns taxon IDs, accepted names, ranks, classification hierarchy, and taxonomic status. Use rank parameter to filter by taxonomic level (species, genus, family, order, class, phylum, kingdom).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Scientific name to search for (e.g., 'Homo sapiens', 'Panthera leo', 'Arabidopsis thaliana')"
+        },
+        "rank": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by taxonomic rank: 'species', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom'"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 10, max 1000)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.catalogueoflife.org/dataset/3LR/nameusage/search"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "Homo sapiens",
+        "rank": "species"
+      },
+      {
+        "q": "Panthera",
+        "rank": "genus",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Catalogue of Life search results",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "Total number of matches"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "result": {
+              "type": "array",
+              "description": "List of matching taxa",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "CoL taxon ID"
+                  },
+                  "usage": {
+                    "type": "object",
+                    "description": "Taxon usage details",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "Taxonomic status: accepted, synonym, etc."
+                      },
+                      "name": {
+                        "type": "object",
+                        "properties": {
+                          "scientificName": {
+                            "type": "string"
+                          },
+                          "rank": {
+                            "type": "string"
+                          },
+                          "authorship": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "extinct": {
+                        "type": "boolean"
+                      },
+                      "environments": {
+                        "type": "array"
+                      }
+                    }
+                  },
+                  "classification": {
+                    "type": "array",
+                    "description": "Full classification hierarchy from kingdom to current taxon",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "rank": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CoL_get_taxon",
+    "description": "Get detailed taxonomic information for a specific taxon in the Catalogue of Life by its CoL ID. Returns full name details, accepted status, classification hierarchy, authorship, publication, and environments. Use CoL_search_species to find the CoL ID first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_id": {
+          "type": "string",
+          "description": "CoL taxon ID (e.g., '6MB3T' for Homo sapiens, '64J67' for Panthera leo). Obtain from CoL_search_species."
+        }
+      },
+      "required": [
+        "taxon_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.catalogueoflife.org/dataset/3LR/nameusage/{taxon_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "taxon_id": "6MB3T"
+      },
+      {
+        "taxon_id": "64J67"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed taxon information",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "origin": {
+              "type": "string"
+            },
+            "name": {
+              "type": "object",
+              "properties": {
+                "scientificName": {
+                  "type": "string"
+                },
+                "rank": {
+                  "type": "string"
+                },
+                "authorship": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Nomenclatural code: zoological, botanical, etc."
+                }
+              }
+            },
+            "extinct": {
+              "type": "boolean"
+            },
+            "environments": {
+              "type": "array"
+            },
+            "parentId": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CoL_get_children",
+    "description": "Get child taxa (immediate subtaxa) of a given taxon in the Catalogue of Life. For example, get all species within a genus, or all genera within a family. Uses the parentId parameter to list direct descendants. Returns child taxon names, ranks, IDs, and status. Use CoL_search_species or CoL_get_taxon to find the parent taxon ID first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "parentId": {
+          "type": "string",
+          "description": "CoL ID of the parent taxon whose children to retrieve (e.g., '636X2' for genus Homo, '623RM' for family Felidae). Obtain from CoL_search_species or CoL_get_taxon."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of children to return (default 10, max 1000)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination"
+        }
+      },
+      "required": [
+        "parentId"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.catalogueoflife.org/dataset/3LR/nameusage"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "parentId": "636X2",
+        "limit": 10
+      },
+      {
+        "parentId": "623RM",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Child taxa list",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "Total number of child taxa"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "result": {
+              "type": "array",
+              "description": "List of child taxa",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "CoL taxon ID of the child"
+                  },
+                  "name": {
+                    "type": "object",
+                    "properties": {
+                      "scientificName": {
+                        "type": "string"
+                      },
+                      "rank": {
+                        "type": "string"
+                      },
+                      "authorship": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Taxonomic status: accepted, synonym"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "Formatted name with authorship"
+                  },
+                  "parentId": {
+                    "type": "string",
+                    "description": "Parent taxon ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

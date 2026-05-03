@@ -2,7 +2,7 @@
   {
     "type": "CoreTool",
     "name": "CORE_search_papers",
-    "description": "Search for open access academic papers using CORE API. CORE is the world's largest collection of open access research papers, providing access to over 200 million papers from repositories and journals worldwide.",
+    "description": "Search for open access academic papers using CORE API. CORE aggregates OA repository and journal content; queries can match metadata and (for many records) indexed full text, but coverage varies by source. Use CORE_get_fulltext_snippets to search inside a returned PDF URL when exact body-text terms matter.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,10 +10,30 @@
           "type": "string",
           "description": "Search query for CORE papers. Use keywords separated by spaces to refine your search."
         },
+        "search": {
+          "type": "string",
+          "description": "Alias for `query`."
+        },
+        "q": {
+          "type": "string",
+          "description": "Alias for `query`."
+        },
         "limit": {
           "type": "integer",
           "description": "Maximum number of papers to return. This sets the maximum number of papers retrieved from CORE.",
           "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Alias for `limit`.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Alias for `limit`.",
           "minimum": 1,
           "maximum": 100
         },
@@ -30,9 +50,10 @@
           "description": "Language filter for papers (e.g., 'en', 'es', 'fr'). Optional parameter to limit search to papers in specific language."
         }
       },
-      "required": [
-        "query",
-        "limit"
+      "anyOf": [
+        { "required": ["query"] },
+        { "required": ["search"] },
+        { "required": ["q"] }
       ]
     },
     "return_schema": {
@@ -61,7 +82,7 @@
             "description": "Publication year"
           },
           "doi": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Digital Object Identifier (DOI) of the paper"
           },
           "url": {
@@ -104,6 +125,137 @@
         "query": "artificial intelligence",
         "limit": 1,
         "year_from": 2020
+      }
+    ]
+  }
+  ,
+  {
+    "type": "CorePDFSnippetsTool",
+    "name": "CORE_get_fulltext_snippets",
+    "description": "Fetch an open-access PDF (commonly returned by CORE_search_papers) and return bounded text snippets around provided terms. This is a local (download + scan) full-text search fallback when index-based search misses body-only keywords. Extraction backends: PyMuPDF (fitz), pypdf, or markitdown (auto-selects fastest available unless `extractor` is set).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdf_url": {
+          "type": "string",
+          "description": "Direct PDF URL to download (preferred). CORE_search_papers returns this as the `url` field in many results."
+        },
+        "url": {
+          "type": "string",
+          "description": "Alias for `pdf_url` for convenience when piping CORE_search_papers outputs."
+        },
+        "terms": {
+          "type": "array",
+          "description": "Terms to search for in the extracted PDF text (case-insensitive).",
+          "items": { "type": "string" }
+        },
+        "window_chars": {
+          "type": "integer",
+          "description": "Context window size (characters) before and after each match.",
+          "default": 220,
+          "minimum": 20,
+          "maximum": 2000
+        },
+        "max_snippets_per_term": {
+          "type": "integer",
+          "description": "Maximum number of snippets returned per term.",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "max_total_chars": {
+          "type": "integer",
+          "description": "Hard cap on total characters returned across all snippets.",
+          "default": 8000,
+          "minimum": 1000,
+          "maximum": 50000
+        },
+        "extractor": {
+          "type": "string",
+          "description": "PDF text extraction backend: auto (default), fitz (PyMuPDF), pypdf, or markitdown.",
+          "enum": ["auto", "fitz", "pypdf", "markitdown"],
+          "default": "auto"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Download timeout in seconds (bounded to <=55 to stay under typical MCP call deadlines).",
+          "default": 20,
+          "minimum": 5,
+          "maximum": 55
+        },
+        "max_pdf_bytes": {
+          "type": "integer",
+          "description": "Maximum PDF size (bytes) allowed for download/scan. Prevents timeouts on huge PDFs.",
+          "default": 20000000,
+          "minimum": 1000000,
+          "maximum": 100000000
+        },
+        "max_pages": {
+          "type": "integer",
+          "description": "Maximum number of PDF pages to scan when using fitz/pypdf extractors.",
+          "default": 12,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "max_text_chars": {
+          "type": "integer",
+          "description": "Maximum number of extracted text characters to scan for term matches (limits CPU/memory).",
+          "default": 400000,
+          "minimum": 50000,
+          "maximum": 2000000
+        }
+      },
+      "required": ["terms"],
+      "anyOf": [
+        { "required": ["pdf_url"] },
+        { "required": ["url"] }
+      ]
+    },
+    "return_schema": {
+      "type": ["object", "null"],
+      "properties": {
+        "status": { "type": "string", "enum": ["success", "error"] },
+        "pdf_url": { "type": "string" },
+        "retrieval_trace": {
+          "type": "array",
+          "description": "Machine-readable trace of attempts used to retrieve the PDF.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "attempt": { "type": "string" },
+              "url": { "type": ["string", "null"] },
+              "status_code": { "type": ["integer", "null"] },
+              "content_type": { "type": ["string", "null"] },
+              "content_length": { "type": ["string", "null"] },
+              "note": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "snippets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": { "type": "string" },
+              "snippet": { "type": "string" }
+            }
+          }
+        },
+        "snippets_count": { "type": "integer" },
+        "truncated": { "type": "boolean" },
+        "extractor_used": { "type": ["string", "null"] },
+        "pages_scanned": { "type": ["integer", "null"] },
+        "text_chars_scanned": { "type": "integer" },
+        "error": { "type": "string" },
+        "status_code": { "type": "integer" },
+        "retryable": { "type": "boolean" }
+      }
+    },
+    "test_examples": [
+      {
+        "url": "https://arxiv.org/pdf/1706.03762.pdf",
+        "terms": ["transformer", "attention"],
+        "window_chars": 200
       }
     ]
   }

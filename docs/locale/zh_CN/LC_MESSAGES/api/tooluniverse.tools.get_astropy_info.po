@@ -28,6 +28,8 @@ msgstr "tooluniverse.tools.get\\_astropy\\_info 模块"
 #: 280b391dc2534beba32cb27f0125fd03 of tooluniverse.tools.get_astropy_info:1
 msgid "get_astropy_info"
 msgstr ""
+"get_astropy_info  \n"
+"获取_astropy信息"
 
 #: 3306c7a7226945d0b6d08d648b3c9f01 58c885112c2d4dc88a848581e25afc11 of
 #: tooluniverse.tools.get_astropy_info:3

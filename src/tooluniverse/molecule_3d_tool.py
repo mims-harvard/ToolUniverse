@@ -64,7 +64,7 @@ class Molecule3DTool(VisualizationTool):
                 )
             else:
                 return self.create_error_response(
-                    "Either smiles, mol_content, or sdf_content must be " "provided"
+                    "Either smiles, mol_content, or sdf_content must be provided"
                 )
 
             if mol is None:
@@ -174,7 +174,7 @@ class Molecule3DTool(VisualizationTool):
                 "molecular_properties": mol_props,
             }
 
-            return self.create_visualization_response(
+            viz_response = self.create_visualization_response(
                 html_content=html_content,
                 viz_type="molecule_3d",
                 data={
@@ -186,17 +186,22 @@ class Molecule3DTool(VisualizationTool):
                 metadata=metadata,
             )
 
+            # Wrap in standard format for test framework compatibility
+            return {"status": "success", "data": viz_response}
+
         except ImportError as e:
             missing_package = "py3Dmol" if "py3Dmol" in str(e) else "rdkit"
-            return self.create_error_response(
+            error_response = self.create_error_response(
                 f"{missing_package} is not installed. Please install it with: "
                 f"pip install {missing_package}",
                 "MissingDependency",
             )
+            return {"status": "error", "data": error_response}
         except Exception as e:
-            return self.create_error_response(
+            error_response = self.create_error_response(
                 f"Failed to create molecule 3D visualization: {str(e)}"
             )
+            return {"status": "error", "data": error_response}
 
     def _calculate_molecular_properties(self, mol) -> Dict[str, Any]:
         """Calculate basic molecular properties."""
@@ -330,20 +335,20 @@ class Molecule3DTool(VisualizationTool):
             <div class="control-group">
                 <label class="control-label">Style</label>
                 <select class="control-select" id="styleSelect" onchange="changeStyle()">
-                    <option value="stick" {'selected' if current_style == 'stick' else ''}>Stick</option>
-                    <option value="sphere" {'selected' if current_style == 'sphere' else ''}>Sphere</option>
-                    <option value="cartoon" {'selected' if current_style == 'cartoon' else ''}>Cartoon</option>
-                    <option value="line" {'selected' if current_style == 'line' else ''}>Line</option>
-                    <option value="spacefill" {'selected' if current_style == 'spacefill' else ''}>Spacefill</option>
+                    <option value="stick" {"selected" if current_style == "stick" else ""}>Stick</option>
+                    <option value="sphere" {"selected" if current_style == "sphere" else ""}>Sphere</option>
+                    <option value="cartoon" {"selected" if current_style == "cartoon" else ""}>Cartoon</option>
+                    <option value="line" {"selected" if current_style == "line" else ""}>Line</option>
+                    <option value="spacefill" {"selected" if current_style == "spacefill" else ""}>Spacefill</option>
                 </select>
             </div>
             <div class="control-group">
                 <label class="control-label">Color Scheme</label>
                 <select class="control-select" id="colorSelect" onchange="changeColor()">
-                    <option value="default" {'selected' if current_color == 'default' else ''}>Default</option>
-                    <option value="spectrum" {'selected' if current_color == 'spectrum' else ''}>Spectrum</option>
-                    <option value="rainbow" {'selected' if current_color == 'rainbow' else ''}>Rainbow</option>
-                    <option value="elem" {'selected' if current_color == 'elem' else ''}>Element</option>
+                    <option value="default" {"selected" if current_color == "default" else ""}>Default</option>
+                    <option value="spectrum" {"selected" if current_color == "spectrum" else ""}>Spectrum</option>
+                    <option value="rainbow" {"selected" if current_color == "rainbow" else ""}>Rainbow</option>
+                    <option value="elem" {"selected" if current_color == "elem" else ""}>Element</option>
                 </select>
             </div>
             <div class="control-group">
@@ -393,7 +398,7 @@ class Molecule3DTool(VisualizationTool):
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">SMILES</span>
-                    <span class="info-value">{smiles[:30]}{'...' if len(smiles) > 30 else ''}</span>
+                    <span class="info-value">{smiles[:30]}{"..." if len(smiles) > 30 else ""}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Molecular Weight</span>

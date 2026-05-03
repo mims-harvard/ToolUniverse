@@ -1,0 +1,67 @@
+[
+    {
+        "name": "fda_pharmacogenomic_biomarkers",
+        "type": "FDAPharmacogenomicBiomarkersTool",
+        "description": "Retrieve pharmacogenomic biomarkers from FDA drug labels. This tool fetches the Table of Pharmacogenomic Biomarkers in Drug Labeling from the FDA website and allows filtering by drug name or biomarker.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "drug_name": {
+                    "type": "string",
+                    "description": "Filter by the name of the drug (e.g., 'Sivextro', 'Abacavir'). Case-insensitive partial match."
+                },
+                "biomarker": {
+                    "type": "string",
+                    "description": "Filter by the specific biomarker (e.g., 'CYP2D6', 'HLA-B*5701'). Case-insensitive partial match."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return.",
+                    "default": 10
+                }
+            },
+            "required": []
+        },
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "description": "Total number of matching records found."
+                },
+                "shown": {
+                    "type": "integer",
+                    "description": "Number of records returned in this response."
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "Drug": {
+                                "type": "string"
+                            },
+                            "TherapeuticArea": {
+                                "type": "string"
+                            },
+                            "Biomarker": {
+                                "type": "string"
+                            },
+                            "LabelingSection": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "drug_name": "Warfarin"
+            },
+            {
+                "biomarker": "CYP2C9"
+            }
+        ]
+    }
+]

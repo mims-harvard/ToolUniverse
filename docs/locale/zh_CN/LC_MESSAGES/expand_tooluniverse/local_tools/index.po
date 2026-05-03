@@ -7,17 +7,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-19 16:01-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:2
@@ -30,8 +30,7 @@ msgstr "本地工具"
 #: 7033435bb1b147e89d753b4c18a8112e
 msgid ""
 "Local tools are Python classes that run within the ToolUniverse process. "
-"They provide high performance and easy integration for custom "
-"functionality."
+"They provide high performance and easy integration for custom functionality."
 msgstr "本地工具是运行在 ToolUniverse 进程中的 Python 类。它们提供高性能并且易于集成自定义功能。"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:7
@@ -42,8 +41,8 @@ msgstr "什么是本地工具？"
 #: ../../expand_tooluniverse/local_tools/index.rst:9
 #: a228ed90371c4ad0aa747097531eb0ee
 msgid ""
-"Local tools extend ToolUniverse with custom Python functionality. They "
-"run in the same process as ToolUniverse and provide:"
+"Local tools extend ToolUniverse with custom Python functionality. They run "
+"in the same process as ToolUniverse and provide:"
 msgstr "本地工具通过自定义 Python 功能扩展 ToolUniverse。它们与 ToolUniverse 在同一进程中运行，并提供："
 
 #: ../../expand_tooluniverse/local_tools/index.rst:11
@@ -69,8 +68,8 @@ msgstr "**完全集成**：访问所有 ToolUniverse 功能"
 #: ../../expand_tooluniverse/local_tools/index.rst:16
 #: a98dc2867450440b9d8b61185ec3d79f
 msgid ""
-"**Best for:** - Data processing and analysis - File manipulation "
-"utilities - Simple API wrappers - Computational tools"
+"**Best for:** - Data processing and analysis - File manipulation utilities -"
+" Simple API wrappers - Computational tools"
 msgstr ""
 "**最佳用途：**  \n"
 "- 数据处理与分析  \n"
@@ -86,8 +85,8 @@ msgstr "快速入门"
 #: ../../expand_tooluniverse/local_tools/index.rst:25
 #: 105500d02b71486ea234861b5a76163e
 msgid ""
-"**I want to quickly try creating a local tool:** → :doc:`../quick_start` "
-"- 5-minute tutorial to create your first tool"
+"**I want to quickly try creating a local tool:** → :doc:`../quick_start` - "
+"5-minute tutorial to create your first tool"
 msgstr "**我想快速尝试创建一个本地工具：** → :doc:`../quick_start` - 5分钟教程，帮助您创建第一个工具"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:28
@@ -100,11 +99,10 @@ msgstr "**我想学习本地工具开发：** → :doc:`教程` - 包含示例�
 #: ../../expand_tooluniverse/local_tools/index.rst:31
 #: 3a5e708d04784685a420c40f5b7614ec
 msgid ""
-"**I want to contribute a local tool:** → "
-":doc:`../contributing/local_tools` - Submit your tool to ToolUniverse"
+"**I want to contribute a local tool:** → :doc:`../contributing/local_tools` "
+"- Submit your tool to ToolUniverse"
 msgstr ""
-"**我想贡献一个本地工具：** → :doc:`../contributing/local_tools` - 将您的工具提交到 "
-"ToolUniverse"
+"**我想贡献一个本地工具：** → :doc:`../contributing/local_tools` - 将您的工具提交到 ToolUniverse"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:34
 #: c7af5c412a4d4003813990387ffee416
@@ -121,9 +119,9 @@ msgstr "关键概念"
 #: ../../expand_tooluniverse/local_tools/index.rst:40
 #: f6525cef7bb64851a91b83fca34236a1
 msgid ""
-"**Tool Registration** - Use ``@register_tool`` decorator to register your"
-" tool - Tools are automatically discovered by ToolUniverse - "
-"Configuration can be inline or in separate JSON files"
+"**Tool Registration** - Use ``@register_tool`` decorator to register your "
+"tool - Tools are automatically discovered by ToolUniverse - Configuration "
+"can be inline or in separate JSON files"
 msgstr ""
 "**工具注册** - 使用 ``@register_tool`` 装饰器注册您的工具 - 工具会被 ToolUniverse 自动发现 - "
 "配置可以内联或存储在单独的 JSON 文件中"
@@ -149,8 +147,8 @@ msgstr "**配置** - 使用 JSON Schema 定义工具参数 - 指定必需和可�
 #: e5d4e7ba05dd4247b63b8567bcea47cf
 msgid ""
 "**Self-Use vs Contribution** - **Self-Use**: Config in decorator, no "
-"``__init__.py`` changes - **Contribution**: Config in JSON file, must "
-"modify ``__init__.py``"
+"``__init__.py`` changes - **Contribution**: Config in JSON file, must modify"
+" ``__init__.py``"
 msgstr ""
 "**自用与贡献** - **自用**：在装饰器中配置，无需修改``__init__.py`` - "
 "**贡献**：在JSON文件中配置，必须修改``__init__.py``"
@@ -184,12 +182,13 @@ msgstr "**输入验证** .. code-block:: python"
 #: 44ac4655563043ef8d16dc7069a7d072
 msgid "def validate_input(self, **kwargs):"
 msgstr ""
+"```python\n"
+"def validate_input(self, **kwargs):\n"
+"```"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:164
 #: 501b866d1d454f71a042c0a9109fccb2
-msgid ""
-"\"\"\"Validate input parameters.\"\"\" if \"required_param\" not in "
-"kwargs:"
+msgid "\"\"\"Validate input parameters.\"\"\" if \"required_param\" not in kwargs:"
 msgstr "\"\"\"验证输入参数。\"\"\" 如果 \"required_param\" 不在 kwargs 中："
 
 #: ../../expand_tooluniverse/local_tools/index.rst:166
@@ -248,6 +247,8 @@ msgstr "return {\"error\": f\"输入无效：{str(e)}\", \"success\": False}"
 #: bdde936d66e640a6b54314b54800f231
 msgid "except Exception as e:"
 msgstr ""
+"except Exception as e:  \n"
+"除非发生异常 Exception 并赋值给变量 e："
 
 #: ../../expand_tooluniverse/local_tools/index.rst:182
 #: 98fb47157aa74c8a90daacd9b43e2a21
@@ -264,13 +265,16 @@ msgstr "**使用环境变量** .. code-block:: python"
 #: baaa479142fa40269c0856f565575405
 msgid "def __init__(self, tool_config=None):"
 msgstr ""
+"```python\n"
+"def __init__(self, tool_config=None):\n"
+"```"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:188
 #: d8701df2c7d344ac9ff73ebb94924cf7
 #, python-brace-format
 msgid ""
-"super().__init__(tool_config) self.api_key = "
-"self.config.get(\"settings\", {}).get(\"api_key\")"
+"super().__init__(tool_config) self.api_key = self.config.get(\"settings\", "
+"{}).get(\"api_key\")"
 msgstr ""
 "super().__init__(tool_config)  \n"
 "self.api_key = self.config.get(\"settings\", {}).get(\"api_key\")"
@@ -305,10 +309,10 @@ msgstr "故障排除"
 #: ../../expand_tooluniverse/local_tools/index.rst:204
 #: ebd32443edfb4a55968a860a88168f73
 msgid ""
-"**Tool not found** - Check if tool is imported - Verify "
-"``@register_tool`` decorator - Ensure ToolUniverse is instantiated after "
-"import"
-msgstr "**工具未找到** - 检查工具是否已导入 - 验证 ``@register_tool`` 装饰器 - 确保在导入后实例化 ToolUniverse"
+"**Tool not found** - Check if tool is imported - Verify ``@register_tool`` "
+"decorator - Ensure ToolUniverse is instantiated after import"
+msgstr ""
+"**工具未找到** - 检查工具是否已导入 - 验证 ``@register_tool`` 装饰器 - 确保在导入后实例化 ToolUniverse"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:209
 #: bee39e534df7410cae5ae25a2ec6a049
@@ -331,8 +335,8 @@ msgstr ""
 #: ../../expand_tooluniverse/local_tools/index.rst:219
 #: dfb3802348ac43778ace03a90a1c11f4
 msgid ""
-"**Import errors** - Check module name matches file name - Verify class "
-"name matches exactly - Ensure all dependencies are installed"
+"**Import errors** - Check module name matches file name - Verify class name "
+"matches exactly - Ensure all dependencies are installed"
 msgstr "**导入错误** - 检查模块名称是否与文件名匹配 - 验证类名是否完全一致 - 确保所有依赖项已安装"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:225
@@ -371,18 +375,16 @@ msgstr "🔧 **高级**：:doc:`advanced_features` - 了解 BaseTool 的高级�
 msgid ""
 "🔍 **Compare**: Review the tool type comparison table in "
 ":doc:`../contributing/index`"
-msgstr ""
+msgstr "🔍 **比较**：请查看 :doc:`../contributing/index` 中的工具类型对比表"
 
 #: ../../expand_tooluniverse/local_tools/index.rst:241
 #: fd122891c1274ad5bd8cc133f8ec465e
 msgid ""
-"**Getting Started**: We recommend starting with the quick start tutorial "
-"to understand the basics, then following the comprehensive tutorial for "
+"**Getting Started**: We recommend starting with the quick start tutorial to "
+"understand the basics, then following the comprehensive tutorial for "
 "detailed development guidance."
 msgstr "**入门指南**：我们建议先从快速入门教程开始，以了解基础内容，然后再参考综合教程以获得详细的开发指导。"
 
 #~ msgid ""
-#~ "🔍 **Compare**: :doc:`../reference/comparison` - "
-#~ "Compare with remote tools"
+#~ "🔍 **Compare**: :doc:`../reference/comparison` - Compare with remote tools"
 #~ msgstr "🔍 **比较**: :doc:`../reference/comparison` - 与远程工具进行比较"
-

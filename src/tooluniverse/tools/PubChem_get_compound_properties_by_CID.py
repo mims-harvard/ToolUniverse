@@ -14,7 +14,7 @@ def PubChem_get_compound_properties_by_CID(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a set of specified molecular properties through CID (Compound ID), such as molecular weight, ...
 
@@ -31,12 +31,17 @@ def PubChem_get_compound_properties_by_CID(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"cid": cid}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "PubChem_get_compound_properties_by_CID", "arguments": {"cid": cid}},
+        {
+            "name": "PubChem_get_compound_properties_by_CID",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

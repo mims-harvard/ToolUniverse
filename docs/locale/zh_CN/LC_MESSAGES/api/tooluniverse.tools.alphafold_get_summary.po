@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.alphafold\\_get\\_summary 模块"
 #: b1b121c273e54aa4b7782b9581b2d53c of
 #: tooluniverse.tools.alphafold_get_summary:1
 msgid "alphafold_get_summary"
-msgstr ""
+msgstr "alphafold_获取摘要"
 
 #: 677b846634f046d6942a4cf4daae45f7 eb72f3247d884552b23d60347e3a2037 of
 #: tooluniverse.tools.alphafold_get_summary:3

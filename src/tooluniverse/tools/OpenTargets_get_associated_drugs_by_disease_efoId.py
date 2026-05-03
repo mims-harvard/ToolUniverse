@@ -10,12 +10,11 @@ from ._shared_client import get_shared_client
 
 def OpenTargets_get_associated_drugs_by_disease_efoId(
     efoId: str,
-    size: int,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve known drugs associated with a specific disease by disease efoId.
 
@@ -23,8 +22,6 @@ def OpenTargets_get_associated_drugs_by_disease_efoId(
     ----------
     efoId : str
         The EFO ID of the disease.
-    size : int
-        Number of entries to fetch, recomanding a large number to avoid missing drugs.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +31,16 @@ def OpenTargets_get_associated_drugs_by_disease_efoId(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"efoId": efoId}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_get_associated_drugs_by_disease_efoId",
-            "arguments": {"efoId": efoId, "size": size},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

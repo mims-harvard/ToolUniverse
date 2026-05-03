@@ -1,248 +1,299 @@
 [
   {
     "name": "alphafold_get_prediction",
-    "description": "Retrieve full AlphaFold 3D structure predictions for a given protein. Input must be a UniProt accession (e.g., 'P69905'), UniProt entry name (e.g., 'HBA_HUMAN'), or CRC64 checksum. Returns residue-level metadata including sequence, per-residue confidence scores (pLDDT), and structure download links (PDB, CIF, PAE). If you do not know the accession, first call `uniprot_search` to resolve it from a protein/gene name, or `UniProt_get_entry_by_accession` if you already have the accession and want UniProt details. For a quick overview, use `alphafold_get_summary`. For mutation/variant impact, see `alphafold_get_annotations.",
+    "description": "Retrieve full AlphaFold 3D structure predictions for a given protein. IMPORTANT: The qualifier must be a UniProt ACCESSION (e.g., 'P69905' for HBA_HUMAN). Do NOT use UniProt entry names like 'HBA_HUMAN' - they will cause API errors. To find UniProt accession from a gene/protein name, use `UniProt_search` (e.g., query='gene:HBA' organism='human') or `UniProt_id_mapping` for ID conversion. Returns residue-level metadata including sequence, per-residue confidence scores (pLDDT), and structure download links (PDB, CIF, PAE). If you already have the accession and want UniProt details, call `UniProt_get_entry_by_accession`. For a quick overview, use `alphafold_get_summary`. For mutation/variant impact, see `alphafold_get_annotations`.",
     "type": "AlphaFoldRESTTool",
     "parameter": {
       "type": "object",
       "properties": {
         "qualifier": {
           "type": "string",
-          "description": "Protein identifier: UniProt accession (e.g., 'P69905'), entry name (e.g., 'HBA_HUMAN'), or CRC64 checksum."
+          "description": "UniProt ACCESSION (e.g., 'P69905'). Do NOT use entry names like 'HBA_HUMAN'. Aliases: uniprot_id, uniprot_accession."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "Alias for qualifier: UniProt accession (e.g., 'P69905')."
+        },
+        "uniprot_accession": {
+          "type": "string",
+          "description": "Alias for qualifier: UniProt accession (e.g., 'P69905')."
         },
         "sequence_checksum": {
           "type": "string",
           "description": "Optional CRC64 checksum of the UniProt sequence."
         }
       },
-      "required": [
-        "qualifier",
-        "sequence_checksum"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "/prediction/{qualifier}",
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "toolUsed": {
-            "type": "string"
-          },
-          "providerId": {
-            "type": "string"
-          },
-          "entityType": {
-            "type": "string"
-          },
-          "isUniProt": {
-            "type": "boolean"
-          },
-          "modelEntityId": {
-            "type": "string"
-          },
-          "modelCreatedDate": {
-            "type": "string"
-          },
-          "sequenceVersionDate": {
-            "type": "string"
-          },
-          "globalMetricValue": {
-            "type": "number"
-          },
-          "fractionPlddtVeryLow": {
-            "type": "number"
-          },
-          "fractionPlddtLow": {
-            "type": "number"
-          },
-          "fractionPlddtConfident": {
-            "type": "number"
-          },
-          "fractionPlddtVeryHigh": {
-            "type": "number"
-          },
-          "latestVersion": {
-            "type": "integer"
-          },
-          "allVersions": {
-            "type": "array",
-            "items": {
-              "type": "integer"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "toolUsed": {
+                    "type": "string"
+                  },
+                  "providerId": {
+                    "type": "string"
+                  },
+                  "entityType": {
+                    "type": "string"
+                  },
+                  "isUniProt": {
+                    "type": "boolean"
+                  },
+                  "modelEntityId": {
+                    "type": "string"
+                  },
+                  "modelCreatedDate": {
+                    "type": "string"
+                  },
+                  "sequenceVersionDate": {
+                    "type": "string"
+                  },
+                  "globalMetricValue": {
+                    "type": "number"
+                  },
+                  "fractionPlddtVeryLow": {
+                    "type": "number"
+                  },
+                  "fractionPlddtLow": {
+                    "type": "number"
+                  },
+                  "fractionPlddtConfident": {
+                    "type": "number"
+                  },
+                  "fractionPlddtVeryHigh": {
+                    "type": "number"
+                  },
+                  "latestVersion": {
+                    "type": "integer"
+                  },
+                  "allVersions": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "sequence": {
+                    "type": "string"
+                  },
+                  "sequenceStart": {
+                    "type": "integer"
+                  },
+                  "sequenceEnd": {
+                    "type": "integer"
+                  },
+                  "sequenceChecksum": {
+                    "type": "string"
+                  },
+                  "isUniProtReviewed": {
+                    "type": "boolean"
+                  },
+                  "gene": {
+                    "type": "string"
+                  },
+                  "uniprotAccession": {
+                    "type": "string"
+                  },
+                  "uniprotId": {
+                    "type": "string"
+                  },
+                  "uniprotDescription": {
+                    "type": "string"
+                  },
+                  "taxId": {
+                    "type": "integer"
+                  },
+                  "organismScientificName": {
+                    "type": "string"
+                  },
+                  "isUniProtReferenceProteome": {
+                    "type": "boolean"
+                  },
+                  "organismCommonNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "organismSynonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "geneSynonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "proteinFullNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "proteinShortNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "complexName": {
+                    "type": "string"
+                  },
+                  "stoichiometry": {
+                    "type": "number"
+                  },
+                  "ipTM": {
+                    "type": "number"
+                  },
+                  "ipSAE": {
+                    "type": "number"
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "taxonomyLineage": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "functions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "alternativeNames": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "catalyticActivities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "bcifUrl": {
+                    "type": "string"
+                  },
+                  "cifUrl": {
+                    "type": "string"
+                  },
+                  "pdbUrl": {
+                    "type": "string"
+                  },
+                  "paeImageUrl": {
+                    "type": "string"
+                  },
+                  "paeDocUrl": {
+                    "type": "string"
+                  },
+                  "amAnnotationsUrl": {
+                    "type": "string"
+                  },
+                  "amAnnotationsHg19Url": {
+                    "type": "string"
+                  },
+                  "amAnnotationsHg38Url": {
+                    "type": "string"
+                  },
+                  "entryId": {
+                    "type": "string"
+                  },
+                  "isReviewed": {
+                    "type": "boolean"
+                  },
+                  "isReferenceProteome": {
+                    "type": "boolean"
+                  },
+                  "uniprotStart": {
+                    "type": "integer"
+                  },
+                  "uniprotEnd": {
+                    "type": "integer"
+                  },
+                  "uniprotSequence": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
             }
           },
-          "sequence": {
-            "type": "string"
-          },
-          "sequenceStart": {
-            "type": "integer"
-          },
-          "sequenceEnd": {
-            "type": "integer"
-          },
-          "sequenceChecksum": {
-            "type": "string"
-          },
-          "isUniProtReviewed": {
-            "type": "boolean"
-          },
-          "gene": {
-            "type": "string"
-          },
-          "uniprotAccession": {
-            "type": "string"
-          },
-          "uniprotId": {
-            "type": "string"
-          },
-          "uniprotDescription": {
-            "type": "string"
-          },
-          "taxId": {
-            "type": "integer"
-          },
-          "organismScientificName": {
-            "type": "string"
-          },
-          "isUniProtReferenceProteome": {
-            "type": "boolean"
-          },
-          "organismCommonNames": {
-            "type": "array",
-            "items": {
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
               "type": "string"
-            }
-          },
-          "organismSynonyms": {
-            "type": "array",
-            "items": {
+            },
+            "detail": {
               "type": "string"
-            }
-          },
-          "geneSynonyms": {
-            "type": "array",
-            "items": {
+            },
+            "endpoint": {
               "type": "string"
+            },
+            "query": {
+              "type": "object"
             }
           },
-          "proteinFullNames": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "proteinShortNames": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "complexName": {
-            "type": "string"
-          },
-          "stoichiometry": {
-            "type": "number"
-          },
-          "ipTM": {
-            "type": "number"
-          },
-          "ipSAE": {
-            "type": "number"
-          },
-          "keywords": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "taxonomyLineage": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "functions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "alternativeNames": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "catalyticActivities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "bcifUrl": {
-            "type": "string"
-          },
-          "cifUrl": {
-            "type": "string"
-          },
-          "pdbUrl": {
-            "type": "string"
-          },
-          "paeImageUrl": {
-            "type": "string"
-          },
-          "paeDocUrl": {
-            "type": "string"
-          },
-          "amAnnotationsUrl": {
-            "type": "string"
-          },
-          "amAnnotationsHg19Url": {
-            "type": "string"
-          },
-          "amAnnotationsHg38Url": {
-            "type": "string"
-          },
-          "entryId": {
-            "type": "string"
-          },
-          "isReviewed": {
-            "type": "boolean"
-          },
-          "isReferenceProteome": {
-            "type": "boolean"
-          },
-          "uniprotStart": {
-            "type": "integer"
-          },
-          "uniprotEnd": {
-            "type": "integer"
-          },
-          "uniprotSequence": {
-            "type": "string"
-          }
+          "required": [
+            "error"
+          ]
         }
+      ]
+    },
+    "test_examples": [
+      {
+        "qualifier": "P69905"
       }
-    }
+    ]
   },
   {
     "name": "alphafold_get_summary",
-    "description": "Retrieve summary details of AlphaFold 3D models for a given protein. Input must be a UniProt accession, entry name, or CRC64 checksum. Returns lightweight information such as sequence length, coverage, confidence scores, experimental method, resolution, oligomeric state, and structural entities. If you only know the protein/gene name, first use `uniprot_search` to find the accession. For full residue-level 3D predictions with downloadable coordinates, call `alphafold_get_prediction`. For curated variants, see `UniProt_get_disease_variants_by_accession`; for predicted mutation effects, use `alphafold_get_annotations`.",
+    "description": "Retrieve summary details of AlphaFold 3D models for a given protein. IMPORTANT: The qualifier must be a UniProt ACCESSION (e.g., 'Q5SWX9' for MEIOB_HUMAN). Do NOT use UniProt entry names like 'MEIOB_HUMAN' - they will cause API errors. To find UniProt accession from a gene/protein name, use `UniProt_search` (e.g., query='gene:MEIOB' organism='human') or `UniProt_id_mapping` for ID conversion. Returns lightweight information such as sequence length, coverage, confidence scores, experimental method, resolution, oligomeric state, and structural entities. For full residue-level 3D predictions with downloadable coordinates, call `alphafold_get_prediction`. For curated variants, see `UniProt_get_disease_variants_by_accession`; for predicted mutation effects, use `alphafold_get_annotations`.",
     "type": "AlphaFoldRESTTool",
     "parameter": {
       "type": "object",
       "properties": {
         "qualifier": {
           "type": "string",
-          "description": "Protein identifier: UniProt accession, entry name, or CRC64 checksum."
+          "description": "Protein identifier: UniProt ACCESSION (e.g., 'Q5SWX9'). Aliases: uniprot_id, uniprot_accession."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P04637')."
+        },
+        "uniprot_accession": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P04637')."
         }
       },
-      "required": [
-        "qualifier"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "/uniprot/summary/{qualifier}.json",
@@ -383,35 +434,41 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "qualifier": "P04637"
+      }
+    ]
   },
   {
     "name": "alphafold_get_annotations",
-    "description": "Retrieve AlphaFold variant annotations (e.g., missense mutations) for a given UniProt accession (e.g., 'P69905'). Input must be a UniProt accession, entry name, or CRC64 checksum, along with an annotation type (currently only 'MUTAGEN'). Use this tool to explore predicted pathogenicity or functional effects of substitutions. If you only have a protein/gene name, resolve it with `uniprot_search`. For experimentally curated variants, use `UniProt_get_disease_variants_by_accession`. To view the full 3D structure, call `alphafold_get_prediction`; for overall model metadata, use `alphafold_get_summary`.",
+    "description": "Retrieve AlphaFold MUTAGEN annotations for a given UniProt accession. Returns experimental mutagenesis data mapped onto protein structures from UniProt. The qualifier must be a UniProt ACCESSION (e.g., 'P69905'). Note: Not all proteins have MUTAGEN annotations available in the database.",
     "type": "AlphaFoldRESTTool",
     "parameter": {
       "type": "object",
       "properties": {
         "qualifier": {
           "type": "string",
-          "description": "Protein identifier: UniProt accession, entry name, or CRC64 checksum."
+          "description": "UniProt ACCESSION (e.g., 'P69905'). Aliases: uniprot_id, uniprot_accession."
         },
-        "type": {
+        "uniprot_id": {
           "type": "string",
-          "description": "Annotation type (currently only 'MUTAGEN' is supported).",
-          "enum": [
-            "MUTAGEN"
-          ]
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P69905')."
+        },
+        "uniprot_accession": {
+          "type": "string",
+          "description": "Alias for qualifier. UniProt accession (e.g., 'P69905')."
         }
       },
-      "required": [
-        "qualifier",
-        "type"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "/annotations/{qualifier}.json",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "auto_query_params": {
+        "type": "MUTAGEN"
+      }
     },
     "return_schema": {
       "type": "object",
@@ -475,6 +532,11 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "qualifier": "P69905"
+      }
+    ]
   }
 ]

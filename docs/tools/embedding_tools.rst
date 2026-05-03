@@ -3,7 +3,7 @@ Embedding Tools
 
 **Configuration File**: ``embedding_tools.json``
 **Tool Type**: Local
-**Tools Count**: 6
+**Tools Count**: 5
 
 This page contains all tools defined in the ``embedding_tools.json`` configuration file.
 
@@ -13,7 +13,7 @@ Available Tools
 **embedding_database_add** (Type: EmbeddingDatabase)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Add new documents to an existing embedding database. Generates embeddings for new documents using...
+Append documents to an existing per-collection datastore (<name>.db + <name>.faiss). Uses the sam...
 
 .. dropdown:: embedding_database_add tool specification
 
@@ -21,21 +21,27 @@ Add new documents to an existing embedding database. Generates embeddings for ne
 
    * **Name**: ``embedding_database_add``
    * **Type**: ``EmbeddingDatabase``
-   * **Description**: Add new documents to an existing embedding database. Generates embeddings for new documents using the same model as the original database and appends them to the existing FAISS index.
+   * **Description**: Append documents to an existing per-collection datastore (<name>.db + <name>.faiss). Uses the same L2-normalized cosine setup. Enforces model/dimension consistency with the collection.
 
    **Parameters:**
 
-   * ``action`` (string) (required)
-     Action to add documents to existing database
+   * ``action`` (string) (optional)
+     No description
 
    * ``database_name`` (string) (required)
-     Name of the existing database to add documents to
+     Existing collection/database name
 
    * ``documents`` (array) (required)
      List of new document texts to embed and add
 
-   * ``metadata`` (array) (required)
-     Optional metadata for each new document (same length as documents)
+   * ``metadata`` (array) (optional)
+     Optional metadata per document (must match length of documents if provided)
+
+   * ``provider`` (string) (optional)
+     Embedding backend override. If omitted, falls back to collection/env.
+
+   * ``model`` (string) (optional)
+     Embedding model/deployment id override. If omitted, uses collection model or env default.
 
    **Example Usage:**
 
@@ -44,10 +50,8 @@ Add new documents to an existing embedding database. Generates embeddings for ne
       query = {
           "name": "embedding_database_add",
           "arguments": {
-              "action": "example_value",
               "database_name": "example_value",
-              "documents": ["item1", "item2"],
-              "metadata": ["item1", "item2"]
+              "documents": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -56,7 +60,7 @@ Add new documents to an existing embedding database. Generates embeddings for ne
 **embedding_database_create** (Type: EmbeddingDatabase)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a new embedding database from a collection of documents. Generates embeddings using OpenAI...
+Create a per-collection datastore: <name>.db (SQLite) + <name>.faiss (FAISS). Embeds documents us...
 
 .. dropdown:: embedding_database_create tool specification
 
@@ -64,27 +68,30 @@ Create a new embedding database from a collection of documents. Generates embedd
 
    * **Name**: ``embedding_database_create``
    * **Type**: ``EmbeddingDatabase``
-   * **Description**: Create a new embedding database from a collection of documents. Generates embeddings using OpenAI or Azure OpenAI models and stores them in a searchable database with FAISS vector index and SQLite metadata storage.
+   * **Description**: Create a per-collection datastore: <name>.db (SQLite) + <name>.faiss (FAISS). Embeds documents using the chosen provider (openai/azure/huggingface/local). Vectors are L2-normalized; FAISS index uses IndexFlatIP (cosine).
 
    **Parameters:**
 
-   * ``action`` (string) (required)
-     Action to create database from documents
+   * ``action`` (string) (optional)
+     No description
 
    * ``database_name`` (string) (required)
-     Name for the new database (must be unique)
+     Collection/database name (produces <name>.db and <name>.faiss)
 
    * ``documents`` (array) (required)
      List of document texts to embed and store
 
-   * ``metadata`` (array) (required)
-     Optional metadata for each document (same length as documents)
+   * ``metadata`` (array) (optional)
+     Optional metadata for each document (must match length of documents if provided)
 
-   * ``model`` (string) (required)
-     OpenAI/Azure OpenAI embedding model to use
+   * ``provider`` (string) (optional)
+     Embedding backend. Defaults: EMBED_PROVIDER, else by available creds (azure>openai>huggingface>local).
 
-   * ``description`` (string) (required)
-     Optional description for the database
+   * ``model`` (string) (optional)
+     Embedding model/deployment id. Defaults: EMBED_MODEL, else provider-specific sensible default.
+
+   * ``description`` (string) (optional)
+     Optional human-readable description for the collection
 
    **Example Usage:**
 
@@ -93,55 +100,8 @@ Create a new embedding database from a collection of documents. Generates embedd
       query = {
           "name": "embedding_database_create",
           "arguments": {
-              "action": "example_value",
               "database_name": "example_value",
-              "documents": ["item1", "item2"],
-              "metadata": ["item1", "item2"],
-              "model": "example_value",
-              "description": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**embedding_database_load** (Type: EmbeddingDatabase)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Load an existing embedding database from a local path or external source. Allows importing databa...
-
-.. dropdown:: embedding_database_load tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``embedding_database_load``
-   * **Type**: ``EmbeddingDatabase``
-   * **Description**: Load an existing embedding database from a local path or external source. Allows importing databases created elsewhere or backed up databases into the current ToolUniverse instance.
-
-   **Parameters:**
-
-   * ``action`` (string) (required)
-     Action to load database from external source
-
-   * ``database_path`` (string) (required)
-     Path to the existing database directory or file
-
-   * ``database_name`` (string) (required)
-     Local name to assign to the loaded database
-
-   * ``overwrite`` (boolean) (required)
-     Whether to overwrite existing database with same name
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "embedding_database_load",
-          "arguments": {
-              "action": "example_value",
-              "database_path": "example_value",
-              "database_name": "example_value",
-              "overwrite": true
+              "documents": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -150,7 +110,7 @@ Load an existing embedding database from a local path or external source. Allows
 **embedding_database_search** (Type: EmbeddingDatabase)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Search for semantically similar documents in an embedding database. Uses OpenAI embeddings to con...
+Semantic search over a per-collection datastore using FAISS (cosine via L2-normalized vectors). S...
 
 .. dropdown:: embedding_database_search tool specification
 
@@ -158,24 +118,30 @@ Search for semantically similar documents in an embedding database. Uses OpenAI 
 
    * **Name**: ``embedding_database_search``
    * **Type**: ``EmbeddingDatabase``
-   * **Description**: Search for semantically similar documents in an embedding database. Uses OpenAI embeddings to convert query text to vectors and performs similarity search using FAISS with optional metadata filtering.
+   * **Description**: Semantic search over a per-collection datastore using FAISS (cosine via L2-normalized vectors). Supports optional metadata filtering.
 
    **Parameters:**
 
-   * ``action`` (string) (required)
-     Action to search the database
+   * ``action`` (string) (optional)
+     No description
 
    * ``database_name`` (string) (required)
-     Name of the database to search in
+     Collection/database name to search
 
    * ``query`` (string) (required)
-     Query text to find similar documents for
+     Query text to embed and search with
 
-   * ``top_k`` (integer) (required)
+   * ``top_k`` (integer) (optional)
      Number of most similar documents to return
 
-   * ``filters`` (object) (required)
-     Optional metadata filters to apply to search results
+   * ``filters`` (object) (optional)
+     Optional metadata filters ('$gte', '$lte', '$in', '$contains', exact match)
+
+   * ``provider`` (string) (optional)
+     Embedding backend for the query vector. Defaults to collection/env.
+
+   * ``model`` (string) (optional)
+     Embedding model/deployment id for the query vector. Defaults to collection/env.
 
    **Example Usage:**
 
@@ -184,11 +150,8 @@ Search for semantically similar documents in an embedding database. Uses OpenAI 
       query = {
           "name": "embedding_database_search",
           "arguments": {
-              "action": "example_value",
               "database_name": "example_value",
-              "query": "example_value",
-              "top_k": 10,
-              "filters": "example_value"
+              "query": "example_value"
           }
       }
       result = tu.run(query)
@@ -197,7 +160,7 @@ Search for semantically similar documents in an embedding database. Uses OpenAI 
 **embedding_sync_download** (Type: EmbeddingSync)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Download an embedding database from HuggingFace Hub to local storage. Allows accessing databases ...
+Download a per-collection datastore from Hugging Face Hub into ./data/embeddings as <name>.db and...
 
 .. dropdown:: embedding_sync_download tool specification
 
@@ -205,21 +168,21 @@ Download an embedding database from HuggingFace Hub to local storage. Allows acc
 
    * **Name**: ``embedding_sync_download``
    * **Type**: ``EmbeddingSync``
-   * **Description**: Download an embedding database from HuggingFace Hub to local storage. Allows accessing databases shared by others or your own backups.
+   * **Description**: Download a per-collection datastore from Hugging Face Hub into ./data/embeddings as <name>.db and <name>.faiss.
 
    **Parameters:**
 
-   * ``action`` (string) (required)
-     Action to download database from HuggingFace
+   * ``action`` (string) (optional)
+     No description
 
    * ``repository`` (string) (required)
-     HuggingFace repository to download from (format: username/repo-name)
+     HF dataset repo to download from (e.g., 'user/repo')
 
-   * ``local_name`` (string) (required)
-     Local name for the downloaded database (optional, defaults to repo name)
+   * ``local_name`` (string) (optional)
+     Local collection name to save as (defaults to repo basename)
 
-   * ``overwrite`` (boolean) (required)
-     Whether to overwrite existing local database with same name
+   * ``overwrite`` (boolean) (optional)
+     Whether to overwrite existing local files
 
    **Example Usage:**
 
@@ -228,10 +191,7 @@ Download an embedding database from HuggingFace Hub to local storage. Allows acc
       query = {
           "name": "embedding_sync_download",
           "arguments": {
-              "action": "example_value",
-              "repository": "example_value",
-              "local_name": "example_value",
-              "overwrite": true
+              "repository": "example_value"
           }
       }
       result = tu.run(query)
@@ -240,7 +200,7 @@ Download an embedding database from HuggingFace Hub to local storage. Allows acc
 **embedding_sync_upload** (Type: EmbeddingSync)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Upload a local embedding database to HuggingFace Hub for sharing and collaboration. Creates a dat...
+Upload a per-collection datastore to Hugging Face Hub: <name>.db and <name>.faiss, plus metadata ...
 
 .. dropdown:: embedding_sync_upload tool specification
 
@@ -248,26 +208,26 @@ Upload a local embedding database to HuggingFace Hub for sharing and collaborati
 
    * **Name**: ``embedding_sync_upload``
    * **Type**: ``EmbeddingSync``
-   * **Description**: Upload a local embedding database to HuggingFace Hub for sharing and collaboration. Creates a dataset repository with the database files and metadata.
+   * **Description**: Upload a per-collection datastore to Hugging Face Hub: <name>.db and <name>.faiss, plus metadata files.
 
    **Parameters:**
 
-   * ``action`` (string) (required)
-     Action to upload database to HuggingFace
+   * ``action`` (string) (optional)
+     No description
 
    * ``database_name`` (string) (required)
-     Name of the local database to upload
+     Collection/database name to upload (expects <name>.db and <name>.faiss under data_dir)
 
    * ``repository`` (string) (required)
-     HuggingFace repository name (format: username/repo-name)
+     HF dataset repo (e.g., 'user/repo')
 
-   * ``description`` (string) (required)
-     Description for the HuggingFace dataset
+   * ``description`` (string) (optional)
+     Optional dataset description in the HF README
 
-   * ``private`` (boolean) (required)
-     Whether to create a private repository
+   * ``private`` (boolean) (optional)
+     Create/use a private HF repo
 
-   * ``commit_message`` (string) (required)
+   * ``commit_message`` (string) (optional)
      Commit message for the upload
 
    **Example Usage:**
@@ -277,12 +237,8 @@ Upload a local embedding database to HuggingFace Hub for sharing and collaborati
       query = {
           "name": "embedding_sync_upload",
           "arguments": {
-              "action": "example_value",
               "database_name": "example_value",
-              "repository": "example_value",
-              "description": "example_value",
-              "private": true,
-              "commit_message": "example_value"
+              "repository": "example_value"
           }
       }
       result = tu.run(query)

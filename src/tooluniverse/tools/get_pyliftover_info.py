@@ -14,7 +14,7 @@ def get_pyliftover_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get comprehensive information about PyLiftover – genomic coordinate conversion between assemblies
 
@@ -31,14 +31,18 @@ def get_pyliftover_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v for k, v in {"include_examples": include_examples}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "get_pyliftover_info",
-            "arguments": {"include_examples": include_examples},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

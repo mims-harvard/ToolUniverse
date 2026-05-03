@@ -1,0 +1,149 @@
+[
+  {
+    "name": "CEDA_search_datasets",
+    "description": "Search the CEDA (Centre for Environmental Data Analysis) data catalogue for UK and global environmental, climate, and atmospheric science datasets. CEDA archives over 450TB of data from atmospheric, earth observation, and climate science research. Returns dataset records with titles, abstracts, time periods, geographic extents, and access information. Essential for finding atmospheric measurements, climate model outputs, satellite data, and Earth observation datasets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Search query for datasets. Examples: 'climate model', 'sea surface temperature', 'atmospheric CO2', 'soil moisture', 'ozone'"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (default 10, max 100)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://catalogue.ceda.ac.uk/api/v2/observations.json",
+      "params": {
+        "limit": "10"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "climate model temperature",
+        "limit": 5
+      },
+      {
+        "q": "sea surface temperature satellite",
+        "limit": 5
+      },
+      {
+        "q": "atmospheric CO2 measurements",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "CEDA dataset catalogue results",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching datasets"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for next page"
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for previous page"
+            },
+            "results": {
+              "type": "array",
+              "description": "List of datasets",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ob_id": {
+                    "type": "integer",
+                    "description": "Dataset ID"
+                  },
+                  "uuid": {
+                    "type": "string",
+                    "description": "Dataset UUID"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Dataset title"
+                  },
+                  "abstract": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Dataset description"
+                  },
+                  "keywords": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Keywords/topics (space-separated string or array)"
+                  },
+                  "timePeriod": {
+                    "type": [
+                      "string",
+                      "object",
+                      "null"
+                    ],
+                    "description": "Temporal coverage (URL string or object with startTime/endTime)"
+                  },
+                  "geographicExtent": {
+                    "type": [
+                      "string",
+                      "object",
+                      "null"
+                    ],
+                    "description": "Geographic coverage (URL string or object)"
+                  },
+                  "phenomena": {
+                    "type": "array",
+                    "description": "Physical phenomena measured"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

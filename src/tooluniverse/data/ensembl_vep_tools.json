@@ -1,0 +1,528 @@
+[
+  {
+    "name": "EnsemblVEP_annotate_hgvs",
+    "description": "Predict functional consequences of a genetic variant using HGVS notation via the Ensembl Variant Effect Predictor (VEP). Returns impact on genes, transcripts, and proteins including SIFT/PolyPhen pathogenicity scores, consequence types, amino acid changes, and colocated known variants. HGVS notation examples: 'BRAF:p.Val600Glu' (protein), 'ENST00000366667:c.803C>T' (coding DNA). This complements the existing region-based VEP tool by accepting standard clinical variant nomenclature.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hgvs_notation": {
+          "type": "string",
+          "description": "Variant in HGVS notation. Supports protein (p.), coding DNA (c.), and genomic (g.) notation. Examples: 'BRAF:p.Val600Glu', 'ENST00000366667:c.803C>T', 'NC_000007.14:g.140753336A>T'."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name. Default: 'human'. Other options: 'mouse', 'rat', 'zebrafish', etc.",
+          "default": "human"
+        }
+      },
+      "required": [
+        "hgvs_notation"
+      ]
+    },
+    "fields": {
+      "mode": "vep_hgvs"
+    },
+    "type": "EnsemblVEPTool",
+    "test_examples": [
+      {
+        "hgvs_notation": "BRAF:p.Val600Glu"
+      },
+      {
+        "hgvs_notation": "ENST00000366667:c.803C>T",
+        "species": "human"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Input variant identifier"
+                },
+                "assembly_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Reference genome assembly"
+                },
+                "seq_region_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Chromosome or contig"
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Genomic start position"
+                },
+                "end": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Genomic end position"
+                },
+                "strand": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Strand (1 or -1)"
+                },
+                "allele_string": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Allele string (ref/alt)"
+                },
+                "most_severe_consequence": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Most severe consequence (e.g., missense_variant)"
+                },
+                "transcript_consequences": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene_symbol": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "transcript_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "biotype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "consequence_terms": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "impact": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "amino_acids": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "codons": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "sift_prediction": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "sift_score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "polyphen_prediction": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "polyphen_score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "colocated_variants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "allele_string": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "input": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblVEP_annotate_rsid",
+    "description": "Predict functional consequences of a genetic variant using its dbSNP rs identifier via the Ensembl Variant Effect Predictor (VEP). Returns impact on genes, transcripts, and proteins including SIFT/PolyPhen scores, consequence types, amino acid changes, and colocated variants. Useful when you have a variant's rs number from GWAS, clinical reports, or literature. Example: 'rs7903146' (TCF7L2 T2D variant), 'rs429358' (APOE Alzheimer variant).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "dbSNP rs identifier. Examples: 'rs7903146' (TCF7L2, type 2 diabetes), 'rs429358' (APOE, Alzheimer's), 'rs1801133' (MTHFR C677T). Aliases: rsid, rs_id."
+        },
+        "rsid": {
+          "type": "string",
+          "description": "Alias for variant_id. dbSNP rs identifier (e.g., 'rs7903146')."
+        },
+        "rs_id": {
+          "type": "string",
+          "description": "Alias for variant_id. dbSNP rs identifier (e.g., 'rs7903146')."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name. Default: 'human'.",
+          "default": "human"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "mode": "vep_id"
+    },
+    "type": "EnsemblVEPTool",
+    "test_examples": [
+      {
+        "variant_id": "rs7903146"
+      },
+      {
+        "variant_id": "rs429358"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "input": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "assembly_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "seq_region_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "end": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "allele_string": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "most_severe_consequence": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "transcript_consequences": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene_symbol": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "consequence_terms": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "impact": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "amino_acids": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "sift_prediction": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "polyphen_prediction": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "colocated_variants": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "input": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblVEP_variant_recoder",
+    "description": "Convert genetic variant identifiers between different nomenclature formats using the Ensembl Variant Recoder. Given a variant ID (e.g., rs number), returns equivalent representations in HGVS genomic (hgvsg), HGVS coding (hgvsc), HGVS protein (hgvsp), and SPDI format. Essential for cross-referencing variants across databases that use different notation systems. Example: 'rs429358' returns HGVS coding notation for all APOE transcripts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "Variant identifier to recode. Accepts: rsID (e.g., 'rs429358'), HGVS notation (e.g., 'AGT:c.803T>C'), SPDI (e.g., 'NC_000019.10:44908683:T:C')."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name. Default: 'human'.",
+          "default": "human"
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "mode": "variant_recoder"
+    },
+    "type": "EnsemblVEPTool",
+    "test_examples": [
+      {
+        "variant_id": "rs429358"
+      },
+      {
+        "variant_id": "rs7903146"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "allele": {
+                    "type": "string",
+                    "description": "Alternative allele"
+                  },
+                  "input": {
+                    "type": "string",
+                    "description": "Original input variant ID"
+                  },
+                  "id": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Known variant IDs (rsIDs, COSMIC, etc.)"
+                  },
+                  "hgvsg": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "HGVS genomic notation(s)"
+                  },
+                  "hgvsc": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "HGVS coding notation(s) for each transcript"
+                  },
+                  "hgvsp": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "HGVS protein notation(s)"
+                  },
+                  "spdi": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "SPDI notation(s)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "input": {
+                  "type": "string"
+                },
+                "num_alleles": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

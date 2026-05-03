@@ -3586,8 +3586,6 @@ msgid "get_htmd_info (from :doc:`structural_biology_tools`)"
 msgstr "get_htmd_info（来自 :doc:`structural_biology_tools`）"
 
 #: ../../tools/tools_config_index.rst:1430 716d947815d64e2c9e17e484242ead55
-msgid "get_hyperopt_info (from :doc:`machine_learning_tools`)"
-msgstr "get_hyperopt_info（来自 :doc:`machine_learning_tools`）"
 
 #: ../../tools/tools_config_index.rst:1431 127250b36ecf4d71bbd6e8a1ce12f246
 msgid "get_igraph_info (from :doc:`visualization_tools`)"

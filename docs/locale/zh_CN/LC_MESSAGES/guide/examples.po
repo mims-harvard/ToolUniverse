@@ -209,7 +209,7 @@ msgstr ""
 #: ../../guide/examples.rst:1000 cfcb63c2544a49b2ba90ba8c62bea5f9
 msgid ""
 "**🛠️ All Available Tools** → :doc:`tools` - Explore the complete catalog of "
-"600+ scientific tools and their capabilities"
+"1000+ scientific tools and their capabilities"
 msgstr "**🛠️ 所有可用工具** → :doc:`tools` - 探索包含600多种科学工具及其功能的完整目录"
 
 #: ../../guide/examples.rst:1001 0574f39678744f94b1496e10a7bf6291

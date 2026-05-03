@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_clair3\\_info 模块"
 
 #: 52b514379bd64095bbd0ff4a376ba767 of tooluniverse.tools.get_clair3_info:1
 msgid "get_clair3_info"
-msgstr ""
+msgstr "get_clair3_信息"
 
 #: d5dc96459cc0486bb9f5689d4b698fd5 e7477964e732445c974537f14be0927f of
 #: tooluniverse.tools.get_clair3_info:3

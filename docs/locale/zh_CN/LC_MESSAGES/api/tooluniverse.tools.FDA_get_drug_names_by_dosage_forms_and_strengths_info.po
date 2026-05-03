@@ -32,7 +32,7 @@ msgstr ""
 #: 2bcc3a4ac7d54b9dbb0eb7771e2b2be7 of
 #: tooluniverse.tools.FDA_get_drug_names_by_dosage_forms_and_strengths_info:1
 msgid "FDA_get_drug_names_by_dosage_forms_and_strengths_info"
-msgstr ""
+msgstr "FDA_按剂型和规格获取药品名称信息"
 
 #: 22f6a66a35ef46e68adf6569d812ecef ca39b2857d594cd6a1ffc58c0e822c75 of
 #: tooluniverse.tools.FDA_get_drug_names_by_dosage_forms_and_strengths_info:3

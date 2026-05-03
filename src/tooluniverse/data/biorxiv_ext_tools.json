@@ -1,0 +1,165 @@
+[
+  {
+    "name": "BioRxiv_list_recent_preprints",
+    "description": "List recent bioRxiv or medRxiv preprints by date range. Returns up to 100 preprints posted between the given start and end dates, with title, authors, abstract, DOI, category, and publication status. The bioRxiv API returns results in batches of up to 100; use the cursor parameter for pagination (0 for first page, 100 for second, etc.). Use this to monitor new preprints in a date range or discover recent work in a field. For searching by DOI, use BioRxiv_get_preprint instead. For searching by keywords, use EuropePMC_search_articles with 'SRC:PPR' filter.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Date range must not exceed 60 days."
+        },
+        "end_date": {
+          "type": "string",
+          "description": "End date in YYYY-MM-DD format (e.g., '2024-01-03'). Date range must not exceed 60 days."
+        },
+        "server": {
+          "type": "string",
+          "description": "Server: 'biorxiv' for biology preprints, 'medrxiv' for health sciences preprints",
+          "default": "biorxiv",
+          "enum": [
+            "biorxiv",
+            "medrxiv"
+          ]
+        },
+        "cursor": {
+          "type": "integer",
+          "description": "Pagination cursor (0 for first 100 results, 100 for next 100, etc.)",
+          "default": 0
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.biorxiv.org/details/{server}/{start_date}/{end_date}/{cursor}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "start_date": "2024-01-01",
+        "end_date": "2024-01-03",
+        "server": "biorxiv",
+        "cursor": 0
+      },
+      {
+        "start_date": "2024-06-01",
+        "end_date": "2024-06-03",
+        "server": "medrxiv",
+        "cursor": 0
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "bioRxiv/medRxiv recent preprints response",
+          "properties": {
+            "messages": {
+              "type": "array",
+              "description": "Status messages with pagination info",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  },
+                  "interval": {
+                    "type": "string",
+                    "description": "Date range queried"
+                  },
+                  "cursor": {
+                    "type": "integer",
+                    "description": "Current cursor position"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "description": "Number of results in this batch (max 100)"
+                  },
+                  "count_new_papers": {
+                    "type": "string",
+                    "description": "Total unique new papers in date range"
+                  },
+                  "total": {
+                    "type": "string",
+                    "description": "Total records including revisions"
+                  }
+                }
+              }
+            },
+            "collection": {
+              "type": "array",
+              "description": "Array of preprint metadata",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "doi": {
+                    "type": "string",
+                    "description": "bioRxiv/medRxiv DOI"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Preprint title"
+                  },
+                  "authors": {
+                    "type": "string",
+                    "description": "Author list as semicolon-separated string"
+                  },
+                  "author_corresponding": {
+                    "type": "string",
+                    "description": "Corresponding author name"
+                  },
+                  "author_corresponding_institution": {
+                    "type": "string",
+                    "description": "Corresponding author institution"
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Publication date"
+                  },
+                  "version": {
+                    "type": "string",
+                    "description": "Version number"
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Subject category (e.g., neuroscience, bioinformatics, genomics)"
+                  },
+                  "abstract": {
+                    "type": "string",
+                    "description": "Full abstract text"
+                  },
+                  "published": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Published journal DOI if accepted"
+                  },
+                  "license": {
+                    "type": "string",
+                    "description": "License type"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

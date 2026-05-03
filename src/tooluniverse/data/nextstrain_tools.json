@@ -1,0 +1,212 @@
+[
+  {
+    "name": "Nextstrain_list_datasets",
+    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika). Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pathogen": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional pathogen name filter. Examples: 'flu', 'ebola', 'zika', 'dengue', 'mpox'. Leave empty for all pathogens."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "list_datasets"
+    },
+    "type": "NextstrainTool",
+    "test_examples": [
+      {
+        "pathogen": "flu"
+      },
+      {
+        "pathogen": "ebola"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathogen": {
+                    "type": "string"
+                  },
+                  "dataset_count": {
+                    "type": "integer"
+                  },
+                  "datasets": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_pathogens": {
+                  "type": "integer"
+                },
+                "total_datasets": {
+                  "type": "integer"
+                },
+                "filter": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Nextstrain_get_dataset",
+    "description": "Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, last update date, number of sequences, data provenance, maintainers, root node attributes, and available coloring options. Useful for understanding the scope and currency of pathogen genomic surveillance data. Example: 'zika' returns 1044 sequences tracking Zika virus evolution, last updated Dec 2025.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset": {
+          "type": "string",
+          "description": "Nextstrain dataset path. Examples: 'zika', 'ebola', 'flu/seasonal/h3n2/ha/2y', 'dengue/denv1', 'mpox/clade-IIb'."
+        }
+      },
+      "required": [
+        "dataset"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_dataset"
+    },
+    "type": "NextstrainTool",
+    "test_examples": [
+      {
+        "dataset": "zika"
+      },
+      {
+        "dataset": "ebola"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "build_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "num_sequences": {
+                  "type": "integer"
+                },
+                "data_provenance": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "maintainers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "root_attributes": {
+                  "type": "object"
+                },
+                "available_colorings": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

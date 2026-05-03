@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_overdosage\\_info\\_by\\_drug\\_name 模�
 #: 098be63ecd1a48f8a7097fb066265a81 of
 #: tooluniverse.tools.FDA_get_overdosage_info_by_drug_name:1
 msgid "FDA_get_overdosage_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取过量服用信息"
 
 #: 6f45af0c96ce4a5b8364679e5860523e e9035e2360424081aebf3d2e5eea5f26 of
 #: tooluniverse.tools.FDA_get_overdosage_info_by_drug_name:3

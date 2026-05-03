@@ -1,8 +1,11 @@
 [
   {
     "name": "visualize_molecule_2d",
-    "description": "Visualize 2D molecular structures using RDKit. Supports SMILES, InChI, molecule names, and various output formats including PNG, SVG, and interactive HTML.",
+    "description": "Visualize 2D molecular structures using RDKit. Supports SMILES, InChI, molecule names, and various output formats including PNG, SVG, and interactive HTML. Prerequisites: Requires 'rdkit' package (install: pip install tooluniverse[visualization]).",
     "type": "Molecule2DTool",
+    "required_packages": [
+      "rdkit"
+    ],
     "parameter": {
       "type": "object",
       "properties": {
@@ -129,6 +132,19 @@
           "description": "Type of error if visualization failed"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+        "inchi": "InChI=1S/C9H8O4/c1-6(10)13-8-5-3-2-4-7(8)9(11)12/h2-5H,1H3,(H,11,12)",
+        "molecule_name": "aspirin",
+        "width": 400,
+        "height": 400,
+        "output_format": "png",
+        "show_atom_numbers": false,
+        "show_bond_numbers": false,
+        "include_stereo": true
+      }
+    ]
   }
 ]

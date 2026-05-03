@@ -135,4 +135,6 @@ def reset_shared_client():
     global _client
 
     with _client_lock:
+        if _client:
+            _client.close()
         _client = None

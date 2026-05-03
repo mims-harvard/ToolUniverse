@@ -1,0 +1,246 @@
+[
+  {
+    "name": "GtoPdb_search_targets",
+    "description": "Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels, nuclear receptors, enzymes, transporters, and catalytic receptors. Returns target IDs, names, abbreviations, types, and family classifications. GtoPdb is the IUPHAR/BPS reference resource for pharmacological drug targets with 3000+ curated targets. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Target name or gene symbol to search. Examples: 'dopamine', 'serotonin receptor', 'EGFR', 'beta-adrenoceptor', 'TRPV1'"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Target type filter. Values: 'GPCR', 'Ion channel', 'Nuclear receptor', 'Enzyme', 'Transporter', 'Catalytic receptor'"
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.guidetopharmacology.org/services/targets",
+      "params": {}
+    },
+    "type": "GtoPdbRESTTool",
+    "test_examples": [
+      {
+        "name": "dopamine"
+      },
+      {
+        "name": "serotonin",
+        "type": "GPCR"
+      },
+      {
+        "name": "EGFR"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of pharmacological targets",
+          "items": {
+            "type": "object",
+            "properties": {
+              "targetId": {
+                "type": "integer",
+                "description": "GtoPdb target ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full target name"
+              },
+              "abbreviation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Common abbreviation"
+              },
+              "type": {
+                "type": "string",
+                "description": "Target type (GPCR, Ion channel, etc.)"
+              },
+              "familyIds": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                },
+                "description": "Family IDs"
+              },
+              "subunitIds": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "complexIds": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GtoPdb_search_ligands",
+    "description": "Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, endogenous compounds). Returns ligand details including type, approval status, INN name, WHO essential medicine status, and whether it is an approved drug. GtoPdb covers 10,000+ curated ligands with pharmacological activity data. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ligand name or INN to search. Examples: 'aspirin', 'morphine', 'dopamine', 'caffeine', 'insulin'"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ligand type filter. Values: 'Approved', 'Synthetic organic', 'Natural product', 'Endogenous peptide', 'Antibody', 'Inorganic'"
+        },
+        "approved": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Filter to approved drugs only (true) or all ligands (false/omit)"
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.guidetopharmacology.org/services/ligands",
+      "params": {}
+    },
+    "type": "GtoPdbRESTTool",
+    "test_examples": [
+      {
+        "name": "aspirin"
+      },
+      {
+        "name": "morphine",
+        "approved": true
+      },
+      {
+        "name": "dopamine",
+        "type": "Endogenous peptide"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  {
+    "name": "GtoPdb_get_interactions",
+    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data \u2014 use ChEMBL_get_drug_mechanisms for those instead. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gene symbol convenience parameter \u2014 automatically resolves to GtoPdb targetId. Works for gene-symbol-named targets (e.g., 'KRAS', 'EGFR', 'BRAF', 'ALK'). Traditional receptor names like 'DRD2' may not resolve; use GtoPdb_search_targets first to confirm. Prefer exact gene symbols over partial names."
+        },
+        "targetId": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "GtoPdb target ID. Get from GtoPdb_search_targets. Examples: 2486 (dopamine beta-hydroxylase), 20 (5-HT1A receptor). Alias: target_id also accepted."
+        },
+        "target_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Alias for targetId. GtoPdb target ID."
+        },
+        "ligandId": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "GtoPdb ligand ID. Get from GtoPdb_search_ligands. Examples: 5765 (aspirin), 7093 (morphine)"
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by species. Examples: 'Human', 'Mouse', 'Rat'"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.guidetopharmacology.org/services/interactions",
+      "params": {}
+    },
+    "type": "GtoPdbRESTTool",
+    "test_examples": [
+      {
+        "gene_symbol": "KRAS",
+        "species": "Human"
+      },
+      {
+        "targetId": 20
+      },
+      {
+        "targetId": 2486,
+        "species": "Human"
+      },
+      {
+        "ligandId": 7093
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+]

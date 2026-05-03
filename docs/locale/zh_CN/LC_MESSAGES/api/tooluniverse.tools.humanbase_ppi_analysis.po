@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.humanbase\\_ppi\\_analysis 模块"
 #: 7d8c4d0afb394823addc14be01b6f6c2 of
 #: tooluniverse.tools.humanbase_ppi_analysis:1
 msgid "humanbase_ppi_analysis"
-msgstr ""
+msgstr "humanbase_ppi_分析"
 
 #: 64dc41aca19f4611977c9b0637d2dc4a ca102188c69d49d4a8e40eacb5495367 of
 #: tooluniverse.tools.humanbase_ppi_analysis:3

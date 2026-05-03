@@ -1,0 +1,341 @@
+[
+  {
+    "name": "NWS_get_point_metadata",
+    "description": "Get weather metadata for a geographic point (latitude/longitude) from the US National Weather Service. Returns the forecast office, grid coordinates, and URLs for forecast, hourly forecast, and observation stations. This is often the first step to get a weather forecast for a US location.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude of the location (e.g., 38.8894 for Washington DC)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude of the location (e.g., -77.0352 for Washington DC)"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.weather.gov/points/{latitude},{longitude}",
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "latitude": 38.8894,
+        "longitude": -77.0352
+      },
+      {
+        "latitude": 40.7128,
+        "longitude": -74.006
+      },
+      {
+        "latitude": 34.0522,
+        "longitude": -118.2437
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Point metadata including forecast office and grid coordinates",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object",
+              "properties": {
+                "cwa": {
+                  "type": "string",
+                  "description": "County Warning Area office code"
+                },
+                "gridId": {
+                  "type": "string",
+                  "description": "Grid office ID"
+                },
+                "gridX": {
+                  "type": "integer",
+                  "description": "Grid X coordinate"
+                },
+                "gridY": {
+                  "type": "integer",
+                  "description": "Grid Y coordinate"
+                },
+                "forecast": {
+                  "type": "string",
+                  "description": "URL for the forecast"
+                },
+                "forecastHourly": {
+                  "type": "string",
+                  "description": "URL for hourly forecast"
+                },
+                "timeZone": {
+                  "type": "string",
+                  "description": "IANA time zone"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NWS_get_forecast",
+    "description": "Get the 7-day weather forecast for a National Weather Service grid point. You need the gridId, gridX, and gridY values from NWS_get_point_metadata. Returns period-by-period forecast with temperature, wind, and detailed descriptions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gridId": {
+          "type": "string",
+          "description": "NWS grid office identifier (e.g., 'LWX' for Washington DC area)"
+        },
+        "gridX": {
+          "type": "integer",
+          "description": "Grid X coordinate from point metadata"
+        },
+        "gridY": {
+          "type": "integer",
+          "description": "Grid Y coordinate from point metadata"
+        }
+      },
+      "required": [
+        "gridId",
+        "gridX",
+        "gridY"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.weather.gov/gridpoints/{gridId}/{gridX},{gridY}/forecast",
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "gridId": "LWX",
+        "gridX": 97,
+        "gridY": 71
+      },
+      {
+        "gridId": "OKX",
+        "gridX": 33,
+        "gridY": 37
+      },
+      {
+        "gridId": "LOX",
+        "gridX": 154,
+        "gridY": 44
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Forecast data with periods",
+          "properties": {
+            "properties": {
+              "type": "object",
+              "properties": {
+                "periods": {
+                  "type": "array",
+                  "description": "Forecast periods (typically 14 half-day periods)",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "number": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Period name (e.g., 'Tonight', 'Friday')"
+                      },
+                      "startTime": {
+                        "type": "string"
+                      },
+                      "endTime": {
+                        "type": "string"
+                      },
+                      "temperature": {
+                        "type": "integer"
+                      },
+                      "temperatureUnit": {
+                        "type": "string"
+                      },
+                      "windSpeed": {
+                        "type": "string"
+                      },
+                      "windDirection": {
+                        "type": "string"
+                      },
+                      "shortForecast": {
+                        "type": "string"
+                      },
+                      "detailedForecast": {
+                        "type": "string"
+                      },
+                      "isDaytime": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NWS_get_active_alerts",
+    "description": "Get active weather alerts from the National Weather Service. Can be filtered by US state/territory. Returns current severe weather warnings, watches, and advisories including tornado warnings, flood warnings, winter storm warnings, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "area": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "US state/territory abbreviation to filter by (e.g., 'CA', 'TX', 'NY'). If not provided, returns all active alerts."
+        },
+        "severity": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by severity: Extreme, Severe, Moderate, Minor, Unknown"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of alerts to return (default: 50)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://api.weather.gov/alerts/active",
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "area": "TX"
+      },
+      {
+        "area": "CA"
+      },
+      {
+        "severity": "Extreme"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Active weather alerts",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "features": {
+              "type": "array",
+              "description": "Array of alert features",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "event": {
+                        "type": "string",
+                        "description": "Alert event type (e.g., 'Tornado Warning')"
+                      },
+                      "headline": {
+                        "type": "string"
+                      },
+                      "severity": {
+                        "type": "string"
+                      },
+                      "certainty": {
+                        "type": "string"
+                      },
+                      "urgency": {
+                        "type": "string"
+                      },
+                      "areaDesc": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "effective": {
+                        "type": "string"
+                      },
+                      "expires": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

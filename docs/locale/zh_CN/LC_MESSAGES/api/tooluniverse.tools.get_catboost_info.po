@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_catboost\\_info 模块"
 #: be06db7c6d2041dd99f59b312744248d of tooluniverse.tools.get_catboost_info:1
 msgid "get_catboost_info"
 msgstr ""
+"get_catboost_info\n"
+"\n"
+"获取_catboost_信息"
 
 #: 1a0a4a22092f42e5b7c577e7c82b5241 edc18f05f72f4ae7842a8578c3a59bf3 of
 #: tooluniverse.tools.get_catboost_info:3

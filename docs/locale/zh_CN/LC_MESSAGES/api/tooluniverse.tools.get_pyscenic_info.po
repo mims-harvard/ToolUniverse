@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pyscenic\\_info 模块"
 
 #: 318705ee3c51412481b6bdd4ce95b97d of tooluniverse.tools.get_pyscenic_info:1
 msgid "get_pyscenic_info"
-msgstr ""
+msgstr "get_pyscenic_信息获取"
 
 #: 1017b5af1bc04160abfeeed1ffac5392 b08bda417837461b8257fc4367f8192e of
 #: tooluniverse.tools.get_pyscenic_info:3

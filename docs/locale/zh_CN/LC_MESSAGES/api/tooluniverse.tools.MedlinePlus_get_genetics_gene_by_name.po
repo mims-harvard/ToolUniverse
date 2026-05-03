@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.MedlinePlus\\_get\\_genetics\\_gene\\_by\\_name 模�
 #: e7706a5aa2f84b5b854e68b5f90378ec of
 #: tooluniverse.tools.MedlinePlus_get_genetics_gene_by_name:1
 msgid "MedlinePlus_get_genetics_gene_by_name"
-msgstr ""
+msgstr "MedlinePlus_按名称获取基因信息"
 
 #: 07a13b4101384891aa40ffe501499028 e3ee60fe113842f3ae2d0f2add04d653 of
 #: tooluniverse.tools.MedlinePlus_get_genetics_gene_by_name:3

@@ -1,0 +1,190 @@
+[
+  {
+    "type": "SIMBADTool",
+    "name": "SIMBAD_query_object",
+    "description": "Query the SIMBAD astronomical database for information about celestial objects. Supports queries by object name, coordinates, or identifier. SIMBAD contains data on millions of astronomical objects including stars, galaxies, and other celestial bodies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query_type": {
+          "type": "string",
+          "description": "Type of query to perform. Options: 'object_name' (search by name), 'coordinates' (search by position), 'identifier' (search by identifier pattern)",
+          "enum": ["object_name", "coordinates", "identifier"],
+          "default": "object_name"
+        },
+        "object_name": {
+          "type": "string",
+          "description": "Name of the astronomical object (e.g., 'M31', 'Sirius', 'NGC 1068'). Required when query_type='object_name'"
+        },
+        "ra": {
+          "type": "number",
+          "description": "Right Ascension in degrees (0-360). Required when query_type='coordinates'"
+        },
+        "dec": {
+          "type": "number",
+          "description": "Declination in degrees (-90 to +90). Required when query_type='coordinates'"
+        },
+        "radius": {
+          "type": "number",
+          "description": "Search radius in arcminutes for coordinate queries. Default is 1.0 arcmin",
+          "default": 1.0
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Identifier pattern with wildcards (e.g., 'HD *', 'NGC 10*'). Required when query_type='identifier'"
+        },
+        "output_format": {
+          "type": "string",
+          "description": "Level of detail in output. Options: 'basic' (ID, coordinates, type), 'detailed' (includes spectral type and flux), 'full' (all available data)",
+          "enum": ["basic", "detailed", "full"],
+          "default": "basic"
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return for coordinate or identifier queries",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the query was successful"
+        },
+        "query": {
+          "type": "string",
+          "description": "Description of the query executed"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of results returned"
+        },
+        "results": {
+          "type": "array",
+          "description": "Array of astronomical objects matching the query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "main_id": {
+                "type": "string",
+                "description": "Primary identifier for the object"
+              },
+              "coordinates": {
+                "type": "string",
+                "description": "Coordinates in ICRS format"
+              },
+              "object_type": {
+                "type": "string",
+                "description": "Type of astronomical object"
+              },
+              "spectral_type": {
+                "type": "string",
+                "description": "Spectral type (if available and format is detailed/full)"
+              },
+              "flux": {
+                "type": "string",
+                "description": "Flux measurements (if available and format is detailed/full)"
+              }
+            }
+          }
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if query failed"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query_type": "object_name",
+        "object_name": "M31",
+        "output_format": "basic"
+      },
+      {
+        "query_type": "object_name",
+        "object_name": "Sirius",
+        "output_format": "detailed"
+      },
+      {
+        "query_type": "coordinates",
+        "ra": 10.68458,
+        "dec": 41.26917,
+        "radius": 2.0,
+        "max_results": 5
+      },
+      {
+        "query_type": "identifier",
+        "identifier": "NGC 10*",
+        "max_results": 5
+      }
+    ],
+    "tags": ["astronomy", "database", "objects", "celestial", "simbad", "science"],
+    "author": "ToolUniverse Contributors",
+    "version": "1.0.0",
+    "license": "Apache-2.0"
+  },
+  {
+    "type": "SIMBADAdvancedTool",
+    "name": "SIMBAD_advanced_query",
+    "description": "Execute advanced ADQL (Astronomical Data Query Language) queries on SIMBAD using TAP (Table Access Protocol). Allows complex database queries with SQL-like syntax for sophisticated astronomical data searches. Use this for queries that require joins, filtering, or complex conditions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adql_query": {
+          "type": "string",
+          "description": "ADQL query string. Example: 'SELECT TOP 10 main_id, ra, dec, otype FROM basic WHERE otype='Star' AND ra BETWEEN 0 AND 10'"
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return",
+          "default": 100
+        },
+        "format": {
+          "type": "string",
+          "description": "Output format. Options: 'json' or 'votable'",
+          "enum": ["json", "votable"],
+          "default": "json"
+        }
+      },
+      "required": ["adql_query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether the query was successful"
+        },
+        "query": {
+          "type": "string",
+          "description": "The ADQL query that was executed"
+        },
+        "results": {
+          "description": "Query results in requested format (JSON object or VOTable XML string)"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if query failed"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "adql_query": "SELECT TOP 5 main_id, ra, dec, otype FROM basic WHERE otype='Star' AND ra BETWEEN 0 AND 10",
+        "max_results": 5,
+        "format": "json"
+      },
+      {
+        "adql_query": "SELECT main_id, pmra, pmdec FROM basic WHERE main_id='Sirius'",
+        "format": "json"
+      }
+    ],
+    "tags": ["astronomy", "database", "adql", "tap", "advanced", "simbad", "science"],
+    "author": "ToolUniverse Contributors",
+    "version": "1.0.0",
+    "license": "Apache-2.0"
+  }
+]

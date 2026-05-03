@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_other\\_safety\\_info\\_by\\_drug\\_name 
 #: 2912be0e773149599d9a4ef1183102b2 of
 #: tooluniverse.tools.FDA_get_other_safety_info_by_drug_name:1
 msgid "FDA_get_other_safety_info_by_drug_name"
-msgstr ""
+msgstr "FDA_根据药品名称获取其他安全信息"
 
 #: 4186dbffab59486cac64cd28eea792ce f7e27caf161e41a585ee248077e72e3e of
 #: tooluniverse.tools.FDA_get_other_safety_info_by_drug_name:3

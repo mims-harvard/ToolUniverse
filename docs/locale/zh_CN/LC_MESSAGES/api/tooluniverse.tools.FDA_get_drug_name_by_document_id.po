@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_document\\_id 模块"
 #: 9e8fd0046e384ff08626d68d61bc1b3c of
 #: tooluniverse.tools.FDA_get_drug_name_by_document_id:1
 msgid "FDA_get_drug_name_by_document_id"
-msgstr ""
+msgstr "FDA_根据文档ID获取药品名称"
 
 #: 703d8851768243a7b2738a04f88d612c aacd8d2b1fb24a1d81342294657c924d of
 #: tooluniverse.tools.FDA_get_drug_name_by_document_id:3

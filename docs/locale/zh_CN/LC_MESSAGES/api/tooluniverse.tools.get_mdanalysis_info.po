@@ -29,6 +29,9 @@ msgstr "tooluniverse.tools.get\\_mdanalysis\\_info 模块"
 #: tooluniverse.tools.get_mdanalysis_info:1
 msgid "get_mdanalysis_info"
 msgstr ""
+"get_mdanalysis_info\n"
+"\n"
+"获取_mdanalysis_信息"
 
 #: 8a3f4496444441a09f45291eea1095cc a7c0d8ab9380418282e8e5c3c66500f1 of
 #: tooluniverse.tools.get_mdanalysis_info:3

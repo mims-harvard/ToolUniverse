@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_joblib\\_info 模块"
 
 #: 675f8b6aa9324b059855a73788a1f5aa of tooluniverse.tools.get_joblib_info:1
 msgid "get_joblib_info"
-msgstr ""
+msgstr "获取_joblib_信息"
 
 #: 2af21accf38d461ba29672358f02e415 f1491a052390433a88ee722ff627ba5e of
 #: tooluniverse.tools.get_joblib_info:3

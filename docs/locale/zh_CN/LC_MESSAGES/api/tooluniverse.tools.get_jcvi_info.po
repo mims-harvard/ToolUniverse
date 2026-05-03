@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_jcvi\\_info 模块"
 
 #: 5219473b32f84c23a276e6f60becccfb of tooluniverse.tools.get_jcvi_info:1
 msgid "get_jcvi_info"
-msgstr ""
+msgstr "get_jcvi_info 获取 JCVI 信息"
 
 #: 585b53c750d64fe99b1e2be23f6bc9e8 692a9b56da444f8c96c3059256540672 of
 #: tooluniverse.tools.get_jcvi_info:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_recommended\\_name\\_by\\_accession �
 #: 44f7e62dc07b47a5b2bf1cfa087cff23 of
 #: tooluniverse.tools.UniProt_get_recommended_name_by_accession:1
 msgid "UniProt_get_recommended_name_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取推荐名称"
 
 #: 2cda1f198f9641399b1910ba8d5e3eea b4d4693bd58747faaee8043082a58c99 of
 #: tooluniverse.tools.UniProt_get_recommended_name_by_accession:3

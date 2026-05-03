@@ -1,0 +1,500 @@
+[
+  {
+    "name": "HGNC_fetch_gene_by_symbol",
+    "description": "Fetch detailed gene information from HGNC (HUGO Gene Nomenclature Committee) by official gene symbol. Returns comprehensive gene data including HGNC ID, full name, chromosomal location, cross-references to Ensembl, NCBI Entrez, UniProt, OMIM, and RefSeq. HGNC is the authoritative source for human gene nomenclature. Example: 'TP53' returns tumor protein p53 with all its identifiers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "description": "Official HGNC gene symbol. Examples: 'TP53', 'BRCA1', 'EGFR', 'INS', 'ACE2'."
+        }
+      },
+      "required": [
+        "symbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "fetch",
+      "search_field": "symbol"
+    },
+    "type": "HGNCTool",
+    "test_examples": [
+      {
+        "symbol": "TP53"
+      },
+      {
+        "symbol": "BRCA1"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "hgnc_id": {
+                  "type": "string",
+                  "description": "HGNC identifier (e.g., HGNC:11998)"
+                },
+                "symbol": {
+                  "type": "string",
+                  "description": "Approved gene symbol"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Approved gene name"
+                },
+                "locus_type": {
+                  "type": "string",
+                  "description": "Type of locus (e.g., gene with protein product)"
+                },
+                "locus_group": {
+                  "type": "string",
+                  "description": "Locus group classification"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Symbol status (Approved, etc.)"
+                },
+                "location": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Chromosomal location"
+                },
+                "entrez_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "NCBI Entrez Gene ID"
+                },
+                "ensembl_gene_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Ensembl Gene ID"
+                },
+                "uniprot_ids": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "UniProt accession(s)"
+                },
+                "refseq_accession": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "RefSeq accession(s)"
+                },
+                "omim_id": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "OMIM ID(s)"
+                },
+                "ccds_id": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "CCDS ID(s)"
+                },
+                "prev_symbol": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Previous gene symbols"
+                },
+                "prev_name": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Previous gene names"
+                },
+                "alias_symbol": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Alias symbols"
+                },
+                "gene_group": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Gene group memberships"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_field": {
+                  "type": "string"
+                },
+                "query_value": {
+                  "type": "string"
+                },
+                "num_found": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HGNC_fetch_gene_by_id",
+    "description": "Fetch gene information from HGNC by HGNC ID. Useful when you have a specific HGNC identifier and want the full gene record. Returns official symbol, name, location, and cross-references to other databases. Example: 'HGNC:11998' returns TP53.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hgnc_id": {
+          "type": "string",
+          "description": "HGNC identifier, with or without 'HGNC:' prefix. Examples: 'HGNC:11998' (TP53), 'HGNC:1100' (BRCA1), '1101' (BRCA2)."
+        }
+      },
+      "required": [
+        "hgnc_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "fetch",
+      "search_field": "hgnc_id"
+    },
+    "type": "HGNCTool",
+    "test_examples": [
+      {
+        "hgnc_id": "HGNC:11998"
+      },
+      {
+        "hgnc_id": "HGNC:1100"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "hgnc_id": {
+                  "type": "string"
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "locus_type": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "entrez_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ensembl_gene_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "uniprot_ids": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "refseq_accession": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_field": {
+                  "type": "string"
+                },
+                "query_value": {
+                  "type": "string"
+                },
+                "num_found": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HGNC_search_genes",
+    "description": "Search for human genes in HGNC by symbol, name, or alias. Supports wildcards (e.g., 'BRCA*' finds BRCA1, BRCA2). Searches across approved symbols and names. Returns a list of matching genes with basic info. Example: 'kinase' searches gene names containing kinase.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query - gene symbol, partial name, or keyword. Supports wildcards (*). Examples: 'BRCA*', 'tumor protein', 'insulin receptor'."
+        },
+        "search_field": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Field to search in. Options: 'symbol', 'name', 'alias_symbol', 'prev_symbol', 'entrez_id', 'ensembl_gene_id', 'uniprot_ids', 'location'. Default searches across symbol and name."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "search",
+      "search_field": null
+    },
+    "type": "HGNCTool",
+    "test_examples": [
+      {
+        "query": "BRCA*"
+      },
+      {
+        "query": "tumor protein",
+        "search_field": "name"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hgnc_id": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HGNC_search_by_location",
+    "description": "Search HGNC for genes at a specific chromosomal location. Returns all genes mapped to that cytogenetic band. Useful for identifying genes in a chromosomal region of interest. Example: '17p13.1' returns genes including TP53.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "description": "Cytogenetic band location. Examples: '17p13.1' (TP53 region), '17q21.31' (BRCA1 region), '7p11.2' (EGFR region), '13q14.2' (RB1 region)."
+        }
+      },
+      "required": [
+        "location"
+      ]
+    },
+    "fields": {
+      "endpoint": "search",
+      "search_field": "location"
+    },
+    "type": "HGNCTool",
+    "test_examples": [
+      {
+        "location": "17p13.1"
+      },
+      {
+        "location": "17q21.31"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hgnc_id": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "locus_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query_location": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

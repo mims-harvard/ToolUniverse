@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_mutation\\_annotations\\_by\\_pdb\\_id 模块"
 #: b81ef1f6fa1148e9bbc883403d1a4b8e of
 #: tooluniverse.tools.get_mutation_annotations_by_pdb_id:1
 msgid "get_mutation_annotations_by_pdb_id"
-msgstr ""
+msgstr "get_mutation_annotations_by_pdb_id（通过PDB ID获取突变注释）"
 
 #: 40dc98428ed44095ace13feb8781e3cb 5e9aad9d89924ab699558a7ed50769ec of
 #: tooluniverse.tools.get_mutation_annotations_by_pdb_id:3

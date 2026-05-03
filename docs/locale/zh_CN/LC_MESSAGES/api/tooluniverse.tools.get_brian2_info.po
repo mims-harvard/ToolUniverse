@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_brian2\\_info 模块"
 
 #: d3630a8820004f77ad17b0d83115582c of tooluniverse.tools.get_brian2_info:1
 msgid "get_brian2_info"
-msgstr ""
+msgstr "get_brian2_信息"
 
 #: 0cc17747dd10475587393a40afe6636f f91e21366106423b8b3178cce25fad1b of
 #: tooluniverse.tools.get_brian2_info:3

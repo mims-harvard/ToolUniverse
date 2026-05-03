@@ -7,7 +7,47 @@
       "type": "object",
       "properties": {},
       "required": []
-    }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "type": "UsageTipsTool",
+    "name": "ToolUniverse_get_usage_tips",
+    "category": "special_tools",
+    "description": "Return concise usage tips for the ToolUniverse SDK. Use topic='all' (default) to get all tips, or specify a topic: 'loading', 'running', 'searching', 'workspace'. No API keys or network access required — always available offline.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "Topic to filter tips. One of: 'loading', 'running', 'searching', 'workspace', or 'all' (default) to return every topic.",
+          "enum": ["loading", "running", "searching", "workspace", "all"],
+          "default": "all"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Usage tips for the specified topic.",
+      "properties": {
+        "topic": {"type": "string"},
+        "tips": {"type": ["array", "object"]},
+        "available_topics": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "test_examples": [
+      {},
+      {"topic": "running"},
+      {"topic": "all"}
+    ]
   },
   {
     "type": "SpecialTool",
@@ -24,6 +64,16 @@
       "required": [
         "solution"
       ]
-    }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    },
+    "test_examples": [
+      {
+        "solution": "Step 1: Search for gene data. Step 2: Analyze mutations."
+      }
+    ]
   }
 ]

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_lab\\_tests 模块"
 #: 56b48f77ea134d8092f33934d052e156 of
 #: tooluniverse.tools.FDA_get_drug_names_by_lab_tests:1
 msgid "FDA_get_drug_names_by_lab_tests"
-msgstr ""
+msgstr "FDA_根据实验室检测获取药品名称"
 
 #: 71533e0959894ce1b7692bc20eac36a6 bd93001f82b84fc3b7fcdc524bf80707 of
 #: tooluniverse.tools.FDA_get_drug_names_by_lab_tests:3

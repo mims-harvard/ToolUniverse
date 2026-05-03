@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_dependence\\_info\\_by\\_drug\\_name 模�
 #: fb9ddfd82dfa42cf9973bb7b6ae29d53 of
 #: tooluniverse.tools.FDA_get_dependence_info_by_drug_name:1
 msgid "FDA_get_dependence_info_by_drug_name"
-msgstr ""
+msgstr "FDA_get_dependence_info_by_drug_name（根据药物名称获取依赖性信息）"
 
 #: ce8b419f35c04ef9879ee8842931e336 fe106d92a47646ea80d9879bb438bfb7 of
 #: tooluniverse.tools.FDA_get_dependence_info_by_drug_name:3

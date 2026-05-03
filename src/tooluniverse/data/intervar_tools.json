@@ -1,0 +1,98 @@
+[
+  {
+    "name": "InterVar_classify_variant",
+    "description": "Classify a germline variant using ACMG/AMP 2015 standards (InterVar). Returns the clinical significance category — Pathogenic, Likely Pathogenic, Uncertain Significance, Likely Benign, or Benign — plus the activation status of all 28 evidence criteria (PVS1, PS1-PS4, PM1-PM6, PP1-PP5, BA1, BP1-BP7, BS1-BS4). Input requires genomic coordinates in hg19 or hg38. No API key needed. Example: BRCA1 c.5266dupC (chr17:41245466 G>A in hg19) is Likely Pathogenic with PM2+PP3+PP5.",
+    "type": "InterVarTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome number or name. Can include 'chr' prefix (e.g., '17', 'chr17', 'X')."
+        },
+        "pos": {
+          "type": "integer",
+          "description": "Genomic position (1-based)."
+        },
+        "ref": {
+          "type": "string",
+          "description": "Reference allele (e.g., 'G', 'A', 'ATCG')."
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternate allele (e.g., 'A', 'T', 'C')."
+        },
+        "build": {
+          "type": "string",
+          "enum": ["hg19", "hg38"],
+          "default": "hg19",
+          "description": "Genome build. Default: hg19."
+        }
+      },
+      "required": ["chrom", "pos", "ref", "alt"]
+    },
+    "fields": {
+      "operation": "classify",
+      "endpoint": "http://wintervar.wglab.org/api_new.php"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "classification": {
+              "type": "string",
+              "description": "ACMG/AMP classification: Pathogenic | Likely pathogenic | Uncertain significance | Likely benign | Benign"
+            },
+            "variant": {
+              "type": "object",
+              "properties": {
+                "chromosome": {"type": ["integer", "string", "null"]},
+                "position": {"type": ["integer", "null"]},
+                "ref_allele": {"type": ["string", "null"]},
+                "alt_allele": {"type": ["string", "null"]},
+                "gene": {"type": ["string", "null"]},
+                "build": {"type": ["string", "null"]}
+              }
+            },
+            "active_criteria": {
+              "type": "array",
+              "description": "List of criteria codes that are active (met) for this variant",
+              "items": {"type": "string"}
+            },
+            "criteria_detail": {
+              "type": "object",
+              "description": "Per-criterion activation status and description",
+              "additionalProperties": true
+            }
+          }
+        },
+        "metadata": {"type": "object", "additionalProperties": true}
+      }
+    },
+    "test_examples": [
+      {
+        "chrom": "17",
+        "pos": 41245466,
+        "ref": "G",
+        "alt": "A",
+        "build": "hg19"
+      },
+      {
+        "chrom": "1",
+        "pos": 115256529,
+        "ref": "T",
+        "alt": "C",
+        "build": "hg19"
+      }
+    ],
+    "label": ["InterVar", "ACMG", "AMP", "variant", "germline", "pathogenicity"],
+    "metadata": {
+      "tags": ["variant_interpretation", "ACMG_classification", "germline", "clinical_genomics"],
+      "estimated_execution_time": "< 5 seconds",
+      "guideline": "ACMG/AMP 2015 Standards and Guidelines for Interpretation of Sequence Variants"
+    }
+  }
+]

@@ -32,7 +32,7 @@ msgstr ""
 #: b0894df77998459ca7323326f4c95304 of
 #: tooluniverse.tools.OpenTargets_search_category_counts_by_query_string:1
 msgid "OpenTargets_search_category_counts_by_query_string"
-msgstr ""
+msgstr "OpenTargets_按查询字符串分类的搜索计数"
 
 #: 495c36876a3b484d8419f1222c04f040 684907d12d274638bc07d70744423487 of
 #: tooluniverse.tools.OpenTargets_search_category_counts_by_query_string:3

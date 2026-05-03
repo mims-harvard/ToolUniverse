@@ -57,7 +57,6 @@ class ToolFinderLLM(BaseTool):
         self.api_type = configs.get("api_type", "CHATGPT")
         self.model_id = configs.get("model_id", "gpt-4o-1120")
         self.temperature = configs.get("temperature", 0.1)
-        self.max_new_tokens = configs.get("max_new_tokens", 4096)
         self.return_json = configs.get("return_json", True)
 
         # Tool filtering settings
@@ -118,7 +117,6 @@ class ToolFinderLLM(BaseTool):
                 "api_type": self.api_type,
                 "model_id": self.model_id,
                 "temperature": self.temperature,
-                "max_new_tokens": self.max_new_tokens,
                 "return_json": self.return_json,
                 "return_metadata": False,
             },
@@ -198,6 +196,7 @@ Requirements:
             available_tools = []
             for name, desc in zip(tool_names, tool_descriptions):
                 if name not in self.exclude_tools:
+                    # name is already shortened (primary identifier)
                     available_tools.append({"name": name, "description": desc})
 
             # Update cache
@@ -300,6 +299,15 @@ Requirements:
             dict: Dictionary containing selected tools and metadata
         """
         try:
+            # AUTO-LOAD: If tools not fully loaded, load them now
+            # Check if tools are not loaded or only partially loaded (< 100 tools means incomplete)
+            if len(self.tooluniverse.all_tool_dict) < 100:
+                self.tooluniverse.logger.info(
+                    f"Tool_Finder_LLM: Only {len(self.tooluniverse.all_tool_dict)} tools loaded, loading all tools now..."
+                )
+                # Force full load by clearing filters and loading everything
+                self.tooluniverse.load_tools(include_tools=None, tool_type=None)
+
             # Get available tools
             available_tools = self._get_available_tools()
 
@@ -387,7 +395,9 @@ Requirements:
 
             # Get actual tool objects
             if tool_names:
-                selected_tool_objects = self.tooluniverse.get_tool_by_name(tool_names)
+                selected_tool_objects = (
+                    self.tooluniverse.get_tool_specification_by_names(tool_names)
+                )
                 tool_prompts = self.tooluniverse.prepare_tool_prompts(
                     selected_tool_objects
                 )
@@ -495,7 +505,9 @@ Requirements:
         picked_tool_names = picked_tool_names_no_special[:rag_num]
 
         # Get tool objects and prepare prompts (needed for both list and other formats)
-        picked_tools = self.tooluniverse.get_tool_by_name(picked_tool_names)
+        picked_tools = self.tooluniverse.get_tool_specification_by_names(
+            picked_tool_names
+        )
         picked_tools_prompt = self.tooluniverse.prepare_tool_prompts(picked_tools)
 
         # If only list format is requested, return the tool specifications as a list

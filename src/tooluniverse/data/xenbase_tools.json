@@ -1,0 +1,99 @@
+[
+  {
+    "name": "Xenbase_search_genes",
+    "type": "XenbaseTool",
+    "description": "Search for Xenopus (frog) genes in Xenbase via the Alliance of Genome Resources API. Returns gene IDs, symbols, names, and species for both Xenopus tropicalis and Xenopus laevis. Xenbase is the primary database for Xenopus genetics and developmental biology. Optionally filter by species (tropicalis or laevis). Useful for finding amphibian homologs of human disease genes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene symbol or name to search. Examples: 'tp53', 'pax6', 'sox2', 'bmp4', 'wnt3a', 'fgf8'."
+        },
+        "species": {
+          "type": "string",
+          "description": "Optional species filter: 'tropicalis' for X. tropicalis, 'laevis' for X. laevis. Leave empty for both species.",
+          "default": ""
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return. Default: 10.",
+          "default": 10
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint_type": "search_genes"
+    },
+    "test_examples": [
+      {"query": "tp53"},
+      {"query": "pax6", "species": "tropicalis"}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gene_id": {"type": ["string", "null"]},
+          "symbol": {"type": ["string", "null"]},
+          "name": {"type": ["string", "null"]},
+          "species": {"type": ["string", "null"]},
+          "synonyms": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Xenbase_get_gene",
+    "type": "XenbaseTool",
+    "description": "Get detailed Xenopus gene information from Xenbase via the Alliance of Genome Resources. Returns gene symbol, name, synopsis, genomic location, synonyms, cross-references, and species details. Supports both Xenopus tropicalis and Xenopus laevis genes. Gene IDs use Xenbase format (e.g., 'XB-GENE-484286' or 'Xenbase:XB-GENE-484286').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Xenbase gene ID. Can be with or without 'Xenbase:' prefix. Examples: 'XB-GENE-484286' (tp53, X. tropicalis), 'XB-GENE-6252168' (tp53.L, X. laevis), 'XB-GENE-487192' (pax6, X. tropicalis)."
+        }
+      },
+      "required": ["gene_id"]
+    },
+    "fields": {
+      "endpoint_type": "get_gene"
+    },
+    "test_examples": [
+      {"gene_id": "XB-GENE-484286"},
+      {"gene_id": "Xenbase:XB-GENE-6252168"}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene_id": {"type": ["string", "null"]},
+        "symbol": {"type": ["string", "null"]},
+        "name": {"type": ["string", "null"]},
+        "species": {
+          "type": "object",
+          "properties": {
+            "name": {"type": ["string", "null"]},
+            "short_name": {"type": ["string", "null"]},
+            "taxon_id": {"type": ["string", "null"]},
+            "data_provider": {"type": ["string", "null"]}
+          }
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "gene_synopsis": {"type": ["string", "null"]},
+        "automated_gene_synopsis": {"type": ["string", "null"]},
+        "so_term": {"type": ["string", "null"]},
+        "genomic_location": {"type": ["object", "null"]},
+        "xenbase_url": {"type": ["string", "null"]},
+        "cross_references": {"type": ["object", "null"]}
+      }
+    }
+  }
+]

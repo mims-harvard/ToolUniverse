@@ -224,6 +224,8 @@ msgid ""
 "\"name\": \"SlowTool\", \"type\": \"SlowTool\", \"batch_max_concurrency\": "
 "2, \"parameter\": {\"type\": \"object\", \"properties\": {}}"
 msgstr ""
+"\"name\": \"慢速工具\", \"type\": \"慢速工具\", \"batch_max_concurrency\": 2, "
+"\"parameter\": {\"type\": \"object\", \"properties\": {}}"
 
 #: ../../guide/cache_system.rst:179 8105cbc8510b48e7aaa8e859f77694f7
 msgid "}"

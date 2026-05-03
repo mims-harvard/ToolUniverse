@@ -7,17 +7,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-18 16:50-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.execute_function.rst:2
@@ -31,11 +31,10 @@ msgstr "ToolUniverse 功能执行模块"
 
 #: 2a9e365070a645c88803f62bfec89161 of tooluniverse.execute_function:3
 msgid ""
-"This module provides the core ToolUniverse class for managing and "
-"executing various scientific and data tools. It supports loading tools "
-"from JSON configurations, organizing them by categories, validating "
-"function calls, and executing tools with proper error handling and "
-"caching."
+"This module provides the core ToolUniverse class for managing and executing "
+"various scientific and data tools. It supports loading tools from JSON "
+"configurations, organizing them by categories, validating function calls, "
+"and executing tools with proper error handling and caching."
 msgstr ""
 "该模块提供了用于管理和执行各种科学与数据工具的核心 ToolUniverse 类。它支持从 JSON "
 "配置加载工具，按类别进行组织，验证函数调用，并在执行工具时实现完善的错误处理与缓存机制。"
@@ -43,11 +42,11 @@ msgstr ""
 #: ca6a41dc79a74c70992a30228a3ceefc of tooluniverse.execute_function:7
 msgid ""
 "The module includes support for: - GraphQL tools (OpenTarget, OpenTarget "
-"Genetics) - RESTful API tools (Monarch, ChEMBL, PubChem, etc.) - FDA drug"
-" labeling and adverse event tools - Clinical trials tools - Literature "
-"search tools (EuropePMC, Semantic Scholar, PubTator) - Biological "
-"databases (HPA, Reactome, UniProt) - MCP (Model Context Protocol) clients"
-" and auto-loaders - Enrichment analysis tools - Package management tools"
+"Genetics) - RESTful API tools (Monarch, ChEMBL, PubChem, etc.) - FDA drug "
+"labeling and adverse event tools - Clinical trials tools - Literature search"
+" tools (EuropePMC, Semantic Scholar, PubTator) - Biological databases (HPA, "
+"Reactome, UniProt) - MCP (Model Context Protocol) clients and auto-loaders -"
+" Enrichment analysis tools - Package management tools"
 msgstr ""
 "该模块支持以下功能：  \n"
 "- GraphQL 工具（OpenTarget、OpenTarget Genetics）  \n"
@@ -74,9 +73,9 @@ msgstr "常量："
 
 #: 74fa3bd9a52c4977ac705aab789fad70 of tooluniverse.execute_function:22
 msgid ""
-"default_tool_files: Default mapping of tool categories to JSON file paths"
-" tool_type_mappings: Mapping of tool type strings to their implementation"
-" classes"
+"default_tool_files: Default mapping of tool categories to JSON file paths "
+"tool_type_mappings: Mapping of tool type strings to their implementation "
+"classes"
 msgstr ""
 "default_tool_files：工具类别到 JSON 文件路径的默认映射  \n"
 "tool_type_mappings：工具类型字符串到其实现类的映射"
@@ -101,14 +100,14 @@ msgstr "_BatchCacheInfo(namespace: str, version: str, cache_key: str)_"
 #: tooluniverse.execute_function._BatchJob:1
 msgid ""
 "_BatchJob(signature: str, call: Dict[str, Any], function_name: str, "
-"arguments: Dict[str, Any], indices: List[int] = <factory>, tool_instance:"
-" Any = None, cache_info: "
+"arguments: Dict[str, Any], indices: List[int] = <factory>, tool_instance: "
+"Any = None, cache_info: "
 "Optional[tooluniverse.execute_function._BatchCacheInfo] = None, "
 "cache_key_composed: Optional[str] = None, skip_execution: bool = False)"
 msgstr ""
 "_BatchJob(signature: str, call: Dict[str, Any], function_name: str, "
-"arguments: Dict[str, Any], indices: List[int] = <factory>, tool_instance:"
-" Any = None, cache_info: "
+"arguments: Dict[str, Any], indices: List[int] = <factory>, tool_instance: "
+"Any = None, cache_info: "
 "Optional[tooluniverse.execute_function._BatchCacheInfo] = None, "
 "cache_key_composed: Optional[str] = None, skip_execution: bool = False)_"
 
@@ -122,8 +121,8 @@ msgstr "用于验证关键字参数并调用 run_one_function 的工具的可调
 #: 0df61a458eca45c9b403604d5da6474a of
 #: tooluniverse.execute_function.ToolCallable:3
 msgid ""
-"This class provides the dynamic function interface for tools, allowing "
-"them to be called like regular Python functions with keyword arguments."
+"This class provides the dynamic function interface for tools, allowing them "
+"to be called like regular Python functions with keyword arguments."
 msgstr "该类为工具提供动态函数接口，使其能够像常规的 Python 函数一样使用关键字参数进行调用。"
 
 #: 39e8f19ea8324e669e78f3d326ebd2b4 of
@@ -131,26 +130,26 @@ msgstr "该类为工具提供动态函数接口，使其能够像常规的 Pytho
 msgid "Execute the tool with the provided keyword arguments."
 msgstr "使用提供的关键字参数执行该工具。"
 
-#: ../../api/tooluniverse.execute_function.rst 0301b87345424e3493d9bffe0d156819
-#: 0aa7d258b95d4461a183d53855b24f8e 0c3476d5afd94b3f9bf392eeb41307ff
-#: 0c71fda2cead4a5d8aaa3266f2137722 1365c31df0f3413c9d090620d4bd4995
-#: 1649b006f29a4892a3e8d7295696dd3f 1c07967a6e08452bbf6354d6b1eada98
-#: 1ec6d717be55449da2694a55a0b6b84d 210f6d35ab9b4f49a02d3158cd8465c1
-#: 2e68007dc3d141c7bb9ca3b386429eb4 31f2fc5fa58a43e0a344e3fa855e6072
-#: 3f56d3dcad30405b8a92123f364985be 4ba3141f64fb4d75a9d629cfebd9927c
-#: 54da3883267b4b6ea0c1e6c502890490 55ddd4cac5514c4b9e3f503b2ac42cc9
-#: 5a34204c66ab499babe5083617c75c61 607b8526836f401abb1e3293092933f5
-#: 65d99d10600141ceaa8940467ddf63c5 6b8297a119db4bbcbcc907020973901e
-#: 7a75c91292b14f9bb37644ca0c6bd44f 7bd0f7f6051c485f8d6a7d4dfc5e6cf6
-#: 8b59d425ae4f4725b14e117af8bdd764 8bbd955df85c4442b4010aa89a0324fb
-#: 8c64f719bb3248e4b63ff654754c377a 8ee8afdb8f8948b7ae4d1958da8f032e
-#: 9bbbfbad646d4fdea68b0c8e75368fed 9c4314e8332d4b6ab5dc859901496ae7
-#: a7407903091b49bd90b55e0a59104aac aaf7713a52174c0db2445288c096bcd7
-#: b42286b761714e52961c9201702426c5 b8731ef230fc4d86ad6bcbc208dac46e
-#: cd6171dd5def4738ae452ad00fddfc8a d2432a328e1540bda499fb202946c0cb
-#: e25d437b028d479eb8bba457b57f34b3 ea78b0c3c71843a4a4da5837faeb9fd3
-#: eca4a51dfd1f4402ad3e482386dc1ee9 efb8ab80f2e94ef5a3c7af920931c102
-#: f8b5636cf1ce441298aea841320a916a
+#: ../../api/tooluniverse.execute_function.rst
+#: 0301b87345424e3493d9bffe0d156819 0aa7d258b95d4461a183d53855b24f8e
+#: 0c3476d5afd94b3f9bf392eeb41307ff 0c71fda2cead4a5d8aaa3266f2137722
+#: 1365c31df0f3413c9d090620d4bd4995 1649b006f29a4892a3e8d7295696dd3f
+#: 1c07967a6e08452bbf6354d6b1eada98 1ec6d717be55449da2694a55a0b6b84d
+#: 210f6d35ab9b4f49a02d3158cd8465c1 2e68007dc3d141c7bb9ca3b386429eb4
+#: 31f2fc5fa58a43e0a344e3fa855e6072 3f56d3dcad30405b8a92123f364985be
+#: 4ba3141f64fb4d75a9d629cfebd9927c 54da3883267b4b6ea0c1e6c502890490
+#: 55ddd4cac5514c4b9e3f503b2ac42cc9 5a34204c66ab499babe5083617c75c61
+#: 607b8526836f401abb1e3293092933f5 65d99d10600141ceaa8940467ddf63c5
+#: 6b8297a119db4bbcbcc907020973901e 7a75c91292b14f9bb37644ca0c6bd44f
+#: 7bd0f7f6051c485f8d6a7d4dfc5e6cf6 8b59d425ae4f4725b14e117af8bdd764
+#: 8bbd955df85c4442b4010aa89a0324fb 8c64f719bb3248e4b63ff654754c377a
+#: 8ee8afdb8f8948b7ae4d1958da8f032e 9bbbfbad646d4fdea68b0c8e75368fed
+#: 9c4314e8332d4b6ab5dc859901496ae7 a7407903091b49bd90b55e0a59104aac
+#: aaf7713a52174c0db2445288c096bcd7 b42286b761714e52961c9201702426c5
+#: b8731ef230fc4d86ad6bcbc208dac46e cd6171dd5def4738ae452ad00fddfc8a
+#: d2432a328e1540bda499fb202946c0cb e25d437b028d479eb8bba457b57f34b3
+#: ea78b0c3c71843a4a4da5837faeb9fd3 eca4a51dfd1f4402ad3e482386dc1ee9
+#: efb8ab80f2e94ef5a3c7af920931c102 f8b5636cf1ce441298aea841320a916a
 msgid "Parameters"
 msgstr "参数"
 
@@ -174,27 +173,27 @@ msgstr "是否根据模式验证参数"
 msgid "Tool-specific arguments"
 msgstr "工具专用参数"
 
-#: ../../api/tooluniverse.execute_function.rst 006fef9ca80348898bb0e14c718c5f3f
-#: 02a9b6452d4845c7aa2ae25f97c751d7 093875fa466b4abea81bf3740383d1b1
-#: 0f86d3df04d34e34a1ebcfad1529e161 1171a367ec2b42d7ac218b5809bf2b0d
-#: 142d1d18de7843e492eefca439590466 15c6c470ab7a4ab3b5ac1cd990b4db0b
-#: 1748954783b948dbb4d8d58d32c77ade 2a9f31318fcb467cbb9bbb590067fd46
-#: 2c7c68fea9284d249582f13b01b0dde0 2d37908f54bc475fadee89fbe48a667c
-#: 2d982ef5e8b946c4afa0fc49f9a46158 2ffebbb7ad24413d970c12525d7730ba
-#: 3cd5f890751c41a799c94be4a6328dd8 3ff8d97cc6f0437eb16ec8be475b903e
-#: 4062b9b2ded4484db86ecf39fafc0aeb 448cd9cff7c24126a7f7dff2f7145b44
-#: 482c88b34c1f4962bd605e29704edc5a 4a681e1a23b64a3ca6d3dbc5c78d8b13
-#: 5042481243e94a808110d0feed140d62 6aeee2031aa04784b8fd6c6c9bd60369
-#: 6b2cc76935d3443f9d86495be89d7cd3 76a0ac98d5b24397ba75443775e51a7a
-#: 7727c982cc1c4199a2095d64f9f7b2eb 7f6719917c074ed09fad8351c6e5b508
-#: 7fdd903e767b4991ab0f94fc6dde2710 844c0add94e14806a844975dedf4f659
-#: 8834f8732c8942e0a6364796c13c6ce1 8d9a936d59d34c048f90a8b00f556cec
-#: ac47d08bb41142c2a4d1ddbf9cfe7712 b2e4ac855e5041cab0920f8b4329ebd6
-#: b6246b8bc4da4aab9bd38b5bf240bc51 c0f3515ad4b24a5598d817946362036d
-#: c2763d5cfdab42e889ef0bbc97ae21d7 c635473a773941d3918def23038a2471
-#: ca7eb0521a824c2d91d81137a69df356 d93caa450689497e97c3f2b8a29cd2e1
-#: ea86186551eb454ca4ecfd1bfab5ca07 ec230507d9da4453a01f3d5b3f899c55
-#: f5b411652bf246dfa1462f04a387968c
+#: ../../api/tooluniverse.execute_function.rst
+#: 006fef9ca80348898bb0e14c718c5f3f 02a9b6452d4845c7aa2ae25f97c751d7
+#: 093875fa466b4abea81bf3740383d1b1 0f86d3df04d34e34a1ebcfad1529e161
+#: 1171a367ec2b42d7ac218b5809bf2b0d 142d1d18de7843e492eefca439590466
+#: 15c6c470ab7a4ab3b5ac1cd990b4db0b 1748954783b948dbb4d8d58d32c77ade
+#: 2a9f31318fcb467cbb9bbb590067fd46 2c7c68fea9284d249582f13b01b0dde0
+#: 2d37908f54bc475fadee89fbe48a667c 2d982ef5e8b946c4afa0fc49f9a46158
+#: 2ffebbb7ad24413d970c12525d7730ba 3cd5f890751c41a799c94be4a6328dd8
+#: 3ff8d97cc6f0437eb16ec8be475b903e 4062b9b2ded4484db86ecf39fafc0aeb
+#: 448cd9cff7c24126a7f7dff2f7145b44 482c88b34c1f4962bd605e29704edc5a
+#: 4a681e1a23b64a3ca6d3dbc5c78d8b13 5042481243e94a808110d0feed140d62
+#: 6aeee2031aa04784b8fd6c6c9bd60369 6b2cc76935d3443f9d86495be89d7cd3
+#: 76a0ac98d5b24397ba75443775e51a7a 7727c982cc1c4199a2095d64f9f7b2eb
+#: 7f6719917c074ed09fad8351c6e5b508 7fdd903e767b4991ab0f94fc6dde2710
+#: 844c0add94e14806a844975dedf4f659 8834f8732c8942e0a6364796c13c6ce1
+#: 8d9a936d59d34c048f90a8b00f556cec ac47d08bb41142c2a4d1ddbf9cfe7712
+#: b2e4ac855e5041cab0920f8b4329ebd6 b6246b8bc4da4aab9bd38b5bf240bc51
+#: c0f3515ad4b24a5598d817946362036d c2763d5cfdab42e889ef0bbc97ae21d7
+#: c635473a773941d3918def23038a2471 ca7eb0521a824c2d91d81137a69df356
+#: d93caa450689497e97c3f2b8a29cd2e1 ea86186551eb454ca4ecfd1bfab5ca07
+#: ec230507d9da4453a01f3d5b3f899c55 f5b411652bf246dfa1462f04a387968c
 msgid "Returns"
 msgstr "返回值"
 
@@ -259,9 +258,9 @@ msgstr "一个用于加载、组织和执行各种科学与数据工具的综合
 #: tooluniverse.execute_function.ToolUniverse:3
 msgid ""
 "The ToolUniverse class provides a centralized interface for managing "
-"different types of tools including GraphQL tools, RESTful APIs, MCP "
-"clients, and specialized scientific tools. It handles tool loading, "
-"filtering, caching, and execution."
+"different types of tools including GraphQL tools, RESTful APIs, MCP clients,"
+" and specialized scientific tools. It handles tool loading, filtering, "
+"caching, and execution."
 msgstr ""
 "ToolUniverse 类提供了一个集中的接口，用于管理不同类型的工具，包括 GraphQL 工具、RESTful API、MCP "
 "客户端以及专用的科学工具。它负责工具的加载、筛选、缓存和执行。"
@@ -327,8 +326,8 @@ msgstr "将类别名称映射到JSON文件路径的字典。默认为default_too
 #: 27855b8f9a944803ac82f47ce9317f36 of
 #: tooluniverse.execute_function.ToolUniverse.__init__:6
 msgid ""
-"Whether to keep default tools when custom tool_files are provided. "
-"Defaults to True."
+"Whether to keep default tools when custom tool_files are provided. Defaults "
+"to True."
 msgstr "当提供自定义工具文件时，是否保留默认工具。默认为 True。"
 
 #: d24c150988534c1b837f121bb83618da of
@@ -336,7 +335,8 @@ msgstr "当提供自定义工具文件时，是否保留默认工具。默认为
 msgid ""
 "Log level for this instance. Can be 'DEBUG', 'INFO', 'WARNING', 'ERROR', "
 "'CRITICAL'. If None, uses global setting."
-msgstr "此实例的日志级别。可以为 'DEBUG'、'INFO'、'WARNING'、'ERROR'、'CRITICAL'。如果为 None，则使用全局设置。"
+msgstr ""
+"此实例的日志级别。可以为 'DEBUG'、'INFO'、'WARNING'、'ERROR'、'CRITICAL'。如果为 None，则使用全局设置。"
 
 #: bd46eaa817e0406db8b36d8c99aaeea2 of
 #: tooluniverse.execute_function.ToolUniverse.__init__:12
@@ -351,9 +351,9 @@ msgstr "钩子的配置。如果为 None，则使用默认配置。"
 #: 1404b47306b74fd3aabd7480e0026463 of
 #: tooluniverse.execute_function.ToolUniverse.__init__:16
 msgid ""
-"Simple hook type selection. Can be 'SummarizationHook', 'FileSaveHook', "
-"or a list of both. Defaults to 'SummarizationHook'. If both hook_config "
-"and hook_type are provided, hook_config takes precedence."
+"Simple hook type selection. Can be 'SummarizationHook', 'FileSaveHook', or a"
+" list of both. Defaults to 'SummarizationHook'. If both hook_config and "
+"hook_type are provided, hook_config takes precedence."
 msgstr ""
 "简单的钩子类型选择。可以是 'SummarizationHook'、'FileSaveHook'，或者两者的列表。默认值为 "
 "'SummarizationHook'。如果同时提供了 hook_config 和 hook_type，则以 hook_config 为准。"
@@ -383,26 +383,27 @@ msgstr "工具配置字典，添加到 all_tools 中"
 msgid "The name the tool was registered under"
 msgstr "工具注册时使用的名称"
 
-#: ../../api/tooluniverse.execute_function.rst 046eacbcbdd545c3837d1900723f7648
-#: 0e7dda8bc840416e9a3edb8fabcfc036 1063ed42c3f64ffe8938d3aa40cc4434
-#: 16c4cc3cfd224ba5ab43f6bae3ba6579 1cb8b57e6cff406d9ce95a29ca602da7
-#: 279843eebd0f48afbcb40b7f05585d53 30ab3dfe147c46ceb679cfbe230a572f
-#: 332251a3dac5422eb034955f0a5d9091 35efdd700010484b88241923904be47c
-#: 3d503738b0484189b174ffb0964f67a4 42a864551ea842109a5f3d8583df35e1
-#: 52c94cd564d44377b4921e4036c5c90a 5c26aa83f42448f287b57d021fa0f604
-#: 5e601e2330004d8bb28de0a338629113 5f5587fe01064f28b6c5b265586af3bd
-#: 6588bdd46baf4b5eb30502dea68a5ea8 7410109be7a14e89a89b13441666b75d
-#: 78cfc4c802a54bbaa441aa253ef556cd 7cfd2f2744a843e7afa5dda6b6a5f1b1
-#: 850cb9d6211e49febb44a8b4b4951b55 86d86d069a83477ba9ab3d8c7f2d7bee
-#: 88a55fdfb11f451f9a5d86e395380292 8bacaa6cb884407bac7536cbb7751332
-#: 94d6377b47fa449983ba3153499ab9ad 959e030156fb4638af9a9cc518970bb7
-#: 9b7425314c87409aa088d23a90d472a3 9d5c540ce8ab4342b05b92b61f52d195
-#: c1b40bf7f15449e5b290486a2617de81 c94f63c32755418a99677ab20b41cb03
-#: d2078f776e4447b99725c990105257ae d3f6b838c00b4399b08e1392e5ec6f1c
-#: dcf5f1263293486480a2a88908f26b56 dfa1a30ecfaf43faac502f54b9bd6605
-#: e3c4bf00db314237bcf35ddbd354b4b9 e78cd2cb069c44e5bdb8bc0432669f37
-#: ed0a1669614c410dace7946b71083bab f3c03d9fe7c6466e922018c0958b7dbe
-#: f7759a9018374ca09b6046bb405b7d6a f91b3471231c412a97110d421da97aa3
+#: ../../api/tooluniverse.execute_function.rst
+#: 046eacbcbdd545c3837d1900723f7648 0e7dda8bc840416e9a3edb8fabcfc036
+#: 1063ed42c3f64ffe8938d3aa40cc4434 16c4cc3cfd224ba5ab43f6bae3ba6579
+#: 1cb8b57e6cff406d9ce95a29ca602da7 279843eebd0f48afbcb40b7f05585d53
+#: 30ab3dfe147c46ceb679cfbe230a572f 332251a3dac5422eb034955f0a5d9091
+#: 35efdd700010484b88241923904be47c 3d503738b0484189b174ffb0964f67a4
+#: 42a864551ea842109a5f3d8583df35e1 52c94cd564d44377b4921e4036c5c90a
+#: 5c26aa83f42448f287b57d021fa0f604 5e601e2330004d8bb28de0a338629113
+#: 5f5587fe01064f28b6c5b265586af3bd 6588bdd46baf4b5eb30502dea68a5ea8
+#: 7410109be7a14e89a89b13441666b75d 78cfc4c802a54bbaa441aa253ef556cd
+#: 7cfd2f2744a843e7afa5dda6b6a5f1b1 850cb9d6211e49febb44a8b4b4951b55
+#: 86d86d069a83477ba9ab3d8c7f2d7bee 88a55fdfb11f451f9a5d86e395380292
+#: 8bacaa6cb884407bac7536cbb7751332 94d6377b47fa449983ba3153499ab9ad
+#: 959e030156fb4638af9a9cc518970bb7 9b7425314c87409aa088d23a90d472a3
+#: 9d5c540ce8ab4342b05b92b61f52d195 c1b40bf7f15449e5b290486a2617de81
+#: c94f63c32755418a99677ab20b41cb03 d2078f776e4447b99725c990105257ae
+#: d3f6b838c00b4399b08e1392e5ec6f1c dcf5f1263293486480a2a88908f26b56
+#: dfa1a30ecfaf43faac502f54b9bd6605 e3c4bf00db314237bcf35ddbd354b4b9
+#: e78cd2cb069c44e5bdb8bc0432669f37 ed0a1669614c410dace7946b71083bab
+#: f3c03d9fe7c6466e922018c0958b7dbe f7759a9018374ca09b6046bb405b7d6a
+#: f91b3471231c412a97110d421da97aa3
 msgid "Return type"
 msgstr "返回类型"
 
@@ -491,7 +492,8 @@ msgstr "生成的钩子配置"
 
 #: f3b355ed7f0d4602a81866cebc4937f5 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:1
-msgid "Loads tool definitions from JSON files into the instance's tool registry."
+msgid ""
+"Loads tool definitions from JSON files into the instance's tool registry."
 msgstr "将工具定义从 JSON 文件加载到实例的工具注册表中。"
 
 #: 09d54c0076a042daa6e4fdd16d81a15c of
@@ -526,8 +528,8 @@ msgstr "要排除加载的工具类别列表。"
 #: 8b2c64c38db24261af8c85c7841ba2e0 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:15
 msgid ""
-"List of specific tool names to include, or path to a text file containing"
-" tool names (one per line). If provided, only these tools will be loaded "
+"List of specific tool names to include, or path to a text file containing "
+"tool names (one per line). If provided, only these tools will be loaded "
 "regardless of categories."
 msgstr "包含特定工具名称的列表，或包含工具名称（每行一个）的文本文件路径。若提供，则仅加载这些工具，忽略类别设置。"
 
@@ -549,15 +551,15 @@ msgstr "包含工具名称的文本文件路径（每行一个）。提供文件
 #: 6be752438a2f41e8a924d19b1832a7dc of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:25
 msgid ""
-"List of tool types to include (e.g., [\"OpenTarget\", \"ChEMBLTool\"]). "
-"If provided, only tools with these types will be loaded."
+"List of tool types to include (e.g., [\"OpenTarget\", \"ChEMBLTool\"]). If "
+"provided, only tools with these types will be loaded."
 msgstr "要包含的工具类型列表（例如，[\"OpenTarget\", \"ChEMBLTool\"]）。如果提供，则仅加载这些类型的工具。"
 
 #: c751fb26588f4a5697dfb8cd7bb71d99 of
 #: tooluniverse.execute_function.ToolUniverse.load_tools:28
 msgid ""
-"List of tool types to exclude (e.g., [\"ToolFinderEmbedding\"]). Tools "
-"with these types will be excluded."
+"List of tool types to exclude (e.g., [\"ToolFinderEmbedding\"]). Tools with "
+"these types will be excluded."
 msgstr "要排除的工具类型列表（例如，[\"ToolFinderEmbedding\"]）。具有这些类型的工具将被排除。"
 
 #: 3442c500f4af4499920ae5bf7d4f1de0 34f1e916835f46dfb383bcaefcefa41c of
@@ -650,9 +652,9 @@ msgstr "# 组合多个选项 tu.load_tools("
 #: tooluniverse.execute_function.ToolUniverse.load_tools:57
 #, python-brace-format
 msgid ""
-"tool_type=[\"uniprot\", \"ChEMBL\"], "
-"exclude_tools=[\"problematic_tool\"], exclude_tool_types=[\"Unknown\"], "
-"tool_config_files={\"custom\": \"/path/to/custom.json\"}"
+"tool_type=[\"uniprot\", \"ChEMBL\"], exclude_tools=[\"problematic_tool\"], "
+"exclude_tool_types=[\"Unknown\"], tool_config_files={\"custom\": "
+"\"/path/to/custom.json\"}"
 msgstr ""
 "tool_type=[\"uniprot\", "
 "\"ChEMBL\"]，exclude_tools=[\"problematic_tool\"]，exclude_tool_types=[\"Unknown\"]，tool_config_files={\"custom\":"
@@ -681,7 +683,8 @@ msgstr "从文件加载的工具名称列表"
 
 #: 864ab832343a4a839318239fc5507a6e of
 #: tooluniverse.execute_function.ToolUniverse._filter_and_deduplicate_tools:1
-msgid "Filter tools based on inclusion/exclusion criteria and remove duplicates."
+msgid ""
+"Filter tools based on inclusion/exclusion criteria and remove duplicates."
 msgstr "根据包含/排除标准筛选工具并去除重复项。"
 
 #: 63ba0e913a5e430985b5b2f31304ebdd 8bf1815ddf2b47f6a8a67139683df4ba of
@@ -713,8 +716,8 @@ msgstr "从装饰器注册表中加载自动发现的配置。"
 #: d17186db8c684a4ab0c873a926780a92 of
 #: tooluniverse.execute_function.ToolUniverse._load_auto_discovered_configs:3
 msgid ""
-"This method loads tool configurations that were registered automatically "
-"via the @register_tool decorator with config parameter."
+"This method loads tool configurations that were registered automatically via"
+" the @register_tool decorator with config parameter."
 msgstr "该方法加载通过带有 config 参数的 @register_tool 装饰器自动注册的工具配置。"
 
 #: 1365e14e4776419d9b3e915b2202d687 of
@@ -727,10 +730,10 @@ msgstr "处理所有 MCPAutoLoaderTool 实例，以自动发现并注册 MCP 工
 #: c67b8dff04de4479ad73f6f2aaa06a1d of
 #: tooluniverse.execute_function.ToolUniverse._process_mcp_auto_loaders:3
 msgid ""
-"This method scans through all loaded tools for MCPAutoLoaderTool "
-"instances and runs their auto-discovery process to find and register MCP "
-"tools from configured servers. It handles async operations properly with "
-"cleanup and error handling."
+"This method scans through all loaded tools for MCPAutoLoaderTool instances "
+"and runs their auto-discovery process to find and register MCP tools from "
+"configured servers. It handles async operations properly with cleanup and "
+"error handling."
 msgstr ""
 "该方法扫描所有已加载的工具，查找 MCPAutoLoaderTool 实例，并运行其自动发现流程，以从配置的服务器中查找并注册 MCP "
 "工具。该方法正确处理异步操作，包含清理和错误处理机制。"
@@ -753,28 +756,27 @@ msgstr "在MCP注册后更新工具计数"
 #: de22fe4be72e456e979aff1a21c1029c of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:1
 msgid ""
-"List all built-in tool categories and their statistics with different "
-"modes."
+"List all built-in tool categories and their statistics with different modes."
 msgstr "列出所有内置工具类别及其在不同模式下的统计数据。"
 
 #: 7066177e199b44119f3984d6e08a8152 of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:3
 msgid ""
-"This method provides a comprehensive overview of all available tools in "
-"the ToolUniverse, organized by categories. It reads directly from the "
-"default tool files to gather statistics, so it works even before calling "
+"This method provides a comprehensive overview of all available tools in the "
+"ToolUniverse, organized by categories. It reads directly from the default "
+"tool files to gather statistics, so it works even before calling "
 "load_tools()."
 msgstr ""
-"此方法提供了对 ToolUniverse 中所有可用工具的全面概览，并按类别进行组织。它直接从默认工具文件中读取数据以收集统计信息，因此即使在调用"
-" load_tools() 之前也能正常工作。"
+"此方法提供了对 ToolUniverse 中所有可用工具的全面概览，并按类别进行组织。它直接从默认工具文件中读取数据以收集统计信息，因此即使在调用 "
+"load_tools() 之前也能正常工作。"
 
 #: 71a1de3e4ee94c99b2802c5f28d9b698 of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:7
 msgid ""
-"Organization mode for tools. Defaults to 'config'. - 'config': Organize "
-"by config file categories (original behavior) - 'type': Organize by tool "
-"types (implementation classes) - 'list_name': Return a list of all tool "
-"names - 'list_spec': Return a list of all tool specifications"
+"Organization mode for tools. Defaults to 'config'. - 'config': Organize by "
+"config file categories (original behavior) - 'type': Organize by tool types "
+"(implementation classes) - 'list_name': Return a list of all tool names - "
+"'list_spec': Return a list of all tool specifications"
 msgstr ""
 "工具的组织模式。默认值为 'config'。  \n"
 "- 'config'：按配置文件类别组织（原始行为）  \n"
@@ -785,9 +787,9 @@ msgstr ""
 #: b032ce86b02643bab7cc8dc9688e28d1 of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:13
 msgid ""
-"Whether to scan all JSON files in data directory recursively. If True, "
-"scans all JSON files in data/ and its subdirectories. If False (default),"
-" uses predefined tool file mappings."
+"Whether to scan all JSON files in data directory recursively. If True, scans"
+" all JSON files in data/ and its subdirectories. If False (default), uses "
+"predefined tool file mappings."
 msgstr ""
 "是否递归扫描数据目录中的所有 JSON 文件。如果为 True，则扫描 data/ 及其子目录中的所有 JSON 文件。如果为 "
 "False（默认值），则使用预定义的工具文件映射。"
@@ -795,9 +797,9 @@ msgstr ""
 #: 9a58baf77c014c639649d80f4faebd3e of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:18
 msgid ""
-"- For 'config' and 'type' modes: A dictionary containing tool statistics "
-"- For 'list_name' mode: A list of all tool names - For 'list_spec' mode: "
-"A list of all tool specifications"
+"- For 'config' and 'type' modes: A dictionary containing tool statistics - "
+"For 'list_name' mode: A list of all tool names - For 'list_spec' mode: A "
+"list of all tool specifications"
 msgstr ""
 "- 对于“config”和“type”模式：包含工具统计信息的字典  \n"
 "- 对于“list_name”模式：包含所有工具名称的列表  \n"
@@ -822,8 +824,8 @@ msgstr "对于“list_spec”模式：所有工具规格的列表"
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:23
 msgid "Example"
 msgstr ""
-"Please provide the English text you would like translated, and I will "
-"assist you."
+"Please provide the English text you would like translated, and I will assist"
+" you."
 
 #: 9aa2efcfb44c45db892187c7a949a4ca of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:35
@@ -835,20 +837,21 @@ msgstr "此方法直接从工具文件中读取数据，无需调用 load_tools(
 #: fe5cd35a4e3e4bcab1f8a2a764bbe239 of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:36
 msgid ""
-"Tools are deduplicated across categories, so the same tool won't be "
-"counted multiple times"
+"Tools are deduplicated across categories, so the same tool won't be counted "
+"multiple times"
 msgstr "工具已在各类别中去重，因此同一工具不会被重复计数。"
 
 #: 711e7f7b1d6146aea56f337e697245a0 of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:37
 msgid ""
-"The summary is automatically printed to console when this method is "
-"called (except for list_name and list_spec modes)"
+"The summary is automatically printed to console when this method is called "
+"(except for list_name and list_spec modes)"
 msgstr "当调用此方法时，摘要会自动打印到控制台（list_name 和 list_spec 模式除外）。"
 
 #: 3341412b2a8145e7b29959a3f504ad5a of
 #: tooluniverse.execute_function.ToolUniverse.list_built_in_tools:38
-msgid "When scan_all=True, all JSON files in data/ and subdirectories are scanned"
+msgid ""
+"When scan_all=True, all JSON files in data/ and subdirectories are scanned"
 msgstr "当 scan_all=True 时，系统会扫描 data/ 目录及其子目录中的所有 JSON 文件"
 
 #: 35eed78aad044fb789c91c8ba99a21d7 of
@@ -880,8 +883,7 @@ msgid ""
 "(all_tools, all_tool_names) where all_tools is a list of tool configs"
 "        and all_tool_names is a set of tool names for deduplication"
 msgstr ""
-"（all_tools，all_tool_names），其中 all_tools 是工具配置的列表，all_tool_names "
-"是用于去重的工具名称集合"
+"（all_tools，all_tool_names），其中 all_tools 是工具配置的列表，all_tool_names 是用于去重的工具名称集合"
 
 #: 45e02ca10dcb46fba3b4c0caa8258972 4cab10d1d1744847b1654d03af3c0a9b of
 #: tooluniverse.execute_function.ToolUniverse._scan_all_json_files:5
@@ -904,15 +906,15 @@ msgstr "递归扫描数据目录及其子目录中的所有 JSON 文件。"
 
 #: dfcd560d2d024d518f796774700969f1 of
 #: tooluniverse.execute_function.ToolUniverse.refresh_tool_name_desc:1
-msgid "Refresh the tool name and description mappings with optional filtering."
+msgid ""
+"Refresh the tool name and description mappings with optional filtering."
 msgstr "使用可选的过滤条件刷新工具名称和描述的映射。"
 
 #: df089ab6c25243aa85fa951669af912c of
 #: tooluniverse.execute_function.ToolUniverse.refresh_tool_name_desc:3
 msgid ""
 "This method rebuilds the internal tool dictionary and generates filtered "
-"lists of tool names and descriptions based on the provided filter "
-"criteria."
+"lists of tool names and descriptions based on the provided filter criteria."
 msgstr "此方法会重建内部工具字典，并根据提供的筛选条件生成经过筛选的工具名称和描述列表。"
 
 #: 2cad359437044c6aafec01558d619d7e of
@@ -989,15 +991,13 @@ msgstr "工具配置字典列表"
 #: tooluniverse.execute_function.ToolUniverse.prepare_tool_prompts:5
 msgid ""
 "Preparation mode. Options: - 'prompt': Keep essential keys for prompting "
-"(name, description, parameter, required) - 'example': Keep extended keys "
-"for examples (name, description, parameter, required, query_schema, "
-"fields, label, type) - 'custom': Use custom valid_keys parameter"
+"(name, description, parameter, required) - 'example': Keep extended keys for"
+" examples (name, description, parameter, required, query_schema, fields, "
+"label, type) - 'custom': Use custom valid_keys parameter"
 msgstr ""
 "准备模式。选项：  \n"
 "- 'prompt'：保留用于提示的关键字段（name、description、parameter、required）  \n"
-"- "
-"'example'：保留用于示例的扩展关键字段（name、description、parameter、required、query_schema、fields、label、type）"
-"  \n"
+"- 'example'：保留用于示例的扩展关键字段（name、description、parameter、required、query_schema、fields、label、type）  \n"
 "- 'custom'：使用自定义的 valid_keys 参数"
 
 #: e5069683ef4d4bb7a9084011510f7062 of
@@ -1014,8 +1014,7 @@ msgstr "指定名称的工具配置列表。"
 #: bcf54e9610de4b6dbda6ff7bdc0af182 of
 #: tooluniverse.execute_function.ToolUniverse.get_tool_specification_by_names:1
 msgid ""
-"Retrieve tool specifications by their names using tool_specification "
-"method."
+"Retrieve tool specifications by their names using tool_specification method."
 msgstr "使用 tool_specification 方法通过工具名称获取工具规格。"
 
 #: 7299256b930445898a80624a22fe60cf d9f280ade7b544c982c04a9c73424011 of
@@ -1032,13 +1031,14 @@ msgstr "工具名称检索列表"
 msgid ""
 "Output format. Options: 'default', 'openai'. If 'openai', returns OpenAI "
 "function calling format. Defaults to 'default'."
-msgstr "输出格式。选项：'default'，'openai'。如果选择 'openai'，将返回 OpenAI 函数调用格式。默认为 'default'。"
+msgstr ""
+"输出格式。选项：'default'，'openai'。如果选择 'openai'，将返回 OpenAI 函数调用格式。默认为 'default'。"
 
 #: ff7d4974a2344c02b40a9d5d75e23ffd of
 #: tooluniverse.execute_function.ToolUniverse.get_tool_specification_by_names:9
 msgid ""
-"List of tool specifications for the specified names.      Tools not found"
-" will be reported but not included in the result."
+"List of tool specifications for the specified names.      Tools not found "
+"will be reported but not included in the result."
 msgstr "指定名称的工具规格清单。未找到的工具将被报告，但不会包含在结果中。"
 
 #: 9b79175ceb924273b3c11aab0ad36007 of
@@ -1073,8 +1073,8 @@ msgstr "要检索的工具名称。"
 #: 376d95eaed5a4466978f7d4c28181480 of
 #: tooluniverse.execute_function.ToolUniverse.get_one_tool_by_one_name:7
 msgid ""
-"If True, returns tool prepared for prompting. If False, returns full tool"
-" configuration. Defaults to True."
+"If True, returns tool prepared for prompting. If False, returns full tool "
+"configuration. Defaults to True."
 msgstr ""
 "如果为 True，则返回用于提示的工具。  \n"
 "如果为 False，则返回完整的工具配置。  \n"
@@ -1096,8 +1096,8 @@ msgstr "根据名称检索单个工具配置。"
 #: d3d09799b1a74da78142dbf22e4db657 of
 #: tooluniverse.execute_function.ToolUniverse.tool_specification:5
 msgid ""
-"If True, returns tool prepared for prompting. If False, returns full tool"
-" configuration. Defaults to False."
+"If True, returns tool prepared for prompting. If False, returns full tool "
+"configuration. Defaults to False."
 msgstr ""
 "如果为 True，则返回用于提示的工具。  \n"
 "如果为 False，则返回完整的工具配置。  \n"
@@ -1119,8 +1119,8 @@ msgstr "工具名称。"
 msgid "The type of the tool."
 msgstr "工具的类型。"
 
-#: ../../api/tooluniverse.execute_function.rst 29d02c9d835246d79268a2efe39a45ae
-#: 6e354398d601459b820c82f52136e36c
+#: ../../api/tooluniverse.execute_function.rst
+#: 29d02c9d835246d79268a2efe39a45ae 6e354398d601459b820c82f52136e36c
 msgid "Raises"
 msgstr "提升"
 
@@ -1168,7 +1168,8 @@ msgstr "从输入数据中提取函数调用的JSON。"
 
 #: ca28e8772b79400e97d0a833bfa20079 of
 #: tooluniverse.execute_function.ToolUniverse.extract_function_call_json:3
-msgid "This method delegates to the utility function extract_function_call_json."
+msgid ""
+"This method delegates to the utility function extract_function_call_json."
 msgstr "此方法委托给实用函数 extract_function_call_json。"
 
 #: 21afcb0ad87e4096b2c2399abd5a5874 of
@@ -1231,7 +1232,8 @@ msgstr "是否启用输出钩子。默认为 False。"
 
 #: cb7111e7d2484ea097bbe1e6f4cfb11b of
 #: tooluniverse.execute_function.ToolUniverse._execute_function_call_list:6
-msgid "Maximum parallel workers; values <=1 fall back to sequential execution."
+msgid ""
+"Maximum parallel workers; values <=1 fall back to sequential execution."
 msgstr "最大并行工作线程数；值 <=1 时将回退到顺序执行。"
 
 #: 7596396bbcad48a6a7433a8f511ce2b2 of
@@ -1272,8 +1274,8 @@ msgstr "解析的格式类型。默认为“llama”。"
 #: tooluniverse.execute_function.ToolUniverse.run:14
 msgid ""
 "- For multiple function calls: List of formatted messages with tool "
-"responses - For single function call: Direct result from the tool - None:"
-" If the input is not a valid function call"
+"responses - For single function call: Direct result from the tool - None: If"
+" the input is not a valid function call"
 msgstr ""
 "- 对于多个函数调用：包含工具响应的格式化消息列表  \n"
 "- 对于单个函数调用：工具的直接结果  \n"
@@ -1282,8 +1284,7 @@ msgstr ""
 #: 82ebf40a5dbc40e78fefe4c80a021a85 of
 #: tooluniverse.execute_function.ToolUniverse.run:14
 msgid ""
-"For multiple function calls: List of formatted messages with tool "
-"responses"
+"For multiple function calls: List of formatted messages with tool responses"
 msgstr "对于多次函数调用：包含工具响应的格式化消息列表"
 
 #: cdc108377f1a4b8094b0a682ac2d0663 of
@@ -1304,9 +1305,9 @@ msgstr "执行单个函数调用。"
 #: 4735d4d2a50d47208c035f59cd5b9615 of
 #: tooluniverse.execute_function.ToolUniverse.run_one_function:3
 msgid ""
-"This method validates the function call, initializes the tool if "
-"necessary, and executes it with the provided arguments. If hooks are "
-"enabled, it also applies output hooks to process the result."
+"This method validates the function call, initializes the tool if necessary, "
+"and executes it with the provided arguments. If hooks are enabled, it also "
+"applies output hooks to process the result."
 msgstr "此方法用于验证函数调用，必要时初始化工具，并使用提供的参数执行。如果启用了钩子，还会应用输出钩子来处理结果。"
 
 #: 047fe94a914b410f9816294cf4782b0b of
@@ -1355,7 +1356,8 @@ msgid ""
 "This method allows runtime control of the hook system. When enabled, it "
 "initializes the HookManager if not already present. When disabled, it "
 "deactivates the HookManager."
-msgstr "此方法允许在运行时控制挂钩系统。启用时，如果 HookManager 尚未初始化，则会对其进行初始化。禁用时，则会停用 HookManager。"
+msgstr ""
+"此方法允许在运行时控制挂钩系统。启用时，如果 HookManager 尚未初始化，则会对其进行初始化。禁用时，则会停用 HookManager。"
 
 #: 69bf1536ee454074acf671e13df465eb of
 #: tooluniverse.execute_function.ToolUniverse.toggle_hooks:7
@@ -1379,12 +1381,14 @@ msgstr ""
 
 #: 3383d1f4e44c4191bac827d5d04b1b39 of
 #: tooluniverse.execute_function.ToolUniverse.init_tool:7
-msgid "Tool configuration dictionary. Either this or tool_name must be provided."
+msgid ""
+"Tool configuration dictionary. Either this or tool_name must be provided."
 msgstr "工具配置字典。必须提供此项或 tool_name。"
 
 #: 5c3989ca42224f60b39618b329876146 of
 #: tooluniverse.execute_function.ToolUniverse.init_tool:9
-msgid "Name of the tool type to initialize. Either this or tool must be provided."
+msgid ""
+"Name of the tool type to initialize. Either this or tool must be provided."
 msgstr "用于初始化的工具类型名称。必须提供此项或工具。"
 
 #: 573a9a489ef949f09ca9f2a82b55a29e of
@@ -1496,8 +1500,8 @@ msgstr "用于验证的特定功能配置。如果为 None，则使用已加载�
 #: tooluniverse.execute_function.ToolUniverse.check_function_call:13
 msgid ""
 "A tuple of (is_valid, message) where:     - is_valid (bool): True if the "
-"function call is valid, False otherwise     - message (str): Error "
-"message if invalid, empty if valid"
+"function call is valid, False otherwise     - message (str): Error message "
+"if invalid, empty if valid"
 msgstr ""
 "一个元组 (is_valid, message)，其中：  \n"
 "- is_valid (bool)：如果函数调用有效，则为 True；否则为 False  \n"
@@ -1634,8 +1638,8 @@ msgstr "已弃用：请改用 tool_specification()。"
 #: 76fdf2dfca414c59aff3a30c79c514ab of
 #: tooluniverse.execute_function.ToolUniverse.get_tool_by_name:11
 msgid ""
-"List of tool configurations for the specified names.      Tools not found"
-" will be reported but not included in the result."
+"List of tool configurations for the specified names.      Tools not found "
+"will be reported but not included in the result."
 msgstr "指定名称的工具配置列表。未找到的工具将被报告，但不会包含在结果中。"
 
 #: 6f3d18fa07374b9c83abfd8618876fb7 of
@@ -1656,8 +1660,7 @@ msgstr "从工具配置列表中移除指定的键。"
 #: 237b0acbd62a41c8892e56a7655cc3bb of
 #: tooluniverse.execute_function.ToolUniverse.remove_keys:3
 msgid ""
-"DEPRECATED: Use prepare_tool_prompts(mode='custom', valid_keys=...) "
-"instead."
+"DEPRECATED: Use prepare_tool_prompts(mode='custom', valid_keys=...) instead."
 msgstr "已弃用：请使用 prepare_tool_prompts(mode='custom', valid_keys=...) 替代。"
 
 #: 1e4598100bbe4a809d34f1e5378fc91d of
@@ -1731,8 +1734,8 @@ msgstr "在不加载的情况下，发现来自MCP服务器的可用工具。"
 #: tooluniverse.mcp_integration.discover_mcp_tools:3
 msgid ""
 "This method connects to MCP servers to discover what tools are available "
-"without actually registering them in ToolUniverse. Useful for exploration"
-" and selective tool loading."
+"without actually registering them in ToolUniverse. Useful for exploration "
+"and selective tool loading."
 msgstr "此方法连接到MCP服务器，以发现可用的工具，而无需实际将它们注册到ToolUniverse中。适用于探索和选择性加载工具。"
 
 #: 48beb2eeef2b41e99816496f25079c7c e2e14b19549042e1aa65217ea81ef077 of
@@ -1765,7 +1768,7 @@ msgstr "要发现的MCP服务器URL列表"
 #: tooluniverse.mcp_integration.discover_mcp_tools:11
 #: tooluniverse.mcp_integration.load_mcp_tools:16
 msgid "**kwargs"
-msgstr ""
+msgstr "**kwargs（关键字参数）"
 
 #: ea95cd5a8f4b41d9a7a003ae23ddda37 of
 #: tooluniverse.mcp_integration.discover_mcp_tools:12
@@ -1851,7 +1854,7 @@ msgstr ""
 #: tooluniverse.mcp_integration.discover_mcp_tools:36
 #, python-brace-format
 msgid "print(f\"  - {tool['name']}: {tool['description']}\")"
-msgstr ""
+msgstr "print(f\"  - {tool['name']}：{tool['description']}\")"
 
 #: 2ab0d215e879441abd55a6b59ad58eb7 of
 #: tooluniverse.mcp_integration.discover_mcp_tools:37
@@ -1881,7 +1884,8 @@ msgstr "工具名称筛选列表。"
 
 #: 8301da67815c488ea046a9dcb61c8dbf of
 #: tooluniverse.execute_function.ToolUniverse.filter_tool_lists:7
-msgid "List of tool descriptions to filter (must correspond to tool_name_list)."
+msgid ""
+"List of tool descriptions to filter (must correspond to tool_name_list)."
 msgstr "用于筛选的工具描述列表（必须与 tool_name_list 对应）。"
 
 #: b5f2a8487f884f84ae7cb80b3e1cae0f of
@@ -1902,8 +1906,7 @@ msgstr "关于MCP连接、自动加载器和已加载工具的信息"
 #: a5a8146e74cc4e4682a8c6260ee7a6ca of
 #: tooluniverse.mcp_integration.list_mcp_connections:10
 msgid ""
-"```python tu = ToolUniverse() "
-"tu.load_mcp_tools([\"http://localhost:8001\"])"
+"```python tu = ToolUniverse() tu.load_mcp_tools([\"http://localhost:8001\"])"
 msgstr ""
 "```python\n"
 "tu = ToolUniverse()  \n"
@@ -1931,8 +1934,7 @@ msgstr "将MCP工具从远程服务器加载到此ToolUniverse实例中。"
 #: tooluniverse.mcp_integration.load_mcp_tools:3
 msgid ""
 "This method automatically discovers tools from MCP servers and registers "
-"them as ToolUniverse tools, enabling seamless usage of remote "
-"capabilities."
+"them as ToolUniverse tools, enabling seamless usage of remote capabilities."
 msgstr "此方法会自动从MCP服务器中发现工具，并将其注册为ToolUniverse工具，从而实现远程功能的无缝使用。"
 
 #: 58877b1d17e74665812f68b0212da4fa of
@@ -1973,8 +1975,8 @@ msgstr "timeout（int）：连接超时时间（单位：秒）（默认值：30
 #: d3bb18f664704526ba675202d1655b4d of
 #: tooluniverse.mcp_integration.load_mcp_tools:21
 msgid ""
-"auto_register (bool): Whether to auto-register discovered tools (default:"
-" True)"
+"auto_register (bool): Whether to auto-register discovered tools (default: "
+"True)"
 msgstr "auto_register（布尔值）：是否自动注册发现的工具（默认值：True）"
 
 #: 611a0cca547a4731bbdf5519f76eec40 of
@@ -2012,8 +2014,8 @@ msgstr ""
 #: tooluniverse.mcp_integration.load_mcp_tools:39
 msgid ""
 "\"http://localhost:8001\",  # Local analysis server \"http://ml-"
-"server:8002\",  # Remote ML server \"ws://realtime:9000\"      # "
-"WebSocket server"
+"server:8002\",  # Remote ML server \"ws://realtime:9000\"      # WebSocket "
+"server"
 msgstr ""
 "\"http://localhost:8001\",  # 本地分析服务器  \n"
 "\"http://ml-server:8002\",  # 远程机器学习服务器  \n"
@@ -2025,7 +2027,8 @@ msgstr ""
 msgid ""
 "print(f\"Loaded {result['total_tools']} tools from "
 "{result['servers_connected']} servers\") ```"
-msgstr "```print(f\"已从{result['servers_connected']}台服务器加载了{result['total_tools']}个工具\")```"
+msgstr ""
+"```print(f\"已从{result['servers_connected']}台服务器加载了{result['total_tools']}个工具\")```"
 
 #: 48a6163798eb411380bb879fa21e4c97 of
 #: tooluniverse.mcp_integration.load_mcp_tools:47
@@ -2038,13 +2041,15 @@ msgid ""
 "server_urls=[\"http://localhost:8001\"], tool_prefix=\"analysis\\_\", "
 "timeout=60, selected_tools=[\"protein_analysis\", \"drug_interaction\"]"
 msgstr ""
+"server_urls=[\"http://localhost:8001\"]，tool_prefix=\"analysis\\_\"，timeout=60，selected_tools=[\"protein_analysis\","
+" \"drug_interaction\"]"
 
 #: 1ccfc6b6e7fb443581b05b988e93c701 of
 #: tooluniverse.mcp_integration.load_mcp_tools:57
 msgid ""
-"Auto-discovery from local registry: ```python # If you have registered "
-"MCP tools locally, auto-discover their servers tu.load_mcp_tools()  # "
-"Uses servers from mcp_tool_registry ```"
+"Auto-discovery from local registry: ```python # If you have registered MCP "
+"tools locally, auto-discover their servers tu.load_mcp_tools()  # Uses "
+"servers from mcp_tool_registry ```"
 msgstr ""
 "从本地注册表自动发现：  \n"
 "```python  \n"
@@ -2086,24 +2091,22 @@ msgstr "将MCP工具从远程服务器加载到此ToolUniverse实例中。"
 #: b0ab0f4e05734d1ea55c28617c079999 of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:3
 msgid ""
-"This is a high-level method that loads a Space configuration from "
-"various sources (HuggingFace, GitHub, local files, etc.) and applies the "
-"tool settings to the current instance."
-msgstr ""
+"This is a high-level method that loads a Space configuration from various "
+"sources (HuggingFace, GitHub, local files, etc.) and applies the tool "
+"settings to the current instance."
+msgstr "这是一个高级方法，用于从多个来源（如 HuggingFace、GitHub、本地文件等）加载空间配置，并将工具设置应用于当前实例。"
 
 #: ca5ecaaaeb61492d926c8eb6d2dad900 of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:7
-msgid ""
-"Space URI (e.g., \"drug-discovery\", \"hf:user/repo\", "
-"\"./config.yaml\")"
-msgstr ""
+msgid "Space URI (e.g., \"drug-discovery\", \"hf:user/repo\", \"./config.yaml\")"
+msgstr "空间 URI（例如：\"drug-discovery\"、\"hf:user/repo\"、\"./config.yaml\"）"
 
 #: cea8b3f4de8c42759ad6faa92c709d76 of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:8
 msgid ""
 "Additional parameters to override Space configuration (e.g., "
 "exclude_tools=[\"tool1\"], include_tools=[\"tool2\"])"
-msgstr ""
+msgstr "用于覆盖空间配置的附加参数（例如，exclude_tools=[\"tool1\"], include_tools=[\"tool2\"]）"
 
 #: c0419817ae5f4e7b87035fe32ff691c7 of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:11
@@ -2114,14 +2117,16 @@ msgstr "已加载工具配置列表"
 #: db97d30949c34d08ae96bee43939e307 of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:16
 msgid "# Load official preset config = tu.load_toolspace(\"drug-discovery\")"
-msgstr ""
+msgstr "# 加载官方预设配置 = tu.load_toolspace(\"drug-discovery\")"
 
 #: 6e03ca4f7bcf4d3a8cd44687f366fbf1 of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:19
 msgid ""
-"# Load from HuggingFace config = tu.load_toolspace(\"hf:community"
-"/proteomics-toolkit\")"
+"# Load from HuggingFace config = "
+"tu.load_toolspace(\"hf:community/proteomics-toolkit\")"
 msgstr ""
+"# 从 HuggingFace 加载 config = tu.load_toolspace(\"hf:community/proteomics-"
+"toolkit\")"
 
 #: 29c13292069c4aabba517d6def65e413 of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:22
@@ -2129,6 +2134,8 @@ msgid ""
 "# Load local file with overrides config = tu.load_toolspace(\"./my-"
 "config.yaml\", exclude_tools=[\"slow_tool\"])"
 msgstr ""
+"# 加载本地文件并覆盖配置  \n"
+"config = tu.load_toolspace(\"./my-config.yaml\", exclude_tools=[\"slow_tool\"])"
 
 #: f9926b197dfa44b795ab32ce02704c0e of
 #: tooluniverse.execute_function.ToolUniverse.load_toolspace:25
@@ -2136,12 +2143,12 @@ msgid ""
 "# Load from GitHub config = tu.load_toolspace(\"gh:team/configs/research-"
 "env.yaml\")"
 msgstr ""
+"# 从 GitHub 加载  \n"
+"config = tu.load_toolspace(\"gh:team/configs/research-env.yaml\")"
 
 #~ msgid ""
-#~ "This method takes existing tool name "
-#~ "and description lists and filters them"
-#~ " according to the specified criteria "
-#~ "using the select_tools method for "
+#~ "This method takes existing tool name and description lists and filters them "
+#~ "according to the specified criteria using the select_tools method for "
 #~ "category-based filtering."
 #~ msgstr "该方法采用现有的工具名称和描述列表，并使用 select_tools 方法根据指定的条件进行类别筛选。"
 
@@ -2149,12 +2156,9 @@ msgstr ""
 #~ msgstr "工具配置列表，仅包含用于提示的必要键。"
 
 #~ msgid ""
-#~ "This method is similar to "
-#~ "prepare_tool_prompts but includes additional "
-#~ "keys useful for examples and "
-#~ "documentation."
+#~ "This method is similar to prepare_tool_prompts but includes additional keys "
+#~ "useful for examples and documentation."
 #~ msgstr "此方法类似于 prepare_tool_prompts，但包含了一些对示例和文档有用的额外键值。"
 
 #~ msgid "Initialized tool instance."
 #~ msgstr "初始化工具实例。"
-

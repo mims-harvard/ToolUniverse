@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_souporcell\\_info 模块"
 #: 7124f7440a3946f3b049b1f0d90aa0e0 of
 #: tooluniverse.tools.get_souporcell_info:1
 msgid "get_souporcell_info"
-msgstr ""
+msgstr "get_souporcell_info 获取souporcell信息"
 
 #: 75e847473b434e67a86c9f364e0f758c e8a3db76420d4711a5e598b64e6065e4 of
 #: tooluniverse.tools.get_souporcell_info:3

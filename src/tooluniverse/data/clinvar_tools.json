@@ -1,0 +1,288 @@
+[
+    {
+        "type": "ClinVarSearchVariants",
+        "name": "ClinVar_search_variants",
+        "description": "Search for variants in ClinVar database by gene name, condition, or variant ID. Returns variant identifiers and basic information. At least one of gene, condition, or variant_id must be provided.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene": {
+                    "type": "string",
+                    "description": "Gene name or symbol (e.g., 'BRCA1', 'BRCA2') At least one of gene, condition, or variant_id must be provided."
+                },
+                "condition": {
+                    "type": "string",
+                    "description": "Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of gene, condition, or variant_id must be provided."
+                },
+                "variant_id": {
+                    "type": "string",
+                    "description": "ClinVar variant ID (e.g., '12345') At least one of gene, condition, or variant_id must be provided."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of results to return (default: 20). Alias: limit.",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 100
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Alias for max_results: maximum number of results to return.",
+                    "minimum": 1,
+                    "maximum": 100
+                },
+                "clinical_significance": {
+                    "type": "string",
+                    "description": "Filter by clinical significance (e.g., 'Pathogenic', 'Likely pathogenic', 'Benign', 'Uncertain significance', 'VUS'). Applied client-side after retrieval."
+                },
+                "gene_symbol": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Alias for gene. HGNC gene symbol (e.g., \"DPYD\", \"CYP2C19\")."
+                },
+                "significance": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Alias for clinical_significance (e.g., \"pathogenic\", \"benign\", \"uncertain_significance\")."
+                },
+                "query": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Alias for condition. Free-text search mapped to condition/disease field."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "/esearch.fcgi",
+            "return_format": "JSON"
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "ClinVar search results",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Status of the request"
+                },
+                "data": {
+                    "type": "object",
+                    "description": "Search results from ClinVar",
+                    "properties": {
+                        "esearchresult": {
+                            "type": "object",
+                            "properties": {
+                                "count": {
+                                    "type": "string",
+                                    "description": "Number of results found"
+                                },
+                                "idlist": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "List of ClinVar variant IDs"
+                                },
+                                "querytranslation": {
+                                    "type": "string",
+                                    "description": "Translated query"
+                                }
+                            }
+                        }
+                    }
+                },
+                "search_params": {
+                    "type": "object",
+                    "description": "Search parameters used",
+                    "properties": {
+                        "gene": {
+                            "type": "string"
+                        },
+                        "condition": {
+                            "type": "string"
+                        },
+                        "variant_id": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "url": {
+                    "type": "string",
+                    "description": "API URL used"
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "gene": "BRCA1",
+                "max_results": 10
+            },
+            {
+                "condition": "breast cancer",
+                "max_results": 5
+            }
+        ],
+        "label": [
+            "ClinVar",
+            "Variants",
+            "Search"
+        ],
+        "metadata": {
+            "tags": [
+                "variants",
+                "clinical",
+                "disease"
+            ],
+            "difficulty_level": "easy",
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "type": "ClinVarGetVariantDetails",
+        "name": "ClinVar_get_variant_details",
+        "description": "Get variant summary information from ClinVar by variant ID. Returns accession, title, genes, clinical significance, review status, chromosome location, and variation name. For the same variant, this provides a different field view than ClinVar_get_clinical_significance.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variant_id": {
+                    "type": "string",
+                    "description": "ClinVar variant ID (e.g., '12345', '123456')"
+                }
+            },
+            "required": [
+                "variant_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "/esummary.fcgi",
+            "return_format": "JSON"
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "ClinVar variant details",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Status of the request"
+                },
+                "data": {
+                    "type": "object",
+                    "description": "Detailed variant information from ClinVar",
+                    "properties": {
+                        "result": {
+                            "type": "object",
+                            "description": "Variant data structure keyed by variant ID"
+                        }
+                    }
+                },
+                "variant_id": {
+                    "type": "string",
+                    "description": "Input variant ID"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "API URL used"
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "variant_id": "12345"
+            },
+            {
+                "variant_id": "4813039"
+            }
+        ],
+        "label": [
+            "ClinVar",
+            "Variant",
+            "Details"
+        ],
+        "metadata": {
+            "tags": [
+                "variant",
+                "details",
+                "clinical"
+            ],
+            "difficulty_level": "easy",
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "type": "ClinVarGetClinicalSignificance",
+        "name": "ClinVar_get_clinical_significance",
+        "description": "Get clinical significance information for a variant from ClinVar. Returns pathogenicity classification and clinical interpretations.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variant_id": {
+                    "type": "string",
+                    "description": "ClinVar variant ID (e.g., '12345', '123456')"
+                }
+            },
+            "required": [
+                "variant_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "/esummary.fcgi",
+            "return_format": "JSON"
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "ClinVar clinical significance data",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Status of the request"
+                },
+                "data": {
+                    "type": "object",
+                    "description": "Clinical significance information from ClinVar",
+                    "properties": {
+                        "result": {
+                            "type": "object",
+                            "description": "Summary results for the variant"
+                        }
+                    }
+                },
+                "variant_id": {
+                    "type": "string",
+                    "description": "Input variant ID"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "API URL used"
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "variant_id": "12345"
+            },
+            {
+                "variant_id": "4813039"
+            }
+        ],
+        "label": [
+            "ClinVar",
+            "Clinical",
+            "Significance"
+        ],
+        "metadata": {
+            "tags": [
+                "clinical",
+                "pathogenicity",
+                "significance"
+            ],
+            "difficulty_level": "easy",
+            "estimated_execution_time": "< 3 seconds"
+        }
+    }
+]

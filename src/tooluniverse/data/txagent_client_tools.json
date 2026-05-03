@@ -1,9 +1,19 @@
 [
-    {
-        "name": "mcp_auto_loader_txagent",
-        "description": "Automatically discover and load all tools from TxAgent MCP Server. Can register discovered tools as individual ToolUniverse tools or provide tool configurations.",
-        "type": "MCPAutoLoaderTool",
-        "server_url": "http://${TXAGENT_MCP_SERVER_HOST}:7000/mcp",
-        "required_api_keys": ["TXAGENT_MCP_SERVER_HOST"]
+  {
+    "name": "mcp_auto_loader_txagent",
+    "description": "Automatically discover and load all tools from TxAgent MCP Server. Can register discovered tools as individual ToolUniverse tools or provide tool configurations.",
+    "type": "MCPAutoLoaderTool",
+    "server_url": "http://${TXAGENT_MCP_SERVER_HOST}:7000/mcp",
+    "required_api_keys": [
+      "TXAGENT_MCP_SERVER_HOST"
+    ],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
+  }
 ]

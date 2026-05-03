@@ -14,7 +14,7 @@ def TestCaseGenerator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Generates diverse and representative ToolUniverse tool call dictionaries for a given tool based o...
 
@@ -31,12 +31,17 @@ def TestCaseGenerator(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"tool_config": tool_config}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "TestCaseGenerator", "arguments": {"tool_config": tool_config}},
+        {
+            "name": "TestCaseGenerator",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

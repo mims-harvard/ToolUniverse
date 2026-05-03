@@ -282,8 +282,7 @@ Create ``tests/integration/test_my_remote_tool.py``:
 
        def test_tool_discovery(self):
            """Test that tool is discovered correctly."""
-           tools = self.tu.list_tools()
-           assert "my_remote_tool" in tools
+           assert "my_remote_tool" in self.tu.all_tool_dict
 
 Run tests:
 .. code-block:: bash
@@ -448,33 +447,33 @@ Key Differences from Local Tools
 
 | Aspect | Local Tools | Remote Tools |
 |--------|-------------|--------------|
-| **__init__.py** | ✅ Must modify 4 locations | ❌ No modification needed |
+| **__init__.py** | Must modify 4 locations | No modification needed |
 | **File Location** | ``src/tooluniverse/xxx_tool.py`` | ``src/tooluniverse/remote/xxx/`` |
 | **Config Location** | ``data/xxx_tools.json`` | ``data/remote_tools/xxx_tools.json`` |
-| **Server Deployment** | Not needed | ✅ Must provide public access |
+| **Server Deployment** | Not needed | Must provide public access |
 | **Testing** | Unit tests | Integration tests (mock server) |
 | **Dependencies** | Python only | Server + dependencies |
 
 Common Mistakes
 ----------------
 
-**❌ Server not accessible**
+** Server not accessible**
 - Tool will fail with connection errors
 - Solution: Ensure server is publicly accessible or provide clear deployment docs
 
-**❌ Wrong config location**
+** Wrong config location**
 - Config must be in ``data/remote_tools/``
 - Not in ``data/``
 
-**❌ Missing server code**
+** Missing server code**
 - Include complete server implementation
 - Don't just provide config
 
-**❌ No deployment documentation**
+** No deployment documentation**
 - Users need to know how to run the server
 - Include setup and deployment instructions
 
-**❌ Poor error handling**
+** Poor error handling**
 - Server should return proper error responses
 - Tool should handle network failures gracefully
 
@@ -498,8 +497,7 @@ Troubleshooting
    tu = ToolUniverse()
    tu.load_tools()
    
-   tools = tu.list_tools()
-   print("my_remote_tool" in tools)  # Should be True
+   print("my_remote_tool" in tu.all_tool_dict)  # Should be True
 
 **Server returns unexpected format**
 - Ensure server follows MCP protocol
@@ -511,10 +509,10 @@ Next Steps
 
 After successfully contributing your remote tool:
 
-* 🏠 **Local Tools**: :doc:`local_tools` - Learn about contributing local tools
-* 📚 **MCP Server Development**: :doc:`../remote_tools/mcp_server` - Advanced MCP server patterns
-* 🔍 **Architecture**: :doc:`../reference/architecture` - Understand ToolUniverse internals
-* 📊 **Comparison**: Review the tool type comparison table in :doc:`../contributing/index`
+* **Local Tools**: :doc:`local_tools` - Learn about contributing local tools
+* **MCP Integration**: :doc:`../remote_tools/mcp_integration` - MCP integration patterns
+* **Architecture**: :doc:`../reference/architecture` - Understand ToolUniverse internals
+* **Comparison**: Review the tool type comparison table in :doc:`index`
 
 .. tip::
    **Success Tips**: Start with simple servers, test thoroughly with real deployments, and provide clear documentation for users to run your service!

@@ -27,6 +27,7 @@ class ODPHPRESTTool(BaseTool):
             resp.raise_for_status()
             data = resp.json()
             return {
+                "status": "success",
                 "data": data.get("Result"),
                 "metadata": {
                     "source": "ODPHP MyHealthfinder",
@@ -35,9 +36,9 @@ class ODPHPRESTTool(BaseTool):
                 },
             }
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except ValueError as e:
-            return {"error": f"Failed to parse JSON: {str(e)}"}
+            return {"status": "error", "error": f"Failed to parse JSON: {str(e)}"}
 
 
 def _sections_array(resource: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -219,7 +220,10 @@ class ODPHPOutlinkFetch(BaseTool):
         return_html: bool = bool(arguments.get("return_html", False))
 
         if not urls or not isinstance(urls, list):
-            return {"error": "Missing required parameter 'urls' (array of 1–3 URLs)."}
+            return {
+                "status": "error",
+                "error": "Missing required parameter 'urls' (array of 1–3 URLs).",
+            }
 
         out: List[Dict[str, Any]] = []
         for u in urls[:3]:

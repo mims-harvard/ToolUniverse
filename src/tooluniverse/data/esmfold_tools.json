@@ -1,0 +1,49 @@
+[
+  {
+    "name": "ESMFold_predict_structure",
+    "type": "ESMFoldTool",
+    "description": "Predict protein 3D structure from amino acid sequence using ESMFold (Meta's ESM-2 language model). Returns per-residue pLDDT confidence scores (0-1 scale, higher=better) and summary statistics. Also returns the predicted PDB coordinate text. Fast single-sequence prediction (no MSA needed). Best for sequences under 400 residues. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein amino acid sequence in single-letter code. Example: 'MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH'. FASTA headers and whitespace are stripped. Max ~400 residues recommended for fast results."
+        }
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sequence_length": {"type": "integer"},
+        "mean_plddt": {"type": "number", "description": "Mean pLDDT confidence (0-1 scale)"},
+        "confident_residues": {"type": "integer", "description": "Residues with pLDDT >= 0.70"},
+        "very_confident_residues": {"type": "integer", "description": "Residues with pLDDT >= 0.90"},
+        "low_confidence_residues": {"type": "integer", "description": "Residues with pLDDT < 0.50"},
+        "confident_fraction": {"type": "number", "description": "Fraction of residues with pLDDT >= 0.70"},
+        "per_residue_plddt": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "position": {"type": "integer"},
+              "residue": {"type": "string"},
+              "plddt": {"type": "number"}
+            }
+          }
+        },
+        "pdb_text": {"type": "string", "description": "Full PDB format coordinate text"}
+      }
+    },
+    "test_examples": [
+      {"sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"},
+      {"sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSY"}
+    ],
+    "label": ["ESMFold", "Protein Structure", "Structure Prediction", "pLDDT"],
+    "metadata": {
+      "tags": ["protein structure", "structure prediction", "ESMFold", "ESM-2", "pLDDT", "confidence"],
+      "estimated_execution_time": "5-30 seconds depending on sequence length"
+    }
+  }
+]

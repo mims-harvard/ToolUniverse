@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_reference 模块"
 #: 0f744d33538e47a58fb7227c79b5d0b7 of
 #: tooluniverse.tools.FDA_get_drug_name_by_reference:1
 msgid "FDA_get_drug_name_by_reference"
-msgstr ""
+msgstr "FDA_get_drug_name_by_reference 获取药物名称函数"
 
 #: 4ef6f6cd6318493e9b22bcfb98d4aa6e d7642566985d434babe91e5e8e9a5af5 of
 #: tooluniverse.tools.FDA_get_drug_name_by_reference:3

@@ -1,0 +1,226 @@
+[
+  {
+    "name": "FinnGen_list_phenotypes",
+    "description": "Search and list FinnGen disease endpoints (phenotypes). FinnGen is a Finnish population genomics study with 486,367 participants and 2,470 phenotypes. Search by keyword (e.g., 'diabetes', 'asthma', 'cancer') or browse by category. Returns phenotype codes, case/control counts, and number of genome-wide significant loci. Use phenocode values from results with FinnGen_get_phenotype and FinnGen_get_region_associations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": ["string", "null"],
+          "description": "Search query to filter phenotypes by code, name, or category (e.g., 'diabetes', 'breast cancer', 'asthma'). Case-insensitive."
+        },
+        "category": {
+          "type": ["string", "null"],
+          "description": "Filter by disease category (e.g., 'Diabetes', 'circulatory', 'Neoplasms'). Case-insensitive substring match."
+        },
+        "min_cases": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of cases required. Use to filter for well-powered phenotypes (e.g., 1000)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of results to return (default 50)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "list_phenotypes"
+    },
+    "type": "FinnGenTool",
+    "test_examples": [
+      {
+        "query": "diabetes"
+      },
+      {
+        "category": "Neoplasms",
+        "min_cases": 5000,
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phenocode": {"type": "string"},
+          "phenostring": {"type": "string"},
+          "category": {"type": "string"},
+          "num_cases": {"type": "integer"},
+          "num_controls": {"type": "integer"},
+          "num_gw_significant": {"type": "integer"}
+        }
+      }
+    }
+  },
+  {
+    "name": "FinnGen_get_phenotype",
+    "description": "Get detailed information about a specific FinnGen disease endpoint (phenotype). Returns case/control counts, genomic control lambda values, and genome-wide significant loci count for a given phenocode. Use phenocodes from FinnGen_list_phenotypes (e.g., 'T2D' for type 2 diabetes, 'I9_CHD' for coronary heart disease, 'C3_BREAST' for breast cancer).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "phenocode": {
+          "type": "string",
+          "description": "FinnGen phenotype code (e.g., 'T2D', 'I9_CHD', 'C3_BREAST', 'J10_ASTHMA'). Get valid codes from FinnGen_list_phenotypes."
+        }
+      },
+      "required": ["phenocode"]
+    },
+    "fields": {
+      "endpoint_type": "get_phenotype"
+    },
+    "type": "FinnGenTool",
+    "test_examples": [
+      {
+        "phenocode": "T2D"
+      },
+      {
+        "phenocode": "I9_CHD"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "phenocode": {"type": "string"},
+        "phenostring": {"type": "string"},
+        "category": {"type": "string"},
+        "num_cases": {"type": "integer"},
+        "num_controls": {"type": "integer"},
+        "num_gw_significant": {"type": "integer"},
+        "num_cases_prev": {"type": ["integer", "null"]},
+        "num_controls_prev": {"type": ["integer", "null"]},
+        "gc_lambda": {
+          "type": ["object", "null"],
+          "properties": {
+            "0.001": {"type": "number"},
+            "0.01": {"type": "number"},
+            "0.1": {"type": "number"},
+            "0.5": {"type": "number"}
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "FinnGen_get_variant_finemapping",
+    "description": "Get fine-mapping regions associated with a genomic variant in FinnGen. Returns phenotypes where this variant appears in a credible set from statistical fine-mapping. Input variant in chr:pos:ref:alt format (GRCh38). Useful for understanding which disease associations a variant contributes to in the Finnish population.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Genomic variant in chr:pos:ref:alt format (GRCh38). Examples: '19:44908684:T:C' (APOE rs429358), '10:112998590:C:T' (TCF7L2 rs7903146). Also accepts chr-pos-ref-alt format."
+        }
+      },
+      "required": ["variant"]
+    },
+    "fields": {
+      "endpoint_type": "get_variant_finemapping"
+    },
+    "type": "FinnGenTool",
+    "test_examples": [
+      {
+        "variant": "19:44908684:T:C"
+      },
+      {
+        "variant": "10:112998590:C:T"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phenocode": {"type": "string"},
+          "chromosome": {"type": "integer"},
+          "start": {"type": "integer"},
+          "end": {"type": "integer"},
+          "type": {"type": "string"}
+        }
+      }
+    }
+  },
+  {
+    "name": "FinnGen_get_region_associations",
+    "description": "Get regional association and fine-mapping credible set data for a FinnGen phenotype in a specific genomic region. Returns credible sets with lead variants, posterior probabilities, and minor allele frequencies. Use to examine GWAS signals at a specific locus for a Finnish population disease endpoint.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "phenocode": {
+          "type": "string",
+          "description": "FinnGen phenotype code (e.g., 'T2D', 'I9_CHD'). Get codes from FinnGen_list_phenotypes."
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region in chr:start-end format (GRCh38). Example: '9:22000000-22200000' for the CDKN2A/B locus on chromosome 9."
+        }
+      },
+      "required": ["phenocode", "region"]
+    },
+    "fields": {
+      "endpoint_type": "get_region_associations"
+    },
+    "type": "FinnGenTool",
+    "test_examples": [
+      {
+        "phenocode": "I9_CHD",
+        "region": "9:22000000-22200000"
+      },
+      {
+        "phenocode": "T2D",
+        "region": "10:112900000-113100000"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "phenotype": {
+          "type": "object",
+          "properties": {
+            "phenocode": {"type": "string"},
+            "phenostring": {"type": ["string", "null"]},
+            "num_cases": {"type": ["integer", "null"]},
+            "num_controls": {"type": ["integer", "null"]}
+          }
+        },
+        "region": {
+          "type": "object",
+          "properties": {
+            "chromosome": {"type": ["integer", "null"]},
+            "start": {"type": ["integer", "null"]},
+            "end": {"type": ["integer", "null"]}
+          }
+        },
+        "credible_sets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "region_id": {"type": ["string", "null"]},
+              "chromosome": {"type": ["integer", "null"]},
+              "start": {"type": ["integer", "null"]},
+              "end": {"type": ["integer", "null"]},
+              "lead_variants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "variant_id": {"type": ["string", "null"]},
+                    "rsid": {"type": ["string", "null"]},
+                    "chromosome": {"type": ["string", "integer", "null"]},
+                    "position": {"type": ["integer", "null"]},
+                    "ref": {"type": ["string", "null"]},
+                    "alt": {"type": ["string", "null"]},
+                    "maf": {"type": ["number", "null"]},
+                    "posterior_probability": {"type": ["number", "null"]},
+                    "credible_set": {"type": ["integer", "null"]}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

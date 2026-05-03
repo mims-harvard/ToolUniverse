@@ -1,0 +1,56 @@
+"""
+USGSWater_get_water_level
+
+Get real-time water level (gage height) data from USGS monitoring stations. Returns water surface...
+"""
+
+from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
+
+
+def USGSWater_get_water_level(
+    sites: str,
+    period: Optional[str | Any] = None,
+    *,
+    stream_callback: Optional[Callable[[str], None]] = None,
+    use_cache: bool = False,
+    validate: bool = True,
+) -> Any:
+    """
+    Get real-time water level (gage height) data from USGS monitoring stations. Returns water surface...
+
+    Parameters
+    ----------
+    sites : str
+        USGS site number(s), comma-separated (e.g., '01646500' for Potomac River)
+    period : str | Any
+        Time period in ISO 8601 format (e.g., 'PT2H', 'P1D', 'P7D'). Default: 'P1D'
+    stream_callback : Callable, optional
+        Callback for streaming output
+    use_cache : bool, default False
+        Enable caching
+    validate : bool, default True
+        Validate parameters
+
+    Returns
+    -------
+    Any
+    """
+    # Handle mutable defaults to avoid B006 linting error
+
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v for k, v in {"sites": sites, "period": period}.items() if v is not None
+    }
+    return get_shared_client().run_one_function(
+        {
+            "name": "USGSWater_get_water_level",
+            "arguments": _args,
+        },
+        stream_callback=stream_callback,
+        use_cache=use_cache,
+        validate=validate,
+    )
+
+
+__all__ = ["USGSWater_get_water_level"]

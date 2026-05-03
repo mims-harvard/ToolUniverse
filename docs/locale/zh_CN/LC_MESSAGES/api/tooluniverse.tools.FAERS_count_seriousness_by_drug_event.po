@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_seriousness\\_by\\_drug\\_event 模�
 #: de6de68c4079463cbe1d782da39a0f10 of
 #: tooluniverse.tools.FAERS_count_seriousness_by_drug_event:1
 msgid "FAERS_count_seriousness_by_drug_event"
-msgstr ""
+msgstr "FAERS_按药物事件严重程度计数"
 
 #: 034d8c09c67b4541b29ff41d8b7037ed d0e43c64e3d94f8bb8b78169ac98bc6c of
 #: tooluniverse.tools.FAERS_count_seriousness_by_drug_event:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_environmental\\_warning\\_by\\_drug\\_nam
 #: 8a277c7627b6489aa9f58ef2878930a2 of
 #: tooluniverse.tools.FDA_get_environmental_warning_by_drug_name:1
 msgid "FDA_get_environmental_warning_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取环境警告"
 
 #: 151409f3914a43e0957f7f3d6410e4a7 da1f612f65654dfea4bbdbc593ad9acb of
 #: tooluniverse.tools.FDA_get_environmental_warning_by_drug_name:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_clinical\\_trial\\_status\\_and\\_dates 模块"
 #: 72394d3c759746849e96fb507e5e7f1d of
 #: tooluniverse.tools.get_clinical_trial_status_and_dates:1
 msgid "get_clinical_trial_status_and_dates"
-msgstr ""
+msgstr "获取临床试验状态和日期"
 
 #: d640020b84364098950966da7b0b2dd7 ecf472c50f324640bed846bc984ed1eb of
 #: tooluniverse.tools.get_clinical_trial_status_and_dates:3

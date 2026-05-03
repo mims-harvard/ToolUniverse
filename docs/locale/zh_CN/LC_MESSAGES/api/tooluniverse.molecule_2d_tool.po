@@ -38,7 +38,7 @@ msgstr "用于使用RDKit可视化二维分子结构的工具。支持SMILES、I
 #: 1f2fb46722eb410f983c7a6b43a48b78 of
 #: tooluniverse.molecule_2d_tool.Molecule2DTool:1
 msgid "Bases: :py:class:`~tooluniverse.visualization_tool.VisualizationTool`"
-msgstr ""
+msgstr "基础类：:py:class:`~tooluniverse.visualization_tool.VisualizationTool`"
 
 #: 26a2156f3e544d0a9bfebabea9e3eaa2 of
 #: tooluniverse.molecule_2d_tool.Molecule2DTool:1

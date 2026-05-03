@@ -1,0 +1,215 @@
+[
+  {
+    "name": "FlyMine_search",
+    "type": "BaseRESTTool",
+    "description": "Search FlyMine, the InterMine data warehouse for Drosophila melanogaster (fruit fly) genomics data from FlyBase. Searches across genes, proteins, publications, protein domains, gene ontology terms, and more. FlyMine integrates data from FlyBase, UniProt, Reactome, KEGG, TreeFam, and other model organism databases. Returns matching records with category facets and relevance scores. Use facet_Category parameter to filter by entity type (e.g., 'Gene', 'Protein', 'Publication', 'ProteinDomain', 'CDNAClone', 'GOTerm', 'InteractionExperiment').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query: gene symbol (e.g., 'dpp', 'Notch', 'hedgehog'), protein name, domain name, or free text."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default: 10, max: 100)."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        },
+        "facet_Category": {
+          "type": "string",
+          "description": "Filter by entity category. Options: 'Gene', 'Protein', 'Publication', 'ProteinDomain', 'CDNAClone', 'GOTerm', 'InteractionExperiment', 'RNAiScreen', 'UniProtFeature'."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.flymine.org/flymine/service/search",
+      "return_format": "JSON",
+      "params": {
+        "format": "json"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FlyMine search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total matching records"
+            },
+            "facets": {
+              "type": "object",
+              "description": "Facet counts by category, organism, and pathway"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Entity type (Gene, Protein, etc.)"
+                  },
+                  "relevance": {
+                    "type": "number"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "description": "Entity-specific fields. For genes: symbol, organism.name, primaryIdentifier, secondaryIdentifier. For proteins: primaryAccession, organism.name. For domains: name, primaryIdentifier (InterPro ID), shortName, type."
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "q": "Notch",
+        "size": 5,
+        "format": "json"
+      },
+      {
+        "q": "dpp",
+        "size": 5,
+        "format": "json",
+        "facet_Category": "Gene"
+      },
+      {
+        "q": "hedgehog",
+        "size": 5,
+        "format": "json"
+      }
+    ]
+  },
+  {
+    "name": "FlyMine_search_genes",
+    "type": "BaseRESTTool",
+    "description": "Search FlyMine specifically for Drosophila genes. This is a convenience wrapper that filters results to the Gene category only. Returns gene symbols, FlyBase gene IDs (FBgn numbers), secondary identifiers (CG numbers), and organism information. FlyMine covers 12+ Drosophila species plus other model organisms. For broader searches across all entity types, use FlyMine_search instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Gene search query: gene symbol (e.g., 'dpp', 'Notch', 'wg', 'hh'), FlyBase ID (e.g., 'FBgn0000490'), or keyword."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default: 10)."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.flymine.org/flymine/service/search",
+      "return_format": "JSON",
+      "params": {
+        "format": "json",
+        "facet_Category": "Gene"
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FlyMine gene search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "relevance": {
+                    "type": "number"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "symbol": {
+                        "type": "string",
+                        "description": "Gene symbol (e.g., 'dpp', 'N')"
+                      },
+                      "primaryIdentifier": {
+                        "type": "string",
+                        "description": "FlyBase gene ID (e.g., 'FBgn0000490')"
+                      },
+                      "secondaryIdentifier": {
+                        "type": "string",
+                        "description": "CG number (e.g., 'CG9885')"
+                      },
+                      "organism.name": {
+                        "type": "string",
+                        "description": "Full organism name (e.g., 'Drosophila melanogaster')"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "q": "Notch",
+        "size": 5
+      },
+      {
+        "q": "decapentaplegic",
+        "size": 5
+      },
+      {
+        "q": "wingless",
+        "size": 5
+      }
+    ]
+  }
+]

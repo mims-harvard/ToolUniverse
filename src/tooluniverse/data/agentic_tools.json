@@ -32,68 +32,19 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 4096,
       "return_json": false
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "CodeQualityAnalyzer",
-    "description": "Analyzes code quality from multiple dimensions including algorithmic correctness, functional implementation capability, performance characteristics, and best practices. Provides detailed feedback and improvement suggestions.",
-    "prompt": "You are an expert software engineer and code quality analyst. Please analyze the following code implementation and provide comprehensive quality assessment.\n\n## CODE TO ANALYZE\nTool Name: {tool_name}\nTool Description: {tool_description}\nTool Parameters: {tool_parameters}\nImplementation Code: {implementation_code}\nTest Cases: {test_cases}\nTest Execution Results: {test_execution_results}\n\n## ANALYSIS REQUIREMENTS\nPlease provide a comprehensive analysis covering the following dimensions:\n\n### 1. ALGORITHMIC CORRECTNESS (0-10)\n- Mathematical accuracy and logical correctness\n- Algorithm efficiency and time/space complexity\n- Edge case handling and boundary conditions\n- Error propagation and numerical stability\n- Correctness of domain-specific calculations\n\n### 2. FUNCTIONAL IMPLEMENTATION CAPABILITY (0-10)\n- Completeness of required functionality\n- Parameter validation and input handling\n- Return value accuracy and format consistency\n- Integration with external libraries/APIs\n- Feature completeness vs. requirements\n\n### 3. PERFORMANCE CHARACTERISTICS (0-10)\n- Time complexity analysis\n- Space complexity analysis\n- Memory usage optimization\n- Computational efficiency\n- Scalability considerations\n\n### 4. CODE QUALITY AND STRUCTURE (0-10)\n- Code readability and maintainability\n- Function and variable naming\n- Code organization and modularity\n- Documentation quality\n- Adherence to coding standards\n\n### 5. ERROR HANDLING AND ROBUSTNESS (0-10)\n- Exception handling coverage\n- Input validation robustness\n- Error message clarity and usefulness\n- Graceful degradation strategies\n- Recovery mechanisms\n\n### 6. TESTING AND VALIDATION (0-10)\n- Test coverage completeness\n- Test case quality and relevance\n- Edge case testing\n- Performance testing\n- Integration testing considerations\n- **IMPORTANT**: When test_execution_results are provided, use them to validate actual code behavior and adjust scoring accordingly\n\n### 7. SECURITY AND SAFETY (0-10)\n- Input sanitization and validation\n- Resource usage limits\n- Access control considerations\n- Data privacy protection\n- Security best practices\n\n### 8. MAINTAINABILITY AND EXTENSIBILITY (0-10)\n- Code modularity and reusability\n- Configuration flexibility\n- Future enhancement readiness\n- Dependency management\n- Technical debt assessment\n\n## TEST EXECUTION ANALYSIS\nWhen test_execution_results are provided:\n- Analyze actual test outcomes vs. expected results\n- Identify discrepancies between code behavior and test expectations\n- Use real execution data to validate code correctness\n- Adjust quality scores based on actual performance\n- Provide specific feedback on test failures and their implications\n\n## OUTPUT FORMAT\nProvide your analysis in the following JSON format:\n\n```json\n{\n  \"overall_score\": <0-10>,\n  \"scores\": {\n    \"algorithmic_correctness\": <0-10>,\n    \"functional_capability\": <0-10>,\n    \"performance\": <0-10>,\n    \"code_quality\": <0-10>,\n    \"error_handling\": <0-10>,\n    \"testing\": <0-10>,\n    \"security\": <0-10>,\n    \"maintainability\": <0-10>\n  },\n  \"feedback\": {\n    \"strengths\": [\"list of code strengths\"],\n    \"weaknesses\": [\"list of specific weaknesses\"],\n    \"critical_issues\": [\"list of critical issues that must be fixed\"],\n    \"improvement_opportunities\": [\"list of areas for improvement\"]\n  },\n  \"algorithm_analysis\": {\n    \"complexity\": \"O(n) analysis\",\n    \"correctness_verification\": \"mathematical verification details\",\n    \"edge_cases\": \"identified edge cases\",\n    \"numerical_stability\": \"numerical computation stability assessment\"\n  },\n  \"functional_verification\": {\n    \"requirements_coverage\": \"percentage of requirements covered\",\n    \"missing_features\": [\"list of missing features\"],\n    \"integration_points\": [\"external dependencies and integration points\"],\n    \"api_consistency\": \"API design consistency assessment\"\n  },\n  \"test_execution_analysis\": {\n    \"test_results_summary\": \"summary of test execution outcomes\",\n    \"pass_rate\": \"percentage of tests passed\",\n    \"failed_tests\": [\"list of failed tests with reasons\"],\n    \"actual_vs_expected\": \"analysis of actual vs expected behavior\"\n  },\n  \"recommendations\": [\n    {\n      \"priority\": \"high|medium|low\",\n      \"category\": \"algorithm|functionality|performance|quality|security\",\n      \"description\": \"specific improvement description\",\n      \"action\": \"concrete action to take\",\n      \"expected_impact\": \"expected improvement impact\"\n    }\n  ]\n}\n```\n\n## ANALYSIS GUIDELINES\n- Be thorough and objective in your assessment\n- Provide specific examples from the code when possible\n- Focus on actionable feedback and concrete improvements\n- Consider both immediate fixes and long-term improvements\n- Evaluate code from both technical and business perspectives\n- Provide evidence-based scoring with clear justification\n- **When test_execution_results are available, prioritize actual behavior over theoretical analysis**",
-    "input_arguments": [
-      "tool_name",
-      "tool_description",
-      "tool_parameters",
-      "implementation_code",
-      "test_cases",
-      "test_execution_results"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "tool_name": {
-          "type": "string",
-          "description": "Name of the tool being analyzed"
-        },
-        "tool_description": {
-          "type": "string",
-          "description": "Description of what the tool is supposed to do"
-        },
-        "tool_parameters": {
-          "type": "string",
-          "description": "JSON string of tool parameters and their types"
-        },
-        "implementation_code": {
-          "type": "string",
-          "description": "The actual implementation code to analyze"
-        },
-        "test_cases": {
-          "type": "string",
-          "description": "JSON string of test cases for the tool"
-        },
-        "test_execution_results": {
-          "type": "string",
-          "description": "JSON string of test execution results including pass/fail status and actual outputs"
-        }
-      },
-      "required": [
-        "tool_name",
-        "tool_description",
-        "tool_parameters",
-        "implementation_code",
-        "test_cases"
-      ]
     },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.3,
-      "max_new_tokens": 8192,
-      "return_json": true
+    "test_examples": [
+      {
+        "text": "This study investigates the efficacy of a new drug in treating Alzheimer's disease by conducting a double-blind, placebo-controlled trial involving 200 participants over a 12-month period. The methodology includes patient selection criteria, dosing schedules, and outcome measures.",
+        "summary_length": "100",
+        "focus_area": "methodology"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -147,11 +98,22 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "research_topic": "efficacy of drug X in treating condition Y",
+        "literature_content": "Abstracts and full-texts of relevant randomized controlled trials and cohort studies on drug X.",
+        "focus_area": "therapeutic efficacy",
+        "study_types": "randomized controlled trials",
+        "quality_level": "high quality only",
+        "review_scope": "comprehensive systematic review"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -193,11 +155,20 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "context": "Recent studies show that chronic sleep deprivation alters hippocampal synaptic plasticity in rodents.",
+        "domain": "neuroscience",
+        "number_of_hypotheses": "3",
+        "hypothesis_format": "If-Then Statements"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -227,11 +198,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "hypothesis": "Increasing daily light exposure will significantly accelerate the growth rate of tomato plants.",
+        "design_description": "Two groups of tomato seedlings (n=30 each) will be grown under 6 hours vs. 12 hours of light daily. Plants will be randomized into groups, height measured weekly using a calibrated ruler, and data analyzed using repeated-measures ANOVA to test for growth rate differences."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -255,11 +233,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 2048,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "raw_terms": "hypertension, diabetes"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -295,11 +279,19 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "paper_title": "Deep Learning for Protein Structure Prediction",
+        "abstract": "We propose a novel deep learning method to predict protein tertiary structures with high accuracy.",
+        "manuscript_text": "Introduction:\nProtein structure prediction remains a key challenge...\nMethods:\nWe developed a convolutional neural network...\nResults:\nOur approach achieves state-of-the-art performance..."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -328,11 +320,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "paper_title": "Deep Learning for Bioinformatics",
+        "literature_review": "This literature review covers deep learning applications in genomics and proteomics, highlighting key studies, summarizing methodologies, and identifying research gaps."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -356,11 +355,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "methods_section": "In this study, we conducted a randomized controlled trial with 200 participants to evaluate the effect of intervention X on outcome Y. Participants were randomly assigned to control or treatment groups, and all procedures were standardized and fully documented to ensure replicability."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -383,11 +388,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "analysis_section": "We performed t-tests with p<0.05 significance level"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -415,11 +426,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "results_section": "In the treated group, the average response increased by 15% (p=0.02) compared to baseline, with confidence intervals showing robustness.",
+        "discussion_section": "These findings support the hypothesis that compound X enhances performance; however, variability across subjects suggests alternative factors may also contribute."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -442,11 +460,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "manuscript_text": "In this study, we investigate the effects of X on Y. The methodology section outlines the experimental design and analysis."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -469,11 +493,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "availability_statement": "Data available upon request from corresponding author"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -496,11 +526,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "ethics_section": "The study received approval from the Institutional Review Board at XYZ University. Participants provided written informed consent. No conflicts of interest were reported. Data were stored securely with encryption."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -529,11 +565,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "question": "What is the capital of France?",
+        "options": "A) Paris B) London C) Rome D) Berlin"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -556,202 +599,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 8192,
       "return_json": false
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "TestCaseGenerator",
-    "description": "Generates diverse and representative ToolUniverse tool call dictionaries for a given tool based on its parameter schema. Each tool call should be a JSON object with 'name' (the tool's name) and 'arguments' (a dict of input arguments), covering different parameter combinations, edge cases, and typical usage. Can generate targeted test cases based on previous optimization feedback.",
-    "prompt": "You are an expert software tester. Generate 3-5 diverse ToolUniverse tool call dictionaries for the given tool configuration. Each tool call must be a JSON object with 'name' (tool name) and 'arguments' (input parameters).\n\nFEEDBACK-DRIVEN GENERATION:\nIf tool_config contains '_optimization_feedback' and '_iteration', generate targeted test cases addressing the specific issues mentioned in the feedback. Focus on edge cases, parameter combinations, or usage patterns that need better coverage.\n\nSTANDARD GENERATION:\nCover typical usage, edge cases, and boundary conditions when possible.\n\nTool configuration: {tool_config}\n\nReturn a JSON object with key 'test_cases' containing an array of test case objects. Example format:\n{\"test_cases\": [{\"name\":\"ToolName\",\"arguments\":{\"param\":\"value\"}},{\"name\":\"ToolName\",\"arguments\":{\"param\":123}}]}",
-    "input_arguments": [
-      "tool_config"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "tool_config": {
-          "type": "object",
-          "description": "The full configuration of the tool to generate test cases for. May include '_optimization_feedback' and '_iteration' fields for feedback-driven test generation."
-        }
-      },
-      "required": [
-        "tool_config"
-      ]
     },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 4096,
-      "return_json": true,
-      "response_format": {
-        "type": "json_object"
+    "test_examples": [
+      {
+        "initial_protocol": "This study aims to test the efficacy of drug X in reducing blood pressure. We will recruit 100 participants, administer varying doses over 8 weeks, and measure systolic and diastolic pressure weekly."
       }
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "DescriptionAnalyzer",
-    "description": "Analyzes a tool's original description and the results of multiple test cases, then suggests an improved description that is more accurate, comprehensive, and user-friendly. Optionally provides a rationale for the changes.",
-    "prompt": "You are an expert technical writer and tool evaluator. Given the original description of a tool and the results of several test cases (inputs and outputs), analyze whether the description accurately reflects the tool's behavior. Suggest an improved description that is more precise, comprehensive, and user-friendly. Also provide a brief rationale for your changes.\n\nCRITICAL CONSTRAINTS - TOOL DESCRIPTION SCOPE:\n1. If the original description contains 'Previous optimization feedback:', use that feedback to guide your improvements and address the specific issues mentioned.\n2. The tool description should focus EXCLUSIVELY on the OVERALL PURPOSE and HIGH-LEVEL FUNCTIONALITY of the tool.\n3. NEVER include parameter-specific details, formats, or requirements in the tool description.\n4. NEVER mention specific parameter names, data types, or input requirements - these belong in parameter descriptions.\n5. Focus ONLY on: what the tool does, its primary use cases, what kind of output it provides, and its general behavior patterns.\n6. Avoid generic filler phrases like 'enabling workflows', 'supporting analysis', 'facilitating research' unless they add specific meaning.\n7. Every sentence must convey essential information about the tool's core functionality.\n8. Think of the tool description as answering 'What does this tool do?' with concrete, actionable information.\n\nOriginal description:\n{original_description}\n\nTest results:\n{test_results}\n\nReturn a JSON object with keys: 'optimized_description' and 'rationale'.",
-    "input_arguments": [
-      "original_description",
-      "test_results"
     ],
-    "parameter": {
+    "return_schema": {
       "type": "object",
-      "properties": {
-        "original_description": {
-          "type": "string",
-          "description": "The original description of the tool."
-        },
-        "test_results": {
-          "type": "string",
-          "description": "A JSON string containing a list of test case input/output pairs."
-        }
-      },
-      "required": [
-        "original_description",
-        "test_results"
-      ]
-    },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.4,
-      "max_new_tokens": 1024,
-      "return_json": true
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "ArgumentDescriptionOptimizer",
-    "description": "Optimizes the descriptions of tool arguments/parameters based on test case results and actual usage patterns. Provides improved descriptions that are more accurate and user-friendly.",
-    "prompt": "You are an expert technical writer specializing in API documentation. Given a tool's parameter schema and test case results, analyze how each parameter is used and optimize their descriptions to be clear, accurate, and concise.\n\nCRITICAL CONSTRAINTS - PARAMETER DESCRIPTION SCOPE:\n1. If the parameter schema contains '_previous_feedback', use that feedback to address specific issues and improve the parameter descriptions accordingly.\n2. Parameter descriptions should be HIGHLY SPECIFIC to each individual parameter.\n3. NEVER repeat or reference the main tool functionality - assume the user already knows what the tool does.\n4. Focus EXCLUSIVELY on parameter-specific details: data types, formats, constraints, valid values, required formats, examples when helpful.\n5. Each description should answer: 'What should I put in this specific parameter?' not 'What does the tool do?'\n6. Avoid generic phrases like 'for this tool', 'used by the tool', 'enables functionality' unless they provide specific technical context.\n7. Be precise about technical requirements (e.g., 'JSON string', 'integer between 1-100', 'URL format', etc.)\n8. Every word must serve a purpose - eliminate filler words and redundant phrases.\n\nOriginal parameter schema:\n{parameter_schema}\n\nTest results showing parameter usage:\n{test_results}\n\nFor each parameter, suggest an improved description that:\n1. Is brief but informative (1-2 sentences max)\n2. Accurately reflects the parameter's specific purpose, data type, and constraints\n3. Uses clear, simple language with precise technical details\n4. Avoids redundancy with the parameter name\n5. Addresses any issues mentioned in previous feedback\n6. Contains only essential information about what value should be provided\n\nReturn a JSON object with keys: 'optimized_parameters' (object with parameter names as keys and optimized descriptions as values) and 'rationale' (explaining the key changes made).",
-    "input_arguments": [
-      "parameter_schema",
-      "test_results"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "parameter_schema": {
-          "type": "string",
-          "description": "JSON string of the original parameter schema with properties and descriptions."
-        },
-        "test_results": {
-          "type": "string",
-          "description": "A JSON string containing test case input/output pairs showing parameter usage."
-        }
-      },
-      "required": [
-        "parameter_schema",
-        "test_results"
-      ]
-    },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 1536,
-      "return_json": true
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "DescriptionQualityEvaluator",
-    "description": "Evaluates the quality of tool descriptions and parameter descriptions, providing a score and specific feedback for improvements.",
-    "prompt": "You are an expert evaluator of technical documentation. Given a tool description, parameter descriptions, and test results, evaluate the quality and provide a score from 1-10 along with specific feedback.\n\nTool description:\n{tool_description}\n\nParameter descriptions:\n{parameter_descriptions}\n\nTest results:\n{test_results}\n\nEvaluate based on these criteria:\n1. Clarity and understandability (1-10)\n2. Accuracy based on test results (1-10)\n3. Completeness of information (1-10)\n4. Conciseness and meaningfulness - every sentence must serve a purpose (1-10)\n5. User-friendliness (1-10)\n6. Redundancy avoidance - tool description and parameter descriptions must not duplicate information (1-10)\n\nCRITICAL EVALUATION FOCUS:\n- Tool description should ONLY describe overall functionality and purpose, NOT parameter details\n- Parameter descriptions should ONLY describe specific parameter requirements, NOT tool functionality\n- Check for meaningless filler phrases like 'enabling workflows', 'supporting analysis', 'facilitating integration' - DEDUCT POINTS for vague language\n- Check for overlap: Does the tool description mention parameter names, formats, or specific input requirements? (DEDUCT POINTS)\n- Check for overlap: Do parameter descriptions repeat what the tool does overall? (DEDUCT POINTS)\n- Every sentence must convey essential, actionable information\n\nReturn a JSON object with:\n- 'overall_score': Average of all criteria scores (1-10)\n- 'criteria_scores': Object with individual scores for each criterion\n- 'feedback': Specific suggestions for improvement, identifying meaningless phrases and redundancy issues\n- 'is_satisfactory': Boolean indicating if quality is acceptable (score >= 8)\n- 'meaningfulness_analysis': Detailed explanation of any filler language or redundant information found",
-    "input_arguments": [
-      "tool_description",
-      "parameter_descriptions",
-      "test_results"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "tool_description": {
-          "type": "string",
-          "description": "The tool description to evaluate."
-        },
-        "parameter_descriptions": {
-          "type": "string",
-          "description": "JSON string of parameter names and their descriptions."
-        },
-        "test_results": {
-          "type": "string",
-          "description": "JSON string containing test case results."
-        }
-      },
-      "required": [
-        "tool_description",
-        "parameter_descriptions",
-        "test_results"
-      ]
-    },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 1024,
-      "return_json": true
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "ToolSpecificationGenerator",
-    "description": "Generates complete ToolUniverse-compliant tool specifications based on a description and analysis of similar existing tools. Creates comprehensive tool configurations including parameters, prompts, and metadata.",
-    "prompt": "You are an expert tool architect specializing in ToolUniverse tool design. Generate a complete, valid ToolUniverse tool specification based on the provided requirements and analysis of similar tools.\n\n🚨 **CRITICAL REQUIREMENT**: For all tool types except AgenticTool, generate CUSTOM tool implementations with complete standalone code. Do NOT reference existing tool classes. Only use AgenticTool for subjective analysis tasks requiring LLM capabilities.\n\n**PACKAGE USAGE REQUIREMENT**: ALWAYS prioritize using existing, well-maintained Python packages over custom implementations. Leverage established libraries like pandas, numpy, scipy, requests, beautifulsoup4, biopython, etc. Only write custom algorithms when absolutely no suitable package exists.\n\nREQUIREMENTS:\nTool Description: {tool_description}\nTarget Category: {tool_category}\nTarget Type: {tool_type}\nSimilar Tools Analysis: {similar_tools}\nExisting Tools Context: {existing_tools_summary}\n\n**TOOL TYPE SELECTION LOGIC:**\n1. **AgenticTool**: Only for subjective tasks (analysis, interpretation, creative writing)\n2. **CustomTool**: For all computational, API, data processing tasks with complete custom implementation\n\n**FOR CustomTool (Complete custom implementation - PREFERRED for most tasks):**\n```json\n{\n  \"type\": \"CustomTool\",\n  \"name\": \"ToolName\",\n  \"description\": \"Custom implementation for [specific functionality]\",\n  \"implementation\": {\n    \"language\": \"python\",\n    \"dependencies\": [\"package1\", \"package2\"],\n    \"installation_commands\": [\"pip install package1\", \"pip install package2\"],\n    \"source_code\": \"import requests\\nimport json\\n\\ndef execute_tool(params):\\n    # Complete implementation here\\n    return result\",\n    \"main_function\": \"execute_tool\",\n    \"error_handling\": \"try-except blocks for robust error management\",\n    \"validation\": \"input parameter validation logic\",\n    \"documentation\": \"Complete usage documentation\"\n  },\n  \"parameter\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"input_param\": {\n        \"type\": \"string\",\n        \"description\": \"Description of input parameter\",\n        \"required\": true\n      }\n    },\n    \"required\": [\"input_param\"]\n  },\n  \"return_schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"result\": {\"type\": \"string\", \"description\": \"Tool output description\"}\n    }\n  },\n  \"testing\": {\n    \"test_cases\": [\n      {\n        \"input\": {\"input_param\": \"test_value\"},\n        \"expected_output_type\": \"object\",\n        \"description\": \"Test case description\"\n      }\n    ],\n    \"validation_method\": \"automated testing with assertions\"\n  }\n}\n```\n\n**FOR AgenticTool (AI-powered tools - Only for subjective tasks):**\n```json\n{\n  \"type\": \"AgenticTool\",\n  \"name\": \"ToolName\",\n  \"description\": \"AI-powered [subjective task] for [non-computational purpose]\",\n  \"prompt\": \"Prompt template with {parameter_name} placeholders for subjective analysis\",\n  \"input_arguments\": [\"param1\", \"param2\"],\n  \"parameter\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"param1\": {\"type\": \"string\", \"description\": \"...\", \"required\": true}\n    },\n    \"required\": [\"param1\"]\n  },\n  \"configs\": {\n    \"api_type\": \"CHATGPT\",\n    \"model_id\": \"o4-mini-0416\",\n    \"temperature\": 0.7,\n    \"max_new_tokens\": 1024,\n    \"return_json\": false\n  }\n}\n```\n\n**GENERATION REQUIREMENTS:**\n1. **CUSTOM IMPLEMENTATION APPROACH**: For computational/API/data tasks, generate complete standalone Python code\n2. **NO EXISTING TOOL CLASSES**: Do not inherit from or reference PackageTool, RESTTool, XMLTool, etc.\n3. **REAL PACKAGES**: Use actual, installable Python packages (requests, pandas, numpy, etc.)\n4. **COMPLETE CODE**: Include full implementation with imports, error handling, and validation\n5. **TESTING READY**: Provide test cases and validation methods\n6. **AGENTICTOOL ONLY FOR SUBJECTIVE**: Use AgenticTool only for interpretation, analysis, creative tasks\n\n**QUALITY STANDARDS:**\n- Generate complete, executable Python code for CustomTool\n- Include real package dependencies and installation instructions\n- Provide comprehensive error handling and input validation\n- Ensure computational accuracy through established libraries\n- Only use AgenticTool for tasks requiring subjective judgment or LLM capabilities\n\nReturn ONLY a valid JSON object representing the complete tool configuration using the EXACT format for the chosen tool type. No additional text or explanations.",
-    "input_arguments": [
-      "tool_description",
-      "tool_category",
-      "tool_type",
-      "similar_tools",
-      "existing_tools_summary"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "tool_description": {
-          "type": "string",
-          "description": "Brief description of the desired tool functionality and purpose."
-        },
-        "tool_category": {
-          "type": "string",
-          "description": "Target category for the tool (e.g., 'biomedical', 'data_analysis', 'text_processing')."
-        },
-        "tool_type": {
-          "type": "string",
-          "description": "Specific ToolUniverse tool type (e.g., 'AgenticTool', 'RESTTool', 'PythonTool')."
-        },
-        "similar_tools": {
-          "type": "string",
-          "description": "JSON string containing configurations of similar existing tools for analysis and differentiation."
-        },
-        "existing_tools_summary": {
-          "type": "string",
-          "description": "Summary of existing tools in the ecosystem to avoid duplication and identify gaps."
-        }
-      },
-      "required": [
-        "tool_description",
-        "tool_category",
-        "tool_type",
-        "similar_tools",
-        "existing_tools_summary"
-      ]
-    },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 1.0,
-      "max_new_tokens": 40960,
-      "return_json": true
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -797,133 +655,20 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.1,
-      "max_new_tokens": 3000,
       "return_json": true
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "ToolImplementationGenerator",
-    "description": "Generates domain-specific, functional code implementations based on tool descriptions and requirements with intelligent algorithm selection",
-    "prompt": "You are an expert software engineer specializing in domain-specific implementations. Generate a complete, functional implementation based on the requirements.\n\n## IMPLEMENTATION REQUEST\nTool Description: {tool_description}\nDomain: {domain}\nComplexity Level: {complexity_level}\nPerformance Requirements: {performance_requirements}\n\nTool Parameters:\n{tool_parameters}\n\n## CRITICAL REQUIREMENT: USE EXISTING PACKAGES\n🚨 **ALWAYS PRIORITIZE EXISTING, WELL-MAINTAINED PACKAGES** over custom implementations. Your goal is to leverage the ecosystem of established, tested, and optimized libraries. **NEVER write custom algorithms unless absolutely no suitable package exists.**\n\n## PACKAGE SELECTION STRATEGY\n1. **FIRST CHOICE**: Use established, widely-adopted packages (e.g., pandas, numpy, scipy, requests, beautifulsoup4)\n2. **SECOND CHOICE**: Use domain-specific packages (e.g., biopython for bioinformatics, matplotlib for plotting)\n3. **THIRD CHOICE**: Use specialized libraries (e.g., opencv-python for computer vision, scikit-learn for ML)\n4. **LAST RESORT**: Only implement custom algorithms when no suitable package exists\n\n## REQUIREMENTS ANALYSIS\n1. Parse the tool description to understand core functionality\n2. **Research existing packages** that can solve this problem\n3. **Evaluate package suitability** (popularity, maintenance, performance)\n4. Design implementation using the best available packages\n5. Generate production-ready code with proper error handling\n\n## CODE GENERATION GUIDELINES\n- **ALWAYS check if an existing package can solve the problem**\n- Use established libraries and algorithms for the domain\n- Include comprehensive input validation\n- Implement proper error handling with meaningful messages\n- Add informative comments explaining the logic\n- Return structured results with validation status\n- Consider edge cases and handle them gracefully\n- Follow domain-specific best practices\n- **Document why you chose specific packages**\n\n## DOMAIN-SPECIFIC PACKAGE RECOMMENDATIONS\n\n### Bioinformatics Tools\n- **Biopython**: Sequence analysis, molecular calculations, file format handling\n- **scipy.stats**: Statistical analysis for biological data\n- **pandas**: Data manipulation and analysis\n- **numpy**: Numerical computations\n- **matplotlib/seaborn**: Data visualization\n\n### Mathematical Tools\n- **numpy**: Numerical methods, linear algebra, optimization\n- **scipy**: Scientific computing, optimization, signal processing\n- **sympy**: Symbolic mathematics\n- **pandas**: Data analysis and statistics\n- **matplotlib**: Mathematical plotting\n\n### Data Science Tools\n- **pandas**: Data manipulation and analysis\n- **numpy**: Numerical computations\n- **scipy**: Statistical methods and optimization\n- **scikit-learn**: Machine learning algorithms\n- **matplotlib/seaborn**: Data visualization\n\n### Web API Tools\n- **requests**: HTTP handling and API calls\n- **urllib3**: HTTP client library\n- **aiohttp**: Asynchronous HTTP client/server\n- **httpx**: Modern HTTP client\n- **beautifulsoup4**: HTML/XML parsing\n\n### Text Processing Tools\n- **nltk**: Natural language processing\n- **spaCy**: Advanced NLP\n- **textblob**: Simple text processing\n- **re**: Regular expressions (built-in)\n- **difflib**: Sequence matching (built-in)\n\n### General Purpose\n- **pathlib**: File path operations (built-in)\n- **json**: JSON handling (built-in)\n- **csv**: CSV file handling (built-in)\n- **datetime**: Date/time operations (built-in)\n- **collections**: Advanced data structures (built-in)\n\n## PACKAGE EVALUATION CRITERIA\nWhen choosing packages, consider:\n1. **Popularity**: GitHub stars, PyPI downloads, community size\n2. **Maintenance**: Recent updates, active development\n3. **Documentation**: Quality and completeness of docs\n4. **Performance**: Speed and memory efficiency\n5. **Compatibility**: Python version support, dependencies\n6. **License**: Open source, commercial-friendly\n\n## IMPLEMENTATION APPROACH\n1. **Research Phase**: Identify 2-3 candidate packages for the problem\n2. **Evaluation Phase**: Compare packages based on criteria above\n3. **Selection Phase**: Choose the best package and document why\n4. **Implementation Phase**: Use the selected package with proper error handling\n5. **Fallback Phase**: If package fails, implement minimal custom solution\n\n## RESPONSE FORMAT\nReturn a comprehensive JSON object:\n\n```json\n{\n    \"implementation\": {\n        \"source_code\": \"<complete Python function implementation>\",\n        \"dependencies\": [\"<required packages>\"],\n        \"imports\": [\"<import statements>\"],\n        \"algorithm_description\": \"<explanation of chosen algorithm/approach>\",\n        \"complexity\": \"<time/space complexity analysis>\",\n        \"test_cases\": [\n            {\n                \"input\": \"<test input>\",\n                \"expected_output\": \"<expected result>\",\n                \"description\": \"<what this test validates>\"\n            }\n        ],\n        \"package_justification\": \"<explanation of why specific packages were chosen>\",\n        \"alternative_packages\": [\"<other packages considered but not chosen>\"]\n    },\n    \"quality_metrics\": {\n        \"estimated_accuracy\": \"<accuracy assessment>\",\n        \"performance_characteristics\": \"<performance description>\",\n        \"robustness_level\": \"<error handling assessment>\"\n    },\n    \"documentation\": {\n        \"usage_examples\": [\"<code examples>\"],\n        \"parameter_explanations\": \"<detailed parameter descriptions>\",\n        \"return_format\": \"<description of return value structure>\"\n    }\n}\n```\n\n## FINAL REMINDER\n**ALWAYS prefer using existing, well-maintained packages over custom implementations.** Only write custom code when absolutely necessary. Your goal is to create robust, maintainable tools that leverage the Python ecosystem's strengths.",
-    "input_arguments": [
-      "tool_description",
-      "tool_parameters",
-      "domain",
-      "complexity_level",
-      "performance_requirements"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "tool_description": {
-          "type": "string",
-          "description": "Detailed description of what the tool should accomplish"
-        },
-        "tool_parameters": {
-          "type": "string",
-          "description": "JSON string of parameter schema for the tool"
-        },
-        "domain": {
-          "type": "string",
-          "description": "Domain area for specialized implementation",
-          "enum": [
-            "bioinformatics",
-            "data-science",
-            "web-api",
-            "mathematical",
-            "text-processing",
-            "general"
-          ],
-          "default": "general"
-        },
-        "complexity_level": {
-          "type": "string",
-          "enum": [
-            "basic",
-            "intermediate",
-            "advanced"
-          ],
-          "description": "Desired complexity level of implementation",
-          "default": "intermediate"
-        },
-        "performance_requirements": {
-          "type": "string",
-          "description": "Performance requirements or constraints"
-        }
-      },
-      "required": [
-        "tool_description",
-        "tool_parameters"
-      ]
     },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.2,
-      "max_new_tokens": 50000,
-      "return_json": true
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "ToolSpecificationOptimizer",
-    "description": "Optimizes tool specifications for clarity, completeness, and usability with comprehensive benchmarking against similar tools",
-    "prompt": "You are an expert in tool design and user experience optimization. Analyze and optimize the provided tool specification for maximum effectiveness.\n\n## TOOL SPECIFICATION TO OPTIMIZE\nCurrent Configuration:\n{tool_config}\n\nOptimization Focus: {optimization_focus}\nTarget Audience: {target_audience}\n\nSimilar Tools for Benchmarking:\n{similar_tools}\n\n## OPTIMIZATION FRAMEWORK\n\n### 1. CLARITY ASSESSMENT\n- Description comprehensiveness and clarity\n- Parameter naming and documentation\n- Usage examples and guidance\n- Error message quality\n\n### 2. COMPLETENESS EVALUATION\n- Required vs optional parameters\n- Edge case handling\n- Output format specification\n- Documentation coverage\n\n### 3. USABILITY ANALYSIS\n- Ease of understanding for target audience\n- Parameter complexity and defaults\n- Error prevention design\n- Workflow integration\n\n### 4. PERFORMANCE OPTIMIZATION\n- Parameter validation efficiency\n- Resource usage considerations\n- Scalability factors\n- Response time optimization\n\n### 5. COMPARATIVE BENCHMARKING\n- Analyze similar tools for best practices\n- Identify competitive advantages\n- Address common user pain points\n- Incorporate proven design patterns\n\n## OPTIMIZATION PROCESS\n1. Evaluate current specification quality\n2. Identify improvement opportunities\n3. Benchmark against similar tools\n4. Generate optimized version\n5. Provide detailed rationale for changes\n\n## RESPONSE FORMAT\nReturn a comprehensive optimization report:\n\n```json\n{\n    \"optimized_config\": {\n        \"name\": \"<optimized name>\",\n        \"description\": \"<improved description>\",\n        \"parameter\": {\n            \"type\": \"object\",\n            \"properties\": \"<optimized parameters>\",\n            \"required\": \"<updated required fields>\"\n        },\n        \"examples\": [\"<usage examples>\"],\n        \"metadata\": {\n            \"tags\": [\"<relevant tags>\"],\n            \"difficulty_level\": \"<user difficulty>\",\n            \"estimated_execution_time\": \"<typical runtime>\"\n        }\n    },\n    \"improvements\": [\n        {\n            \"area\": \"<improvement area>\",\n            \"change\": \"<what was changed>\",\n            \"rationale\": \"<why this improves the tool>\",\n            \"impact\": \"<expected user impact>\"\n        }\n    ],\n    \"quality_score\": {\n        \"before\": \"<0-10>\",\n        \"after\": \"<0-10>\",\n        \"improvement\": \"<difference>\"\n    },\n    \"recommendations\": [\n        {\n            \"type\": \"enhancement|fix|optimization\",\n            \"description\": \"<recommendation>\",\n            \"priority\": \"high|medium|low\"\n        }\n    ]\n}\n```",
-    "input_arguments": [
-      "tool_config",
-      "optimization_focus",
-      "target_audience",
-      "similar_tools"
+    "test_examples": [
+      {
+        "source_code": "def add(a, b):\n    return a + b",
+        "language": "python",
+        "analysis_depth": "comprehensive",
+        "domain_context": "web development"
+      }
     ],
-    "parameter": {
+    "return_schema": {
       "type": "object",
-      "properties": {
-        "tool_config": {
-          "type": "string",
-          "description": "JSON string of current tool configuration to optimize"
-        },
-        "optimization_focus": {
-          "type": "string",
-          "enum": [
-            "clarity",
-            "completeness",
-            "usability",
-            "performance",
-            "all"
-          ],
-          "description": "Primary optimization focus",
-          "default": "all"
-        },
-        "target_audience": {
-          "type": "string",
-          "enum": [
-            "beginner",
-            "intermediate",
-            "expert",
-            "mixed"
-          ],
-          "description": "Target user expertise level",
-          "default": "mixed"
-        },
-        "similar_tools": {
-          "type": "string",
-          "description": "JSON string array of similar tools for comparison and benchmarking"
-        }
-      },
-      "required": [
-        "tool_config"
-      ]
-    },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.3,
-      "max_new_tokens": 3500,
-      "return_json": true
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -975,11 +720,120 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.1,
-      "max_new_tokens": 3500,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "tool_config": "{\"type\":\"XMLTool\",\"name\":\"SampleXMLParser\",\"description\":\"Parses XML data\"}",
+        "domain": "data-science",
+        "validation_aspects": "[\"accuracy\",\"methodology\",\"best-practices\"]",
+        "implementation_code": "def validate_tool(config):\n    pass"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "validation_results": {
+          "type": "object",
+          "properties": {
+            "overall_validity": {
+              "type": "string"
+            },
+            "domain_appropriateness": {
+              "type": "string"
+            },
+            "methodology_score": {
+              "type": "string"
+            },
+            "standards_compliance": {
+              "type": "string"
+            }
+          }
+        },
+        "expert_analysis": {
+          "type": "object",
+          "properties": {
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "concerns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "severity": {
+                    "type": "string"
+                  },
+                  "area": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "impact": {
+                    "type": "string"
+                  },
+                  "recommendation": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "missing_considerations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "domain_recommendations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "recommendation": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "string"
+              },
+              "implementation_hint": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "compliance_check": {
+          "type": "object",
+          "properties": {
+            "standards_followed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "standards_violations": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "certification_notes": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1015,85 +869,24 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.2,
-      "max_new_tokens": 2048,
       "return_json": true
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "ToolOptimizer",
-    "description": "Optimizes tool configurations based on quality feedback. Improves tool specifications and implementations to address identified issues.",
-    "prompt": "You are an expert tool optimizer. Improve this tool based on the quality feedback:\n\nOriginal Tool Configuration: {tool_config}\nQuality Feedback: {quality_feedback}\nOptimization Target: {optimization_target}\n\nGenerate an optimized version in this JSON format:\n{\n  \"optimized_tool\": {\n    \"name\": \"improved_tool_name\",\n    \"type\": \"tool_type\",\n    \"description\": \"enhanced_description\",\n    \"parameter\": {\n      \"type\": \"object\",\n      \"properties\": {},\n      \"required\": []\n    },\n    \"category\": \"category\",\n    \"implementation\": {\n      \"source_code\": \"improved_code\",\n      \"dependencies\": [],\n      \"main_function\": \"execute_tool\"\n    }\n  },\n  \"improvements_made\": [\n    \"Added input validation\",\n    \"Enhanced error handling\",\n    \"Improved parameter descriptions\"\n  ],\n  \"optimization_notes\": \"Summary of key improvements\"\n}\n\nFocus on:\n1. Fixing identified weaknesses\n2. Enhancing parameter validation\n3. Improving error handling\n4. Adding missing functionality\n5. Optimizing for the specified target\n6. Maintaining backward compatibility where possible",
-    "input_arguments": [
-      "tool_config",
-      "quality_feedback",
-      "optimization_target"
-    ],
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "tool_config": {
-          "type": "string",
-          "description": "JSON string of the original tool configuration"
-        },
-        "quality_feedback": {
-          "type": "string",
-          "description": "JSON string of quality evaluation feedback"
-        },
-        "optimization_target": {
-          "type": "string",
-          "description": "What to optimize for (improve_quality, enhance_performance, etc.)"
-        }
-      },
-      "required": [
-        "tool_config",
-        "quality_feedback",
-        "optimization_target"
-      ]
     },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.3,
-      "max_new_tokens": 3072,
-      "return_json": true
-    }
-  },
-  {
-    "type": "AgenticTool",
-    "name": "CodeOptimizer",
-    "description": "Optimizes code implementation for tools based on quality evaluation. Takes tool configuration and quality evaluation results to produce improved source code.",
-    "prompt": "You are an expert software engineer specializing in code optimization. Your task is to optimize the implementation code of a tool based on the provided configuration and quality evaluation.\n\n## TOOL CONFIGURATION\n{tool_config}\n\n## QUALITY EVALUATION\n{quality_evaluation}\n\n## OPTIMIZATION INSTRUCTIONS\nAnalyze the current implementation and quality evaluation feedback, then provide an optimized version that addresses the identified issues. Focus on:\n1. **Code Quality**: Improve readability, structure, and maintainability\n2. **Error Handling**: Enhance exception handling, input validation, and robustness\n3. **Performance**: Optimize algorithms, reduce complexity, improve efficiency\n4. **Best Practices**: Follow Python standards, proper documentation, and clean code principles\n\nReturn a JSON object with the following structure:\n```json\n{\n  \"implementation\": {\n    \"source_code\": \"<optimized_python_code>\",\n    \"dependencies\": [\"<required_packages>\"],\n    \"imports\": [\"<import_statements>\"],\n    \"improvements_made\": [\"list of specific improvements based on quality evaluation feedback\"],\n    \"addressed_issues\": [\"list of issues that were fixed\"],\n    \"quality_improvements\": \"summary of overall quality improvements\"\n  }\n}\n```\n\nEnsure the optimized code:\n- Maintains the same functionality as the original\n- Addresses the specific issues mentioned in quality evaluation feedback\n- Includes proper error handling and input validation\n- Follows Python best practices and PEP 8 standards\n- Is well-documented with clear docstrings and comments",
-    "input_arguments": [
-      "tool_config",
-      "quality_evaluation"
+    "test_examples": [
+      {
+        "tool_config": "{\"type\":\"ExampleTool\",\"name\":\"SampleTool\",\"description\":\"A sample tool for demonstration.\"}",
+        "test_cases": "[{\"input\":{},\"expected_output\":{}}]",
+        "evaluation_aspects": [
+          "functionality",
+          "usability",
+          "completeness",
+          "best_practices"
+        ]
+      }
     ],
-    "parameter": {
+    "return_schema": {
       "type": "object",
-      "properties": {
-        "tool_config": {
-          "type": "string",
-          "description": "JSON string containing the complete tool configuration including current implementation"
-        },
-        "quality_evaluation": {
-          "type": "string",
-          "description": "JSON string containing quality evaluation results and feedback"
-        }
-      },
-      "required": [
-        "tool_config",
-        "quality_evaluation"
-      ]
-    },
-    "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.2,
-      "max_new_tokens": 4096,
-      "return_json": true
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -1140,11 +933,20 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.7,
-      "max_new_tokens": 2048,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "tool_name": "MoleculeAnalyzer",
+        "tool_description": "Analyzes molecular structures for bioinformatics research",
+        "tool_parameters": "{\"molecule_sequence\": \"string\", \"analysis_type\": \"string\"}",
+        "category": "bioinformatics"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -1168,11 +970,17 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.7,
-      "max_new_tokens": 1024,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "question": "What are the benefits of meditation?"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -1201,12 +1009,68 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.7,
-      "max_new_tokens": 8192,
       "return_json": true,
       "return_metadata": false
+    },
+    "test_examples": [
+      {
+        "tool_config": "{ \"type\": \"AgenticTool\", \"name\": \"ExampleTool\", \"description\": \"Example description\" }",
+        "tool_type_mappings": {
+          "Embedding Store": [
+            "EmbeddingDatabase"
+          ],
+          "Database": [
+            "XMLTool",
+            "DatasetTool"
+          ],
+          "Scientific Software Package": [
+            "PackageTool"
+          ],
+          "AI Agent": [
+            "AgenticTool"
+          ],
+          "ML Model": [
+            "ADMETAITool",
+            "AlphaFoldRESTTool",
+            "boltz2_docking",
+            "compute_depmap24q2_gene_correlations",
+            "run_compass_prediction",
+            "run_pinnacle_ppi_retrieval",
+            "run_transcriptformer_embedding_retrieval",
+            "get_abstract_from_patent_app_number",
+            "get_claims_from_patent_app_number",
+            "get_full_text_from_patent_app_number"
+          ],
+          "Human Expert Feedback": [
+            "mcp_auto_loader_human_expert",
+            "consult_human_expert",
+            "get_expert_response",
+            "get_expert_status",
+            "list_pending_expert_requests",
+            "submit_expert_response"
+          ],
+          "MCP": [
+            "MCPAutoLoaderTool"
+          ],
+          "Compositional Tool": [
+            "ComposeTool"
+          ],
+          "Tool Finder Tool": [
+            "ToolFinderEmbedding",
+            "ToolFinderLLM",
+            "ToolFinderKeyword"
+          ],
+          "Special Tool": [
+            "Finish",
+            "CallAgent"
+          ]
+        }
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -1238,11 +1102,25 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.7,
-      "max_new_tokens": 13192,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "metadata_list": [
+          "Gene Expression",
+          "gene_expression",
+          "Gene-Expression",
+          "protein analysis",
+          "Protein-Analysis",
+          "NCBI",
+          "national center for biotechnology information"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -1272,11 +1150,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.2,
-      "max_new_tokens": 8192,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "tool_a": "{\"name\": \"SequenceAligner\", \"type\": \"PackageTool\", \"description\": \"Aligns DNA or protein sequences based on optimal scoring.\"}",
+        "other_tools": "[{\"name\": \"PhyloTreeBuilder\", \"type\": \"PackageTool\", \"description\": \"Constructs phylogenetic trees from sequence alignments.\"}, {\"name\": \"StructureVisualizer\", \"type\": \"PackageTool\", \"description\": \"Visualizes 3D molecular structures from coordinate data.\"}]"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   }
 ]

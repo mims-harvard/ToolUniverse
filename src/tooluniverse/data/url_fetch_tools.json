@@ -31,33 +31,16 @@
       }
     },
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "Successful title extraction",
-          "properties": {
-            "title": {
-              "type": "string",
-              "description": "Extracted and cleaned <title> text"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "description": "Error response",
-          "properties": {
-            "error": {
-              "type": "string",
-              "description": "Error message"
-            },
-            "detail": {
-              "type": "string",
-              "description": "Extra context (optional)"
-            }
-          }
-        }
-      ]
-    }
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    },
+    "test_examples": [
+      {
+        "url": "https://www.wikipedia.org",
+        "timeout": 20
+      }
+    ]
   },
   {
     "type": "URLToPDFTextTool",
@@ -88,27 +71,15 @@
       }
     },
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "Successful text extraction",
-          "properties": {
-            "text": {
-              "type": "string",
-              "description": "Extracted text from rendered webpage PDF"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "description": "Error response",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          }
-        }
-      ]
-    }
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    },
+    "test_examples": [
+      {
+        "url": "https://www.wikipedia.org",
+        "timeout": 30
+      }
+    ]
   }
 ]

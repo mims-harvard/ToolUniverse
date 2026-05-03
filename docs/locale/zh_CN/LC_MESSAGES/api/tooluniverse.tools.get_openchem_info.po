@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_openchem\\_info 模块"
 #: 685d543392004ba095cd9ddcddac52f7 of tooluniverse.tools.get_openchem_info:1
 msgid "get_openchem_info"
 msgstr ""
+"get_openchem_info\n"
+"\n"
+"获取_openchem_信息"
 
 #: 727e9bd8fea74534b90c162f5a9d94d2 93af4dcf61824dd882640873e9605752 of
 #: tooluniverse.tools.get_openchem_info:3
@@ -70,4 +73,4 @@ msgstr "返回类型"
 #: 97cf95dc07b944068bcdf7220aa55b15 of
 #: tooluniverse.tools.get_openchem_info.get_openchem_info:12
 msgid ":py:class:`Any`"
-msgstr ""
+msgstr ":py:class:`任意`"

@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_mageck\\_info 模块"
 
 #: 0ed3c2d3772048ab85900c5e8c2d15eb of tooluniverse.tools.get_mageck_info:1
 msgid "get_mageck_info"
-msgstr ""
+msgstr "get_mageck_info 获取信息"
 
 #: 0cf02dad8e39412c8aa0e1db575581a0 42f34a4f175a415c8f77291bfb1669f2 of
 #: tooluniverse.tools.get_mageck_info:3

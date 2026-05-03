@@ -16,7 +16,7 @@
         },
         "tissue": {
           "type": "string",
-          "description": "Tissue type for tissue-specific interactions. Examples: 'brain', 'heart', 'liver', 'kidney', etc.",
+          "description": "Tissue type for tissue-specific interactions. Use simple names like 'brain', 'heart', 'liver', 'kidney', 'lung', 'blood'. For v3 networks with more cell-type specificity, append '-v3' (e.g., 'brain-v3', 'liver-v3').",
           "default": "brain"
         },
         "max_node": {
@@ -41,15 +41,38 @@
           "type": "boolean",
           "description": "Whether to return the result in string mode. If True, the result will be a string of the network graph and the biological processes. If False, the result will be a NetworkX graph and a list of biological processes.",
           "default": true
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Alias for gene_list. List of gene symbols to analyze."
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "Alias for max_node. Maximum number of network nodes to retrieve.",
+          "minimum": 1,
+          "maximum": 100
         }
       },
-      "required": [
-        "gene_list",
-        "tissue",
-        "max_node",
-        "interaction",
-        "string_mode"
-      ]
+      "required": []
+    },
+    "test_examples": [
+      {
+        "gene_list": [
+          "TP53",
+          "BRCA1"
+        ],
+        "tissue": "brain",
+        "max_node": 3,
+        "interaction": "co-expression",
+        "string_mode": true
+      }
+    ],
+    "return_schema": {
+      "type": "string",
+      "description": "Formatted string representation of the protein-protein interaction network, including network summary, protein nodes with descriptions, interaction details with evidence types, associated biological processes from Gene Ontology, and network analysis metrics."
     }
   }
 ]

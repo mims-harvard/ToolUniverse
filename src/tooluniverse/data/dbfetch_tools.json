@@ -1,0 +1,135 @@
+[
+  {
+    "type": "DbfetchRESTTool",
+    "name": "dbfetch_fetch_entry",
+    "description": "Fetch a single database entry by ID from various databases (UniProt, PDB, etc.) in specified format. Supports FASTA, XML, JSON, and other formats.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "db": {
+          "type": "string",
+          "description": "Database name (e.g., 'uniprotkb', 'pdb', 'embl', 'ensembl')"
+        },
+        "id": {
+          "type": "string",
+          "description": "Entry ID (e.g., UniProt accession 'P05067', PDB ID '1A2B')"
+        },
+        "format": {
+          "type": "string",
+          "description": "Output format (e.g., 'fasta', 'xml', 'json', 'txt'). Default: 'fasta'",
+          "default": "fasta",
+          "enum": ["fasta", "xml", "json", "txt", "gff", "embl", "genbank"]
+        }
+      },
+      "required": ["db", "id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "Database entry in requested format (FASTA, XML, JSON, etc.)"
+    },
+    "test_examples": [
+      {
+        "db": "uniprotkb",
+        "id": "P05067",
+        "format": "fasta"
+      },
+      {
+        "db": "pdb",
+        "id": "1GAG",
+        "format": "fasta"
+      }
+    ]
+  },
+  {
+    "type": "DbfetchRESTTool",
+    "name": "dbfetch_fetch_batch",
+    "description": "Fetch multiple database entries by IDs in batch. Supports comma-separated IDs or list of IDs. Returns entries in specified format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "db": {
+          "type": "string",
+          "description": "Database name"
+        },
+        "ids": {
+          "type": ["string", "array"],
+          "description": "Comma-separated IDs or list of IDs (e.g., 'P05067,P04637' or ['P05067', 'P04637'])"
+        },
+        "format": {
+          "type": "string",
+          "description": "Output format (default: 'fasta')",
+          "default": "fasta"
+        }
+      },
+      "required": ["db", "ids"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "Batch of database entries in requested format"
+    },
+    "test_examples": [
+      {
+        "db": "uniprotkb",
+        "ids": "P05067,P04637",
+        "format": "fasta"
+      }
+    ]
+  },
+  {
+    "type": "DbfetchRESTTool",
+    "name": "dbfetch_list_databases",
+    "description": "List all available databases in Dbfetch service. Note: This returns a static list of common database names as the API endpoint for listing is web-only.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "List of available databases"
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "type": "DbfetchRESTTool",
+    "name": "dbfetch_list_formats",
+    "description": "List available output formats for a specific database. Note: This returns common format names as the API endpoint for listing is web-only.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "db": {
+          "type": "string",
+          "description": "Database name"
+        }
+      },
+      "required": ["db"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/Tools/dbfetch/dbfetch",
+      "return_format": "TEXT"
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "List of available formats for the database"
+    },
+    "test_examples": [
+      {
+        "db": "uniprotkb"
+      }
+    ]
+  }
+]

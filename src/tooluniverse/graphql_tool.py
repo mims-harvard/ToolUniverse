@@ -48,18 +48,22 @@ def remove_none_and_empty_values(json_obj):
 
 def execute_query(endpoint_url, query, variables=None):
     response = requests.post(
-        endpoint_url, json={"query": query, "variables": variables}
+        endpoint_url, json={"query": query, "variables": variables}, timeout=30
     )
     try:
+        if not response.ok:
+            print(f"HTTP {response.status_code} from API: {response.text[:200]}")
+            return None
         result = response.json()
-        # result = json.dumps(result, ensure_ascii=False)
         result = remove_none_and_empty_values(result)
         # Check if the response contains errors
         if "errors" in result:
             print("Invalid Query: ", result["errors"])
             return None
-        # Check if the data field is empty
-        elif not result.get("data") or all(not v for v in result["data"].values()):
+        # Feature-94A-002: always return result when data key is present,
+        # even if all values are empty/null (e.g. disease not found = {"data": {}}).
+        # Callers distinguish empty results from errors via status envelope.
+        elif "data" not in result:
             print("No data returned")
             return None
         else:
@@ -80,24 +84,110 @@ class GraphQLTool(BaseTool):
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
         if "size" in self.parameters and "size" not in arguments:
-            arguments["size"] = 5
-        return execute_query(
+            arguments["size"] = self.default_size
+        result = execute_query(
             endpoint_url=self.endpoint_url, query=self.query_schema, variables=arguments
         )
+        if result is None:
+            return {"status": "error", "error": "No data returned from API"}
+        return {"status": "success", "data": result.get("data", result)}
+
+
+_OT_SEARCH_QUERY = """
+query otSearch($q: String!, $entity: [String!]!) {
+  search(queryString: $q, entityNames: $entity, page: {index: 0, size: 1}) {
+    hits { id name }
+  }
+}
+"""
+
+
+def _ot_resolve_id(endpoint_url: str, query_string: str, entity: str) -> str | None:
+    """Resolve a gene symbol or disease name to an OpenTargets ID via search."""
+    result = execute_query(
+        endpoint_url,
+        _OT_SEARCH_QUERY,
+        {"q": query_string, "entity": [entity]},
+    )
+    if result:
+        hits = result.get("data", {}).get("search", {}).get("hits", [])
+        if hits:
+            return hits[0]["id"]
+    return None
 
 
 @register_tool("OpenTarget")
 class OpentargetTool(GraphQLTool):
     def __init__(self, tool_config):
-        endpoint_url = "https://api.platform.opentargets.org/api/v4/graphql"
-        super().__init__(tool_config, endpoint_url)
+        self.endpoint_url = "https://api.platform.opentargets.org/api/v4/graphql"
+        super().__init__(tool_config, self.endpoint_url)
 
     def run(self, arguments):
-        # First try without modifying '-'
+        arguments = copy.deepcopy(arguments)
+
+        # Normalize common aliases before resolution
+        if "ensemblId" not in arguments and "gene_symbol" not in arguments:
+            for alias in ("target", "gene", "gene_name"):
+                if arguments.get(alias):
+                    arguments["gene_symbol"] = arguments.pop(alias)
+                    break
+        if "efoId" not in arguments and "disease_name" not in arguments:
+            for alias in ("disease", "disease_id", "trait"):
+                if arguments.get(alias):
+                    arguments["disease_name"] = arguments.pop(alias)
+                    break
+
+        # Resolve gene_symbol → ensemblId if ensemblId not provided
+        if "ensemblId" not in arguments and "gene_symbol" in arguments:
+            resolved = _ot_resolve_id(
+                self.endpoint_url, arguments.pop("gene_symbol"), "target"
+            )
+            if resolved:
+                arguments["ensemblId"] = resolved
+            else:
+                return {
+                    "status": "error",
+                    "error": f"Could not resolve gene symbol to Ensembl ID. "
+                    "Try passing ensemblId directly (e.g. ENSG00000141510 for TP53).",
+                }
+
+        # Resolve disease_name → efoId (or diseaseIds) if not provided
+        needs_disease_ids = "diseaseIds" in self.query_schema
+        if (
+            "efoId" not in arguments
+            and "diseaseIds" not in arguments
+            and "disease_name" in arguments
+        ):
+            resolved = _ot_resolve_id(
+                self.endpoint_url, arguments.pop("disease_name"), "disease"
+            )
+            if resolved:
+                if needs_disease_ids:
+                    arguments["diseaseIds"] = [resolved]
+                else:
+                    arguments["efoId"] = resolved
+            else:
+                return {
+                    "status": "error",
+                    "error": f"Could not resolve disease name to EFO ID. "
+                    "Try passing efoId directly (e.g. EFO_0000384 for Crohn's disease).",
+                }
+
         result = super().run(arguments)
 
-        # If no results, try with '-' replaced by ' '
-        if result is None:
+        # Add note when IntOGen evidence count is 0 (Feature-122B-002)
+        if result.get("status") == "success":
+            evidences = result.get("data", {}).get("disease", {}).get("evidences", {})
+            if isinstance(evidences, dict) and evidences.get("count") == 0:
+                result.setdefault("metadata", {})["note"] = (
+                    "IntOGen returns 0 evidence rows for this query. "
+                    "IntOGen only covers somatic tumor driver mutations — "
+                    "it has no data for non-cancer diseases or non-driver genes. "
+                    "For non-oncology phenotypes, use OpenTargets_get_evidence_by_datasource instead."
+                )
+
+        # If no results, retry with '-' replaced by ' '
+        if result.get("status") != "success":
             if "drugName" in arguments and isinstance(arguments["drugName"], str):
                 arguments["drugName"] = arguments["drugName"].split("-")[0]
             modified_arguments = copy.deepcopy(arguments)
@@ -105,7 +195,6 @@ class OpentargetTool(GraphQLTool):
                 if isinstance(arg_value, str) and "-" in arg_value:
                     modified_arguments[each_arg] = arg_value.replace("-", " ")
             result = super().run(modified_arguments)
-            return result
 
         return result
 
@@ -127,30 +216,35 @@ class OpentargetToolDrugNameMatch(GraphQLTool):
             print(
                 "No results found for the drug brand name. Trying with the generic name."
             )
-            name_arguments = {}
-            for each_args in self.possible_drug_name_args:
-                if each_args in arguments:
-                    name_arguments["drug_name"] = arguments[each_args]
+            # Find which drug name argument was provided
+            matched_arg = None
+            for arg_name in self.possible_drug_name_args:
+                if arg_name in arguments:
+                    matched_arg = arg_name
                     break
-            if len(name_arguments) == 0:
+            if matched_arg is None:
                 print("No drug name found in the arguments.")
-                return None
-            drug_name_results = self.drug_generic_tool.run(name_arguments)
+                return {"status": "error", "error": "No drug name found in arguments"}
+            drug_name_results = self.drug_generic_tool.run(
+                {"drug_name": arguments[matched_arg]}
+            )
             if (
                 drug_name_results is not None
                 and "openfda.generic_name" in drug_name_results
             ):
-                arguments[each_args] = drug_name_results["openfda.generic_name"]
+                arguments[matched_arg] = drug_name_results["openfda.generic_name"]
                 print(
                     "Found generic name. Trying with the generic name: ",
-                    arguments[each_args],
+                    arguments[matched_arg],
                 )
                 results = execute_query(
                     endpoint_url=self.endpoint_url,
                     query=self.query_schema,
                     variables=arguments,
                 )
-        return results
+        if results is None:
+            return {"status": "error", "error": "No data returned from API"}
+        return {"status": "success", "data": results.get("data", results)}
 
 
 @register_tool("OpenTargetGenetics")
@@ -158,6 +252,33 @@ class OpentargetGeneticsTool(GraphQLTool):
     def __init__(self, tool_config):
         endpoint_url = "https://api.genetics.opentargets.org/graphql"
         super().__init__(tool_config, endpoint_url)
+
+    def run(self, arguments):
+        arguments = copy.deepcopy(arguments)
+        # Resolve disease_name → diseaseIds if not already provided
+        if "diseaseIds" not in arguments:
+            disease_name = None
+            for alias in ("disease_name", "disease", "trait"):
+                if arguments.get(alias):
+                    disease_name = arguments.pop(alias)
+                    break
+            if disease_name:
+                resolved = _ot_resolve_id(
+                    "https://api.platform.opentargets.org/api/v4/graphql",
+                    disease_name,
+                    "disease",
+                )
+                if resolved:
+                    arguments["diseaseIds"] = [resolved]
+                else:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"Could not resolve '{disease_name}' to a disease ID. "
+                            "Try passing diseaseIds directly (e.g. ['MONDO_0005148'] for type 2 diabetes)."
+                        ),
+                    }
+        return super().run(arguments)
 
 
 @register_tool("DiseaseTargetScoreTool")
@@ -181,9 +302,9 @@ class DiseaseTargetScoreTool(GraphQLTool):
         page_size = arguments.get("pageSize", 100)
 
         if not efo_id:
-            return {"error": "efoId is required"}
+            return {"status": "error", "error": "efoId is required"}
         if not datasource_id:
-            return {"error": "datasourceId is required"}
+            return {"status": "error", "error": "datasourceId is required"}
 
         results = []
         page_index = 0
@@ -237,8 +358,11 @@ class DiseaseTargetScoreTool(GraphQLTool):
             page_index += 1
 
         return {
-            "disease_info": disease_info,
-            "datasource": datasource_id,
-            "total_targets_with_scores": len(results),
-            "target_scores": results,
+            "status": "success",
+            "data": {
+                "disease_info": disease_info,
+                "datasource": datasource_id,
+                "total_targets_with_scores": len(results),
+                "target_scores": results,
+            },
         }

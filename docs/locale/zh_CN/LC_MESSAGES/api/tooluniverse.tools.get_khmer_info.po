@@ -70,4 +70,4 @@ msgstr "返回类型"
 #: c42c673d5b9c465f90221bb153ac9394 of
 #: tooluniverse.tools.get_khmer_info.get_khmer_info:12
 msgid ":py:class:`Any`"
-msgstr ""
+msgstr ":py:class:`任意`"

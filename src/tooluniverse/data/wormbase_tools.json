@@ -1,0 +1,407 @@
+[
+  {
+    "name": "WormBase_get_gene",
+    "description": "Get detailed gene overview from WormBase for C. elegans (nematode worm) by WormBase gene ID. Returns gene name, sequence name, species, description, gene type, and status. C. elegans is one of the most important model organisms for genetics, neuroscience, and developmental biology. Example: WBGene00006763 returns unc-26 (synaptojanin, a polyphosphoinositide phosphatase required for synaptic vesicle recycling).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "WormBase gene identifier (WBGene format). Examples: 'WBGene00006763' (unc-26), 'WBGene00006789' (unc-52), 'WBGene00000898' (daf-2)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_overview"
+    },
+    "type": "WormBaseTool",
+    "test_examples": [
+      {
+        "gene_id": "WBGene00006763"
+      },
+      {
+        "gene_id": "WBGene00000898"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "wormbase_id": {
+                  "type": "string"
+                },
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sequence_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "species": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "WormBase_get_phenotypes",
+    "description": "Get phenotype annotations for a C. elegans gene from WormBase. Returns observed phenotypes (from RNAi, mutation, transgene experiments), phenotypes not observed, and total counts. Phenotype data uses the WormBase Phenotype Ontology (WPO). Example: WBGene00006763 (unc-26) has 125+ observed phenotypes including locomotion defects, synaptic vesicle recycling abnormalities, and pharyngeal pumping defects.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "WormBase gene identifier. Examples: 'WBGene00006763' (unc-26), 'WBGene00000898' (daf-2)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_phenotypes"
+    },
+    "type": "WormBaseTool",
+    "test_examples": [
+      {
+        "gene_id": "WBGene00006763"
+      },
+      {
+        "gene_id": "WBGene00000898"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "wormbase_id": {
+                  "type": "string"
+                },
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "phenotype_count": {
+                  "type": "integer"
+                },
+                "phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phenotype_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "phenotype_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "evidence_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "not_observed_count": {
+                  "type": "integer"
+                },
+                "phenotypes_not_observed": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phenotype_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "phenotype_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "WormBase_get_expression",
+    "description": "Get expression data for a C. elegans gene from WormBase. Returns tissues where the gene is expressed, developmental stages, subcellular localization, and expression clusters. Expression data is curated from GFP reporters, antibody staining, RNA in situ, and microarray experiments. Example: WBGene00006763 (unc-26) is expressed in 38 tissues including neurons, pharynx, and body wall muscle.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "WormBase gene identifier. Examples: 'WBGene00006763' (unc-26), 'WBGene00000898' (daf-2)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_expression"
+    },
+    "type": "WormBaseTool",
+    "test_examples": [
+      {
+        "gene_id": "WBGene00006763"
+      },
+      {
+        "gene_id": "WBGene00000898"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "wormbase_id": {
+                  "type": "string"
+                },
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "expressed_in_count": {
+                  "type": "integer"
+                },
+                "expressed_in": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "term_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "expressed_during": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "term_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "subcellular_localization": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "term_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "expression_clusters_count": {
+                  "type": "integer"
+                },
+                "expression_clusters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "cluster_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "cluster_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

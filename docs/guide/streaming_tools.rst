@@ -79,32 +79,6 @@ Key points:
 The streaming demonstration script ``examples/agentic_streaming_example.py``
 wraps the same logic with a longer prompt so chunks are visually obvious.
 
-Streaming via MCP / JSON Parameters
------------------------------------
-
-When the client cannot pass a Python callback (for example, MCP or pure HTTP
-JSON), stream mode can be toggled in the arguments using the flag defined by the
-tool's ``STREAM_FLAG_KEY`` (``_tooluniverse_stream`` for AgenticTool-based
-tools):
-
-.. code-block:: json
-
-   {
-     "method": "tools/call",
-     "params": {
-       "name": "ScientificTextSummarizer",
-       "arguments": {
-         "text": "Long paper...",
-         "summary_length": "200",
-         "focus_area": "conclusion",
-         "_tooluniverse_stream": true
-       }
-     }
-   }
-
-The SMCP server forwards each streamed chunk as a ``ctx.info`` log message. The
-final aggregated result is still returned via the normal MCP response.
-
 .. _building-custom-streaming-tools:
 
 Building Your Own Streaming Tool

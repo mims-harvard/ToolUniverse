@@ -1,0 +1,155 @@
+[
+    {
+        "name": "AlphaMissense_get_protein_scores",
+        "description": "Get all AlphaMissense pathogenicity scores for a protein by UniProt ID. Returns comprehensive residue-level data for all possible missense variants across the entire protein. Useful for identifying pathogenic hotspots and overall protein vulnerability assessment.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "uniprot_id": {
+                    "type": "string",
+                    "description": "UniProt accession ID (e.g., 'P00533' for EGFR)"
+                }
+            },
+            "required": ["uniprot_id"]
+        },
+        "fields": {
+            "operation": "get_protein_scores"
+        },
+        "type": "AlphaMissenseTool",
+        "test_examples": [
+            {
+                "uniprot_id": "P00533"
+            },
+            {
+                "uniprot_id": "P15056"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "uniprot_id": {"type": "string"},
+                        "residue_data": {"type": "object"},
+                        "thresholds": {"type": "object"}
+                    }
+                },
+                "error": {"type": "string"},
+                "message": {"type": "string"}
+            }
+        },
+        "label": ["AlphaMissense", "Protein", "Pathogenicity"],
+        "metadata": {
+            "tags": ["pathogenicity", "protein_analysis", "missense", "hotspot"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "AlphaMissense_get_variant_score",
+        "description": "Get AlphaMissense pathogenicity score for a specific missense variant. Input: UniProt ID and variant (e.g., 'p.R123H'). Returns score and classification (pathogenic/ambiguous/benign). State-of-the-art for VUS interpretation.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "uniprot_id": {
+                    "type": "string",
+                    "description": "UniProt accession ID (e.g., 'P00533' for EGFR)"
+                },
+                "variant": {
+                    "type": "string",
+                    "description": "Variant in protein notation: p.X123Y or X123Y where X is reference amino acid, 123 is position, Y is variant (e.g., 'p.R123H', 'V600E')"
+                }
+            },
+            "required": ["uniprot_id", "variant"]
+        },
+        "fields": {
+            "operation": "get_variant_score"
+        },
+        "type": "AlphaMissenseTool",
+        "test_examples": [
+            {
+                "uniprot_id": "P15056",
+                "variant": "V600E"
+            },
+            {
+                "uniprot_id": "P00533",
+                "variant": "p.L858R"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "uniprot_id": {"type": "string"},
+                        "variant": {"type": "string"},
+                        "pathogenicity_score": {"type": "number"},
+                        "classification": {"type": "string", "enum": ["pathogenic", "ambiguous", "benign"]}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["AlphaMissense", "Variant", "Pathogenicity"],
+        "metadata": {
+            "tags": ["pathogenicity", "missense", "vus", "variant_interpretation"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "AlphaMissense_get_residue_scores",
+        "description": "Get AlphaMissense scores for all 20 possible amino acid substitutions at a specific protein position. Useful for saturation mutagenesis analysis and identifying pathogenic hotspots.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "uniprot_id": {
+                    "type": "string",
+                    "description": "UniProt accession ID (e.g., 'P00533' for EGFR)"
+                },
+                "position": {
+                    "type": "integer",
+                    "description": "Amino acid position in the protein (1-indexed)"
+                }
+            },
+            "required": ["uniprot_id", "position"]
+        },
+        "fields": {
+            "operation": "get_residue_scores"
+        },
+        "type": "AlphaMissenseTool",
+        "test_examples": [
+            {
+                "uniprot_id": "P15056",
+                "position": 600
+            },
+            {
+                "uniprot_id": "P00533",
+                "position": 858
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "uniprot_id": {"type": "string"},
+                        "position": {"type": "integer"},
+                        "scores": {"type": "object"},
+                        "thresholds": {"type": "object"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["AlphaMissense", "Residue", "Saturation"],
+        "metadata": {
+            "tags": ["pathogenicity", "saturation_mutagenesis", "residue_analysis"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    }
+]

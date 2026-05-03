@@ -2,7 +2,8 @@
 """ToolUniverse health checker."""
 
 
-def main():
+def main() -> int:
+    """Run ToolUniverse health checks and print a diagnostic report."""
     print("🔍 Checking ToolUniverse health...\n")
 
     try:

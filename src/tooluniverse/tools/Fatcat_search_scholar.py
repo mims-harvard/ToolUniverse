@@ -1,7 +1,7 @@
 """
 Fatcat_search_scholar
 
-Search Internet Archive Scholar via Fatcat releases search. Fatcat is the underlying database pow...
+Search Internet Archive Scholar via Fatcat releases search and retrieve detailed metadata includi...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def Fatcat_search_scholar(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search Internet Archive Scholar via Fatcat releases search. Fatcat is the underlying database pow...
+    Search Internet Archive Scholar via Fatcat releases search and retrieve detailed metadata includi...
 
     Parameters
     ----------
@@ -38,10 +38,16 @@ def Fatcat_search_scholar(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"query": query, "max_results": max_results}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Fatcat_search_scholar",
-            "arguments": {"query": query, "max_results": max_results},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_uniprot\\_accession\\_by\\_entity\\_id 模块"
 #: ea9de05addab4f3482e57d9ea35935cb of
 #: tooluniverse.tools.get_uniprot_accession_by_entity_id:1
 msgid "get_uniprot_accession_by_entity_id"
-msgstr ""
+msgstr "get_uniprot_accession_by_entity_id 获取实体ID对应的UniProt登录号"
 
 #: 3c69a3c3ca7d4673a6adf00033c5a3b7 f299f9cfb7354da2a5ebc1559915dd1a of
 #: tooluniverse.tools.get_uniprot_accession_by_entity_id:3

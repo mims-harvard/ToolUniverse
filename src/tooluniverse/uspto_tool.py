@@ -137,7 +137,10 @@ class USPTOOpenDataPortalTool(BaseTool):
         """
         endpoint = self.tool_config.get("api_endpoint")
         if not endpoint:
-            return {"error": "API endpoint not found in tool configuration."}
+            return {
+                "status": "error",
+                "error": "API endpoint not found in tool configuration.",
+            }
 
         path_params = re.findall(r"\{(\w+)\}", endpoint)
         query_params = {}
@@ -150,23 +153,20 @@ class USPTOOpenDataPortalTool(BaseTool):
                 query_params[key] = value
 
         # Remove any None values from the query parameters
-        for k, v in query_params.items():
+        keys_to_process = list(query_params.keys())
+        for k in keys_to_process:
+            v = query_params.get(k)
             if v is None:
-                if (
-                    self.tool_config.get("parameter")
-                    .get("properties")
-                    .get(k)
-                    .get("default")
-                    is not None
-                ):
-                    query_params[k] = (
-                        self.tool_config.get("parameter")
-                        .get("properties")
-                        .get(k)
-                        .get("default")
-                    )
+                param_props = (
+                    self.tool_config.get("parameter", {})
+                    .get("properties", {})
+                    .get(k, {})
+                )
+                default = param_props.get("default")
+                if default is not None:
+                    query_params[k] = default
                 else:
-                    del query_params[k]
+                    query_params.pop(k, None)
 
         # default parameters if not provided
         for k, v in self.tool_config.get("default_query_params", {}).items():
@@ -179,11 +179,16 @@ class USPTOOpenDataPortalTool(BaseTool):
                 query_params["q"] = query_params["query"]
                 del query_params["query"]
             else:
-                return {"error": "Missing required parameter 'query'."}
+                return {
+                    "status": "error",
+                    "data": {"error": "Missing required parameter 'query'."},
+                }
 
-            if query_params["exact_match"]:
+            if query_params.get("exact_match", False):
                 query_params["q"] = f'"{query_params["q"]}"'
-                del query_params["exact_match"]
+
+            # Remove exact_match from params if present
+            query_params.pop("exact_match", None)
 
             field_mappings = {
                 "filingDate": "applicationMetaData.filingDate",
@@ -224,7 +229,9 @@ class USPTOOpenDataPortalTool(BaseTool):
                 result["patentFileWrapperDataBag"] = pruned_patents
             else:
                 result = response.json()
-            return result
+
+            # Wrap response with data field for schema validation
+            return {"status": "success", "data": result}
 
         except requests.exceptions.HTTPError as http_err:
             # Attempt to return the structured error from the API response body
@@ -233,8 +240,14 @@ class USPTOOpenDataPortalTool(BaseTool):
             except json.JSONDecodeError:
                 error_details = http_err.response.text
             return {
-                "error": f"HTTP Error: {http_err.response.status_code}",
-                "details": error_details,
+                "status": "error",
+                "data": {
+                    "error": f"HTTP Error: {http_err.response.status_code}",
+                    "details": error_details,
+                },
             }
         except requests.exceptions.RequestException as e:
-            return {"error": "API request failed", "details": str(e)}
+            return {
+                "status": "error",
+                "data": {"error": "API request failed", "details": str(e)},
+            }

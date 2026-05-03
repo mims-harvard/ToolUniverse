@@ -1,0 +1,400 @@
+[
+  {
+    "name": "Dryad_search_datasets",
+    "description": "Search the Dryad open research data repository for published datasets. Dryad is a curated, general-purpose repository that makes research data discoverable, freely reusable, and citable. It hosts datasets across all scientific disciplines, with strong coverage in ecology, evolutionary biology, genetics, and life sciences. Returns dataset identifiers, titles, authors, abstracts, storage sizes, and related publication ISSNs. Use this to find openly available research datasets by keyword, then use Dryad_get_dataset for full metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query string for dataset title, abstract, or author (e.g., 'climate change', 'CRISPR gene editing', 'protein structure')"
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page (default 10, max 100)"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination (starts at 1)"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://datadryad.org/api/v2/datasets"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "climate change",
+        "per_page": 5
+      },
+      {
+        "q": "protein structure",
+        "per_page": 3
+      },
+      {
+        "q": "CRISPR gene editing"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Dryad search results with pagination links and embedded dataset list",
+          "properties": {
+            "_links": {
+              "type": "object",
+              "description": "HAL pagination links (self, first, last, next)"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of datasets returned on this page"
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of matching datasets"
+            },
+            "_embedded": {
+              "type": "object",
+              "description": "Contains stash:datasets array with the dataset records",
+              "properties": {
+                "stash:datasets": {
+                  "type": "array",
+                  "description": "Array of dataset objects",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "Numeric dataset ID (use with Dryad_get_dataset)"
+                      },
+                      "identifier": {
+                        "type": "string",
+                        "description": "DOI identifier (e.g., 'doi:10.5061/dryad.7rh4625')"
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Dataset title"
+                      },
+                      "authors": {
+                        "type": "array",
+                        "description": "List of dataset authors with names, affiliations, and ORCID IDs",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "firstName": {
+                              "type": "string"
+                            },
+                            "lastName": {
+                              "type": "string"
+                            },
+                            "affiliation": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "orcid": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "abstract": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Dataset abstract/description"
+                      },
+                      "storageSize": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Total storage size in bytes"
+                      },
+                      "relatedPublicationISSN": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ISSN of the related publication journal"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Dryad_get_dataset",
+    "description": "Get detailed metadata for a specific Dryad dataset by its numeric ID. Returns comprehensive information including the DOI identifier, title, authors with affiliations and ORCID IDs, abstract, storage size, related publication ISSN, and HAL links to versions and files. The version ID from the _links.stash:version href can be used with Dryad_get_dataset_files to list downloadable files. Use Dryad_search_datasets first to find dataset IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_id": {
+          "type": "integer",
+          "description": "Numeric dataset ID from Dryad (e.g., 93, 94, 95). Find IDs using Dryad_search_datasets."
+        }
+      },
+      "required": [
+        "dataset_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://datadryad.org/api/v2/datasets/{dataset_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "dataset_id": 93
+      },
+      {
+        "dataset_id": 94
+      },
+      {
+        "dataset_id": 95
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed Dryad dataset metadata",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Numeric dataset ID"
+            },
+            "identifier": {
+              "type": "string",
+              "description": "DOI identifier (e.g., 'doi:10.5061/dryad.7rh4625')"
+            },
+            "title": {
+              "type": "string",
+              "description": "Dataset title"
+            },
+            "authors": {
+              "type": "array",
+              "description": "Authors with names, affiliations, ORCID IDs, and ROR affiliations",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "affiliation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "affiliationROR": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "orcid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "abstract": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Full dataset abstract/description"
+            },
+            "storageSize": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total storage size in bytes"
+            },
+            "relatedPublicationISSN": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "ISSN of related publication journal"
+            },
+            "_links": {
+              "type": "object",
+              "description": "HAL links including stash:versions and stash:version (contains version ID for file listing)"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Dryad_get_dataset_files",
+    "description": "Get the list of downloadable files for a specific Dryad dataset version. Returns file names, sizes, MIME types, and MD5 checksums for each file in the dataset. The version_id can be found in the Dryad_get_dataset response under _links.stash:version.href (extract the numeric ID from the path, e.g., '/api/v2/versions/124910' means version_id=124910). Use this to discover what data files are available before downloading.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "version_id": {
+          "type": "integer",
+          "description": "Version ID from Dryad dataset metadata. Found in _links.stash:version.href of Dryad_get_dataset response (e.g., 124910, 94, 93)."
+        }
+      },
+      "required": [
+        "version_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://datadryad.org/api/v2/versions/{version_id}/files"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "version_id": 124910
+      },
+      {
+        "version_id": 94
+      },
+      {
+        "version_id": 93
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "File listing for the specified dataset version",
+          "properties": {
+            "_links": {
+              "type": "object",
+              "description": "HAL pagination links"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of files returned on this page"
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of files in this version"
+            },
+            "_embedded": {
+              "type": "object",
+              "description": "Contains stash:files array with file records",
+              "properties": {
+                "stash:files": {
+                  "type": "array",
+                  "description": "Array of file objects",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "description": "File name/path (e.g., 'data.csv', 'alignment.zip')"
+                      },
+                      "size": {
+                        "type": "integer",
+                        "description": "File size in bytes"
+                      },
+                      "mimeType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "MIME type of the file"
+                      },
+                      "status": {
+                        "type": "string",
+                        "description": "File status (e.g., 'created')"
+                      },
+                      "digest": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "File checksum value"
+                      },
+                      "digestType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Checksum algorithm (e.g., 'md5')"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -3,7 +3,7 @@ Available Tools Reference
 
 **Complete reference of all ToolUniverse scientific tools and their capabilities.**
 
-ToolUniverse provides 600+ tools across eight major categories, each serving specific computational and analytical requirements in scientific research.
+ToolUniverse provides 1000+ tools across eight major categories, each serving specific computational and analytical requirements in scientific research.
 
 Tool Ecosystem Overview
 -----------------------
@@ -12,7 +12,7 @@ ToolUniverse integrates tools across eight major categories:
 
 .. code-block:: text
 
-   ToolUniverse Ecosystem (600+ Tools):
+   ToolUniverse Ecosystem (1000+ Tools):
 
    ┌─────────────────┐
    │   ML Models     │ 15 tools  → Prediction, Classification, Generation
@@ -58,51 +58,51 @@ Tool Categories Summary
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. list-table:: Tool Distribution by Category
-   :header-rows: 1
-   :widths: 25 15 15 45
+ :header-rows: 1
+ :widths: 25 15 15 45
 
-   * - Category
-     - Count
-     - Percentage
-     - Primary Use Cases
-   * - APIs
-     - 281
-     - 48.4%
-     - External data access, real-time information
-   * - Software Packages
-     - 164
-     - 28.3%
-     - Computational analysis, local processing
-   * - Databases
-     - 84
-     - 14.5%
-     - Structured data storage and retrieval
-   * - AI Agents
-     - 33
-     - 5.7%
-     - Autonomous reasoning and planning
-   * - ML Models
-     - 15
-     - 2.6%
-     - Prediction and classification tasks
-   * - Expert Feedback
-     - 6
-     - 1.0%
-     - Human validation and guidance
-   * - Embedding Stores
-     - 4
-     - 0.7%
-     - Semantic search and similarity
-   * - Robotics
-     - 1
-     - 0.2%
-     - Laboratory automation
-   * - **Total**
-     - **588**
-     - **100%**
-     - **Comprehensive scientific ecosystem**
+ * - Category
+ - Count
+ - Percentage
+ - Primary Use Cases
+ * - APIs
+ - 281
+ - 48.4%
+ - External data access, real-time information
+ * - Software Packages
+ - 164
+ - 28.3%
+ - Computational analysis, local processing
+ * - Databases
+ - 84
+ - 14.5%
+ - Structured data storage and retrieval
+ * - AI Agents
+ - 33
+ - 5.7%
+ - Autonomous reasoning and planning
+ * - ML Models
+ - 15
+ - 2.6%
+ - Prediction and classification tasks
+ * - Expert Feedback
+ - 6
+ - 1.0%
+ - Human validation and guidance
+ * - Embedding Stores
+ - 4
+ - 0.7%
+ - Semantic search and similarity
+ * - Robotics
+ - 1
+ - 0.2%
+ - Laboratory automation
+ * - **Total**
+ - **588**
+ - **100%**
+ - **Comprehensive scientific ecosystem**
 
-🧬 Molecular & Genetic Data
+ Molecular & Genetic Data
 ----------------------------
 
 UniProt - Protein Information
@@ -166,7 +166,7 @@ Comprehensive gene set enrichment analysis.
        }
    }
 
-🎯 Disease & Target Data
+ Disease & Target Data
 ------------------------
 
 OpenTargets Platform
@@ -210,7 +210,7 @@ Disease and experimental factor ontology.
        "arguments": {"query": "diabetes"}
    }
 
-💊 Drug & Chemical Data
+ Drug & Chemical Data
 -----------------------
 
 PubChem - Chemical Information
@@ -253,7 +253,7 @@ Chemical bioactivity and drug discovery data.
        "arguments": {"target_symbol": "EGFR"}
    }
 
-🛡️ Drug Safety & Regulatory
+️ Drug Safety & Regulatory
 ----------------------------
 
 OpenFDA - FDA Data
@@ -302,7 +302,7 @@ Official FDA drug labeling information.
        "arguments": {"medicinalproduct": "metformin"}
    }
 
-🧪 Clinical Research
+ Clinical Research
 --------------------
 
 ClinicalTrials.gov
@@ -328,7 +328,7 @@ Clinical trial registry and results database.
        }
    }
 
-📚 Literature & Publications
+ Literature & Publications
 -----------------------------
 
 PubTator - Biomedical Literature
@@ -400,7 +400,7 @@ Open academic publication database.
 * ``OpenAlex_get_author_info`` - Author information and metrics
 * ``OpenAlex_get_institution_data`` - Institution research data
 
-📊 Specialized Databases
+ Specialized Databases
 ------------------------
 
 Human Protein Atlas
@@ -461,7 +461,7 @@ Consumer health information.
 * ``MedlinePlus_search_conditions`` - Search medical conditions
 * ``MedlinePlus_get_drug_info`` - Consumer drug information
 
-🤖 AI-Powered Tools
+ AI-Powered Tools
 --------------------
 
 Machine Learning Models (15 tools)
@@ -579,7 +579,7 @@ AI tools for discovering and combining other tools.
        }
    }
 
-🔍 Search & Integration Tools
+ Search & Integration Tools
 -----------------------------
 
 Tool Finder
@@ -646,7 +646,7 @@ Tools for combining data from multiple sources.
 * ``cross_reference_identifiers`` - Map between different ID systems
 * ``validate_data_consistency`` - Check data consistency
 
-🛠️ Tool Usage Patterns
+️ Tool Usage Patterns
 -----------------------
 
 Single Tool Queries
@@ -733,23 +733,25 @@ Combine multiple tools for comprehensive analysis:
 
        # 1. Find disease ID
        disease_query = {
-           "name": "opentarget_get_disease_id_description_by_name",
+           "name": "OpenTargets_get_disease_id_description_by_name",
            "arguments": {"disease_name": disease_name}
        }
        disease_info = tooluni.run(disease_query)
 
        # 2. Get associated targets
        targets_query = {
-           "name": "opentarget_get_associated_targets_by_disease_efoId",
-           "arguments": {"disease_efo_id": disease_info['id']}
+           "name": "OpenTargets_get_associated_targets_by_disease_efoId",
+           "arguments": {"efoId": disease_info['id']}
        }
-       targets = tooluni.run(targets_query)
+       targets_result = tooluni.run(targets_query)
+       targets = targets_result['data']['disease']['associatedTargets']['rows']
 
        # 3. Find drugs for each target
        drugs = []
-       for target in targets[:5]:  # Top 5 targets
+       for row in targets[:5]:  # Top 5 targets
+           target = row['target']
            drugs_query = {
-               "name": "opentarget_get_associated_drugs_by_target_ensemblID",
+               "name": "OpenTargets_get_associated_drugs_by_target_ensemblID",
                "arguments": {
                    "target_ensembl_id": target['id'],
                    "size": 10,
@@ -809,7 +811,7 @@ Tool Composition Patterns
        else:
            break
 
-📈 Tool Performance Tips
+ Tool Performance Tips
 ------------------------
 
 Optimization Strategies
@@ -897,10 +899,11 @@ Finding the Right Tools
 
 .. code-block:: python
 
-   # List tools by category
-   ml_tools = tu.list_tools_by_category("ML Models")
-   database_tools = tu.list_tools_by_category("Databases")
-   api_tools = tu.list_tools_by_category("APIs")
+   # List tools by type (use get_tool_types() to see available types)
+   print(tu.get_tool_types())        # e.g. ['opentarget', 'ChEMBL', 'uniprot', ...]
+   ml_tools = tu.filter_tools(include_tool_types=["ML_tools"])
+   database_tools = tu.filter_tools(include_tool_types=["uniprot", "ChEMBL"])
+   api_tools = tu.filter_tools(include_tool_types=["EuropePMC", "PubMed"])
 
 **By Functionality:**
 
@@ -937,19 +940,16 @@ API Authentication
 
 .. code-block:: python
 
-   # Environment-based API key management
+   # API keys are managed via environment variables
+   # Set them before importing ToolUniverse or use a .env file
    import os
 
-   # Recommended: Use environment variables
-   api_keys = {
-       'OPENTARGETS_API_KEY': os.getenv('OPENTARGETS_API_KEY'),
-       'NCBI_API_KEY': os.getenv('NCBI_API_KEY'),
-       'SEMANTIC_SCHOLAR_API_KEY': os.getenv('SEMANTIC_SCHOLAR_API_KEY')
-   }
+   os.environ['NCBI_API_KEY'] = 'your_ncbi_key'
+   os.environ['SEMANTIC_SCHOLAR_API_KEY'] = 'your_s2_key'
 
-   # ToolUniverse automatically manages authentication
+   # ToolUniverse automatically reads API keys from environment variables
    tu = ToolUniverse()
-   tu.configure_api_keys(api_keys)
+   tu.load_tools()
 
 Future Extensions
 -----------------
@@ -966,15 +966,14 @@ Future Extensions
 - Community voting and validation
 - Maintenance and updates
 
-🎯 Next Steps
+ Next Steps
 -------------
 
 Now that you know what tools are available:
 
-* 🚀 **Try Examples**: :doc:`examples` - See tools in action
-* 🔬 **Build Workflows**: :doc:`scientific_workflows` - Combine tools for research
-* ⚡ **Optimize**: :doc:`best_practices` - Performance and production tips
-* 🛠️ **Create Custom**: :doc:`../tutorials/custom_tools` - Build your own tools
+* **Try Examples**: :doc:`examples` - See tools in action
+* **Build Workflows**: :doc:`scientific_workflows` - Combine tools for research
+* **Extend ToolUniverse**: :doc:`../expand_tooluniverse/index` - Create custom tools
 
 .. tip::
    **Discovery tip**: Use the AI-powered tool discovery features to find the right tools for your specific research questions!

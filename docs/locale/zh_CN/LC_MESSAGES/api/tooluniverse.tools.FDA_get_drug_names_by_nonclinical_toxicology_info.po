@@ -32,7 +32,7 @@ msgstr ""
 #: c9e52832a74a47f0ad542822b1cdc5cb of
 #: tooluniverse.tools.FDA_get_drug_names_by_nonclinical_toxicology_info:1
 msgid "FDA_get_drug_names_by_nonclinical_toxicology_info"
-msgstr ""
+msgstr "FDA_根据非临床毒理学信息获取药物名称"
 
 #: 5020275bba594998bf3d8fda3458f557 7e2912b37a4a47859bd8327469414a98 of
 #: tooluniverse.tools.FDA_get_drug_names_by_nonclinical_toxicology_info:3

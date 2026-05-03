@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_adverse\\_reaction 模
 #: b51e1d12567c43f0bb8b02d43c6d3ac0 of
 #: tooluniverse.tools.FDA_get_drug_name_by_adverse_reaction:1
 msgid "FDA_get_drug_name_by_adverse_reaction"
-msgstr ""
+msgstr "FDA_根据不良反应获取药物名称"
 
 #: 2b1719cb76d24cfaa14c15e795810070 9580ef19b38e46ab84cd564a1e21d3fa of
 #: tooluniverse.tools.FDA_get_drug_name_by_adverse_reaction:3

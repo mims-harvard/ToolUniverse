@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_ruptures\\_info 模块"
 
 #: 45e5fa448eeb49fcb4650ab81fcb8946 of tooluniverse.tools.get_ruptures_info:1
 msgid "get_ruptures_info"
-msgstr ""
+msgstr "get_ruptures_info（获取断裂信息）"
 
 #: 4e9bfc7aafe2453fbd104974430e720a 9a1fc9e6b51d408988a5c19c6eb802e8 of
 #: tooluniverse.tools.get_ruptures_info:3

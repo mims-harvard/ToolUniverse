@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_cartopy\\_info 模块"
 
 #: 7e49e319aaa9457d86e30b9d14277a31 of tooluniverse.tools.get_cartopy_info:1
 msgid "get_cartopy_info"
-msgstr ""
+msgstr "获取_cartopy_信息"
 
 #: d41c17ee7653463aafd83ed66d46c938 e8a04d0b0301437c91f7fc09b6076e34 of
 #: tooluniverse.tools.get_cartopy_info:3

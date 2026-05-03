@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get_structure_title_by_pdb_id 模块"
 #: f95add9676d04d76b545e26df9eab45e of
 #: tooluniverse.tools.get_structure_title_by_pdb_id:1
 msgid "get_structure_title_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取结构标题"
 
 #: 75568b3c64c244e5bdef4b9e7c7b42af ac5e650210784ebf9a6223a82bc43c79 of
 #: tooluniverse.tools.get_structure_title_by_pdb_id:3

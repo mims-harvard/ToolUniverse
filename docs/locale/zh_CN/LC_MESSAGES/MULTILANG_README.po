@@ -87,7 +87,7 @@ msgstr "打开语言选择页面"
 
 #: ../../MULTILANG_README.md:28 83edd54d00fe47a995e131cd79bbb7ac
 msgid "方法 2: 直接命令"
-msgstr ""
+msgstr "方法 2：直接命令"
 
 #: ../../MULTILANG_README.md:42 239c5b63a6c54999b6af6d85198dacc2
 msgid "📝 如何翻译"
@@ -114,7 +114,7 @@ msgstr ""
 
 #: ../../MULTILANG_README.md:68 98e92b1568564f1bb8ada0fcf026fd29
 msgid "3. 重新构建"
-msgstr ""
+msgstr "3. 重建"
 
 #: ../../MULTILANG_README.md:75 1e0cd68b003645afa6aeceaf4d62692e
 msgid "📂 文件结构"
@@ -122,7 +122,7 @@ msgstr ""
 
 #: ../../MULTILANG_README.md:104 e338f642a44642cbb9dc9784d8fff70c
 msgid "🎨 主题特性"
-msgstr ""
+msgstr "🎨 主题功能"
 
 #: ../../MULTILANG_README.md:106 c9c98cb5329c40e596620871f3708176
 msgid "Shibuya 主题配置"
@@ -242,7 +242,7 @@ msgstr ""
 
 #: ../../MULTILANG_README.md:168 7812d1b471874b27a7cc66b026fdcde2
 msgid "🔌 API 参考"
-msgstr ""
+msgstr "🔌 API 参考文档"
 
 #: ../../MULTILANG_README.md:169 f79ffbe363d7486e967face0ec8fb148
 msgid "❓ 参考资料"
@@ -254,7 +254,7 @@ msgstr "请提供需要翻译的英文文本，我将为您进行翻译。"
 
 #: ../../MULTILANG_README.md:173 f6d12dc828ae4f20a56c78c393f6732d
 msgid "需要翻译的主要文件（按优先级）："
-msgstr ""
+msgstr "主要需要翻译的文件（按优先级）："
 
 #: ../../MULTILANG_README.md:175 7575a24531b646ea914e7cee9dd82011
 msgid "☐ `quickstart.po` - 快速开始"
@@ -270,7 +270,7 @@ msgstr "☐ `getting_started.po` - Getting Started 教程"
 
 #: ../../MULTILANG_README.md:178 a997c8975cfb46fbbf5f1364c1672324
 msgid "☐ `faq.po` - 常见问题"
-msgstr ""
+msgstr "☐ `faq.po` - 常见问题解答"
 
 #: ../../MULTILANG_README.md:179 ac94ee138a324965b7c5f78946a206ec
 msgid "☐ `guide/*.po` - 用户指南"
@@ -302,7 +302,7 @@ msgstr ""
 
 #: ../../MULTILANG_README.md:189 de81d9d5493a44e994245cda34224fd1
 msgid "构建英文版测试"
-msgstr ""
+msgstr "构建英文版测试环境"
 
 #: ../../MULTILANG_README.md:190 69372bd764bf4226bea1d7b946ac966d
 msgid "生成翻译模板"
@@ -384,7 +384,7 @@ msgstr "问：语言切换器未显示？"
 
 #: ../../MULTILANG_README.md:237 65905c1e2ee84576ac525183bb1e6866
 msgid "A: 检查："
-msgstr ""
+msgstr "A：检查："
 
 #: ../../MULTILANG_README.md:238 686389a941dc484aaa27a79fe4ccada3
 msgid "`_static/language_switcher.js` 和 `.css` 文件存在"
@@ -436,7 +436,7 @@ msgstr ""
 
 #: ../../MULTILANG_README.md:275 4510330e35d14515aecf0e274740bc56
 msgid "自定义服务器"
-msgstr ""
+msgstr "Custom Server"
 
 #: ../../MULTILANG_README.md:285 612addb367f34e8494c75db982e447f9
 msgid "📝 TODO"
@@ -444,7 +444,7 @@ msgstr "请提供需要翻译的具体英文文本，我将为您提供准确、
 
 #: ../../MULTILANG_README.md:287 d7d24466a02d4dfeb3479e5f1a1f03da
 msgid "[ ] 完成所有主要页面的中文翻译"
-msgstr ""
+msgstr "[ ] Complete the Chinese translation of all main pages"
 
 #: ../../MULTILANG_README.md:288 d03aecea0ff948058012e5b0a3dd42ed
 msgid "[ ] 添加更多语言（日语、韩语等）"
@@ -460,7 +460,7 @@ msgstr ""
 
 #: ../../MULTILANG_README.md:291 3196a832c28a47c69aa044b9f2509006
 msgid "[ ] 翻译进度追踪"
-msgstr ""
+msgstr "[ ] 翻译进度跟踪"
 
 #: ../../MULTILANG_README.md:293 09ab07a7a9024ea5b39b94cb6cbfc287
 msgid "💡 贡献"

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_harmony\\_pytorch\\_info 模块"
 #: 689b9abfc39a46dc86ca5dfc6ea90595 of
 #: tooluniverse.tools.get_harmony_pytorch_info:1
 msgid "get_harmony_pytorch_info"
-msgstr ""
+msgstr "get_harmony_pytorch_信息"
 
 #: 36fb0ee91f1141d58436e968fa942a28 88134c7cd45243aba5f1de417c9a9c67 of
 #: tooluniverse.tools.get_harmony_pytorch_info:3

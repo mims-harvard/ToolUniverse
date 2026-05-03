@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_flowutils\\_info 模块"
 
 #: 3f8770e44abf4088938b8c5065cb2213 of tooluniverse.tools.get_flowutils_info:1
 msgid "get_flowutils_info"
-msgstr ""
+msgstr "获取_flowutils_信息"
 
 #: 34fdc298902a49b5958a55a0b7cb3946 58e2b83a448a41bf878da3f31be627f2 of
 #: tooluniverse.tools.get_flowutils_info:3

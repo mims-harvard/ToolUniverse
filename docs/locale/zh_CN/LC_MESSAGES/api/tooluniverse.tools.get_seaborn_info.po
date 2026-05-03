@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_seaborn\\_info 模块"
 
 #: 0ae0b3ec570d43d88f8962c322a9adb7 of tooluniverse.tools.get_seaborn_info:1
 msgid "get_seaborn_info"
-msgstr ""
+msgstr "get_seaborn_信息"
 
 #: 3d532bcf88504edb841b68cbfb65aa22 4f0aa2b38a97467bbcf86f664fdca8d4 of
 #: tooluniverse.tools.get_seaborn_info:3

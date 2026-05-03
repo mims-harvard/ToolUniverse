@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get_gene_name_by_entity_id 模块"
 #: ceadfb1f021b4d6fb81e6a4c75a4c2aa of
 #: tooluniverse.tools.get_gene_name_by_entity_id:1
 msgid "get_gene_name_by_entity_id"
-msgstr ""
+msgstr "通过实体ID获取基因名称"
 
 #: 0e6fcb4d908f4bd88fa635de4552d816 8436dc9eec7f4a06befb1fc68c6c1f65 of
 #: tooluniverse.tools.get_gene_name_by_entity_id:3

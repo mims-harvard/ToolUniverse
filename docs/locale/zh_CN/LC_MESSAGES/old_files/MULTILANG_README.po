@@ -243,7 +243,7 @@ msgstr ""
 
 #: ../../old_files/MULTILANG_README.md:168 9bbbb38c378c4f7b889a3c53f0312322
 msgid "🔌 API 参考"
-msgstr ""
+msgstr "🔌 API 参考文档"
 
 #: ../../old_files/MULTILANG_README.md:169 ec4ed685dda24a8a9c8ab136953cac53
 msgid "❓ 参考资料"
@@ -255,7 +255,7 @@ msgstr "请提供需要翻译的具体英文文本，我将为您进行翻译。
 
 #: ../../old_files/MULTILANG_README.md:173 aa52ce5ac0454954b270092db898224e
 msgid "需要翻译的主要文件（按优先级）："
-msgstr ""
+msgstr "主要需要翻译的文件（按优先级）："
 
 #: ../../old_files/MULTILANG_README.md:175 9b726ad253014b2a9a13306e85caf3eb
 msgid "☐ `quickstart.po` - 快速开始"
@@ -271,7 +271,7 @@ msgstr "☐ `getting_started.po` - 入门指南"
 
 #: ../../old_files/MULTILANG_README.md:178 ee318867e6e54fd387da73b25cc7dd61
 msgid "☐ `faq.po` - 常见问题"
-msgstr ""
+msgstr "☐ `faq.po` - 常见问题解答"
 
 #: ../../old_files/MULTILANG_README.md:179 d8af5e0e683743ec955e912e93a27ffc
 msgid "☐ `guide/*.po` - 用户指南"
@@ -283,11 +283,11 @@ msgstr ""
 
 #: ../../old_files/MULTILANG_README.md:181 fb0da1957b534b9589f3efe416d14d40
 msgid "☐ `tutorials/*.po` - 教程"
-msgstr ""
+msgstr "☐ `tutorials/*.po` - 教程文件"
 
 #: ../../old_files/MULTILANG_README.md:182 71687d2dbfe24d0ebca984a90afeaf06
 msgid "☐ `api/*.po` - API 参考"
-msgstr ""
+msgstr "☐ `api/*.po` - API 参考文档"
 
 #: ../../old_files/MULTILANG_README.md:184 7cdadc8c54af4b0ea3ec1910fdcf1033
 msgid "🛠️ 开发工作流"
@@ -303,7 +303,7 @@ msgstr ""
 
 #: ../../old_files/MULTILANG_README.md:189 031749fe3c13445392ae29a992114f38
 msgid "构建英文版测试"
-msgstr ""
+msgstr "构建英文版测试环境"
 
 #: ../../old_files/MULTILANG_README.md:190 13b1c26ea51a4af4921a43b692c6c5a0
 msgid "生成翻译模板"
@@ -315,7 +315,7 @@ msgstr "请提供需要翻译的英文文本，我将为您翻译成符合要求
 
 #: ../../old_files/MULTILANG_README.md:192 2a985675f9d64223ad2c7ce589c686ad
 msgid "构建中文版测试"
-msgstr ""
+msgstr "构建测试的中文版"
 
 #: ../../old_files/MULTILANG_README.md:203 67b8c54de02c43cc979c92d585cd2ef6
 msgid "批量翻译技巧"
@@ -385,7 +385,7 @@ msgstr "问：语言切换器未显示？"
 
 #: ../../old_files/MULTILANG_README.md:237 66ac662acfa345abb88594e651f5836a
 msgid "A: 检查："
-msgstr ""
+msgstr "A：检查："
 
 #: ../../old_files/MULTILANG_README.md:238 9f6527f989aa4479a937e904fff76736
 msgid "`_static/language_switcher.js` 和 `.css` 文件存在"
@@ -413,7 +413,7 @@ msgstr ""
 
 #: ../../old_files/MULTILANG_README.md:258 96ffc3a3bf4b4d1bbc73cfc1b119fca3
 msgid "GitHub Pages"
-msgstr ""
+msgstr "GitHub 页面"
 
 #: ../../old_files/MULTILANG_README.md:275 d4ab965046644d63bd83f3826e97b42c
 msgid "自定义服务器"
@@ -425,7 +425,7 @@ msgstr "请提供需要翻译的具体英文文本，我将为您提供准确、
 
 #: ../../old_files/MULTILANG_README.md:287 bf49df59991b4661b7e309379de2784d
 msgid "[ ] 完成所有主要页面的中文翻译"
-msgstr ""
+msgstr "[ ] Complete the Chinese translation of all main pages"
 
 #: ../../old_files/MULTILANG_README.md:288 2cd197141f614427b079e8538a443a2f
 msgid "[ ] 添加更多语言（日语、韩语等）"

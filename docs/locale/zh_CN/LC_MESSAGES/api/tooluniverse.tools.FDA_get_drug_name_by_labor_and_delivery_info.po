@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_labor\\_and\\_delivery
 #: 5052023f4c6d447296b0b6c57d855632 of
 #: tooluniverse.tools.FDA_get_drug_name_by_labor_and_delivery_info:1
 msgid "FDA_get_drug_name_by_labor_and_delivery_info"
-msgstr ""
+msgstr "FDA_根据分娩信息获取药物名称"
 
 #: 452a8fddbeed4f138c4e7c7f95fd50eb 682c780b09e84cb9929a6acfcecb27cf of
 #: tooluniverse.tools.FDA_get_drug_name_by_labor_and_delivery_info:3

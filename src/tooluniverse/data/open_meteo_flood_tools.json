@@ -1,0 +1,69 @@
+[
+  {
+    "name": "OpenMeteo_get_flood_forecast",
+    "description": "Get river discharge and flood forecast data for any location using Open-Meteo's free GloFAS (Global Flood Awareness System) API. Returns daily river discharge forecasts up to 210 days ahead, based on the Copernicus Emergency Management Service. Useful for flood risk assessment, water resource management, hydropower planning, and climate research. Data resolution is 0.05 degrees (~5km). Latitude/longitude required (use OpenMeteo_geocode_location for coordinates).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (e.g., 52.52 for Berlin, 48.85 for Paris, 29.76 for Houston)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (e.g., 13.41 for Berlin, 2.35 for Paris, -95.37 for Houston)"
+        },
+        "daily": {
+          "type": ["string", "null"],
+          "description": "Comma-separated daily variables. Options: river_discharge, river_discharge_mean, river_discharge_median, river_discharge_max, river_discharge_min, river_discharge_p25, river_discharge_p75. Default: river_discharge."
+        },
+        "forecast_days": {
+          "type": ["integer", "null"],
+          "description": "Number of forecast days (1-210, default 92). GloFAS provides seasonal forecasts up to 210 days."
+        },
+        "past_days": {
+          "type": ["integer", "null"],
+          "description": "Number of past days to include (0-92, default 0). Includes recent historical discharge data."
+        }
+      },
+      "required": ["latitude", "longitude"]
+    },
+    "fields": {
+      "endpoint": "https://flood-api.open-meteo.com/v1/flood"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"latitude": 52.52, "longitude": 13.41, "daily": "river_discharge", "forecast_days": 14},
+      {"latitude": 48.85, "longitude": 2.35, "daily": "river_discharge,river_discharge_mean,river_discharge_max", "forecast_days": 30},
+      {"latitude": 29.76, "longitude": -95.37, "daily": "river_discharge,river_discharge_median", "past_days": 7, "forecast_days": 14}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Flood/river discharge forecast data",
+          "properties": {
+            "latitude": {"type": "number"},
+            "longitude": {"type": "number"},
+            "timezone": {"type": "string"},
+            "elevation": {"type": "number"},
+            "daily": {
+              "type": "object",
+              "description": "Daily river discharge data with time array and variable arrays",
+              "properties": {
+                "time": {"type": "array", "items": {"type": "string"}},
+                "river_discharge": {"type": "array", "items": {"type": ["number", "null"]}}
+              }
+            },
+            "daily_units": {"type": "object", "description": "Units (m3/s for river discharge)"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

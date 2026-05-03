@@ -266,21 +266,25 @@ def compose(
 
 
 def _parse_result(result):
-    """解析工具结果，确保返回字典格式"""
+    """Parse tool result into a dict, unwrapping nested JSON strings."""
     if isinstance(result, str):
         try:
             parsed = json.loads(result)
-            if isinstance(parsed, dict):
-                return parsed
-            else:
-                return {"result": parsed}
+            return parsed if isinstance(parsed, dict) else {"result": parsed}
         except Exception:
             return {"result": result}
-    elif isinstance(result, dict):
-        # 如果已经是字典，直接返回
+    if isinstance(result, dict):
+        # Unwrap nested JSON in "result" key (e.g. from agent tools)
+        inner = result.get("result")
+        if isinstance(inner, str):
+            try:
+                parsed = json.loads(inner)
+                if isinstance(parsed, dict):
+                    return parsed
+            except Exception:
+                pass
         return result
-    else:
-        return {"result": str(result)}
+    return {"result": str(result)}
 
 
 def _format_papers_for_summary(papers):
@@ -303,7 +307,7 @@ def _format_papers_for_summary(papers):
    Authors: {authors_str}
    Year: {year}
    Venue: {venue}
-   Abstract: {abstract[:200]}{'...' if len(abstract) > 200 else ''}
+   Abstract: {abstract[:200]}{"..." if len(abstract) > 200 else ""}
 """
         formatted_papers.append(formatted_paper)
 

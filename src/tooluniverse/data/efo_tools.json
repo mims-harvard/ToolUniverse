@@ -1,17 +1,253 @@
 [
-    {
-        "type": "EFOTool",
-        "name": "OSL_get_efo_id_by_disease_name",
-        "description": "Tool to lookup Experimental Factor Ontology (EFO) IDs for diseases via the EMBL-EBI OLS API.",
-        "parameter": {
+  {
+    "type": "EFOTool",
+    "name": "OSL_get_efo_id_by_disease_name",
+    "description": "Legacy helper to find an EFO term ID from a disease name using EMBL-EBI OLS search.\n\nReturns the best match as `{efo_id, name}` (or `null` if none). Note: the tool name contains a legacy typo (`OSL_` vs `OLS_`). If you need richer ontology data (IRI, synonyms, children), use the newer `ols_*` tools in `efo_tools.json`.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease": {
+          "type": "string",
+          "description": "Disease name or free-text query (e.g., 'diabetes mellitus')."
+        }
+      },
+      "required": [
+        "disease"
+      ]
+    },
+    "test_examples": [
+      {
+        "disease": "Diabetes Mellitus"
+      }
+    ],
+    "return_schema": {
+      "description": "Either a best-match `{efo_id,name}` result, an error object, or null when no results are found.",
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "efo_id": {"type": "string"},
+            "name": {"type": "string"}
+          },
+          "required": ["efo_id", "name"],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"},
+            "details": {"type": "string"}
+          },
+          "required": ["error"],
+          "additionalProperties": true
+        },
+        {"type": "null"}
+      ]
+    }
+  },
+  {
+    "type": "OLSRESTTool",
+    "name": "ols_search_efo_terms",
+    "description": "Search EFO terms (OLS v4). Use this to find term IRIs and OBO IDs for a concept, then pass the `iri` (or `obo_id`) into `ols_get_efo_term` / `ols_get_efo_term_children`.\n\nExample: search for 'diabetes mellitus' to discover `obo_id` like 'EFO:0000400' and `iri` like 'http://www.ebi.ac.uk/efo/EFO_0000400'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Search query (free text)."},
+        "rows": {"type": "integer", "description": "Maximum number of results to return.", "default": 10}
+      },
+      "required": ["query"]
+    },
+    "test_examples": [
+      {"query": "diabetes mellitus", "rows": 2}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "url": {"type": "string"},
+        "count": {"type": "integer"},
+        "terms": {
+          "type": "array",
+          "items": {
             "type": "object",
             "properties": {
-                "disease": {
-                    "type": "string",
-                    "description": "Search query for diseases. Provide the disease name to lookup the corresponding EFO ID."
-                }
+              "iri": {"type": ["string", "null"]},
+              "obo_id": {"type": ["string", "null"]},
+              "short_form": {"type": ["string", "null"]},
+              "label": {"type": ["string", "null"]},
+              "description": {"type": ["array", "null"], "items": {"type": "string"}},
+              "ontology_name": {"type": ["string", "null"]},
+              "ontology_prefix": {"type": ["string", "null"]},
+              "type": {"type": ["string", "null"]}
             },
-            "required": ["disease"]
-        }
-    }
+            "additionalProperties": true
+          }
+        },
+        "error": {"type": "string"},
+        "detail": {},
+        "status_code": {"type": "integer"}
+      },
+      "additionalProperties": true
+    },
+    "fields": {"kind": "search", "ontology_id": "efo"}
+  },
+  {
+    "type": "OLSRESTTool",
+    "name": "ols_get_efo_term",
+    "description": "Get details for a single EFO term by `iri` (recommended) or `obo_id` (e.g., 'EFO:0000400'). Use `ols_search_efo_terms` first to discover IDs.\n\n`iri` example: 'http://www.ebi.ac.uk/efo/EFO_0000400'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "iri": {"type": "string", "description": "Term IRI returned by `ols_search_efo_terms`."},
+        "obo_id": {"type": "string", "description": "OBO ID like 'EFO:0000400' (will be converted to an EFO IRI)."}
+      },
+      "oneOf": [{"required": ["iri"]}, {"required": ["obo_id"]}]
+    },
+    "test_examples": [
+      {"obo_id": "EFO:0000400"}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "url": {"type": "string"},
+        "term": {
+          "type": "object",
+          "properties": {
+            "iri": {"type": ["string", "null"]},
+            "obo_id": {"type": ["string", "null"]},
+            "short_form": {"type": ["string", "null"]},
+            "label": {"type": ["string", "null"]},
+            "description": {"type": ["array", "null"], "items": {"type": "string"}},
+            "synonyms": {"type": ["array", "null"], "items": {"type": "string"}},
+            "has_children": {"type": ["boolean", "null"]},
+            "is_obsolete": {"type": ["boolean", "null"]},
+            "ontology_name": {"type": ["string", "null"]},
+            "ontology_prefix": {"type": ["string", "null"]}
+          },
+          "additionalProperties": true
+        },
+        "error": {"type": "string"},
+        "detail": {},
+        "status_code": {"type": "integer"}
+      },
+      "additionalProperties": true
+    },
+    "fields": {"kind": "term", "ontology_id": "efo"}
+  },
+  {
+    "type": "OLSRESTTool",
+    "name": "ols_get_efo_term_children",
+    "description": "List children of an EFO term (ontology hierarchy). Provide `iri` or `obo_id`.\n\nTip: use `ols_search_efo_terms` first, then pass the returned `obo_id` or `iri`.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "iri": {"type": "string", "description": "Term IRI returned by `ols_search_efo_terms`."},
+        "obo_id": {"type": "string", "description": "OBO ID like 'EFO:0000400' (will be converted to an EFO IRI)."},
+        "size": {"type": "integer", "description": "Maximum number of children to return.", "default": 20}
+      },
+      "oneOf": [{"required": ["iri"]}, {"required": ["obo_id"]}]
+    },
+    "test_examples": [
+      {"obo_id": "EFO:0000400", "size": 2}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "url": {"type": "string"},
+        "count": {"type": "integer"},
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "iri": {"type": ["string", "null"]},
+              "obo_id": {"type": ["string", "null"]},
+              "short_form": {"type": ["string", "null"]},
+              "label": {"type": ["string", "null"]}
+            },
+            "additionalProperties": true
+          }
+        },
+        "error": {"type": "string"},
+        "detail": {},
+        "status_code": {"type": "integer"}
+      },
+      "additionalProperties": true
+    },
+    "fields": {"kind": "children", "ontology_id": "efo"}
+  },
+  {
+    "type": "OLSRESTTool",
+    "name": "ols_get_efo_ontology_info",
+    "description": "Get metadata about the EFO ontology itself (version, status, number of terms, title/description).",
+    "parameter": {"type": "object", "properties": {}, "required": []},
+    "test_examples": [{}],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "url": {"type": "string"},
+        "ontology": {
+          "type": "object",
+          "properties": {
+            "ontologyId": {"type": ["string", "null"]},
+            "version": {"type": ["string", "null"]},
+            "status": {"type": ["string", "null"]},
+            "numberOfTerms": {"type": ["integer", "null"]},
+            "updated": {"type": ["string", "null"]},
+            "title": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "homepage": {"type": ["string", "null"]}
+          },
+          "additionalProperties": true
+        },
+        "error": {"type": "string"},
+        "detail": {},
+        "status_code": {"type": "integer"}
+      },
+      "additionalProperties": true
+    },
+    "fields": {"kind": "ontology", "ontology_id": "efo"}
+  },
+  {
+    "type": "OLSRESTTool",
+    "name": "ols_list_ontologies",
+    "description": "List available ontologies in OLS (not limited to EFO). Useful to discover `ontologyId`, sizes, and status.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "size": {"type": "integer", "description": "Maximum number of ontologies to return.", "default": 20}
+      },
+      "required": []
+    },
+    "test_examples": [{"size": 2}],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "url": {"type": "string"},
+        "count": {"type": "integer"},
+        "ontologies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ontologyId": {"type": ["string", "null"]},
+              "title": {"type": ["string", "null"]},
+              "numberOfTerms": {"type": ["integer", "null"]},
+              "status": {"type": ["string", "null"]}
+            },
+            "additionalProperties": true
+          }
+        },
+        "error": {"type": "string"},
+        "detail": {},
+        "status_code": {"type": "integer"}
+      },
+      "additionalProperties": true
+    },
+    "fields": {"kind": "ontologies"}
+  }
 ]

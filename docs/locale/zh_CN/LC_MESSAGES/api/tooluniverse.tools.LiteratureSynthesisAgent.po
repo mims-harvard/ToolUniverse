@@ -81,4 +81,4 @@ msgstr "返回类型"
 #: 53f6934ee8fb470ca32f001ebf0d1875 of
 #: tooluniverse.tools.LiteratureSynthesisAgent.LiteratureSynthesisAgent:16
 msgid ":py:class:`Any`"
-msgstr ""
+msgstr ":py:class:`任意`"

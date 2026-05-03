@@ -1,0 +1,85 @@
+[
+  {
+    "name": "GMrepo_search_species",
+    "type": "GmrepoTool",
+    "description": "Search the GMrepo database for gut microbiome species by name. Returns species with NCBI taxon IDs, sample counts, prevalence across conditions, and number of associated phenotypes. GMrepo is a curated human gut microbiome repository with data from 96,000+ samples across 350+ phenotypes. Use this to find specific bacteria and their prevalence in human gut studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Species name or partial name to search. Examples: 'Akkermansia', 'Bacteroides', 'Lactobacillus', 'Faecalibacterium prausnitzii', 'Bifidobacterium'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return. Default: 20.",
+          "default": 20
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint_type": "search_species"
+    },
+    "test_examples": [
+      {"query": "Akkermansia"},
+      {"query": "Bacteroides", "limit": 5}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ncbi_taxon_id": {"type": ["integer", "null"]},
+          "name": {"type": ["string", "null"]},
+          "presented_samples": {"type": ["string", "null"]},
+          "nr_phenotypes": {"type": ["integer", "null"]},
+          "pct_of_all_samples": {"type": ["string", "null"]}
+        }
+      }
+    }
+  },
+  {
+    "name": "GMrepo_get_phenotypes",
+    "type": "GmrepoTool",
+    "description": "List phenotypes and health conditions with gut microbiome data in the GMrepo database. Returns MeSH disease IDs, sample counts, and species/genus diversity for each phenotype. Optionally filter by keyword (e.g., 'diabetes', 'obesity', 'cancer'). GMrepo covers 350+ phenotypes including healthy controls. Use this to find what conditions have microbiome data available.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Optional keyword to filter phenotypes. Examples: 'diabetes', 'obesity', 'cancer', 'Healthy', 'Crohn'. Leave empty to list all phenotypes.",
+          "default": ""
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return. Default: 20.",
+          "default": 20
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "get_phenotypes"
+    },
+    "test_examples": [
+      {"query": "diabetes"},
+      {"query": "obesity", "limit": 5}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phenotype_id": {"type": ["integer", "null"]},
+          "mesh_id": {"type": ["string", "null"]},
+          "term": {"type": ["string", "null"]},
+          "all_samples": {"type": ["integer", "null"]},
+          "valid_runs": {"type": ["integer", "null"]},
+          "nr_species": {"type": ["integer", "null"]},
+          "nr_genus": {"type": ["integer", "null"]}
+        }
+      }
+    }
+  }
+]

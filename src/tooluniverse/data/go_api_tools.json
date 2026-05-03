@@ -1,0 +1,372 @@
+[
+  {
+    "name": "GOAPI_get_term",
+    "description": "Get detailed information about a Gene Ontology (GO) term by its GO ID. Returns the term label, full definition, synonyms, cross-references, and alternative IDs. GO terms describe gene product attributes across three domains: Biological Process (BP), Molecular Function (MF), and Cellular Component (CC). Example: GO:0006915 returns 'apoptotic process' with its definition and related terms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "go_id": {
+          "type": "string",
+          "description": "Gene Ontology term ID. Format: GO:NNNNNNN. Examples: 'GO:0006915' (apoptotic process), 'GO:0008285' (negative regulation of cell population proliferation), 'GO:0005634' (nucleus), 'GO:0003677' (DNA binding)."
+        }
+      },
+      "required": [
+        "go_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "term"
+    },
+    "type": "GOAPITool",
+    "test_examples": [
+      {
+        "go_id": "GO:0006915"
+      },
+      {
+        "go_id": "GO:0005634"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "go_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "GO term identifier"
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Term name/label"
+                },
+                "definition": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Full text definition"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Exact synonyms"
+                },
+                "related_synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Related synonyms"
+                },
+                "xrefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Cross-references (Reactome, Wikipedia, etc.)"
+                },
+                "alternative_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Alternative/obsolete GO IDs"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GOAPI_get_gene_functions",
+    "description": "Get Gene Ontology (GO) annotations for a specific gene, showing its known biological processes, molecular functions, and cellular components. Returns GO terms with evidence types (IDA=direct assay, IMP=mutant phenotype, ISS=sequence similarity, etc.) and literature references. Input is a gene CURIE identifier. Example: HGNC:11998 (TP53) returns annotations like 'apoptotic process', 'DNA binding', 'nucleus'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Gene identifier as a CURIE. Examples: 'HGNC:11998' (TP53), 'UniProtKB:P04637' (p53 protein), 'HGNC:1100' (BRCA1), 'MGI:MGI:98834' (Trp53 mouse). For human genes, use HGNC prefix."
+        },
+        "rows": {
+          "type": "integer",
+          "description": "Maximum number of annotations to return (default: 20, max: 100)."
+        },
+        "aspect": {
+          "type": "string",
+          "description": "Filter by GO aspect: 'P' (Biological Process), 'F' (Molecular Function), 'C' (Cellular Component). Default: all aspects."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "gene_functions"
+    },
+    "type": "GOAPITool",
+    "test_examples": [
+      {
+        "gene_id": "HGNC:11998"
+      },
+      {
+        "gene_id": "UniProtKB:P04637",
+        "rows": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO term ID"
+                  },
+                  "go_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO term name"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO domain (biological_process, molecular_function, cellular_component)"
+                  },
+                  "evidence_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Evidence code (IDA, IMP, ISS, IEA, etc.)"
+                  },
+                  "evidence_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Full evidence description"
+                  },
+                  "provided_by": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Annotation providers"
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Literature references (PMID, UniProtKB)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "gene_id": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GOAPI_get_genes_by_function",
+    "description": "Get genes annotated with a specific Gene Ontology (GO) term. Find all genes/proteins that have been experimentally or computationally associated with a biological process, molecular function, or cellular component. Optionally filter by taxon. Example: GO:0006915 (apoptotic process) returns genes like TP53, BAX, BCL2 that function in apoptosis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "go_id": {
+          "type": "string",
+          "description": "Gene Ontology term ID. Examples: 'GO:0006915' (apoptotic process), 'GO:0003677' (DNA binding), 'GO:0005634' (nucleus)."
+        },
+        "rows": {
+          "type": "integer",
+          "description": "Maximum number of gene annotations to return (default: 20, max: 100)."
+        },
+        "taxon": {
+          "type": "string",
+          "description": "Filter by taxon. Format: NCBITaxon:ID. Examples: 'NCBITaxon:9606' (human), 'NCBITaxon:10090' (mouse), 'NCBITaxon:7227' (Drosophila)."
+        }
+      },
+      "required": [
+        "go_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_annotations"
+    },
+    "type": "GOAPITool",
+    "test_examples": [
+      {
+        "go_id": "GO:0006915",
+        "rows": 10
+      },
+      {
+        "go_id": "GO:0003677",
+        "taxon": "NCBITaxon:9606",
+        "rows": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene/protein identifier (UniProtKB, HGNC, etc.)"
+                  },
+                  "gene_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol or name"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxon identifier"
+                  },
+                  "taxon_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species name"
+                  },
+                  "evidence_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Evidence code"
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Literature references"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "go_id": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

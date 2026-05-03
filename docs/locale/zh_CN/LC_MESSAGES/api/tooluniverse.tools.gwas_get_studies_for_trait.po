@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_get\\_studies\\_for\\_trait 模块"
 #: 37037caaaa9b432db407fe6245036ea8 of
 #: tooluniverse.tools.gwas_get_studies_for_trait:1
 msgid "gwas_get_studies_for_trait"
-msgstr ""
+msgstr "gwas_get_studies_for_trait（获取特定性状的GWAS研究）"
 
 #: b2144971cbc54c10900c95a241290982 b78da64d184b49d39f0efdc926b2222e of
 #: tooluniverse.tools.gwas_get_studies_for_trait:3

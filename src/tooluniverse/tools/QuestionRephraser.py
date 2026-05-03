@@ -15,7 +15,7 @@ def QuestionRephraser(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Generates three distinct paraphrases of a given question while ensuring answer options remain val...
 
@@ -34,14 +34,20 @@ def QuestionRephraser(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"question": question, "options": options}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "QuestionRephraser",
-            "arguments": {"question": question, "options": options},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

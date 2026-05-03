@@ -1,0 +1,13 @@
+{
+  "api_name": "BindingDB REST API",
+  "base_url": "https://www.bindingdb.org/rest",
+  "failure_mode": "Request timeout (60s) — no response from REST endpoints",
+  "root_cause": "The BindingDB REST API endpoints (/getLigandsByUniprot, /getLigandsByUniprots, /getLigandsByPDBs, /getTargetByCompound) hang indefinitely. The BindingDB website (bindingdb.org) itself returns HTTP 200, but the REST API path does not respond within 60s. Likely an overloaded or decommissioned REST tier.",
+  "confirmed_broken_date": "2026-03-24",
+  "last_retry_date": "2026-03-24",
+  "retry_count": 2,
+  "retry_after": "2026-06-01",
+  "retry_notes": "Try GET https://www.bindingdb.org/rest/getLigandsByUniprot?uniprot=P35354;100&response=application/json — if it responds within 60s the API is back.",
+  "workaround": "Use ChEMBL API (chembl_tool.py) for compound-target binding affinity data, or PubChem BioAssay for ligand activity data.",
+  "tool_file": "src/tooluniverse/bindingdb_tool.py"
+}

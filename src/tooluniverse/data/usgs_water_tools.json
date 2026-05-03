@@ -1,0 +1,313 @@
+[
+  {
+    "name": "USGSWater_get_streamflow",
+    "description": "Get real-time streamflow (discharge) data from USGS water monitoring stations. Returns instantaneous values for water flow rate in cubic feet per second (ft3/s) including site name, location coordinates, and recent measurements. The USGS monitors over 10,000 stream gauges across the United States.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sites": {
+          "type": "string",
+          "description": "USGS site number(s), comma-separated (e.g., '01646500' for Potomac River near Washington DC, '09380000' for Colorado River at Lees Ferry)"
+        },
+        "period": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Time period for data in ISO 8601 duration format (e.g., 'PT2H' for 2 hours, 'P1D' for 1 day, 'P7D' for 7 days). Default: 'P1D'"
+        }
+      },
+      "required": [
+        "sites"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://waterservices.usgs.gov/nwis/iv/",
+      "params": {
+        "format": "json",
+        "parameterCd": "00060"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "sites": "01646500",
+        "period": "PT2H"
+      },
+      {
+        "sites": "09380000",
+        "period": "P1D"
+      },
+      {
+        "sites": "12340000",
+        "period": "PT6H"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "USGS water data response",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "declaredType": {
+              "type": "string"
+            },
+            "value": {
+              "type": "object",
+              "properties": {
+                "queryInfo": {
+                  "type": "object"
+                },
+                "timeSeries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sourceInfo": {
+                        "type": "object",
+                        "properties": {
+                          "siteName": {
+                            "type": "string"
+                          },
+                          "siteCode": {
+                            "type": "array"
+                          },
+                          "geoLocation": {
+                            "type": "object"
+                          }
+                        }
+                      },
+                      "variable": {
+                        "type": "object",
+                        "properties": {
+                          "variableName": {
+                            "type": "string"
+                          },
+                          "unit": {
+                            "type": "object"
+                          }
+                        }
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "value": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "value": {
+                                    "type": "string"
+                                  },
+                                  "dateTime": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "USGSWater_get_water_level",
+    "description": "Get real-time water level (gage height) data from USGS monitoring stations. Returns water surface elevation in feet above a reference datum. Useful for monitoring river/lake levels, flood conditions, and drought assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sites": {
+          "type": "string",
+          "description": "USGS site number(s), comma-separated (e.g., '01646500' for Potomac River)"
+        },
+        "period": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Time period in ISO 8601 format (e.g., 'PT2H', 'P1D', 'P7D'). Default: 'P1D'"
+        }
+      },
+      "required": [
+        "sites"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://waterservices.usgs.gov/nwis/iv/",
+      "params": {
+        "format": "json",
+        "parameterCd": "00065"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "sites": "01646500",
+        "period": "PT2H"
+      },
+      {
+        "sites": "09380000",
+        "period": "P1D"
+      },
+      {
+        "sites": "02037500",
+        "period": "PT6H"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "USGS water level data",
+          "properties": {
+            "value": {
+              "type": "object",
+              "properties": {
+                "timeSeries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sourceInfo": {
+                        "type": "object"
+                      },
+                      "variable": {
+                        "type": "object"
+                      },
+                      "values": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "USGSWater_get_water_temperature",
+    "description": "Get real-time water temperature data from USGS monitoring stations. Returns water temperature in degrees Celsius. Useful for ecological monitoring, aquatic habitat assessment, and water quality analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sites": {
+          "type": "string",
+          "description": "USGS site number(s), comma-separated"
+        },
+        "period": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Time period in ISO 8601 format (e.g., 'PT2H', 'P1D', 'P7D'). Default: 'P1D'"
+        }
+      },
+      "required": [
+        "sites"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://waterservices.usgs.gov/nwis/iv/",
+      "params": {
+        "format": "json",
+        "parameterCd": "00010"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "sites": "01646500",
+        "period": "PT2H"
+      },
+      {
+        "sites": "09380000",
+        "period": "P1D"
+      },
+      {
+        "sites": "01578310",
+        "period": "PT6H"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "USGS water temperature data",
+          "properties": {
+            "value": {
+              "type": "object",
+              "properties": {
+                "timeSeries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sourceInfo": {
+                        "type": "object"
+                      },
+                      "variable": {
+                        "type": "object"
+                      },
+                      "values": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

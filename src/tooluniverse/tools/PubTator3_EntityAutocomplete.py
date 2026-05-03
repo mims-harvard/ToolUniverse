@@ -10,13 +10,13 @@ from ._shared_client import get_shared_client
 
 def PubTator3_EntityAutocomplete(
     text: str,
-    entity_type: str,
-    max_results: int,
+    entity_type: Optional[str] = None,
+    max_results: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Provides suggestions for the best‐matching standardized PubTator IDs for a partial biomedical ter...
 
@@ -37,18 +37,24 @@ def PubTator3_EntityAutocomplete(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "text": text,
+            "entity_type": entity_type,
+            "max_results": max_results,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "PubTator3_EntityAutocomplete",
-            "arguments": {
-                "text": text,
-                "entity_type": entity_type,
-                "max_results": max_results,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

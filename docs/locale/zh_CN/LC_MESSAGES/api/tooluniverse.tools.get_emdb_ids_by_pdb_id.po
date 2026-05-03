@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_emdb\\_ids\\_by\\_pdb\\_id 模块"
 #: faa6531563f249cab603b731e6ae08b0 of
 #: tooluniverse.tools.get_emdb_ids_by_pdb_id:1
 msgid "get_emdb_ids_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取EMDB ID"
 
 #: 8bdd0fac873a40da9855f6bf75aa284c c631940b7e1c4a998ad1b5469b55bc79 of
 #: tooluniverse.tools.get_emdb_ids_by_pdb_id:3

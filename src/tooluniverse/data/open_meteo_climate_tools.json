@@ -1,0 +1,75 @@
+[
+  {
+    "name": "OpenMeteo_get_historical_climate",
+    "description": "Get historical daily climate data for any location on Earth using the Open-Meteo Climate Change API. Returns daily temperature, precipitation, wind, humidity, and other variables from climate reanalysis models (ERA5, EC-Earth3P_HR, CMIP6). Data available from 1950 onwards. No authentication required. Useful for climate research, trend analysis, and historical weather studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Location latitude (-90 to 90). Examples: 52.52 (Berlin), 40.71 (NYC), 48.85 (Paris)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Location longitude (-180 to 180). Examples: 13.41 (Berlin), -74.01 (NYC), 2.35 (Paris)"
+        },
+        "start_date": {
+          "type": "string",
+          "description": "Start date in YYYY-MM-DD format. Data available from 1950-01-01. Examples: '1980-01-01', '2000-06-01', '2020-01-01'"
+        },
+        "end_date": {
+          "type": "string",
+          "description": "End date in YYYY-MM-DD format. Examples: '1980-12-31', '2000-06-30', '2023-12-31'"
+        },
+        "daily": {
+          "type": ["string", "null"],
+          "description": "Comma-separated daily variables. Values: 'temperature_2m_mean', 'temperature_2m_max', 'temperature_2m_min', 'precipitation_sum', 'rain_sum', 'snowfall_sum', 'wind_speed_10m_max', 'et0_fao_evapotranspiration'. Default: temperature_2m_mean,precipitation_sum"
+        },
+        "models": {
+          "type": ["string", "null"],
+          "description": "Climate model. Values: 'EC_Earth3P_HR' (Europe, high res), 'MPI_ESM1_2_XR', 'FGOALS_f3_H', 'CMCC_CM2_VHR4'. Default: EC_Earth3P_HR"
+        }
+      },
+      "required": ["latitude", "longitude", "start_date", "end_date"]
+    },
+    "fields": {
+      "endpoint": "https://climate-api.open-meteo.com/v1/climate",
+      "params": {"daily": "temperature_2m_mean,precipitation_sum", "models": "EC_Earth3P_HR"}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"latitude": 52.52, "longitude": 13.41, "start_date": "1980-01-01", "end_date": "1980-01-07"},
+      {"latitude": 40.71, "longitude": -74.01, "start_date": "2000-06-01", "end_date": "2000-06-07"},
+      {"latitude": 48.85, "longitude": 2.35, "start_date": "1990-01-01", "end_date": "1990-01-07", "daily": "temperature_2m_mean,temperature_2m_max,temperature_2m_min,precipitation_sum"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Historical climate data",
+          "properties": {
+            "latitude": {"type": "number"},
+            "longitude": {"type": "number"},
+            "elevation": {"type": "number"},
+            "timezone": {"type": "string"},
+            "daily_units": {"type": "object", "description": "Units for each daily variable"},
+            "daily": {
+              "type": "object",
+              "description": "Daily climate data arrays",
+              "properties": {
+                "time": {"type": "array", "items": {"type": "string"}},
+                "temperature_2m_mean": {"type": "array", "items": {"type": ["number", "null"]}},
+                "precipitation_sum": {"type": "array", "items": {"type": ["number", "null"]}}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

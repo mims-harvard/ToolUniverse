@@ -1,0 +1,33 @@
+{
+  "api_name": "PhenoScanner V2",
+  "base_url": "http://www.phenoscanner.medschl.cam.ac.uk/api/",
+  "failure_mode": "Connection timeout (port 80 and 443 unreachable)",
+  "root_cause": "Cambridge University IT outage since March 2024. Maintainer Stephen Burgess confirmed 'no timetable for restoring' PhenoScanner. Server at 131.111.94.77 does not respond on any port. See GitHub issue phenoscanner/phenoscanner#6.",
+  "confirmed_broken_date": "2024-03-08",
+  "last_retry_date": "2026-03-24",
+  "retry_count": 3,
+  "github_issues": [
+    "https://github.com/phenoscanner/phenoscanner/issues/6"
+  ],
+  "retry_after": "never",
+  "workaround": "GWAS Catalog REST API (gwas_get_associations_for_snp, gwas_get_snps_for_gene) covers GWAS phenotype-genotype associations. OpenTargets covers variant-disease evidence. eQTL/pQTL/mQTL catalogues have no single public REST API equivalent.",
+  "workaround_tool_file": "src/tooluniverse/phenoscanner_tool.py",
+  "investigation_notes": [
+    "DNS resolves: www.phenoscanner.medschl.cam.ac.uk -> 131.111.94.77",
+    "Connection timeout on both port 80 and 443 (firewall or server down)",
+    "GitHub issue #6 opened 2024-03-08, maintainer confirmed 'massive IT outage'",
+    "As of 2024-05-18: 'no timetable yet for restoring'",
+    "As of 2024-10-05: still non-functional per latest GitHub comment",
+    "As of 2026-03-24: still unreachable (3 retry attempts, all timeout)",
+    "R package (phenoscanner) and Python CLI (phenoscannerpy) both use same broken API URL",
+    "GWAS Catalog covers GWAS associations; eQTL/pQTL/mQTL have no single REST alternative",
+    "Workaround queries GWAS Catalog for SNP and gene phenotype associations"
+  ],
+  "attempted_config": {
+    "snp_query_url": "http://www.phenoscanner.medschl.cam.ac.uk/api/?snpquery={rsid}&catalogue={catalogue}&p={p_value}&proxies={proxies}&r2={r2}&build={build}",
+    "gene_query_url": "http://www.phenoscanner.medschl.cam.ac.uk/api/?genequery={gene}&catalogue={catalogue}&p={p_value}&proxies=None&r2=1&build={build}",
+    "catalogues": ["GWAS", "eQTL", "pQTL", "mQTL", "methQTL"],
+    "proxy_populations": ["None", "AFR", "AMR", "EAS", "EUR", "SAS"],
+    "builds": ["37", "38"]
+  }
+}

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_target\\_disease\\_evidence 模块"
 #: 19ed9a1dca90439caa39e99bfd6f9d03 of
 #: tooluniverse.tools.OpenTargets_target_disease_evidence:1
 msgid "OpenTargets_target_disease_evidence"
-msgstr ""
+msgstr "OpenTargets_靶点_疾病_证据"
 
 #: 2c3f0d20e793422db353b91cf50e9ccf b5ae221770b44374bbf5279a25d8c376 of
 #: tooluniverse.tools.OpenTargets_target_disease_evidence:3

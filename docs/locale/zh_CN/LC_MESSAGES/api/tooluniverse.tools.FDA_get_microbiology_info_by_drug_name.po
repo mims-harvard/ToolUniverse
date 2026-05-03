@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_microbiology\\_info\\_by\\_drug\\_name �
 #: 69588b020f0b43de88c00cbcdd607342 of
 #: tooluniverse.tools.FDA_get_microbiology_info_by_drug_name:1
 msgid "FDA_get_microbiology_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取微生物学信息"
 
 #: dbc4b45967fc4507979fa7fdb0531a16 ecf288ae68eb445d99fd82bb19f36364 of
 #: tooluniverse.tools.FDA_get_microbiology_info_by_drug_name:3

@@ -1,0 +1,403 @@
+[
+  {
+    "name": "PANTHER_gene_info",
+    "description": "Get gene classification and functional annotation from PANTHER (Protein ANalysis THrough Evolutionary Relationships). Returns PANTHER family/subfamily, Gene Ontology annotations (molecular function, biological process, cellular component), PANTHER protein class, and pathway membership. PANTHER classifies genes by evolutionary relationships across 144 organisms. Example: P04637 returns TP53 classified in family PTHR11447 (tumor protein p53) with GO annotations for DNA-binding transcription factor activity.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Gene identifier - UniProt accession, Ensembl ID, or gene symbol. Examples: 'P04637' (TP53), 'P38398' (BRCA1), 'ENSG00000141510'."
+        },
+        "organism": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "NCBI taxonomy ID. Default: 9606 (human). Others: 10090 (mouse), 10116 (rat), 7227 (fly), 6239 (worm), 559292 (yeast)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_info"
+    },
+    "type": "PANTHERTool",
+    "test_examples": [
+      {
+        "gene_id": "P04637",
+        "organism": 9606
+      },
+      {
+        "gene_id": "P38398",
+        "organism": 9606
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_id": {
+                  "type": "string"
+                },
+                "organism": {
+                  "type": "integer"
+                },
+                "family_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "subfamily_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "annotations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "category": {
+                        "type": "string"
+                      },
+                      "terms": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PANTHER_enrichment",
+    "description": "Perform gene set enrichment (overrepresentation) analysis using PANTHER. Given a gene list, identifies statistically enriched GO terms, PANTHER pathways, Reactome pathways, or protein classes using Fisher's exact test with FDR correction. PANTHER is one of the most widely used tools for functional enrichment in bioinformatics. Example: gene list 'TP53,BRCA1,EGFR,KRAS,PTEN' enriched for GO biological_process returns 'regulation of mitotic cell cycle phase transition' (FDR=0.003).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_list": {
+          "type": "string",
+          "description": "Comma-separated list of gene symbols, UniProt IDs, or Ensembl IDs. Example: 'TP53,BRCA1,EGFR,KRAS,PTEN,APC,RB1'."
+        },
+        "organism": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "NCBI taxonomy ID. Default: 9606 (human). Others: 10090 (mouse), 7227 (fly), 559292 (yeast)."
+        },
+        "annotation_dataset": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Annotation dataset for enrichment. Options: 'GO:0008150' (biological_process, default), 'GO:0003674' (molecular_function), 'GO:0005575' (cellular_component), 'ANNOT_TYPE_ID_PANTHER_PATHWAY' (PANTHER pathway), 'ANNOT_TYPE_ID_REACTOME_PATHWAY' (Reactome pathway), 'ANNOT_TYPE_ID_PANTHER_PC' (protein class)."
+        }
+      },
+      "required": [
+        "gene_list"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "enrichment"
+    },
+    "type": "PANTHERTool",
+    "test_examples": [
+      {
+        "gene_list": "TP53,BRCA1,EGFR,KRAS,PTEN",
+        "organism": 9606,
+        "annotation_dataset": "GO:0008150"
+      },
+      {
+        "gene_list": "TP53,BRCA1,EGFR,KRAS,PTEN,APC,RB1",
+        "organism": 9606,
+        "annotation_dataset": "ANNOT_TYPE_ID_PANTHER_PATHWAY"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_list": {
+                  "type": "string"
+                },
+                "organism": {
+                  "type": "integer"
+                },
+                "annotation_dataset": {
+                  "type": "string"
+                },
+                "result_count": {
+                  "type": "integer"
+                },
+                "enriched_terms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term_id": {
+                        "type": "string"
+                      },
+                      "term_label": {
+                        "type": "string"
+                      },
+                      "number_in_list": {
+                        "type": "integer"
+                      },
+                      "number_in_reference": {
+                        "type": "integer"
+                      },
+                      "expected": {
+                        "type": "number"
+                      },
+                      "fold_enrichment": {
+                        "type": "number"
+                      },
+                      "pvalue": {
+                        "type": "number"
+                      },
+                      "fdr": {
+                        "type": "number"
+                      },
+                      "direction": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PANTHER_ortholog",
+    "description": "Find orthologs of a gene across species using PANTHER evolutionary classification. Returns the orthologous gene in a target species with its persistent ID, gene symbol, and ortholog type (LDO=Least Diverged Ortholog, O=ortholog, P=paralog, X=xenolog, LDX=least diverged xenolog). PANTHER classifies orthologs by evolutionary divergence across 144 fully sequenced genomes. Example: P04637 (human TP53) maps to Tp53 (mouse P02340) as LDO.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Gene identifier - UniProt accession, Ensembl ID, or gene symbol. Examples: 'P04637' (TP53), 'P38398' (BRCA1)."
+        },
+        "organism": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Source organism NCBI taxonomy ID. Default: 9606 (human)."
+        },
+        "target_organism": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Target organism NCBI taxonomy ID. Default: 10090 (mouse). Others: 10116 (rat), 7227 (fly), 6239 (worm)."
+        },
+        "ortholog_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ortholog type filter. Options: 'LDO' (least diverged ortholog, default), 'O' (all orthologs), 'P' (paralogs), 'X' (xenologs), 'LDX' (least diverged xenolog), 'all' (all types)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "ortholog"
+    },
+    "type": "PANTHERTool",
+    "test_examples": [
+      {
+        "gene_id": "P04637",
+        "organism": 9606,
+        "target_organism": 10090,
+        "ortholog_type": "LDO"
+      },
+      {
+        "gene_id": "P38398",
+        "organism": 9606,
+        "target_organism": 10090,
+        "ortholog_type": "LDO"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_id": {
+                  "type": "string"
+                },
+                "source_organism": {
+                  "type": "integer"
+                },
+                "target_organism": {
+                  "type": "integer"
+                },
+                "ortholog_type": {
+                  "type": "string"
+                },
+                "mapping": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "source_gene": {
+                      "type": "string"
+                    },
+                    "target_gene": {
+                      "type": "string"
+                    },
+                    "target_gene_symbol": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ortholog_type": {
+                      "type": "string"
+                    },
+                    "persistent_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "target_persistent_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

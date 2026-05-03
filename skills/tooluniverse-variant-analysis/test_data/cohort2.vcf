@@ -1,0 +1,19 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##INFO=<ID=ANN,Number=.,Type=String,Description="SnpEff annotation">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth">
+##FORMAT=<ID=AF,Number=A,Type=Float,Description="Allele fractions">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	COHORT2_S1
+1	12345	rs12345	A	G	120	PASS	ANN=G|missense_variant|MODERATE|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding|1/5|c.100A>G|p.Thr34Ala||||;DP=250	GT:AD:DP:AF	0/1:188,62:250:0.25
+1	12400	rs12346	C	T	100	PASS	ANN=T|synonymous_variant|LOW|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding|2/5|c.200C>T|p.Ala67=||||;DP=200	GT:AD:DP:AF	0/1:170,30:200:0.15
+1	12500	.	G	A	35	PASS	ANN=A|intron_variant|MODIFIER|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding||||||||;DP=60	GT:AD:DP:AF	0/1:54,6:60:0.10
+1	12600	rs12347	T	C	160	PASS	ANN=C|missense_variant|MODERATE|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding|3/5|c.300T>C|p.Val100Ala||||;DP=320	GT:AD:DP:AF	0/1:192,128:320:0.40
+7	55249071	rs121913529	T	A	210	PASS	ANN=A|missense_variant|MODERATE|EGFR|ENSG00000146648|transcript|ENST00000275493|protein_coding|21/28|c.2573T>A|p.Leu858Arg||||;DP=550	GT:AD:DP:AF	0/1:330,220:550:0.40
+17	7577120	rs28934578	C	T	190	PASS	ANN=T|missense_variant|MODERATE|TP53|ENSG00000141510|transcript|ENST00000269305|protein_coding|8/11|c.818C>T|p.Arg273His||||;DP=450	GT:AD:DP:AF	0/1:270,180:450:0.40
+19	44908822	rs7412	C	T	200	PASS	ANN=T|missense_variant|MODERATE|APOE|ENSG00000130203|transcript|ENST00000252486|protein_coding|4/4|c.526C>T|p.Arg176Cys||||;DP=400	GT:AD:DP:AF	0/1:280,120:400:0.30
+1	13600	.	A	G	150	PASS	ANN=G|synonymous_variant|LOW|GENE4|ENSG00000004|transcript|ENST00000004|protein_coding|1/2|c.30A>G|p.Leu10=||||;DP=300	GT:AD:DP:AF	0/1:210,90:300:0.30
+1	14100	.	C	A	140	PASS	ANN=A|missense_variant|MODERATE|GENE6|ENSG00000006|transcript|ENST00000006|protein_coding|2/4|c.200C>A|p.Pro67His||||;DP=270	GT:AD:DP:AF	0/1:189,81:270:0.30
+1	14200	.	T	TA	70	PASS	ANN=TA|frameshift_variant|HIGH|GENE6|ENSG00000006|transcript|ENST00000006|protein_coding|3/4|c.300insA|p.Gly100Alafs*5||||;DP=100	GT:AD:DP:AF	0/1:80,20:100:0.20

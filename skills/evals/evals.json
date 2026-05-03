@@ -1,0 +1,26 @@
+{
+  "skill_name": "tooluniverse-reasoning-skills",
+  "evals": [
+    {
+      "id": 1,
+      "skill": "tooluniverse-organic-chemistry",
+      "prompt": "What is the IUPAC name of the product of 1,3-dibromo-2-iodobenzene and excess phenyl magnesium bromide refluxing in THF after aqueous work-up?",
+      "expected_output": "1,1':3',1''-terphenyl",
+      "files": []
+    },
+    {
+      "id": 2,
+      "skill": "tooluniverse-computational-biophysics",
+      "prompt": "A 6-year-old child weighing 22 kg is prescribed a chemotherapy drug with a recommended dose of 25 mg/m²/day, administered over 3 days. The child's body surface area (BSA) is calculated as 0.8 m². The drug is supplied in a single-dose vial of 100mg/5mL, and the prescribed dosage must be diluted in 50 mL of 0.9% normal saline for IV infusion. If 4.7 mL was drawn from the vial to prepare the IV medication, what is the final drip rate in drops per minute, assuming 60 drops/mL and that the medication was infused over 1 hour?",
+      "expected_output": "49",
+      "files": []
+    },
+    {
+      "id": 3,
+      "skill": "tooluniverse-drug-drug-interaction",
+      "prompt": "An elderly patient with a history of insomnia, an increase in activity, and infrequent seizures visit a hospital for treatment. Two weeks later the family reports an increase in seizure episodes. The physician prescribed valproate as a mood stabilizer. What is the most likely mechanism explaining the increased seizures?",
+      "expected_output": "Inhibition of lamotrigine glucuronidation",
+      "files": []
+    }
+  ]
+}

@@ -23,17 +23,14 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "List of DBLP publications matching the search query",
       "items": {
         "type": "object",
         "properties": {
           "title": {
-            "type": "string",
-            "description": "Title of the publication"
+            "type": "string"
           },
           "abstract": {
-            "type": "string",
-            "description": "Abstract of the publication (not available from DBLP)"
+            "type": "string"
           },
           "authors": {
             "type": "array",
@@ -47,59 +44,43 @@
                   "type": "string"
                 }
               }
-            },
-            "description": "List of authors with DBLP person IDs"
+            }
           },
           "year": {
-            "type": "integer",
-            "description": "Publication year"
+            "type": "integer"
           },
           "venue": {
-            "type": "string",
-            "description": "Venue information (conference/journal name)"
+            "type": "string"
           },
           "url": {
-            "type": "string",
-            "description": "URL to the publication on DBLP"
+            "type": "string"
           },
           "ee": {
-            "type": "string",
-            "description": "Electronic edition URL (DOI or publisher link)"
+            "type": "string"
           },
           "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier (extracted from ee field)"
+            "type": "string"
           },
           "citations": {
-            "type": "integer",
-            "description": "Number of citations (not available from DBLP)"
+            "type": "integer"
           },
           "open_access": {
-            "type": "boolean",
-            "description": "Open access status (not available from DBLP)"
+            "type": "boolean"
           },
           "keywords": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of keywords (not available from DBLP)"
+            "type": "string"
           },
           "article_type": {
-            "type": "string",
-            "description": "Type of publication (conference-paper)"
+            "type": "string"
           },
           "publisher": {
-            "type": "string",
-            "description": "Publisher name (not available from DBLP)"
+            "type": "string"
           },
           "source": {
-            "type": "string",
-            "description": "Source identifier (always 'DBLP')"
+            "type": "string"
           },
           "data_quality": {
             "type": "object",
-            "description": "Data quality indicators",
             "properties": {
               "has_abstract": {
                 "type": "boolean"

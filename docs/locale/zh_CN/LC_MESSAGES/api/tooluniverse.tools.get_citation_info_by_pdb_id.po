@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get_citation_info_by_pdb_id 模块"
 #: ce08ad3f56a646b0bc5a3a219bc20850 of
 #: tooluniverse.tools.get_citation_info_by_pdb_id:1
 msgid "get_citation_info_by_pdb_id"
-msgstr ""
+msgstr "get_citation_info_by_pdb_id 获取PDB ID对应的引用信息"
 
 #: f95a14bab9c245eb9bc44ae16b443599 fe4105d6ac2e448ea2d345cc86e6e76a of
 #: tooluniverse.tools.get_citation_info_by_pdb_id:3

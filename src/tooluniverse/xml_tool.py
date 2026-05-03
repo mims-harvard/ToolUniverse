@@ -159,7 +159,10 @@ class XMLDatasetTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Main entry point for the tool."""
         if not self.records:
-            return {"error": "XML dataset not loaded or contains no records"}
+            return {
+                "status": "error",
+                "error": "XML dataset not loaded or contains no records",
+            }
 
         # Route to appropriate function based on arguments
         if "query" in arguments:
@@ -168,14 +171,15 @@ class XMLDatasetTool(BaseTool):
             return self._filter(arguments)
         else:
             return {
-                "error": "Provide either 'query' for search or 'condition' for filtering"
+                "status": "error",
+                "error": "Provide either 'query' for search or 'condition' for filtering",
             }
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search records by text content across multiple fields."""
         query = arguments.get("query", "").strip()
         if not query:
-            return {"error": "Query parameter is required"}
+            return {"status": "error", "error": "Query parameter is required"}
 
         # Parse search parameters with sensible defaults
         case_sensitive = arguments.get("case_sensitive", False)
@@ -206,14 +210,17 @@ class XMLDatasetTool(BaseTool):
                     results.append(result_record)
 
         return {
-            "query": query,
-            "total_matches": total_matches,
-            "total_returned_results": len(results),
-            "results": results,
-            "search_parameters": {
-                "case_sensitive": case_sensitive,
-                "exact_match": exact_match,
-                "limit": limit,
+            "status": "success",
+            "data": {
+                "query": query,
+                "total_matches": total_matches,
+                "total_returned_results": len(results),
+                "results": results,
+                "search_parameters": {
+                    "case_sensitive": case_sensitive,
+                    "exact_match": exact_match,
+                    "limit": limit,
+                },
             },
         }
 
@@ -267,11 +274,17 @@ class XMLDatasetTool(BaseTool):
         limit = min(arguments.get("limit", 100), 1000)  # Cap at 1000
 
         if not field or not condition:
-            return {"error": "Both 'field' and 'condition' are required"}
+            return {
+                "status": "error",
+                "error": "Both 'field' and 'condition' are required",
+            }
 
         # Validate condition requirements
         if condition not in ["not_empty", "has_attribute"] and not value:
-            return {"error": f"'value' parameter required for condition '{condition}'"}
+            return {
+                "status": "error",
+                "error": f"'value' parameter required for condition '{condition}'",
+            }
 
         all_records = self._get_all_records_data()
 
@@ -279,7 +292,8 @@ class XMLDatasetTool(BaseTool):
         if all_records and field not in all_records[0]:
             available_fields = sorted(all_records[0].keys())
             return {
-                "error": f"Field '{field}' not found. Available: {available_fields}"
+                "status": "error",
+                "error": f"Field '{field}' not found. Available: {available_fields}",
             }
 
         filtered_records = []
@@ -287,7 +301,8 @@ class XMLDatasetTool(BaseTool):
 
         if not filter_func:
             return {
-                "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty, has_attribute"
+                "status": "error",
+                "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty, has_attribute",
             }
 
         total_matches = 0
@@ -301,17 +316,22 @@ class XMLDatasetTool(BaseTool):
                     filtered_records.append(result_record)
 
         return {
-            "total_matches": total_matches,
-            "total_returned_results": len(filtered_records),
-            "results": filtered_records,
-            "applied_filter": self._get_filter_description(field, condition, value),
-            "filter_parameters": {
-                "field": field,
-                "condition": condition,
-                "value": (
-                    value if condition not in ["not_empty", "has_attribute"] else None
-                ),
-                "limit": limit,
+            "status": "success",
+            "data": {
+                "total_matches": total_matches,
+                "total_returned_results": len(filtered_records),
+                "results": filtered_records,
+                "applied_filter": self._get_filter_description(field, condition, value),
+                "filter_parameters": {
+                    "field": field,
+                    "condition": condition,
+                    "value": (
+                        value
+                        if condition not in ["not_empty", "has_attribute"]
+                        else None
+                    ),
+                    "limit": limit,
+                },
             },
         }
 
@@ -347,7 +367,10 @@ class XMLDatasetTool(BaseTool):
     def get_dataset_info(self) -> Dict[str, Any]:
         """Get comprehensive information about the loaded XML dataset."""
         if not self.records:
-            return {"error": "XML dataset not loaded or contains no records"}
+            return {
+                "status": "error",
+                "error": "XML dataset not loaded or contains no records",
+            }
 
         # Get field information from sample records
         sample_data = self._get_all_records_data()[:5]

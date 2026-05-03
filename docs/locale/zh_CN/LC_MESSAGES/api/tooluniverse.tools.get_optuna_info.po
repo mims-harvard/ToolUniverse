@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_optuna\\_info 模块"
 
 #: 17c4e024ad7e42f888233f07a29f9203 of tooluniverse.tools.get_optuna_info:1
 msgid "get_optuna_info"
-msgstr ""
+msgstr "获取_optuna_信息"
 
 #: 756c9c4ff2dc493388eeba97423e935c ab19ade36a8f45c19097818960da464f of
 #: tooluniverse.tools.get_optuna_info:3

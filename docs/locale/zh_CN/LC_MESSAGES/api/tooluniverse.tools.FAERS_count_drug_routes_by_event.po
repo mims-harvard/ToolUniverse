@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_drug\\_routes\\_by\\_event 模块"
 #: 0db28c2ebc5441d388096c24265c36b3 of
 #: tooluniverse.tools.FAERS_count_drug_routes_by_event:1
 msgid "FAERS_count_drug_routes_by_event"
-msgstr ""
+msgstr "FAERS_按事件统计药物给药途径"
 
 #: 452f06f3f8d140b196b14be8cbc860be a67af348d5c14bf381e9ee8b5f361ab1 of
 #: tooluniverse.tools.FAERS_count_drug_routes_by_event:3

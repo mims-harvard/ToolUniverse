@@ -1,0 +1,189 @@
+[
+  {
+    "type": "ArrayExpressRESTTool",
+    "name": "arrayexpress_search_experiments",
+    "description": "Search ArrayExpress experiments - the original functional genomics database from EMBL-EBI. Searches microarray and RNA-seq experiments by keywords, species, or array platform. Returns experiment metadata including accession IDs (E-GEOD, E-MTAB), titles, descriptions, and study information. Note: Some newer ArrayExpress data is now hosted in BioStudies - use BioStudies tools if an accession is not found here.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "string",
+          "description": "Search keywords (e.g., disease name, tissue type, experimental condition)"
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name (e.g., 'Homo sapiens', 'Mus musculus')"
+        },
+        "array": {
+          "type": "string",
+          "description": "Array platform name"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (default: 10, max: 100)",
+          "default": 10,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/arrayexpress/json/v3/experiments",
+      "note": "Original ArrayExpress API endpoint (redirects to modern infrastructure while maintaining ArrayExpress data collection)",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Search results with experiments",
+      "properties": {
+        "experiments": {
+          "type": "array",
+          "description": "List of matching experiments"
+        },
+        "totalHits": {
+          "type": "integer",
+          "description": "Total number of matching experiments"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Current page number"
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "keywords": "cancer",
+        "limit": 10
+      },
+      {
+        "species": "Homo sapiens",
+        "keywords": "brain",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "type": "ArrayExpressRESTTool",
+    "name": "arrayexpress_get_experiment",
+    "description": "Get detailed information about a specific ArrayExpress experiment by its accession ID (E-GEOD, E-MTAB, etc.). Returns complete experiment metadata including title, description, protocols, experimental design, and publication information from the original ArrayExpress database.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "experiment_id": {
+          "type": "string",
+          "description": "ArrayExpress experiment ID (e.g., 'E-MTAB-1234')"
+        }
+      },
+      "required": ["experiment_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/arrayexpress/json/v3/experiments/{experiment_id}",
+      "note": "Original ArrayExpress API endpoint for experiment details",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Complete experiment information",
+      "properties": {
+        "accno": {
+          "type": "string",
+          "description": "Experiment accession number"
+        },
+        "section": {
+          "type": "object",
+          "description": "Experiment metadata and sections"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "experiment_id": "E-GEOD-26319"
+      }
+    ]
+  },
+  {
+    "type": "ArrayExpressRESTTool",
+    "name": "arrayexpress_get_experiment_files",
+    "description": "Get list of files associated with an ArrayExpress experiment. Returns file metadata including file names, types, sizes, and download paths for raw data files, processed data files, and MAGE-TAB annotation files.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "experiment_id": {
+          "type": "string",
+          "description": "ArrayExpress experiment ID"
+        }
+      },
+      "required": ["experiment_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/arrayexpress/files/{experiment_id}",
+      "note": "Original ArrayExpress files endpoint",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of files (may be empty if no files found)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "experiment_id": "E-GEOD-26319"
+      }
+    ]
+  },
+  {
+    "type": "ArrayExpressRESTTool",
+    "name": "arrayexpress_get_experiment_samples",
+    "description": "Get sample information for an ArrayExpress experiment. Returns sample metadata including sample names, characteristics (e.g., organism part, developmental stage), experimental factors, and technical details from the original ArrayExpress MAGE-TAB annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "experiment_id": {
+          "type": "string",
+          "description": "ArrayExpress experiment ID"
+        }
+      },
+      "required": ["experiment_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/arrayexpress/experiments/{experiment_id}/samples",
+      "note": "Original ArrayExpress samples endpoint",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of samples with their attributes",
+      "items": {
+        "type": "object",
+        "description": "Sample with key-value pairs of attributes"
+      }
+    },
+    "test_examples": [
+      {
+        "experiment_id": "E-GEOD-26319"
+      }
+    ]
+  }
+]

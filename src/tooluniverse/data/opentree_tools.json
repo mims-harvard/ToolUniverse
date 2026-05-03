@@ -1,0 +1,408 @@
+[
+  {
+    "name": "OpenTree_match_names",
+    "description": "Resolve species names to standardized Open Tree of Life taxonomy IDs (OTT IDs) using the TNRS (Taxonomic Name Resolution Service). Takes one or more species names and finds matching taxa in the Open Tree taxonomy, which synthesizes NCBI, GBIF, IRMNG, and other taxonomic sources. Returns OTT IDs that can be used with other OpenTree tools to retrieve phylogenetic trees and evolutionary relationships. Example: 'Homo sapiens' resolves to OTT ID 770315.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "names": {
+          "type": "string",
+          "description": "Comma-separated list of species or taxon names to resolve. Examples: 'Homo sapiens', 'Homo sapiens,Pan troglodytes,Gorilla gorilla', 'Canis lupus,Felis catus'."
+        }
+      },
+      "required": [
+        "names"
+      ]
+    },
+    "fields": {
+      "endpoint": "match_names"
+    },
+    "type": "OpenTreeTool",
+    "test_examples": [
+      {
+        "names": "Homo sapiens"
+      },
+      {
+        "names": "Homo sapiens,Pan troglodytes,Gorilla gorilla"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "query_name": {
+                    "type": "string",
+                    "description": "Original query name"
+                  },
+                  "matched_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name matched in taxonomy"
+                  },
+                  "ott_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Open Tree Taxonomy identifier"
+                  },
+                  "is_synonym": {
+                    "type": "boolean",
+                    "description": "Whether matched name is a synonym"
+                  },
+                  "score": {
+                    "type": "number",
+                    "description": "Match confidence score (0-1)"
+                  },
+                  "nomenclature_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Nomenclature code (ICZN, ICN, etc.)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "context": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxonomic context used for matching"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenTree_get_taxon",
+    "description": "Get detailed taxonomy information for a taxon from the Open Tree of Life by its OTT ID. Returns the taxon name, rank, synonyms, source databases (NCBI, GBIF, IRMNG), and flags indicating taxonomic status. Use OpenTree_match_names first to get OTT IDs from species names. Example: OTT ID 770315 returns Homo sapiens with rank 'species', synonyms, and NCBI/GBIF cross-references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ott_id": {
+          "type": "integer",
+          "description": "Open Tree Taxonomy ID. Examples: 770315 (Homo sapiens), 417950 (Pan troglodytes), 158484 (Pan paniscus), 312031 (Homininae), 244265 (Drosophila melanogaster)."
+        }
+      },
+      "required": [
+        "ott_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "taxon_info"
+    },
+    "type": "OpenTreeTool",
+    "test_examples": [
+      {
+        "ott_id": 770315
+      },
+      {
+        "ott_id": 417950
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "ott_id": {
+                  "type": "integer",
+                  "description": "Open Tree Taxonomy ID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Taxon name"
+                },
+                "rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxonomic rank (species, genus, family, etc.)"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Known synonyms"
+                },
+                "tax_sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Source databases (e.g., ncbi:9606, gbif:2436436)"
+                },
+                "flags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Taxonomic flags (extinct, incertae_sedis, etc.)"
+                },
+                "is_suppressed": {
+                  "type": "boolean",
+                  "description": "Whether taxon is suppressed from synthesis"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "taxonomy_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenTree_get_mrca",
+    "description": "Find the Most Recent Common Ancestor (MRCA) of a set of taxa in the Open Tree of Life synthetic phylogeny. Takes two or more OTT IDs and returns their MRCA with its taxonomic name and rank. Essential for understanding evolutionary relationships between species. Example: OTT IDs 770315 (Homo sapiens) and 417950 (Pan troglodytes) gives MRCA in subfamily Homininae.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ott_ids": {
+          "type": "string",
+          "description": "Comma-separated OTT IDs (at least 2). Use OpenTree_match_names to get IDs. Examples: '770315,417950' (human + chimp), '770315,417950,158484' (human + chimp + bonobo), '244265,417950' (fruit fly + chimp)."
+        }
+      },
+      "required": [
+        "ott_ids"
+      ]
+    },
+    "fields": {
+      "endpoint": "mrca"
+    },
+    "type": "OpenTreeTool",
+    "test_examples": [
+      {
+        "ott_ids": "770315,417950"
+      },
+      {
+        "ott_ids": "770315,417950,158484"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "mrca_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Name of the MRCA taxon"
+                },
+                "mrca_ott_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "OTT ID of the MRCA taxon"
+                },
+                "mrca_rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxonomic rank of the MRCA"
+                },
+                "mrca_node_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Node ID in the synthetic tree"
+                },
+                "num_tips": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of descendant tips in the synthetic tree"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "input_ott_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "OpenTree_get_induced_subtree",
+    "description": "Get a phylogenetic subtree (in Newick format) from the Open Tree of Life synthetic tree for a specified set of taxa. Returns the evolutionary tree connecting the given taxa, showing their branching relationships. Useful for constructing phylogenies for comparative studies. Example: OTT IDs 770315 (Homo sapiens), 417950 (Pan troglodytes), 158484 (Pan paniscus) returns the ape phylogeny showing Pan troglodytes and Pan paniscus as sister species.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ott_ids": {
+          "type": "string",
+          "description": "Comma-separated OTT IDs (at least 2). Examples: '770315,417950,158484' (human, chimp, bonobo), '770315,417950,158484,770309' (plus Homo genus)."
+        }
+      },
+      "required": [
+        "ott_ids"
+      ]
+    },
+    "fields": {
+      "endpoint": "induced_subtree"
+    },
+    "type": "OpenTreeTool",
+    "test_examples": [
+      {
+        "ott_ids": "770315,417950,158484"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "newick": {
+                  "type": "string",
+                  "description": "Phylogenetic tree in Newick format"
+                },
+                "supporting_studies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Study IDs supporting the topology"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "input_ott_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "num_taxa": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

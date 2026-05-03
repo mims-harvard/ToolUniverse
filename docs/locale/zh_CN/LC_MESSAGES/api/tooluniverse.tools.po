@@ -2769,7 +2769,6 @@ msgstr "SMILES 字符串列表"
 #: tooluniverse.tools.get_holoviews_info.get_holoviews_info:4
 #: tooluniverse.tools.get_host_organism_by_pdb_id.get_host_organism_by_pdb_id:5
 #: tooluniverse.tools.get_htmd_info.get_htmd_info:4
-#: tooluniverse.tools.get_hyperopt_info.get_hyperopt_info:5
 #: tooluniverse.tools.get_igraph_info.get_igraph_info:5
 #: tooluniverse.tools.get_imageio_info.get_imageio_info:4
 #: tooluniverse.tools.get_imbalanced_learn_info.get_imbalanced_learn_info:4
@@ -4445,7 +4444,6 @@ msgstr "用于流式输出的回调"
 #: tooluniverse.tools.get_holoviews_info.get_holoviews_info:6
 #: tooluniverse.tools.get_host_organism_by_pdb_id.get_host_organism_by_pdb_id:7
 #: tooluniverse.tools.get_htmd_info.get_htmd_info:6
-#: tooluniverse.tools.get_hyperopt_info.get_hyperopt_info:7
 #: tooluniverse.tools.get_igraph_info.get_igraph_info:7
 #: tooluniverse.tools.get_imageio_info.get_imageio_info:6
 #: tooluniverse.tools.get_imbalanced_learn_info.get_imbalanced_learn_info:6
@@ -6121,7 +6119,6 @@ msgstr "启用缓存"
 #: tooluniverse.tools.get_holoviews_info.get_holoviews_info:8
 #: tooluniverse.tools.get_host_organism_by_pdb_id.get_host_organism_by_pdb_id:9
 #: tooluniverse.tools.get_htmd_info.get_htmd_info:8
-#: tooluniverse.tools.get_hyperopt_info.get_hyperopt_info:9
 #: tooluniverse.tools.get_igraph_info.get_igraph_info:9
 #: tooluniverse.tools.get_imageio_info.get_imageio_info:8
 #: tooluniverse.tools.get_imbalanced_learn_info.get_imbalanced_learn_info:8
@@ -8580,7 +8577,6 @@ msgstr "返回类型"
 #: tooluniverse.tools.get_holoviews_info.get_holoviews_info:11
 #: tooluniverse.tools.get_host_organism_by_pdb_id.get_host_organism_by_pdb_id:12
 #: tooluniverse.tools.get_htmd_info.get_htmd_info:11
-#: tooluniverse.tools.get_hyperopt_info.get_hyperopt_info:12
 #: tooluniverse.tools.get_igraph_info.get_igraph_info:12
 #: tooluniverse.tools.get_imageio_info.get_imageio_info:11
 #: tooluniverse.tools.get_imbalanced_learn_info.get_imbalanced_learn_info:11
@@ -17703,7 +17699,6 @@ msgstr "获取关于 AnnData 的全面信息——用于计算生物学的注释
 #: tooluniverse.tools.get_gget_info.get_gget_info:3
 #: tooluniverse.tools.get_gseapy_info.get_gseapy_info:3
 #: tooluniverse.tools.get_h5py_info.get_h5py_info:3
-#: tooluniverse.tools.get_hyperopt_info.get_hyperopt_info:3
 #: tooluniverse.tools.get_igraph_info.get_igraph_info:3
 #: tooluniverse.tools.get_lifelines_info.get_lifelines_info:3
 #: tooluniverse.tools.get_matplotlib_info.get_matplotlib_info:3
@@ -18639,12 +18634,6 @@ msgstr "获取有关 htmd 软件包的信息。高通量分子动力学平台"
 
 #: 6c43eda6eedc4940aa2a732e2a56f731 6ebc016664974c6091647161894c564a
 #: b1af5fa12e5a4298b3a3f9a5d6017310 d2f2cce2d87c4089a267de57edfdd998 of
-#: tooluniverse.tools.get_hyperopt_info:3
-#: tooluniverse.tools.get_hyperopt_info.get_hyperopt_info:1
-msgid ""
-"Get comprehensive information about Hyperopt – distributed hyperparameter"
-" optimization"
-msgstr "获取有关 Hyperopt 的全面信息——分布式超参数优化"
 
 #: 267b627417114d77aa3fb32dbbf3762f 2d6f3d6986a84d8ca030e140c9bfab85
 #: 416e6b3fb01a48508d1ff799f7481228 decbd70291d947579e380d818cfc173d of
@@ -25906,11 +25895,8 @@ msgid "get_htmd_info"
 msgstr ""
 
 #: ../../api/tooluniverse.tools.rst:4595 0fea9e0a1bbd49da8428194c64de85ff
-msgid "tooluniverse.tools.get\\_hyperopt\\_info module"
 msgstr ""
 
-#: 02f4290fc3284991b414af3bd1f1c5fb of tooluniverse.tools.get_hyperopt_info:1
-msgid "get_hyperopt_info"
 msgstr ""
 
 #: ../../api/tooluniverse.tools.rst:4604 5a8ad305eea64718ad3f032b0a67364d

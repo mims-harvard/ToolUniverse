@@ -1,0 +1,347 @@
+[
+  {
+    "type": "SmolAgentTool",
+    "name": "advanced_literature_search_agent",
+    "description": "Advanced multi-agent deep literature search system. This is a SEARCH-FIRST system: agents must extensively use ToolUniverse literature search tools to gather information, NOT rely on their own knowledge. Required pipeline: (1) query_planner analyzes the query to identify key search aspects and generates 3-8 focused search queries; (2) FIRST call web_foundation_searcher (base web tools only) to produce seeds/sources/keywords; (3) For EACH seed query, parallel call ALL THREE specialized searchers: medical_literature_searcher (PubMed, EuropePMC, PMC, MedRxiv, BioRxiv), computer_science_searcher (ArXiv, DBLP, SemanticScholar), and general_literature_searcher (openalex, Crossref, DOAJ, CORE) using concurrent.futures.ThreadPoolExecutor; (4) result_analyzer deduplicates and scores results from all searchers; (5) literature_synthesizer generates the final report strictly from searched results. CRITICAL: All information must come from tool searches, not pre-existing knowledge.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Research query or topic to search in academic literature. The agent will automatically determine search strategy, database selection, filters, and result limits based on the query content and research domain."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "settings": {
+      "agent_type": "ManagedAgent",
+      "available_tools": [],
+      "model": {
+        "provider": "AzureOpenAIModel",
+        "model_id": "gpt-5",
+        "api_key": "env:AZURE_OPENAI_API_KEY",
+        "azure_endpoint": "https://azure-ai.hms.edu",
+        "api_version": "2024-10-21"
+      },
+      "agent_init_params": {
+        "max_steps": 50,
+        "stream_outputs": true,
+        "verbosity_level": 1,
+        "planning_interval": 2,
+        "max_execution_time": 6000
+      },
+      "sub_agents": [
+        {
+          "name": "query_planner",
+          "description": "Search strategy planner for deep literature search. (1) Analyze the query and produce 3-8 focused search aspects; (2) Call web_foundation_searcher to get seeds (queries), sources (authoritative URLs), and expanded keywords; (3) For EACH seed, parallel dispatch to medical_literature_searcher, computer_science_searcher, and general_literature_searcher using ThreadPoolExecutor; (4) Return a compact routing plan containing the seeds and which searchers will be called for each. IMPORTANT: Focus on search strategy and dispatching; do not write summaries.",
+          "agent_type": "CodeAgent",
+          "available_tools": [],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "json"
+            ],
+            "max_steps": 8,
+            "stream_outputs": true,
+            "verbosity_level": 1
+          }
+        },
+        {
+          "name": "web_foundation_searcher",
+          "description": "FOUNDATION WEB SEARCH (seed generator). Purpose: quickly gather seed queries, authoritative source links, and recent topic variants using ONLY base web tools (web_search, visit_webpage). Output: a compact JSON with fields: seeds (list of refined search queries), sources (list of authoritative URLs/domains), keywords (expanded keyword variants). STRICT RULES: Do NOT summarize content; do NOT generate a literature report; DO NOT call any ToolUniverse literature tools here. Keep steps \u2264 6, focus on producing high\u2011quality seeds for downstream specialized database searchers.",
+          "agent_type": "CodeAgent",
+          "available_tools": [],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "json"
+            ],
+            "max_steps": 6,
+            "stream_outputs": true,
+            "verbosity_level": 1
+          }
+        },
+        {
+          "name": "medical_literature_searcher",
+          "description": "Specialized medical and life sciences literature search agent. For EACH search query, you MUST parallel call ALL 5 medical databases using ThreadPoolExecutor. REQUIRED CODE PATTERN: from concurrent.futures import ThreadPoolExecutor; import json; query = 'your_query'; medical_tools = [PubMed_search_articles, EuropePMC_search_articles, PMC_search_papers, MedRxiv_search_preprints, BioRxiv_search_preprints]; results = {}; def safe_call(tool, q): try: return tool(query=q, limit=10); except: return []; with ThreadPoolExecutor(max_workers=5) as executor: futures = {executor.submit(safe_call, tool, query): tool.__name__ for tool in medical_tools}; for future in futures: tool_name = futures[future]; results[tool_name] = future.result(); VALIDATION: missing = [t.__name__ for t in medical_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]; if missing: with ThreadPoolExecutor(max_workers=len(missing)) as ex2: fut2 = {ex2.submit(safe_call, globals()[name], query): name for name in missing}; for f in fut2: results[fut2[f]] = f.result(); if [t.__name__ for t in medical_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]: raise RuntimeError('MANDATORY TOOL(S) MISSING: ' + ','.join(missing)); return json.dumps(results, indent=2). MUST use all 5 tools in parallel for every query. Do NOT use web_search/visit_webpage here. If any listed tool is not called or returns nothing twice, raise an error.",
+          "agent_type": "CodeAgent",
+          "available_tools": [
+            "PubMed_search_articles",
+            "EuropePMC_search_articles",
+            "PMC_search_papers",
+            "MedRxiv_search_preprints",
+            "BioRxiv_search_preprints"
+          ],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "json",
+              "concurrent.futures",
+              "datetime",
+              "urllib.parse",
+              "re"
+            ],
+            "max_steps": 10,
+            "stream_outputs": true,
+            "verbosity_level": 1,
+            "max_tool_threads": 5
+          }
+        },
+        {
+          "name": "computer_science_searcher",
+          "description": "Specialized computer science and technical literature search agent. For EACH search query, you MUST parallel call ALL 3 CS databases using ThreadPoolExecutor. REQUIRED CODE PATTERN: from concurrent.futures import ThreadPoolExecutor; import json; query = 'your_query'; cs_tools = [ArXiv_search_papers, DBLP_search_publications, SemanticScholar_search_papers]; results = {}; def safe_call(tool, q): try: return tool(query=q, limit=10); except: return []; with ThreadPoolExecutor(max_workers=3) as executor: futures = {executor.submit(safe_call, tool, query): tool.__name__ for tool in cs_tools}; for future in futures: tool_name = futures[future]; results[tool_name] = future.result(); VALIDATION: missing = [t.__name__ for t in cs_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]; if missing: with ThreadPoolExecutor(max_workers=len(missing)) as ex2: fut2 = {ex2.submit(safe_call, globals()[name], query): name for name in missing}; for f in fut2: results[fut2[f]] = f.result(); if [t.__name__ for t in cs_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]: raise RuntimeError('MANDATORY TOOL(S) MISSING: ' + ','.join(missing)); return json.dumps(results, indent=2). MUST use all 3 tools in parallel for every query. Do NOT use web_search/visit_webpage here. If any listed tool is not called or returns nothing twice, raise an error.",
+          "agent_type": "CodeAgent",
+          "available_tools": [
+            "ArXiv_search_papers",
+            "DBLP_search_publications",
+            "SemanticScholar_search_papers"
+          ],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "json",
+              "concurrent.futures",
+              "datetime",
+              "urllib.parse",
+              "re"
+            ],
+            "max_steps": 10,
+            "stream_outputs": true,
+            "verbosity_level": 1,
+            "max_tool_threads": 3
+          }
+        },
+        {
+          "name": "general_literature_searcher",
+          "description": "Specialized general academic literature search agent covering interdisciplinary and open access sources. For EACH search query, you MUST parallel call ALL 4 general databases using ThreadPoolExecutor. REQUIRED CODE PATTERN: from concurrent.futures import ThreadPoolExecutor; import json; query = 'your_query'; general_tools = [openalex_literature_search, Crossref_search_works, DOAJ_search_articles, CORE_search_papers]; results = {}; def safe_call(tool, q): try: return tool(query=q, limit=10); except: return []; with ThreadPoolExecutor(max_workers=4) as executor: futures = {executor.submit(safe_call, tool, query): tool.__name__ for tool in general_tools}; for future in futures: tool_name = futures[future]; results[tool_name] = future.result(); VALIDATION: missing = [t.__name__ for t in general_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]; if missing: with ThreadPoolExecutor(max_workers=len(missing)) as ex2: fut2 = {ex2.submit(safe_call, globals()[name], query): name for name in missing}; for f in fut2: results[fut2[f]] = f.result(); if [t.__name__ for t in general_tools if t.__name__ not in results or results.get(t.__name__) in (None, [], '')]: raise RuntimeError('MANDATORY TOOL(S) MISSING: ' + ','.join(missing)); return json.dumps(results, indent=2). MUST use all 4 tools in parallel for every query. Do NOT use web_search/visit_webpage here. If any listed tool is not called or returns nothing twice, raise an error.",
+          "agent_type": "CodeAgent",
+          "available_tools": [
+            "openalex_literature_search",
+            "Crossref_search_works",
+            "DOAJ_search_articles",
+            "CORE_search_papers"
+          ],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "json",
+              "concurrent.futures",
+              "datetime",
+              "urllib.parse",
+              "re"
+            ],
+            "max_steps": 10,
+            "stream_outputs": true,
+            "verbosity_level": 1,
+            "max_tool_threads": 4
+          }
+        },
+        {
+          "name": "result_analyzer",
+          "description": "Intelligent result analysis agent. Input: combined raw results from medical_literature_searcher, computer_science_searcher, and general_literature_searcher (covering all 12 databases). Steps: merge results from all three searchers, deduplicate (DOI, normalized title similarity, author matching), compute composite relevance score (keyword match, normalized citations, venue impact, recency, cross-source frequency), filter low-quality (<0.3), rank and cluster by themes, identify high-impact and recent breakthroughs. Output: ranked, deduplicated list with scores, themes, and quality flags from all searched databases. Then instruct literature_synthesizer to produce the final report based on these analyzed results.",
+          "agent_type": "CodeAgent",
+          "available_tools": [],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "json",
+              "collections",
+              "re",
+              "difflib",
+              "datetime",
+              "math"
+            ],
+            "max_steps": 15,
+            "stream_outputs": true,
+            "verbosity_level": 1
+          }
+        },
+        {
+          "name": "literature_synthesizer",
+          "description": "Literature synthesis and report generation specialist. Input: result_analyzer ranked list from multi-database searches. Produce a structured markdown report with sections: Executive Summary, Key Findings, Research Trends, Methodology Overview, Top Papers with rationale (10\u201315), Research Gaps, References (with DOIs/URLs). CRITICAL: Base ALL content strictly on the searched and analyzed literature results. Do NOT supplement with your own knowledge. Use only information from the analyzed items; cite actual papers with DOIs/URLs. Do not invent citations or add information not found in the search results.",
+          "agent_type": "CodeAgent",
+          "available_tools": [],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "json",
+              "collections",
+              "datetime",
+              "statistics"
+            ],
+            "max_steps": 20,
+            "stream_outputs": true,
+            "verbosity_level": 1
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  },
+  {
+    "type": "SmolAgentTool",
+    "name": "open_deep_research_agent",
+    "description": "Research manager agent that decomposes the user task, delegates focused subtasks to domain sub\u2011agents (web researcher, synthesizer), enforces evidence use, requires numeric outputs with units, and returns a concise final answer with citations. It should: (1) draft a brief plan, (2) ask web_researcher to gather authoritative facts (URLs + extracted numbers), (3) validate consistency across sources, (4) instruct synthesizer to compute/compose the final result, and (5) output only the final, unit\u2011aware answer plus one short rationale line.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "string",
+          "description": "Research query/task to execute"
+        }
+      },
+      "required": [
+        "task"
+      ]
+    },
+    "settings": {
+      "agent_type": "ManagedAgent",
+      "available_tools": [],
+      "model": {
+        "provider": "AzureOpenAIModel",
+        "model_id": "gpt-5",
+        "api_key": "env:AZURE_OPENAI_API_KEY",
+        "azure_endpoint": "https://azure-ai.hms.edu",
+        "api_version": "2024-10-21"
+      },
+      "agent_init_params": {
+        "max_steps": 30,
+        "stream_outputs": true,
+        "verbosity_level": 1,
+        "planning_interval": 1
+      },
+      "sub_agents": [
+        {
+          "name": "web_researcher",
+          "description": "Web research specialist that (a) formulates robust search queries, (b) selects authoritative sources (official sites, Wikipedia with corroboration, reputable databases), (c) visits pages and extracts exact figures (units, context), (d) records 1\u20132 key quotes/snippets and the canonical URL, and (e) returns a short, source\u2011linked note ready for synthesis.",
+          "agent_type": "CodeAgent",
+          "available_tools": [
+            {
+              "type": "smolagents",
+              "class": "WebSearchTool",
+              "import_path": "smolagents.default_tools"
+            },
+            {
+              "type": "smolagents",
+              "class": "VisitWebpageTool",
+              "import_path": "smolagents.default_tools"
+            }
+          ],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "add_base_tools": true,
+            "additional_authorized_imports": [
+              "requests",
+              "bs4",
+              "lxml"
+            ],
+            "max_steps": 12,
+            "stream_outputs": true,
+            "verbosity_level": 1,
+            "planning_interval": 1
+          }
+        },
+        {
+          "name": "synthesizer",
+          "description": "Synthesis specialist that reads prior research notes, performs any light calculation (unit conversion, division, rounding), resolves minor conflicts by favoring higher\u2011authority sources, and produces a single, precise answer with units and 1\u20132 citations. Keep prose minimal; prioritize the final numeric result and rationale.",
+          "agent_type": "ToolCallingAgent",
+          "available_tools": [
+            {
+              "type": "smolagents",
+              "class": "WebSearchTool",
+              "import_path": "smolagents.default_tools"
+            }
+          ],
+          "model": {
+            "provider": "AzureOpenAIModel",
+            "model_id": "gpt-5",
+            "api_key": "env:AZURE_OPENAI_API_KEY",
+            "azure_endpoint": "https://azure-ai.hms.edu",
+            "api_version": "2024-10-21"
+          },
+          "agent_init_params": {
+            "max_steps": 8,
+            "stream_outputs": false,
+            "planning_interval": 1
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "task": "What are the symptoms of COVID-19?"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  }
+]

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_known\\_drugs\\_by\\_drug\\_chemb
 #: f9a13941d25f4ea7aa6193df5a3b9f01 of
 #: tooluniverse.tools.OpenTargets_get_known_drugs_by_drug_chemblId:1
 msgid "OpenTargets_get_known_drugs_by_drug_chemblId"
-msgstr ""
+msgstr "OpenTargets_通过_drug_chemblId_获取已知药物"
 
 #: 505a35f889804f4bb596a5bda62c3601 cffd6936ce5144e6abb3300cf690f5c8 of
 #: tooluniverse.tools.OpenTargets_get_known_drugs_by_drug_chemblId:3

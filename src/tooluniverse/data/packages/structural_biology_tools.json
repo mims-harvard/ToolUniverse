@@ -2,7 +2,7 @@
   {
     "type": "PackageTool",
     "name": "get_biopandas_info",
-    "description": "Get comprehensive information about BioPandas – pandas-based molecular structure analysis",
+    "description": "Get comprehensive information about BioPandas \u2013 pandas-based molecular structure analysis",
     "parameter": {
       "type": "object",
       "properties": {
@@ -44,12 +44,98 @@
         "Filter: ppdb.df['ATOM'][condition]",
         "Analysis: Calculate distances, angles, etc."
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_openmm_info",
-    "description": "Get comprehensive information about OpenMM – molecular dynamics simulation toolkit",
+    "description": "Get comprehensive information about OpenMM \u2013 molecular dynamics simulation toolkit",
     "parameter": {
       "type": "object",
       "properties": {
@@ -91,12 +177,98 @@
         "Set integrator: integrator = LangevinMiddleIntegrator()",
         "Run: simulation.step(n_steps)"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_mdanalysis_info",
-    "description": "Get comprehensive information about MDAnalysis – molecular dynamics trajectory analysis",
+    "description": "Get comprehensive information about MDAnalysis \u2013 molecular dynamics trajectory analysis",
     "parameter": {
       "type": "object",
       "properties": {
@@ -135,7 +307,7 @@
         "pip": "pip install MDAnalysis",
         "conda": "conda install -c conda-forge mdanalysis"
       },
-      "usage_example": "import MDAnalysis as mda\nfrom MDAnalysis.analysis import distances\n\n# Load trajectory\nu = mda.Universe('topology.pdb', 'trajectory.xtc')\n\n# Select atoms\nprotein = u.select_atoms('protein')\nbackbone = u.select_atoms('backbone')\n\n# Analyze trajectory\nfor ts in u.trajectory:\n    # Calculate RMSD\n    rmsd = distances.distance_array(backbone.positions, backbone.positions[0])\n    print(f'Frame {ts.frame}: RMSD = {rmsd.mean():.2f} Å')",
+      "usage_example": "import MDAnalysis as mda\nfrom MDAnalysis.analysis import distances\n\n# Load trajectory\nu = mda.Universe('topology.pdb', 'trajectory.xtc')\n\n# Select atoms\nprotein = u.select_atoms('protein')\nbackbone = u.select_atoms('backbone')\n\n# Analyze trajectory\nfor ts in u.trajectory:\n    # Calculate RMSD\n    rmsd = distances.distance_array(backbone.positions, backbone.positions[0])\n    print(f'Frame {ts.frame}: RMSD = {rmsd.mean():.2f} \u00c5')",
       "quick_start": [
         "Install: pip install MDAnalysis",
         "Load: u = mda.Universe('topology.pdb', 'traj.xtc')",
@@ -143,12 +315,98 @@
         "Analyze: Loop through trajectory frames",
         "Calculate: distances, angles, RMSD, etc."
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_ase_info",
-    "description": "Get comprehensive information about ASE (Atomic Simulation Environment) – a toolkit for building, running and analysing atomistic simulations.",
+    "description": "Get comprehensive information about ASE (Atomic Simulation Environment) \u2013 a toolkit for building, running and analysing atomistic simulations.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -190,12 +448,98 @@
         "Calculate: atoms.set_calculator(); energy = atoms.get_potential_energy()",
         "Optimize: from ase.optimize import BFGS; BFGS(atoms).run()"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_pyscf_info",
-    "description": "Get comprehensive information about PySCF – a versatile quantum-chemistry framework in Python.",
+    "description": "Get comprehensive information about PySCF \u2013 a versatile quantum-chemistry framework in Python.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -237,12 +581,98 @@
         "Run calculation: energy = mf.kernel()",
         "Analyse further properties: gradients, frequencies, etc."
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_diffdock_info",
-    "description": "Get comprehensive information about DiffDock – diffusion model for molecular docking",
+    "description": "Get comprehensive information about DiffDock \u2013 diffusion model for molecular docking",
     "parameter": {
       "type": "object",
       "properties": {
@@ -281,7 +711,7 @@
         "pip": "pip install diffdock",
         "conda": "conda install -c conda-forge diffdock"
       },
-      "usage_example": "# DiffDock molecular docking simulation\n# This demonstrates the concepts and workflow\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom scipy.spatial.distance import cdist\nfrom sklearn.cluster import DBSCAN\nimport tempfile\nimport os\n\nprint('DiffDock - Diffusion Model for Molecular Docking')\nprint('=' * 50)\n\n# Overview of DiffDock approach\nprint('DiffDock Innovation:')\nprint('• Uses diffusion models for pose generation')\nprint('• End-to-end learning without hand-crafted features')\nprint('• Handles both rigid and flexible docking')\nprint('• State-of-the-art accuracy on benchmarks')\nprint('• Fast inference with GPU acceleration')\n\nprint('\\nKey Advantages over Traditional Docking:')\nprint('• No need for extensive sampling')\nprint('• Better handling of conformational flexibility')\nprint('• Learned representations from large datasets')\nprint('• Robust to protein structure variations')\n\n# Simulate molecular docking workflow\nprint('\\n=== Molecular Docking Simulation ===')\n\nnp.random.seed(42)\n\n# Define protein binding site\nprint('Defining protein binding site...')\nbinding_site_center = np.array([0.0, 0.0, 0.0])\nbinding_site_radius = 8.0\n\n# Generate protein surface points\nn_surface_points = 200\ntheta = np.random.uniform(0, 2*np.pi, n_surface_points)\nphi = np.random.uniform(0, np.pi, n_surface_points)\nr = np.random.uniform(5.0, 8.0, n_surface_points)\n\nprotein_surface = np.column_stack([\n    r * np.sin(phi) * np.cos(theta),\n    r * np.sin(phi) * np.sin(theta),\n    r * np.cos(phi)\n])\n\nprint(f'Generated {n_surface_points} protein surface points')\nprint(f'Binding site radius: {binding_site_radius:.1f} Å')\n\n# Define ligand structure\nprint('\\nDefining ligand structure...')\nligand_atoms = {\n    'C1': np.array([0.0, 0.0, 0.0]),\n    'C2': np.array([1.5, 0.0, 0.0]),\n    'C3': np.array([2.2, 1.3, 0.0]),\n    'N1': np.array([1.5, 2.6, 0.0]),\n    'O1': np.array([0.0, 2.6, 0.5]),\n    'C4': np.array([-0.7, 1.3, 0.5])\n}\n\nligand_center = np.mean(list(ligand_atoms.values()), axis=0)\nligand_coords = np.array(list(ligand_atoms.values()))\nligand_coords_centered = ligand_coords - ligand_center\n\nprint(f'Ligand atoms: {len(ligand_atoms)}')\nprint(f'Ligand center: ({ligand_center[0]:.1f}, {ligand_center[1]:.1f}, {ligand_center[2]:.1f})')\nprint(f'Ligand size: {np.max(cdist(ligand_coords, ligand_coords)):.1f} Å')\n\n# Simulate diffusion-based pose generation\nprint('\\n=== Diffusion-Based Pose Generation ===')\n\ndef rotation_matrix(axis, angle):\n    \"\"\"Generate rotation matrix for given axis and angle\"\"\"\n    axis = axis / np.linalg.norm(axis)\n    cos_angle = np.cos(angle)\n    sin_angle = np.sin(angle)\n    \n    return (\n        cos_angle * np.eye(3) +\n        sin_angle * np.array([[0, -axis[2], axis[1]],\n                             [axis[2], 0, -axis[0]],\n                             [-axis[1], axis[0], 0]]) +\n        (1 - cos_angle) * np.outer(axis, axis)\n    )\n\ndef generate_pose(translation, rotation_axis, rotation_angle):\n    \"\"\"Generate ligand pose from translation and rotation\"\"\"\n    rot_matrix = rotation_matrix(rotation_axis, rotation_angle)\n    rotated_ligand = np.dot(ligand_coords_centered, rot_matrix.T)\n    posed_ligand = rotated_ligand + translation\n    return posed_ligand\n\ndef calculate_docking_score(posed_ligand, protein_surface):\n    \"\"\"Calculate simplified docking score\"\"\"\n    # Distance-based scoring\n    min_distances = np.min(cdist(posed_ligand, protein_surface), axis=1)\n    \n    # Prefer poses where ligand is close to protein surface\n    distance_score = -np.mean(np.maximum(0, min_distances - 2.0))\n    \n    # Penalty for steric clashes (too close)\n    clash_penalty = -np.sum(np.maximum(0, 1.5 - min_distances)) * 10\n    \n    # Bonus for being in binding site\n    center_distances = np.linalg.norm(posed_ligand - binding_site_center, axis=1)\n    binding_site_bonus = -np.mean(np.maximum(0, center_distances - binding_site_radius))\n    \n    total_score = distance_score + clash_penalty + binding_site_bonus\n    return total_score, distance_score, clash_penalty, binding_site_bonus\n\n# Generate multiple poses using diffusion-like sampling\nprint('Generating poses via diffusion sampling...')\nn_poses = 1000\nposes = []\nscores = []\nscore_components = []\n\nfor i in range(n_poses):\n    # Sample translation (biased toward binding site)\n    translation = binding_site_center + np.random.normal(0, 3.0, 3)\n    \n    # Sample rotation\n    rotation_axis = np.random.normal(0, 1, 3)\n    rotation_axis = rotation_axis / np.linalg.norm(rotation_axis)\n    rotation_angle = np.random.uniform(0, 2*np.pi)\n    \n    # Generate pose\n    posed_ligand = generate_pose(translation, rotation_axis, rotation_angle)\n    \n    # Calculate score\n    total_score, dist_score, clash_penalty, binding_bonus = calculate_docking_score(\n        posed_ligand, protein_surface)\n    \n    poses.append({\n        'id': i,\n        'translation': translation,\n        'rotation_axis': rotation_axis,\n        'rotation_angle': rotation_angle,\n        'coordinates': posed_ligand,\n        'score': total_score,\n        'distance_score': dist_score,\n        'clash_penalty': clash_penalty,\n        'binding_bonus': binding_bonus\n    })\n    \n    scores.append(total_score)\n    score_components.append([dist_score, clash_penalty, binding_bonus])\n\nscores = np.array(scores)\nscore_components = np.array(score_components)\n\nprint(f'Generated {n_poses} poses')\nprint(f'Score range: {np.min(scores):.2f} to {np.max(scores):.2f}')\nprint(f'Mean score: {np.mean(scores):.2f} ± {np.std(scores):.2f}')\n\n# Select top poses\ntop_indices = np.argsort(scores)[-50:]  # Top 50 poses\ntop_poses = [poses[i] for i in top_indices]\ntop_scores = scores[top_indices]\n\nprint(f'\\nTop 10 pose scores: {top_scores[-10:]}')\n\n# Cluster top poses\nprint('\\n=== Pose Clustering ===')\n\n# Extract center positions of top poses\ntop_centers = np.array([np.mean(pose['coordinates'], axis=0) for pose in top_poses])\n\n# Cluster by position\ndbscan = DBSCAN(eps=2.0, min_samples=3)\ncluster_labels = dbscan.fit_predict(top_centers)\n\nn_clusters = len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)\nn_noise = list(cluster_labels).count(-1)\n\nprint(f'Found {n_clusters} pose clusters')\nprint(f'Noise points: {n_noise}')\n\n# Analyze clusters\ncluster_info = []\nfor cluster_id in range(n_clusters):\n    cluster_mask = cluster_labels == cluster_id\n    cluster_poses = [top_poses[i] for i in range(len(top_poses)) if cluster_mask[i]]\n    cluster_scores = top_scores[cluster_mask]\n    \n    cluster_center = np.mean(top_centers[cluster_mask], axis=0)\n    best_score = np.max(cluster_scores)\n    cluster_size = len(cluster_poses)\n    \n    cluster_info.append({\n        'id': cluster_id,\n        'size': cluster_size,\n        'best_score': best_score,\n        'center': cluster_center,\n        'poses': cluster_poses\n    })\n    \n    print(f'  Cluster {cluster_id}: {cluster_size} poses, '\n          f'best score: {best_score:.2f}, '\n          f'center: ({cluster_center[0]:.1f}, {cluster_center[1]:.1f}, {cluster_center[2]:.1f})')\n\n# Select representative poses\nprint('\\n=== Representative Pose Selection ===')\n\nrepresentative_poses = []\nfor cluster in sorted(cluster_info, key=lambda x: x['best_score'], reverse=True):\n    # Select best pose from each cluster\n    best_pose_idx = np.argmax([pose['score'] for pose in cluster['poses']])\n    best_pose = cluster['poses'][best_pose_idx]\n    \n    representative_poses.append({\n        'cluster_id': cluster['id'],\n        'pose': best_pose,\n        'cluster_size': cluster['size']\n    })\n    \n    print(f'Cluster {cluster[\"id\"]}: Score {best_pose[\"score\"]:.2f}, '\n          f'Position ({np.mean(best_pose[\"coordinates\"], axis=0)})')\n\n# Analyze binding mode\nprint('\\n=== Binding Mode Analysis ===')\n\nif representative_poses:\n    best_overall = representative_poses[0]['pose']\n    \n    print(f'Best pose analysis:')\n    print(f'  Total score: {best_overall[\"score\"]:.2f}')\n    print(f'  Distance score: {best_overall[\"distance_score\"]:.2f}')\n    print(f'  Clash penalty: {best_overall[\"clash_penalty\"]:.2f}')\n    print(f'  Binding site bonus: {best_overall[\"binding_bonus\"]:.2f}')\n    \n    # Calculate interactions\n    best_coords = best_overall['coordinates']\n    distances_to_surface = cdist(best_coords, protein_surface)\n    min_distances = np.min(distances_to_surface, axis=1)\n    \n    print(f'\\n  Ligand-protein distances:')\n    for i, (atom_name, distance) in enumerate(zip(ligand_atoms.keys(), min_distances)):\n        print(f'    {atom_name}: {distance:.2f} Å')\n    \n    # Identify close contacts\n    close_contacts = min_distances < 3.0\n    print(f'\\n  Close contacts (< 3.0 Å): {np.sum(close_contacts)} atoms')\n    \n    # Center of mass analysis\n    com_distance = np.linalg.norm(np.mean(best_coords, axis=0) - binding_site_center)\n    print(f'  Distance from binding site center: {com_distance:.2f} Å')\n\n# Confidence estimation\nprint('\\n=== Confidence Estimation ===')\n\n# Score-based confidence\ntop_10_scores = top_scores[-10:]\nscore_std = np.std(top_10_scores)\nscore_confidence = 1.0 / (1.0 + score_std)  # Higher std = lower confidence\n\n# Clustering-based confidence\nif n_clusters > 0:\n    largest_cluster_size = max(cluster['size'] for cluster in cluster_info)\n    cluster_confidence = largest_cluster_size / len(top_poses)\nelse:\n    cluster_confidence = 0.0\n\n# Combined confidence\noverall_confidence = (score_confidence + cluster_confidence) / 2.0\n\nprint(f'Score-based confidence: {score_confidence:.3f}')\nprint(f'Clustering confidence: {cluster_confidence:.3f}')\nprint(f'Overall confidence: {overall_confidence:.3f}')\n\n# Quality metrics\nprint('\\n=== Quality Metrics ===')\n\n# Pose diversity\nall_centers = np.array([np.mean(pose['coordinates'], axis=0) for pose in poses])\nposition_diversity = np.mean(cdist(all_centers, all_centers))\n\n# Energy landscape analysis\nenergy_range = np.max(scores) - np.min(scores)\nfunnel_quality = (np.max(scores) - np.mean(scores)) / np.std(scores)\n\nprint(f'Position diversity: {position_diversity:.2f} Å')\nprint(f'Energy range: {energy_range:.2f}')\nprint(f'Funnel quality: {funnel_quality:.2f}')\n\n# Visualization\nprint('\\n=== Visualization ===')\n\nfig = plt.figure(figsize=(16, 12))\n\n# 3D visualization of binding site and top poses\nax1 = fig.add_subplot(221, projection='3d')\n\n# Plot protein surface\nax1.scatter(protein_surface[:, 0], protein_surface[:, 1], protein_surface[:, 2], \n           c='lightblue', alpha=0.3, s=20, label='Protein surface')\n\n# Plot binding site center\nax1.scatter(*binding_site_center, c='red', s=100, marker='*', label='Binding site')\n\n# Plot top poses\ncolors = plt.cm.viridis(np.linspace(0, 1, len(representative_poses)))\nfor i, rep_pose in enumerate(representative_poses[:5]):  # Show top 5\n    coords = rep_pose['pose']['coordinates']\n    ax1.scatter(coords[:, 0], coords[:, 1], coords[:, 2], \n               c=[colors[i]], s=50, alpha=0.8, label=f'Pose {i+1}')\n\nax1.set_xlabel('X (Å)')\nax1.set_ylabel('Y (Å)')\nax1.set_zlabel('Z (Å)')\nax1.set_title('3D Binding Site and Top Poses')\nax1.legend()\n\n# Score distribution\nax2 = fig.add_subplot(222)\nax2.hist(scores, bins=50, alpha=0.7, color='skyblue', edgecolor='black')\nax2.axvline(np.mean(scores), color='red', linestyle='--', label=f'Mean: {np.mean(scores):.2f}')\nax2.axvline(np.percentile(scores, 95), color='green', linestyle='--', \n           label=f'95th percentile: {np.percentile(scores, 95):.2f}')\nax2.set_xlabel('Docking Score')\nax2.set_ylabel('Frequency')\nax2.set_title('Score Distribution')\nax2.legend()\n\n# Score components\nax3 = fig.add_subplot(223)\ncomponent_names = ['Distance', 'Clash Penalty', 'Binding Bonus']\nfor i, name in enumerate(component_names):\n    ax3.scatter(range(len(top_poses)), score_components[top_indices, i], \n               alpha=0.6, label=name, s=20)\nax3.set_xlabel('Pose Index (sorted by score)')\nax3.set_ylabel('Score Component')\nax3.set_title('Score Components for Top Poses')\nax3.legend()\nax3.grid(True, alpha=0.3)\n\n# Cluster analysis\nax4 = fig.add_subplot(224)\nif n_clusters > 0:\n    for cluster_id in range(n_clusters):\n        cluster_mask = cluster_labels == cluster_id\n        if np.any(cluster_mask):\n            cluster_centers = top_centers[cluster_mask]\n            cluster_scores = top_scores[cluster_mask]\n            ax4.scatter(cluster_centers[:, 0], cluster_centers[:, 1], \n                       c=cluster_scores, s=50, alpha=0.7, \n                       label=f'Cluster {cluster_id}', cmap='viridis')\n    \n    # Noise points\n    noise_mask = cluster_labels == -1\n    if np.any(noise_mask):\n        ax4.scatter(top_centers[noise_mask, 0], top_centers[noise_mask, 1], \n                   c='gray', s=20, alpha=0.5, label='Noise')\n    \n    ax4.scatter(*binding_site_center[:2], c='red', s=100, marker='*', \n               label='Binding site')\n    \n    ax4.set_xlabel('X (Å)')\n    ax4.set_ylabel('Y (Å)')\n    ax4.set_title('Pose Clusters (XY projection)')\n    ax4.legend()\n    ax4.grid(True, alpha=0.3)\n\nplt.tight_layout()\n\n# Save visualization\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    viz_file = tmp.name\n\nplt.close()\nprint(f'Docking visualization saved to: {viz_file}')\n\n# Summary report\nprint('\\n' + '=' * 50)\nprint('DIFFDOCK MOLECULAR DOCKING SUMMARY')\nprint('=' * 50)\nprint(f'Poses generated: {n_poses:}')\nprint(f'Top poses analyzed: {len(top_poses)}')\nprint(f'Pose clusters found: {n_clusters}')\nprint(f'Best docking score: {np.max(scores):.2f}')\nprint(f'Confidence score: {overall_confidence:.3f}')\nprint(f'\\nBest pose location:')\nif representative_poses:\n    best_com = np.mean(representative_poses[0]['pose']['coordinates'], axis=0)\n    print(f'  Center of mass: ({best_com[0]:.2f}, {best_com[1]:.2f}, {best_com[2]:.2f})')\n    print(f'  Distance from binding site: {np.linalg.norm(best_com - binding_site_center):.2f} Å')\n\nprint(f'\\nQuality metrics:')\nprint(f'  Position diversity: {position_diversity:.2f} Å')\nprint(f'  Energy range: {energy_range:.2f}')\nprint(f'  Funnel quality: {funnel_quality:.2f}')\n\n# Cleanup\nos.unlink(viz_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nDiffDock provides:')\nprint('• State-of-the-art docking accuracy')\nprint('• End-to-end deep learning approach')\nprint('• Fast GPU-accelerated inference')\nprint('• Handling of flexible ligands and proteins')\nprint('• Confidence estimation for poses')\nprint('• Integration with drug discovery pipelines')\nprint('• Pre-trained models on large datasets')\n\nprint('\\nTypical DiffDock usage:')\nprint('python -m diffdock.inference --protein protein.pdb \\\\')\nprint('  --ligand ligand.sdf --out_dir results --inference_steps 20')",
+      "usage_example": "# DiffDock molecular docking simulation\n# This demonstrates the concepts and workflow\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom scipy.spatial.distance import cdist\nfrom sklearn.cluster import DBSCAN\nimport tempfile\nimport os\n\nprint('DiffDock - Diffusion Model for Molecular Docking')\nprint('=' * 50)\n\n# Overview of DiffDock approach\nprint('DiffDock Innovation:')\nprint('\u2022 Uses diffusion models for pose generation')\nprint('\u2022 End-to-end learning without hand-crafted features')\nprint('\u2022 Handles both rigid and flexible docking')\nprint('\u2022 State-of-the-art accuracy on benchmarks')\nprint('\u2022 Fast inference with GPU acceleration')\n\nprint('\\nKey Advantages over Traditional Docking:')\nprint('\u2022 No need for extensive sampling')\nprint('\u2022 Better handling of conformational flexibility')\nprint('\u2022 Learned representations from large datasets')\nprint('\u2022 Robust to protein structure variations')\n\n# Simulate molecular docking workflow\nprint('\\n=== Molecular Docking Simulation ===')\n\nnp.random.seed(42)\n\n# Define protein binding site\nprint('Defining protein binding site...')\nbinding_site_center = np.array([0.0, 0.0, 0.0])\nbinding_site_radius = 8.0\n\n# Generate protein surface points\nn_surface_points = 200\ntheta = np.random.uniform(0, 2*np.pi, n_surface_points)\nphi = np.random.uniform(0, np.pi, n_surface_points)\nr = np.random.uniform(5.0, 8.0, n_surface_points)\n\nprotein_surface = np.column_stack([\n    r * np.sin(phi) * np.cos(theta),\n    r * np.sin(phi) * np.sin(theta),\n    r * np.cos(phi)\n])\n\nprint(f'Generated {n_surface_points} protein surface points')\nprint(f'Binding site radius: {binding_site_radius:.1f} \u00c5')\n\n# Define ligand structure\nprint('\\nDefining ligand structure...')\nligand_atoms = {\n    'C1': np.array([0.0, 0.0, 0.0]),\n    'C2': np.array([1.5, 0.0, 0.0]),\n    'C3': np.array([2.2, 1.3, 0.0]),\n    'N1': np.array([1.5, 2.6, 0.0]),\n    'O1': np.array([0.0, 2.6, 0.5]),\n    'C4': np.array([-0.7, 1.3, 0.5])\n}\n\nligand_center = np.mean(list(ligand_atoms.values()), axis=0)\nligand_coords = np.array(list(ligand_atoms.values()))\nligand_coords_centered = ligand_coords - ligand_center\n\nprint(f'Ligand atoms: {len(ligand_atoms)}')\nprint(f'Ligand center: ({ligand_center[0]:.1f}, {ligand_center[1]:.1f}, {ligand_center[2]:.1f})')\nprint(f'Ligand size: {np.max(cdist(ligand_coords, ligand_coords)):.1f} \u00c5')\n\n# Simulate diffusion-based pose generation\nprint('\\n=== Diffusion-Based Pose Generation ===')\n\ndef rotation_matrix(axis, angle):\n    \"\"\"Generate rotation matrix for given axis and angle\"\"\"\n    axis = axis / np.linalg.norm(axis)\n    cos_angle = np.cos(angle)\n    sin_angle = np.sin(angle)\n    \n    return (\n        cos_angle * np.eye(3) +\n        sin_angle * np.array([[0, -axis[2], axis[1]],\n                             [axis[2], 0, -axis[0]],\n                             [-axis[1], axis[0], 0]]) +\n        (1 - cos_angle) * np.outer(axis, axis)\n    )\n\ndef generate_pose(translation, rotation_axis, rotation_angle):\n    \"\"\"Generate ligand pose from translation and rotation\"\"\"\n    rot_matrix = rotation_matrix(rotation_axis, rotation_angle)\n    rotated_ligand = np.dot(ligand_coords_centered, rot_matrix.T)\n    posed_ligand = rotated_ligand + translation\n    return posed_ligand\n\ndef calculate_docking_score(posed_ligand, protein_surface):\n    \"\"\"Calculate simplified docking score\"\"\"\n    # Distance-based scoring\n    min_distances = np.min(cdist(posed_ligand, protein_surface), axis=1)\n    \n    # Prefer poses where ligand is close to protein surface\n    distance_score = -np.mean(np.maximum(0, min_distances - 2.0))\n    \n    # Penalty for steric clashes (too close)\n    clash_penalty = -np.sum(np.maximum(0, 1.5 - min_distances)) * 10\n    \n    # Bonus for being in binding site\n    center_distances = np.linalg.norm(posed_ligand - binding_site_center, axis=1)\n    binding_site_bonus = -np.mean(np.maximum(0, center_distances - binding_site_radius))\n    \n    total_score = distance_score + clash_penalty + binding_site_bonus\n    return total_score, distance_score, clash_penalty, binding_site_bonus\n\n# Generate multiple poses using diffusion-like sampling\nprint('Generating poses via diffusion sampling...')\nn_poses = 1000\nposes = []\nscores = []\nscore_components = []\n\nfor i in range(n_poses):\n    # Sample translation (biased toward binding site)\n    translation = binding_site_center + np.random.normal(0, 3.0, 3)\n    \n    # Sample rotation\n    rotation_axis = np.random.normal(0, 1, 3)\n    rotation_axis = rotation_axis / np.linalg.norm(rotation_axis)\n    rotation_angle = np.random.uniform(0, 2*np.pi)\n    \n    # Generate pose\n    posed_ligand = generate_pose(translation, rotation_axis, rotation_angle)\n    \n    # Calculate score\n    total_score, dist_score, clash_penalty, binding_bonus = calculate_docking_score(\n        posed_ligand, protein_surface)\n    \n    poses.append({\n        'id': i,\n        'translation': translation,\n        'rotation_axis': rotation_axis,\n        'rotation_angle': rotation_angle,\n        'coordinates': posed_ligand,\n        'score': total_score,\n        'distance_score': dist_score,\n        'clash_penalty': clash_penalty,\n        'binding_bonus': binding_bonus\n    })\n    \n    scores.append(total_score)\n    score_components.append([dist_score, clash_penalty, binding_bonus])\n\nscores = np.array(scores)\nscore_components = np.array(score_components)\n\nprint(f'Generated {n_poses} poses')\nprint(f'Score range: {np.min(scores):.2f} to {np.max(scores):.2f}')\nprint(f'Mean score: {np.mean(scores):.2f} \u00b1 {np.std(scores):.2f}')\n\n# Select top poses\ntop_indices = np.argsort(scores)[-50:]  # Top 50 poses\ntop_poses = [poses[i] for i in top_indices]\ntop_scores = scores[top_indices]\n\nprint(f'\\nTop 10 pose scores: {top_scores[-10:]}')\n\n# Cluster top poses\nprint('\\n=== Pose Clustering ===')\n\n# Extract center positions of top poses\ntop_centers = np.array([np.mean(pose['coordinates'], axis=0) for pose in top_poses])\n\n# Cluster by position\ndbscan = DBSCAN(eps=2.0, min_samples=3)\ncluster_labels = dbscan.fit_predict(top_centers)\n\nn_clusters = len(set(cluster_labels)) - (1 if -1 in cluster_labels else 0)\nn_noise = list(cluster_labels).count(-1)\n\nprint(f'Found {n_clusters} pose clusters')\nprint(f'Noise points: {n_noise}')\n\n# Analyze clusters\ncluster_info = []\nfor cluster_id in range(n_clusters):\n    cluster_mask = cluster_labels == cluster_id\n    cluster_poses = [top_poses[i] for i in range(len(top_poses)) if cluster_mask[i]]\n    cluster_scores = top_scores[cluster_mask]\n    \n    cluster_center = np.mean(top_centers[cluster_mask], axis=0)\n    best_score = np.max(cluster_scores)\n    cluster_size = len(cluster_poses)\n    \n    cluster_info.append({\n        'id': cluster_id,\n        'size': cluster_size,\n        'best_score': best_score,\n        'center': cluster_center,\n        'poses': cluster_poses\n    })\n    \n    print(f'  Cluster {cluster_id}: {cluster_size} poses, '\n          f'best score: {best_score:.2f}, '\n          f'center: ({cluster_center[0]:.1f}, {cluster_center[1]:.1f}, {cluster_center[2]:.1f})')\n\n# Select representative poses\nprint('\\n=== Representative Pose Selection ===')\n\nrepresentative_poses = []\nfor cluster in sorted(cluster_info, key=lambda x: x['best_score'], reverse=True):\n    # Select best pose from each cluster\n    best_pose_idx = np.argmax([pose['score'] for pose in cluster['poses']])\n    best_pose = cluster['poses'][best_pose_idx]\n    \n    representative_poses.append({\n        'cluster_id': cluster['id'],\n        'pose': best_pose,\n        'cluster_size': cluster['size']\n    })\n    \n    print(f'Cluster {cluster[\"id\"]}: Score {best_pose[\"score\"]:.2f}, '\n          f'Position ({np.mean(best_pose[\"coordinates\"], axis=0)})')\n\n# Analyze binding mode\nprint('\\n=== Binding Mode Analysis ===')\n\nif representative_poses:\n    best_overall = representative_poses[0]['pose']\n    \n    print(f'Best pose analysis:')\n    print(f'  Total score: {best_overall[\"score\"]:.2f}')\n    print(f'  Distance score: {best_overall[\"distance_score\"]:.2f}')\n    print(f'  Clash penalty: {best_overall[\"clash_penalty\"]:.2f}')\n    print(f'  Binding site bonus: {best_overall[\"binding_bonus\"]:.2f}')\n    \n    # Calculate interactions\n    best_coords = best_overall['coordinates']\n    distances_to_surface = cdist(best_coords, protein_surface)\n    min_distances = np.min(distances_to_surface, axis=1)\n    \n    print(f'\\n  Ligand-protein distances:')\n    for i, (atom_name, distance) in enumerate(zip(ligand_atoms.keys(), min_distances)):\n        print(f'    {atom_name}: {distance:.2f} \u00c5')\n    \n    # Identify close contacts\n    close_contacts = min_distances < 3.0\n    print(f'\\n  Close contacts (< 3.0 \u00c5): {np.sum(close_contacts)} atoms')\n    \n    # Center of mass analysis\n    com_distance = np.linalg.norm(np.mean(best_coords, axis=0) - binding_site_center)\n    print(f'  Distance from binding site center: {com_distance:.2f} \u00c5')\n\n# Confidence estimation\nprint('\\n=== Confidence Estimation ===')\n\n# Score-based confidence\ntop_10_scores = top_scores[-10:]\nscore_std = np.std(top_10_scores)\nscore_confidence = 1.0 / (1.0 + score_std)  # Higher std = lower confidence\n\n# Clustering-based confidence\nif n_clusters > 0:\n    largest_cluster_size = max(cluster['size'] for cluster in cluster_info)\n    cluster_confidence = largest_cluster_size / len(top_poses)\nelse:\n    cluster_confidence = 0.0\n\n# Combined confidence\noverall_confidence = (score_confidence + cluster_confidence) / 2.0\n\nprint(f'Score-based confidence: {score_confidence:.3f}')\nprint(f'Clustering confidence: {cluster_confidence:.3f}')\nprint(f'Overall confidence: {overall_confidence:.3f}')\n\n# Quality metrics\nprint('\\n=== Quality Metrics ===')\n\n# Pose diversity\nall_centers = np.array([np.mean(pose['coordinates'], axis=0) for pose in poses])\nposition_diversity = np.mean(cdist(all_centers, all_centers))\n\n# Energy landscape analysis\nenergy_range = np.max(scores) - np.min(scores)\nfunnel_quality = (np.max(scores) - np.mean(scores)) / np.std(scores)\n\nprint(f'Position diversity: {position_diversity:.2f} \u00c5')\nprint(f'Energy range: {energy_range:.2f}')\nprint(f'Funnel quality: {funnel_quality:.2f}')\n\n# Visualization\nprint('\\n=== Visualization ===')\n\nfig = plt.figure(figsize=(16, 12))\n\n# 3D visualization of binding site and top poses\nax1 = fig.add_subplot(221, projection='3d')\n\n# Plot protein surface\nax1.scatter(protein_surface[:, 0], protein_surface[:, 1], protein_surface[:, 2], \n           c='lightblue', alpha=0.3, s=20, label='Protein surface')\n\n# Plot binding site center\nax1.scatter(*binding_site_center, c='red', s=100, marker='*', label='Binding site')\n\n# Plot top poses\ncolors = plt.cm.viridis(np.linspace(0, 1, len(representative_poses)))\nfor i, rep_pose in enumerate(representative_poses[:5]):  # Show top 5\n    coords = rep_pose['pose']['coordinates']\n    ax1.scatter(coords[:, 0], coords[:, 1], coords[:, 2], \n               c=[colors[i]], s=50, alpha=0.8, label=f'Pose {i+1}')\n\nax1.set_xlabel('X (\u00c5)')\nax1.set_ylabel('Y (\u00c5)')\nax1.set_zlabel('Z (\u00c5)')\nax1.set_title('3D Binding Site and Top Poses')\nax1.legend()\n\n# Score distribution\nax2 = fig.add_subplot(222)\nax2.hist(scores, bins=50, alpha=0.7, color='skyblue', edgecolor='black')\nax2.axvline(np.mean(scores), color='red', linestyle='--', label=f'Mean: {np.mean(scores):.2f}')\nax2.axvline(np.percentile(scores, 95), color='green', linestyle='--', \n           label=f'95th percentile: {np.percentile(scores, 95):.2f}')\nax2.set_xlabel('Docking Score')\nax2.set_ylabel('Frequency')\nax2.set_title('Score Distribution')\nax2.legend()\n\n# Score components\nax3 = fig.add_subplot(223)\ncomponent_names = ['Distance', 'Clash Penalty', 'Binding Bonus']\nfor i, name in enumerate(component_names):\n    ax3.scatter(range(len(top_poses)), score_components[top_indices, i], \n               alpha=0.6, label=name, s=20)\nax3.set_xlabel('Pose Index (sorted by score)')\nax3.set_ylabel('Score Component')\nax3.set_title('Score Components for Top Poses')\nax3.legend()\nax3.grid(True, alpha=0.3)\n\n# Cluster analysis\nax4 = fig.add_subplot(224)\nif n_clusters > 0:\n    for cluster_id in range(n_clusters):\n        cluster_mask = cluster_labels == cluster_id\n        if np.any(cluster_mask):\n            cluster_centers = top_centers[cluster_mask]\n            cluster_scores = top_scores[cluster_mask]\n            ax4.scatter(cluster_centers[:, 0], cluster_centers[:, 1], \n                       c=cluster_scores, s=50, alpha=0.7, \n                       label=f'Cluster {cluster_id}', cmap='viridis')\n    \n    # Noise points\n    noise_mask = cluster_labels == -1\n    if np.any(noise_mask):\n        ax4.scatter(top_centers[noise_mask, 0], top_centers[noise_mask, 1], \n                   c='gray', s=20, alpha=0.5, label='Noise')\n    \n    ax4.scatter(*binding_site_center[:2], c='red', s=100, marker='*', \n               label='Binding site')\n    \n    ax4.set_xlabel('X (\u00c5)')\n    ax4.set_ylabel('Y (\u00c5)')\n    ax4.set_title('Pose Clusters (XY projection)')\n    ax4.legend()\n    ax4.grid(True, alpha=0.3)\n\nplt.tight_layout()\n\n# Save visualization\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    viz_file = tmp.name\n\nplt.close()\nprint(f'Docking visualization saved to: {viz_file}')\n\n# Summary report\nprint('\\n' + '=' * 50)\nprint('DIFFDOCK MOLECULAR DOCKING SUMMARY')\nprint('=' * 50)\nprint(f'Poses generated: {n_poses:}')\nprint(f'Top poses analyzed: {len(top_poses)}')\nprint(f'Pose clusters found: {n_clusters}')\nprint(f'Best docking score: {np.max(scores):.2f}')\nprint(f'Confidence score: {overall_confidence:.3f}')\nprint(f'\\nBest pose location:')\nif representative_poses:\n    best_com = np.mean(representative_poses[0]['pose']['coordinates'], axis=0)\n    print(f'  Center of mass: ({best_com[0]:.2f}, {best_com[1]:.2f}, {best_com[2]:.2f})')\n    print(f'  Distance from binding site: {np.linalg.norm(best_com - binding_site_center):.2f} \u00c5')\n\nprint(f'\\nQuality metrics:')\nprint(f'  Position diversity: {position_diversity:.2f} \u00c5')\nprint(f'  Energy range: {energy_range:.2f}')\nprint(f'  Funnel quality: {funnel_quality:.2f}')\n\n# Cleanup\nos.unlink(viz_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nDiffDock provides:')\nprint('\u2022 State-of-the-art docking accuracy')\nprint('\u2022 End-to-end deep learning approach')\nprint('\u2022 Fast GPU-accelerated inference')\nprint('\u2022 Handling of flexible ligands and proteins')\nprint('\u2022 Confidence estimation for poses')\nprint('\u2022 Integration with drug discovery pipelines')\nprint('\u2022 Pre-trained models on large datasets')\n\nprint('\\nTypical DiffDock usage:')\nprint('python -m diffdock.inference --protein protein.pdb \\\\')\nprint('  --ligand ligand.sdf --out_dir results --inference_steps 20')",
       "quick_start": [
         "Install: pip install diffdock",
         "Prepare: protein.pdb and ligand.sdf files",
@@ -290,12 +720,98 @@
         "Output: --out_dir results",
         "Check docked poses in results directory"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_descriptastorus_info",
-    "description": "Get comprehensive information about Descriptastorus – molecular descriptor calculation",
+    "description": "Get comprehensive information about Descriptastorus \u2013 molecular descriptor calculation",
     "parameter": {
       "type": "object",
       "properties": {
@@ -343,6 +859,92 @@
         "Get names: desc_names = generator.columns",
         "Use for QSAR modeling or similarity analysis"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
@@ -355,7 +957,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -367,7 +1053,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -379,7 +1149,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -391,7 +1245,91 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -403,6 +1341,90 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": ["string", "null"],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": ["string", "null"],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": ["string", "null"],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   }
 ]

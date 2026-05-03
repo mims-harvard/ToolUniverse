@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.reactome_disease_target_score 模块"
 #: a7d493e92c8c47a4bf4db5911963a0b4 of
 #: tooluniverse.tools.reactome_disease_target_score:1
 msgid "reactome_disease_target_score"
-msgstr ""
+msgstr "reactome_疾病靶点评分"
 
 #: 13ca284597054b61b02573ce701426b5 c4064d165a1c4cd484108aad807225a1 of
 #: tooluniverse.tools.reactome_disease_target_score:3

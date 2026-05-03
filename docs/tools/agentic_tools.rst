@@ -3,7 +3,7 @@ Agentic Tools
 
 **Configuration File**: ``agentic_tools.json``
 **Tool Type**: Local
-**Tools Count**: 33
+**Tools Count**: 25
 
 This page contains all tools defined in the ``agentic_tools.json`` configuration file.
 
@@ -45,126 +45,6 @@ Performs deep analysis of code quality including complexity, security, performan
           "name": "AdvancedCodeQualityAnalyzer",
           "arguments": {
               "source_code": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**ArgumentDescriptionOptimizer** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Optimizes the descriptions of tool arguments/parameters based on test case results and actual usa...
-
-.. dropdown:: ArgumentDescriptionOptimizer tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``ArgumentDescriptionOptimizer``
-   * **Type**: ``AgenticTool``
-   * **Description**: Optimizes the descriptions of tool arguments/parameters based on test case results and actual usage patterns. Provides improved descriptions that are more accurate and user-friendly.
-
-   **Parameters:**
-
-   * ``parameter_schema`` (string) (required)
-     JSON string of the original parameter schema with properties and descriptions.
-
-   * ``test_results`` (string) (required)
-     A JSON string containing test case input/output pairs showing parameter usage.
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "ArgumentDescriptionOptimizer",
-          "arguments": {
-              "parameter_schema": "example_value",
-              "test_results": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**CodeOptimizer** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Optimizes code implementation for tools based on quality evaluation. Takes tool configuration and...
-
-.. dropdown:: CodeOptimizer tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``CodeOptimizer``
-   * **Type**: ``AgenticTool``
-   * **Description**: Optimizes code implementation for tools based on quality evaluation. Takes tool configuration and quality evaluation results to produce improved source code.
-
-   **Parameters:**
-
-   * ``tool_config`` (string) (required)
-     JSON string containing the complete tool configuration including current implementation
-
-   * ``quality_evaluation`` (string) (required)
-     JSON string containing quality evaluation results and feedback
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "CodeOptimizer",
-          "arguments": {
-              "tool_config": "example_value",
-              "quality_evaluation": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**CodeQualityAnalyzer** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Analyzes code quality from multiple dimensions including algorithmic correctness, functional impl...
-
-.. dropdown:: CodeQualityAnalyzer tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``CodeQualityAnalyzer``
-   * **Type**: ``AgenticTool``
-   * **Description**: Analyzes code quality from multiple dimensions including algorithmic correctness, functional implementation capability, performance characteristics, and best practices. Provides detailed feedback and improvement suggestions.
-
-   **Parameters:**
-
-   * ``tool_name`` (string) (required)
-     Name of the tool being analyzed
-
-   * ``tool_description`` (string) (required)
-     Description of what the tool is supposed to do
-
-   * ``tool_parameters`` (string) (required)
-     JSON string of tool parameters and their types
-
-   * ``implementation_code`` (string) (required)
-     The actual implementation code to analyze
-
-   * ``test_cases`` (string) (required)
-     JSON string of test cases for the tool
-
-   * ``test_execution_results`` (string) (optional)
-     JSON string of test execution results including pass/fail status and actual outputs
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "CodeQualityAnalyzer",
-          "arguments": {
-              "tool_name": "example_value",
-              "tool_description": "example_value",
-              "tool_parameters": "example_value",
-              "implementation_code": "example_value",
-              "test_cases": "example_value"
           }
       }
       result = tu.run(query)
@@ -839,81 +719,6 @@ Summarizes biomedical research texts, abstracts, or papers with specified length
       result = tu.run(query)
 
 
-**TestCaseGenerator** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Generates diverse and representative ToolUniverse tool call dictionaries for a given tool based o...
-
-.. dropdown:: TestCaseGenerator tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``TestCaseGenerator``
-   * **Type**: ``AgenticTool``
-   * **Description**: Generates diverse and representative ToolUniverse tool call dictionaries for a given tool based on its parameter schema. Each tool call should be a JSON object with 'name' (the tool's name) and 'arguments' (a dict of input arguments), covering different parameter combinations, edge cases, and typical usage. Can generate targeted test cases based on previous optimization feedback.
-
-   **Parameters:**
-
-   * ``tool_config`` (object) (required)
-     The full configuration of the tool to generate test cases for. May include '_optimization_feedback' and '_iteration' fields for feedback-driven test generation.
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "TestCaseGenerator",
-          "arguments": {
-              "tool_config": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**ToolImplementationGenerator** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Generates domain-specific, functional code implementations based on tool descriptions and require...
-
-.. dropdown:: ToolImplementationGenerator tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``ToolImplementationGenerator``
-   * **Type**: ``AgenticTool``
-   * **Description**: Generates domain-specific, functional code implementations based on tool descriptions and requirements with intelligent algorithm selection
-
-   **Parameters:**
-
-   * ``tool_description`` (string) (required)
-     Detailed description of what the tool should accomplish
-
-   * ``tool_parameters`` (string) (required)
-     JSON string of parameter schema for the tool
-
-   * ``domain`` (string) (optional)
-     Domain area for specialized implementation
-
-   * ``complexity_level`` (string) (optional)
-     Desired complexity level of implementation
-
-   * ``performance_requirements`` (string) (optional)
-     Performance requirements or constraints
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "ToolImplementationGenerator",
-          "arguments": {
-              "tool_description": "example_value",
-              "tool_parameters": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
 **ToolMetadataGenerator** (Type: AgenticTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -977,45 +782,6 @@ Standardizes and groups semantically equivalent metadata strings (e.g., sources,
           "name": "ToolMetadataStandardizer",
           "arguments": {
               "metadata_list": ["item1", "item2"]
-          }
-      }
-      result = tu.run(query)
-
-
-**ToolOptimizer** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Optimizes tool configurations based on quality feedback. Improves tool specifications and impleme...
-
-.. dropdown:: ToolOptimizer tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``ToolOptimizer``
-   * **Type**: ``AgenticTool``
-   * **Description**: Optimizes tool configurations based on quality feedback. Improves tool specifications and implementations to address identified issues.
-
-   **Parameters:**
-
-   * ``tool_config`` (string) (required)
-     JSON string of the original tool configuration
-
-   * ``quality_feedback`` (string) (required)
-     JSON string of quality evaluation feedback
-
-   * ``optimization_target`` (string) (required)
-     What to optimize for (improve_quality, enhance_performance, etc.)
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "ToolOptimizer",
-          "arguments": {
-              "tool_config": "example_value",
-              "quality_feedback": "example_value",
-              "optimization_target": "example_value"
           }
       }
       result = tu.run(query)
@@ -1090,93 +856,6 @@ Analyzes a primary tool against a list of other tools to identify meaningful, di
           "arguments": {
               "tool_a": "example_value",
               "other_tools": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**ToolSpecificationGenerator** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Generates complete ToolUniverse-compliant tool specifications based on a description and analysis...
-
-.. dropdown:: ToolSpecificationGenerator tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``ToolSpecificationGenerator``
-   * **Type**: ``AgenticTool``
-   * **Description**: Generates complete ToolUniverse-compliant tool specifications based on a description and analysis of similar existing tools. Creates comprehensive tool configurations including parameters, prompts, and metadata.
-
-   **Parameters:**
-
-   * ``tool_description`` (string) (required)
-     Brief description of the desired tool functionality and purpose.
-
-   * ``tool_category`` (string) (required)
-     Target category for the tool (e.g., 'biomedical', 'data_analysis', 'text_processing').
-
-   * ``tool_type`` (string) (required)
-     Specific ToolUniverse tool type (e.g., 'AgenticTool', 'RESTTool', 'PythonTool').
-
-   * ``similar_tools`` (string) (required)
-     JSON string containing configurations of similar existing tools for analysis and differentiation.
-
-   * ``existing_tools_summary`` (string) (required)
-     Summary of existing tools in the ecosystem to avoid duplication and identify gaps.
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "ToolSpecificationGenerator",
-          "arguments": {
-              "tool_description": "example_value",
-              "tool_category": "example_value",
-              "tool_type": "example_value",
-              "similar_tools": "example_value",
-              "existing_tools_summary": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**ToolSpecificationOptimizer** (Type: AgenticTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Optimizes tool specifications for clarity, completeness, and usability with comprehensive benchma...
-
-.. dropdown:: ToolSpecificationOptimizer tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``ToolSpecificationOptimizer``
-   * **Type**: ``AgenticTool``
-   * **Description**: Optimizes tool specifications for clarity, completeness, and usability with comprehensive benchmarking against similar tools
-
-   **Parameters:**
-
-   * ``tool_config`` (string) (required)
-     JSON string of current tool configuration to optimize
-
-   * ``optimization_focus`` (string) (optional)
-     Primary optimization focus
-
-   * ``target_audience`` (string) (optional)
-     Target user expertise level
-
-   * ``similar_tools`` (string) (optional)
-     JSON string array of similar tools for comparison and benchmarking
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "ToolSpecificationOptimizer",
-          "arguments": {
-              "tool_config": "example_value"
           }
       }
       result = tu.run(query)

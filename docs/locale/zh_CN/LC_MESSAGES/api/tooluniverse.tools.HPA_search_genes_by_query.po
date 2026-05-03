@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_search\\_genes\\_by\\_query 模块"
 #: fd607c96a8554108a8875550e003b69f of
 #: tooluniverse.tools.HPA_search_genes_by_query:1
 msgid "HPA_search_genes_by_query"
-msgstr ""
+msgstr "HPA_按查询搜索基因"
 
 #: a551478650e54faeb0bfd062c6b7a847 a8603263b528463ba4bc2f18394c76d2 of
 #: tooluniverse.tools.HPA_search_genes_by_query:3

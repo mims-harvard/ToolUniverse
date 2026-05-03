@@ -1,0 +1,458 @@
+[
+  {
+    "name": "ProteinsPlus_predict_binding_sites",
+    "description": "Predict druggable binding sites and pockets in protein structures using DoGSiteScorer algorithm. Input can be a PDB ID (e.g., '1A2B') or uploaded PDB file content. Returns predicted binding pockets with druggability scores, volume, surface area, and residue composition. Essential for identifying potential drug binding sites before docking. For structure-based drug design workflows: first use this tool to find pockets, then use ProteinsPlus_dock_ligand to dock compounds into identified sites.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (e.g., '1A2B', '4HHB'). Use either pdb_id or pdb_content, not both."
+        },
+        "pdb_content": {
+          "type": "string",
+          "description": "Raw PDB file content as string. Use either pdb_id or pdb_content, not both."
+        },
+        "chain": {
+          "type": "string",
+          "description": "Specific chain to analyze (e.g., 'A'). Optional - if not provided, all chains analyzed."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/dogsite_rest",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 15,
+      "max_wait_time": 1800
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "pockets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pocket_id": {
+                        "type": "integer"
+                      },
+                      "druggability_score": {
+                        "type": "number",
+                        "description": "Druggability score (0-1), higher is better"
+                      },
+                      "volume": {
+                        "type": "number",
+                        "description": "Pocket volume in Angstrom^3"
+                      },
+                      "surface_area": {
+                        "type": "number",
+                        "description": "Pocket surface area in Angstrom^2"
+                      },
+                      "depth": {
+                        "type": "number"
+                      },
+                      "residues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "List of residues forming the pocket"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "4HHB",
+        "chain": "A"
+      }
+    ]
+  },
+  {
+    "name": "ProteinsPlus_dock_ligand",
+    "description": "Perform automated protein-ligand docking using JAMDA workflow with TrixX docking algorithm. Predicts binding poses and affinity for small molecules in protein binding sites. Requires protein structure (PDB ID or file) and ligand (SMILES, SDF, or MOL2 format). Returns top-ranked docking poses with binding scores and coordinates. Use after identifying binding sites with ProteinsPlus_predict_binding_sites. For drug discovery: combine with ADMETAI_predict_admet for comprehensive compound evaluation.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier for protein structure (e.g., '1A2B'). Use either pdb_id or pdb_content."
+        },
+        "pdb_content": {
+          "type": "string",
+          "description": "Raw PDB file content. Use either pdb_id or pdb_content."
+        },
+        "ligand_smiles": {
+          "type": "string",
+          "description": "Ligand structure as SMILES string (e.g., 'CC(=O)OC1=CC=CC=C1C(=O)O' for aspirin). Use one of ligand_smiles, ligand_sdf, or ligand_mol2."
+        },
+        "ligand_sdf": {
+          "type": "string",
+          "description": "Ligand structure in SDF format. Use one of ligand_smiles, ligand_sdf, or ligand_mol2."
+        },
+        "ligand_mol2": {
+          "type": "string",
+          "description": "Ligand structure in MOL2 format. Use one of ligand_smiles, ligand_sdf, or ligand_mol2."
+        },
+        "binding_site": {
+          "type": "object",
+          "description": "Binding site definition with center coordinates and radius. Optional - auto-detected if not provided.",
+          "properties": {
+            "center_x": {
+              "type": "number"
+            },
+            "center_y": {
+              "type": "number"
+            },
+            "center_z": {
+              "type": "number"
+            },
+            "radius": {
+              "type": "number",
+              "description": "Search radius in Angstroms"
+            }
+          }
+        },
+        "num_poses": {
+          "type": "integer",
+          "description": "Number of docking poses to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/jamda/dock",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 20,
+      "max_wait_time": 1800
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "poses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pose_id": {
+                        "type": "integer"
+                      },
+                      "score": {
+                        "type": "number",
+                        "description": "Docking score (more negative = better binding)"
+                      },
+                      "rmsd": {
+                        "type": "number"
+                      },
+                      "coordinates": {
+                        "type": "string",
+                        "description": "Ligand coordinates in PDB format"
+                      }
+                    }
+                  }
+                },
+                "best_score": {
+                  "type": "number"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B",
+        "ligand_smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+      },
+      {
+        "pdb_id": "4HHB",
+        "ligand_smiles": "CC(C)Cc1ccc(cc1)C(C)C(O)=O",
+        "num_poses": 5
+      }
+    ]
+  },
+  {
+    "name": "ProteinsPlus_analyze_interactions",
+    "description": "Analyze protein-ligand interactions using PLIP (Protein-Ligand Interaction Profiler). Identifies hydrogen bonds, hydrophobic contacts, salt bridges, pi-stacking, and other non-covalent interactions. Input requires protein structure with bound ligand (PDB ID or complex file). Returns detailed interaction fingerprint with bond types, distances, and residues involved. Use after docking with ProteinsPlus_dock_ligand to understand binding mode. Critical for structure-based optimization and SAR analysis.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier with bound ligand (e.g., '1A2B'). Use either pdb_id or pdb_content."
+        },
+        "pdb_content": {
+          "type": "string",
+          "description": "Raw PDB file content with protein-ligand complex. Use either pdb_id or pdb_content."
+        },
+        "ligand_id": {
+          "type": "string",
+          "description": "Three-letter ligand residue name in PDB (e.g., 'HEM', 'ATP'). Required for PDB files with multiple ligands."
+        },
+        "chain": {
+          "type": "string",
+          "description": "Chain identifier containing the ligand (e.g., 'A'). Optional."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/plip/analyze",
+      "method": "POST",
+      "is_async": false,
+      "poll_interval": 10,
+      "max_wait_time": 300
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "interactions": {
+                  "type": "object",
+                  "properties": {
+                    "hydrogen_bonds": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "donor": {
+                            "type": "string"
+                          },
+                          "acceptor": {
+                            "type": "string"
+                          },
+                          "distance": {
+                            "type": "number"
+                          },
+                          "angle": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "hydrophobic_contacts": {
+                      "type": "array"
+                    },
+                    "salt_bridges": {
+                      "type": "array"
+                    },
+                    "pi_stacking": {
+                      "type": "array"
+                    },
+                    "pi_cation": {
+                      "type": "array"
+                    },
+                    "halogen_bonds": {
+                      "type": "array"
+                    }
+                  }
+                },
+                "binding_site_residues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "4HHB",
+        "ligand_id": "HEM",
+        "chain": "A"
+      }
+    ]
+  },
+  {
+    "name": "ProteinsPlus_check_structure",
+    "description": "Validate and check protein structure quality before docking or analysis. Identifies issues like missing atoms, unusual bond lengths, steric clashes, and protonation problems. Input is PDB ID or structure file. Returns quality report with warnings and recommendations for structure preparation. Use before running docking calculations to ensure reliable results. Recommended first step in any structure-based drug design workflow.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier to validate (e.g., '1A2B'). Use either pdb_id or pdb_content."
+        },
+        "pdb_content": {
+          "type": "string",
+          "description": "Raw PDB file content to validate. Use either pdb_id or pdb_content."
+        },
+        "fix_structure": {
+          "type": "boolean",
+          "description": "Automatically fix common structure issues (default: false)",
+          "default": false
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/proteinplus/check",
+      "method": "POST",
+      "is_async": false,
+      "poll_interval": 5,
+      "max_wait_time": 120
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "quality_score": {
+                  "type": "number",
+                  "description": "Overall structure quality score (0-100)"
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["error", "warning", "info"]
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "residues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "statistics": {
+                  "type": "object",
+                  "properties": {
+                    "num_atoms": {
+                      "type": "integer"
+                    },
+                    "num_residues": {
+                      "type": "integer"
+                    },
+                    "num_chains": {
+                      "type": "integer"
+                    },
+                    "missing_atoms": {
+                      "type": "integer"
+                    },
+                    "steric_clashes": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "4HHB",
+        "fix_structure": true
+      }
+    ]
+  }
+]

@@ -44,12 +44,107 @@
         "Operations: arr.mean(), arr.sum(), np.dot()",
         "Generate: np.zeros(), np.ones(), np.random.randn()"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_scipy_info",
-    "description": "Get comprehensive information about SciPy – fundamental algorithms for scientific computing",
+    "description": "Get comprehensive information about SciPy \u2013 fundamental algorithms for scientific computing",
     "parameter": {
       "type": "object",
       "properties": {
@@ -97,6 +192,101 @@
         "Use scipy.linalg for linear algebra operations",
         "Explore scipy.stats for statistical functions"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
@@ -144,12 +334,107 @@
         "Read files: pd.read_csv(), pd.read_excel()",
         "Analyze: df.describe(), df.groupby(), df.merge()"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_h5py_info",
-    "description": "Get comprehensive information about h5py – HDF5 for Python",
+    "description": "Get comprehensive information about h5py \u2013 HDF5 for Python",
     "parameter": {
       "type": "object",
       "properties": {
@@ -191,12 +476,107 @@
         "Write: f.create_dataset('name', data=array)",
         "Read: with h5py.File('data.h5', 'r') as f: data = f['name'][:]"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_tqdm_info",
-    "description": "Get comprehensive information about tqdm – fast progress bars for Python",
+    "description": "Get comprehensive information about tqdm \u2013 fast progress bars for Python",
     "parameter": {
       "type": "object",
       "properties": {
@@ -238,12 +618,107 @@
         "Manual: pbar = tqdm(total=100)",
         "Manual control: pbar.update(increment)"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_flowutils_info",
-    "description": "Get comprehensive information about FlowUtils – flow cytometry utilities and algorithms",
+    "description": "Get comprehensive information about FlowUtils \u2013 flow cytometry utilities and algorithms",
     "parameter": {
       "type": "object",
       "properties": {
@@ -291,12 +766,107 @@
         "Use with compensation matrices",
         "Integrate with other flow cytometry tools"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_cooler_info",
-    "description": "Get comprehensive information about Cooler – sparse Hi-C contact matrix storage",
+    "description": "Get comprehensive information about Cooler \u2013 sparse Hi-C contact matrix storage",
     "parameter": {
       "type": "object",
       "properties": {
@@ -338,12 +908,107 @@
         "4. Extract: matrix = c.matrix().fetch('chr1')",
         "5. Analyze: matrix statistics, visualize"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_tiledb_info",
-    "description": "Get comprehensive information about TileDB – modern database for array data",
+    "description": "Get comprehensive information about TileDB \u2013 modern database for array data",
     "parameter": {
       "type": "object",
       "properties": {
@@ -391,12 +1056,107 @@
         "Read data: with tiledb.open(uri, 'r') as A: result = A[:]",
         "Supports both dense and sparse arrays"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_sympy_info",
-    "description": "Get comprehensive information about SymPy – symbolic mathematics library",
+    "description": "Get comprehensive information about SymPy \u2013 symbolic mathematics library",
     "parameter": {
       "type": "object",
       "properties": {
@@ -435,7 +1195,7 @@
         "pip": "pip install sympy",
         "conda": "conda install sympy"
       },
-      "usage_example": "import sympy as sp\nfrom sympy import symbols, diff, integrate, solve, expand, factor\n\n# Define symbols\nx, y, z = symbols('x y z')\na, b, c = symbols('a b c')\n\nprint('SymPy - Symbolic Mathematics in Python')\nprint('=' * 40)\n\n# Basic symbolic operations\nprint('\\n=== Basic Symbolic Operations ===')\nexpr = x**2 + 2*x + 1\nprint(f'Expression: {expr}')\nprint(f'Expanded: {expand(expr)}')\nprint(f'Factored: {factor(expr)}')\nprint(f'Simplified: {sp.simplify(expr)}')\n\n# Calculus operations\nprint('\\n=== Calculus ===')\nf = x**3 + 2*x**2 + x + 1\nprint(f'Function: f(x) = {f}')\nprint(f'Derivative: f\\'(x) = {diff(f, x)}')\nprint(f'Second derivative: f\\'\\'(x) = {diff(f, x, 2)}')\nprint(f'Integral: ∫f(x)dx = {integrate(f, x)}')\nprint(f'Definite integral [0,1]: {integrate(f, (x, 0, 1))}')\n\n# Equation solving\nprint('\\n=== Equation Solving ===')\neq1 = sp.Eq(x**2 - 4, 0)\neq2 = sp.Eq(x**2 + y**2, 1)\nprint(f'Solve x² - 4 = 0: {solve(eq1, x)}')\nprint(f'Solve x² + y² = 1 for y: {solve(eq2, y)}')\n\n# System of equations\nsystem = [x + y - 2, 2*x - y + 1]\nsolution = solve(system, [x, y])\nprint(f'System solution: {solution}')\n\n# Matrix operations\nprint('\\n=== Matrix Operations ===')\nM = sp.Matrix([[1, 2], [3, 4]])\nprint(f'Matrix M:\\n{M}')\nprint(f'Determinant: {M.det()}')\nprint(f'Inverse:\\n{M.inv()}')\nprint(f'Eigenvalues: {M.eigenvals()}')\n\n# Series and limits\nprint('\\n=== Series and Limits ===')\nexpr_limit = sp.sin(x)/x\nprint(f'lim(sin(x)/x, x->0) = {sp.limit(expr_limit, x, 0)}')\nseries_expr = sp.exp(x)\nprint(f'Taylor series of e^x around x=0:')\nprint(sp.series(series_expr, x, 0, 6))\n\n# Special functions\nprint('\\n=== Special Functions ===')\nprint(f'Factorial of 5: {sp.factorial(5)}')\nprint(f'Gamma function Γ(4): {sp.gamma(4)}')\nprint(f'Beta function B(2,3): {sp.beta(2, 3)}')\nprint(f'Binomial coefficient C(10,3): {sp.binomial(10, 3)}')\n\n# Number theory\nprint('\\n=== Number Theory ===')\nprint(f'Prime factorization of 60: {sp.factorint(60)}')\nprint(f'Is 17 prime? {sp.isprime(17)}')\nprint(f'Next prime after 17: {sp.nextprime(17)}')\nprint(f'GCD of 48 and 18: {sp.gcd(48, 18)}')\n\n# Symbolic plotting preparation\nprint('\\n=== Symbolic Function Analysis ===')\nf_analysis = x**3 - 6*x**2 + 9*x + 1\nprint(f'Function: f(x) = {f_analysis}')\nprint(f'Critical points (f\\'(x) = 0): {solve(diff(f_analysis, x), x)}')\nprint(f'Inflection points (f\\'\\'(x) = 0): {solve(diff(f_analysis, x, 2), x)}')\n\n# LaTeX representation\nprint('\\n=== LaTeX Output ===')\ncomplex_expr = sp.sqrt(x**2 + y**2) + sp.sin(x*y)\nprint(f'Expression: {complex_expr}')\nprint(f'LaTeX: {sp.latex(complex_expr)}')\n\nprint('\\nSymPy provides:')\nprint('• Symbolic computation and algebra')\nprint('• Calculus: derivatives, integrals, limits')\nprint('• Equation solving and simplification')\nprint('• Matrix operations and linear algebra')\nprint('• Number theory and combinatorics')\nprint('• Special functions and series')\nprint('• LaTeX output for mathematical expressions')\nprint('• Integration with NumPy and matplotlib')",
+      "usage_example": "import sympy as sp\nfrom sympy import symbols, diff, integrate, solve, expand, factor\n\n# Define symbols\nx, y, z = symbols('x y z')\na, b, c = symbols('a b c')\n\nprint('SymPy - Symbolic Mathematics in Python')\nprint('=' * 40)\n\n# Basic symbolic operations\nprint('\\n=== Basic Symbolic Operations ===')\nexpr = x**2 + 2*x + 1\nprint(f'Expression: {expr}')\nprint(f'Expanded: {expand(expr)}')\nprint(f'Factored: {factor(expr)}')\nprint(f'Simplified: {sp.simplify(expr)}')\n\n# Calculus operations\nprint('\\n=== Calculus ===')\nf = x**3 + 2*x**2 + x + 1\nprint(f'Function: f(x) = {f}')\nprint(f'Derivative: f\\'(x) = {diff(f, x)}')\nprint(f'Second derivative: f\\'\\'(x) = {diff(f, x, 2)}')\nprint(f'Integral: \u222bf(x)dx = {integrate(f, x)}')\nprint(f'Definite integral [0,1]: {integrate(f, (x, 0, 1))}')\n\n# Equation solving\nprint('\\n=== Equation Solving ===')\neq1 = sp.Eq(x**2 - 4, 0)\neq2 = sp.Eq(x**2 + y**2, 1)\nprint(f'Solve x\u00b2 - 4 = 0: {solve(eq1, x)}')\nprint(f'Solve x\u00b2 + y\u00b2 = 1 for y: {solve(eq2, y)}')\n\n# System of equations\nsystem = [x + y - 2, 2*x - y + 1]\nsolution = solve(system, [x, y])\nprint(f'System solution: {solution}')\n\n# Matrix operations\nprint('\\n=== Matrix Operations ===')\nM = sp.Matrix([[1, 2], [3, 4]])\nprint(f'Matrix M:\\n{M}')\nprint(f'Determinant: {M.det()}')\nprint(f'Inverse:\\n{M.inv()}')\nprint(f'Eigenvalues: {M.eigenvals()}')\n\n# Series and limits\nprint('\\n=== Series and Limits ===')\nexpr_limit = sp.sin(x)/x\nprint(f'lim(sin(x)/x, x->0) = {sp.limit(expr_limit, x, 0)}')\nseries_expr = sp.exp(x)\nprint(f'Taylor series of e^x around x=0:')\nprint(sp.series(series_expr, x, 0, 6))\n\n# Special functions\nprint('\\n=== Special Functions ===')\nprint(f'Factorial of 5: {sp.factorial(5)}')\nprint(f'Gamma function \u0393(4): {sp.gamma(4)}')\nprint(f'Beta function B(2,3): {sp.beta(2, 3)}')\nprint(f'Binomial coefficient C(10,3): {sp.binomial(10, 3)}')\n\n# Number theory\nprint('\\n=== Number Theory ===')\nprint(f'Prime factorization of 60: {sp.factorint(60)}')\nprint(f'Is 17 prime? {sp.isprime(17)}')\nprint(f'Next prime after 17: {sp.nextprime(17)}')\nprint(f'GCD of 48 and 18: {sp.gcd(48, 18)}')\n\n# Symbolic plotting preparation\nprint('\\n=== Symbolic Function Analysis ===')\nf_analysis = x**3 - 6*x**2 + 9*x + 1\nprint(f'Function: f(x) = {f_analysis}')\nprint(f'Critical points (f\\'(x) = 0): {solve(diff(f_analysis, x), x)}')\nprint(f'Inflection points (f\\'\\'(x) = 0): {solve(diff(f_analysis, x, 2), x)}')\n\n# LaTeX representation\nprint('\\n=== LaTeX Output ===')\ncomplex_expr = sp.sqrt(x**2 + y**2) + sp.sin(x*y)\nprint(f'Expression: {complex_expr}')\nprint(f'LaTeX: {sp.latex(complex_expr)}')\n\nprint('\\nSymPy provides:')\nprint('\u2022 Symbolic computation and algebra')\nprint('\u2022 Calculus: derivatives, integrals, limits')\nprint('\u2022 Equation solving and simplification')\nprint('\u2022 Matrix operations and linear algebra')\nprint('\u2022 Number theory and combinatorics')\nprint('\u2022 Special functions and series')\nprint('\u2022 LaTeX output for mathematical expressions')\nprint('\u2022 Integration with NumPy and matplotlib')",
       "quick_start": [
         "Install: pip install sympy",
         "Import: import sympy as sp",
@@ -444,12 +1204,107 @@
         "Equations: sp.Eq() and solve()",
         "Use for symbolic math and equation solving"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_optlang_info",
-    "description": "Get comprehensive information about optlang – optimization language for mathematical programming",
+    "description": "Get comprehensive information about optlang \u2013 optimization language for mathematical programming",
     "parameter": {
       "type": "object",
       "properties": {
@@ -498,6 +1353,101 @@
         "Build model: model.add([vars, constraints])",
         "Solve: model.optimize()"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
@@ -510,7 +1460,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -522,7 +1565,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -534,7 +1670,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -546,7 +1775,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -558,7 +1880,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -570,6 +1985,99 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   }
 ]

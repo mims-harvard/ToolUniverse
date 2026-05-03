@@ -1,0 +1,184 @@
+[
+  {
+    "name": "VariantValidator_validate_variant",
+    "description": "Validate and convert genetic variant descriptions using VariantValidator. Takes HGVS-formatted variant notation and returns validated variant descriptions with genomic context, transcript context, protein consequence, and cross-references. Validates variant nomenclature against current RefSeq sequences and LOVD syntax checker. Supports substitutions, deletions, insertions, duplications, inversions. Reference assemblies: GRCh37 (hg19) or GRCh38 (hg38).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genome_build": {
+          "type": "string",
+          "description": "Reference genome assembly: 'GRCh37' (hg19) or 'GRCh38' (hg38)"
+        },
+        "variant_description": {
+          "type": "string",
+          "description": "HGVS variant description (e.g., 'NM_007294.4:c.5266dup' for BRCA1 c.5266dupC, 'NM_000179.3:c.943C>T', 'chr17:g.43092919del')"
+        },
+        "select_transcripts": {
+          "type": "string",
+          "description": "Transcript to validate against (e.g., 'NM_007294.4'). Use 'all' to get all transcripts for a genomic variant."
+        }
+      },
+      "required": ["genome_build", "variant_description", "select_transcripts"]
+    },
+    "fields": {
+      "endpoint": "https://rest.variantvalidator.org/VariantValidator/variantvalidator/{genome_build}/{variant_description}/{select_transcripts}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"genome_build": "GRCh38", "variant_description": "NM_007294.4:c.5266dup", "select_transcripts": "NM_007294.4"},
+      {"genome_build": "GRCh38", "variant_description": "NM_000179.3:c.943C>T", "select_transcripts": "NM_000179.3"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Validated variant information. Contains 'flag' field, 'metadata' field, and dynamic keys for each validated variant.",
+          "properties": {
+            "flag": {"type": ["string", "null"], "description": "Validation status: 'gene_variant', 'warning', 'error'"},
+            "metadata": {
+              "type": ["object", "null"],
+              "description": "VariantValidator version information",
+              "properties": {
+                "variantvalidator_version": {"type": "string"},
+                "variantvalidator_hgvs_version": {"type": "string"},
+                "vvdb_version": {"type": "string"}
+              }
+            }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "description": "HGVS variant key with validated transcript/genomic coordinates, protein consequence, and warnings",
+            "properties": {
+              "hgvs_transcript_variant": {"type": ["string", "null"], "description": "Validated HGVS transcript notation"},
+              "hgvs_refseqgene_variant": {"type": ["string", "null"], "description": "HGVS RefSeqGene notation"},
+              "hgvs_predicted_protein_consequence": {
+                "type": ["object", "null"],
+                "properties": {
+                  "tlr": {"type": ["string", "null"], "description": "Three-letter amino acid code"},
+                  "slr": {"type": ["string", "null"], "description": "Single-letter amino acid code"}
+                }
+              },
+              "primary_assembly_loci": {
+                "type": ["object", "null"],
+                "description": "Genomic coordinates in GRCh37/GRCh38",
+                "properties": {
+                  "grch38": {"type": ["object", "null"]},
+                  "grch37": {"type": ["object", "null"]}
+                }
+              },
+              "gene_ids": {
+                "type": ["object", "null"],
+                "properties": {
+                  "hgnc_id": {"type": ["string", "null"]},
+                  "entrez_gene_id": {"type": ["string", "null"]},
+                  "ncbi_id": {"type": ["string", "null"]},
+                  "ensembl_gene_id": {"type": ["string", "null"]}
+                }
+              },
+              "gene_symbol": {"type": ["string", "null"]},
+              "validation_warnings": {"type": ["array", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "VariantValidator_gene2transcripts",
+    "description": "Get all transcripts for a gene using VariantValidator. Returns MANE Select and MANE Plus Clinical transcript annotations, Ensembl and RefSeq transcript identifiers, genomic coordinates, and cross-references. Useful for identifying the correct transcript for variant annotation. Supports filter for MANE transcripts only or all transcripts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR'). Aliases: gene, gene_name."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for gene_symbol."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for gene_symbol."
+        },
+        "transcript_set": {
+          "type": "string",
+          "description": "Transcript filter: 'mane' for MANE Select/Plus Clinical only, 'refseq' for RefSeq transcripts, 'ensembl' for Ensembl, 'all' for everything",
+          "default": "mane"
+        },
+        "genome_build": {
+          "type": "string",
+          "description": "Reference genome assembly: 'GRCh37' or 'GRCh38' (default: GRCh38)",
+          "default": "GRCh38"
+        }
+      },
+      "required": ["gene_symbol"]
+    },
+    "fields": {
+      "endpoint": "https://rest.variantvalidator.org/VariantValidator/tools/gene2transcripts_v2/{gene_symbol}/{transcript_set}/all/{genome_build}",
+      "path_aliases": {"gene": "gene_symbol", "gene_name": "gene_symbol"},
+      "params": {
+        "content-type": "application/json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"gene_symbol": "TP53", "transcript_set": "mane", "genome_build": "GRCh38"},
+      {"gene_symbol": "BRCA1", "transcript_set": "mane", "genome_build": "GRCh38"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "current_name": {"type": ["string", "null"]},
+              "current_symbol": {"type": ["string", "null"]},
+              "hgnc": {"type": ["string", "null"]},
+              "previous_symbol": {"type": ["string", "null"]},
+              "requested_symbol": {"type": ["string", "null"]},
+              "transcripts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "reference": {"type": ["string", "null"], "description": "Transcript accession (e.g., NM_000546.6 or ENST00000269305.9)"},
+                    "description": {"type": ["string", "null"]},
+                    "coding_start": {"type": ["integer", "null"]},
+                    "coding_end": {"type": ["integer", "null"]},
+                    "length": {"type": ["integer", "null"]},
+                    "annotations": {
+                      "type": "object",
+                      "properties": {
+                        "chromosome": {"type": ["string", "null"]},
+                        "mane_select": {"type": ["boolean", "null"]},
+                        "mane_plus_clinical": {"type": ["boolean", "null"]},
+                        "ensembl_select": {"type": ["boolean", "null"]},
+                        "db_xref": {"type": ["object", "null"]}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

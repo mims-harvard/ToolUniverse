@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_oligosaccharide\\_descriptors\\_by\\_entity\\_i
 #: 2b7ebd7db6e04d0c945169733e8c971e of
 #: tooluniverse.tools.get_oligosaccharide_descriptors_by_entity_id:1
 msgid "get_oligosaccharide_descriptors_by_entity_id"
-msgstr ""
+msgstr "get_oligosaccharide_descriptors_by_entity_id（通过实体ID获取低聚糖描述符）"
 
 #: 0bcbc54aeb6a411a910ed6b6af751425 c75caad0bfa3412690c06708521a9476 of
 #: tooluniverse.tools.get_oligosaccharide_descriptors_by_entity_id:3

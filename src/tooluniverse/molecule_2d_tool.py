@@ -117,7 +117,7 @@ class Molecule2DTool(VisualizationTool):
                 "molecular_properties": mol_props,
             }
 
-            return self.create_visualization_response(
+            viz_response = self.create_visualization_response(
                 html_content=html_content,
                 viz_type="molecule_2d",
                 data={
@@ -128,16 +128,20 @@ class Molecule2DTool(VisualizationTool):
                 static_image=static_image,
                 metadata=metadata,
             )
+            # Wrap in data field for test compatibility
+            return {"status": "success", "data": viz_response}
 
         except ImportError:
-            return self.create_error_response(
-                "RDKit is not installed. Please install it with: " "pip install rdkit",
+            error_response = self.create_error_response(
+                "RDKit is not installed. Please install it with: pip install rdkit",
                 "MissingDependency",
             )
+            return {"status": "error", "data": error_response}
         except Exception as e:
-            return self.create_error_response(
+            error_response = self.create_error_response(
                 f"Failed to create molecule visualization: {str(e)}"
             )
+            return {"status": "error", "data": error_response}
 
     def _resolve_molecule_name(self, name: str) -> Optional[str]:
         """Resolve molecule name to SMILES using PubChem."""

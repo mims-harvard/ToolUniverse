@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_molfeat\\_info 模块"
 
 #: 55e41b378e064104bef635d3ee9199d0 of tooluniverse.tools.get_molfeat_info:1
 msgid "get_molfeat_info"
-msgstr ""
+msgstr "get_molfeat_info 获取分子特征信息"
 
 #: 36677d8df7054e0c994ae7dca75c11c7 f3ad9502d3af44e3836e1f47d5c05d05 of
 #: tooluniverse.tools.get_molfeat_info:3

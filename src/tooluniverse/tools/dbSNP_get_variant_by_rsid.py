@@ -1,14 +1,14 @@
 """
-dbSNP_get_variant_by_rsid
+dbsnp_get_variant_by_rsid
 
-Fetch dbSNP variant by rsID using NCBI Variation Services (refsnp endpoint).
+Get variant information from dbSNP by rsID. Returns genomic coordinates, alleles, and basic varia...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def dbSNP_get_variant_by_rsid(
+def dbsnp_get_variant_by_rsid(
     rsid: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -16,12 +16,12 @@ def dbSNP_get_variant_by_rsid(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch dbSNP variant by rsID using NCBI Variation Services (refsnp endpoint).
+    Get variant information from dbSNP by rsID. Returns genomic coordinates, alleles, and basic varia...
 
     Parameters
     ----------
     rsid : str
-        rsID without 'rs' prefix or with (e.g., rs699 or 699).
+        dbSNP rsID (e.g., 'rs12345', '12345')
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -35,12 +35,17 @@ def dbSNP_get_variant_by_rsid(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"rsid": rsid}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "dbSNP_get_variant_by_rsid", "arguments": {"rsid": rsid}},
+        {
+            "name": "dbsnp_get_variant_by_rsid",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,
     )
 
 
-__all__ = ["dbSNP_get_variant_by_rsid"]
+__all__ = ["dbsnp_get_variant_by_rsid"]

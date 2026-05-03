@@ -1,0 +1,479 @@
+[
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_summary",
+    "description": "Get summary information for a PDB entry including title, authors, release date, and basic structure metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/summary/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "PDB entry summary"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of summary entries returned (typically 1)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "aliases": ["PDBe_get_summary"]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_quality",
+    "description": "Get quality metrics and validation information for a PDB entry including resolution, R-free, Ramachandran statistics, and validation scores. Note: Quality endpoint may not be available for all PDB entries. If this returns 404, try pdbe_get_entry_summary which includes basic quality information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/validation/summary_quality_scores/entry/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request ('success' or 'error')"
+        },
+        "data": {
+          "type": "object",
+          "description": "Quality metrics and validation data (only present if status is 'success')"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message (only present if status is 'error')"
+        },
+        "suggestion": {
+          "type": "string",
+          "description": "Suggestion for alternative endpoint (only present if status is 'error')"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1cbs"
+      },
+      {
+        "pdb_id": "4hhb"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_publications",
+    "description": "Get publication information associated with a PDB entry including authors, journal, DOI, and citation details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/publications/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Publication information"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of publication entries returned"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_assemblies",
+    "description": "Get biological assembly information for a PDB entry including assembly IDs, symmetry operations, and assembly composition. Note: The assemblies endpoint may return 404 for some entries. This tool automatically falls back to extracting assembly information from the summary endpoint. If both methods fail, use pdbe_get_entry_summary for comprehensive structure information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/assemblies/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of biological assemblies for the PDB entry",
+      "items": {
+        "type": "object",
+        "properties": {
+          "assembly_id": {
+            "type": "string",
+            "description": "Assembly identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Assembly name (e.g., monomer, dimer)"
+          },
+          "form": {
+            "type": "string",
+            "description": "Assembly form (e.g., homo, hetero)"
+          },
+          "preferred": {
+            "type": "boolean",
+            "description": "Whether this is the preferred assembly"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_secondary_structure",
+    "description": "Get secondary structure information for a PDB entry including helix, sheet, and turn assignments.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/secondary_structure/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Secondary structure assignments"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of secondary structure entries returned (typically 1)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_molecules",
+    "description": "Get molecule information for a PDB entry including molecule type, entity ID, length, chains, mutations, molecular weight, and gene names. Use this to understand the composition and properties of molecules in the structure.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/molecules/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Molecule information organized by PDB ID, containing arrays of molecule objects with fields like molecule_type, entity_id, length, chains, mutations, weight, gene_name"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of molecules returned (when data is a list)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "1CRN"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_related_publications",
+    "description": "Get publications related to a PDB entry that appear without citation, including PubMed IDs, titles, journals, authors, and citation counts. This complements pdbe_get_entry_publications by showing additional related publications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/related_publications/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Related publications organized by PDB ID, containing articles with pubmed_id, title, journal, authors, citation counts"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of top-level categories returned (typically 1 for this endpoint)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_status",
+    "description": "Get status information for a PDB entry including release date, status code, authors, experimental method, and whether the entry has been superseded or obsoleted. Use this to check the current status and availability of a PDB entry.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/status/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Entry status information organized by PDB ID, containing status_code, release_date, authors, experimental_method, superceded_by, obsoletes"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of status entries returned (typically 1)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "1CRN"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_experiment",
+    "description": "Get experimental details for a PDB entry including experimental method, resolution, R-factors, completeness, refinement software, space group, and unit cell parameters. This provides detailed experimental metadata for structure determination.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/experiment/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Experimental details organized by PDB ID, containing experimental_method, resolution, r_factor, r_free, completeness, refinement_software, spacegroup, cell parameters"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of experimental entries returned (typically 1)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "1CRN"
+      }
+    ]
+  },
+  {
+    "type": "PDBeAPIRESTTool",
+    "name": "pdbe_get_entry_observed_residues_ratio",
+    "description": "Get observed residues ratio for chains in a PDB entry, indicating what fraction of residues are observed in the structure. This helps assess structure completeness and quality. Returns information per chain including struct_asym_id, chain_id, number of residues, observed ratio, and partial ratio.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID (e.g., '1A2B', '1CRN'). Will be converted to lowercase automatically."
+        }
+      },
+      "required": ["pdb_id"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pdbe/api/pdb/entry/observed_residues_ratio/{pdb_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Observed residues ratio organized by PDB ID and entity ID, containing arrays with struct_asym_id, chain_id, number_residues, observed_ratio, partial_ratio"
+        },
+        "url": {
+          "type": "string",
+          "description": "URL of the API request"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of entity groups returned (typically 1 or more)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1A2B"
+      },
+      {
+        "pdb_id": "1CRN"
+      }
+    ]
+  }
+]

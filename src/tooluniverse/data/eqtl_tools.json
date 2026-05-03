@@ -1,0 +1,262 @@
+[
+  {
+    "name": "eQTL_list_datasets",
+    "description": "List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Each dataset represents a study-tissue-quantification combination with measured genetic associations to gene expression. Returns dataset IDs, study labels, tissue types, sample sizes, and quantification methods (ge=gene expression, exon, tx=transcript, txrev=transcript ratio, leafcutter=splicing). Use dataset IDs with eQTL_get_associations for specific variant-gene associations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Number of datasets to return (default 20)"
+        },
+        "quant_method": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by quantification method: 'ge' (gene expression), 'exon', 'tx' (transcript), 'txrev' (transcript ratio), 'leafcutter' (splicing)"
+        },
+        "tissue_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by tissue ontology ID (e.g., 'CL_0000235' for macrophage, 'UBERON_0002107' for liver)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "size": 5
+      },
+      {
+        "size": 5,
+        "quant_method": "ge"
+      },
+      {
+        "size": 3,
+        "tissue_id": "CL_0000235"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of eQTL dataset objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dataset_id": {
+                "type": "string",
+                "description": "Unique dataset identifier (e.g., 'QTD000001')"
+              },
+              "study_id": {
+                "type": "string",
+                "description": "Study identifier (e.g., 'QTS000001')"
+              },
+              "study_label": {
+                "type": "string",
+                "description": "Human-readable study name (e.g., 'Alasoo_2018')"
+              },
+              "quant_method": {
+                "type": "string",
+                "description": "Quantification method (ge, exon, tx, txrev, leafcutter)"
+              },
+              "tissue_id": {
+                "type": "string",
+                "description": "Tissue ontology ID"
+              },
+              "tissue_label": {
+                "type": "string",
+                "description": "Human-readable tissue name"
+              },
+              "condition_label": {
+                "type": "string",
+                "description": "Experimental condition (e.g., 'naive', 'LPS')"
+              },
+              "sample_size": {
+                "type": "integer",
+                "description": "Number of samples in the dataset"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "eQTL_get_associations",
+    "description": "Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI eQTL Catalogue. Returns statistical associations between genetic variants and molecular traits (gene/exon/transcript expression or splicing). Each result includes beta effect size, p-value, allele frequency, and variant coordinates. Use eQTL_list_datasets first to find available dataset IDs. Can filter by gene_id (Ensembl gene ID) or variant (chr_pos_ref_alt format).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_id": {
+          "type": "string",
+          "description": "Dataset identifier from eQTL_list_datasets (e.g., 'QTD000001', 'QTD000584')"
+        },
+        "size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Number of associations to return (default 20)"
+        },
+        "gene_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by Ensembl gene ID (e.g., 'ENSG00000141510' for TP53). Returns all eQTLs affecting this gene."
+        },
+        "variant": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by variant in chr_pos_ref_alt format (e.g., 'chr1_791100_G_GGGA'). Returns all genes affected by this variant."
+        },
+        "molecular_trait_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by molecular trait ID (usually same as gene_id for 'ge' datasets)"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets/{dataset_id}/associations"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "dataset_id": "QTD000001",
+        "size": 5
+      },
+      {
+        "dataset_id": "QTD000584",
+        "size": 3
+      },
+      {
+        "dataset_id": "QTD000001",
+        "size": 3,
+        "gene_id": "ENSG00000215014"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of eQTL association objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "molecular_trait_id": {
+                "type": "string",
+                "description": "Molecular trait identifier"
+              },
+              "gene_id": {
+                "type": "string",
+                "description": "Ensembl gene ID"
+              },
+              "variant": {
+                "type": "string",
+                "description": "Variant ID in chr_pos_ref_alt format"
+              },
+              "rsid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "dbSNP rsID if available"
+              },
+              "chromosome": {
+                "type": "string",
+                "description": "Chromosome"
+              },
+              "position": {
+                "type": "integer",
+                "description": "Genomic position"
+              },
+              "ref": {
+                "type": "string"
+              },
+              "alt": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "description": "Variant type (SNP, INDEL)"
+              },
+              "beta": {
+                "type": "number",
+                "description": "Effect size (beta coefficient)"
+              },
+              "se": {
+                "type": "number",
+                "description": "Standard error"
+              },
+              "pvalue": {
+                "type": "number",
+                "description": "P-value for the association"
+              },
+              "nlog10p": {
+                "type": "number",
+                "description": "Negative log10 of p-value"
+              },
+              "maf": {
+                "type": "number",
+                "description": "Minor allele frequency"
+              },
+              "ac": {
+                "type": "integer",
+                "description": "Allele count"
+              },
+              "an": {
+                "type": "integer",
+                "description": "Total allele number"
+              },
+              "median_tpm": {
+                "type": ["number", "null"],
+                "description": "Median TPM expression of the gene"
+              },
+              "r2": {
+                "type": "number",
+                "description": "Imputation quality (R-squared)"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_SPL\\_ID 模块"
 #: 893b05f243df49dfb15828e225123dc3 of
 #: tooluniverse.tools.FDA_get_drug_name_by_SPL_ID:1
 msgid "FDA_get_drug_name_by_SPL_ID"
-msgstr ""
+msgstr "FDA_通过_SPL_ID_获取药品名称"
 
 #: 83c28523134344b0becf7325f9914b45 a5a9bc4ccf8f4017968c127c3441c37a of
 #: tooluniverse.tools.FDA_get_drug_name_by_SPL_ID:3

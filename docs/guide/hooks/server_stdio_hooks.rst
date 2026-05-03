@@ -3,8 +3,6 @@ Server and Stdio Hook Integration
 
 **Complete Tutorial to using hooks with ToolUniverse servers and stdio interfaces**
 
-This Tutorial covers how to use ToolUniverse's intelligent output processing hooks with both server and stdio modes, including command-line options, configuration files, and Python API integration.
-
 Overview
 --------
 
@@ -305,11 +303,9 @@ Enable verbose logging for troubleshooting:
    # Stdio mode
    tooluniverse-smcp-stdio --hook-type SummarizationHook --verbose
 
-Next Steps
-----------
+.. seealso::
 
-- :doc:`index` - Complete hooks system Tutorial
-- :doc:`summarization_hook` - SummarizationHook details
-- :doc:`file_save_hook` - FileSaveHook details
-- :doc:`hook_configuration` - Advanced configuration
-- :doc:`../loading_tools` - Tool loading and management
+   - :doc:`index` - Complete hooks system overview
+   - :doc:`summarization_hook` - SummarizationHook details
+   - :doc:`file_save_hook` - FileSaveHook details
+   - :doc:`hook_configuration` - Advanced configuration

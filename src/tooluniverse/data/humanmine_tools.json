@@ -1,0 +1,376 @@
+[
+  {
+    "name": "HumanMine_search",
+    "description": "Search HumanMine (InterMine) for genes, proteins, pathways, diseases, and other biological entities related to human, mouse, and rat. HumanMine integrates data from 30+ sources including NCBI Gene, UniProt, Ensembl, GO, KEGG, Reactome, OMIM, and GWAS Catalog. Returns entity IDs, types, names, symbols, and organism information. Use the facet_Category parameter to filter results to a specific type (Gene, Protein, Pathway, Disease, Publication, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query: gene symbol (e.g., 'TP53', 'BRCA1'), gene name, disease name, pathway name, or any biological term"
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 10, max 100)"
+        },
+        "facet_Category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by entity type: 'Gene', 'Protein', 'Pathway', 'Disease', 'Publication', 'GWASResult', 'GOTerm', 'ProteinDomain', etc."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.humanmine.org/humanmine/service/search",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "TP53",
+        "size": 5,
+        "facet_Category": "Gene"
+      },
+      {
+        "q": "BRCA1",
+        "size": 3
+      },
+      {
+        "q": "apoptosis",
+        "facet_Category": "Pathway",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "HumanMine search results",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total number of matching entries"
+            },
+            "facets": {
+              "type": "object",
+              "description": "Facet counts by category and organism",
+              "properties": {
+                "Category": {
+                  "type": "object",
+                  "description": "Count of results per entity type"
+                },
+                "organism.shortName": {
+                  "type": "object",
+                  "description": "Count of results per organism"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "description": "List of matching entities",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "HumanMine internal ID"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Entity type: Gene, Protein, Pathway, Disease, etc."
+                  },
+                  "fields": {
+                    "type": "object",
+                    "description": "Entity-specific fields",
+                    "properties": {
+                      "symbol": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Gene symbol"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Gene/protein/pathway name"
+                      },
+                      "organism.name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Organism scientific name"
+                      },
+                      "primaryIdentifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Primary ID (Entrez Gene ID, Reactome ID, etc.)"
+                      },
+                      "secondaryIdentifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Secondary ID (Ensembl gene ID)"
+                      },
+                      "identifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Identifier for pathways/diseases"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HumanMine_search_genes",
+    "description": "Search HumanMine specifically for genes by symbol, name, or ID across human, mouse, and rat. HumanMine integrates gene data from NCBI Gene, Ensembl, UniProt, and other sources. Returns gene symbols, Entrez IDs, Ensembl IDs, gene names, and organism information. More focused than HumanMine_search as it pre-filters to Gene category only.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Gene search query: gene symbol (e.g., 'EGFR', 'TP53'), gene name (e.g., 'tumor protein p53'), or Entrez Gene ID"
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 10, max 100)"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.humanmine.org/humanmine/service/search",
+      "params": {
+        "format": "json",
+        "facet_Category": "Gene"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "EGFR",
+        "size": 5
+      },
+      {
+        "q": "BRCA1",
+        "size": 3
+      },
+      {
+        "q": "insulin receptor"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Gene search results from HumanMine",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total matching genes"
+            },
+            "facets": {
+              "type": "object",
+              "properties": {
+                "organism.shortName": {
+                  "type": "object",
+                  "description": "Gene counts per organism"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "symbol": {
+                        "type": "string",
+                        "description": "Gene symbol"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Full gene name"
+                      },
+                      "organism.name": {
+                        "type": "string",
+                        "description": "Species"
+                      },
+                      "primaryIdentifier": {
+                        "type": "string",
+                        "description": "Entrez Gene ID or MGI/RGD ID"
+                      },
+                      "secondaryIdentifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Ensembl gene ID"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HumanMine_search_pathways",
+    "description": "Search HumanMine specifically for biological pathways by name or identifier. Integrates pathway data from Reactome, KEGG, and other sources. Returns pathway names, identifiers (Reactome IDs like R-HSA-109581), and associated organisms. Useful for finding pathway IDs for downstream enrichment analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Pathway search query: pathway name (e.g., 'apoptosis', 'cell cycle', 'PI3K-Akt signaling'), or Reactome ID"
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default 10, max 100)"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.humanmine.org/humanmine/service/search",
+      "params": {
+        "format": "json",
+        "facet_Category": "Pathway"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "apoptosis",
+        "size": 5
+      },
+      {
+        "q": "cell cycle"
+      },
+      {
+        "q": "DNA repair",
+        "size": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Pathway search results from HumanMine",
+          "properties": {
+            "totalHits": {
+              "type": "integer",
+              "description": "Total matching pathways"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Always 'Pathway'"
+                  },
+                  "fields": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Pathway name"
+                      },
+                      "identifier": {
+                        "type": "string",
+                        "description": "Pathway ID (e.g., R-HSA-109581 for Reactome)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

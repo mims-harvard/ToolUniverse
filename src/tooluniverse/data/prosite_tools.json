@@ -1,0 +1,279 @@
+[
+  {
+    "name": "PROSITE_get_entry",
+    "description": "Retrieve a PROSITE protein motif/domain entry by its accession number. Returns the entry name, description, type (PATTERN or MATRIX/profile), consensus pattern, functional site annotations, cross-references to UniProt proteins, and documentation links. PROSITE (ExPASy/SIB) contains 1,800+ patterns and profiles describing protein domains, families, and functional sites. Pattern accessions start with PS000xx (e.g., PS00001 for N-glycosylation, PS00028 for zinc finger C2H2). Use this to understand what a PROSITE motif means after finding it via ScanProsite_scan_protein.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "PROSITE accession number starting with 'PS'. Examples: 'PS00001' (N-glycosylation site), 'PS00028' (zinc finger C2H2 signature), 'PS00348' (p53 tumor suppressor family), 'PS51420' (Rho GTPase domain profile), 'PS00262' (insulin family signature)."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "get_entry"
+    },
+    "type": "PROSITETool",
+    "test_examples": [
+      {"accession": "PS00001"},
+      {"accession": "PS00028"},
+      {"accession": "PS00348"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": ["string", "null"],
+                  "description": "PROSITE accession (e.g., PS00001)"
+                },
+                "entry_name": {
+                  "type": ["string", "null"],
+                  "description": "Entry name (e.g., ASN_GLYCOSYLATION)"
+                },
+                "entry_type": {
+                  "type": ["string", "null"],
+                  "description": "Entry type: PATTERN or MATRIX (profile)"
+                },
+                "description": {
+                  "type": ["string", "null"],
+                  "description": "Human-readable description of the motif/domain"
+                },
+                "pattern": {
+                  "type": ["string", "null"],
+                  "description": "Consensus pattern in PROSITE syntax (e.g., N-{P}-[ST]-{P} for glycosylation)"
+                },
+                "dates": {
+                  "type": ["string", "null"],
+                  "description": "Creation and update dates"
+                },
+                "comments": {
+                  "type": ["string", "null"],
+                  "description": "Additional annotations and site information"
+                },
+                "functional_sites": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Functional site positions annotated in the pattern"
+                },
+                "skip_flag": {
+                  "type": ["boolean", "null"],
+                  "description": "If true, pattern matches frequent sites (may produce many hits)"
+                },
+                "prorule": {
+                  "type": ["string", "null"],
+                  "description": "ProRule reference ID"
+                },
+                "documentation": {
+                  "type": ["string", "null"],
+                  "description": "PDOC documentation reference"
+                },
+                "cross_references": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "UniProt protein cross-references (first 20)"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "accession": {"type": "string"},
+                "url": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PROSITE_search",
+    "description": "Search the PROSITE database for protein motifs, domains, and functional site patterns by keyword. Uses the EBI InterPro API which indexes all PROSITE entries. Returns accession numbers, names, types, and InterPro cross-references. Useful for finding PROSITE patterns related to a biological function (e.g., 'kinase', 'zinc finger', 'glycosylation'). Follow up with PROSITE_get_entry to get full details of any result.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keyword(s) for PROSITE entries. Examples: 'zinc finger', 'kinase', 'glycosylation', 'insulin', 'p53', 'EGF-like domain'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 10, max: 50)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "search"
+    },
+    "type": "PROSITETool",
+    "test_examples": [
+      {"query": "zinc finger", "limit": 5},
+      {"query": "kinase"},
+      {"query": "insulin"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": ["string", "null"],
+                    "description": "PROSITE accession (e.g., PS00028)"
+                  },
+                  "name": {
+                    "type": ["string", "null"],
+                    "description": "Full entry name"
+                  },
+                  "short_name": {
+                    "type": ["string", "null"],
+                    "description": "Short entry name identifier"
+                  },
+                  "type": {
+                    "type": ["string", "null"],
+                    "description": "Entry type (conserved_site, domain, active_site, etc.)"
+                  },
+                  "source_database": {
+                    "type": ["string", "null"],
+                    "description": "Source database (prosite)"
+                  },
+                  "integrated_into": {
+                    "type": ["string", "null"],
+                    "description": "InterPro entry this PROSITE pattern is integrated into"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "query": {"type": "string"},
+                "total_results": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PROSITE_scan_sequence",
+    "description": "Scan a raw protein amino acid sequence against all PROSITE patterns and profiles to find matching motifs and domains. Returns PROSITE signature accessions, names, positions, and confidence scores. This is the sequence-based alternative to ScanProsite_scan_protein (which accepts UniProt accessions). Use this when you have a novel or modified sequence not in UniProt. By default, skips frequent/low-information patterns (like N-glycosylation); set skip_frequent=false to include all matches.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein amino acid sequence in single-letter code (e.g., 'MKTAYIAKQRQ...'). Must contain only standard amino acid letters."
+        },
+        "skip_frequent": {
+          "type": "boolean",
+          "description": "If true (default), skip frequent low-information patterns like glycosylation sites. Set to false to include all matches."
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "scan_sequence"
+    },
+    "type": "PROSITETool",
+    "test_examples": [
+      {
+        "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVVHSLAKWKRQTLGQHDFSAGEGLYTHMKALRPDEDRLSPLHSVYVDQWDWERVMGDGERQFSTLKSTVEAIWAGIKATEAAVSEEFGLAPFLPDQIHFVHSQELLSRYPDLDAKGRERAIAKDLGAVFLVGIGGKLSDGHRHDVRAPDYDDWSTPSELGHAGLNGDILVWNPVLEDAFELSSMGIRVDADTLKHQLALTGDEDRLELEWHQALLRGEMPQTIGGGIGQSRLTMLLLQLPHIGQVQAGVWPAAVRESVPSLL",
+        "skip_frequent": true
+      },
+      {
+        "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVVHSLAKWKRQTLGQHDFSAGEGLYTHMKALRPDEDRLSPLHSVYVDQWDWERVMGDGERQFSTLKSTVEAIWAGIKATEAAVSEEFGLAPFLPDQIHFVHSQELLSRYPDLDAKGRERAIAKDLGAVFLVGIGGKLSDGHRHDVRAPDYDDWSTPSELGHAGLNGDILVWNPVLEDAFELSSMGIRVDADTLKHQLALTGDEDRLELEWHQALLRGEMPQTIGGGIGQSRLTMLLLQLPHIGQVQAGVWPAAVRESVPSLL",
+        "skip_frequent": false
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "signature_accession": {
+                    "type": ["string", "null"],
+                    "description": "PROSITE accession of the matched pattern (e.g., PS50862)"
+                  },
+                  "signature_name": {
+                    "type": ["string", "null"],
+                    "description": "PROSITE entry name of the matched pattern"
+                  },
+                  "start": {
+                    "type": ["integer", "null"],
+                    "description": "Start position of the match in the sequence"
+                  },
+                  "end": {
+                    "type": ["integer", "null"],
+                    "description": "End position of the match"
+                  },
+                  "score": {
+                    "type": ["number", "null"],
+                    "description": "Match score (for profiles; null for patterns)"
+                  },
+                  "level": {
+                    "type": ["integer", "null"],
+                    "description": "Confidence level (0 = strong match)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "sequence_length": {"type": "integer"},
+                "total_matches": {"type": "integer"},
+                "skip_frequent_patterns": {"type": "boolean"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

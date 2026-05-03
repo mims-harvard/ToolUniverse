@@ -34,7 +34,7 @@ msgstr "现在 `quick_doc_build.sh` 和 `quick_doc_build_cn.sh` 脚本会**自�
 
 #: ../../QUICK_BUILD_GUIDE.md:7 1a45989432f144c7aeabecd9df3bca97
 msgid "📝 使用方法"
-msgstr ""
+msgstr "📝 使用说明"
 
 #: ../../QUICK_BUILD_GUIDE.md:9 cad8c8c7227c4a1888515a467f83f7be
 msgid "方法 1: 默认构建（中英文）"
@@ -194,11 +194,11 @@ msgstr ""
 
 #: ../../QUICK_BUILD_GUIDE.md:168 1ccf1f8d0cc6404eae3649f2140e1e5e
 msgid "✅ 深色/浅色模式切换"
-msgstr ""
+msgstr "✅ 深色模式/浅色模式切换"
 
 #: ../../QUICK_BUILD_GUIDE.md:169 c1dadc2dfff9404fa9e33b12ed7236e9
 msgid "✅ 移动端响应式"
-msgstr ""
+msgstr "✅ 移动端响应式设计"
 
 #: ../../QUICK_BUILD_GUIDE.md:170 c958388e95784f2e8c3e707ab2691310
 msgid "✅ 内置搜索功能"
@@ -210,7 +210,7 @@ msgstr ""
 
 #: ../../QUICK_BUILD_GUIDE.md:174 7b2aa44ba5c74aa5948e6ec1ab6de908
 msgid "🌍 多语言索引页（优雅的语言选择界面）"
-msgstr ""
+msgstr "🌍 多语言索引页（简洁优雅的语言选择界面）"
 
 #: ../../QUICK_BUILD_GUIDE.md:175 d8c57c11d2d3451eaeff9e64cd8b3e9d
 msgid "🔄 各语言版本独立完整"
@@ -246,7 +246,7 @@ msgstr "选择您想要的语言"
 
 #: ../../QUICK_BUILD_GUIDE.md:191 a3b55bcfde024c16acaae9ad3e7ef3a0
 msgid "享受阅读！📖"
-msgstr ""
+msgstr "祝您阅读愉快！📖"
 
 #: ../../QUICK_BUILD_GUIDE.md:193 013007c8adb1453d9748da8496d2719c
 msgid "💡 Tips"
@@ -384,7 +384,7 @@ msgstr "问：为什么看不到中文翻译？"
 
 #: ../../QUICK_BUILD_GUIDE.md:233 3e473a7ae731401799978a3ae322cc03
 msgid "A: 检查："
-msgstr ""
+msgstr "A：检查："
 
 #: ../../QUICK_BUILD_GUIDE.md:234 a4b33e12b47843a0951f0f307584abaf
 msgid "`locale/zh_CN/LC_MESSAGES/` 目录中的 `.po` 文件是否有翻译内容"
@@ -417,7 +417,7 @@ msgstr "请提供需要翻译的具体英文文本，我将为您翻译成自然
 
 #: ../../QUICK_BUILD_GUIDE.md:249 e7204486138f42439774e77fa531a935
 msgid "跳过 Remote Tools：`DOC_SKIP_REMOTE=1`"
-msgstr ""
+msgstr "跳过远程工具：`DOC_SKIP_REMOTE=1`"
 
 #: ../../QUICK_BUILD_GUIDE.md:250 672530e573d0499babe7d56a1fff1f30
 msgid "只构建一种语言：`DOC_LANGUAGES=en`"
@@ -425,7 +425,7 @@ msgstr ""
 
 #: ../../QUICK_BUILD_GUIDE.md:252 69bc1faa884140cca6680e2e6191f76f
 msgid "Q: 如何部署到服务器？"
-msgstr ""
+msgstr "问：如何部署到服务器？"
 
 #: ../../QUICK_BUILD_GUIDE.md:263 a0e804cfa1d843f3be29ec323b01cc9a
 msgid "🎉 开始使用"

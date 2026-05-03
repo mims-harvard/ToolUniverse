@@ -19,6 +19,61 @@
       "endpoint": "http://golr-aux.geneontology.io/solr/select?fq=document_category:\"ontology_class\"&q=*:*&fq=annotation_class_label:\"{query}\"&wt=json&rows=10",
       "input_description": "Input search keyword, e.g., 'cell cycle'.",
       "output_description": "Returns GO terms matching the search keyword with their details."
+    },
+    "test_examples": [
+      {
+        "query": "gene:TP53"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "responseHeader": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "integer"
+            },
+            "QTime": {
+              "type": "integer"
+            },
+            "params": {
+              "type": "object",
+              "properties": {
+                "q": {
+                  "type": "string"
+                },
+                "fq": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "rows": {
+                  "type": "string"
+                },
+                "wt": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "response": {
+          "type": "object",
+          "properties": {
+            "numFound": {
+              "type": "integer"
+            },
+            "start": {
+              "type": "integer"
+            },
+            "docs": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -41,6 +96,73 @@
       "endpoint": "http://api.geneontology.org/api/bioentity/function/{id}",
       "input_description": "Input GO term ID, e.g., 'GO:0006915'.",
       "output_description": "Returns complete term details including definition, synonyms, and annotations."
+    },
+    "test_examples": [
+      {
+        "id": "GO:0006915"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "bioentity_label": {
+            "type": "string"
+          },
+          "bioentity_name": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "assigned_by": {
+            "type": "string"
+          },
+          "taxon": {
+            "type": "string"
+          },
+          "taxon_label": {
+            "type": "string"
+          },
+          "panther_family": {
+            "type": "string"
+          },
+          "panther_family_label": {
+            "type": "string"
+          },
+          "evidence_type": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "synonym": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "annotation_extension_class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "annotation_extension_class_label": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -64,6 +186,145 @@
       "extract_path": "response.docs[0]",
       "input_description": "Input GO term ID, e.g., 'GO:0006915'.",
       "output_description": "Returns the GO term details including label, definition, and namespace."
+    },
+    "test_examples": [
+      {
+        "id": "GO:0006915"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "document_category": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "annotation_class": {
+          "type": "string"
+        },
+        "annotation_class_label": {
+          "type": "string"
+        },
+        "annotation_class_label_searchable": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "description_searchable": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "idspace": {
+          "type": "string"
+        },
+        "is_obsolete": {
+          "type": "boolean"
+        },
+        "topology_graph_json": {
+          "type": "string"
+        },
+        "regulates_transitivity_graph_json": {
+          "type": "string"
+        },
+        "isa_partof_transitivity_graph_json": {
+          "type": "string"
+        },
+        "neighborhood_graph_json": {
+          "type": "string"
+        },
+        "neighborhood_limited_graph_json": {
+          "type": "string"
+        },
+        "isa_partof_closure_label": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "definition_xref": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "synonym_searchable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isa_partof_closure_label_searchable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isa_closure_label_searchable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isa_closure_label": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "database_xref": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "synonym": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regulates_closure": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regulates_closure_label_searchable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regulates_closure_label": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isa_partof_closure": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isa_closure": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alternate_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   },
   {
@@ -97,6 +358,20 @@
       "extract_path": "associations[*].subject",
       "input_description": "Input GO term ID, e.g., 'GO:0006915'.",
       "output_description": "Returns a list of genes/proteins associated with the GO term."
+    },
+    "test_examples": [
+      {
+        "id": "GO:0006915",
+        "taxon": "NCBITaxon:9606",
+        "rows": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {}
+      }
     }
   },
   {
@@ -109,6 +384,11 @@
         "gene_id": {
           "type": "string",
           "description": "A gene identifier such as gene symbol (e.g., 'TP53') or database ID."
+        },
+        "rows": {
+          "type": "integer",
+          "description": "Maximum number of annotations to return. Default: 100. Use a lower value (e.g., 25) for genes with many annotations like TP53.",
+          "default": 100
         }
       },
       "required": [
@@ -120,6 +400,271 @@
       "extract_path": "response.docs",
       "input_description": "Input gene identifier, e.g., 'TP53'.",
       "output_description": "Returns a list of GO annotations for the gene."
+    },
+    "test_examples": [
+      {
+        "gene_id": "TP53"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "document_category": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "bioentity": {
+            "type": "string"
+          },
+          "bioentity_internal_id": {
+            "type": "string"
+          },
+          "bioentity_label": {
+            "type": "string"
+          },
+          "bioentity_label_searchable": {
+            "type": "string"
+          },
+          "annotation_class": {
+            "type": "string"
+          },
+          "annotation_class_label": {
+            "type": "string"
+          },
+          "annotation_class_label_searchable": {
+            "type": "string"
+          },
+          "aspect": {
+            "type": "string"
+          },
+          "bioentity_name": {
+            "type": "string"
+          },
+          "bioentity_name_searchable": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "assigned_by": {
+            "type": "string"
+          },
+          "bioentity_isoform": {
+            "type": "string"
+          },
+          "taxon": {
+            "type": "string"
+          },
+          "taxon_label": {
+            "type": "string"
+          },
+          "taxon_label_searchable": {
+            "type": "string"
+          },
+          "taxon_closure_map": {
+            "type": "string"
+          },
+          "taxon_subset_closure_map": {
+            "type": "string"
+          },
+          "panther_family": {
+            "type": "string"
+          },
+          "panther_family_searchable": {
+            "type": "string"
+          },
+          "panther_family_label": {
+            "type": "string"
+          },
+          "panther_family_label_searchable": {
+            "type": "string"
+          },
+          "evidence_type": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "evidence_label": {
+            "type": "string"
+          },
+          "evidence_label_searchable": {
+            "type": "string"
+          },
+          "evidence_closure_map": {
+            "type": "string"
+          },
+          "evidence_subset_closure_map": {
+            "type": "string"
+          },
+          "isa_partof_closure_map": {
+            "type": "string"
+          },
+          "regulates_closure_map": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isa_partof_closure_label": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "taxon_subset_closure_label_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "taxon_subset_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_with": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "synonym_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isa_partof_closure_label_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_with_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reference": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "synonym": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_closure_label_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "regulates_closure_label_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "taxon_closure_label_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isa_partof_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "taxon_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_subset_closure_label_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_closure_label": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_subset_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_subset_closure_label": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "taxon_closure_label": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "regulates_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_type_closure": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "regulates_closure_label": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "taxon_subset_closure_label": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reference_searchable": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 ]

@@ -1,0 +1,118 @@
+[
+  {
+    "name": "HMDB_get_metabolite",
+    "description": "Get human metabolite information from HMDB by ID. Returns basic chemical properties via PubChem cross-reference: IUPAC name, molecular formula, SMILES, InChIKey, and molecular weight. Note: HMDB has no open API; data is retrieved from PubChem using the HMDB ID as a cross-reference. Classification, pathways, and disease associations are not available programmatically.",
+    "type": "HMDBTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_metabolite"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID (e.g., HMDB0000001 or 0000001)"
+        }
+      },
+      "required": [
+        "hmdb_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "hmdb_id": "HMDB0000001"
+      }
+    ]
+  },
+  {
+    "name": "HMDB_search",
+    "description": "Search for metabolites by name or formula using PubChem. Returns PubChem CIDs (not HMDB IDs) with name, formula, SMILES, and molecular weight. search_type='name' uses PubChem compound/name endpoint; search_type='formula' uses PubChem fastformula endpoint; search_type='mass' falls back to name search (mass-based search not supported). HMDB IDs are not included in results.",
+    "type": "HMDBTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query - metabolite name, formula, or keyword"
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Search type: name, formula, mass (default: name)",
+          "default": "name"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "glucose"
+      }
+    ]
+  },
+  {
+    "name": "HMDB_get_diseases",
+    "description": "Attempts to get disease associations for a metabolite from HMDB. Note: HMDB does not provide an open API for disease data. This tool always returns an error directing users to the HMDB website. For disease-metabolite relationships, consider using CTD or DisGeNET databases instead.",
+    "type": "HMDBTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_diseases"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID"
+        }
+      },
+      "required": [
+        "hmdb_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "hmdb_id": "HMDB0000122"
+      }
+    ]
+  }
+]

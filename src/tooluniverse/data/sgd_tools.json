@@ -1,0 +1,558 @@
+[
+  {
+    "name": "SGD_get_gene",
+    "description": "Get yeast gene/locus overview from SGD (Saccharomyces Genome Database) by SGD identifier. Returns gene name, systematic name, description, UniProt ID, aliases, and functional annotations. S. cerevisiae is the primary model organism for eukaryotic cell biology. Example: S000000259 returns GAL4, the galactose metabolism transcription factor.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sgd_id": {
+          "type": "string",
+          "description": "SGD locus identifier. Examples: 'S000000259' (GAL4), 'S000003219' (RMR1), 'S000005564' (ACT1)."
+        }
+      },
+      "required": [
+        "sgd_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "locus",
+      "query_mode": "overview"
+    },
+    "type": "SGDTool",
+    "test_examples": [
+      {
+        "sgd_id": "S000000259"
+      },
+      {
+        "sgd_id": "S000003219"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "sgd_id": {
+                  "type": "string",
+                  "description": "SGD identifier"
+                },
+                "display_name": {
+                  "type": "string",
+                  "description": "Gene name (e.g., GAL4)"
+                },
+                "gene_name": {
+                  "type": "string"
+                },
+                "systematic_name": {
+                  "type": "string",
+                  "description": "Systematic ORF name (e.g., YPL248C)"
+                },
+                "locus_type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Curated functional description"
+                },
+                "uniprot_id": {
+                  "type": "string"
+                },
+                "aliases": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SGD_get_phenotypes",
+    "description": "Get curated phenotype annotations for a yeast gene from SGD. Returns observable phenotypes (growth, morphology, fitness), mutant types, experimental methods, strain backgrounds, and chemical conditions. Yeast phenotypes are a key resource for functional genomics. Example: S000003219 (RMR1) has 29 phenotype annotations including competitive fitness, respiratory growth defects.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sgd_id": {
+          "type": "string",
+          "description": "SGD locus identifier. Examples: 'S000003219' (RMR1), 'S000000259' (GAL4), 'S000005564' (ACT1)."
+        }
+      },
+      "required": [
+        "sgd_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "locus",
+      "query_mode": "phenotype"
+    },
+    "type": "SGDTool",
+    "test_examples": [
+      {
+        "sgd_id": "S000003219"
+      },
+      {
+        "sgd_id": "S000000259"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenotype": {
+                    "type": "string",
+                    "description": "Phenotype name with qualifier (e.g., 'competitive fitness: decreased')"
+                  },
+                  "mutant_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "experiment_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "strain_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chemical": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SGD_get_go_annotations",
+    "description": "Get Gene Ontology annotations for a yeast gene from SGD. Returns GO terms (biological process, molecular function, cellular component), evidence codes, qualifiers, and references. SGD GO annotations are among the most thoroughly curated in any model organism. Example: S000003219 (RMR1) has annotations for meiotic recombination and cytoplasm localization.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sgd_id": {
+          "type": "string",
+          "description": "SGD locus identifier. Examples: 'S000003219' (RMR1), 'S000005564' (ACT1), 'S000000259' (GAL4)."
+        }
+      },
+      "required": [
+        "sgd_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "locus",
+      "query_mode": "go"
+    },
+    "type": "SGDTool",
+    "test_examples": [
+      {
+        "sgd_id": "S000003219"
+      },
+      {
+        "sgd_id": "S000005564"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": "string",
+                    "description": "GO term identifier (e.g., GO:0007131)"
+                  },
+                  "go_term": {
+                    "type": "string",
+                    "description": "GO term name"
+                  },
+                  "go_aspect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO namespace: biological_process, molecular_function, or cellular_component"
+                  },
+                  "evidence_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Evidence code (IDA, IMP, IGI, etc.)"
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SGD_get_interactions",
+    "description": "Get genetic and physical interactions for a yeast gene from SGD. Returns interaction type (Physical/Genetic), experiment type (Two-hybrid, Affinity Capture-MS, Synthetic Lethality, etc.), interacting gene names, and references. Yeast interaction data is the most comprehensive of any organism. Example: S000003219 (RMR1) has 178 interactions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sgd_id": {
+          "type": "string",
+          "description": "SGD locus identifier. Examples: 'S000003219' (RMR1), 'S000005564' (ACT1), 'S000000259' (GAL4)."
+        }
+      },
+      "required": [
+        "sgd_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "locus",
+      "query_mode": "interaction"
+    },
+    "type": "SGDTool",
+    "test_examples": [
+      {
+        "sgd_id": "S000003219"
+      },
+      {
+        "sgd_id": "S000005564"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "interaction_type": {
+                    "type": "string",
+                    "description": "Physical or Genetic"
+                  },
+                  "experiment_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Experimental method (Two-hybrid, Affinity Capture-MS, Synthetic Lethality, etc.)"
+                  },
+                  "bait_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hit_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SGD_search",
+    "description": "Search SGD across all data types (genes, GO terms, phenotypes, references, alleles, diseases, complexes, pathways). Returns matching entries with categories, descriptions, and links. Supports category filtering. Example: searching 'GAL4' finds the transcription factor gene, related references, alleles, and GO terms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query string. Examples: 'GAL4', 'cell cycle', 'sporulation'."
+        },
+        "category": {
+          "type": "string",
+          "description": "Filter by category. Options: 'locus', 'reference', 'biological_process', 'molecular_function', 'cellular_component', 'phenotype', 'disease', 'allele', 'complex', 'pathway', 'chemical', 'strain', 'download'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default 10, max 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset (default 0)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search"
+    },
+    "type": "SGDTool",
+    "test_examples": [
+      {
+        "query": "GAL4",
+        "category": "locus",
+        "limit": 5
+      },
+      {
+        "query": "cell cycle",
+        "category": "biological_process",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "href": {
+                    "type": "string"
+                  },
+                  "aliases": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "categories": {
+                  "type": "object",
+                  "description": "Count of results per category"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

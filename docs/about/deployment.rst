@@ -3,8 +3,6 @@
 Documentation Deployment
 ========================
 
-This Tutorial covers different options for deploying the ToolUniverse documentation.
-
 Quick Start
 -----------
 

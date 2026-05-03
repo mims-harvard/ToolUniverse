@@ -26,10 +26,10 @@ msgstr "快速开始"
 
 #: ../../quickstart.rst:4 bfc5a4c9ebf54bf4ad006fcc55fa1464
 msgid ""
-"**Build your first AI scientist in 5 minutes with ToolUniverse's 600+ "
+"**Build your first AI scientist in 5 minutes with ToolUniverse's 1000+ "
 "scientific tools**"
 msgstr ""
-"**使用 ToolUniverse 的 600+ 科学工具在 5 分钟内构建您的第一个 AI 科学家**"
+"**使用 ToolUniverse 的 1000+ 科学工具在 5 分钟内构建您的第一个 AI 科学家**"
 
 #: ../../quickstart.rst:6 12536d5e78a94a42b73728f2aed06176
 msgid ""
@@ -47,8 +47,8 @@ msgid "**Get your first ToolUniverse running in 2 minutes:**"
 msgstr "**在 2 分钟内启动您的第一个 ToolUniverse：**"
 
 #: ../../quickstart.rst:30 bd615aa8311a4274bd8c4ffa42cfe3ab
-msgid "**Success!** You now have access to 600+ scientific tools."
-msgstr "**成功！** 您现在可以访问 600+ 科学工具。"
+msgid "**Success!** You now have access to 1000+ scientific tools."
+msgstr "**成功！** 您现在可以访问 1000+ 科学工具。"
 
 #: ../../quickstart.rst:33 6d2112e7f42743149263794ff71e25e9
 msgid "Building AI Scientists"

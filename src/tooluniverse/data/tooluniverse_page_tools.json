@@ -1,0 +1,37 @@
+[
+  {
+    "type": "ToolUniversePageTool",
+    "name": "get_tool_page_url",
+    "description": "Get the public ToolUniverse web page URL for a tool by its exact tool name. Returns the URL of the tool detail page on aiscientist.tools. Use Tool_RAG or Tool_Finder first if you are unsure of the exact tool name.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "description": "Exact ToolUniverse tool name (e.g. 'ADA_list_standards_sections', 'PubMed_search_articles'). Case-sensitive."
+        }
+      },
+      "required": ["tool_name"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Tool page lookup result (contents of the data field)",
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "description": "The queried tool name"
+        },
+        "url": {
+          "type": "string",
+              "description": "Full HTTPS URL of the tool page on aiscientist.tools"
+        }
+      },
+      "required": ["tool_name", "url"]
+    },
+    "test_examples": [
+      {"tool_name": "ADA_list_standards_sections"},
+      {"tool_name": "PubMed_search_articles"},
+      {"tool_name": "gnomad_get_gene"}
+    ]
+  }
+]

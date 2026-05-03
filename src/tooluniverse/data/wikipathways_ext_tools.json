@@ -1,0 +1,164 @@
+[
+    {
+        "name": "WikiPathways_get_pathway_genes",
+        "description": "Get all genes (as gene symbols) involved in a WikiPathways pathway. Returns the list of HGNC gene symbols for human pathways, or equivalent organism-specific gene identifiers. Useful for extracting gene sets from curated pathways for enrichment analysis or network building. Example: WP254 (Apoptosis) returns 88 genes including AKT1, APAF1, BAD, BAK1, BAX, BCL2, BCL2L1, BID, CASP3, CASP8, CASP9, CFLAR, CYCS, DIABLO, FADD, FAS, NFKB1, TP53, TRAF1, XIAP, and more.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "pathway_id": {
+                    "type": "string",
+                    "description": "WikiPathways pathway identifier. Examples: 'WP254' (Apoptosis, 88 genes), 'WP179' (Cell cycle, 100+ genes), 'WP4216' (Chromosomal and microsatellite instability), 'WP1584' (Type II diabetes mellitus)."
+                },
+                "code": {
+                    "type": "string",
+                    "description": "Identifier system code for returned genes. Options: 'H' (HGNC symbols, default), 'En' (Ensembl), 'S' (UniProt), 'L' (Entrez Gene), 'Ce' (ChEBI for metabolites).",
+                    "default": "H"
+                }
+            },
+            "required": [
+                "pathway_id"
+            ]
+        },
+        "fields": {
+            "endpoint": "get_pathway_genes"
+        },
+        "type": "WikiPathwaysExtTool",
+        "test_examples": [
+            {
+                "pathway_id": "WP254"
+            },
+            {
+                "pathway_id": "WP254",
+                "code": "L"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "pathway_id": {
+                                    "type": "string",
+                                    "description": "WikiPathways pathway ID"
+                                },
+                                "gene_count": {
+                                    "type": "integer",
+                                    "description": "Total number of genes in the pathway"
+                                },
+                                "identifier_type": {
+                                    "type": "string",
+                                    "description": "Type of gene identifiers returned (HGNC, Ensembl, etc.)"
+                                },
+                                "genes": {
+                                    "type": "array",
+                                    "description": "List of gene identifiers",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "WikiPathways_find_pathways_by_gene",
+        "description": "Find all WikiPathways pathways containing a specific gene. Takes a gene identifier (HGNC symbol, Entrez ID, or Ensembl ID) and returns all pathways in which that gene appears. Useful for understanding the biological context of a gene across curated pathway databases. Example: searching for 'TP53' returns multiple pathways including WP254 (Apoptosis), WP179 (Cell Cycle), and others. Supports multiple species.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene": {
+                    "type": "string",
+                    "description": "Gene identifier to search. Examples: 'TP53', 'BRCA1', 'EGFR', '7157' (Entrez), 'ENSG00000141510' (Ensembl)."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species to filter results. Default: 'Homo sapiens'. Other options: 'Mus musculus', 'Rattus norvegicus', 'Danio rerio'.",
+                    "default": "Homo sapiens"
+                }
+            },
+            "required": [
+                "gene"
+            ]
+        },
+        "fields": {
+            "endpoint": "find_pathways_by_gene"
+        },
+        "type": "WikiPathwaysExtTool",
+        "test_examples": [
+            {
+                "gene": "TP53"
+            },
+            {
+                "gene": "BRCA1",
+                "species": "Homo sapiens"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "gene": {
+                                    "type": "string",
+                                    "description": "Gene identifier queried"
+                                },
+                                "total_pathways": {
+                                    "type": "integer",
+                                    "description": "Number of pathways containing this gene"
+                                },
+                                "pathways": {
+                                    "type": "array",
+                                    "description": "List of pathways",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "species": {"type": "string"},
+                                            "url": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

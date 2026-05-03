@@ -1,0 +1,342 @@
+[
+    {
+        "name": "MetabolomicsWorkbench_get_study",
+        "description": "Get metadata and information about a metabolomics study by its study ID. Returns study summary including title, subject species, analysis type, and metabolites.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "study_id": {
+                    "type": "string",
+                    "description": "Metabolomics Workbench study ID (e.g., 'ST000001', 'ST000100')."
+                },
+                "output_item": {
+                    "type": "string",
+                    "description": "Type of information to return. Options: 'summary' (study overview), 'factors' (experimental factors), 'analysis' (analysis methods), 'metabolites' (metabolite list), 'data' (full data matrix).",
+                    "default": "summary",
+                    "enum": [
+                        "summary",
+                        "factors",
+                        "analysis",
+                        "metabolites",
+                        "data"
+                    ]
+                }
+            },
+            "required": [
+                "study_id"
+            ]
+        },
+        "fields": {
+            "context": "study",
+            "output_format": "json"
+        },
+        "type": "MetabolomicsWorkbenchTool",
+        "test_examples": [
+            {
+                "study_id": "ST000001"
+            },
+            {
+                "study_id": "ST000100",
+                "output_item": "metabolites"
+            }
+        ],
+        "return_schema": {
+            "type": ["object", "array", "string"],
+            "description": "Study information object, empty array if not found, or text response"
+        }
+    },
+    {
+        "name": "MetabolomicsWorkbench_search_compound_by_name",
+        "description": "Search for a metabolite/compound by its name using RefMet nomenclature. Returns standardized compound information including formula, exact mass, and classification. Use this for finding metabolites by common name.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "input_value": {
+                    "type": "string",
+                    "description": "Compound/metabolite name to search (e.g., 'Glucose', 'Cholesterol', 'Palmitic acid'). Aliases: compound_name, name."
+                },
+                "compound_name": {
+                    "type": "string",
+                    "description": "Alias for input_value."
+                },
+                "output_item": {
+                    "type": "string",
+                    "description": "Type of output to return.",
+                    "default": "all"
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "context": "refmet",
+            "input_item": "name"
+        },
+        "type": "MetabolomicsWorkbenchTool",
+        "test_examples": [
+            {
+                "input_value": "glucose"
+            },
+            {
+                "input_value": "cholesterol",
+                "output_item": "all"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "regno": {
+                    "type": "string",
+                    "description": "Registry number"
+                },
+                "formula": {
+                    "type": "string",
+                    "description": "Molecular formula"
+                },
+                "exactmass": {
+                    "type": "number",
+                    "description": "Exact molecular mass"
+                },
+                "inchi_key": {
+                    "type": "string",
+                    "description": "InChIKey identifier"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Compound name"
+                },
+                "sys_name": {
+                    "type": "string",
+                    "description": "Systematic name"
+                },
+                "smiles": {
+                    "type": "string",
+                    "description": "SMILES structure"
+                },
+                "data": {
+                    "type": "string",
+                    "description": "Raw response data if not JSON"
+                }
+            }
+        }
+    },
+    {
+        "name": "MetabolomicsWorkbench_get_compound_by_pubchem_cid",
+        "description": "Get metabolite information by PubChem compound ID (CID). Useful for cross-referencing with PubChem data.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "input_value": {
+                    "type": "string",
+                    "description": "PubChem compound ID (CID) as a string (e.g., '311' for citric acid)."
+                },
+                "output_item": {
+                    "type": "string",
+                    "description": "Type of output to return.",
+                    "default": "all",
+                    "enum": [
+                        "all",
+                        "regno",
+                        "formula",
+                        "exactmass",
+                        "inchi_key",
+                        "name",
+                        "smiles"
+                    ]
+                }
+            },
+            "required": [
+                "input_value"
+            ]
+        },
+        "fields": {
+            "context": "compound",
+            "input_item": "pubchem_cid"
+        },
+        "type": "MetabolomicsWorkbenchTool",
+        "test_examples": [
+            {
+                "input_value": "311"
+            },
+            {
+                "input_value": "5793"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "regno": {
+                    "type": "string"
+                },
+                "formula": {
+                    "type": "string"
+                },
+                "exactmass": {
+                    "type": "number"
+                },
+                "inchi_key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "smiles": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    {
+        "name": "MetabolomicsWorkbench_get_refmet_info",
+        "description": "Get RefMet standardized nomenclature for a metabolite. RefMet provides consistent, standardized metabolite names across studies.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "input_value": {
+                    "type": "string",
+                    "description": "Metabolite name to look up in RefMet (e.g., 'Glucose', 'Palmitic acid')."
+                },
+                "output_item": {
+                    "type": "string",
+                    "description": "Type of information to return.",
+                    "default": "all"
+                }
+            },
+            "required": [
+                "input_value"
+            ]
+        },
+        "fields": {
+            "context": "refmet",
+            "input_item": "name"
+        },
+        "type": "MetabolomicsWorkbenchTool",
+        "test_examples": [
+            {
+                "input_value": "Glucose"
+            },
+            {
+                "input_value": "Palmitic acid"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Standardized RefMet name"
+                },
+                "formula": {
+                    "type": "string",
+                    "description": "Molecular formula"
+                },
+                "exactmass": {
+                    "type": "number",
+                    "description": "Exact mass"
+                },
+                "super_class": {
+                    "type": "string",
+                    "description": "Super class classification"
+                },
+                "main_class": {
+                    "type": "string",
+                    "description": "Main class classification"
+                },
+                "sub_class": {
+                    "type": "string",
+                    "description": "Sub class classification"
+                }
+            }
+        }
+    },
+    {
+        "name": "MetabolomicsWorkbench_search_by_mz",
+        "description": "Search metabolites by m/z (mass-to-charge ratio) value from mass spectrometry data. Essential for metabolite identification from MS experiments.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "mz_value": {
+                    "type": "number",
+                    "description": "The m/z value to search for (e.g., 180.0634 for glucose [M+H]+)."
+                },
+                "adduct": {
+                    "type": "string",
+                    "description": "Adduct type. Common values: 'M+H' (protonated), 'M-H' (deprotonated), 'M+Na' (sodiated), 'M+K' (potassiated).",
+                    "default": "M+H"
+                },
+                "tolerance": {
+                    "type": "number",
+                    "description": "Mass tolerance in Daltons for the search.",
+                    "default": 0.1
+                },
+                "database": {
+                    "type": "string",
+                    "description": "Database to search: 'MB' (Metabolomics Workbench, default), 'LIPIDS', or 'REFMET'.",
+                    "enum": ["MB", "LIPIDS", "REFMET"],
+                    "default": "MB"
+                }
+            },
+            "required": [
+                "mz_value"
+            ]
+        },
+        "fields": {
+            "context": "moverz"
+        },
+        "type": "MetabolomicsWorkbenchTool",
+        "test_examples": [
+            {
+                "mz_value": 180.0634,
+                "adduct": "M+H",
+                "tolerance": 0.1
+            },
+            {
+                "mz_value": 146.0579,
+                "adduct": "M-H",
+                "tolerance": 0.05
+            }
+        ],
+        "return_schema": {
+            "type": ["object", "string"],
+            "description": "Metabolite matches object or error message string"
+        }
+    },
+    {
+        "name": "MetabolomicsWorkbench_search_by_exact_mass",
+        "description": "Search metabolites by exact molecular mass. Useful for identifying unknown metabolites from high-resolution mass spectrometry.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "mass_value": {
+                    "type": "number",
+                    "description": "The exact mass value to search for in Daltons (e.g., 180.0634)."
+                },
+                "tolerance": {
+                    "type": "number",
+                    "description": "Mass tolerance in Daltons for the search.",
+                    "default": 0.1
+                }
+            },
+            "required": [
+                "mass_value"
+            ]
+        },
+        "fields": {
+            "context": "exactmass"
+        },
+        "type": "MetabolomicsWorkbenchTool",
+        "test_examples": [
+            {
+                "mass_value": 180.0634,
+                "tolerance": 0.5
+            },
+            {
+                "mass_value": 386.6535,
+                "tolerance": 0.01
+            }
+        ],
+        "return_schema": {
+            "type": ["object", "array"],
+            "description": "Metabolite matches object or empty array if no matches found"
+        }
+    }
+]

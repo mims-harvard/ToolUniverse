@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_target\\_synonyms\\_by\\_ensemblI
 #: 2505a4634acf41669b8335a74fb9f0bf of
 #: tooluniverse.tools.OpenTargets_get_target_synonyms_by_ensemblID:1
 msgid "OpenTargets_get_target_synonyms_by_ensemblID"
-msgstr ""
+msgstr "OpenTargets_通过Ensembl ID获取靶点同义词"
 
 #: 256ce96a567c4b938ff774577934126b 79a9994986ae40c590eeb31f077b9251 of
 #: tooluniverse.tools.OpenTargets_get_target_synonyms_by_ensemblID:3

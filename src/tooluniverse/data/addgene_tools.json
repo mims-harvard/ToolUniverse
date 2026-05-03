@@ -1,0 +1,320 @@
+[
+  {
+    "name": "Addgene_search_plasmids",
+    "type": "AddgeneTool",
+    "description": "Search Addgene's plasmid catalog by name, gene, species, or vector type. Addgene is a nonprofit global plasmid repository with 100,000+ plasmids. Returns plasmid name, ID, purpose, depositor, genes, species, vector types, and expression systems. Requires ADDGENE_API_KEY environment variable. Use for: finding CRISPR plasmids, AAV vectors, expression constructs, shRNA libraries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_plasmids"
+          ],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Plasmid name or keyword to search (e.g., 'pSpCas9', 'GFP', 'lentiviral'). Searches the name field."
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by organism/species (e.g., 'Human', 'Mouse', 'E. coli'). Maps to the species field."
+        },
+        "vector_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by vector type (e.g., 'AAV', 'Lentiviral', 'Retroviral', 'Mammalian Expression'). Maps to vector_types field."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "description": "Maximum number of results to return (default 10, max 100)"
+        }
+      },
+      "required": [
+        "operation",
+        "query"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "plasmids": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      },
+                      "depositor": {
+                        "type": "array"
+                      },
+                      "genes": {
+                        "type": "array"
+                      },
+                      "species": {
+                        "type": "array"
+                      },
+                      "vector_types": {
+                        "type": "array"
+                      },
+                      "expression": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                },
+                "total_count": {
+                  "type": "integer"
+                },
+                "next_page": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_plasmids",
+        "query": "pSpCas9",
+        "limit": 5
+      }
+    ],
+    "required_api_keys": [
+      "ADDGENE_API_KEY"
+    ]
+  },
+  {
+    "name": "Addgene_get_plasmid",
+    "type": "AddgeneTool",
+    "description": "Get detailed information about a specific Addgene plasmid by its catalog ID. Returns full record: name, description, cloning details (backbone, promoter, vector types), insert information (gene, species, tags, mutations), bacterial resistance, growth conditions (strain, temperature), article references (DOI, PubMed), and depositor comments. Requires ADDGENE_API_KEY environment variable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_plasmid"
+          ],
+          "description": "Operation type"
+        },
+        "plasmid_id": {
+          "type": "integer",
+          "description": "Addgene plasmid catalog ID (e.g., 39296 for pSpCas9(BB)-2A-Puro, 48138 for pX330)"
+        }
+      },
+      "required": [
+        "operation",
+        "plasmid_id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "inserts": {
+                  "type": "array"
+                },
+                "cloning": {
+                  "type": "object"
+                },
+                "tags": {
+                  "type": "array"
+                },
+                "bacterial_resistance": {
+                  "type": "string"
+                },
+                "growth_strain": {
+                  "type": "string"
+                },
+                "growth_temp": {
+                  "type": "integer"
+                },
+                "origin": {
+                  "type": "string"
+                },
+                "article": {
+                  "type": "object"
+                },
+                "depositor_comments": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_plasmid",
+        "plasmid_id": 39296
+      }
+    ],
+    "required_api_keys": [
+      "ADDGENE_API_KEY"
+    ]
+  },
+  {
+    "name": "Addgene_search_depositors",
+    "type": "AddgeneTool",
+    "description": "Search for Addgene depositors (PIs / principal investigators) by name or institution. Returns unique depositor names with their plasmid counts and example plasmids. At least one of name or institution is required. Requires ADDGENE_API_KEY environment variable. Use for: finding plasmids from a specific lab, browsing depositor contributions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_depositors"
+          ],
+          "description": "Operation type"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PI or depositor name to search (e.g., 'Feng Zhang', 'Jennifer Doudna')"
+        },
+        "institution": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Institution name to search (e.g., 'MIT', 'Broad Institute')"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "depositors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "plasmid_count": {
+                        "type": "integer"
+                      },
+                      "example_plasmids": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                },
+                "total_depositors": {
+                  "type": "integer"
+                },
+                "total_plasmids_searched": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_depositors",
+        "name": "Feng Zhang"
+      }
+    ],
+    "required_api_keys": [
+      "ADDGENE_API_KEY"
+    ]
+  }
+]

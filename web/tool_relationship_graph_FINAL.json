@@ -3106,11 +3106,6 @@
       "type": "PackageTool"
     },
     {
-      "id": "get_hyperopt_info",
-      "name": "get_hyperopt_info",
-      "type": "PackageTool"
-    },
-    {
       "id": "get_umap_learn_info",
       "name": "get_umap_learn_info",
       "type": "PackageTool"
@@ -44274,11 +44269,6 @@
     },
     {
       "source": "TestCaseGenerator",
-      "target": "get_hyperopt_info",
-      "rationale": "Generates test-case JSON inputs covering include_examples boolean parameter for get_hyperopt_info."
-    },
-    {
-      "source": "TestCaseGenerator",
       "target": "get_umap_learn_info",
       "rationale": "Generates test-case JSON inputs covering include_examples boolean parameter for get_umap_learn_info."
     },
@@ -44552,9 +44542,6 @@
       "target": "DescriptionQualityEvaluator",
       "rationale": "Package info tool outputs description and parameter details used as evaluator tool input."
     },
-    {
-      "source": "get_hyperopt_info",
-      "target": "DescriptionQualityEvaluator",
       "rationale": "Package info tool outputs description and parameter details used as evaluator tool input."
     },
     {
@@ -44827,9 +44814,6 @@
       "target": "ToolSpecificationGenerator",
       "rationale": "Package info guides specification generator’s tool_description, parameters, and metadata fields."
     },
-    {
-      "source": "get_hyperopt_info",
-      "target": "ToolSpecificationGenerator",
       "rationale": "Package info guides specification generator’s tool_description, parameters, and metadata fields."
     },
     {
@@ -44983,11 +44967,6 @@
       "rationale": "Example PyTorch code snippets can be analyzed for complexity and performance."
     },
     {
-      "source": "get_hyperopt_info",
-      "target": "AdvancedCodeQualityAnalyzer",
-      "rationale": "Hyperopt usage examples code serves as input for code quality assessment."
-    },
-    {
       "source": "get_umap_learn_info",
       "target": "AdvancedCodeQualityAnalyzer",
       "rationale": "UMAP example code snippets feed into quality analyzer for maintainability evaluation."
@@ -45082,9 +45061,6 @@
       "target": "ToolImplementationGenerator",
       "rationale": "Package info retrieval provides descriptions and parameters for ToolImplementationGenerator to generate code."
     },
-    {
-      "source": "get_hyperopt_info",
-      "target": "ToolImplementationGenerator",
       "rationale": "Package info retrieval provides descriptions and parameters for ToolImplementationGenerator to generate code."
     },
     {
@@ -45266,11 +45242,6 @@
       "source": "mcp_auto_loader_human_expert",
       "target": "ToolSpecificationOptimizer",
       "rationale": "Tool discovery outputs tool specifications, feeding directly into specification optimizer."
-    },
-    {
-      "source": "get_hyperopt_info",
-      "target": "ToolSpecificationOptimizer",
-      "rationale": "Provides hyperparameter optimization framework details as input to optimizer's similar_tools benchmarking."
     },
     {
       "source": "get_optuna_info",
@@ -45677,10 +45648,6 @@
       "target": "LabelGenerator",
       "rationale": "get_torch_geometric_info output provides tool description and parameter details for LabelGenerator."
     },
-    {
-      "source": "get_hyperopt_info",
-      "target": "LabelGenerator",
-      "rationale": "get_hyperopt_info output provides tool description and parameter details for LabelGenerator."
     },
     {
       "source": "get_umap_learn_info",
@@ -45927,10 +45894,6 @@
       "target": "ToolRelationshipDetector",
       "rationale": "get_torch_geometric_info outputs PyTorch Geometric configuration used as input to ToolRelationshipDetector"
     },
-    {
-      "source": "get_hyperopt_info",
-      "target": "ToolRelationshipDetector",
-      "rationale": "get_hyperopt_info outputs Hyperopt configuration used as input to ToolRelationshipDetector"
     },
     {
       "source": "get_umap_learn_info",
@@ -52949,11 +52912,6 @@
     },
     {
       "source": "get_pyvcf_info",
-      "target": "get_hyperopt_info",
-      "rationale": "Feature matrices from PyVCF-driven pipelines can be hyperparameter optimized using Hyperopt."
-    },
-    {
-      "source": "get_pyvcf_info",
       "target": "get_optuna_info",
       "rationale": "Genomic feature sets parsed by PyVCF can be tuned for model parameters via Optuna."
     },
@@ -53444,11 +53402,6 @@
     },
     {
       "source": "get_openbabel_info",
-      "target": "get_hyperopt_info",
-      "rationale": "OpenBabel-produced features used by Hyperopt to tune hyperparameters in molecular models"
-    },
-    {
-      "source": "get_openbabel_info",
       "target": "get_statsmodels_info",
       "rationale": "OpenBabel data used within statsmodels for statistical modeling of chemical datasets"
     },
@@ -53508,11 +53461,6 @@
       "rationale": "PyTDC provides curated therapeutic datasets used by DeepChem for benchmarking and model training."
     },
     {
-      "source": "get_hyperopt_info",
-      "target": "get_deepchem_info",
-      "rationale": "Hyperopt tunes DeepChem model hyperparameters via optimization objective feedback loops."
-    },
-    {
       "source": "get_scikit_learn_info",
       "target": "get_deepchem_info",
       "rationale": "Scikit-learn provides preprocessing and evaluation metrics that integrate into DeepChem pipelines."
@@ -53566,11 +53514,6 @@
       "source": "get_dscribe_info",
       "target": "get_optuna_info",
       "rationale": "Optimize models taking DScribe descriptor inputs via Optuna hyperparameter search pipelines."
-    },
-    {
-      "source": "get_dscribe_info",
-      "target": "get_hyperopt_info",
-      "rationale": "Hyperparameter searches for descriptor-based models using DScribe outputs with Hyperopt."
     },
     {
       "source": "get_dscribe_info",
@@ -53711,16 +53654,6 @@
       "source": "get_umap_learn_info",
       "target": "get_lifelines_info",
       "rationale": "UMAP generates low-dimensional embeddings that serve as covariates in lifelines models"
-    },
-    {
-      "source": "get_lifelines_info",
-      "target": "get_hyperopt_info",
-      "rationale": "Hyperopt suggests lifelines hyperparameters and ingests lifelines performance metrics for tuning"
-    },
-    {
-      "source": "get_hyperopt_info",
-      "target": "get_lifelines_info",
-      "rationale": "Hyperopt suggests lifelines hyperparameters and ingests lifelines performance metrics for tuning"
     },
     {
       "source": "get_lifelines_info",
@@ -53951,11 +53884,6 @@
       "source": "get_cftime_info",
       "target": "get_cartopy_info",
       "rationale": "cftime parses netCDF time coordinates, enabling cartopy to animate or timeline geospatial plots."
-    },
-    {
-      "source": "get_scikit_learn_info",
-      "target": "get_hyperopt_info",
-      "rationale": "Scikit-learn model definitions feed hyperopt hyperparameter optimization pipelines for algorithm tuning tasks"
     },
     {
       "source": "get_scikit_learn_info",

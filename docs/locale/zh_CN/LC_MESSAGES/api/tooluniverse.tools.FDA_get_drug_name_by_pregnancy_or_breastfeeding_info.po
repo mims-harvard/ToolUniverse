@@ -32,7 +32,7 @@ msgstr ""
 #: ea85f628e4b84cc2962d458f85d47806 of
 #: tooluniverse.tools.FDA_get_drug_name_by_pregnancy_or_breastfeeding_info:1
 msgid "FDA_get_drug_name_by_pregnancy_or_breastfeeding_info"
-msgstr ""
+msgstr "FDA_根据孕期或哺乳期信息获取药物名称"
 
 #: 17c8e7d198094cbebe0fad5634b1c402 1bd65b32a5074bcc9e0eb68cbb15694f of
 #: tooluniverse.tools.FDA_get_drug_name_by_pregnancy_or_breastfeeding_info:3

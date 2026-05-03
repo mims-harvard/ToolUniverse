@@ -24,6 +24,14 @@
           "type": "string",
           "description": "Sort direction. Options: 'ascending', 'descending'",
           "default": "descending"
+        },
+        "date_from": {
+          "type": "string",
+          "description": "Filter results from this date (format: YYYY-MM-DD). Uses submittedDate range."
+        },
+        "date_to": {
+          "type": "string",
+          "description": "Filter results up to this date (format: YYYY-MM-DD). Uses submittedDate range."
         }
       },
       "required": [
@@ -31,44 +39,59 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of arXiv papers matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the paper"
-          },
-          "abstract": {
-            "type": "string",
-            "description": "Abstract of the paper"
-          },
-          "authors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of author names"
-          },
-          "published": {
-            "type": "string",
-            "description": "Publication date in ISO format"
-          },
-          "updated": {
-            "type": "string",
-            "description": "Last updated date in ISO format"
-          },
-          "category": {
-            "type": "string",
-            "description": "arXiv category (e.g., cs.LG, math.CO)"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the paper on arXiv"
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of arXiv papers matching the search query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the paper"
+              },
+              "abstract": {
+                "type": "string",
+                "description": "Abstract of the paper"
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of author names"
+              },
+              "published": {
+                "type": "string",
+                "description": "Publication date in ISO format"
+              },
+              "updated": {
+                "type": "string",
+                "description": "Last updated date in ISO format"
+              },
+              "category": {
+                "type": "string",
+                "description": "arXiv category (e.g., cs.LG, math.CO)"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL to the paper on arXiv"
+              }
+            }
           }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -87,5 +110,96 @@
         "limit": 3
       }
     ]
+  },
+  {
+    "type": "ArXivPDFSnippetsTool",
+    "name": "ArXiv_get_pdf_snippets",
+    "description": "Fetch an arXiv paper's PDF and return bounded text snippets around provided terms. Uses markitdown to convert PDF to markdown. All arXiv papers are freely available (no paywall). Useful when key details are in the full text rather than abstract.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "arxiv_id": {
+          "type": "string",
+          "description": "arXiv paper ID (e.g., '2301.12345' or 'arXiv:2301.12345'). The tool will build the PDF URL automatically."
+        },
+        "pdf_url": {
+          "type": "string",
+          "description": "Direct PDF URL (e.g., 'https://arxiv.org/pdf/2301.12345.pdf')."
+        },
+        "terms": {
+          "type": "array",
+          "description": "Terms to search for in the extracted full text (case-insensitive).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "window_chars": {
+          "type": "integer",
+          "description": "Context window size (characters) before and after each match.",
+          "default": 220,
+          "minimum": 20,
+          "maximum": 2000
+        },
+        "max_snippets_per_term": {
+          "type": "integer",
+          "description": "Maximum number of snippets returned per term.",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "max_total_chars": {
+          "type": "integer",
+          "description": "Hard cap on total characters returned across all snippets.",
+          "default": 8000,
+          "minimum": 1000,
+          "maximum": 50000
+        }
+      },
+      "required": [
+        "terms"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "success or error"
+        },
+        "pdf_url": {
+          "type": "string",
+          "description": "The PDF URL that was processed"
+        },
+        "snippets": {
+          "type": "array",
+          "description": "Extracted text snippets",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": {
+                "type": "string",
+                "description": "The search term that was matched"
+              },
+              "snippet": {
+                "type": "string",
+                "description": "Text snippet with context around the matched term"
+              }
+            }
+          }
+        },
+        "snippets_count": {
+          "type": "integer",
+          "description": "Number of snippets extracted"
+        },
+        "truncated": {
+          "type": "boolean",
+          "description": "Whether output was truncated due to max_total_chars limit"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message (only present if status is error)"
+        }
+      }
+    }
   }
 ]

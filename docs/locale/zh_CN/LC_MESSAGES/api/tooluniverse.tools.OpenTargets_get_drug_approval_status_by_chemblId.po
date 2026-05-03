@@ -32,7 +32,7 @@ msgstr ""
 #: 21c9c397ff0d4de68f65fbc1fb232b89 of
 #: tooluniverse.tools.OpenTargets_get_drug_approval_status_by_chemblId:1
 msgid "OpenTargets_get_drug_approval_status_by_chemblId"
-msgstr ""
+msgstr "OpenTargets_根据ChEMBL ID获取药物审批状态"
 
 #: 1c526ac037bf461d9e4112b924d17fcb fbb0e6c3171b431b989b01ad863ae4a9 of
 #: tooluniverse.tools.OpenTargets_get_drug_approval_status_by_chemblId:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_boxed\\_warning 模�
 #: 747c264259014260bfacb3075dbbbc55 of
 #: tooluniverse.tools.FDA_get_drug_names_by_boxed_warning:1
 msgid "FDA_get_drug_names_by_boxed_warning"
-msgstr ""
+msgstr "FDA_按黑框警告获取药品名称"
 
 #: 267c993ef4f346abbb59406b686e28c8 a688934b1075484c9d4ee10367b4f44f of
 #: tooluniverse.tools.FDA_get_drug_names_by_boxed_warning:3

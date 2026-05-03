@@ -1,0 +1,226 @@
+[
+  {
+    "name": "NASAExoplanet_query_planets",
+    "description": "Query the NASA Exoplanet Archive for confirmed exoplanets using SQL-like ADQL queries. Returns orbital parameters, physical properties, and discovery information for 5,500+ confirmed exoplanets. Key table: 'ps' (Planetary Systems). Key columns: pl_name (planet name), hostname (host star), pl_orbper (orbital period days), pl_rade (radius in Earth radii), pl_bmasse (mass in Earth masses), pl_eqt (equilibrium temperature K), discoverymethod (transit/radial velocity/direct imaging/etc), disc_year (discovery year), sy_dist (distance in parsecs). Example hosts with multiple planets: TRAPPIST-1, Kepler-90, Kepler-11.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "ADQL/SQL query against the NASA Exoplanet Archive table 'ps'. Note: LIMIT is not supported; use WHERE conditions to restrict results. Examples: \"select pl_name,hostname,pl_orbper,pl_rade from ps where hostname = 'TRAPPIST-1'\", \"select pl_name,pl_rade,pl_eqt from ps where pl_rade < 1.6 AND pl_eqt between 200 and 350 order by pl_eqt\", \"select discoverymethod,count(*) as n from ps group by discoverymethod order by n desc\""
+        },
+        "format": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Output format: 'json' (default), 'csv', 'tsv', 'votable'"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "select pl_name,hostname,pl_orbper,pl_rade from ps where hostname = 'TRAPPIST-1'"
+      },
+      {
+        "query": "select pl_name,pl_rade,pl_eqt,discoverymethod from ps where pl_rade < 1.6 AND pl_eqt between 200 and 350 order by pl_eqt"
+      },
+      {
+        "query": "select discoverymethod,count(*) as n from ps group by discoverymethod order by n desc"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of exoplanet records matching the query",
+          "items": {
+            "type": "object",
+            "description": "Exoplanet data record with requested columns",
+            "properties": {
+              "pl_name": {
+                "type": "string",
+                "description": "Planet name (e.g., 'TRAPPIST-1 b')"
+              },
+              "hostname": {
+                "type": "string",
+                "description": "Host star name"
+              },
+              "pl_orbper": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Orbital period (days)"
+              },
+              "pl_rade": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Planet radius (Earth radii)"
+              },
+              "pl_bmasse": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Planet mass (Earth mass)"
+              },
+              "pl_eqt": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Equilibrium temperature (K)"
+              },
+              "discoverymethod": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disc_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "sy_dist": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Distance to system (parsecs)"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASAExoplanet_query_stars",
+    "description": "Query the NASA Exoplanet Archive for stellar host properties using ADQL SQL. Use table 'stellarhosts' to get host star characteristics: st_spectype (spectral type), st_teff (effective temperature K), st_mass (solar masses), st_rad (solar radii), st_met (metallicity), st_age (Gyr), sy_pnum (number of planets), sy_dist (distance parsecs). Essential for understanding planetary system habitability, stellar evolution context, and comparing star properties. Can join with 'ps' table for combined star+planet data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "ADQL/SQL query against NASA Exoplanet Archive. Use 'stellarhosts' table for stellar data. Note: LIMIT is not supported; use WHERE conditions to restrict results. Examples: \"select hostname,st_spectype,st_teff,st_mass,st_rad,sy_pnum from stellarhosts where hostname = 'TRAPPIST-1'\", \"select hostname,st_teff,sy_pnum from stellarhosts where sy_pnum >= 5 order by sy_pnum desc\""
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "select hostname,st_spectype,st_teff,st_mass,st_rad,sy_pnum from stellarhosts where hostname = 'TRAPPIST-1'"
+      },
+      {
+        "query": "select hostname,st_teff,sy_pnum,sy_dist from stellarhosts where sy_pnum >= 5 order by sy_pnum desc"
+      },
+      {
+        "query": "select hostname,st_spectype,st_teff from stellarhosts where hostname = 'Kepler-90'"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of stellar host records",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hostname": {
+                "type": "string"
+              },
+              "st_spectype": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Spectral type (e.g., M8V, K2V)"
+              },
+              "st_teff": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Effective temperature (K)"
+              },
+              "st_mass": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Stellar mass (solar masses)"
+              },
+              "st_rad": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Stellar radius (solar radii)"
+              },
+              "sy_pnum": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of known planets"
+              },
+              "sy_dist": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Distance (parsecs)"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

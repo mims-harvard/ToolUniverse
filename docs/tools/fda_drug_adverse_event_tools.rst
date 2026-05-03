@@ -13,7 +13,7 @@ Available Tools
 **FAERS_count_additive_administration_routes** (Type: FDACountAdditiveReactionsTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Additive multi-drug data: Enumerate and count administration routes for adverse events across spe...
+Enumerate and count administration routes for adverse events across specified medicinal products....
 
 .. dropdown:: FAERS_count_additive_administration_routes tool specification
 
@@ -21,15 +21,15 @@ Additive multi-drug data: Enumerate and count administration routes for adverse 
 
    * **Name**: ``FAERS_count_additive_administration_routes``
    * **Type**: ``FDACountAdditiveReactionsTool``
-   * **Description**: Additive multi-drug data: Enumerate and count administration routes for adverse events across specified medicinal products, using standardized route codes. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Enumerate and count administration routes for adverse events across specified medicinal products. Only medicinalproducts is required; serious filter is optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproducts`` (array) (required)
      Array of medicinal product names.
 
-   * ``serious`` (string) (required)
-     Filter by seriousness.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
    **Example Usage:**
 
@@ -38,8 +38,7 @@ Additive multi-drug data: Enumerate and count administration routes for adverse 
       query = {
           "name": "FAERS_count_additive_administration_routes",
           "arguments": {
-              "medicinalproducts": ["item1", "item2"],
-              "serious": "example_value"
+              "medicinalproducts": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -48,7 +47,7 @@ Additive multi-drug data: Enumerate and count administration routes for adverse 
 **FAERS_count_additive_adverse_reactions** (Type: FDACountAdditiveReactionsTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Additive multi-drug data: Aggregate adverse reaction counts across specified medicinal products, ...
+Aggregate adverse reaction counts across specified medicinal products. Only medicinalproducts is ...
 
 .. dropdown:: FAERS_count_additive_adverse_reactions tool specification
 
@@ -56,27 +55,27 @@ Additive multi-drug data: Aggregate adverse reaction counts across specified med
 
    * **Name**: ``FAERS_count_additive_adverse_reactions``
    * **Type**: ``FDACountAdditiveReactionsTool``
-   * **Description**: Additive multi-drug data: Aggregate adverse reaction counts across specified medicinal products, stratified by demographics, seriousness, and outcomes. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Aggregate adverse reaction counts across specified medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are optional. Use filters sparingly to avoid overly restrictive searches that return no results. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproducts`` (array) (required)
      Array of medicinal product names.
 
-   * ``patientsex`` (string) (required)
-     Filter by patient sex.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Filter by patient age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``occurcountry`` (string) (required)
-     Filter by ISO2 country code of occurrence.
+   * ``occurcountry`` (string) (optional)
+     Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you don't want to filter by country.
 
-   * ``serious`` (string) (required)
-     Filter by seriousness classification.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
-   * ``seriousnessdeath`` (string) (required)
-     Filter for fatal outcomes.
+   * ``seriousnessdeath`` (string) (optional)
+     Optional: Filter for fatal outcomes. Omit this parameter if you don't want to filter by death.
 
    **Example Usage:**
 
@@ -85,12 +84,7 @@ Additive multi-drug data: Aggregate adverse reaction counts across specified med
       query = {
           "name": "FAERS_count_additive_adverse_reactions",
           "arguments": {
-              "medicinalproducts": ["item1", "item2"],
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "occurcountry": "example_value",
-              "serious": "example_value",
-              "seriousnessdeath": "example_value"
+              "medicinalproducts": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -99,7 +93,7 @@ Additive multi-drug data: Aggregate adverse reaction counts across specified med
 **FAERS_count_additive_event_reports_by_country** (Type: FDACountAdditiveReactionsTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Additive multi-drug data: Aggregate report counts by country of occurrence across specified medic...
+Aggregate report counts by country of occurrence across specified medicinal products. Only medici...
 
 .. dropdown:: FAERS_count_additive_event_reports_by_country tool specification
 
@@ -107,21 +101,21 @@ Additive multi-drug data: Aggregate report counts by country of occurrence acros
 
    * **Name**: ``FAERS_count_additive_event_reports_by_country``
    * **Type**: ``FDACountAdditiveReactionsTool``
-   * **Description**: Additive multi-drug data: Aggregate report counts by country of occurrence across specified medicinal products. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Aggregate report counts by country of occurrence across specified medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproducts`` (array) (required)
      Array of medicinal product names.
 
-   * ``patientsex`` (string) (required)
-     Filter by sex.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Filter by age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``serious`` (string) (required)
-     Filter by seriousness.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
    **Example Usage:**
 
@@ -130,10 +124,7 @@ Additive multi-drug data: Aggregate report counts by country of occurrence acros
       query = {
           "name": "FAERS_count_additive_event_reports_by_country",
           "arguments": {
-              "medicinalproducts": ["item1", "item2"],
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "serious": "example_value"
+              "medicinalproducts": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -142,7 +133,7 @@ Additive multi-drug data: Aggregate report counts by country of occurrence acros
 **FAERS_count_additive_reaction_outcomes** (Type: FDACountAdditiveReactionsTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Additive multi-drug data: Determine reaction outcome counts (e.g., recovered, resolving, fatal) a...
+Determine reaction outcome counts (e.g., recovered, resolving, fatal) across medicinal products. ...
 
 .. dropdown:: FAERS_count_additive_reaction_outcomes tool specification
 
@@ -150,20 +141,20 @@ Additive multi-drug data: Determine reaction outcome counts (e.g., recovered, re
 
    * **Name**: ``FAERS_count_additive_reaction_outcomes``
    * **Type**: ``FDACountAdditiveReactionsTool``
-   * **Description**: Additive multi-drug data: Determine reaction outcome counts (e.g., recovered, resolving, fatal) across medicinal products using standardized outcome mappings. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Determine reaction outcome counts (e.g., recovered, resolving, fatal) across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproducts`` (array) (required)
      Array of medicinal product names.
 
-   * ``patientsex`` (string) (required)
+   * ``patientsex`` (string) (optional)
      No description
 
-   * ``patientagegroup`` (string) (required)
+   * ``patientagegroup`` (string) (optional)
      No description
 
-   * ``occurcountry`` (string) (required)
+   * ``occurcountry`` (string) (optional)
      No description
 
    **Example Usage:**
@@ -173,10 +164,7 @@ Additive multi-drug data: Determine reaction outcome counts (e.g., recovered, re
       query = {
           "name": "FAERS_count_additive_reaction_outcomes",
           "arguments": {
-              "medicinalproducts": ["item1", "item2"],
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "occurcountry": "example_value"
+              "medicinalproducts": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -185,7 +173,7 @@ Additive multi-drug data: Determine reaction outcome counts (e.g., recovered, re
 **FAERS_count_additive_reports_by_reporter_country** (Type: FDACountAdditiveReactionsTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Additive multi-drug data: Aggregate adverse event reports by primary reporter country across medi...
+Aggregate adverse event reports by primary reporter country across medicinal products. Only medic...
 
 .. dropdown:: FAERS_count_additive_reports_by_reporter_country tool specification
 
@@ -193,21 +181,21 @@ Additive multi-drug data: Aggregate adverse event reports by primary reporter co
 
    * **Name**: ``FAERS_count_additive_reports_by_reporter_country``
    * **Type**: ``FDACountAdditiveReactionsTool``
-   * **Description**: Additive multi-drug data: Aggregate adverse event reports by primary reporter country across medicinal products. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Aggregate adverse event reports by primary reporter country across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproducts`` (array) (required)
      Array of medicinal product names.
 
-   * ``patientsex`` (string) (required)
-     Filter by sex.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Filter by age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``serious`` (string) (required)
-     Filter by seriousness.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
    **Example Usage:**
 
@@ -216,10 +204,7 @@ Additive multi-drug data: Aggregate adverse event reports by primary reporter co
       query = {
           "name": "FAERS_count_additive_reports_by_reporter_country",
           "arguments": {
-              "medicinalproducts": ["item1", "item2"],
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "serious": "example_value"
+              "medicinalproducts": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -228,7 +213,7 @@ Additive multi-drug data: Aggregate adverse event reports by primary reporter co
 **FAERS_count_additive_seriousness_classification** (Type: FDACountAdditiveReactionsTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Additive multi-drug data: Quantify serious vs non-serious classifications across medicinal produc...
+Quantify serious vs non-serious classifications across medicinal products. Only medicinalproducts...
 
 .. dropdown:: FAERS_count_additive_seriousness_classification tool specification
 
@@ -236,21 +221,21 @@ Additive multi-drug data: Quantify serious vs non-serious classifications across
 
    * **Name**: ``FAERS_count_additive_seriousness_classification``
    * **Type**: ``FDACountAdditiveReactionsTool``
-   * **Description**: Additive multi-drug data: Quantify serious vs non-serious classifications across medicinal products, annotated per regulatory definitions. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Quantify serious vs non-serious classifications across medicinal products. Only medicinalproducts is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproducts`` (array) (required)
      Array of medicinal product names.
 
-   * ``patientsex`` (string) (required)
-     Filter by sex.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Filter by age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``occurcountry`` (string) (required)
-     ISO2 country code filter.
+   * ``occurcountry`` (string) (optional)
+     Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you don't want to filter by country.
 
    **Example Usage:**
 
@@ -259,10 +244,7 @@ Additive multi-drug data: Quantify serious vs non-serious classifications across
       query = {
           "name": "FAERS_count_additive_seriousness_classification",
           "arguments": {
-              "medicinalproducts": ["item1", "item2"],
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "occurcountry": "example_value"
+              "medicinalproducts": ["item1", "item2"]
           }
       }
       result = tu.run(query)
@@ -271,7 +253,7 @@ Additive multi-drug data: Quantify serious vs non-serious classifications across
 **FAERS_count_country_by_drug_event** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count the number of adverse event reports per country of occurrence, filtered by drug, patient de...
+Count the number of adverse event reports per country of occurrence. Only medicinalproduct is req...
 
 .. dropdown:: FAERS_count_country_by_drug_event tool specification
 
@@ -279,21 +261,21 @@ Count the number of adverse event reports per country of occurrence, filtered by
 
    * **Name**: ``FAERS_count_country_by_drug_event``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count the number of adverse event reports per country of occurrence, filtered by drug, patient demographics, and seriousness. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count the number of adverse event reports per country of occurrence. Only medicinalproduct is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproduct`` (string) (required)
      Drug name.
 
-   * ``patientsex`` (string) (required)
-     Patient sex, leave it blank if you don't want to apply a filter.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Patient age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``serious`` (string) (required)
-     Whether the event was serious.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
    **Example Usage:**
 
@@ -302,10 +284,7 @@ Count the number of adverse event reports per country of occurrence, filtered by
       query = {
           "name": "FAERS_count_country_by_drug_event",
           "arguments": {
-              "medicinalproduct": "example_value",
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "serious": "example_value"
+              "medicinalproduct": "example_value"
           }
       }
       result = tu.run(query)
@@ -314,7 +293,7 @@ Count the number of adverse event reports per country of occurrence, filtered by
 **FAERS_count_death_related_by_drug** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count adverse events associated with patient death for a given drug. Data source: FDA Adverse Eve...
+Count adverse events associated with patient death for a given drug. Only medicinalproduct is req...
 
 .. dropdown:: FAERS_count_death_related_by_drug tool specification
 
@@ -322,7 +301,7 @@ Count adverse events associated with patient death for a given drug. Data source
 
    * **Name**: ``FAERS_count_death_related_by_drug``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count adverse events associated with patient death for a given drug. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count adverse events associated with patient death for a given drug. Only medicinalproduct is required. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
@@ -345,7 +324,7 @@ Count adverse events associated with patient death for a given drug. Data source
 **FAERS_count_drug_routes_by_event** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count the most common routes of administration for drugs involved in adverse event reports. Data ...
+Count the most common routes of administration for drugs involved in adverse event reports. Only ...
 
 .. dropdown:: FAERS_count_drug_routes_by_event tool specification
 
@@ -353,15 +332,15 @@ Count the most common routes of administration for drugs involved in adverse eve
 
    * **Name**: ``FAERS_count_drug_routes_by_event``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count the most common routes of administration for drugs involved in adverse event reports. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count the most common routes of administration for drugs involved in adverse event reports. Only medicinalproduct is required; serious filter is optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproduct`` (string) (required)
      Drug name.
 
-   * ``serious`` (string) (required)
-     Seriousness of event.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
    **Example Usage:**
 
@@ -370,8 +349,7 @@ Count the most common routes of administration for drugs involved in adverse eve
       query = {
           "name": "FAERS_count_drug_routes_by_event",
           "arguments": {
-              "medicinalproduct": "example_value",
-              "serious": "example_value"
+              "medicinalproduct": "example_value"
           }
       }
       result = tu.run(query)
@@ -380,7 +358,7 @@ Count the most common routes of administration for drugs involved in adverse eve
 **FAERS_count_drugs_by_drug_event** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count the number of different drugs involved in FDA adverse event reports, filtered by patient de...
+Count the number of different drugs involved in FDA adverse event reports. All filters (patientse...
 
 .. dropdown:: FAERS_count_drugs_by_drug_event tool specification
 
@@ -388,21 +366,21 @@ Count the number of different drugs involved in FDA adverse event reports, filte
 
    * **Name**: ``FAERS_count_drugs_by_drug_event``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count the number of different drugs involved in FDA adverse event reports, filtered by patient details, country, and seriousness. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count the number of different drugs involved in FDA adverse event reports. All filters (patientsex, patientagegroup, occurcountry, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
-   * ``patientsex`` (string) (required)
-     Patient sex, leave it blank if you don't want to apply a filter.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Patient age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``occurcountry`` (string) (required)
-     Country where event occurred.
+   * ``occurcountry`` (string) (optional)
+     Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you don't want to filter by country.
 
-   * ``serious`` (string) (required)
-     Whether the event was serious.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
    **Example Usage:**
 
@@ -411,10 +389,6 @@ Count the number of different drugs involved in FDA adverse event reports, filte
       query = {
           "name": "FAERS_count_drugs_by_drug_event",
           "arguments": {
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "occurcountry": "example_value",
-              "serious": "example_value"
           }
       }
       result = tu.run(query)
@@ -423,7 +397,7 @@ Count the number of different drugs involved in FDA adverse event reports, filte
 **FAERS_count_outcomes_by_drug_event** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count the outcome of adverse reactions (recovered, recovering, fatal, unresolved) filtered by dru...
+Count the outcome of adverse reactions (recovered, recovering, fatal, unresolved). Only medicinal...
 
 .. dropdown:: FAERS_count_outcomes_by_drug_event tool specification
 
@@ -431,20 +405,20 @@ Count the outcome of adverse reactions (recovered, recovering, fatal, unresolved
 
    * **Name**: ``FAERS_count_outcomes_by_drug_event``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count the outcome of adverse reactions (recovered, recovering, fatal, unresolved) filtered by drug, seriousness, and demographics. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count the outcome of adverse reactions (recovered, recovering, fatal, unresolved). Only medicinalproduct is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproduct`` (string) (required)
      Drug name.
 
-   * ``patientsex`` (string) (required)
+   * ``patientsex`` (string) (optional)
      No description
 
-   * ``patientagegroup`` (string) (required)
+   * ``patientagegroup`` (string) (optional)
      No description
 
-   * ``occurcountry`` (string) (required)
+   * ``occurcountry`` (string) (optional)
      No description
 
    **Example Usage:**
@@ -454,10 +428,7 @@ Count the outcome of adverse reactions (recovered, recovering, fatal, unresolved
       query = {
           "name": "FAERS_count_outcomes_by_drug_event",
           "arguments": {
-              "medicinalproduct": "example_value",
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "occurcountry": "example_value"
+              "medicinalproduct": "example_value"
           }
       }
       result = tu.run(query)
@@ -466,7 +437,7 @@ Count the outcome of adverse reactions (recovered, recovering, fatal, unresolved
 **FAERS_count_patient_age_distribution** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Analyze the age distribution of patients experiencing adverse events for a specific drug. The age...
+Analyze the age distribution of patients experiencing adverse events for a specific drug. Only me...
 
 .. dropdown:: FAERS_count_patient_age_distribution tool specification
 
@@ -474,7 +445,7 @@ Analyze the age distribution of patients experiencing adverse events for a speci
 
    * **Name**: ``FAERS_count_patient_age_distribution``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Analyze the age distribution of patients experiencing adverse events for a specific drug. The age groups are: Neonate (0-28 days), Infant (29 days - 23 months), Child (2-11 years), Adolescent (12-17 years), Adult (18-64 years), Elderly (65+ years). Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Analyze the age distribution of patients experiencing adverse events for a specific drug. Only medicinalproduct is required. The age groups are: Neonate (0-28 days), Infant (29 days - 23 months), Child (2-11 years), Adolescent (12-17 years), Adult (18-64 years), Elderly (65+ years). Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
@@ -497,7 +468,7 @@ Analyze the age distribution of patients experiencing adverse events for a speci
 **FAERS_count_reactions_by_drug_event** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count the number of adverse reactions reported for a given drug, filtered by patient details, eve...
+Count the number of adverse reactions reported for a given drug. Only medicinalproduct is require...
 
 .. dropdown:: FAERS_count_reactions_by_drug_event tool specification
 
@@ -505,27 +476,30 @@ Count the number of adverse reactions reported for a given drug, filtered by pat
 
    * **Name**: ``FAERS_count_reactions_by_drug_event``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count the number of adverse reactions reported for a given drug, filtered by patient details, event seriousness, and reaction outcomes. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count the number of adverse reactions reported for a given drug. Only medicinalproduct is required; all other filters (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath, reactionmeddraverse) are optional. When reactionmeddraverse is not specified, returns all adverse reactions (AE) with their counts grouped by MedDRA Preferred Term. When reactionmeddraverse is specified, filters results to only include that specific MedDRA Lowest Level Term. Use filters sparingly to avoid overly restrictive searches that return no results. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproduct`` (string) (required)
      Drug name.
 
-   * ``patientsex`` (string) (required)
-     Patient sex, leave it blank if you don't want to apply a filter.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Patient age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``occurcountry`` (string) (required)
-     Country where event occurred.
+   * ``occurcountry`` (string) (optional)
+     Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you don't want to filter by country.
 
-   * ``serious`` (string) (required)
-     Whether the event was serious.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
-   * ``seriousnessdeath`` (string) (required)
-     Was death reported?
+   * ``seriousnessdeath`` (string) (optional)
+     Optional: Filter for fatal outcomes. Omit this parameter if you don't want to filter by death.
+
+   * ``reactionmeddraverse`` (string) (optional)
+     Optional: Filter by MedDRA reaction term (Lowest Level Term). When omitted, returns all adverse reactions with their counts. When specified, filters results to only include that specific reaction term.
 
    **Example Usage:**
 
@@ -534,12 +508,7 @@ Count the number of adverse reactions reported for a given drug, filtered by pat
       query = {
           "name": "FAERS_count_reactions_by_drug_event",
           "arguments": {
-              "medicinalproduct": "example_value",
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "occurcountry": "example_value",
-              "serious": "example_value",
-              "seriousnessdeath": "example_value"
+              "medicinalproduct": "example_value"
           }
       }
       result = tu.run(query)
@@ -548,7 +517,7 @@ Count the number of adverse reactions reported for a given drug, filtered by pat
 **FAERS_count_reportercountry_by_drug_event** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count the number of FDA adverse event reports grouped by the country of the primary reporter. Dat...
+Count the number of FDA adverse event reports grouped by the country of the primary reporter. Onl...
 
 .. dropdown:: FAERS_count_reportercountry_by_drug_event tool specification
 
@@ -556,21 +525,21 @@ Count the number of FDA adverse event reports grouped by the country of the prim
 
    * **Name**: ``FAERS_count_reportercountry_by_drug_event``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count the number of FDA adverse event reports grouped by the country of the primary reporter. Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count the number of FDA adverse event reports grouped by the country of the primary reporter. Only medicinalproduct is required; all other filters (patientsex, patientagegroup, serious) are optional. Use filters sparingly to avoid overly restrictive searches. Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproduct`` (string) (required)
      Drug name.
 
-   * ``patientsex`` (string) (required)
-     Patient sex, leave it blank if you don't want to apply a filter.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Patient age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``serious`` (string) (required)
-     Whether the event was serious.
+   * ``serious`` (string) (optional)
+     Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness.
 
    **Example Usage:**
 
@@ -579,10 +548,7 @@ Count the number of FDA adverse event reports grouped by the country of the prim
       query = {
           "name": "FAERS_count_reportercountry_by_drug_event",
           "arguments": {
-              "medicinalproduct": "example_value",
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "serious": "example_value"
+              "medicinalproduct": "example_value"
           }
       }
       result = tu.run(query)
@@ -591,7 +557,7 @@ Count the number of FDA adverse event reports grouped by the country of the prim
 **FAERS_count_seriousness_by_drug_event** (Type: FDADrugAdverseEventTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Count the number of adverse event reports classified as serious or non-serious, filtered by drug ...
+Count the number of adverse event reports classified as serious or non-serious. Only medicinalpro...
 
 .. dropdown:: FAERS_count_seriousness_by_drug_event tool specification
 
@@ -599,21 +565,21 @@ Count the number of adverse event reports classified as serious or non-serious, 
 
    * **Name**: ``FAERS_count_seriousness_by_drug_event``
    * **Type**: ``FDADrugAdverseEventTool``
-   * **Description**: Count the number of adverse event reports classified as serious or non-serious, filtered by drug and patient demographics. In results, term Serious means: 'The adverse event resulted in death, a life threatening condition, hospitalization, disability, congenital anomaly, or other serious condition', term Non-serious means 'The adverse event did not result in any of the above' Data source: FDA Adverse Event Reporting System (FAERS).
+   * **Description**: Count the number of adverse event reports classified as serious or non-serious. Only medicinalproduct is required; all other filters (patientsex, patientagegroup, occurcountry) are optional. Use filters sparingly to avoid overly restrictive searches. In results, term Serious means: "The adverse event resulted in death, a life threatening condition, hospitalization, disability, congenital anomaly, or other serious condition", term Non-serious means "The adverse event did not result in any of the above". Data source: FDA Adverse Event Reporting System (FAERS).
 
    **Parameters:**
 
    * ``medicinalproduct`` (string) (required)
      Drug name.
 
-   * ``patientsex`` (string) (required)
-     Patient sex, leave it blank if you don't want to apply a filter.
+   * ``patientsex`` (string) (optional)
+     Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex.
 
-   * ``patientagegroup`` (string) (required)
-     Patient age group.
+   * ``patientagegroup`` (string) (optional)
+     Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age.
 
-   * ``occurcountry`` (string) (required)
-     Country where event occurred.
+   * ``occurcountry`` (string) (optional)
+     Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you don't want to filter by country.
 
    **Example Usage:**
 
@@ -622,10 +588,7 @@ Count the number of adverse event reports classified as serious or non-serious, 
       query = {
           "name": "FAERS_count_seriousness_by_drug_event",
           "arguments": {
-              "medicinalproduct": "example_value",
-              "patientsex": "example_value",
-              "patientagegroup": "example_value",
-              "occurcountry": "example_value"
+              "medicinalproduct": "example_value"
           }
       }
       result = tu.run(query)

@@ -8,38 +8,19 @@ exclude: |
   )
 
 repos:
-
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      - id: check-ast
       - id: check-yaml
       - id: check-toml
 
-  - repo: https://github.com/psf/black
-    rev: 25.9.0
-    hooks:
-      - id: black
-        args: ["--line-length=88"]
-        language_version: python3
-
-  - repo: https://github.com/PyCQA/autoflake
-    rev: v2.3.1
-    hooks:
-      - id: autoflake
-        args: ["--remove-all-unused-imports", "--remove-unused-variables", "--in-place"]
-
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.3.0
-    hooks:
-      - id: flake8
-        additional_dependencies: ["flake8-bugbear"]
-        args: ["--max-line-length=88", "--extend-ignore=E501,F401,F541,E203,W503"]
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.1
+    rev: v0.14.7
     hooks:
-      - id: ruff
-        args: ["--fix", "--line-length=88", "--ignore=E203"]
+      # Run the linter.
+      - id: ruff-check
+        args: [ --fix ] # automatically fix linting issues
+      # Run the formatter.
+      - id: ruff-format

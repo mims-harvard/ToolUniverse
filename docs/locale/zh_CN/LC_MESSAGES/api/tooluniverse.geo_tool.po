@@ -39,7 +39,7 @@ msgstr ""
 
 #: b48295a46ee544738231bf6d85523860 of tooluniverse.geo_tool.GEORESTTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: e1a00a43354244428fadab77eebb8fdc of tooluniverse.geo_tool.GEORESTTool:1
 msgid ""

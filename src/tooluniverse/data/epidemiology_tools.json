@@ -1,0 +1,314 @@
+[
+  {
+    "name": "Epidemiology_r0_herd",
+    "type": "EpidemiologyTool",
+    "description": "Compute herd immunity threshold and effective reproduction number from R0 and vaccine efficacy. Returns the perfect-vaccine threshold (1-1/R0), the VE-adjusted minimum vaccination coverage (Vc = threshold/VE), and optionally Re at a given coverage fraction. Useful for vaccine program planning and outbreak assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["r0_herd"],
+          "description": "Operation type"
+        },
+        "R0": {
+          "type": "number",
+          "description": "Basic reproduction number (must be > 1)"
+        },
+        "VE": {
+          "type": "number",
+          "description": "Vaccine efficacy as fraction (0, 1], default 1.0 (perfect vaccine)"
+        },
+        "coverage": {
+          "type": "number",
+          "description": "Optional vaccination coverage fraction [0, 1] to evaluate Re at"
+        }
+      },
+      "required": ["operation", "R0"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "herd_threshold_perfect": {"type": "number"},
+                "herd_threshold_ve_adjusted": {"type": "number"},
+                "Re_at_coverage": {"type": "number"},
+                "epidemic_suppressed": {"type": "boolean"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "r0_herd",
+        "R0": 3.0,
+        "VE": 0.94
+      }
+    ]
+  },
+  {
+    "name": "Epidemiology_vaccine_coverage",
+    "type": "EpidemiologyTool",
+    "description": "Derive vaccine effectiveness from field surveillance data using the screening method (Farrington 1993), then compute the required vaccination coverage threshold. Requires R0, proportion of cases vaccinated (PCV), and proportion of population vaccinated (PPV). Formula: VE = 1 - [PCV*(1-PPV)]/[(1-PCV)*PPV], then Vc = (1-1/R0)/VE.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["vaccine_coverage"],
+          "description": "Operation type"
+        },
+        "R0": {
+          "type": "number",
+          "description": "Basic reproduction number (must be > 1)"
+        },
+        "PCV": {
+          "type": "number",
+          "description": "Proportion of disease cases that were vaccinated (0, 1)"
+        },
+        "PPV": {
+          "type": "number",
+          "description": "Proportion of total population that is vaccinated (0, 1)"
+        }
+      },
+      "required": ["operation", "R0", "PCV", "PPV"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "VE": {"type": "number"},
+                "Vc": {"type": "number"},
+                "Re_current": {"type": "number"},
+                "Vc_achievable": {"type": "boolean"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "vaccine_coverage",
+        "R0": 3.0,
+        "PCV": 0.06,
+        "PPV": 0.35
+      }
+    ]
+  },
+  {
+    "name": "Epidemiology_nnt",
+    "type": "EpidemiologyTool",
+    "description": "Calculate Number Needed to Treat (NNT) or Number Needed to Harm (NNH), Absolute Risk Reduction (ARR), Relative Risk (RR), Relative Risk Reduction (RRR), and Odds Ratio (OR) from control and treatment event rates. NNT = 1/ARR. If treatment increases risk, reports NNH instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["nnt"],
+          "description": "Operation type"
+        },
+        "control_rate": {
+          "type": "number",
+          "description": "Event rate in the control group [0, 1]"
+        },
+        "treatment_rate": {
+          "type": "number",
+          "description": "Event rate in the treatment group [0, 1]"
+        }
+      },
+      "required": ["operation", "control_rate", "treatment_rate"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "NNT_value": {"type": "number"},
+                "NNT_label": {"type": "string"},
+                "ARR": {"type": "number"},
+                "RR": {"type": "number"},
+                "OR": {"type": "number"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "nnt",
+        "control_rate": 0.30,
+        "treatment_rate": 0.20
+      }
+    ]
+  },
+  {
+    "name": "Epidemiology_diagnostic",
+    "type": "EpidemiologyTool",
+    "description": "Compute diagnostic test performance metrics from a 2x2 contingency table (TP, FP, TN, FN). Returns sensitivity, specificity, PPV, NPV, accuracy, positive/negative likelihood ratios. Useful for evaluating screening tests and clinical decision-making.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["diagnostic"],
+          "description": "Operation type"
+        },
+        "tp": {
+          "type": "integer",
+          "description": "True positives (disease+, test+)"
+        },
+        "fp": {
+          "type": "integer",
+          "description": "False positives (disease-, test+)"
+        },
+        "tn": {
+          "type": "integer",
+          "description": "True negatives (disease-, test-)"
+        },
+        "fn": {
+          "type": "integer",
+          "description": "False negatives (disease+, test-)"
+        }
+      },
+      "required": ["operation", "tp", "fp", "tn", "fn"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "sensitivity": {"type": "number"},
+                "specificity": {"type": "number"},
+                "PPV": {"type": "number"},
+                "NPV": {"type": "number"},
+                "accuracy": {"type": "number"},
+                "LR_pos": {"type": "number"},
+                "LR_neg": {"type": "number"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "diagnostic",
+        "tp": 90,
+        "fp": 10,
+        "tn": 880,
+        "fn": 20
+      }
+    ]
+  },
+  {
+    "name": "Epidemiology_bayesian",
+    "type": "EpidemiologyTool",
+    "description": "Compute post-test probability via Bayes' theorem given pre-test prevalence, test sensitivity, and specificity. Converts prevalence to pre-test odds, applies likelihood ratio (LR+ for positive test, LR- for negative test), and converts post-test odds back to probability. Useful for interpreting test results in clinical settings.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["bayesian"],
+          "description": "Operation type"
+        },
+        "prevalence": {
+          "type": "number",
+          "description": "Pre-test probability (disease prevalence) [0, 1]"
+        },
+        "sensitivity": {
+          "type": "number",
+          "description": "Test sensitivity P(test+ | disease+) [0, 1]"
+        },
+        "specificity": {
+          "type": "number",
+          "description": "Test specificity P(test- | disease-) [0, 1]"
+        },
+        "test_result": {
+          "type": "string",
+          "enum": ["positive", "negative"],
+          "description": "Whether to compute post-test probability for a positive or negative result (default: positive)"
+        }
+      },
+      "required": ["operation", "prevalence", "sensitivity", "specificity"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "post_test_probability": {"type": "number"},
+                "LR": {"type": "number"},
+                "pre_test_odds": {"type": "number"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "bayesian",
+        "prevalence": 0.01,
+        "sensitivity": 0.95,
+        "specificity": 0.90
+      }
+    ]
+  }
+]

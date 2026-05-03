@@ -26,7 +26,7 @@ msgstr "tooluniverse.ensembl\\_tool 模块"
 
 #: 0bbfdcae13464ad1914b3ed68c1dcdfa of tooluniverse.ensembl_tool.EnsemblTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: 2213a6fbbdd24aef9d1f06c596ea6cca of tooluniverse.ensembl_tool.EnsemblTool:1
 msgid ""

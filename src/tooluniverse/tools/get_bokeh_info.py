@@ -13,7 +13,7 @@ def get_bokeh_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get information about the bokeh package. Interactive visualization library for modern web browsers
 
@@ -29,12 +29,17 @@ def get_bokeh_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "get_bokeh_info", "arguments": {}},
+        {
+            "name": "get_bokeh_info",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

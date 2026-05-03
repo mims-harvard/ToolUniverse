@@ -17,7 +17,7 @@ def HypothesisGenerator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Generates research hypotheses based on provided background context, domain, and desired format. U...
 
@@ -40,19 +40,25 @@ def HypothesisGenerator(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "context": context,
+            "domain": domain,
+            "number_of_hypotheses": number_of_hypotheses,
+            "hypothesis_format": hypothesis_format,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "HypothesisGenerator",
-            "arguments": {
-                "context": context,
-                "domain": domain,
-                "number_of_hypotheses": number_of_hypotheses,
-                "hypothesis_format": hypothesis_format,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

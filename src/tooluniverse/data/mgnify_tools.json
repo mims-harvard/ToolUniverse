@@ -1,0 +1,119 @@
+[
+  {
+    "name": "MGnify_search_studies",
+    "type": "MGnifyStudiesTool",
+    "description": "Search MGnify metagenomics/microbiome studies by biome or keyword. Returns study accessions (MGYS...), names, bioproject IDs, biome names, and analysis counts. Use to find datasets from specific environments (e.g., gut microbiome, soil, ocean) before retrieving analyses or taxonomy. Example: biome='root:Host-associated' returns gut, skin, and oral studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "biome": {
+          "type": "string",
+          "description": "Biome identifier (e.g., 'root:Host-associated')."
+        },
+        "search": {
+          "type": "string",
+          "description": "Keyword to search in study titles/descriptions."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of records per page (1–100)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/metagenomics/api/latest/studies",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of MGnify study objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "description": "MGnify study accession (e.g., MGYS00006860)"},
+          "type": {"type": "string", "description": "Resource type (studies)"},
+          "attributes": {
+            "type": "object",
+            "description": "Study metadata (bioproject, accession, study-name, etc.)"
+          },
+          "relationships": {
+            "type": "object",
+            "description": "Links to related resources (samples, analyses, biomes, etc.)"
+          },
+          "links": {
+            "type": "object",
+            "description": "API links for this study"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"biome": "root:Host-associated", "size": 1}
+    ],
+    "label": ["MGnify", "Microbiome", "Study"],
+    "metadata": {
+      "tags": ["microbiome", "metagenomics", "study"],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "MGnify_list_analyses",
+    "type": "MGnifyAnalysesTool",
+    "description": "List analyses associated with a study accession (taxonomic/functional outputs). Use to enumerate available processed results for programmatic retrieval.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "study_accession": {
+          "type": "string",
+          "description": "MGnify study accession (e.g., 'MGYS00000001')."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of records per page (1–100)."
+        }
+      },
+      "required": ["study_accession"]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/metagenomics/api/latest/analyses",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of MGnify analysis objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "description": "MGnify analysis accession"},
+          "type": {"type": "string", "description": "Resource type (analyses)"},
+          "attributes": {
+            "type": "object",
+            "description": "Analysis metadata (pipeline version, taxonomy/function results, etc.)"
+          },
+          "relationships": {
+            "type": "object",
+            "description": "Links to related resources (study, sample, downloads, etc.)"
+          },
+          "links": {
+            "type": "object",
+            "description": "API links for this analysis"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"study_accession": "MGYS00000001", "size": 1}
+    ],
+    "label": ["MGnify", "Microbiome", "Analysis"],
+    "metadata": {
+      "tags": ["analysis", "taxonomy", "function"],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  }
+]

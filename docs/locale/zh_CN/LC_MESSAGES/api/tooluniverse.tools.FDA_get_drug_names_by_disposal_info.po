@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_disposal\\_info 模�
 #: 8424a721a5af4e0384c19aba834ef426 of
 #: tooluniverse.tools.FDA_get_drug_names_by_disposal_info:1
 msgid "FDA_get_drug_names_by_disposal_info"
-msgstr ""
+msgstr "FDA_根据处置信息获取药品名称"
 
 #: 1086c1576d154de3adcd7f94027fccdd 45eb5c6919d2416989c2231608b1228f of
 #: tooluniverse.tools.FDA_get_drug_names_by_disposal_info:3

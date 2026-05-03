@@ -1,0 +1,183 @@
+[
+    {
+        "name": "CADD_get_variant_score",
+        "description": "Get CADD deleteriousness score for a specific variant. PHRED scores: >=20 top 1% deleterious (pathogenic threshold ~15-20), >=30 top 0.1%. Input: chromosome, position, ref, alt alleles. Supports GRCh37 and GRCh38.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome (1-22, X, Y, MT). Can include 'chr' prefix."
+                },
+                "pos": {
+                    "type": "integer",
+                    "description": "Genomic position (1-based)"
+                },
+                "ref": {
+                    "type": "string",
+                    "description": "Reference allele (e.g., 'A', 'G')"
+                },
+                "alt": {
+                    "type": "string",
+                    "description": "Alternate allele (e.g., 'T', 'C')"
+                },
+                "version": {
+                    "type": "string",
+                    "default": "GRCh38-v1.7",
+                    "enum": ["GRCh38-v1.7", "GRCh37-v1.7", "GRCh38-v1.6", "GRCh37-v1.6"],
+                    "description": "CADD version and genome build"
+                },
+                "include_annotations": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Include full annotation details in response"
+                }
+            },
+            "required": ["chrom", "pos", "ref", "alt"]
+        },
+        "fields": {
+            "operation": "get_variant_score"
+        },
+        "type": "CADDTool",
+        "test_examples": [
+            {
+                "chrom": "7",
+                "pos": 140753336,
+                "ref": "A",
+                "alt": "T"
+            },
+            {
+                "chrom": "17",
+                "pos": 7674220,
+                "ref": "G",
+                "alt": "A",
+                "version": "GRCh38-v1.7"
+            }
+        ],
+        "return_schema": {
+            "type": ["object", "null"],
+            "properties": {
+                "chrom": {"type": "string"},
+                "pos": {"type": "integer"},
+                "ref": {"type": "string"},
+                "alt": {"type": "string"},
+                "phred_score": {"type": ["number", "null"]},
+                "raw_score": {"type": ["number", "null"]},
+                "interpretation": {"type": ["string", "null"]},
+                "version": {"type": "string"},
+                "thresholds": {"type": "object"},
+                "annotations": {"type": ["object", "null"]}
+            }
+        },
+        "label": ["CADD", "Deleteriousness", "Variant"],
+        "metadata": {
+            "tags": ["variant_effect", "pathogenicity", "deleteriousness", "snv"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "CADD_get_position_scores",
+        "description": "Get CADD scores for all possible substitutions at a genomic position. Returns PHRED scores for A, C, G, T variants at the position. Useful for saturation mutagenesis analysis.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome (1-22, X, Y, MT)"
+                },
+                "pos": {
+                    "type": "integer",
+                    "description": "Genomic position (1-based)"
+                },
+                "version": {
+                    "type": "string",
+                    "default": "GRCh38-v1.7",
+                    "description": "CADD version and genome build"
+                }
+            },
+            "required": ["chrom", "pos"]
+        },
+        "fields": {
+            "operation": "get_position_scores"
+        },
+        "type": "CADDTool",
+        "test_examples": [
+            {
+                "chrom": "7",
+                "pos": 140753336
+            },
+            {
+                "chrom": "17",
+                "pos": 7674220
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "chrom": {"type": "string"},
+                "pos": {"type": "integer"},
+                "variants": {"type": "array"},
+                "version": {"type": "string"}
+            }
+        },
+        "label": ["CADD", "Position", "Saturation"],
+        "metadata": {
+            "tags": ["variant_effect", "saturation", "all_substitutions"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "CADD_get_range_scores",
+        "description": "Get CADD scores for all variants in a genomic range (max 100bp). Returns all pre-computed deleteriousness scores in the region. Use for hotspot analysis or exon scanning.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome (1-22, X, Y, MT)"
+                },
+                "start": {
+                    "type": "integer",
+                    "description": "Start position (1-based, inclusive)"
+                },
+                "end": {
+                    "type": "integer",
+                    "description": "End position (1-based, inclusive). Max range: 100bp."
+                },
+                "version": {
+                    "type": "string",
+                    "default": "GRCh38-v1.7",
+                    "description": "CADD version and genome build"
+                }
+            },
+            "required": ["chrom", "start", "end"]
+        },
+        "fields": {
+            "operation": "get_range_scores"
+        },
+        "type": "CADDTool",
+        "test_examples": [
+            {
+                "chrom": "7",
+                "start": 140753330,
+                "end": 140753340
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "chrom": {"type": "string"},
+                "start": {"type": "integer"},
+                "end": {"type": "integer"},
+                "variants": {"type": "array"},
+                "count": {"type": "integer"},
+                "version": {"type": "string"}
+            }
+        },
+        "label": ["CADD", "Range", "Region"],
+        "metadata": {
+            "tags": ["variant_effect", "region", "hotspot"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    }
+]

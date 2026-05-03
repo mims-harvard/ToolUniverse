@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_taxonomy\\_by\\_pdb\\_id 模块"
 #: 8f2d5cefe9154357b88d4e6f0b29d75d of
 #: tooluniverse.tools.get_taxonomy_by_pdb_id:1
 msgid "get_taxonomy_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取分类信息"
 
 #: 8f74ffa17ae34c0b9b3bcd9e4da44a32 c6956395dc86443aa2e9c68d7a0d43f5 of
 #: tooluniverse.tools.get_taxonomy_by_pdb_id:3

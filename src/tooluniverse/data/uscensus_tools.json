@@ -1,0 +1,92 @@
+[
+  {
+    "name": "USCensus_get_population",
+    "description": "Get population and demographic data from the US Census Bureau API. Access decennial census and American Community Survey (ACS) data at national, state, county, and city levels. No authentication key required for basic usage. Variables include total population, housing units, age groups, and race/ethnicity breakdowns. Useful for demographic research, urban planning, and social science analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "get": {
+          "type": "string",
+          "description": "Comma-separated variable codes to retrieve plus NAME. For 2020 decennial: 'P1_001N,NAME' (total pop). For ACS 5-year (B01003_001E=total pop, B19013_001E=median income, B01002_001E=median age). Example: 'NAME,B01003_001E,B19013_001E'"
+        },
+        "for": {
+          "type": "string",
+          "description": "Geographic unit. Examples: 'state:*' (all states), 'county:*' (all counties), 'state:06' (California), 'county:001&in=state:06' (Alameda County CA)"
+        },
+        "dataset": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Dataset to query. Values: '2020/dec/pl' (2020 decennial), '2022/acs/acs5' (ACS 5-year 2022), '2021/acs/acs1' (ACS 1-year 2021). Default: 2022/acs/acs5"
+        },
+        "in": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Geographic filter for sub-national queries. Examples: 'state:06' (within California)"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return"
+        }
+      },
+      "required": [
+        "get",
+        "for"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.census.gov/data/2022/acs/acs5",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "get": "NAME,B01003_001E",
+        "for": "state:*"
+      },
+      {
+        "get": "NAME,B01003_001E,B19013_001E",
+        "for": "state:06"
+      },
+      {
+        "get": "NAME,B01003_001E",
+        "for": "county:*",
+        "in": "state:06"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Census data as a 2D array. First row is header with variable names, subsequent rows are data. Example: [['NAME','B01003_001E','state'],['Alabama','5028092','01'],...]",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

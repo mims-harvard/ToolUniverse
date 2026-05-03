@@ -14,7 +14,7 @@ def MedicalTermNormalizer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Identifies and corrects misspelled drug or disease names, returning a list of plausible standardi...
 
@@ -31,12 +31,17 @@ def MedicalTermNormalizer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"raw_terms": raw_terms}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "MedicalTermNormalizer", "arguments": {"raw_terms": raw_terms}},
+        {
+            "name": "MedicalTermNormalizer",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

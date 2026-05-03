@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_spl\\_indexing\\_data\\_elements\\_by\\_d
 #: 4b918e5d25fe4b489a7f7d9af31acb55 of
 #: tooluniverse.tools.FDA_get_spl_indexing_data_elements_by_drug_name:1
 msgid "FDA_get_spl_indexing_data_elements_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取SPL索引数据元素"
 
 #: b1db6ca93b314ad9b87c921a4f897f49 e6d8529e768f41ab8f78ba65c64845ac of
 #: tooluniverse.tools.FDA_get_spl_indexing_data_elements_by_drug_name:3

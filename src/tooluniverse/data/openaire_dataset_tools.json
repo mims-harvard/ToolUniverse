@@ -1,0 +1,129 @@
+[
+  {
+    "type": "OpenAIREDatasetTool",
+    "name": "OpenAIRE_search_datasets",
+    "description": "Search OpenAIRE for research datasets from the European open science ecosystem. Covers datasets from EU-funded projects (Horizon 2020, Horizon Europe), national repositories (Zenodo, DANS, Dryad, Figshare), and thousands of data archives across Europe. Complements DataGov_search_datasets (US federal data) with European and international research datasets. Supports filtering by funder (EC, NIH, NSF, ARC, etc.) and country (ISO 2-letter code).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "string",
+          "description": "Search keywords for dataset discovery. Searches across titles, descriptions, and subjects."
+        },
+        "funder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional funder short name to filter datasets. Examples: 'EC' (European Commission), 'NIH', 'NSF', 'ARC' (Australian Research Council), 'WT' (Wellcome Trust), 'FCT' (Portugal), 'SNSF' (Swiss NSF).",
+          "default": null
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional ISO 3166-1 alpha-2 country code to filter by. Examples: 'DE' (Germany), 'FR' (France), 'IT' (Italy), 'NL' (Netherlands), 'GB' (UK), 'ES' (Spain).",
+          "default": null
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return. Default 10, maximum 100.",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "keywords"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "OpenAIRE dataset search results (contents of the data field)",
+      "properties": {
+        "keywords": {
+          "type": "string",
+          "description": "The search keywords used"
+        },
+        "funder": {
+          "type": ["string", "null"],
+          "description": "Funder filter applied"
+        },
+        "country": {
+          "type": ["string", "null"],
+          "description": "Country filter applied"
+        },
+        "total_count": {
+          "type": "integer",
+          "description": "Total number of matching datasets in OpenAIRE"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of datasets returned"
+        },
+        "datasets": {
+          "type": "array",
+          "description": "List of matching datasets",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": ["string", "null"],
+                "description": "Dataset title"
+              },
+              "description": {
+                "type": ["string", "null"],
+                "description": "Dataset description (truncated to 500 chars)"
+              },
+              "creators": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "List of creator/author names"
+              },
+              "date": {
+                "type": ["string", "null"],
+                "description": "Date of acceptance/publication"
+              },
+              "publisher": {
+                "type": ["string", "null"],
+                "description": "Dataset publisher"
+              },
+              "access_rights": {
+                "type": ["string", "null"],
+                "description": "Access rights (Open Access, Restricted, etc.)"
+              },
+              "doi": {
+                "type": ["string", "null"],
+                "description": "DOI identifier if available"
+              },
+              "subjects": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Subject keywords and classifications"
+              }
+            }
+          }
+        }
+      },
+      "required": ["keywords", "total_count", "returned", "datasets"]
+    },
+    "test_examples": [
+      {
+        "keywords": "aging cohort physical function",
+        "size": 3
+      },
+      {
+        "keywords": "climate change biodiversity",
+        "funder": "EC",
+        "size": 3
+      },
+      {
+        "keywords": "genomics cancer",
+        "country": "DE",
+        "size": 2
+      }
+    ]
+  }
+]

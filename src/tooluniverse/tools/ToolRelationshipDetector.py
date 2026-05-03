@@ -15,7 +15,7 @@ def ToolRelationshipDetector(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Analyzes a primary tool against a list of other tools to identify meaningful, directional data fl...
 
@@ -34,14 +34,20 @@ def ToolRelationshipDetector(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"tool_a": tool_a, "other_tools": other_tools}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ToolRelationshipDetector",
-            "arguments": {"tool_a": tool_a, "other_tools": other_tools},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

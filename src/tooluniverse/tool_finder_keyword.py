@@ -33,7 +33,10 @@ class ToolFinderKeyword(BaseTool):
     and relevant tool discovery.
     """
 
-    # Common English stop words to filter out
+    # Common English stop words to filter out.
+    # NOTE: domain-meaningful terms like "search", "find", "query" are intentionally
+    # excluded from this list so that queries like "UniProt search" keep the
+    # discriminating token "search" and can match UniProt_search over unrelated tools.
     STOP_WORDS = {
         "a",
         "an",
@@ -92,7 +95,6 @@ class ToolFinderKeyword(BaseTool):
         "did",
         "number",
         "no",
-        "find",
         "long",
         "down",
         "day",
@@ -174,6 +176,9 @@ class ToolFinderKeyword(BaseTool):
         self._tool_index = None
         self._document_frequencies = None
         self._total_documents = 0
+        self._avg_token_count = (
+            0  # average raw token count, used for BM25 normalization
+        )
 
     def _tokenize_and_normalize(self, text: str) -> List[str]:
         """
@@ -188,8 +193,19 @@ class ToolFinderKeyword(BaseTool):
         if not text:
             return []
 
-        # Convert to lowercase and extract words (alphanumeric sequences)
-        tokens = re.findall(r"\b[a-zA-Z][a-zA-Z0-9]*\b", text.lower())
+        lower_text = text.lower()
+        # Extract hyphenated biomedical identifiers (e.g. "il-6" → "il6") before
+        # splitting on hyphens, so the compound form is also indexed.
+        hyphenated = re.findall(
+            r"\b[a-zA-Z][a-zA-Z0-9]*(?:-[a-zA-Z0-9]+)+\b", lower_text
+        )
+        compound_tokens = [re.sub(r"-", "", h) for h in hyphenated]
+        # Extract regular alphanumeric words
+        tokens = re.findall(r"\b[a-zA-Z][a-zA-Z0-9]*\b", lower_text)
+        # Add compound forms (e.g. "il6" from "il-6") that aren't already present
+        for ct in compound_tokens:
+            if ct not in tokens:
+                tokens.append(ct)
 
         # Remove stop words
         tokens = [token for token in tokens if token not in self.STOP_WORDS]
@@ -198,7 +214,9 @@ class ToolFinderKeyword(BaseTool):
         stemmed_tokens = []
         for token in tokens:
             stemmed = self._apply_stemming(token)
-            if len(stemmed) > 2:  # Keep only meaningful terms
+            if (
+                len(stemmed) >= 2
+            ):  # Keep tokens of 2+ chars (allows acronyms like IL, CD)
                 stemmed_tokens.append(stemmed)
 
         return stemmed_tokens
@@ -286,6 +304,10 @@ class ToolFinderKeyword(BaseTool):
                 "tool": tool,
                 "terms": term_freq,
                 "total_terms": len(phrases),
+                # raw_token_count stores word-only length for document-length
+                # normalization; using phrase count would unfairly penalize tools
+                # with longer descriptions that generate more bigrams/trigrams.
+                "raw_token_count": len(tokens),
             }
 
             # Count document frequency for each term
@@ -298,39 +320,71 @@ class ToolFinderKeyword(BaseTool):
         # Calculate document frequencies
         self._document_frequencies = dict(term_doc_count)
 
+        # Compute average raw token count across all indexed documents.
+        # Used as the normalization baseline in BM25-style scoring.
+        if self._total_documents > 0:
+            total_tokens = sum(v["raw_token_count"] for v in self._tool_index.values())
+            self._avg_token_count = total_tokens / self._total_documents
+        else:
+            self._avg_token_count = 1
+
     def _extract_parameter_text(self, parameter_schema: Dict) -> List[str]:
         """
         Extract searchable text from parameter schema.
+
+        Only parameter **names** are indexed (not their free-text descriptions).
+        Parameter descriptions often contain boilerplate phrases like
+        "Whether to include usage examples and quick start guide" that
+        appear identically across many tools, inflating term frequencies for
+        words like "guide" and producing false matches for domain-specific
+        queries (e.g. "CRISPR guide RNA design"). Parameter names (e.g.
+        "sequence_type", "gene_id", "format") are more discriminating and
+        carry genuine signal about tool capabilities.
 
         Args:
             parameter_schema (Dict): Tool parameter schema
 
         Returns
-            List[str]: List of text elements from parameters
+            List[str]: List of parameter name text elements
         """
         text_elements = []
 
         if isinstance(parameter_schema, dict):
             properties = parameter_schema.get("properties", {})
-            for prop_name, prop_info in properties.items():
+            for prop_name in properties.keys():
                 text_elements.append(prop_name)
-                if isinstance(prop_info, dict):
-                    desc = prop_info.get("description", "")
-                    if desc:
-                        text_elements.append(desc)
 
         return text_elements
 
     def _calculate_tfidf_score(self, query_terms: List[str], tool_name: str) -> float:
         """
-        Calculate TF-IDF relevance score for a tool given query terms.
+        Calculate BM25-based relevance score for a tool given query terms.
+
+        BM25 (Best Match 25) is a bag-of-words retrieval function that improves
+        on plain TF-IDF by incorporating document-length normalization directly
+        into the term-frequency saturation formula. This eliminates the bias
+        where short tool descriptions (few tokens) score disproportionately
+        high because their TF values are inflated by a small denominator.
+
+        BM25 term score for a single term t in document d:
+            IDF(t) * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * dl / avgdl))
+
+        where:
+            tf    = raw count of term in document
+            dl    = document length (raw token count, not phrase count)
+            avgdl = average document length across all indexed tools
+            k1    = term-frequency saturation parameter (default 1.5)
+            b     = document-length normalization strength (default 0.75)
+
+        Using raw_token_count (word-only length, without bigrams/trigrams) as
+        dl so that phrase expansion does not double-penalize longer documents.
 
         Args:
             query_terms (List[str]): Processed query terms and phrases
             tool_name (str): Name of the tool to score
 
         Returns
-            float: TF-IDF relevance score
+            float: BM25 relevance score
         """
         if tool_name not in self._tool_index:
             return 0.0
@@ -339,26 +393,60 @@ class ToolFinderKeyword(BaseTool):
         tool_terms = tool_data["terms"]
         total_terms = tool_data["total_terms"]
 
+        # BM25 hyperparameters
+        k1 = 1.5  # term-frequency saturation: higher = more weight for repeated terms
+        b = 0.75  # document-length normalization strength: 0 = no normalization, 1 = full
+        # Discount factor for multi-word phrases: bigrams are worth phrase_discount
+        # of a unigram's contribution, trigrams phrase_discount^2, etc. This prevents
+        # rare high-IDF n-grams from dominating single-token matches.
+        phrase_discount = 0.3
+
+        # Use raw word-only token count as document length (dl).
+        # Falls back to total_terms (phrase count) for backward compatibility if
+        # the field is absent (index built before this change).
+        dl = max(tool_data.get("raw_token_count", total_terms), 1)
+        avgdl = max(self._avg_token_count, 1)
+
         score = 0.0
         query_term_freq = Counter(query_terms)
 
         for term, query_freq in query_term_freq.items():
             if term in tool_terms:
-                # Term Frequency (TF): frequency of term in tool / total terms in tool
-                tf = tool_terms[term] / total_terms
+                tf = tool_terms[term]
 
-                # Inverse Document Frequency (IDF): log(total docs / docs containing term)
+                # IDF: log(total docs / docs containing term).
+                # Add smoothing (+1) to avoid log(1)=0 for terms in all docs.
                 doc_freq = self._document_frequencies.get(term, 1)
-                idf = math.log(self._total_documents / doc_freq)
+                idf = math.log((self._total_documents + 1) / (doc_freq + 0.5))
 
-                # TF-IDF score with query term frequency weighting
-                score += tf * idf * math.log(1 + query_freq)
+                # BM25 TF normalization: saturates at high counts and penalizes
+                # documents that are longer than average (controlled by b).
+                bm25_tf = (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * dl / avgdl))
+
+                # Apply a phrase-length discount so that bigrams and trigrams
+                # (which have artificially high IDF due to rarity) do not
+                # overwhelm single-token matches. A unigram gets full weight,
+                # a bigram gets weight * phrase_discount, a trigram gets
+                # weight * phrase_discount^2, etc.
+                phrase_length = len(term.split())
+                phrase_weight = phrase_discount ** (phrase_length - 1)
+
+                # Optionally weight by query term frequency (log-dampened)
+                score += idf * bm25_tf * math.log(1 + query_freq) * phrase_weight
 
         return score
 
     def _calculate_exact_match_bonus(self, query: str, tool: Dict) -> float:
         """
         Calculate bonus score for exact matches in tool name or key phrases.
+
+        Tool names use underscores as word separators (e.g. "BLAST_nucleotide_search"),
+        so the query is also checked in its underscore-normalized form so that
+        "UniProt search" correctly matches "uniprot_search".
+
+        Individual query tokens are also checked against the tool name so that
+        a query like "sequence alignment BLAST" gives a bonus to BLAST_nucleotide_search
+        even though the full query string does not appear literally in the name.
 
         Args:
             query (str): Original query string
@@ -368,14 +456,45 @@ class ToolFinderKeyword(BaseTool):
             float: Exact match bonus score
         """
         query_lower = query.lower()
+        # Underscore-normalized version of the full query for matching tool names
+        query_underscored = query_lower.replace(" ", "_")
         tool_name = tool.get("name", "").lower()
         tool_desc = tool.get("description", "").lower()
 
         bonus = 0.0
 
-        # Exact tool name match
-        if query_lower in tool_name or tool_name in query_lower:
+        # Full query (space or underscore form) appears in or equals tool name.
+        # Give a larger bonus when the query maps exactly to the tool name
+        # (e.g. "UniProt search" → "uniprot_search" == "uniprot_search") versus
+        # when the query is merely a prefix of a longer tool name
+        # (e.g. "uniprot_search" ⊂ "uniprot_search_uniparc").
+        if query_lower == tool_name or query_underscored == tool_name:
+            # Exact whole-name match: highest bonus
+            bonus += 3.0
+        elif (
+            query_lower in tool_name
+            or tool_name in query_lower
+            or query_underscored in tool_name
+            or tool_name in query_underscored
+        ):
             bonus += 2.0
+        else:
+            # Partial bonus: count how many individual query tokens appear as
+            # exact word-components of the tool name (tool names are
+            # underscore-separated, e.g. "BLAST_nucleotide_search" splits into
+            # ["blast", "nucleotide", "search"]). Using word-boundary matching
+            # prevents "alignment" from matching only because it is a substring
+            # of "rfam_get_alignment" — the token must be an entire word in the
+            # name. Each matching token adds a small bonus scaled by its length
+            # to favour specific acronyms (e.g. "blast") over generic words.
+            tool_name_words = set(tool_name.split("_"))
+            query_words = query_lower.split()
+            token_bonus = 0.0
+            for word in query_words:
+                if len(word) >= 3 and word in tool_name_words:
+                    # Weight by word length: longer/rarer words carry more signal
+                    token_bonus += 0.3 * math.log(1 + len(word))
+            bonus += token_bonus
 
         # Exact phrase matches in description
         query_words = query_lower.split()
@@ -451,7 +570,9 @@ class ToolFinderKeyword(BaseTool):
         picked_tool_names = picked_tool_names_no_special[:rag_num]
 
         # Get tool objects and prepare prompts (matching original behavior)
-        picked_tools = self.tooluniverse.get_tool_by_name(picked_tool_names)
+        picked_tools = self.tooluniverse.get_tool_specification_by_names(
+            picked_tool_names
+        )
         picked_tools_prompt = self.tooluniverse.prepare_tool_prompts(picked_tools)
 
         if return_call_result:
@@ -480,11 +601,14 @@ class ToolFinderKeyword(BaseTool):
         # Extract parameters for compatibility
         description = arguments.get("description", arguments.get("query", ""))
         limit = arguments.get("limit", 10)
+        # Default False: find_tools() is the default path (returns a list of tool dicts).
+        # Pass True to get (prompts, names) tuple; pass None to use _run_json_search().
         return_call_result = arguments.get("return_call_result", False)
         categories = arguments.get("categories", None)
         picked_tool_names = arguments.get("picked_tool_names", None)
 
-        # If we have a unified interface call, delegate to find_tools method
+        # If return_call_result is a bool, delegate to find_tools (original interface).
+        # If None is explicitly passed, use the JSON search interface.
         if return_call_result is not None:
             return self.find_tools(
                 message=description,
@@ -494,7 +618,7 @@ class ToolFinderKeyword(BaseTool):
                 categories=categories,
             )
 
-        # Otherwise use original JSON-based interface for backward compatibility
+        # Explicit None: use JSON-based interface (used by CLI directly)
         return self._run_json_search(arguments)
 
     def _run_json_search(self, arguments):
@@ -514,6 +638,7 @@ class ToolFinderKeyword(BaseTool):
             )  # Support both names for compatibility
             categories = arguments.get("categories", None)
             limit = arguments.get("limit", 10)
+            offset = arguments.get("offset", 0) or 0
 
             if not query:
                 return json.dumps(
@@ -524,6 +649,16 @@ class ToolFinderKeyword(BaseTool):
                     },
                     indent=2,
                 )
+
+            # Feature-R13A-08: queries that look like exact tool names (e.g.
+            # "BioGRID_get_chemical_interactions") tokenize to nothing because
+            # underscores are treated as separators that produce stop-word-only
+            # tokens.  Replacing underscores with spaces lets the NLP pipeline
+            # extract the meaningful words ("BioGRID", "chemical", "interactions").
+            # Feature-R15B-02: preserve original query for transparency in processing_info.
+            query_submitted = query
+            if "_" in query:
+                query = query.replace("_", " ")
 
             # Ensure categories is None or a list (handle validation issue)
             if categories is not None and not isinstance(categories, list):
@@ -540,13 +675,23 @@ class ToolFinderKeyword(BaseTool):
                     indent=2,
                 )
 
+            # AUTO-LOAD: If tools not fully loaded, load them now
+            # Check if tools are not loaded or only partially loaded (< 100 tools means incomplete)
+            if len(self.tooluniverse.all_tool_dict) < 100:
+                self.tooluniverse.logger.info(
+                    f"Tool_Finder_Keyword: Only {len(self.tooluniverse.all_tool_dict)} tools loaded, loading all tools now..."
+                )
+                # Force full load by clearing filters and loading everything
+                self.tooluniverse.load_tools(include_tools=None, tool_type=None)
+
             all_tools = self.tooluniverse.return_all_loaded_tools()
 
             # Filter by categories if specified
             if categories:
-                filtered_tools = self.tooluniverse.select_tools(
-                    include_categories=categories
-                )
+                categories_set = set(categories)
+                filtered_tools = [
+                    t for t in all_tools if t.get("category") in categories_set
+                ]
             else:
                 filtered_tools = all_tools
 
@@ -565,10 +710,31 @@ class ToolFinderKeyword(BaseTool):
             query_phrases = self._extract_phrases(query_tokens)
 
             if not query_tokens and not query_phrases:
+                # Feature-R13B-01: return standard schema so programmatic consumers
+                # can always read total_matches without branching on "error" key.
                 return json.dumps(
                     {
-                        "error": "No meaningful search terms found in query",
                         "query": query,
+                        "search_method": "Advanced keyword matching (TF-IDF + NLP)",
+                        "total_matches": 0,
+                        "limit": limit,
+                        "offset": offset,
+                        "has_more": False,
+                        "categories_filtered": categories,
+                        "processing_info": {
+                            "query_tokens": 0,
+                            "query_phrases": 0,
+                            "indexed_tools": getattr(self, "_total_documents", 0),
+                            "warning": "No meaningful search terms found in query",
+                            **(
+                                {
+                                    "query_submitted": query_submitted,
+                                    "query_normalized": query,
+                                }
+                                if query_submitted != query
+                                else {}
+                            ),
+                        },
                         "tools": [],
                     },
                     indent=2,
@@ -605,13 +771,15 @@ class ToolFinderKeyword(BaseTool):
 
                 # Only include tools with positive relevance
                 if total_score > 0:
+                    # tool_name is already shortened (primary identifier)
                     tool_info = {
                         "name": tool_name,
                         "description": tool.get("description", ""),
                         "type": tool.get("type", ""),
                         "category": tool_category,
                         "parameters": tool.get("parameter", {}),
-                        "required": tool.get("required", []),
+                        # Feature-R12B-03/R13B-04: removed top-level "required" field —
+                        # it was always [] (the real list lives inside parameters.required).
                         "relevance_score": round(total_score, 4),
                         "tfidf_score": round(tfidf_score, 4),
                         "exact_match_bonus": round(exact_bonus, 4),
@@ -620,23 +788,50 @@ class ToolFinderKeyword(BaseTool):
 
             # Sort by relevance score (highest first) and limit results
             tool_scores.sort(key=lambda x: x["relevance_score"], reverse=True)
-            matching_tools = tool_scores[:limit]
+            total_scored = len(tool_scores)
+            matching_tools = tool_scores[offset : offset + limit] if limit > 0 else []
 
             # Remove internal scoring details from final output
             for tool in matching_tools:
                 tool.pop("tfidf_score", None)
                 tool.pop("exact_match_bonus", None)
 
+            has_more = (
+                total_scored > offset  # limit=0: items exist at this offset
+                if limit == 0
+                else (
+                    limit is not None and (offset + len(matching_tools)) < total_scored
+                )
+            )
             return json.dumps(
                 {
                     "query": query,
                     "search_method": "Advanced keyword matching (TF-IDF + NLP)",
-                    "total_matches": len(matching_tools),
+                    "total_matches": total_scored,
+                    "limit": limit,
+                    "offset": offset,
+                    "has_more": has_more,
+                    # Feature-R19A-02: include next_offset so pipelines don't recompute
+                    # offset + len(tools). Feature-23A-02: when limit=0 and has_more=True,
+                    # set next_offset=0 so callers can pass it directly as --offset.
+                    "next_offset": (offset + len(matching_tools))
+                    if (has_more and limit != 0)
+                    else (0 if has_more else None),
                     "categories_filtered": categories,
                     "processing_info": {
                         "query_tokens": len(query_tokens),
                         "query_phrases": len(query_phrases),
                         "indexed_tools": self._total_documents,
+                        # Feature-R15B-02: expose original vs normalized query when underscore
+                        # normalization was applied, so callers can detect the transformation.
+                        **(
+                            {
+                                "query_submitted": query_submitted,
+                                "query_normalized": query,
+                            }
+                            if query_submitted != query
+                            else {}
+                        ),
                     },
                     "tools": matching_tools,
                 },

@@ -11,12 +11,12 @@ from ._shared_client import get_shared_client
 def MedlinePlus_search_topics_by_keyword(
     term: str,
     db: str,
-    rettype: str,
+    rettype: Optional[str] = "topic",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for relevant information in MedlinePlus Web Service by keyword across health topics or oth...
 
@@ -37,14 +37,20 @@ def MedlinePlus_search_topics_by_keyword(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"term": term, "db": db, "rettype": rettype}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "MedlinePlus_search_topics_by_keyword",
-            "arguments": {"term": term, "db": db, "rettype": rettype},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

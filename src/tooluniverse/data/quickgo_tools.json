@@ -1,0 +1,563 @@
+[
+  {
+    "name": "QuickGO_annotations_by_gene",
+    "description": "Search Gene Ontology (GO) annotations for a specific gene product using the EBI QuickGO browser. Returns GO terms annotated to the protein/gene with evidence codes, qualifiers, and annotation sources. Accepts UniProtKB accessions (e.g., 'UniProtKB:P04637' for TP53). Provides more detailed annotation data than the standard GO API, including evidence provenance and assigned-by information. Useful for understanding gene function, localization, and biological processes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_product_id": {
+          "type": "string",
+          "description": "Gene product identifier, typically a UniProtKB accession. Format: 'UniProtKB:P04637' (TP53), 'UniProtKB:P38398' (BRCA1), 'UniProtKB:P00533' (EGFR)."
+        },
+        "aspect": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by GO aspect: 'biological_process', 'molecular_function', or 'cellular_component'. Default: all aspects."
+        },
+        "taxon_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Filter by NCBI taxonomy ID. Example: 9606 (human), 10090 (mouse)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of annotations to return. Default: 25, max: 100.",
+          "default": 25
+        }
+      },
+      "required": [
+        "gene_product_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "annotation_gene"
+    },
+    "type": "QuickGOTool",
+    "test_examples": [
+      {
+        "gene_product_id": "UniProtKB:P04637",
+        "limit": 10
+      },
+      {
+        "gene_product_id": "UniProtKB:P38398",
+        "aspect": "biological_process",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO term accession"
+                  },
+                  "go_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO term name"
+                  },
+                  "go_aspect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO aspect (biological_process, etc.)"
+                  },
+                  "gene_product_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene product accession"
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol"
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation qualifier"
+                  },
+                  "go_evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Evidence code (IDA, IMP, ISS, etc.)"
+                  },
+                  "assigned_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Database that made the annotation"
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Literature reference"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_annotations": {
+                  "type": "integer"
+                },
+                "page_size": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "QuickGO_annotations_by_goterm",
+    "description": "Search for all gene products annotated with a specific Gene Ontology (GO) term using the EBI QuickGO browser. Returns the proteins/genes associated with the GO term, their evidence codes, and annotation sources. Can be filtered by species (taxon_id). Useful for finding all genes involved in a biological process, molecular function, or cellular component. Example: GO:0006915 (apoptotic process) returns 6800+ human annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "go_id": {
+          "type": "string",
+          "description": "Gene Ontology term accession. Examples: 'GO:0006915' (apoptotic process), 'GO:0008150' (biological process), 'GO:0005634' (nucleus), 'GO:0003677' (DNA binding)."
+        },
+        "taxon_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Filter by NCBI taxonomy ID. Example: 9606 (human), 10090 (mouse), 7227 (fly)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of annotations to return. Default: 25, max: 100.",
+          "default": 25
+        }
+      },
+      "required": [
+        "go_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "annotation_goterm"
+    },
+    "type": "QuickGOTool",
+    "test_examples": [
+      {
+        "go_id": "GO:0006915",
+        "taxon_id": 9606,
+        "limit": 10
+      },
+      {
+        "go_id": "GO:0003677",
+        "taxon_id": 9606,
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_product_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene product accession"
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol"
+                  },
+                  "go_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO term accession"
+                  },
+                  "go_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO term name"
+                  },
+                  "go_aspect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO aspect"
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotation qualifier"
+                  },
+                  "go_evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Evidence code"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI taxonomy ID"
+                  },
+                  "assigned_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Annotating database"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_go_id": {
+                  "type": "string"
+                },
+                "total_annotations": {
+                  "type": "integer"
+                },
+                "page_size": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "QuickGO_get_term_detail",
+    "description": "Get detailed information about a specific Gene Ontology (GO) term from the EBI QuickGO browser. Returns the term name, definition, aspect (biological_process/molecular_function/cellular_component), synonyms, cross-references, and number of child terms. More detailed than the standard GO term lookup, including synonym types and cross-references to other ontologies. Example: GO:0006915 returns 'apoptotic process' with its full definition and 29 child terms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "go_id": {
+          "type": "string",
+          "description": "Gene Ontology term accession. Examples: 'GO:0006915' (apoptotic process), 'GO:0008150' (biological process), 'GO:0005634' (nucleus), 'GO:0016020' (membrane)."
+        }
+      },
+      "required": [
+        "go_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "term_detail"
+    },
+    "type": "QuickGOTool",
+    "test_examples": [
+      {
+        "go_id": "GO:0006915"
+      },
+      {
+        "go_id": "GO:0005634"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "GO term accession"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "GO term name"
+                },
+                "definition": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "GO term definition text"
+                },
+                "aspect": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "GO aspect (biological_process, etc.)"
+                },
+                "is_obsolete": {
+                  "type": "boolean",
+                  "description": "Whether the term is obsolete"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "xrefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "db_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "db_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "usage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Usage constraints"
+                },
+                "num_children": {
+                  "type": "integer",
+                  "description": "Number of child terms"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "found": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "QuickGO_get_term_children",
+    "description": "Get child terms (direct descendants) of a Gene Ontology (GO) term from the EBI QuickGO browser. Returns child term IDs, names, relationship type (is_a, part_of, regulates), and whether they have further children. Useful for navigating the GO hierarchy and finding more specific terms. Example: GO:0006915 (apoptotic process) has 29 children including 'intrinsic apoptotic signaling pathway' and 'extrinsic apoptotic signaling pathway'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "go_id": {
+          "type": "string",
+          "description": "Gene Ontology term accession. Examples: 'GO:0006915' (apoptotic process), 'GO:0008150' (biological process), 'GO:0005575' (cellular component)."
+        }
+      },
+      "required": [
+        "go_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "term_children"
+    },
+    "type": "QuickGOTool",
+    "test_examples": [
+      {
+        "go_id": "GO:0006915"
+      },
+      {
+        "go_id": "GO:0005634"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Child GO term accession"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Child term name"
+                  },
+                  "relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Relationship type (is_a, part_of, regulates, etc.)"
+                  },
+                  "has_children": {
+                    "type": "boolean",
+                    "description": "Whether this child has further children"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "parent_go_id": {
+                  "type": "string"
+                },
+                "num_children": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

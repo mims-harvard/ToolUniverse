@@ -32,7 +32,7 @@ msgstr ""
 #: 0970c64042394d35abf850024bc5ce4e of
 #: tooluniverse.tools.drugbank_get_drug_references_by_drug_name_or_drugbank_id:1
 msgid "drugbank_get_drug_references_by_drug_name_or_drugbank_id"
-msgstr ""
+msgstr "drugbank_通过药物名称或DrugBank ID获取药物参考文献"
 
 #: 084ee7fae1974aeca33a6c4f722b2cad e5fbac1f400f4be582a65303e9221e6e of
 #: tooluniverse.tools.drugbank_get_drug_references_by_drug_name_or_drugbank_id:3

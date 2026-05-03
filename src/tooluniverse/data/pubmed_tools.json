@@ -1,23 +1,48 @@
 [
   {
-    "type": "PubMedTool",
+    "type": "PubMedRESTTool",
     "name": "PubMed_search_articles",
-    "description": "Search PubMed using NCBI E-utilities (esearch + esummary) and return articles. Returns articles with title, journal, year, DOI, and PubMed URL.",
+    "description": "Search PubMed biomedical literature database using NCBI E-utilities (esearch + esummary). Returns articles with PMID, title, authors, journal, publication year, DOI, article type, and PubMed URL. Automatically fetches rich metadata for each article. Use this to discover medical/life sciences literature, find articles by topic, or search for publications by author or journal. Rate limiting is automatically handled (3 req/sec without API key, 10 req/sec with key set via NCBI_API_KEY environment variable).",
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ],
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search query for PubMed articles. Use keywords separated by spaces to refine your search."
+          "description": "Search query for PubMed articles. Use keywords, author names, journal names, or MeSH terms. Examples: 'cancer immunotherapy', 'Smith J[Author]', 'Nature[Journal]', 'diabetes[MeSH]'. Use AND/OR/NOT for complex queries."
         },
         "limit": {
           "type": "integer",
-          "description": "Number of articles to return. This sets the maximum number of articles retrieved from PubMed.",
+          "description": "Number of articles to return. This sets the maximum number of articles retrieved from PubMed (max: 200).",
           "default": 10
         },
-        "api_key": {
+        "mindate": {
           "type": "string",
-          "description": "Optional NCBI API key for higher rate limits. Get your free key at https://www.ncbi.nlm.nih.gov/account/"
+          "description": "Minimum date for results (format: YYYY/MM/DD or YYYY). Requires datetype to be set."
+        },
+        "maxdate": {
+          "type": "string",
+          "description": "Maximum date for results (format: YYYY/MM/DD or YYYY). Requires datetype to be set."
+        },
+        "datetype": {
+          "type": "string",
+          "description": "Type of date to filter on: 'pdat' (publication date), 'edat' (Entrez date), or 'mdat' (modification date). Required when using mindate/maxdate.",
+          "default": "pdat"
+        },
+        "include_abstract": {
+          "type": "boolean",
+          "description": "If true, best-effort fetches abstracts via efetch (adds abstract/abstract_source fields).",
+          "default": false
+        },
+        "sort": {
+          "type": "string",
+          "description": "Sort order for results. Valid values: 'pub_date' (newest first), 'Author' (alphabetical by first author), 'JournalName' (alphabetical by journal), 'relevance' (default PubMed ranking)."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Alias for limit \u2014 maximum number of results to return"
         }
       },
       "required": [
@@ -25,97 +50,130 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of PubMed articles matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the article"
-          },
-          "abstract": {
-            "type": "string",
-            "description": "Abstract of the article (not available from PubMed API)"
-          },
-          "authors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of author names"
-          },
-          "journal": {
-            "type": "string",
-            "description": "Journal name where the article was published"
-          },
-          "year": {
-            "type": "integer",
-            "description": "Publication year"
-          },
-          "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier (if available)"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the article on PubMed"
-          },
-          "citations": {
-            "type": "integer",
-            "description": "Number of citations (not available from PubMed API)"
-          },
-          "open_access": {
-            "type": "boolean",
-            "description": "Open access status (not available from PubMed API)"
-          },
-          "keywords": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of MeSH keywords"
-          },
-          "article_type": {
-            "type": "string",
-            "description": "Type of article"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source identifier (always 'PubMed')"
-          },
-          "data_quality": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of PubMed articles with metadata",
+          "items": {
             "type": "object",
-            "description": "Data quality indicators",
             "properties": {
-              "has_abstract": {
-                "type": "boolean"
+              "pmid": {
+                "type": "string",
+                "description": "PubMed ID (PMID)"
               },
-              "has_authors": {
-                "type": "boolean"
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Article title"
               },
-              "has_journal": {
-                "type": "boolean"
+              "authors": {
+                "type": "array",
+                "description": "List of author names (up to 5 authors shown)",
+                "items": {
+                  "type": "string"
+                }
               },
-              "has_year": {
-                "type": "boolean"
+              "journal": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Full journal name"
               },
-              "has_doi": {
-                "type": "boolean"
+              "pub_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication date (e.g., '2023 Jan 15')"
               },
-              "has_citations": {
-                "type": "boolean"
+              "pub_year": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Publication year"
               },
-              "has_keywords": {
-                "type": "boolean"
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Digital Object Identifier (DOI)"
               },
-              "has_url": {
-                "type": "boolean"
+              "pmcid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed Central ID (if available)"
+              },
+              "article_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Type of article (e.g., 'Journal Article, Review')"
+              },
+              "url": {
+                "type": "string",
+                "description": "Direct URL to the article on PubMed"
+              },
+              "abstract": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Abstract text (only when include_abstract=true and available)"
+              },
+              "abstract_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source for abstract text (e.g., 'PubMed')"
+              },
+              "doi_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI resolver URL"
+              },
+              "pmc_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PMC full text URL when PMCID is available"
               }
             }
           }
+        },
+        {
+          "type": "array",
+          "description": "Stub response when summaries fail (contains PMIDs and URLs only)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pmid": {
+                "type": "string"
+              },
+              "partial": {
+                "type": "boolean"
+              },
+              "warning": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "partial"
+            ]
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -125,6 +183,199 @@
       {
         "query": "COVID-19",
         "limit": 1
+      }
+    ],
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+      "method": "GET",
+      "db": "pubmed",
+      "retmode": "json"
+    }
+  },
+  {
+    "type": "PubMedRESTTool",
+    "name": "PubMed_get_article",
+    "description": "Get complete metadata for a specific PubMed article by its PMID (PubMed ID) using efetch. Returns comprehensive article information including title, full abstract, complete author list with affiliations, journal details (name, volume, issue, pages), publication dates, DOI, MeSH terms, article type, grant information, and references. Essential for accessing full abstracts, detailed metadata, and citation information. Find PMIDs using PubMed_search_articles (format: integer like 12345678).",
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": [
+            "string",
+            "integer"
+          ],
+          "description": "PubMed ID (PMID) as string or integer (e.g., '12345678' or 12345678, '33250470' or 33250470). Find PMIDs using PubMed_search_articles. Can also accept comma-separated PMIDs as string for multiple articles."
+        }
+      },
+      "required": [
+        "pmid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+      "method": "GET",
+      "db": "pubmed",
+      "retmode": "xml"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "string"
+      ],
+      "description": "Full PubMed article metadata in XML format (as string) or parsed structure"
+    },
+    "test_examples": [
+      {
+        "pmid": "17284678"
+      },
+      {
+        "pmid": "11748933"
+      }
+    ]
+  },
+  {
+    "type": "PubMedRESTTool",
+    "name": "PubMed_get_related",
+    "description": "Get related PubMed articles for a specific PMID using elink. Returns a list of computationally similar articles based on title, abstract, and MeSH terms. Use this to discover additional relevant literature, find similar studies, or explore a research topic more comprehensively. The algorithm identifies articles with similar content, methodology, or subject matter. Find PMIDs using PubMed_search_articles.",
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (PMID) for which to find related articles (e.g., '20210808', '19879512'). Find PMIDs using PubMed_search_articles."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of related articles to return (default: 20, max: 100).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "pmid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi",
+      "method": "GET",
+      "dbfrom": "pubmed",
+      "db": "pubmed",
+      "cmd": "neighbor_score"
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "object",
+        "string"
+      ],
+      "description": "List of related PMIDs, linkset data structure, or error message"
+    },
+    "test_examples": [
+      {
+        "pmid": "20210808"
+      },
+      {
+        "pmid": "19879512",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "PubMedRESTTool",
+    "name": "PubMed_get_cited_by",
+    "description": "Get a list of PubMed articles that cite a specific PMID using elink. Returns PMIDs of articles that have cited the input article in their reference list. Use this to track citation impact, find more recent work building on a paper, or explore how research has been applied. Essential for literature reviews, impact analysis, and staying current with research developments. Find PMIDs using PubMed_search_articles.",
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (PMID) for which to find citing articles (e.g., '12345678'). Find PMIDs using PubMed_search_articles."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of citing articles to return (default: 20, max: 100).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "pmid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi",
+      "method": "GET",
+      "dbfrom": "pubmed",
+      "db": "pubmed",
+      "linkname": "pubmed_pubmed_citedin"
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "object",
+        "string"
+      ],
+      "description": "List of PMIDs that cite the input article, linkset data structure, or error message"
+    },
+    "test_examples": [
+      {
+        "pmid": "20210808"
+      },
+      {
+        "pmid": "16210666"
+      }
+    ]
+  },
+  {
+    "type": "PubMedRESTTool",
+    "name": "PubMed_get_links",
+    "description": "Get external links (LinkOut) for a specific PubMed article by its PMID using elink. Returns URLs to full-text providers, supplementary data, related resources, clinical trials, and other external content. Use this to access full-text articles, find supplementary materials, or discover related datasets and resources. Essential for accessing paywalled content via institutional subscriptions or finding open-access versions. Find PMIDs using PubMed_search_articles.",
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID (PMID) for which to retrieve external links (e.g., '19880848', '19822630'). Find PMIDs using PubMed_search_articles."
+        }
+      },
+      "required": [
+        "pmid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi",
+      "method": "GET",
+      "dbfrom": "pubmed",
+      "cmd": "llinks"
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "object",
+        "string"
+      ],
+      "description": "LinkOut URLs and provider information (array of link objects or structured data)"
+    },
+    "test_examples": [
+      {
+        "pmid": "19880848"
+      },
+      {
+        "pmid": "19822630"
       }
     ]
   }

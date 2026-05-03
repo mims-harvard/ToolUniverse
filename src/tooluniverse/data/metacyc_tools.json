@@ -1,0 +1,150 @@
+[
+  {
+    "name": "MetaCyc_search_pathways",
+    "description": "Search MetaCyc for metabolic pathways by name or keyword. Returns pathway IDs and basic information. MetaCyc contains 2,800+ experimentally elucidated metabolic pathways. Note: BioCyc/MetaCyc now requires a free account (https://biocyc.org/register.shtml). This tool will return an auth error until BIOCYC_API_KEY is configured.",
+    "type": "MetaCycTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_pathways"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query - pathway name or keyword (e.g., 'glycolysis', 'TCA cycle')"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "glycolysis"
+      }
+    ]
+  },
+  {
+    "name": "MetaCyc_get_pathway",
+    "description": "Get metabolic pathway details from MetaCyc by pathway ID. Returns pathway information, URL to pathway diagram, and associated reactions/compounds. Note: requires a free BioCyc account (https://biocyc.org/register.shtml); returns auth error without BIOCYC_API_KEY.",
+    "type": "MetaCycTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_pathway"
+        },
+        "pathway_id": {
+          "type": "string",
+          "description": "MetaCyc pathway ID (e.g., PWY-5177, GLYCOLYSIS)"
+        }
+      },
+      "required": [
+        "pathway_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pathway_id": "GLYCOLYSIS"
+      }
+    ]
+  },
+  {
+    "name": "MetaCyc_get_compound",
+    "description": "Get metabolite/compound details from MetaCyc by compound ID. Returns compound information and URL to compound page. Note: requires a free BioCyc account (https://biocyc.org/register.shtml); returns auth error without BIOCYC_API_KEY.",
+    "type": "MetaCycTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_compound"
+        },
+        "compound_id": {
+          "type": "string",
+          "description": "MetaCyc compound ID (e.g., CPD-1, PYRUVATE)"
+        }
+      },
+      "required": [
+        "compound_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "compound_id": "PYRUVATE"
+      }
+    ]
+  },
+  {
+    "name": "MetaCyc_get_reaction",
+    "description": "Get reaction details from MetaCyc by reaction ID. Returns reaction information including substrates, products, enzymes, and URL to reaction page. Note: requires a free BioCyc account (https://biocyc.org/register.shtml); returns auth error without BIOCYC_API_KEY.",
+    "type": "MetaCycTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_reaction"
+        },
+        "reaction_id": {
+          "type": "string",
+          "description": "MetaCyc reaction ID (e.g., RXN-14500)"
+        }
+      },
+      "required": [
+        "reaction_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "reaction_id": "PEPDEPHOS-RXN"
+      }
+    ]
+  }
+]

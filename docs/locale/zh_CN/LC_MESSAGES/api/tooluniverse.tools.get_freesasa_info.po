@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_freesasa\\_info 模块"
 
 #: 41cd841619d1448d8727ce97245473c7 of tooluniverse.tools.get_freesasa_info:1
 msgid "get_freesasa_info"
-msgstr ""
+msgstr "get_freesasa_信息"
 
 #: 8c3007d6ff8f4ad7a2b3c786cd16ed6f fd8e5ff8d79e461dbc317f1986b77922 of
 #: tooluniverse.tools.get_freesasa_info:3

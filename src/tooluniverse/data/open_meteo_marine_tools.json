@@ -1,0 +1,68 @@
+[
+  {
+    "name": "OpenMeteo_get_marine_forecast",
+    "description": "Get marine/ocean weather forecast for any coastal or offshore location using Open-Meteo (free, no API key). Returns wave height, wave direction, wave period, swell wave height, swell direction, swell period, wind wave height, and ocean temperature. Data sourced from NOAA GFS Wave, DWD ICON Wave, and ECMWF WAM models with global 0.25 degree resolution. Useful for surfing, sailing, fishing, offshore operations, and maritime safety. Latitude/longitude required (use OpenMeteo_geocode_location for coordinates).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (e.g., 52.0 for North Sea, 21.3 for Hawaii, -33.9 for Sydney coast)"
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (e.g., 4.0 for North Sea, -157.8 for Hawaii, 151.2 for Sydney coast)"
+        },
+        "hourly": {
+          "type": ["string", "null"],
+          "description": "Comma-separated hourly marine variables. Options: wave_height, wave_direction, wave_period, wind_wave_height, wind_wave_direction, wind_wave_period, wind_wave_peak_period, swell_wave_height, swell_wave_direction, swell_wave_period, swell_wave_peak_period, ocean_current_velocity, ocean_current_direction. Default: wave_height if not specified."
+        },
+        "daily": {
+          "type": ["string", "null"],
+          "description": "Comma-separated daily marine variables. Options: wave_height_max, wave_direction_dominant, wave_period_max, wind_wave_height_max, wind_wave_direction_dominant, wind_wave_period_max, wind_wave_peak_period_max, swell_wave_height_max, swell_wave_direction_dominant, swell_wave_period_max, swell_wave_peak_period_max."
+        },
+        "forecast_days": {
+          "type": ["integer", "null"],
+          "description": "Number of forecast days (1-16, default 7)"
+        },
+        "timezone": {
+          "type": ["string", "null"],
+          "description": "Timezone for local time (e.g., 'Europe/London', 'Pacific/Honolulu', 'auto')"
+        }
+      },
+      "required": ["latitude", "longitude"]
+    },
+    "fields": {
+      "endpoint": "https://marine-api.open-meteo.com/v1/marine"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"latitude": 52.0, "longitude": 4.0, "hourly": "wave_height,wave_direction,wave_period,swell_wave_height"},
+      {"latitude": 21.3, "longitude": -157.8, "daily": "wave_height_max,wave_direction_dominant,swell_wave_height_max", "forecast_days": 5, "timezone": "Pacific/Honolulu"},
+      {"latitude": -33.9, "longitude": 151.2, "hourly": "wave_height,wind_wave_height,swell_wave_height,ocean_current_velocity", "forecast_days": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Marine forecast data",
+          "properties": {
+            "latitude": {"type": "number"},
+            "longitude": {"type": "number"},
+            "timezone": {"type": "string"},
+            "elevation": {"type": "number", "description": "Always 0.0 for marine data"},
+            "hourly": {"type": "object", "description": "Hourly marine forecast with time array and variable arrays"},
+            "hourly_units": {"type": "object", "description": "Units for hourly variables (m, degrees, s)"},
+            "daily": {"type": "object", "description": "Daily marine forecast summaries"},
+            "daily_units": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_principal\\_display\\_
 #: tooluniverse.tools.FDA_get_drug_name_by_principal_display_panel:1
 msgid "FDA_get_drug_name_by_principal_display_panel"
 msgstr ""
+"FDA_get_drug_name_by_principal_display_panel  \n"
+"获取药品名称_根据主要显示面板"
 
 #: 4f2314306c20413889fb17f45402250f a554092f95d6455ab36e9873e77a5a2a of
 #: tooluniverse.tools.FDA_get_drug_name_by_principal_display_panel:3

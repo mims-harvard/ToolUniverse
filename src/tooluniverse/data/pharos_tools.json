@@ -1,0 +1,211 @@
+[
+    {
+        "name": "Pharos_get_target",
+        "description": "Get detailed drug target information from Pharos/TCRD by gene symbol or UniProt ID. Returns Target Development Level (Tdark/Tbio/Tchem/Tclin), protein family, diseases, ligands, and druggability data. Essential for identifying understudied proteins.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene": {
+                    "type": "string",
+                    "description": "Gene symbol (e.g., 'EGFR', 'TP53', 'BRCA1'). Use either gene or uniprot."
+                },
+                "uniprot": {
+                    "type": "string",
+                    "description": "UniProt accession (e.g., 'P00533'). Use either gene or uniprot."
+                }
+            }
+        },
+        "fields": {
+            "operation": "get_target"
+        },
+        "type": "PharosTool",
+        "test_examples": [
+            {
+                "gene": "EGFR"
+            },
+            {
+                "uniprot": "P00533"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "name": {"type": "string"},
+                        "gene": {"type": "string"},
+                        "accession": {"type": "string"},
+                        "idgFamily": {"type": "string"},
+                        "idgTDL": {"type": "string"},
+                        "novelty": {"type": "number"},
+                        "diseases": {"type": "array"},
+                        "ligands": {"type": "array"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["Pharos", "TCRD", "IDG", "Druggability"],
+        "metadata": {
+            "tags": ["drug_target", "understudied_proteins", "tdl"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "Pharos_search_targets",
+        "description": "Search drug targets in Pharos database by keyword. Supports filtering by Target Development Level (Tdark for understudied, Tchem for chemically tractable, Tclin for approved drugs). Returns TDL, protein family, and novelty scores.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query (gene name, protein name, or keyword)"
+                },
+                "tdl": {
+                    "type": "string",
+                    "enum": ["Tdark", "Tbio", "Tchem", "Tclin"],
+                    "description": "Filter by Target Development Level. Tdark=understudied, Tbio=biological annotations, Tchem=chemical probes, Tclin=approved drugs."
+                },
+                "top": {
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results (1-100)"
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "operation": "search_targets"
+        },
+        "type": "PharosTool",
+        "test_examples": [
+            {
+                "query": "kinase",
+                "top": 5
+            },
+            {
+                "query": "GPCR",
+                "tdl": "Tdark",
+                "top": 10
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "count": {"type": "integer"},
+                        "targets": {"type": "array"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["Pharos", "Search", "IDG"],
+        "metadata": {
+            "tags": ["search", "drug_target", "tdl"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "Pharos_get_tdl_summary",
+        "description": "Get Target Development Level statistics from Pharos. Returns counts of human proteome targets at each TDL: Tclin (approved drugs), Tchem (chemical probes), Tbio (biological annotations), Tdark (understudied). Use to understand druggable genome coverage.",
+        "parameter": {
+            "type": "object",
+            "properties": {}
+        },
+        "fields": {
+            "operation": "get_tdl_summary"
+        },
+        "type": "PharosTool",
+        "test_examples": [
+            {}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "tdl_summary": {"type": "object"},
+                        "total_targets": {"type": "integer"},
+                        "description": {"type": "object"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["Pharos", "Statistics", "IDG"],
+        "metadata": {
+            "tags": ["statistics", "tdl", "druggable_genome"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "Pharos_get_disease_targets",
+        "description": "Get drug targets associated with a disease from Pharos. Returns targets with TDL classification to identify druggable vs understudied proteins for the disease. Supports TDL filtering to find Tdark opportunities.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "disease": {
+                    "type": "string",
+                    "description": "Disease name (e.g., 'breast cancer', 'Alzheimer disease', 'diabetes mellitus')"
+                },
+                "tdl": {
+                    "type": "string",
+                    "enum": ["Tdark", "Tbio", "Tchem", "Tclin"],
+                    "description": "Optional filter by Target Development Level"
+                },
+                "top": {
+                    "type": "integer",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results (1-100)"
+                }
+            },
+            "required": ["disease"]
+        },
+        "fields": {
+            "operation": "get_disease_targets"
+        },
+        "type": "PharosTool",
+        "test_examples": [
+            {
+                "disease": "sickle cell anemia",
+                "top": 5
+            },
+            {
+                "disease": "cystic fibrosis",
+                "top": 5
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "disease": {"type": "string"},
+                        "count": {"type": "integer"},
+                        "targets": {"type": "array"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["Pharos", "Disease", "IDG"],
+        "metadata": {
+            "tags": ["disease", "drug_target", "tdl"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    }
+]

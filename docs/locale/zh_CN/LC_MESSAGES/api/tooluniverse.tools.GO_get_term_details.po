@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.GO\\_get\\_term\\_details 模块"
 #: 84140d7071d949d3b3c1a121e7fa0d75 of
 #: tooluniverse.tools.GO_get_term_details:1
 msgid "GO_get_term_details"
-msgstr ""
+msgstr "GO_get_term_details 获取术语详细信息"
 
 #: ba950e9a4bf24d40805a770fab2db7fe e10686bdbbc047c2b6fd9ba371000628 of
 #: tooluniverse.tools.GO_get_term_details:3

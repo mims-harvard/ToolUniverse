@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_sequence\\_by\\_pdb\\_id 模块"
 #: a7eeaef04c104fb390f4146cb6139f37 of
 #: tooluniverse.tools.get_sequence_by_pdb_id:1
 msgid "get_sequence_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取序列"
 
 #: 5dddbd903e8148aab6a369dc1f492256 9ee5a67f698045608c4a58fd3b207487 of
 #: tooluniverse.tools.get_sequence_by_pdb_id:3

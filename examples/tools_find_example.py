@@ -21,7 +21,6 @@ warnings.filterwarnings(
 )
 warnings.filterwarnings("ignore", message=".*RDKit.*")
 warnings.filterwarnings("ignore", message=".*pkg_resources.*")
-warnings.filterwarnings("ignore", category=UserWarning, module="hyperopt")
 
 # Add project src directory to the path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

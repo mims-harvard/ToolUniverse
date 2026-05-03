@@ -1,0 +1,152 @@
+[
+  {
+    "name": "GBIF_search_species",
+    "type": "GBIFTool",
+    "description": "Find taxa by keyword (scientific/common names) in GBIF. Use to resolve organism names to stable taxon keys (rank, lineage) for downstream biodiversity/occurrence queries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search string for species/taxa (supports scientific/common names), e.g., 'Homo', 'Atlantic cod'."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 300,
+          "description": "Maximum number of results to return (1–300)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Result offset for pagination (0-based)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "https://api.gbif.org/v1/species/search",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "GBIF species search response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "count": {"type": "integer"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {"type": "integer", "description": "taxonKey"},
+                  "scientificName": {"type": "string"},
+                  "rank": {"type": "string"},
+                  "kingdom": {"type": "string"},
+                  "phylum": {"type": "string"},
+                  "class": {"type": "string"},
+                  "order": {"type": "string"},
+                  "family": {"type": "string"},
+                  "genus": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"query": "Homo", "limit": 1},
+      {"query": "Gadus", "limit": 1}
+    ],
+    "label": ["GBIF", "Taxonomy", "Search"],
+    "metadata": {
+      "tags": ["biodiversity", "taxonomy", "species", "search"],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "GBIF_search_occurrences",
+    "type": "GBIFOccurrenceTool",
+    "description": "Retrieve species occurrence records from GBIF with optional filters (taxonKey, country, coordinates). Use for distribution mapping, presence-only modeling, and sampling context.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxonKey": {
+          "type": "integer",
+          "description": "GBIF taxon key to filter occurrences by a specific taxon (from species search)."
+        },
+        "country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code filter (e.g., 'US', 'CN')."
+        },
+        "hasCoordinate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Only return records with valid latitude/longitude coordinates when true."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 300,
+          "description": "Maximum number of results to return (1–300)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Result offset for pagination (0-based)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://api.gbif.org/v1/occurrence/search",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "GBIF occurrence search response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "count": {"type": "integer"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {"type": "integer"},
+                  "speciesKey": {"type": "integer"},
+                  "scientificName": {"type": "string"},
+                  "decimalLatitude": {"type": "number"},
+                  "decimalLongitude": {"type": "number"},
+                  "eventDate": {"type": "string"},
+                  "countryCode": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"hasCoordinate": true, "limit": 1},
+      {"country": "US", "limit": 1}
+    ],
+    "label": ["GBIF", "Occurrence", "Geospatial"],
+    "metadata": {
+      "tags": ["biodiversity", "occurrence", "distribution", "geospatial"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
+]

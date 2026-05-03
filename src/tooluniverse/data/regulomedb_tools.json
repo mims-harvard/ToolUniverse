@@ -1,0 +1,83 @@
+[
+  {
+    "type": "RegulomeDBRESTTool",
+    "name": "RegulomeDB_query_variant",
+    "description": "Query RegulomeDB for regulatory variant annotations using rsID",
+    "aliases": ["RegulomeDB_get_score"],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID (e.g., 'rs4994', 'rs429358')"
+        },
+        "variant": {
+          "type": "string",
+          "description": "Alias for rsid. dbSNP rsID (e.g., 'rs7903146', 'rs429358')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://regulomedb.org/regulome-search/?regions={rsid}&genome=GRCh38",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful regulatory annotation",
+          "properties": {
+            "rsid": {"type": "string"},
+            "assembly": {"type": ["string", "null"]},
+            "query_coordinates": {
+              "type": ["array", "null"],
+              "items": {"type": "string"}
+            },
+            "regulome_score": {
+              "type": ["object", "null"],
+              "properties": {
+                "probability": {"type": ["string", "null"]},
+                "ranking": {"type": ["string", "null"]},
+                "tissue_specific_scores": {"type": ["object", "null"]}
+              }
+            },
+            "variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chrom": {"type": "string"},
+                  "start": {"type": "integer"},
+                  "end": {"type": "integer"},
+                  "rsids": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            },
+            "features": {"type": ["object", "array", "null"]},
+            "nearby_snps": {"type": "array"},
+            "notifications": {"type": ["object", "null"]},
+            "total_supporting_datasets": {"type": "integer"}
+          },
+          "required": ["rsid", "regulome_score", "variants"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "rsid": "rs4994"
+      },
+      {
+        "rsid": "rs429358"
+      }
+    ]
+  }
+]

@@ -1,0 +1,327 @@
+[
+  {
+    "name": "FPbase_get_protein",
+    "description": "Get detailed data for a fluorescent protein from FPbase by its slug/short name. Returns the protein sequence, spectral properties (excitation max, emission max, extinction coefficient, quantum yield, brightness, pKa, maturation time), PDB and UniProt IDs, aggregation state, and relevant publications. FPbase is the comprehensive reference database for fluorescent proteins used in biological imaging. Examples: 'egfp' (Ex 488/Em 507, brightness 33.5), 'mcherry' (Ex 587/Em 610), 'tdtomato' (Ex 554/Em 581), 'itagbfp2' (blue), 'mirgfp' (infrared).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "description": "Fluorescent protein slug/short name in lowercase (e.g., 'egfp', 'mcherry', 'tdtomato', 'cerulean', 'venus', 'mscarlet', 'mirgfp', 'mscarlet-i'). Common GFP variants: 'egfp', 'mtaggfp2', 'sgfp2'. Common red: 'mcherry', 'mscarlet', 'tdtomato'. Common blue: 'ebfp2', 'mtagbfp2'. NIR: 'mirgfp', 'bphp1-qd'."
+        }
+      },
+      "required": [
+        "slug"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.fpbase.org/api/proteins/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "slug": "egfp"
+      },
+      {
+        "slug": "mcherry"
+      },
+      {
+        "slug": "tdtomato"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of fluorescent proteins matching the slug",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": "string",
+                "description": "FPbase unique identifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "Fluorescent protein name (e.g., EGFP, mCherry)"
+              },
+              "slug": {
+                "type": "string",
+                "description": "URL-friendly name"
+              },
+              "seq": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Amino acid sequence"
+              },
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession"
+              },
+              "pdb": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "PDB structure IDs"
+              },
+              "agg": {
+                "type": "string",
+                "description": "Aggregation tendency (wd=weak dimer, m=monomer, d=dimer, t=tetramer)"
+              },
+              "switch_type": {
+                "type": "string",
+                "description": "Photoswitching type (b=basic, ps=photoswitchable, pa=photoactivatable, pc=photoconvertible)"
+              },
+              "states": {
+                "type": "array",
+                "description": "Fluorescent states with spectral properties",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "ex_max": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Excitation maximum wavelength (nm)"
+                    },
+                    "em_max": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Emission maximum wavelength (nm)"
+                    },
+                    "ext_coeff": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Extinction coefficient (M^-1 cm^-1)"
+                    },
+                    "qy": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Quantum yield (0-1)"
+                    },
+                    "pka": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "pKa of fluorophore"
+                    },
+                    "maturation": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Maturation half-time (minutes) at 37\u00b0C"
+                    },
+                    "lifetime": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Fluorescence lifetime (ns)"
+                    },
+                    "brightness": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Relative brightness (ext_coeff \u00d7 qy / 1000)"
+                    }
+                  }
+                }
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Primary reference DOI"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FPbase_search_by_spectrum",
+    "description": "Search FPbase for fluorescent proteins with specific spectral properties. Filter by excitation wavelength range, emission wavelength range, or name. Essential for selecting appropriate fluorescent proteins for multiplexed imaging, FRET experiments, or specific microscopy setups. FPbase contains over 1000 fluorescent proteins. Common wavelength ranges: UV/violet ~350-420nm, blue ~430-480nm, cyan ~480-500nm, green ~490-530nm, yellow ~520-570nm, orange ~550-590nm, red ~590-640nm, far-red ~640-680nm, near-infrared ~680-800nm.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name__icontains": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Search by name (case-insensitive partial match, e.g., 'GFP', 'cherry', 'scarlet', 'cyan')"
+        },
+        "agg_exc_max__gte": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum excitation wavelength in nm (e.g., 480 for green range)"
+        },
+        "agg_exc_max__lte": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum excitation wavelength in nm (e.g., 520 for green range)"
+        },
+        "agg_em_max__gte": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum emission wavelength in nm"
+        },
+        "agg_em_max__lte": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum emission wavelength in nm"
+        },
+        "switch_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by photoswitching: 'b' (basic/constitutive), 'ps' (photoswitchable), 'pa' (photoactivatable), 'pc' (photoconvertible)"
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://www.fpbase.org/api/proteins/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "agg_exc_max__gte": 580,
+        "agg_exc_max__lte": 620,
+        "switch_type": "b"
+      },
+      {
+        "name__icontains": "scarlet"
+      },
+      {
+        "agg_em_max__gte": 640,
+        "agg_em_max__lte": 700
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of fluorescent proteins matching the spectral criteria",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "description": "Protein name"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "agg": {
+                "type": "string",
+                "description": "Aggregation state"
+              },
+              "switch_type": {
+                "type": "string"
+              },
+              "states": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "ex_max": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "em_max": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "ext_coeff": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "qy": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "brightness": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

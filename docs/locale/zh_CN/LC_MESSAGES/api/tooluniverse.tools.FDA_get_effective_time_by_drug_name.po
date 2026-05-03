@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_effective\\_time\\_by\\_drug\\_name 模�
 #: 637b2b1705664169a0f86adb84b7c61a of
 #: tooluniverse.tools.FDA_get_effective_time_by_drug_name:1
 msgid "FDA_get_effective_time_by_drug_name"
-msgstr ""
+msgstr "FDA_根据药品名称获取有效时间"
 
 #: 210efa3f15c44d4fbc29309546eaa764 ee8dd40c58324c63af122ace5851d05a of
 #: tooluniverse.tools.FDA_get_effective_time_by_drug_name:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.Reactome\\_get\\_pathway\\_reactions 模块"
 #: e373852532864cfd943559573bab1578 of
 #: tooluniverse.tools.Reactome_get_pathway_reactions:1
 msgid "Reactome_get_pathway_reactions"
-msgstr ""
+msgstr "Reactome_获取通路反应"
 
 #: 0c60694985b94cbaa4b9f17df782617b 353c79649e784d91888701e296f635f3 of
 #: tooluniverse.tools.Reactome_get_pathway_reactions:3

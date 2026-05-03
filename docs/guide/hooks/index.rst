@@ -65,6 +65,8 @@ When to Use Hooks
 - Working with literature search results
 - Processing large scientific datasets
 
+**Note:** Some tools (like Tool_RAG, ToolFinderEmbedding) are automatically excluded from hook processing to prevent information missing. You can customize excluded tools using the `exclude_tools` configuration option.
+
 **Use FileSaveHook when:**
 - Outputs exceed memory limits
 - You need to process outputs as files
@@ -89,6 +91,7 @@ The trade-off is usually worth it for large outputs that benefit from processing
 
 .. toctree::
    :maxdepth: 1
+   :hidden:
    :caption: Hook Topics
 
    summarization_hook

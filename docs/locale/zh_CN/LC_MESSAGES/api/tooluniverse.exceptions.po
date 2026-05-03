@@ -234,6 +234,8 @@ msgstr "服务器端错误（5xx响应，意外故障）。"
 
 #~ msgid "``RateLimitError``"
 #~ msgstr ""
+#~ "``RateLimitError``  \n"
+#~ "速率限制错误"
 
 #~ msgid ":class:`ToolRateLimitError`"
 #~ msgstr ":class:`工具速率限制错误`"

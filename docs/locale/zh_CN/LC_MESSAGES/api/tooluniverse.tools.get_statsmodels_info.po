@@ -29,6 +29,9 @@ msgstr "tooluniverse.tools.get\\_statsmodels\\_info 模块"
 #: tooluniverse.tools.get_statsmodels_info:1
 msgid "get_statsmodels_info"
 msgstr ""
+"get_statsmodels_info\n"
+"\n"
+"获取_statsmodels信息"
 
 #: 402df052d0c34af9ba1c966c3f1e8685 f7a88b95c2904a2888e87e4f1fae1343 of
 #: tooluniverse.tools.get_statsmodels_info:3

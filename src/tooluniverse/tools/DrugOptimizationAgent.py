@@ -17,7 +17,7 @@ def DrugOptimizationAgent(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     AI agent that analyzes drug optimization strategies based on ADMET and efficacy data
 
@@ -40,19 +40,25 @@ def DrugOptimizationAgent(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "compounds": compounds,
+            "admet_data": admet_data,
+            "efficacy_data": efficacy_data,
+            "target_profile": target_profile,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DrugOptimizationAgent",
-            "arguments": {
-                "compounds": compounds,
-                "admet_data": admet_data,
-                "efficacy_data": efficacy_data,
-                "target_profile": target_profile,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

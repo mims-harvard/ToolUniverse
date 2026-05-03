@@ -1,0 +1,12 @@
+# Example Tool Whitelist for Claude Desktop
+# Add one tool name per line
+# Lines starting with # are comments
+# All tool names must be ≤64 characters
+
+# Literature search tools
+ArXiv_search_papers
+SemanticScholar_search_papers
+PubMed_search_articles
+
+# Add your tools here:
+

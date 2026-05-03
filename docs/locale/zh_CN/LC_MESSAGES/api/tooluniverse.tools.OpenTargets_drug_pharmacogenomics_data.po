@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_drug\\_pharmacogenomics\\_data 模块"
 #: 209a398b6c5447a796dc4ecc6450f41a of
 #: tooluniverse.tools.OpenTargets_drug_pharmacogenomics_data:1
 msgid "OpenTargets_drug_pharmacogenomics_data"
-msgstr ""
+msgstr "OpenTargets_药物_药物基因组学_数据"
 
 #: 860235943c094529aa6413b5ef7be079 c08ce65348404aa8a0ff561e960ad347 of
 #: tooluniverse.tools.OpenTargets_drug_pharmacogenomics_data:3

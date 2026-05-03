@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_entry\\_by\\_accession 模块"
 #: 2fd037f8c76d476f911efacbb2e4acd1 of
 #: tooluniverse.tools.UniProt_get_entry_by_accession:1
 msgid "UniProt_get_entry_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取条目"
 
 #: 02724f73334f49a9bf843d8222a3996c 2ae8a9bf171045e99ca428bdb9450893 of
 #: tooluniverse.tools.UniProt_get_entry_by_accession:3

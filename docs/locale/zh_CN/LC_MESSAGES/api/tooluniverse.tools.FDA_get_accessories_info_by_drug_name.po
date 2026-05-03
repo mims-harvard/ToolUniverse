@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_accessories\\_info\\_by\\_drug\\_name 模
 #: e08dfd79faf7441687c02f20e29b2604 of
 #: tooluniverse.tools.FDA_get_accessories_info_by_drug_name:1
 msgid "FDA_get_accessories_info_by_drug_name"
-msgstr ""
+msgstr "FDA_根据药品名称获取配件信息"
 
 #: 848cc18cbaf243b990cd1d9c0304f385 ba7965d2cf1041ad97af40d14f00a4cd of
 #: tooluniverse.tools.FDA_get_accessories_info_by_drug_name:3

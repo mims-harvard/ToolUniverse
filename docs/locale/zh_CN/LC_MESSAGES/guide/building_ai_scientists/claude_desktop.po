@@ -70,7 +70,7 @@ msgstr "**高级推理**：Claude 对复杂科学问题的高级推理能力"
 #: ../../guide/building_ai_scientists/claude_desktop.rst:33
 #: a033a31860f444dd8d0c8bcb12c1c46b
 msgid ""
-"**Comprehensive Tools**: Access to 600+ scientific tools across multiple "
+"**Comprehensive Tools**: Access to 1000+ scientific tools across multiple "
 "domains"
 msgstr "**综合工具**：可访问涵盖多个领域的600多种科学工具"
 

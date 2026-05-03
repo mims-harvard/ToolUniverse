@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.BioRxiv\\_search\\_preprints 模块"
 #: b99ccef6d93e4ab7b7c6d3025258e33c of
 #: tooluniverse.tools.BioRxiv_search_preprints:1
 msgid "BioRxiv_search_preprints"
-msgstr ""
+msgstr "BioRxiv_预印本搜索"
 
 #: 8680d9a6182a440698a144606f7fef32 ec1995ff66484dabaef2b81dfc2fe885 of
 #: tooluniverse.tools.BioRxiv_search_preprints:3

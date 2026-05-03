@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_clinical\\_trial\\_references 模块"
 #: 18689209658d45999c0e49aefd7d4f87 of
 #: tooluniverse.tools.get_clinical_trial_references:1
 msgid "get_clinical_trial_references"
-msgstr ""
+msgstr "获取临床试验参考文献"
 
 #: 14024020472e4c09b7ab72301a461105 6fc08c84b2c44118986da87624112087 of
 #: tooluniverse.tools.get_clinical_trial_references:3

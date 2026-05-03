@@ -1,0 +1,920 @@
+[
+  {
+    "name": "NvidiaNIM_alphafold2",
+    "description": "Predict protein 3D structure from amino acid sequence using DeepMind's AlphaFold2 via NVIDIA NIM. Returns PDB format structure. Requires NVIDIA_API_KEY. Input: sequence (amino acids), algorithm (jackhmmer/mmseqs2), databases (uniref90, mgnify, small_bfd). Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Amino acid sequence to predict structure for (single letter codes)"
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["jackhmmer", "mmseqs2"],
+          "description": "MSA search algorithm. mmseqs2 is faster, jackhmmer is more sensitive",
+          "default": "mmseqs2"
+        },
+        "databases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Sequence databases for MSA search: uniref90, mgnify, small_bfd",
+          "default": ["small_bfd"]
+        },
+        "e_value": {
+          "type": "number",
+          "description": "E-value threshold for MSA search",
+          "default": 0.0001
+        },
+        "iterations": {
+          "type": "integer",
+          "description": "Number of search iterations",
+          "default": 1
+        },
+        "relax_prediction": {
+          "type": "boolean",
+          "description": "Whether to perform structure relaxation",
+          "default": false
+        },
+        "skip_template_search": {
+          "type": "boolean",
+          "description": "Skip template-based prediction",
+          "default": true
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "deepmind/alphafold2",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 900
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "AlphaFold2 structure prediction result with PDB coordinates, confidence scores, and model metrics",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_alphafold2_multimer",
+    "description": "Predict multi-chain protein complex structure using AlphaFold2-Multimer via NVIDIA NIM. Input: sequences (array of 1-6 protein sequences for complex). Returns predicted complex structure. Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequences": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Array of 1-6 protein sequences (amino acid single letter codes) to predict as a complex",
+          "minItems": 1,
+          "maxItems": 6
+        },
+        "databases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Sequence databases for MSA: uniref90, small_bfd",
+          "default": ["uniref90", "small_bfd"]
+        },
+        "relax_prediction": {
+          "type": "boolean",
+          "description": "Whether to relax the predicted structure",
+          "default": false
+        }
+      },
+      "required": ["sequences"]
+    },
+    "fields": {
+      "endpoint": "deepmind/alphafold2-multimer",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 900
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "AlphaFold2-Multimer complex structure prediction with multi-chain PDB coordinates and confidence scores",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "sequences": ["MNVIDIAIAMAI", "IAMNVIDIAAI"]
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_esmfold",
+    "description": "Fast alignment-free protein structure prediction using ESMFold via NVIDIA NIM. No MSA required - predicts directly from sequence. Input: sequence (max 1024 amino acids). Returns PDB structure. Fast synchronous response.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Amino acid sequence (max 1024 chars, valid: ARNDCQEGHILKMFPSTWYVXBOU)",
+          "maxLength": 1024
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "nvidia/esmfold",
+      "async_expected": false,
+      "response_type": "pdb",
+      "timeout": 120
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": ["string", "null"],
+      "description": "PDB format structure text (returned via 'structure' field, not 'data'). Contains ATOM records with coordinates and pLDDT confidence in B-factor column."
+    },
+    "test_examples": [
+      {
+        "sequence": "ARNDCQEGHILKMFPSTWYV"
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_openfold2",
+    "description": "Predict protein structure from sequence and MSA using OpenFold2 via NVIDIA NIM. PyTorch reimplementation of AlphaFold2 with improved speed. Input: sequence plus pre-computed MSA alignments in a3m format. Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Amino acid sequence to predict"
+        },
+        "alignments": {
+          "type": "object",
+          "description": "MSA alignments by database. Format: {db_name: {a3m: {alignment: str, format: 'a3m'}}}",
+          "additionalProperties": true
+        },
+        "selected_models": {
+          "type": "array",
+          "items": {"type": "integer"},
+          "description": "Model indices to use for prediction (1-5)",
+          "default": [1, 2]
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "openfold/openfold2/predict-structure-from-msa-and-template",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 600
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "OpenFold2 structure prediction with PDB coordinates and model quality metrics",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH",
+        "selected_models": [1]
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_openfold3",
+    "description": "Predict biomolecular complex structure (proteins, DNA, RNA, ligands) using OpenFold3 via NVIDIA NIM. AlphaFold3-style prediction for complete biological assemblies. Input: molecules (proteins with MSA, DNA, RNA, ligands). Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "input_id": {"type": "string"},
+              "molecules": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Molecule spec: type (protein/dna/rna/ligand), sequence, msa, etc."
+                }
+              },
+              "diffusion_samples": {"type": "integer", "default": 1},
+              "output_format": {"type": "string", "enum": ["cif", "pdb"], "default": "pdb"}
+            }
+          },
+          "description": "List of input specifications for structure prediction"
+        }
+      },
+      "required": ["inputs"]
+    },
+    "fields": {
+      "endpoint": "openfold/openfold3/predict",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 900
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "OpenFold3 biomolecular complex structure prediction (proteins, DNA, RNA, ligands) with coordinates and confidence metrics",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "inputs": [{
+          "input_id": "test",
+          "molecules": [{"type": "protein", "sequence": "MKTVRQERLKSIVR", "msa": {"main": {"a3m": {"alignment": ">query\nMKTVRQERLKSIVR", "format": "a3m"}}}}],
+          "output_format": "pdb"
+        }]
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_boltz2",
+    "description": "Predict multi-molecular complex structure (proteins, DNA, RNA, ligands) using Boltz2 via NVIDIA NIM. Supports protein-protein, protein-DNA/RNA, protein-ligand complexes. Input: polymers (proteins/DNA/RNA), ligands (SMILES or CCD codes). Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "polymers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "description": "Chain identifier (A-Z or 4-char PDB style)"},
+              "molecule_type": {"type": "string", "enum": ["protein", "dna", "rna"]},
+              "sequence": {"type": "string"},
+              "cyclic": {"type": "boolean", "default": false},
+              "msa": {"type": "object", "description": "MSA for proteins"}
+            },
+            "required": ["molecule_type", "sequence"]
+          },
+          "description": "List of polymer molecules (1-12)",
+          "minItems": 1,
+          "maxItems": 12
+        },
+        "ligands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string"},
+              "ccd": {"type": "string", "description": "CCD code (e.g., ATP)"},
+              "smiles": {"type": "string", "description": "SMILES string"}
+            }
+          },
+          "description": "Ligands specified by CCD code OR SMILES (max 20)"
+        },
+        "recycling_steps": {
+          "type": "integer",
+          "description": "Number of recycling steps (1-6)",
+          "minimum": 1,
+          "maximum": 6,
+          "default": 3
+        },
+        "sampling_steps": {
+          "type": "integer",
+          "description": "Number of sampling steps (10-1000)",
+          "minimum": 10,
+          "maximum": 1000,
+          "default": 50
+        },
+        "diffusion_samples": {
+          "type": "integer",
+          "description": "Number of structure samples (1-5)",
+          "minimum": 1,
+          "maximum": 5,
+          "default": 1
+        },
+        "output_format": {
+          "type": "string",
+          "enum": ["mmcif"],
+          "default": "mmcif"
+        }
+      },
+      "required": ["polymers"]
+    },
+    "fields": {
+      "endpoint": "mit/boltz2/predict",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 900
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "Boltz2 multi-molecular complex structure prediction (proteins, DNA, RNA, ligands) in mmCIF format with confidence scores",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "polymers": [{"id": "A", "molecule_type": "protein", "sequence": "MKTVRQERLKSIVR"}],
+        "sampling_steps": 50
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_proteinmpnn",
+    "description": "Design protein sequences for a given backbone structure using ProteinMPNN via NVIDIA NIM (inverse folding). Input: PDB structure text. Output: designed sequences in Multi-FASTA format with log-probabilities. Fast synchronous response.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_pdb": {
+          "type": "string",
+          "description": "PDB format text of the backbone structure (ATOM records)"
+        },
+        "ca_only": {
+          "type": "boolean",
+          "description": "Use only CA atoms for design",
+          "default": false
+        },
+        "use_soluble_model": {
+          "type": "boolean",
+          "description": "Use model trained on soluble proteins",
+          "default": false
+        },
+        "sampling_temp": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Sampling temperatures (0.1-0.3 recommended for high quality)",
+          "default": [0.1]
+        },
+        "num_seq_per_target": {
+          "type": "integer",
+          "description": "Number of sequences to generate",
+          "default": 1
+        }
+      },
+      "required": ["input_pdb"]
+    },
+    "fields": {
+      "endpoint": "ipd/proteinmpnn/predict",
+      "async_expected": false,
+      "response_type": "mfasta",
+      "timeout": 120
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "ProteinMPNN inverse folding result with designed sequences in Multi-FASTA format and per-residue log-probabilities",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "input_pdb": "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N",
+        "sampling_temp": [0.1]
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_rfdiffusion",
+    "description": "De novo protein design using RFdiffusion via NVIDIA NIM. Generate novel protein structures, binders, or scaffold motifs. Input: contigs DSL (e.g., 'A20-60/0 50-100'), input_pdb (required for scaffolding), hotspot_res for binding sites. Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "contigs": {
+          "type": "string",
+          "description": "Contig specification DSL. Format: 'ChainStart-End/gap length'. Example: 'A20-60/0 50-100' keeps residues A20-60 and generates 50-100 new residues"
+        },
+        "input_pdb": {
+          "type": "string",
+          "description": "PDB structure for scaffolding/binder design (ATOM records only). Required by the API."
+        },
+        "hotspot_res": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Hotspot residues for binder design (e.g., ['A50', 'A51', 'A52'])"
+        },
+        "diffusion_steps": {
+          "type": "integer",
+          "description": "Number of diffusion steps (15-50)",
+          "default": 15
+        },
+        "random_seed": {
+          "type": "integer",
+          "description": "Random seed for reproducibility"
+        }
+      },
+      "required": ["contigs", "input_pdb"]
+    },
+    "fields": {
+      "endpoint": "ipd/rfdiffusion/generate",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 600
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "RFdiffusion de novo protein design result with generated PDB structure coordinates",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "contigs": "50-100",
+        "input_pdb": "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00 20.00           N\nATOM      2  CA  ALA A   1       1.458   0.000   0.000  1.00 20.00           C\nEND",
+        "diffusion_steps": 15
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_diffdock",
+    "description": "Blind molecular docking using DiffDock via NVIDIA NIM. Predict ligand binding poses without specifying binding pocket. Input: protein (PDB content or asset ID), ligand (SDF content or asset ID). For large files, use is_staged=true with asset IDs. Returns docking poses with confidence scores.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein": {
+          "type": "string",
+          "description": "Protein structure: PDB content directly OR asset ID (if is_staged=true)"
+        },
+        "ligand": {
+          "type": "string",
+          "description": "Ligand structure: SDF/MOL2 content directly OR asset ID (if is_staged=true)"
+        },
+        "ligand_file_type": {
+          "type": "string",
+          "enum": ["sdf", "mol2"],
+          "description": "Ligand file format",
+          "default": "sdf"
+        },
+        "num_poses": {
+          "type": "integer",
+          "description": "Number of docking poses to generate (1-40)",
+          "minimum": 1,
+          "maximum": 40,
+          "default": 10
+        },
+        "time_divisions": {
+          "type": "integer",
+          "description": "Time divisions for diffusion",
+          "default": 20
+        },
+        "steps": {
+          "type": "integer",
+          "description": "Number of diffusion steps",
+          "default": 18
+        },
+        "save_trajectory": {
+          "type": "boolean",
+          "description": "Save diffusion trajectory",
+          "default": false
+        },
+        "is_staged": {
+          "type": "boolean",
+          "description": "If true, protein and ligand are asset IDs (uploaded via NVCF assets API). If false, they are raw file content.",
+          "default": false
+        }
+      },
+      "required": ["protein", "ligand"]
+    },
+    "fields": {
+      "endpoint": "mit/diffdock",
+      "base_url": "https://health.api.nvidia.com/v1/biology",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 600
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "DiffDock blind molecular docking result with predicted ligand binding poses and confidence scores",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "protein": "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N",
+        "ligand": "\n  RDKit          3D\n\n  3  2  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\nM  END\n",
+        "ligand_file_type": "sdf",
+        "num_poses": 5
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_genmol",
+    "description": "Generate molecules using GenMol via NVIDIA NIM. Input: SMILES/SAFE template with masked regions. Output: generated molecules with property scores. Use [*{min-max}] syntax for masked fragments. Fast synchronous response.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SAFE/SMILES template with masked fragments. Use [*{min-max}] for variable-length masks. Example: 'CC(=O)O[*{5-10}]'"
+        },
+        "num_molecules": {
+          "type": "integer",
+          "description": "Number of molecules to generate (1-1000)",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 5
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Sampling temperature (0.01-10.0). Higher = more diverse",
+          "minimum": 0.01,
+          "maximum": 10.0,
+          "default": 2.0
+        },
+        "noise": {
+          "type": "number",
+          "description": "Noise level for generation (0-2.0)",
+          "minimum": 0,
+          "maximum": 2.0,
+          "default": 1.0
+        },
+        "step_size": {
+          "type": "integer",
+          "description": "Step size for sampling",
+          "default": 1
+        },
+        "scoring": {
+          "type": "string",
+          "enum": ["QED", "LogP"],
+          "description": "Property to score generated molecules",
+          "default": "QED"
+        }
+      },
+      "required": ["smiles"]
+    },
+    "fields": {
+      "endpoint": "nvidia/genmol/generate",
+      "async_expected": false,
+      "response_type": "json",
+      "timeout": 120
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "GenMol generated molecules with SMILES strings and property scores (QED or LogP)",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "smiles": "CC(=O)OC1=CC=CC=C1[*{5-10}]",
+        "num_molecules": 5,
+        "scoring": "QED"
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_molmim",
+    "description": "Controlled molecule generation using MolMIM via NVIDIA NIM. Generates molecules with optimized properties based on a reference molecule. Input: smi (SMILES string), num_molecules, algorithm (CMA-ES, GA, etc.). Output: generated molecules with property scores. Fast synchronous response.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smi": {
+          "type": "string",
+          "description": "Reference SMILES string for molecule generation"
+        },
+        "num_molecules": {
+          "type": "integer",
+          "description": "Number of molecules to generate (1-100)",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["CMA-ES", "GA"],
+          "description": "Optimization algorithm: CMA-ES (Covariance Matrix Adaptation Evolution Strategy) or GA (Genetic Algorithm)",
+          "default": "CMA-ES"
+        }
+      },
+      "required": ["smi"]
+    },
+    "fields": {
+      "endpoint": "nvidia/molmim/generate",
+      "async_expected": false,
+      "response_type": "json",
+      "timeout": 120
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "MolMIM controlled molecule generation result with optimized SMILES and property scores",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "smi": "c1ccccc1",
+        "num_molecules": 5,
+        "algorithm": "CMA-ES"
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_evo2",
+    "description": "Generate DNA sequences using Evo2-40B via NVIDIA NIM. 40 billion parameter model trained on 9 trillion nucleotides. Input: DNA sequence (ACTG), num_tokens to generate. Output: generated sequence with optional per-nucleotide probabilities. Fast synchronous response.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Input DNA sequence (A, C, T, G characters only)"
+        },
+        "num_tokens": {
+          "type": "integer",
+          "description": "Number of nucleotides to generate",
+          "default": 100
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Sampling temperature",
+          "default": 0.7
+        },
+        "top_k": {
+          "type": "integer",
+          "description": "Top-k sampling parameter",
+          "default": 1
+        },
+        "top_p": {
+          "type": "number",
+          "description": "Top-p (nucleus) sampling parameter"
+        },
+        "enable_sampled_probs": {
+          "type": "boolean",
+          "description": "Return per-nucleotide probabilities",
+          "default": false
+        },
+        "enable_logits": {
+          "type": "boolean",
+          "description": "Return raw logits",
+          "default": false
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "arc/evo2-40b/generate",
+      "async_expected": false,
+      "response_type": "json",
+      "timeout": 120
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "Evo2 DNA sequence generation result with generated nucleotide sequence and optional per-nucleotide probabilities",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "sequence": "ACTGACTGACTGACTG",
+        "num_tokens": 8,
+        "top_k": 1
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_msa_search",
+    "description": "GPU-accelerated multiple sequence alignment search using ColabFold/MMseqs2 via NVIDIA NIM. Input: protein sequence. Output: MSA alignments in a3m/fasta format. Use for structure prediction pipelines. Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence to search (1-4096 amino acids)"
+        },
+        "e_value": {
+          "type": "number",
+          "description": "E-value threshold for sequence inclusion",
+          "default": 0.0001
+        },
+        "iterations": {
+          "type": "integer",
+          "description": "Number of search iterations for sensitivity",
+          "default": 1
+        },
+        "output_alignment_formats": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["a3m", "fasta"]},
+          "description": "Output alignment formats",
+          "default": ["a3m"]
+        },
+        "databases": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Specific databases to search"
+        },
+        "max_msa_sequences": {
+          "type": "integer",
+          "description": "Maximum sequences in output MSA (max 10000)"
+        }
+      },
+      "required": ["sequence"]
+    },
+    "fields": {
+      "endpoint": "colabfold/msa-search/predict",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 600
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "object",
+      "description": "MSA search result with multiple sequence alignments in a3m/fasta format from database searches",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "sequence": "SGSMKTAISLPDETFDRVSRRASELGMSRSEFFTKAAQR",
+        "e_value": 0.0001,
+        "output_alignment_formats": ["a3m"]
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_esm2_650m",
+    "description": "Generate protein sequence embeddings using ESM2-650M via NVIDIA NIM. 650 million parameter language model for protein sequences. Input: sequences (array of protein sequences, max 1024 AA each), format (npz/json). Output: embedding vectors in specified format. Returns binary npz file or JSON. Fast synchronous response.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequences": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Array of protein sequences (max 1024 amino acids each, valid: ARNDCQEGHILKMFPSTWYVXBOU)"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["npz", "json"],
+          "description": "Output format: npz (binary NumPy archive) or json",
+          "default": "npz"
+        }
+      },
+      "required": ["sequences", "format"]
+    },
+    "fields": {
+      "endpoint": "meta/esm2-650m",
+      "async_expected": false,
+      "response_type": "binary",
+      "timeout": 120
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "string",
+      "description": "Binary NPZ or JSON embedding data. For NPZ format: '<Binary data, N bytes>'. For JSON format: embedding vectors as nested arrays."
+    },
+    "test_examples": [
+      {
+        "sequences": ["MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"],
+        "format": "npz"
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_maisi",
+    "description": "Generate synthetic CT images with segmentation masks using MAISI via NVIDIA NIM. 3D Latent Diffusion Model for medical imaging data augmentation. Input: body_region, anatomy_list, controllable_anatomy_size, output_size. Returns ZIP file with NIfTI/NRRD images and labels. Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "num_output_samples": {
+          "type": "integer",
+          "description": "Number of CT images to generate",
+          "minimum": 1,
+          "default": 1
+        },
+        "body_region": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["head", "chest", "thorax", "abdomen", "pelvis", "lower"]},
+          "description": "Body regions to generate"
+        },
+        "anatomy_list": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Specific anatomical structures to include (e.g., liver, spleen, kidney)"
+        },
+        "controllable_anatomy_size": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "description": "[anatomy_name, size_ratio] pairs for controlling structure sizes"
+          },
+          "description": "Control anatomy sizes as [[name, ratio], ...]. Example: [['hepatic tumor', 0.3], ['liver', 0.5]]"
+        },
+        "output_size": {
+          "type": "array",
+          "items": {"type": "integer"},
+          "description": "Output volume size [x, y, z]. x,y: 256-512, z: 128-768",
+          "minItems": 3,
+          "maxItems": 3,
+          "default": [512, 512, 512]
+        },
+        "spacing": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Voxel spacing [x, y, z] in mm",
+          "default": [1.0, 1.0, 1.0]
+        },
+        "image_output_ext": {
+          "type": "string",
+          "enum": [".nii.gz", ".nii", ".nrrd", ".dcm"],
+          "description": "Output image format",
+          "default": ".nii.gz"
+        },
+        "label_output_ext": {
+          "type": "string",
+          "enum": [".nii.gz", ".nii", ".nrrd"],
+          "description": "Output segmentation format",
+          "default": ".nii.gz"
+        },
+        "pre_signed_url": {
+          "type": "string",
+          "description": "Optional pre-signed URL to upload results to",
+          "default": ""
+        }
+      },
+      "required": ["num_output_samples", "body_region"]
+    },
+    "fields": {
+      "endpoint": "nvidia/maisi",
+      "base_url": "https://health.api.nvidia.com/v1/medicalimaging",
+      "async_expected": false,
+      "response_type": "zip",
+      "timeout": 300
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "string",
+      "description": "ZIP file containing synthetic CT images (NIfTI/NRRD) and segmentation masks. Returned as '<ZIP file, N bytes>'."
+    },
+    "test_examples": [
+      {
+        "num_output_samples": 1,
+        "body_region": ["abdomen"],
+        "anatomy_list": ["liver"],
+        "output_size": [256, 256, 256]
+      }
+    ]
+  },
+  {
+    "name": "NvidiaNIM_vista3d",
+    "description": "3D medical image segmentation using VISTA-3D via NVIDIA NIM. Segment organs and structures from CT scans. Input: image URL (NIfTI/NRRD), class prompts, optional point prompts for interactive refinement. Returns ZIP file with segmentation masks. Synchronous response.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "URL to NIfTI or NRRD CT image file"
+        },
+        "prompts": {
+          "type": "object",
+          "properties": {
+            "classes": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Anatomical classes to segment (e.g., 'spleen', 'liver', 'kidney')"
+            },
+            "points": {
+              "type": "object",
+              "description": "Optional point prompts per class for interactive refinement. Format: {class_name: [[x,y,z], ...]}"
+            }
+          },
+          "description": "Segmentation prompts: classes and optional point coordinates"
+        }
+      },
+      "required": ["image"]
+    },
+    "fields": {
+      "endpoint": "nvidia/vista-3d",
+      "base_url": "https://health.api.nvidia.com/v1/medicalimaging",
+      "async_expected": false,
+      "response_type": "zip",
+      "timeout": 300
+    },
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "return_schema": {
+      "type": "string",
+      "description": "ZIP file containing 3D segmentation masks (NIfTI/NRRD) for requested anatomical structures. Returned as '<ZIP file, N bytes>'."
+    },
+    "test_examples": [
+      {
+        "image": "https://assets.ngc.nvidia.com/products/api-catalog/vista3d/example-1.nii.gz",
+        "prompts": {
+          "classes": ["spleen"]
+        }
+      }
+    ]
+  }
+]

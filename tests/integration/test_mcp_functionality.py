@@ -227,15 +227,7 @@ class TestMCPFunctionality:
         )
         
         # Test tools/find request
-        request = {
-            "jsonrpc": "2.0",
-            "id": "find-test",
-            "method": "tools/find",
-            "params": {
-                "query": "protein analysis",
-                "limit": 5
-            }
-        }
+
         
         response = await server._handle_tools_find(
             request_id="find-test",

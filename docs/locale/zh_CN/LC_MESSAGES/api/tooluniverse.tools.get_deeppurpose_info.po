@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get_deeppurpose_info 模块"
 #: 4a8f74eb235844d2be2d86e6adafd8dc of
 #: tooluniverse.tools.get_deeppurpose_info:1
 msgid "get_deeppurpose_info"
-msgstr ""
+msgstr "get_deeppurpose_info 获取深度用途信息"
 
 #: 09c71efb045d4f87a52552b0abd8e463 9f6fd69339bb41fa8935367640965c02 of
 #: tooluniverse.tools.get_deeppurpose_info:3

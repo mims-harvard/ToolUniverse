@@ -10,12 +10,12 @@ from ._shared_client import get_shared_client
 
 def cellosaurus_query_converter(
     query: str,
-    include_explanation: bool,
+    include_explanation: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[dict[str, Any]]:
     """
     Convert natural language queries to Solr syntax for Cellosaurus API searches. Uses semantic simil...
 
@@ -34,14 +34,20 @@ def cellosaurus_query_converter(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"query": query, "include_explanation": include_explanation}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "cellosaurus_query_converter",
-            "arguments": {"query": query, "include_explanation": include_explanation},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

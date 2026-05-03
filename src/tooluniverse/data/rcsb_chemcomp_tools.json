@@ -1,0 +1,137 @@
+[
+  {
+    "name": "RCSB_get_chemical_component",
+    "description": "Get detailed chemical component information from the RCSB Protein Data Bank by 3-letter component ID. Returns the chemical name, formula, molecular weight, type (non-polymer, peptide-like, D-saccharide, etc.), InChI/SMILES descriptors, and synonyms. Chemical components include ligands, drugs, cofactors, and modified residues found in PDB structures. Common examples: ATP, HEM (heme), NAG (N-acetylglucosamine), STI (imatinib/Gleevec), FAD, NAD.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "comp_id": {
+          "type": "string",
+          "description": "3-letter chemical component ID in uppercase (e.g., 'ATP', 'HEM', 'NAG', 'STI', 'FAD', 'NAD', 'GDP', 'ADP')"
+        }
+      },
+      "required": [
+        "comp_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://data.rcsb.org/rest/v1/core/chemcomp/{comp_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "comp_id": "ATP"
+      },
+      {
+        "comp_id": "HEM"
+      },
+      {
+        "comp_id": "STI"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Chemical component details from RCSB PDB",
+          "properties": {
+            "chem_comp": {
+              "type": "object",
+              "description": "Core chemical component information",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "3-letter component ID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Full chemical name"
+                },
+                "formula": {
+                  "type": "string",
+                  "description": "Molecular formula (e.g., 'C10 H16 N5 O13 P3')"
+                },
+                "formula_weight": {
+                  "type": "number",
+                  "description": "Molecular weight in Da"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Component type (non-polymer, peptide-like, D-saccharide, L-peptide linking, etc.)"
+                },
+                "three_letter_code": {
+                  "type": "string",
+                  "description": "Three letter code"
+                },
+                "pdbx_formal_charge": {
+                  "type": "integer",
+                  "description": "Formal charge"
+                },
+                "pdbx_release_status": {
+                  "type": "string",
+                  "description": "Release status (REL = released)"
+                }
+              }
+            },
+            "pdbx_chem_comp_descriptor": {
+              "type": "array",
+              "description": "Chemical descriptors including InChI, InChIKey, SMILES (canonical and isomeric)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "comp_id": {
+                    "type": "string"
+                  },
+                  "descriptor": {
+                    "type": "string"
+                  },
+                  "program": {
+                    "type": "string"
+                  },
+                  "program_version": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "pdbx_chem_comp_identifier": {
+              "type": "array",
+              "description": "Chemical identifiers and synonyms",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "comp_id": {
+                    "type": "string"
+                  },
+                  "identifier": {
+                    "type": "string"
+                  },
+                  "program": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

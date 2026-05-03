@@ -1,7 +1,7 @@
 [
   {
     "name": "Reactome_get_pathway_reactions",
-    "description": "Query all Reactions contained under a Pathway using Pathway Stable ID. This is currently the only working Reactome tool.",
+    "description": "Query all reactions and subpathways contained under a Pathway using Pathway Stable ID. Returns list of events (reactions and subpathways) contained in the pathway, including their metadata and relationships.",
     "endpoint": "/data/pathway/{stId}/containedEvents",
     "method": "GET",
     "parameter": {
@@ -9,11 +9,758 @@
       "properties": {
         "stId": {
           "type": "string",
-          "description": "Pathway Stable ID, e.g., 'R-HSA-73817' (verified valid)."
+          "description": "Pathway Stable ID (e.g., 'R-HSA-73817'). To find pathway IDs, use Reactome_list_top_pathways to get top-level pathways, or Reactome_map_uniprot_to_pathways if you have a UniProt protein ID."
         }
       },
       "required": ["stId"]
     },
-    "type": "ReactomeRESTTool"
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"type": "integer", "description": "Event ID reference"},
+          {
+            "type": "object",
+            "properties": {
+              "dbId": {"type": "integer", "description": "Database ID"},
+              "displayName": {"type": "string", "description": "Event display name"},
+              "stId": {"type": "string", "description": "Stable identifier"},
+              "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+              "isInDisease": {"type": "boolean", "description": "Whether event is associated with disease"},
+              "isInferred": {"type": "boolean", "description": "Whether event is inferred"},
+              "maxDepth": {"type": "integer", "description": "Maximum depth"},
+              "name": {"type": "array", "items": {"type": "string"}, "description": "Event names"},
+              "releaseDate": {"type": "string", "description": "Release date"},
+              "speciesName": {"type": "string", "description": "Species name"},
+              "eventOf": {"type": "array", "items": {"type": ["integer", "object"]}, "description": "Parent events (can be IDs or objects)"},
+              "category": {"type": "string", "description": "Event category"},
+              "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Reaction', 'Pathway')"},
+              "className": {"type": "string", "description": "Class name"}
+            },
+            "description": "Event object with full details"
+          }
+        ]
+      },
+      "description": "List of events (reactions or subpathways), can be IDs or full objects"
+    }
+  },
+  {
+    "name": "Reactome_get_pathway",
+    "description": "Get detailed information about a specific pathway by its Stable ID. Returns comprehensive pathway data including metadata, compartments, literature references, orthologous events, and related pathways. Uses the unified query endpoint that works for all entity types.",
+    "endpoint": "/data/query/{stId}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Pathway Stable ID (e.g., 'R-HSA-73817'). To find pathway IDs, use Reactome_list_top_pathways to get top-level pathways, or Reactome_map_uniprot_to_pathways if you have a UniProt protein ID."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "dbId": {"type": "integer", "description": "Database ID"},
+        "displayName": {"type": "string", "description": "Pathway display name"},
+        "stId": {"type": "string", "description": "Stable identifier (e.g., 'R-HSA-73817')"},
+        "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+        "isInDisease": {"type": "boolean", "description": "Whether pathway is associated with disease"},
+        "isInferred": {"type": "boolean", "description": "Whether pathway is inferred"},
+        "maxDepth": {"type": "integer", "description": "Maximum depth of pathway hierarchy"},
+        "name": {"type": "array", "items": {"type": "string"}, "description": "Pathway names"},
+        "releaseDate": {"type": "string", "description": "Release date"},
+        "speciesName": {"type": "string", "description": "Species name"},
+        "compartment": {"type": "array", "items": {"type": "object"}, "description": "Cellular compartments"},
+        "figure": {"type": "array", "items": {"type": "object"}, "description": "Pathway figures"},
+        "goBiologicalProcess": {"type": "object", "description": "GO biological process annotation"},
+        "literatureReference": {"type": "array", "items": {"type": "object"}, "description": "Literature references"},
+        "orthologousEvent": {"type": "array", "items": {"type": "object"}, "description": "Orthologous events in other species"},
+        "hasEvent": {"type": "array", "items": {"type": "object"}, "description": "Events (reactions/subpathways) in this pathway"},
+        "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Pathway')"},
+        "className": {"type": "string", "description": "Class name"}
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_pathway_hierarchy",
+    "description": "Get the hierarchy (parent pathways) for a pathway. Returns list of parent pathways.",
+    "endpoint": "/data/event/{stId}/ancestors",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Pathway Stable ID (e.g., 'R-HSA-73817'). To find pathway IDs, use Reactome_list_top_pathways to get top-level pathways, or Reactome_map_uniprot_to_pathways if you have a UniProt protein ID."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "Parent pathway objects"
+        }
+      }
+    }
+  },
+  {
+    "name": "Reactome_list_top_pathways",
+    "description": "List top-level pathways for a specific species. Returns pathways that have no parent pathways, including their metadata and basic information.",
+    "endpoint": "/data/pathways/top/{species}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species name or taxonomy ID (e.g., 'Homo sapiens' or '9606'). IMPORTANT: Common names like 'human' or 'mouse' will return HTTP 404. Use exact scientific name (e.g., 'Homo sapiens', 'Mus musculus') or NCBI taxonomy ID. To find available species, use Reactome_list_species."
+        }
+      },
+      "required": ["species"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "species": "Homo sapiens"
+      },
+      {
+        "species": "9606"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbId": {"type": "integer", "description": "Database ID"},
+          "displayName": {"type": "string", "description": "Pathway display name"},
+          "stId": {"type": "string", "description": "Stable identifier"},
+          "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+          "isInDisease": {"type": "boolean", "description": "Whether pathway is associated with disease"},
+          "isInferred": {"type": "boolean", "description": "Whether pathway is inferred"},
+          "maxDepth": {"type": "integer", "description": "Maximum depth"},
+          "name": {"type": "array", "items": {"type": "string"}, "description": "Pathway names"},
+          "releaseDate": {"type": "string", "description": "Release date"},
+          "speciesName": {"type": "string", "description": "Species name"},
+          "hasDiagram": {"type": "boolean", "description": "Whether pathway has diagram"},
+          "hasEHLD": {"type": "boolean", "description": "Whether pathway has EHLD diagram"},
+          "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Pathway')"},
+          "className": {"type": "string", "description": "Class name"}
+        },
+        "description": "Top-level pathway objects"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_reaction",
+    "description": "Get detailed information about a specific reaction/event by its Stable ID. Returns comprehensive reaction data including inputs, outputs, regulation, literature references, and participants. Uses the unified query endpoint. Use Reactome_get_pathway_reactions to get valid reaction IDs first.",
+    "endpoint": "/data/query/{stId}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Reaction Stable ID (e.g., 'R-HSA-111289'). To find reaction IDs, use Reactome_get_pathway_reactions with a pathway ID to get all reactions in that pathway."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-111289"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "dbId": {"type": "integer", "description": "Database ID"},
+        "displayName": {"type": "string", "description": "Reaction display name"},
+        "stId": {"type": "string", "description": "Stable identifier"},
+        "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+        "isInDisease": {"type": "boolean", "description": "Whether reaction is associated with disease"},
+        "isInferred": {"type": "boolean", "description": "Whether reaction is inferred"},
+        "name": {"type": "array", "items": {"type": "string"}, "description": "Reaction names"},
+        "releaseDate": {"type": "string", "description": "Release date"},
+        "speciesName": {"type": "string", "description": "Species name"},
+        "input": {"type": "array", "items": {"type": ["integer", "object"]}, "description": "Input entities (can be IDs or objects)"},
+        "output": {"type": "array", "items": {"type": ["integer", "object"]}, "description": "Output entities (can be IDs or objects)"},
+        "regulatedBy": {"type": "array", "items": {"type": "object"}, "description": "Regulation information"},
+        "literatureReference": {"type": "array", "items": {"type": "object"}, "description": "Literature references"},
+        "category": {"type": "string", "description": "Reaction category"},
+        "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Reaction')"},
+        "className": {"type": "string", "description": "Class name"}
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_complex",
+    "description": "Get detailed information about a protein complex by its Stable ID. Returns comprehensive complex data including subunits, compartments, and related information. Uses the unified query endpoint that works for all entity types.",
+    "endpoint": "/data/query/{stId}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Complex Stable ID (e.g., 'R-HSA-XXXXX'). To find complex IDs, use Reactome_get_participants with a reaction ID to see complexes participating in that reaction."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "dbId": {"type": "integer", "description": "Database ID"},
+        "displayName": {"type": "string", "description": "Complex display name"},
+        "stId": {"type": "string", "description": "Stable identifier"},
+        "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+        "isInDisease": {"type": "boolean", "description": "Whether complex is associated with disease"},
+        "name": {"type": "array", "items": {"type": "string"}, "description": "Complex names"},
+        "speciesName": {"type": "string", "description": "Species name"},
+        "compartment": {"type": "array", "items": {"type": "object"}, "description": "Cellular compartments"},
+        "hasComponent": {"type": "array", "items": {"type": "object"}, "description": "Complex subunits/components"},
+        "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Complex')"},
+        "className": {"type": "string", "description": "Class name"}
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_interactor",
+    "description": "Get detailed information about an interactor (protein, complex, or small molecule) by its Stable ID. Returns comprehensive interactor data including reference entities, compartments, and related pathways. Uses the unified query endpoint that works for all entity types.",
+    "endpoint": "/data/query/{stId}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Interactor Stable ID. To find interactor IDs, use Reactome_get_participants with a reaction ID, or Reactome_map_uniprot_to_pathways/Reactome_map_uniprot_to_reactions if you have a UniProt protein ID."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "dbId": {"type": "integer", "description": "Database ID"},
+        "displayName": {"type": "string", "description": "Interactor display name"},
+        "stId": {"type": "string", "description": "Stable identifier"},
+        "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+        "isInDisease": {"type": "boolean", "description": "Whether interactor is associated with disease"},
+        "name": {"type": "array", "items": {"type": "string"}, "description": "Interactor names"},
+        "speciesName": {"type": "string", "description": "Species name"},
+        "referenceEntity": {"type": "object", "description": "Reference entity (UniProt, ChEBI, etc.)"},
+        "compartment": {"type": "array", "items": {"type": "object"}, "description": "Cellular compartments"},
+        "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Interactor')"},
+        "className": {"type": "string", "description": "Class name"}
+      }
+    }
+  },
+  {
+    "name": "Reactome_list_species",
+    "description": "List all species available in Reactome database.",
+    "endpoint": "/data/species/all",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [{}],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbId": {"type": "integer"},
+          "displayName": {"type": "string"},
+          "name": {"type": ["string", "array"], "description": "Species name(s)"},
+          "taxId": {"type": "string"}
+        }
+      }
+    }
+  },
+  {
+    "name": "Reactome_query_by_ids",
+    "description": "Query Reactome by providing a list of Reactome stable identifiers (R-HSA-*). Returns detailed information about pathways, reactions, or other entities. Note: This endpoint requires Reactome stable IDs, not external IDs (UniProt, ChEBI). Use mapping endpoints first to convert external IDs to Reactome IDs.",
+    "endpoint": "/data/query/ids",
+    "method": "POST",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of Reactome stable identifiers (e.g., 'R-HSA-73817', 'R-HSA-111289'). Must be Reactome stable IDs, not external IDs. To find pathway IDs, use Reactome_list_top_pathways. To find reaction IDs, use Reactome_get_pathway_reactions. To convert external IDs (UniProt) to Reactome IDs, first use Reactome_map_uniprot_to_pathways or Reactome_map_uniprot_to_reactions."
+        },
+        "species": {
+          "type": "string",
+          "description": "Optional: Filter by species using exact scientific name (e.g., 'Homo sapiens') or taxonomy ID. Common names like 'human' are not supported."
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: Filter by types (e.g., ['Pathway', 'Reaction'])"
+        }
+      },
+      "required": ["ids"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "ids": ["R-HSA-73817", "R-HSA-111289"]
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbId": {"type": "integer", "description": "Database ID"},
+          "displayName": {"type": "string", "description": "Entity display name"},
+          "stId": {"type": "string", "description": "Stable identifier"},
+          "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+          "isInDisease": {"type": "boolean", "description": "Whether entity is associated with disease"},
+          "isInferred": {"type": "boolean", "description": "Whether entity is inferred"},
+          "maxDepth": {"type": "integer", "description": "Maximum depth"},
+          "name": {"type": "array", "items": {"type": "string"}, "description": "Entity names"},
+          "releaseDate": {"type": "string", "description": "Release date"},
+          "speciesName": {"type": "string", "description": "Species name"},
+          "compartment": {"type": "array", "items": {"type": "object"}, "description": "Cellular compartments"},
+          "literatureReference": {"type": "array", "items": {"type": "object"}, "description": "Literature references"},
+          "orthologousEvent": {"type": "array", "items": {"type": "object"}, "description": "Orthologous events"},
+          "input": {"type": "array", "items": {"type": ["integer", "object"]}, "description": "Input entities (can be IDs or objects, for reactions)"},
+          "output": {"type": "array", "items": {"type": ["integer", "object"]}, "description": "Output entities (can be IDs or objects, for reactions)"},
+          "regulatedBy": {"type": "array", "items": {"type": "object"}, "description": "Regulation information"},
+          "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Pathway', 'Reaction')"},
+          "className": {"type": "string", "description": "Class name"}
+        },
+        "description": "Detailed information about pathways, reactions, or other entities"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_database_version",
+    "description": "Get Reactome database version information. Returns version number as integer.",
+    "endpoint": "/data/database/version",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [{}],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "value": {"type": "string", "description": "Database version number"}
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_event_ancestors",
+    "description": "Get ancestor events (parent pathways) for a reaction or pathway.",
+    "endpoint": "/data/event/{stId}/ancestors",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Event Stable ID (pathway or reaction, e.g., 'R-HSA-73817'). To find pathway IDs, use Reactome_list_top_pathways. To find reaction IDs, use Reactome_get_pathway_reactions with a pathway ID."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "description": "Each element is an array of ancestor events (hierarchy path)"
+      }
+    }
+  },
+  {
+    "name": "Reactome_map_uniprot_to_pathways",
+    "description": "Map a UniProt protein identifier to Reactome pathways. Returns all pathways that contain this protein.",
+    "endpoint": "/data/mapping/UniProt/{uniprot_id}/pathways",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt protein accession (e.g., 'P04637' for TP53, 'P00533' for EGFR)"
+        }
+      },
+      "required": ["uniprot_id"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "uniprot_id": "P04637"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbId": {"type": "integer", "description": "Database ID"},
+          "displayName": {"type": "string", "description": "Pathway display name"},
+          "stId": {"type": "string", "description": "Stable identifier"},
+          "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+          "isInDisease": {"type": "boolean", "description": "Whether pathway is associated with disease"},
+          "isInferred": {"type": "boolean", "description": "Whether pathway is inferred"},
+          "maxDepth": {"type": "integer", "description": "Maximum depth"},
+          "name": {"type": "array", "items": {"type": "string"}, "description": "Pathway names"},
+          "releaseDate": {"type": "string", "description": "Release date"},
+          "speciesName": {"type": "string", "description": "Species name"},
+          "hasDiagram": {"type": "boolean", "description": "Whether pathway has diagram"},
+          "hasEHLD": {"type": "boolean", "description": "Whether pathway has EHLD diagram"},
+          "lastUpdatedDate": {"type": "string", "description": "Last update date"},
+          "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Pathway')"},
+          "className": {"type": "string", "description": "Class name"}
+        },
+        "description": "Pathway objects containing the UniProt protein"
+      }
+    }
+  },
+  {
+    "name": "Reactome_map_uniprot_to_reactions",
+    "description": "Map a UniProt protein identifier to Reactome reactions. Returns all reactions that involve this protein.",
+    "endpoint": "/data/mapping/UniProt/{uniprot_id}/reactions",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt protein accession (e.g., 'P04637' for TP53, 'P00533' for EGFR)"
+        }
+      },
+      "required": ["uniprot_id"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "uniprot_id": "P04637"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbId": {"type": "integer", "description": "Database ID"},
+          "displayName": {"type": "string", "description": "Reaction display name"},
+          "stId": {"type": "string", "description": "Stable identifier"},
+          "stIdVersion": {"type": "string", "description": "Versioned stable ID"},
+          "isInDisease": {"type": "boolean", "description": "Whether reaction is associated with disease"},
+          "isInferred": {"type": "boolean", "description": "Whether reaction is inferred"},
+          "maxDepth": {"type": "integer", "description": "Maximum depth"},
+          "name": {"type": "array", "items": {"type": "string"}, "description": "Reaction names"},
+          "releaseDate": {"type": "string", "description": "Release date"},
+          "speciesName": {"type": "string", "description": "Species name"},
+          "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Reaction')"},
+          "className": {"type": "string", "description": "Class name"}
+        },
+        "description": "Reaction objects involving the UniProt protein"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_participants",
+    "description": "Get all participants (physical entities) of a reaction or event. Returns list of physical entities (proteins, complexes, small molecules) participating in the event, including their reference entities.",
+    "endpoint": "/data/participants/{stId}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Event Stable ID (reaction or pathway, e.g., 'R-HSA-111289'). To find reaction IDs, use Reactome_get_pathway_reactions with a pathway ID. To find pathway IDs, use Reactome_list_top_pathways."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-111289"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "peDbId": {"type": "integer", "description": "Physical entity database ID"},
+          "displayName": {"type": "string", "description": "Participant display name"},
+          "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Complex', 'SimpleEntity')"},
+          "refEntities": {"type": "array", "items": {"type": "object"}, "description": "Reference entities (UniProt, ChEBI, etc.) associated with this participant"}
+        },
+        "description": "Physical entity participating in the event"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_participant_reference_entities",
+    "description": "Get reference entities for participants of a reaction or event. Returns list of reference entities (UniProt proteins, ChEBI chemicals, etc.) associated with the participants, including database identifiers and names.",
+    "endpoint": "/data/participants/{stId}/referenceEntities",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Event Stable ID (reaction or pathway, e.g., 'R-HSA-111289'). To find reaction IDs, use Reactome_get_pathway_reactions with a pathway ID. To find pathway IDs, use Reactome_list_top_pathways."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-111289"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbId": {"type": "integer", "description": "Database ID"},
+          "displayName": {"type": "string", "description": "Reference entity display name"},
+          "stId": {"type": "string", "description": "Stable identifier (e.g., 'uniprot:Q06203')"},
+          "databaseName": {"type": "string", "description": "Database name (e.g., 'UniProt', 'ChEBI')"},
+          "identifier": {"type": "string", "description": "External database identifier"},
+          "name": {"type": "array", "items": {"type": "string"}, "description": "Entity names"},
+          "otherIdentifier": {"type": "array", "items": {"type": "string"}, "description": "Other identifiers"},
+          "schemaClass": {"type": "string", "description": "Schema class"},
+          "className": {"type": "string", "description": "Class name"}
+        },
+        "description": "Reference entity objects (UniProt, ChEBI, etc.)"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_pathways_low_entity",
+    "description": "Get low-level pathways (most specific pathways) containing a specific entity. Returns pathways at the lowest level of the hierarchy.",
+    "endpoint": "/data/pathways/low/entity/{id}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Entity Stable ID (pathway, reaction, or physical entity, e.g., 'R-HSA-73817'). To find pathway IDs, use Reactome_list_top_pathways. To find reaction IDs, use Reactome_get_pathway_reactions. To find entity IDs, use Reactome_get_participants."
+        }
+      },
+      "required": ["id"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "id": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "Low-level pathway objects"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_entity_events",
+    "description": "Get events (reactions/subpathways) associated with an entity. Returns TSV-formatted event data parsed into structured JSON. The API returns tab-separated values (ID, name, type) which are automatically converted to JSON format.",
+    "endpoint": "/data/query/{stId}/hasEvent",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Entity Stable ID (pathway, e.g., 'R-HSA-73817'). To find pathway IDs, use Reactome_list_top_pathways to get top-level pathways, or Reactome_map_uniprot_to_pathways if you have a UniProt protein ID."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "description": "Event stable ID (e.g., 'R-HSA-111285')"},
+          "name": {"type": "string", "description": "Event display name"},
+          "type": {"type": "string", "description": "Event type (e.g., 'Reaction', 'Pathway')"},
+          "raw": {"type": "string", "description": "Original TSV line"}
+        },
+        "description": "Event objects (reactions or subpathways) parsed from TSV format"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_entity_compartment",
+    "description": "Get compartment information for an entity. Returns TSV-formatted compartment data parsed into structured JSON. The API returns tab-separated values (ID, name, type) which are automatically converted to JSON format.",
+    "endpoint": "/data/query/{stId}/compartment",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "stId": {
+          "type": "string",
+          "description": "Entity Stable ID (e.g., 'R-HSA-73817'). To find pathway IDs, use Reactome_list_top_pathways. To find reaction IDs, use Reactome_get_pathway_reactions. To find entity IDs, use Reactome_get_participants."
+        }
+      },
+      "required": ["stId"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "stId": "R-HSA-73817"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string", "description": "Compartment database ID"},
+        "name": {"type": "string", "description": "Compartment name (e.g., 'cytosol')"},
+        "type": {"type": "string", "description": "Compartment type (e.g., 'Compartment')"},
+        "raw": {"type": "string", "description": "Original TSV line"}
+      },
+      "description": "Compartment information parsed from TSV format"
+    }
+  },
+  {
+    "name": "Reactome_get_events_hierarchy",
+    "description": "Get the full event hierarchy (pathways and reactions) for a specific species. Returns complete nested hierarchy structure with top-level pathways and their children (subpathways and reactions). Note: Use taxonomy ID (e.g., '9606') for best results.",
+    "endpoint": "/data/eventsHierarchy/{species}",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species taxonomy ID (e.g., '9606' for Homo sapiens) or species name. Taxonomy ID is recommended. To find available species and their taxonomy IDs, use Reactome_list_species."
+        }
+      },
+      "required": ["species"]
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [
+      {
+        "species": "9606"
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stId": {"type": "string", "description": "Stable identifier"},
+          "name": {"type": "string", "description": "Pathway name"},
+          "species": {"type": "string", "description": "Species name"},
+          "type": {"type": "string", "description": "Event type (e.g., 'TopLevelPathway')"},
+          "diagram": {"type": "boolean", "description": "Whether pathway has diagram"},
+          "totalEntity": {"type": "integer", "description": "Total number of entities"},
+          "totalEntityAndInteractors": {"type": "integer", "description": "Total entities including interactors"},
+          "children": {"type": "array", "items": {"type": "object"}, "description": "Child events (subpathways and reactions), recursively nested"}
+        },
+        "description": "Top-level pathway with nested hierarchy structure"
+      }
+    }
+  },
+  {
+    "name": "Reactome_get_diseases",
+    "description": "Get list of disease pathways or DOIDs (Disease Ontology IDs) annotated in Reactome. Returns disease-related pathway information including database identifiers, definitions, and names.",
+    "endpoint": "/data/diseases",
+    "method": "GET",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "type": "ReactomeRESTTool",
+    "test_examples": [{}],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbId": {"type": "integer", "description": "Database ID"},
+          "displayName": {"type": "string", "description": "Disease display name"},
+          "databaseName": {"type": "string", "description": "Database name (e.g., 'DOID')"},
+          "definition": {"type": "string", "description": "Disease definition"},
+          "identifier": {"type": "string", "description": "Disease identifier (e.g., DOID)"},
+          "name": {"type": "array", "items": {"type": "string"}, "description": "Disease names"},
+          "url": {"type": "string", "description": "URL to disease information"},
+          "schemaClass": {"type": "string", "description": "Schema class"},
+          "className": {"type": "string", "description": "Class name"}
+        },
+        "description": "Disease pathway objects with DOID annotations"
+      }
+    }
   }
 ]

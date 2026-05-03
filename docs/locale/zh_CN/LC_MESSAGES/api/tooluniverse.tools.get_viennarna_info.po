@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_viennarna\\_info 模块"
 
 #: efcf595813ab488489fbb8c370e53740 of tooluniverse.tools.get_viennarna_info:1
 msgid "get_viennarna_info"
-msgstr ""
+msgstr "get_viennarna_信息"
 
 #: 4704db130b06490f86308c2af386ae24 c7c8e7c8d5ea45b180fdda7fc7813b51 of
 #: tooluniverse.tools.get_viennarna_info:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_nonteratogenic\\_effects\\_by\\_drug\\_na
 #: f1bdae7ae12246cf8b138b4b6a8651f0 of
 #: tooluniverse.tools.FDA_get_nonteratogenic_effects_by_drug_name:1
 msgid "FDA_get_nonteratogenic_effects_by_drug_name"
-msgstr ""
+msgstr "FDA_按药物名称获取非致畸效应"
 
 #: bb9a9352e4c44ce793a7a93d384d6e24 c593505014d44d64b8faffe6884829c3 of
 #: tooluniverse.tools.FDA_get_nonteratogenic_effects_by_drug_name:3

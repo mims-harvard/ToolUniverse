@@ -7,7 +7,7 @@ Tests GEO tool for real data access
 import pytest
 import sys
 import os
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 
 # Add the src directory to the path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
@@ -93,8 +93,7 @@ class TestGEOTool:
         assert params["term"] == expected_term
         assert params["retmax"] == 20
     
-    @patch('requests.get')
-    def test_make_request_success(self, mock_get):
+    def test_make_request_success(self):
         """Test successful API request"""
         # Mock successful response
         mock_response = MagicMock()
@@ -105,22 +104,26 @@ class TestGEOTool:
             }
         }
         mock_response.raise_for_status.return_value = None
-        mock_get.return_value = mock_response
+        mock_response.headers.get.return_value = "application/json"
+        self.tool.session.get = MagicMock(return_value=mock_response)
         
-        result = self.tool._make_request("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi", {})
+        result = self.tool._make_request("/esearch.fcgi", {})
         
-        assert "esearchresult" in result
-        assert "idlist" in result["esearchresult"]
-        assert len(result["esearchresult"]["idlist"]) == 3
-        mock_get.assert_called_once()
+        assert result["status"] == "success"
+        assert "data" in result
+        assert "esearchresult" in result["data"]
+        assert "idlist" in result["data"]["esearchresult"]
+        assert len(result["data"]["esearchresult"]["idlist"]) == 3
+        self.tool.session.get.assert_called_once()
     
-    @patch('requests.get')
-    def test_make_request_error(self, mock_get):
+    def test_make_request_error(self):
         """Test API request error handling"""
-        mock_get.side_effect = Exception("Network error")
+        import requests
+        self.tool.session.get = MagicMock(side_effect=requests.exceptions.RequestException("Network error"))
         
-        result = self.tool._make_request("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi", {})
+        result = self.tool._make_request("/esearch.fcgi", {})
         
+        assert result["status"] == "error"
         assert "error" in result
         assert "Network error" in result["error"]
     
@@ -130,8 +133,7 @@ class TestGEOTool:
         assert "error" in result
         assert "Missing required parameter" in result["error"]
     
-    @patch('requests.get')
-    def test_run_success(self, mock_get):
+    def test_run_success(self):
         """Test successful run"""
         # Mock successful response
         mock_response = MagicMock()
@@ -142,13 +144,16 @@ class TestGEOTool:
             }
         }
         mock_response.raise_for_status.return_value = None
-        mock_get.return_value = mock_response
+        mock_response.headers.get.return_value = "application/json"
+        self.tool.session.get = MagicMock(return_value=mock_response)
         
         arguments = {"query": "cancer AND Homo sapiens[organism]"}
         result = self.tool.run(arguments)
         
-        assert "esearchresult" in result
-        assert len(result["esearchresult"]["idlist"]) == 2
+        assert result["status"] == "success"
+        assert "data" in result
+        assert "esearchresult" in result["data"]
+        assert len(result["data"]["esearchresult"]["idlist"]) == 2
     
     def test_parse_search_results(self):
         """Test parsing of search results"""

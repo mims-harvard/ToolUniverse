@@ -16,7 +16,7 @@ def FDA_get_drug_names_by_abuse_dependence_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the drug name based on information about drug abuse and dependence, including whether th...
 
@@ -37,14 +37,20 @@ def FDA_get_drug_names_by_abuse_dependence_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"abuse_info": abuse_info, "limit": limit, "skip": skip}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "FDA_get_drug_names_by_abuse_dependence_info",
-            "arguments": {"abuse_info": abuse_info, "limit": limit, "skip": skip},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

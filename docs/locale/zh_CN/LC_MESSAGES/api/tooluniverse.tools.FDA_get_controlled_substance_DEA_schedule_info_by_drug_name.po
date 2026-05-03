@@ -32,7 +32,7 @@ msgstr ""
 #: 9bc4137b3b0444289eb85aa3499e5857 of
 #: tooluniverse.tools.FDA_get_controlled_substance_DEA_schedule_info_by_drug_name:1
 msgid "FDA_get_controlled_substance_DEA_schedule_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取受控物质DEA分类信息"
 
 #: be256ea8dcb6400dbf95e82074baab80 c91ea569ba9a45fe9d383c7d5f4baa39 of
 #: tooluniverse.tools.FDA_get_controlled_substance_DEA_schedule_info_by_drug_name:3

@@ -1,0 +1,665 @@
+[
+  {
+    "name": "LNCipedia_search_lncrna",
+    "description": "Search for long non-coding RNAs (lncRNAs) by name, accession, or keyword using EBI Search over RNAcentral. RNAcentral aggregates lncRNA data from LNCipedia, NONCODE, LncBook, HGNC, RefSeq, GeneCards, and 50+ other databases. Supports filtering by species. Returns RNAcentral IDs, descriptions, sequence lengths, and source databases. Use to search for lncRNAs like MALAT1, HOTAIR, NEAT1, XIST, H19, or KCNQ1OT1. The human genome encodes 50,000+ lncRNA transcripts. Example: search 'MALAT1' returns URS0002A146E4_9606 (7472 nt, metastasis-associated lung adenocarcinoma transcript 1).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: lncRNA name (e.g., 'MALAT1', 'HOTAIR'), gene symbol, accession, or keyword. Supports AND/OR operators."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name filter (e.g., 'Homo sapiens', 'Mus musculus'). Leave empty for all species."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return (1-100). Default: 10."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "rna_type_filter": "lncRNA"
+    },
+    "type": "miRNASearchTool",
+    "test_examples": [
+      {
+        "query": "MALAT1",
+        "size": 5
+      },
+      {
+        "query": "HOTAIR",
+        "species": "Homo sapiens",
+        "size": 5
+      },
+      {
+        "query": "NEAT1",
+        "size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_hits": {
+                  "type": "integer",
+                  "description": "Total number of matching lncRNA entries"
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number of entries returned in this response"
+                },
+                "entries": {
+                  "type": "array",
+                  "description": "List of lncRNA entries with IDs, descriptions, and metadata",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rnacentral_id": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rna_type": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": "integer"
+                      },
+                      "expert_databases": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "has_secondary_structure": {
+                        "type": "boolean"
+                      },
+                      "has_genomic_coordinates": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "lncRNA",
+      "LNCipedia",
+      "RNAcentral",
+      "Search"
+    ],
+    "metadata": {
+      "tags": [
+        "lncrna",
+        "long-noncoding-rna",
+        "ncrna",
+        "lncipedia",
+        "rnacentral",
+        "search"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "LNCipedia_get_lncrna",
+    "description": "Get detailed lncRNA information from RNAcentral including full RNA sequence, species, gene associations, publication count, and source databases. Use a species-specific RNAcentral ID (format: URS_TAXID) or base URS ID with optional taxid. Key lncRNA IDs: URS0002A146E4_9606 (MALAT1, 7472 nt), URS00026A23F2_9606 (HOTAIR, 2273 nt), URS000075DAEC_9606 (NEAT1, 3756 nt). Returns the full nucleotide sequence which can be used for downstream analysis (structure prediction, conservation, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rnacentral_id": {
+          "type": "string",
+          "description": "RNAcentral URS identifier. Use species-specific format 'URS_TAXID' (e.g., 'URS0002A146E4_9606' for human MALAT1) or base URS ID with taxid parameter."
+        },
+        "taxid": {
+          "type": "integer",
+          "description": "NCBI Taxonomy ID for species-specific lookup (e.g., 9606 for human). Optional if rnacentral_id already includes taxid."
+        }
+      },
+      "required": [
+        "rnacentral_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_rna"
+    },
+    "type": "miRNAGetTool",
+    "test_examples": [
+      {
+        "rnacentral_id": "URS0002A146E4",
+        "taxid": 9606
+      },
+      {
+        "rnacentral_id": "URS00026A23F2",
+        "taxid": 9606
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "rnacentral_id": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "short_description": {
+                  "type": "string"
+                },
+                "sequence": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "integer"
+                },
+                "rna_type": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "taxid": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "publications_count": {
+                  "type": "integer"
+                },
+                "is_active": {
+                  "type": "boolean"
+                },
+                "distinct_databases": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "lncRNA",
+      "LNCipedia",
+      "RNAcentral",
+      "Sequence"
+    ],
+    "metadata": {
+      "tags": [
+        "lncrna",
+        "long-noncoding-rna",
+        "sequence",
+        "ncrna",
+        "lncipedia",
+        "rnacentral"
+      ],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "LNCipedia_get_lncrna_publications",
+    "description": "Retrieve publications associated with a long non-coding RNA from RNAcentral. Returns publication titles, authors, PubMed IDs, DOIs, and journal information. Use after LNCipedia_search_lncrna to get the RNAcentral URS ID, then retrieve associated literature. MALAT1 and HOTAIR are among the most-studied lncRNAs with hundreds of publications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rnacentral_id": {
+          "type": "string",
+          "description": "RNAcentral URS identifier (e.g., 'URS0002A146E4' for MALAT1). Use base URS ID without taxid suffix."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of publications to return (1-50). Default: 10."
+        }
+      },
+      "required": [
+        "rnacentral_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_publications"
+    },
+    "type": "miRNAGetTool",
+    "test_examples": [
+      {
+        "rnacentral_id": "URS0002A146E4",
+        "page_size": 5
+      },
+      {
+        "rnacentral_id": "URS00026A23F2",
+        "page_size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_publications": {
+                  "type": "integer",
+                  "description": "Total number of publications for this lncRNA"
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number returned in this page"
+                },
+                "publications": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "authors": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "publication": {
+                        "type": "string"
+                      },
+                      "pubmed_id": {
+                        "type": "string"
+                      },
+                      "doi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "expert_db": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "lncRNA",
+      "LNCipedia",
+      "RNAcentral",
+      "Publications"
+    ],
+    "metadata": {
+      "tags": [
+        "lncrna",
+        "publications",
+        "literature",
+        "pubmed",
+        "rnacentral"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "LNCipedia_get_lncrna_xrefs",
+    "description": "Get cross-references for a long non-coding RNA from RNAcentral. Returns database links from LNCipedia, NONCODE, LncBook, HGNC, RefSeq, GeneCards, MalaCards, Ensembl, and other sources. Includes external accession IDs, expert database URLs, and species information. Essential for mapping lncRNA IDs across databases and finding functional annotation data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rnacentral_id": {
+          "type": "string",
+          "description": "RNAcentral URS identifier (e.g., 'URS0002A146E4' for MALAT1). Use base URS ID without taxid suffix."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Number of cross-references to return (1-50). Default: 10."
+        }
+      },
+      "required": [
+        "rnacentral_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_xrefs"
+    },
+    "type": "miRNAGetTool",
+    "test_examples": [
+      {
+        "rnacentral_id": "URS0002A146E4",
+        "page_size": 10
+      },
+      {
+        "rnacentral_id": "URS00026A23F2",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_xrefs": {
+                  "type": "integer",
+                  "description": "Total number of cross-references"
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number returned in this page"
+                },
+                "cross_references": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "database": {
+                        "type": "string"
+                      },
+                      "accession_id": {
+                        "type": "string"
+                      },
+                      "external_id": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "rna_type": {
+                        "type": "string"
+                      },
+                      "gene": {
+                        "type": "string"
+                      },
+                      "taxid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "is_active": {
+                        "type": "boolean"
+                      },
+                      "expert_db_url": {
+                        "type": "string"
+                      },
+                      "mirbase_mature_products": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "mirbase_precursor": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "lncRNA",
+      "LNCipedia",
+      "RNAcentral",
+      "Cross-references"
+    ],
+    "metadata": {
+      "tags": [
+        "lncrna",
+        "xrefs",
+        "cross-references",
+        "database-mapping",
+        "rnacentral"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "LNCipedia_search_ncrna_by_type",
+    "description": "Search for any type of non-coding RNA by RNA type classification. Supports all RNA types in RNAcentral: miRNA, lncRNA, rRNA, tRNA, snRNA, snoRNA, piRNA, pre_miRNA, SRP_RNA, RNase_P_RNA, antisense_RNA, and more. Useful for browsing or discovering ncRNAs of a specific type, optionally filtered by species or keyword. Example: search for all human snoRNAs, or find piRNAs related to a specific gene.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: gene name, keyword, or accession. Use '*' for all entries of the specified RNA type."
+        },
+        "rna_type": {
+          "type": "string",
+          "description": "RNA type filter: miRNA, lncRNA, rRNA, tRNA, snRNA, snoRNA, piRNA, pre_miRNA, SRP_RNA, RNase_P_RNA, antisense_RNA, ribozyme, etc."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name filter (e.g., 'Homo sapiens'). Leave empty for all species."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return (1-100). Default: 10."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "rna_type_filter": ""
+    },
+    "type": "miRNASearchTool",
+    "test_examples": [
+      {
+        "query": "SNORD",
+        "rna_type": "snoRNA",
+        "species": "Homo sapiens",
+        "size": 5
+      },
+      {
+        "query": "tRNA-Ala",
+        "rna_type": "tRNA",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_hits": {
+                  "type": "integer",
+                  "description": "Total number of matching ncRNA entries"
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Number of entries returned in this response"
+                },
+                "entries": {
+                  "type": "array",
+                  "description": "List of ncRNA entries",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rnacentral_id": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rna_type": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": "integer"
+                      },
+                      "expert_databases": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "has_secondary_structure": {
+                        "type": "boolean"
+                      },
+                      "has_genomic_coordinates": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "ncRNA",
+      "RNAcentral",
+      "Search",
+      "RNA-type"
+    ],
+    "metadata": {
+      "tags": [
+        "ncrna",
+        "rna-type",
+        "snorna",
+        "trna",
+        "pirna",
+        "rrna",
+        "rnacentral",
+        "search"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
+]

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_additive\\_adverse\\_reactions 模块
 #: 03e70fda1b1042c89d529745d32377aa of
 #: tooluniverse.tools.FAERS_count_additive_adverse_reactions:1
 msgid "FAERS_count_additive_adverse_reactions"
-msgstr ""
+msgstr "FAERS_计数_加成不良反应"
 
 #: 0d9662986b5647278f1ff500bae11c4f fd73cf2f79ed45cda5cd0f66910e3cab of
 #: tooluniverse.tools.FAERS_count_additive_adverse_reactions:3
@@ -71,7 +71,7 @@ msgstr "根据严重程度分类筛选。"
 #: 4c73e167df60420cb9d3d911e410daf8 of
 #: tooluniverse.tools.FAERS_count_additive_adverse_reactions.FAERS_count_additive_adverse_reactions:13
 msgid "Filter for fatal outcomes."
-msgstr ""
+msgstr "筛选致命结果。"
 
 #: 145bc7f3812841be876d4a78af1eb67b of
 #: tooluniverse.tools.FAERS_count_additive_adverse_reactions.FAERS_count_additive_adverse_reactions:15

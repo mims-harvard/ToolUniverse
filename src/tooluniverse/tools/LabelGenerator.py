@@ -18,7 +18,7 @@ def LabelGenerator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Generates relevant keyword labels for tools based on their name, description, parameters, and cat...
 
@@ -43,20 +43,26 @@ def LabelGenerator(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "tool_name": tool_name,
+            "tool_description": tool_description,
+            "tool_parameters": tool_parameters,
+            "category": category,
+            "existing_labels": existing_labels,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "LabelGenerator",
-            "arguments": {
-                "tool_name": tool_name,
-                "tool_description": tool_description,
-                "tool_parameters": tool_parameters,
-                "category": category,
-                "existing_labels": existing_labels,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

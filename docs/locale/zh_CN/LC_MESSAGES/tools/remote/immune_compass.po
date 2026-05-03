@@ -7,17 +7,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-19 13:50-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../tools/remote/immune_compass.md:1 d3a1583afcf644c4a612c72480693e1d
@@ -28,15 +28,15 @@ msgstr "COMPASS 免疫治疗预测工具 - MCP 服务器"
 #, fuzzy
 msgid ""
 "A MCP tool from [Prism ToolSpace](https://huggingface.co/datasets/mims-"
-"harvard/ToolSpace) for running immune checkpoint inhibitor (ICI) response"
-" predictions using the [COMPASS model](https://github.com/mims-"
+"harvard/ToolSpace) for running immune checkpoint inhibitor (ICI) response "
+"predictions using the [COMPASS model](https://github.com/mims-"
 "harvard/COMPASS). This tool processes the pateint level mRNA's TPM "
 "(transcripts per million) tumor expression profile and cancer context to "
-"predict patient responsiveness for immunotherapy and provides "
-"interpretable insights through immune cell concept analysis."
+"predict patient responsiveness for immunotherapy and provides interpretable "
+"insights through immune cell concept analysis."
 msgstr ""
-"来自 [Prism Space](https://huggingface.co/datasets/mims-harvard/Space) 的 "
-"MCP 工具，用于使用 [COMPASS 模型](https://github.com/mims-harvard/COMPASS) "
+"来自 [Prism Space](https://huggingface.co/datasets/mims-harvard/Space) 的 MCP "
+"工具，用于使用 [COMPASS 模型](https://github.com/mims-harvard/COMPASS) "
 "进行免疫检查点抑制剂（ICI）反应预测。该工具处理患者层面的 mRNA "
 "TPM（每百万转录本数）肿瘤表达谱及癌症背景，以预测患者对免疫治疗的响应性，并通过免疫细胞概念分析提供可解释的见解。"
 
@@ -58,8 +58,8 @@ msgstr "2. GPU 支持（可选）"
 
 #: ../../tools/remote/immune_compass.md:25 cdb0a3afb0c442bcba6dea967d787a49
 msgid ""
-"For GPU acceleration, install CUDA-enabled PyTorch before installing "
-"other dependencies:"
+"For GPU acceleration, install CUDA-enabled PyTorch before installing other "
+"dependencies:"
 msgstr "要实现GPU加速，请在安装其他依赖项之前先安装支持CUDA的PyTorch："
 
 #: ../../tools/remote/immune_compass.md:33 7df0cee922b142b4a9a230e94c3a579c
@@ -78,8 +78,8 @@ msgstr "从官方仓库下载预训练的 COMPASS 模型。可用的模型包括
 
 #: ../../tools/remote/immune_compass.md:39 74d8186295ac45448cb6062a0b6ac8a6
 msgid ""
-"**`pft_leave_IMVigor210.pt`** - Fine-tuned on IMVigor210 cohort "
-"(urothelial carcinoma) - *Default*"
+"**`pft_leave_IMVigor210.pt`** - Fine-tuned on IMVigor210 cohort (urothelial "
+"carcinoma) - *Default*"
 msgstr "**`pft_leave_IMVigor210.pt`** - 在IMVigor210队列（尿路上皮癌）上进行微调 - *默认*"
 
 #: ../../tools/remote/immune_compass.md:40 8ec8276ea7264bcb8b5cac0ca466babf
@@ -115,11 +115,13 @@ msgstr ""
 "compass.com/download/model/LOCO/pft_leave_IMVigor210.pt"
 
 #: ../../tools/remote/immune_compass.md:48 3180adf08db94ebd837e6cb27a1dc49b
-msgid "Gide: https://www.immuno-compass.com/download/model/LOCO/pft_leave_Gide.pt"
+msgid ""
+"Gide: https://www.immuno-compass.com/download/model/LOCO/pft_leave_Gide.pt"
 msgstr ""
 
 #: ../../tools/remote/immune_compass.md:49 4936b7b455f149da819ef70caaf3a674
-msgid "Pre-trainer: https://www.immuno-compass.com/download/model/pretrainer.pt"
+msgid ""
+"Pre-trainer: https://www.immuno-compass.com/download/model/pretrainer.pt"
 msgstr ""
 "预训练模型下载链接：<a href=\"https://www.immuno-"
 "compass.com/download/model/pretrainer.pt\">https://www.immuno-"
@@ -139,8 +141,8 @@ msgstr "3. 设置环境变量"
 
 #: ../../tools/remote/immune_compass.md:67 e34df28044aa4e1f94329d48e67606e9
 msgid ""
-"Set the `COMPASS_MODEL_PATH` environment variable to point to your "
-"COMPASS installation:"
+"Set the `COMPASS_MODEL_PATH` environment variable to point to your COMPASS "
+"installation:"
 msgstr "将 `COMPASS_MODEL_PATH` 环境变量设置为指向您的 COMPASS 安装路径："
 
 #: ../../tools/remote/immune_compass.md:74 231149ffe7634b259ffbc5cf4b439cf0
@@ -157,8 +159,8 @@ msgstr "输入格式"
 
 #: ../../tools/remote/immune_compass.md:92 8a063e62820e44b29106d94dfe3fadac
 msgid ""
-"The tool expects patient level TPM gene expression data in **pickle "
-"format** (`.pkl` file) containing a pandas DataFrame with:"
+"The tool expects patient level TPM gene expression data in **pickle format**"
+" (`.pkl` file) containing a pandas DataFrame with:"
 msgstr "该工具要求患者级别的TPM基因表达数据以**pickle格式**（`.pkl`文件）提供，其中包含一个pandas DataFrame："
 
 #: ../../tools/remote/immune_compass.md:94 3dcd2469a2e74713a88ec4b14b98e290
@@ -166,9 +168,7 @@ msgid "**Rows**: Samples/patients"
 msgstr "**行**：样本/患者"
 
 #: ../../tools/remote/immune_compass.md:95 f09c115a7b754809b0d11c567fcd146f
-msgid ""
-"**Columns**: Genes (standard gene symbols like \"CD274\", \"PDCD1\", "
-"\"CTLA4\")"
+msgid "**Columns**: Genes (standard gene symbols like \"CD274\", \"PDCD1\", \"CTLA4\")"
 msgstr "**列**：基因（标准基因符号，例如 \"CD274\"、\"PDCD1\"、\"CTLA4\"）"
 
 #: ../../tools/remote/immune_compass.md:96 9d92d973034b4289b9690e53779f4b2c
@@ -199,12 +199,12 @@ msgstr "**输出字段：**"
 
 #: ../../tools/remote/immune_compass.md:131 b0c844e8e586469590fcf01f99a8b403
 msgid ""
-"`is_responder` (bool): True if predicted responder (probability ≥ "
-"threshold)"
+"`is_responder` (bool): True if predicted responder (probability ≥ threshold)"
 msgstr "`is_responder`（bool）：如果预测为响应者（概率 ≥ 阈值），则为 True"
 
 #: ../../tools/remote/immune_compass.md:132 e54e1876c46542949482b37c6c4536ef
-msgid "`top_concepts` (list): Ranked immune cell concepts with importance scores"
+msgid ""
+"`top_concepts` (list): Ranked immune cell concepts with importance scores"
 msgstr "`top_concepts`（列表）：按重要性评分排序的免疫细胞概念"
 
 #: ../../tools/remote/immune_compass.md:133 1fef247f2fe94de9948811d8d21f0b34
@@ -273,8 +273,8 @@ msgstr "**参数：**"
 
 #: ../../tools/remote/immune_compass.md:185 886a0081aabb4dcb8e5cd9ff3a395d99
 msgid ""
-"`gene_expression_data_path` (str): Path to the pickle file containing TPM"
-" expression data"
+"`gene_expression_data_path` (str): Path to the pickle file containing TPM "
+"expression data"
 msgstr "`gene_expression_data_path` (str)：包含TPM表达数据的pickle文件路径"
 
 #: ../../tools/remote/immune_compass.md:186 8a2960b401fd4463a06d0208ee3f0f41
@@ -349,8 +349,8 @@ msgstr "参考文献"
 
 #: ../../tools/remote/immune_compass.md:222 a11d4220caeb4fabb00aae319b291a09
 msgid ""
-"**COMPASS Paper**: [Generalizable AI predicts immunotherapy outcomes "
-"across cancers and treatments](https://github.com/mims-harvard/COMPASS)"
+"**COMPASS Paper**: [Generalizable AI predicts immunotherapy outcomes across "
+"cancers and treatments](https://github.com/mims-harvard/COMPASS)"
 msgstr ""
 "**COMPASS 论文**：[通用型人工智能预测不同癌症及治疗中的免疫疗法效果](https://github.com/mims-"
 "harvard/COMPASS)"
@@ -381,7 +381,6 @@ msgstr "许可证"
 
 #: ../../tools/remote/immune_compass.md:242 ef7e8a57f6aa481a9ca7a509f2a044cc
 msgid ""
-"This tool is released under the MIT License, consistent with the original"
-" COMPASS project."
+"This tool is released under the MIT License, consistent with the original "
+"COMPASS project."
 msgstr "该工具依据 MIT 许可证发布，与原始 COMPASS 项目保持一致。"
-

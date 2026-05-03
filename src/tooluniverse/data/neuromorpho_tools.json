@@ -1,0 +1,503 @@
+[
+  {
+    "name": "NeuroMorpho_get_neuron",
+    "description": "Get detailed neuron reconstruction data from NeuroMorpho.Org by neuron ID or name. Returns species, brain region, cell type, staining method, reconstruction software, morphological attributes, and associated publications. Example: neuron_id=1 returns a Rhesus monkey prefrontal pyramidal neuron.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "neuron_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Numeric neuron ID in NeuroMorpho.Org database. Examples: 1, 102399, 50000."
+        },
+        "neuron_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Neuron name string (alternative to neuron_id). Example: 'cnic_001'."
+        }
+      }
+    },
+    "fields": {
+      "endpoint_type": "neuron",
+      "query_mode": "id"
+    },
+    "type": "NeuroMorphoTool",
+    "test_examples": [
+      {
+        "neuron_id": 1
+      },
+      {
+        "neuron_name": "cnic_001"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "neuron_id": {
+                  "type": "integer"
+                },
+                "neuron_name": {
+                  "type": "string"
+                },
+                "archive": {
+                  "type": "string",
+                  "description": "Contributing lab/archive name"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "strain": {
+                  "type": "string"
+                },
+                "scientific_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "brain_region": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cell_type": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "gender": {
+                  "type": "string"
+                },
+                "age_classification": {
+                  "type": "string"
+                },
+                "stain": {
+                  "type": "string"
+                },
+                "protocol": {
+                  "type": "string"
+                },
+                "domain": {
+                  "type": "string",
+                  "description": "Neuronal compartments reconstructed (Dendrites, Axon, Soma)"
+                },
+                "reference_pmid": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "png_url": {
+                  "type": "string",
+                  "description": "URL to neuron image"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroMorpho_search_neurons",
+    "description": "Search for neurons in NeuroMorpho.Org by species, brain region, cell type, or other attributes. Supports filtering by multiple criteria. Returns paginated list of matching neurons. Example: searching species 'human' returns thousands of human neuron reconstructions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query_field": {
+          "type": "string",
+          "description": "Field to search on. Common fields: 'species', 'brain_region', 'cell_type', 'archive', 'stain', 'protocol'. Use NeuroMorpho_get_field_values to see available values.",
+          "default": "species"
+        },
+        "query_value": {
+          "type": "string",
+          "description": "Value to search for. Examples: 'human', 'rat', 'mouse', 'hippocampus', 'pyramidal', 'interneuron'. Comma-separated for multiple values."
+        },
+        "filter_field": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional additional filter field. Example: 'cell_type'."
+        },
+        "filter_value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Value for the filter field. Example: 'pyramidal'."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number (0-indexed). Default: 0.",
+          "default": 0
+        },
+        "size": {
+          "type": "integer",
+          "description": "Results per page (max 500). Default: 20.",
+          "default": 20
+        }
+      },
+      "required": [
+        "query_value"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "neuron",
+      "query_mode": "search"
+    },
+    "type": "NeuroMorphoTool",
+    "test_examples": [
+      {
+        "query_field": "species",
+        "query_value": "human",
+        "size": 5
+      },
+      {
+        "query_field": "species",
+        "query_value": "rat",
+        "filter_field": "brain_region",
+        "filter_value": "hippocampus",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "neuron_id": {
+                    "type": "integer"
+                  },
+                  "neuron_name": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": "string"
+                  },
+                  "brain_region": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "cell_type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "archive": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "total_pages": {
+                  "type": "integer"
+                },
+                "current_page": {
+                  "type": "integer"
+                },
+                "page_size": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroMorpho_get_morphometry",
+    "description": "Get morphometric measurements for a neuron from NeuroMorpho.Org. Returns quantitative properties including surface area, volume, number of stems, bifurcations, branches, width, height, depth, average diameter, Euclidean/path distance, fractal dimension, and more.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "neuron_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Numeric neuron ID. Example: 1."
+        },
+        "neuron_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Neuron name (alternative to neuron_id). Example: 'cnic_001'."
+        }
+      }
+    },
+    "fields": {
+      "endpoint_type": "morphometry",
+      "query_mode": "id"
+    },
+    "type": "NeuroMorphoTool",
+    "test_examples": [
+      {
+        "neuron_id": 1
+      },
+      {
+        "neuron_name": "cnic_001"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "neuron_name": {
+                  "type": "string"
+                },
+                "neuron_id": {
+                  "type": "integer"
+                },
+                "surface": {
+                  "type": "number",
+                  "description": "Total surface area (um^2)"
+                },
+                "volume": {
+                  "type": "number",
+                  "description": "Total volume (um^3)"
+                },
+                "n_stems": {
+                  "type": "number",
+                  "description": "Number of stems"
+                },
+                "n_bifs": {
+                  "type": "number",
+                  "description": "Number of bifurcations"
+                },
+                "n_branch": {
+                  "type": "number",
+                  "description": "Number of branches"
+                },
+                "width": {
+                  "type": "number",
+                  "description": "Width (um)"
+                },
+                "height": {
+                  "type": "number",
+                  "description": "Height (um)"
+                },
+                "depth": {
+                  "type": "number",
+                  "description": "Depth (um)"
+                },
+                "diameter": {
+                  "type": "number",
+                  "description": "Average diameter (um)"
+                },
+                "eucDistance": {
+                  "type": "number",
+                  "description": "Max Euclidean distance (um)"
+                },
+                "pathDistance": {
+                  "type": "number",
+                  "description": "Max path distance (um)"
+                },
+                "branch_Order": {
+                  "type": "number"
+                },
+                "contraction": {
+                  "type": "number"
+                },
+                "fragmentation": {
+                  "type": "number"
+                },
+                "partition_asymmetry": {
+                  "type": "number"
+                },
+                "fractal_Dim": {
+                  "type": "number",
+                  "description": "Fractal dimension"
+                },
+                "soma_Surface": {
+                  "type": "number",
+                  "description": "Soma surface area (um^2)"
+                },
+                "length": {
+                  "type": "number",
+                  "description": "Total length (um)"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroMorpho_get_field_values",
+    "description": "Get available values for a neuron metadata field in NeuroMorpho.Org. Useful for discovering what species, brain regions, cell types, or other attributes are available for searching. Example: field_name='species' returns all species represented in the database.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "field_name": {
+          "type": "string",
+          "description": "Metadata field name. Common fields: 'species', 'brain_region', 'cell_type', 'archive', 'stain', 'protocol', 'gender', 'age_classification', 'experiment_condition'.",
+          "default": "species"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number (0-indexed). Default: 0.",
+          "default": 0
+        },
+        "size": {
+          "type": "integer",
+          "description": "Results per page (max 500). Default: 500.",
+          "default": 500
+        }
+      },
+      "required": [
+        "field_name"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "neuron",
+      "query_mode": "fields"
+    },
+    "type": "NeuroMorphoTool",
+    "test_examples": [
+      {
+        "field_name": "species"
+      },
+      {
+        "field_name": "cell_type"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of available values for the specified field"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "field_name": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "total_pages": {
+                  "type": "integer"
+                },
+                "current_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -278,8 +278,6 @@ Core Infrastructure
 
    tooluniverse
    tooluniverse.execute_function
-   tooluniverse.cache
-   tooluniverse.space
 
 Core Classes & Utilities
 ------------------------
@@ -355,8 +353,6 @@ Core Infrastructure
 
    tooluniverse
    tooluniverse.execute_function
-   tooluniverse.cache
-   tooluniverse.space
 
 Core Classes & Utilities
 ------------------------
@@ -464,7 +460,7 @@ fi
 
 
 # Ensure we're in the docs directory
-SCRIPT_DIR="$(dirname "$0")"
+# Ensure we're in the docs directory
 cd "$SCRIPT_DIR"
 OUTPUT_DIR="_build/html"
 

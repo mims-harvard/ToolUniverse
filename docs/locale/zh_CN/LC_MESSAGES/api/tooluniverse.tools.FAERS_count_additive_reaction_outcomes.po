@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_additive\\_reaction\\_outcomes 模块
 #: 21773b596a794b0c8f4db1f3793993c2 of
 #: tooluniverse.tools.FAERS_count_additive_reaction_outcomes:1
 msgid "FAERS_count_additive_reaction_outcomes"
-msgstr ""
+msgstr "FAERS_计数_加成反应结果"
 
 #: 0ce1ff62029c441798fc870938e0b8b9 77b1bf001b8749c7a2fd1b45899b29b6 of
 #: tooluniverse.tools.FAERS_count_additive_reaction_outcomes:3

@@ -1,0 +1,218 @@
+[
+  {
+    "name": "Sequence_count_residues",
+    "type": "SequenceAnalyzeTool",
+    "description": "Count occurrences of a specific amino acid or nucleotide residue in a sequence. Accepts either a raw sequence string or a UniProt accession (fetches protein sequence from UniProt REST API). Reports count, fraction, percentage, and 1-based positions. Useful for cysteine counting (disulfide bond estimation), charged residue analysis, or nucleotide composition.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["count_residues"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Sequence string (DNA/RNA/protein). Optional if uniprot_id is provided."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession to fetch sequence from (e.g., 'P00533' for EGFR). Optional if sequence is provided."
+        },
+        "residue": {
+          "type": "string",
+          "description": "Single character residue to count (e.g., 'C' for cysteine)"
+        }
+      },
+      "required": ["operation", "residue"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {"type": "integer"},
+                "sequence_length": {"type": "integer"},
+                "fraction": {"type": "number"},
+                "percent": {"type": "number"},
+                "positions_1based": {"type": "array"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "count_residues",
+        "uniprot_id": "P00533",
+        "residue": "C"
+      }
+    ]
+  },
+  {
+    "name": "Sequence_gc_content",
+    "type": "SequenceAnalyzeTool",
+    "description": "Calculate GC content of a DNA or RNA sequence. Reports GC count, GC fraction, GC percentage, and full nucleotide composition. Ambiguous bases (N) are excluded from the denominator. Useful for primer design, genome characterization, and codon usage analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["gc_content"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA or RNA sequence string"
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "gc_fraction": {"type": "number"},
+                "gc_percent": {"type": "number"},
+                "length": {"type": "integer"},
+                "composition": {"type": "object"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "gc_content",
+        "sequence": "ATGCGATCGATCGATCGATCG"
+      }
+    ]
+  },
+  {
+    "name": "Sequence_reverse_complement",
+    "type": "SequenceAnalyzeTool",
+    "description": "Return the reverse complement of a DNA sequence. Supports A, T, C, G, and N bases. Useful for primer design, probe design, and strand orientation analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["reverse_complement"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A/T/C/G/N only)"
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "original": {"type": "string"},
+                "reverse_complement": {"type": "string"},
+                "length": {"type": "integer"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "reverse_complement",
+        "sequence": "ATGCGATCG"
+      }
+    ]
+  },
+  {
+    "name": "Sequence_stats",
+    "type": "SequenceAnalyzeTool",
+    "description": "Compute basic statistics for a DNA, RNA, or protein sequence. Auto-detects sequence type, reports length, full composition, and type-specific metrics (GC% for nucleotides, estimated molecular weight for proteins). Accepts sequence string or UniProt accession.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["stats"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Sequence string. Optional if uniprot_id is provided."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession to fetch protein sequence from. Optional if sequence is provided."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "sequence_type": {"type": "string"},
+                "length": {"type": "integer"},
+                "composition": {"type": "object"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "stats",
+        "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVVHSLAK"
+      }
+    ]
+  }
+]

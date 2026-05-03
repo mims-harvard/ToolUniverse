@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_igraph\\_info 模块"
 #: 6e5fbca5b17a402d9e5b13520769bc19 of tooluniverse.tools.get_igraph_info:1
 msgid "get_igraph_info"
 msgstr ""
+"get_igraph_info\n"
+"\n"
+"获取_igraph_信息"
 
 #: 3f8182c0adaf44a4961e9f3b7505213f 82742106faae46f2985ba0765bc09686 of
 #: tooluniverse.tools.get_igraph_info:3

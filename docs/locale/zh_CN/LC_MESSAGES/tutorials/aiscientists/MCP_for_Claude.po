@@ -150,8 +150,8 @@ msgstr "`run`：用于指示 uv 执行一条命令"
 
 #: ../../tutorials/aiscientists/MCP_for_Claude.md:53
 #: 8288e9736597435da56c84c50cd90ec8
-msgid "`tooluniverse-mcp-studio`: The specific MCP command to execute"
-msgstr "`tooluniverse-mcp-studio`：用于执行的特定MCP命令"
+msgid "`tooluniverse-smcp-stdio`: The specific MCP command to execute"
+msgstr "`tooluniverse-smcp-stdio`：用于执行的特定MCP命令"
 
 #: ../../tutorials/aiscientists/MCP_for_Claude.md:55
 #: 93b4bf53081641979a53d43d2e7022b8

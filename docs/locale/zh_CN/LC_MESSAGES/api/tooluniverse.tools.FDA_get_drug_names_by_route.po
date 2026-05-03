@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_route 模块"
 #: d6e08caee03f44d5949f99ac3af61d92 of
 #: tooluniverse.tools.FDA_get_drug_names_by_route:1
 msgid "FDA_get_drug_names_by_route"
-msgstr ""
+msgstr "FDA_get_drug_names_by_route（按给药途径获取药品名称）"
 
 #: 28af829b3481473eaf4f38584ac024f4 2ae0360bcac2435da15fcb568433eba0 of
 #: tooluniverse.tools.FDA_get_drug_names_by_route:3

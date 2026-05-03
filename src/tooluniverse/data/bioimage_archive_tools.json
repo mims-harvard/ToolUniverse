@@ -1,0 +1,370 @@
+[
+  {
+    "name": "BioImageArchive_search_studies",
+    "description": "Search the BioImage Archive (EBI BioStudies) for biological imaging datasets. The BioImage Archive hosts open microscopy, imaging, and visualization data from life sciences research. Search by imaging modality (cryo-EM, fluorescence, confocal), organism, technique, or scientific topic. Returns study accessions, titles, and metadata. Example: 'fluorescence microscopy cell' finds fluorescence imaging studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query - imaging modality, organism, technique, or topic. Examples: 'cryo-EM', 'fluorescence microscopy', 'cell segmentation', 'brain imaging', 'protein localization'."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page. Default: 10. Max: 100."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number (1-indexed). Default: 1."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "action": "search"
+    },
+    "type": "BioImageArchiveTool",
+    "test_examples": [
+      {
+        "query": "fluorescence microscopy cell",
+        "page_size": 5
+      },
+      {
+        "query": "cryo-EM",
+        "page_size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string",
+                    "description": "Study accession (e.g., S-BIAD634)"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study title"
+                  },
+                  "author": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Author(s)"
+                  },
+                  "release_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Release date"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study type"
+                  },
+                  "links": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of linked resources"
+                  },
+                  "files": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of files"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_hits": {
+                  "type": "integer"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "page_size": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "BioImageArchive_get_study",
+    "description": "Get detailed information about a specific BioImage Archive study by accession number. Returns comprehensive metadata including title, description, imaging methods, organism, and file information. Example: 'S-BIAD634' returns an annotated fluorescence image dataset.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "BioImage Archive study accession number. Format: S-BIAD#### or S-BSST#### or S-EPMC#######. Examples: 'S-BIAD634', 'S-BIAD928'."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "action": "get_study"
+    },
+    "type": "BioImageArchiveTool",
+    "test_examples": [
+      {
+        "accession": "S-BIAD634"
+      },
+      {
+        "accession": "S-BIAD928"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "release_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "organism": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "imaging_method": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "attributes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "section_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "accession": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "BioImageArchive_search_bioimages",
+    "description": "Search the BioImage Archive specifically for biological image datasets (BioImages collection). This targets the BioImages-specific collection at EBI, returning imaging studies with microscopy-specific metadata. Example: 'cell division' finds imaging datasets of cell division processes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for biological imaging data. Examples: 'cell division', 'neuron morphology', 'tissue section', 'live cell imaging'."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page. Default: 10. Max: 100."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "action": "search_bioimages"
+    },
+    "type": "BioImageArchiveTool",
+    "test_examples": [
+      {
+        "query": "cell division",
+        "page_size": 5
+      },
+      {
+        "query": "neuron morphology",
+        "page_size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "author": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "release_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_hits": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

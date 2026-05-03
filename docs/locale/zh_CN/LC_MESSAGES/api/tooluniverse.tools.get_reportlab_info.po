@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_reportlab\\_info 模块"
 
 #: 1758b09dcdec4949970b3ee0b5c13df7 of tooluniverse.tools.get_reportlab_info:1
 msgid "get_reportlab_info"
-msgstr ""
+msgstr "获取_reportlab_信息"
 
 #: 4ee26a9dc57549639919294f4879a21c de8a08b296b64ce486ae9eaa8c357c22 of
 #: tooluniverse.tools.get_reportlab_info:3

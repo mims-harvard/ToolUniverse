@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_pediatric\\_use 模�
 #: d4f41d7d303f4c2fa78579b66091d419 of
 #: tooluniverse.tools.FDA_get_drug_names_by_pediatric_use:1
 msgid "FDA_get_drug_names_by_pediatric_use"
-msgstr ""
+msgstr "FDA_get_drug_names_by_pediatric_use（按儿科用途获取药品名称）"
 
 #: 10862326ab02422cadc347fecad055d3 597a3e37797744ea9d27fd386b36c8b9 of
 #: tooluniverse.tools.FDA_get_drug_names_by_pediatric_use:3

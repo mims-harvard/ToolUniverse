@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_pharmacokinetics 模�
 #: e038f3f4a79447acbbff4767f7afd3f7 of
 #: tooluniverse.tools.FDA_get_drug_names_by_pharmacokinetics:1
 msgid "FDA_get_drug_names_by_pharmacokinetics"
-msgstr ""
+msgstr "FDA_按药代动力学获取药物名称"
 
 #: 33081e9e9b8140388edf66025144e85a bf6530098dac4fc187dfb92bdc282f22 of
 #: tooluniverse.tools.FDA_get_drug_names_by_pharmacokinetics:3

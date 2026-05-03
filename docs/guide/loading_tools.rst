@@ -11,10 +11,10 @@ Python API: Using load_tools()
 The ``load_tools()`` method is the primary way to load tools when using ToolUniverse programmatically in Python.
 
 .. note::
-   **For complete Python API documentation**, see :doc:`api_quick_reference` for commonly used classes and methods, or :doc:`api_comprehensive` for full API reference.
+   **For complete Python API documentation**, see :doc:`../api/modules` for the full API reference.
 
 .. autofunction:: tooluniverse.execute_function.ToolUniverse.load_tools
-   :noindex:
+ :noindex:
 
 Basic Usage
 ~~~~~~~~~~~
@@ -127,17 +127,17 @@ MCP Server Functions
 ToolUniverse provides two main MCP server functions for different use cases:
 
 .. seealso::
-   For a comprehensive MCP overview, detailed configuration, best practices, and troubleshooting, see :doc:`mcp_support`.
+   For a comprehensive MCP overview, detailed configuration, best practices, and troubleshooting, see :doc:`building_ai_scientists/mcp_support`.
 
-1. **`tooluniverse-mcp`** - Full-featured server with configurable transport (HTTP, SSE, stdio)
+1. **`tooluniverse-smcp`** - Full-featured server with configurable transport (HTTP, SSE, stdio)
 2. **`tooluniverse-smcp-stdio`** - Specialized server for stdio transport (for desktop AI applications)
 
-Both functions expose the same 600+ scientific tools through the Model Context Protocol (MCP), but with different transport configurations and argument handling.
+Both functions expose the same 1000+ scientific tools through the Model Context Protocol (MCP), but with different transport configurations and argument handling.
 
-tooluniverse-mcp Function
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+tooluniverse-smcp Function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `tooluniverse-mcp` function is the main entry point for ToolUniverse's SMCP server, providing full configurability for different deployment scenarios.
+The `tooluniverse-smcp` function is the main entry point for ToolUniverse's SMCP server, providing full configurability for different deployment scenarios.
 
 Basic Server Startup
 ^^^^^^^^^^^^^^^^^^^^
@@ -328,7 +328,7 @@ Available Hook Types
 For detailed hook configuration, see :doc:`hooks/index`.
 
 
-🛠️ Practical Examples
+️ Practical Examples
 ----------------------
 
 Research Workflow Setup
@@ -378,7 +378,7 @@ Setting up for scientific research:
        --name "Drug Discovery Tools with File Archiving"
 
 
-🗂️ File Formats
+️ File Formats
 ----------------
 
 Tool Names File Format

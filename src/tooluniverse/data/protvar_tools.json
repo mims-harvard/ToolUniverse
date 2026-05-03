@@ -1,0 +1,210 @@
+[
+  {
+    "name": "ProtVar_map_variant",
+    "type": "ProtVarTool",
+    "description": "Map a human protein variant to genomic coordinates and get pathogenicity predictions (AlphaMissense, EVE, ESM, conservation). Accepts three input formats: (1) protein 'ACCESSION CHANGE' e.g. 'P04637 R175H'; (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF-style genomic 'chr17 43057065 . T G'. Returns isoform mappings, consequence type, and variant effect scores.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Variant identifier in one of three formats: (1) 'UniProtAccession SingleLetterChange' e.g. 'P04637 R175H' (TP53 R175H); (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF genomic 'chr17 43057065 . REF ALT'. Note: colon-separated 'chr:pos:ref:alt' is auto-converted to VCF format."
+        }
+      },
+      "required": ["variant"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "The variant query string"
+        },
+        "genomic_coordinates": {
+          "type": "object",
+          "properties": {
+            "chr": {"type": ["string", "null"]},
+            "pos": {"type": ["integer", "null"]},
+            "ref": {"type": ["string", "null"]},
+            "alt": {"type": ["string", "null"]}
+          }
+        },
+        "isoform_mappings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {"type": ["string", "null"]},
+              "canonical": {"type": ["boolean", "null"]},
+              "gene": {"type": ["string", "null"]},
+              "ensg": {"type": ["string", "null"]},
+              "consequence": {"type": ["string", "null"]},
+              "ref_aa": {"type": ["string", "null"]},
+              "alt_aa": {"type": ["string", "null"]},
+              "position": {"type": ["integer", "null"]},
+              "codon_change": {"type": ["string", "null"]},
+              "protein_name": {"type": ["string", "null"]},
+              "alphamissense": {
+                "type": ["object", "null"],
+                "properties": {
+                  "score": {"type": ["number", "null"]},
+                  "class": {"type": ["string", "null"]}
+                }
+              },
+              "eve": {
+                "type": ["object", "null"],
+                "properties": {
+                  "score": {"type": ["number", "null"]},
+                  "class": {"type": ["string", "null"]}
+                }
+              },
+              "esm_score": {"type": ["number", "null"]},
+              "conservation_score": {"type": ["number", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"variant": "P04637 R175H"},
+      {"variant": "rs1799966"}
+    ],
+    "label": ["ProtVar", "Variant", "Pathogenicity", "AlphaMissense", "EVE"],
+    "metadata": {
+      "tags": ["variant", "pathogenicity", "missense", "protein"],
+      "estimated_execution_time": "3-5 seconds"
+    }
+  },
+  {
+    "name": "ProtVar_get_function",
+    "type": "ProtVarFunctionTool",
+    "description": "Get functional annotations at a specific amino acid position from ProtVar. Returns annotated UniProt features overlapping that position (domains, active sites, binding sites, PTMs), the protein's function description, and structural context. Use to understand the biological importance of a variant site before interpreting pathogenicity scores. Example: P04637 position 175 returns DNA-binding domain overlap and TP53 tumor suppressor function.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt accession (e.g. 'P04637' for TP53)."
+        },
+        "position": {
+          "type": "integer",
+          "description": "Amino acid position in the protein (1-based)."
+        },
+        "variant_aa": {
+          "type": "string",
+          "description": "Single-letter code for the variant amino acid (e.g. 'H' for histidine). Optional but recommended."
+        }
+      },
+      "required": ["accession", "position"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "accession": {"type": ["string", "null"]},
+        "position": {"type": ["integer", "null"]},
+        "protein_name": {"type": ["string", "null"]},
+        "gene_names": {
+          "type": "array",
+          "items": {"type": "object"}
+        },
+        "protein_existence": {"type": ["string", "null"]},
+        "features": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {"type": ["string", "null"]},
+              "category": {"type": ["string", "null"]},
+              "description": {"type": ["string", "null"]},
+              "begin": {"type": ["string", "integer", "null"]},
+              "end": {"type": ["string", "integer", "null"]}
+            }
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {"type": ["string", "null"]},
+              "value": {"type": ["string", "null"]}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"accession": "P04637", "position": 175, "variant_aa": "H"},
+      {"accession": "P22304", "position": 149}
+    ],
+    "label": ["ProtVar", "Function", "Annotation", "UniProt"],
+    "metadata": {
+      "tags": ["variant", "function", "annotation", "protein"],
+      "estimated_execution_time": "2-3 seconds"
+    }
+  },
+  {
+    "name": "ProtVar_get_population",
+    "type": "ProtVarPopulationTool",
+    "description": "Get population observation data for a protein variant position from ProtVar. Returns co-located variants with population allele frequencies (gnomAD, 1000Genomes), clinical significance (ClinVar), and computational predictions (SIFT, PolyPhen).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt accession (e.g. 'P22304' for IDS)."
+        },
+        "position": {
+          "type": "integer",
+          "description": "Amino acid position in the protein (1-based)."
+        },
+        "genomic_location": {
+          "type": "integer",
+          "description": "Genomic coordinate (GRCh38) for the variant. Obtain from ProtVar_map_variant output."
+        }
+      },
+      "required": ["accession", "position", "genomic_location"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "accession": {"type": "string"},
+        "position": {"type": "integer"},
+        "genomic_location": {"type": "integer"},
+        "colocated_variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {"type": ["string", "null"]},
+              "wild_type": {"type": ["string", "null"]},
+              "alt_sequence": {"type": ["string", "null"]},
+              "genomic_location": {"type": ["string", "null"]},
+              "cytogenetic_band": {"type": ["string", "null"]},
+              "frequencies": {
+                "type": "array",
+                "items": {"type": "object"}
+              },
+              "predictions": {
+                "type": "array",
+                "items": {"type": "object"}
+              },
+              "xrefs": {
+                "type": "array",
+                "items": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"accession": "P22304", "position": 149, "genomic_location": 149501011}
+    ],
+    "label": ["ProtVar", "Population", "Frequency", "ClinVar", "SIFT", "PolyPhen"],
+    "metadata": {
+      "tags": ["variant", "population", "frequency", "clinical"],
+      "estimated_execution_time": "2-3 seconds"
+    }
+  }
+]

@@ -32,6 +32,11 @@ class TestToolComposition(unittest.TestCase):
         self.tu.all_tools = []
         self.tu.all_tool_dict = {}
 
+    def tearDown(self):
+        """Tear down test fixtures."""
+        if hasattr(self, 'tu'):
+            self.tu.close()
+
     def test_compose_tool_creation_real(self):
         """Test creating and configuring compose tools with real ToolUniverse."""
         # Test compose tool configuration
@@ -280,7 +285,7 @@ class TestToolComposition(unittest.TestCase):
         
         for i, tool_name in enumerate(test_tools):
             try:
-                result = self.tu.run({
+                _ = self.tu.run({
                     "name": tool_name,
                     "arguments": {"accession": "P05067"} if "UniProt" in tool_name else {"query": "test", "limit": 5}
                 })
@@ -330,17 +335,17 @@ class TestToolComposition(unittest.TestCase):
         for api in external_apis:
             try:
                 if "OpenTargets" in api:
-                    result = self.tu.run({
+                    _ = self.tu.run({
                         "name": api,
                         "arguments": {"efoId": "EFO_0000305"}
                     })
                 elif "UniProt" in api:
-                    result = self.tu.run({
+                    _ = self.tu.run({
                         "name": api,
                         "arguments": {"accession": "P05067"}
                     })
                 else:  # ArXiv
-                    result = self.tu.run({
+                    _ = self.tu.run({
                         "name": api,
                         "arguments": {"query": "test", "limit": 5}
                     })
@@ -363,17 +368,17 @@ class TestToolComposition(unittest.TestCase):
         for i, tool_name in enumerate(test_tools):
             try:
                 if "UniProt" in tool_name:
-                    result = self.tu.run({
+                    _ = self.tu.run({
                         "name": tool_name,
                         "arguments": {"accession": "P05067"}
                     })
                 elif "ArXiv" in tool_name:
-                    result = self.tu.run({
+                    _ = self.tu.run({
                         "name": tool_name,
                         "arguments": {"query": "test", "limit": 5}
                     })
                 else:
-                    result = self.tu.run({
+                    _ = self.tu.run({
                         "name": tool_name,
                         "arguments": {"test": "data"}
                     })

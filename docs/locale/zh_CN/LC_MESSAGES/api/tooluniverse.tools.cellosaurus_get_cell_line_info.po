@@ -29,6 +29,9 @@ msgstr "tooluniverse.tools.cellosaurus\\_get\\_cell\\_line\\_info 模块"
 #: tooluniverse.tools.cellosaurus_get_cell_line_info:1
 msgid "cellosaurus_get_cell_line_info"
 msgstr ""
+"cellosaurus_get_cell_line_info\n"
+"\n"
+"获取细胞系信息"
 
 #: 428aa5e0f11b4631926d0c74d1be3116 c81ddbd7849a47938b264554bfcaf2c0 of
 #: tooluniverse.tools.cellosaurus_get_cell_line_info:3

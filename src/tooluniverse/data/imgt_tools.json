@@ -1,0 +1,123 @@
+[
+  {
+    "name": "IMGT_get_sequence",
+    "description": "Get immunoglobulin/T cell receptor sequence from IMGT by accession number. IMGT is the reference for IG/TR/MHC gene sequences. Returns sequence in FASTA or EMBL format. Uses EBI DBFetch. No authentication required.",
+    "type": "IMGTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_sequence"
+        },
+        "accession": {
+          "type": "string",
+          "description": "IMGT/LIGM-DB accession or EMBL/GenBank accession"
+        },
+        "format": {
+          "type": "string",
+          "description": "Output format: fasta or embl (default: fasta)",
+          "enum": [
+            "fasta",
+            "embl"
+          ],
+          "default": "fasta"
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "M12950",
+        "format": "fasta"
+      }
+    ]
+  },
+  {
+    "name": "IMGT_search_genes",
+    "description": "Search IMGT for immunoglobulin/TCR germline genes. Filter by gene type (IGHV, IGKV, TRAV, etc.) and species. Returns search URLs and gene type information for navigating IMGT GENE-DB.",
+    "type": "IMGTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_genes"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query (gene name)"
+        },
+        "gene_type": {
+          "type": "string",
+          "description": "Gene type: IGHV, IGHD, IGHJ, IGKV, IGLV, TRAV, TRBV, etc."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name (default: Homo sapiens)",
+          "default": "Homo sapiens"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_type": "IGHV",
+        "species": "Homo sapiens"
+      }
+    ]
+  },
+  {
+    "name": "IMGT_get_gene_info",
+    "description": "Get information about IMGT databases, gene nomenclature, and analysis tools. Returns descriptions of IMGT resources (LIGM-DB, GENE-DB, V-QUEST) and gene naming conventions. Good starting point for immunogenetics research.",
+    "type": "IMGTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_gene_info"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ]
+  }
+]

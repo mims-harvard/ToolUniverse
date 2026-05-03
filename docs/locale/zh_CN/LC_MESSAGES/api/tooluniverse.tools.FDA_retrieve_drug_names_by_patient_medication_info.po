@@ -32,7 +32,7 @@ msgstr ""
 #: b5abc9523d5545db82eaf1f753ab0e65 of
 #: tooluniverse.tools.FDA_retrieve_drug_names_by_patient_medication_info:1
 msgid "FDA_retrieve_drug_names_by_patient_medication_info"
-msgstr ""
+msgstr "FDA_根据患者用药信息检索药品名称"
 
 #: 80c74fbba82043729710ef1049d52f73 fa99b6b965cb412d9bc3907a5319858f of
 #: tooluniverse.tools.FDA_retrieve_drug_names_by_patient_medication_info:3

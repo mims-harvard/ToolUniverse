@@ -1,0 +1,162 @@
+[
+  {
+    "name": "KEGG_search_network",
+    "type": "KEGGExtTool",
+    "description": "Search the KEGG NETWORK database for signaling pathway networks by gene or keyword. KEGG NETWORK contains 800+ disease/drug-associated molecular interaction networks representing signal transduction pathways perturbed in cancer, infection, and other diseases. Returns network IDs (N#####) and pathway names. Example: searching 'EGFR' returns N00001 EGF-EGFR-RAS-ERK signaling pathway, N00006 Amplified EGFR, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Search keyword for network/pathway name or gene (e.g., 'EGFR', 'RAS', 'p53', 'WNT', 'NOTCH'). Case-insensitive."
+        },
+        "max_results": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results (default: 25)."
+        }
+      },
+      "required": ["keyword"]
+    },
+    "fields": {
+      "endpoint": "search_network"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "network_id": {"type": "string"},
+          "name": {"type": "string"}
+        }
+      }
+    },
+    "test_examples": [
+      {"keyword": "EGFR", "max_results": 5},
+      {"keyword": "p53", "max_results": 5}
+    ]
+  },
+  {
+    "name": "KEGG_get_network",
+    "type": "KEGGExtTool",
+    "description": "Get detailed KEGG network information including signaling pathway definition (e.g., EGF -> EGFR -> RAS -> RAF -> MEK -> ERK), associated disease classes, linked diseases, drug targets, and pathway elements. KEGG networks model specific molecular interaction cascades perturbed in disease. Example: N00001 returns EGF-EGFR-RAS-ERK signaling pathway linked to colorectal cancer, melanoma, breast cancer, and 7+ other cancer types.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "network_id": {
+          "type": "string",
+          "description": "KEGG network ID in N##### format (e.g., 'N00001' for EGF-EGFR-RAS-ERK, 'N00010' for WNT signaling)."
+        }
+      },
+      "required": ["network_id"]
+    },
+    "fields": {
+      "endpoint": "get_network"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "network_id": {"type": "string"},
+        "name": {"type": ["string", "null"]},
+        "definition": {"type": ["string", "null"]},
+        "expanded": {"type": ["string", "null"]},
+        "classes": {"type": "array", "items": {"type": "string"}},
+        "diseases": {"type": "array", "items": {"type": "string"}},
+        "drugs": {"type": "array", "items": {"type": "string"}},
+        "elements": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "test_examples": [
+      {"network_id": "N00001"},
+      {"network_id": "N00010"}
+    ]
+  },
+  {
+    "name": "KEGG_search_variant",
+    "type": "KEGGExtTool",
+    "description": "Search the KEGG VARIANT database for human gene variants associated with disease. KEGG VARIANT catalogs gain-of-function mutations, loss-of-function mutations, and other variants in human genes linked to cancer and other diseases. Returns variant IDs and descriptions. Example: searching 'BRAF' returns 673v1 (BRAF mutation) and 673v2 (BRAF mutation). Use KEGG_get_variant for mutation details, ClinVar/dbSNP cross-references, and associated diseases/drugs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Gene name to search (e.g., 'BRAF', 'TP53', 'EGFR', 'KRAS', 'PIK3CA'). Case-insensitive."
+        },
+        "max_results": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of results (default: 25)."
+        }
+      },
+      "required": ["keyword"]
+    },
+    "fields": {
+      "endpoint": "search_variant"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "variant_id": {"type": "string"},
+          "description": {"type": "string"}
+        }
+      }
+    },
+    "test_examples": [
+      {"keyword": "BRAF", "max_results": 5},
+      {"keyword": "TP53", "max_results": 5}
+    ]
+  },
+  {
+    "name": "KEGG_get_variant",
+    "type": "KEGGExtTool",
+    "description": "Get detailed KEGG variant information including gene name, mutation type (gain/loss of function), specific mutations with ClinVar/dbSNP/COSMIC cross-references, associated signaling networks, diseases, and targeted drugs. Example: hsa_var:673v1 (BRAF) returns V600E and V600K mutations with ClinVar:13961, dbSNP:rs113488022, COSM:476, linked to melanoma and thyroid cancer, targeted by dabrafenib and encorafenib.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "KEGG variant ID. Can be with prefix 'hsa_var:673v1' or without '673v1'. Get IDs from KEGG_search_variant. Format: {entrez_gene_id}v{variant_number}."
+        }
+      },
+      "required": ["variant_id"]
+    },
+    "fields": {
+      "endpoint": "get_variant"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "variant_id": {"type": "string"},
+        "name": {"type": ["string", "null"]},
+        "type": {"type": ["string", "null"]},
+        "gene": {"type": ["string", "null"]},
+        "organism": {"type": ["string", "null"]},
+        "variations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mutation": {"type": "string"},
+              "clinvar": {"type": "array", "items": {"type": "string"}},
+              "dbsnp": {"type": "array", "items": {"type": "string"}},
+              "cosmic": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "networks": {"type": "array", "items": {"type": "string"}},
+        "diseases": {"type": "array", "items": {"type": "string"}},
+        "drugs": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "test_examples": [
+      {"variant_id": "hsa_var:673v1"},
+      {"variant_id": "hsa_var:7157v1"}
+    ]
+  }
+]

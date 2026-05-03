@@ -38,7 +38,7 @@ msgstr "简单实现遵循微软官方的MCP模式。支持http:、https:、file
 #: 3ecddf55bc0048feb1b3540a0144af0c of
 #: tooluniverse.markitdown_tool.MarkItDownTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: f1afe5703dd1447f86435d1511fc8c2e of
 #: tooluniverse.markitdown_tool.MarkItDownTool:1

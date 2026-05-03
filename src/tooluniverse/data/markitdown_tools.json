@@ -20,7 +20,9 @@
           "default": false
         }
       },
-      "required": ["uri"]
+      "required": [
+        "uri"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -36,9 +38,15 @@
         "file_info": {
           "type": "object",
           "properties": {
-            "original_file": {"type": "string"},
-            "file_type": {"type": "string"},
-            "output_file": {"type": "string"}
+            "original_file": {
+              "type": "string"
+            },
+            "file_type": {
+              "type": "string"
+            },
+            "output_file": {
+              "type": "string"
+            }
           }
         },
         "error": {
@@ -46,6 +54,13 @@
           "description": "Error message if conversion failed"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "uri": "https://example.com/file.txt",
+        "output_path": "./downloads/output.txt",
+        "enable_plugins": false
+      }
+    ]
   }
 ]

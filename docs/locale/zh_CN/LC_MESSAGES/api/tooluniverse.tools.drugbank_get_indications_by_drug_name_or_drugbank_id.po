@@ -32,7 +32,7 @@ msgstr ""
 #: 17cb67577dc04228a5ad342a35ecdf3f of
 #: tooluniverse.tools.drugbank_get_indications_by_drug_name_or_drugbank_id:1
 msgid "drugbank_get_indications_by_drug_name_or_drugbank_id"
-msgstr ""
+msgstr "drugbank_根据药物名称或DrugBank ID获取适应症"
 
 #: 5c2aacc9a11447068f9f8e97cb325796 f83aca5c610a4d0b8c6e1a2f603c7a7e of
 #: tooluniverse.tools.drugbank_get_indications_by_drug_name_or_drugbank_id:3

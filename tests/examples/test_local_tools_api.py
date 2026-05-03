@@ -71,27 +71,30 @@ def test_tooluniverse_initialization():
         from tooluniverse import ToolUniverse
         
         tu = ToolUniverse()
-        print("✅ ToolUniverse initialization successful")
-        
-        # Test load_tools method
-        tu.load_tools()
-        print(f"✅ load_tools successful - loaded {len(tu.all_tools)} tools")
-        
-        # Test run method
-        if hasattr(tu, 'run'):
-            print("✅ run method exists")
-        else:
-            print("❌ run method not found")
-            return False
-        
-        # Test tools attribute
-        if hasattr(tu, 'tools'):
-            print("✅ tools attribute exists")
-        else:
-            print("❌ tools attribute not found")
-            return False
-        
-        return True
+        try:
+            print("✅ ToolUniverse initialization successful")
+            
+            # Test load_tools method
+            tu.load_tools()
+            print(f"✅ load_tools successful - loaded {len(tu.all_tools)} tools")
+            
+            # Test run method
+            if hasattr(tu, 'run'):
+                print("✅ run method exists")
+            else:
+                print("❌ run method not found")
+                return False
+            
+            # Test tools attribute
+            if hasattr(tu, 'tools'):
+                print("✅ tools attribute exists")
+            else:
+                print("❌ tools attribute not found")
+                return False
+            
+            return True
+        finally:
+            tu.close()
         
     except Exception as e:
         print(f"❌ ToolUniverse initialization failed: {e}")

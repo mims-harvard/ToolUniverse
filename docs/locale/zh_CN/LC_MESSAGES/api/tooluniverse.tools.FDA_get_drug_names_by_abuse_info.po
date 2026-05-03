@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_abuse\\_info 模块"
 #: 7f7137d3c1954b928d8b4f2499f1313e of
 #: tooluniverse.tools.FDA_get_drug_names_by_abuse_info:1
 msgid "FDA_get_drug_names_by_abuse_info"
-msgstr ""
+msgstr "FDA_根据滥用信息获取药物名称"
 
 #: 0334c4c555ac47b28f2e021d753a5856 151874d273954427bb9e2e6a0f4246a3 of
 #: tooluniverse.tools.FDA_get_drug_names_by_abuse_info:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_pediatric\\_use\\_info\\_by\\_drug\\_name
 #: 211326a10517400fa50f83c1495b6ef0 of
 #: tooluniverse.tools.FDA_get_pediatric_use_info_by_drug_name:1
 msgid "FDA_get_pediatric_use_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取儿科使用信息"
 
 #: 504c3f009f3a442b9c926b339a63df08 eee1eb7cb8fe43609a018ceea7c452c3 of
 #: tooluniverse.tools.FDA_get_pediatric_use_info_by_drug_name:3

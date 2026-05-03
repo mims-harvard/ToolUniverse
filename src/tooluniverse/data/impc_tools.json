@@ -1,0 +1,213 @@
+[
+    {
+        "name": "IMPC_get_gene_summary",
+        "description": "Get mouse gene summary from IMPC including phenotyping status, viability, ortholog info, and MP/HP term annotations. Query by human gene symbol or MGI ID. No API key needed. Essential for safety/liability triangulation via mouse KO phenotypes.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Mouse gene symbol (e.g., 'Trp53', 'Brca1', 'Wdr7'). Case-sensitive. Use mouse symbol, not human."
+                },
+                "mgi_id": {
+                    "type": "string",
+                    "description": "MGI accession ID (e.g., 'MGI:98834'). Use if gene symbol is ambiguous."
+                }
+            }
+        },
+        "fields": {
+            "operation": "get_gene_summary"
+        },
+        "type": "IMPCTool",
+        "test_examples": [
+            {"gene_symbol": "Trp53"},
+            {"mgi_id": "MGI:98834"}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "mgi_id": {"type": "string"},
+                        "symbol": {"type": "string"},
+                        "name": {"type": "string"},
+                        "human_ortholog": {"type": "array"},
+                        "phenotype_status": {"type": "string"},
+                        "mp_terms": {"type": "array"},
+                        "disease_associations": {"type": "array"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["IMPC", "MGI", "Mouse", "Phenotype", "Knockout"],
+        "metadata": {
+            "tags": ["mouse_model", "knockout", "phenotype", "safety", "target_validation"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "IMPC_get_phenotypes_by_gene",
+        "description": "Get all phenotype annotations for a mouse gene from IMPC knockout screens. Returns MP ontology terms grouped by physiological system (e.g., nervous, cardiovascular, immune). Essential for understanding gene function and predicting drug side effects.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Mouse gene symbol (e.g., 'Trp53', 'Brca1')"
+                },
+                "mgi_id": {
+                    "type": "string",
+                    "description": "MGI accession ID (e.g., 'MGI:98834')"
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum phenotype records to return (default: 100)",
+                    "default": 100,
+                    "minimum": 1,
+                    "maximum": 500
+                }
+            }
+        },
+        "fields": {
+            "operation": "get_phenotypes_by_gene"
+        },
+        "type": "IMPCTool",
+        "test_examples": [
+            {"gene_symbol": "Trp53", "limit": 50},
+            {"gene_symbol": "Braf", "limit": 20}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "gene_symbol": {"type": "string"},
+                        "mgi_id": {"type": "string"},
+                        "total_phenotype_calls": {"type": "integer"},
+                        "unique_phenotypes": {"type": "integer"},
+                        "phenotypes": {"type": "array"},
+                        "phenotype_summary_by_system": {"type": "object"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["IMPC", "Mouse", "Phenotype", "MP Ontology"],
+        "metadata": {
+            "tags": ["mouse_phenotype", "knockout", "mp_ontology", "safety_profiling"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "IMPC_search_genes",
+        "description": "Search IMPC for mouse genes by symbol, name, synonym, or MGI ID. Returns matching genes with their phenotyping and production status. Use to find the correct MGI ID for a gene before querying phenotypes.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query: gene symbol, name fragment, or MGI ID (e.g., 'Wdr7', 'WD repeat', 'MGI:2442934')"
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum results (default: 20)",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 100
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "operation": "search_genes"
+        },
+        "type": "IMPCTool",
+        "test_examples": [
+            {"query": "Trp53", "limit": 5},
+            {"query": "Wdr7"}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string"},
+                        "genes": {"type": "array"},
+                        "count": {"type": "integer"},
+                        "total_found": {"type": "integer"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["IMPC", "MGI", "Gene Search"],
+        "metadata": {
+            "tags": ["gene_search", "mgi_id", "mouse_gene"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    },
+    {
+        "name": "IMPC_get_gene_phenotype_hits",
+        "description": "Get detailed statistical results from IMPC phenotyping for a gene. Returns p-values, effect sizes, and classification tags for each phenotyping parameter. Filter by significant results only. Useful for quantifying phenotype severity.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Mouse gene symbol (e.g., 'Trp53', 'Brca1')"
+                },
+                "mgi_id": {
+                    "type": "string",
+                    "description": "MGI accession ID (e.g., 'MGI:98834')"
+                },
+                "significant_only": {
+                    "type": "boolean",
+                    "description": "Return only significant results (default: true)",
+                    "default": true
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum results (default: 100)",
+                    "default": 100,
+                    "minimum": 1,
+                    "maximum": 500
+                }
+            }
+        },
+        "fields": {
+            "operation": "get_gene_phenotype_hits"
+        },
+        "type": "IMPCTool",
+        "test_examples": [
+            {"gene_symbol": "Trp53", "significant_only": true, "limit": 50},
+            {"gene_symbol": "Braf"}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "gene_symbol": {"type": "string"},
+                        "total_results": {"type": "integer"},
+                        "hits": {"type": "array"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["IMPC", "Statistical Results", "Phenotype"],
+        "metadata": {
+            "tags": ["phenotype_statistics", "p_value", "effect_size", "target_safety"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    }
+]

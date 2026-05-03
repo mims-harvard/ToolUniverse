@@ -1,0 +1,129 @@
+[
+    {
+        "name": "OpenCRAVAT_annotate_variant",
+        "description": "Annotate a single genomic variant using OpenCRAVAT with 182+ annotation sources including ClinVar, gnomAD, SIFT, PolyPhen-2, REVEL, AlphaMissense, SpliceAI, GERP, PhastCons, DANN, FATHMM, and more. Returns gene name, amino acid change, consequence type, and all requested annotator results. Input: chromosome, position (1-based, GRCh38), reference and alternate alleles. Optionally specify which annotators to use (comma-separated).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "chrom": {
+                    "type": ["string", "null"],
+                    "description": "Chromosome (e.g., 'chr17', 'chr7', '17'). 'chr' prefix added automatically if missing."
+                },
+                "chromosome": {
+                    "type": ["string", "null"],
+                    "description": "Alias for chrom. Chromosome (e.g., 'chr17', 'chr7', '17')."
+                },
+                "pos": {
+                    "type": ["integer", "null"],
+                    "description": "Genomic position (1-based, GRCh38 coordinates)"
+                },
+                "position": {
+                    "type": ["integer", "null"],
+                    "description": "Alias for pos. Genomic position (1-based, GRCh38 coordinates)."
+                },
+                "ref_base": {
+                    "type": ["string", "null"],
+                    "description": "Reference allele (e.g., 'C', 'A', 'G', 'T')"
+                },
+                "ref": {
+                    "type": ["string", "null"],
+                    "description": "Alias for ref_base. Reference allele."
+                },
+                "alt_base": {
+                    "type": ["string", "null"],
+                    "description": "Alternate allele (e.g., 'T', 'A', 'G', 'C')"
+                },
+                "alt": {
+                    "type": ["string", "null"],
+                    "description": "Alias for alt_base. Alternate allele."
+                },
+                "annotators": {
+                    "type": ["string", "null"],
+                    "description": "Comma-separated annotator names (e.g., 'clinvar,gnomad3,sift,polyphen2,revel,alphamissense'). If omitted, returns only basic variant annotation (gene, consequence). Common annotators: clinvar, gnomad3, sift, polyphen2, cadd_exome, revel, alphamissense, spliceai, dann, fathmm, gerp, phastcons, dbsnp, mutation_assessor, provean, vest, primateai, lrt."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "operation": "annotate_variant"
+        },
+        "type": "OpenCRAVATTool",
+        "test_examples": [
+            {
+                "chrom": "chr7",
+                "pos": 140753336,
+                "ref_base": "A",
+                "alt_base": "T",
+                "annotators": "clinvar,gnomad3,sift,polyphen2"
+            },
+            {
+                "chrom": "chr17",
+                "pos": 7674220,
+                "ref_base": "C",
+                "alt_base": "T"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "gene": {"type": ["string", "null"]},
+                "amino_acid_change": {"type": ["string", "null"]},
+                "coding_change": {"type": ["string", "null"]},
+                "consequence": {"type": ["string", "null"]},
+                "transcript": {"type": ["string", "null"]},
+                "chrom": {"type": "string"},
+                "pos": {"type": "integer"},
+                "ref_base": {"type": "string"},
+                "alt_base": {"type": "string"},
+                "annotations": {"type": "object"},
+                "module_versions": {"type": "object"}
+            }
+        },
+        "label": ["OpenCRAVAT", "Variant Annotation", "Multi-source"],
+        "metadata": {
+            "tags": ["variant_annotation", "clinvar", "gnomad", "sift", "polyphen2", "pathogenicity", "conservation"],
+            "estimated_execution_time": "3-10 seconds"
+        }
+    },
+    {
+        "name": "OpenCRAVAT_list_annotators",
+        "description": "List all available annotation modules on the OpenCRAVAT server. Returns 182+ annotators including variant effect predictors (SIFT, PolyPhen-2, REVEL, AlphaMissense), population databases (gnomAD, ExAC), clinical databases (ClinVar, COSMIC), conservation scores (GERP, PhastCons), and more. Optionally filter by category type.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": ["string", "null"],
+                    "description": "Filter annotators by type/category substring (e.g., 'annotator', 'converter'). Case-insensitive."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "operation": "list_annotators"
+        },
+        "type": "OpenCRAVATTool",
+        "test_examples": [
+            {},
+            {
+                "category": "annotator"
+            }
+        ],
+        "return_schema": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "title": {"type": "string"},
+                    "description": {"type": "string"},
+                    "type": {"type": "string"}
+                }
+            }
+        },
+        "label": ["OpenCRAVAT", "Annotators", "Registry"],
+        "metadata": {
+            "tags": ["variant_annotation", "annotator_registry", "metadata"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    }
+]

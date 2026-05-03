@@ -3,7 +3,7 @@ Fda Drug Labeling Tools
 
 **Configuration File**: ``fda_drug_labeling_tools.json``
 **Tool Type**: Local
-**Tools Count**: 156
+**Tools Count**: 158
 
 This page contains all tools defined in the ``fda_drug_labeling_tools.json`` configuration file.
 
@@ -2836,6 +2836,68 @@ Retrieve a list of drug names based on a specific indication or usage.
 
       query = {
           "name": "FDA_get_drug_names_by_indication",
+          "arguments": {
+              "indication": "example_value"
+          }
+      }
+      result = tu.run(query)
+
+
+**FDA_get_drug_names_by_indication_aggregated** (Type: FDADrugLabelAggregated)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Retrieve and aggregate drug names by indication, grouping by generic name with all brand names. T...
+
+.. dropdown:: FDA_get_drug_names_by_indication_aggregated tool specification
+
+   **Tool Information:**
+
+   * **Name**: ``FDA_get_drug_names_by_indication_aggregated``
+   * **Type**: ``FDADrugLabelAggregated``
+   * **Description**: Retrieve and aggregate drug names by indication, grouping by generic name with all brand names. This tool iterates through all available results without limit restrictions.
+
+   **Parameters:**
+
+   * ``indication`` (string) (required)
+     The indication or usage of the drug.
+
+   **Example Usage:**
+
+   .. code-block:: python
+
+      query = {
+          "name": "FDA_get_drug_names_by_indication_aggregated",
+          "arguments": {
+              "indication": "example_value"
+          }
+      }
+      result = tu.run(query)
+
+
+**FDA_get_drug_names_by_indication_stats** (Type: FDADrugLabelStats)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Retrieve and aggregate drug names by indication using FDA count API. This tool uses count mechani...
+
+.. dropdown:: FDA_get_drug_names_by_indication_stats tool specification
+
+   **Tool Information:**
+
+   * **Name**: ``FDA_get_drug_names_by_indication_stats``
+   * **Type**: ``FDADrugLabelStats``
+   * **Description**: Retrieve and aggregate drug names by indication using FDA count API. This tool uses count mechanism to efficiently get brand_name and generic_name distributions without fetching full records.
+
+   **Parameters:**
+
+   * ``indication`` (string) (required)
+     The indication or usage of the drug.
+
+   **Example Usage:**
+
+   .. code-block:: python
+
+      query = {
+          "name": "FDA_get_drug_names_by_indication_stats",
           "arguments": {
               "indication": "example_value"
           }

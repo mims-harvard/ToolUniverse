@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_boxed\\_warning\\_info\\_by\\_drug\\_name
 #: bf014b4ad5094c1088df2841d1d343b1 of
 #: tooluniverse.tools.FDA_get_boxed_warning_info_by_drug_name:1
 msgid "FDA_get_boxed_warning_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取盒装警告信息"
 
 #: 64f87ddb23bf42cc8b3e807728548924 ff5b83e90d20460fbb5f4b3922d0d8b3 of
 #: tooluniverse.tools.FDA_get_boxed_warning_info_by_drug_name:3

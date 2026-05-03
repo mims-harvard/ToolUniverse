@@ -65,18 +65,24 @@ class TestErrorHandlingAndRecovery:
         # Mark a tool as unavailable
         mark_tool_unavailable("PersistentTool", ImportError('No module named "test"'))
         
-        # Create first instance
-        tu1 = ToolUniverse()
-        health1 = tu1.get_tool_health()
-        assert "PersistentTool" in health1["unavailable_list"]
-        
-        # Create second instance
-        tu2 = ToolUniverse()
-        health2 = tu2.get_tool_health()
-        assert "PersistentTool" in health2["unavailable_list"]
-        
-        # Should be the same error
-        assert health1["details"]["PersistentTool"] == health2["details"]["PersistentTool"]
+        try:
+            # Create first instance
+            tu1 = ToolUniverse()
+            health1 = tu1.get_tool_health()
+            assert "PersistentTool" in health1["unavailable_list"]
+            
+            # Create second instance
+            tu2 = ToolUniverse()
+            health2 = tu2.get_tool_health()
+            assert "PersistentTool" in health2["unavailable_list"]
+            
+            # Should be the same error
+            assert health1["details"]["PersistentTool"] == health2["details"]["PersistentTool"]
+        finally:
+            if 'tu1' in locals():
+                tu1.close()
+            if 'tu2' in locals():
+                tu2.close()
 
     def test_error_clearing_and_recovery(self):
         """Test clearing errors and system recovery."""
@@ -95,10 +101,14 @@ class TestErrorHandlingAndRecovery:
         errors = get_tool_errors()
         assert len(errors) == 0
         
-        # System should be clean
-        tu = ToolUniverse()
-        health = tu.get_tool_health()
-        assert health["unavailable"] == 0
+        try:
+            # System should be clean
+            tu = ToolUniverse()
+            health = tu.get_tool_health()
+            assert health["unavailable"] == 0
+        finally:
+            if 'tu' in locals():
+                tu.close()
 
     def test_partial_error_recovery(self):
         """Test recovering from some errors while keeping others."""

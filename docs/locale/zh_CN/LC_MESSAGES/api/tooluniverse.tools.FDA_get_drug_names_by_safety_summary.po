@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_safety\\_summary 模�
 #: 3363b364c7944b858c20f1d4f655060e of
 #: tooluniverse.tools.FDA_get_drug_names_by_safety_summary:1
 msgid "FDA_get_drug_names_by_safety_summary"
-msgstr ""
+msgstr "FDA_get_drug_names_by_safety_summary（根据安全摘要获取药品名称）"
 
 #: 391a6239562b42898b568afe11e64994 d4191431a3c749d5ad341151bd894f33 of
 #: tooluniverse.tools.FDA_get_drug_names_by_safety_summary:3

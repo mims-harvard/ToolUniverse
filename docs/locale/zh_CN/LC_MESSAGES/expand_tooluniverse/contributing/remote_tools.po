@@ -7,17 +7,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-19 16:01-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:2
@@ -32,18 +32,18 @@ msgstr ""
 #: 620a98429e9c4e6a99b566ea14d13f95
 msgid ""
 "This guide covers how to contribute remote tools to the ToolUniverse "
-"repository. Remote tools run on separate servers and are accessed via MCP"
-" (Model Context Protocol) or REST APIs."
+"repository. Remote tools run on separate servers and are accessed via MCP "
+"(Model Context Protocol) or REST APIs."
 msgstr ""
-"本指南介绍了如何向 ToolUniverse 仓库贡献远程工具。远程工具运行在独立的服务器上，并通过 MCP（模型上下文协议）或 REST API"
-" 进行访问。"
+"本指南介绍了如何向 ToolUniverse 仓库贡献远程工具。远程工具运行在独立的服务器上，并通过 MCP（模型上下文协议）或 REST API "
+"进行访问。"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:7
 #: d2b96ca84b4b4703bc9eeec58770e52f
 msgid ""
-"**Key Difference**: Remote tools don't require modifying ``__init__.py``,"
-" but you must provide a publicly accessible server or detailed deployment"
-" instructions."
+"**Key Difference**: Remote tools don't require modifying ``__init__.py``, "
+"but you must provide a publicly accessible server or detailed deployment "
+"instructions."
 msgstr "**关键区别**：远程工具无需修改``__init__.py``，但您必须提供一个可公开访问的服务器或详细的部署说明。"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:10
@@ -119,14 +119,14 @@ msgstr "步骤 1：环境设置"
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:48
 #: 519746879f134aecbe385fcbf3255a22
 msgid "Step 2: Choose Implementation"
-msgstr ""
+msgstr "步骤 2：选择实施方案"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:50
 #: f92313ad56bc46818cef964d48cda8a1
 msgid ""
-"**Option A: Independent MCP Server (Recommended)** - Create separate "
-"server (any language) - More flexible and maintainable - Server code goes"
-" in ``src/tooluniverse/remote/``"
+"**Option A: Independent MCP Server (Recommended)** - Create separate server "
+"(any language) - More flexible and maintainable - Server code goes in "
+"``src/tooluniverse/remote/``"
 msgstr ""
 "**选项A：独立的MCP服务器（推荐）** - 创建独立服务器（任意语言） - 更灵活且易于维护 - "
 "服务器代码存放于``src/tooluniverse/remote/``"
@@ -134,8 +134,8 @@ msgstr ""
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:55
 #: 52615be9e2814f2cb874da9275684a7c
 msgid ""
-"**Option B: register_mcp_tool Decorator** - Python class as both local "
-"and MCP tool - Simpler but less flexible - Good for simple tools"
+"**Option B: register_mcp_tool Decorator** - Python class as both local and "
+"MCP tool - Simpler but less flexible - Good for simple tools"
 msgstr ""
 "**选项 B：register_mcp_tool 装饰器** - Python 类同时作为本地工具和 MCP 工具 - 更简单但灵活性较低 - "
 "适用于简单工具"
@@ -166,8 +166,8 @@ msgid ""
 "src/tooluniverse/remote/my_service/ ├── __init__.py ├── server.py"
 "              # Main server file ├── tools.py               # Tool "
 "implementations ├── requirements.txt       # Server dependencies ├── "
-"README.md              # Deployment instructions └── docker-compose.yml"
-"     # Optional: Docker setup"
+"README.md              # Deployment instructions └── docker-compose.yml     "
+"# Optional: Docker setup"
 msgstr ""
 "src/tooluniverse/remote/my_service/  \n"
 "├── __init__.py  \n"
@@ -202,15 +202,15 @@ msgstr ""
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:88
 #: 7512cbc2a136466fb46e291527014809
 msgid ""
-"@mcp.tool(\"my_remote_tool\") def my_remote_tool(input_text: str, "
-"operation: str = \"uppercase\") -> dict:"
+"@mcp.tool(\"my_remote_tool\") def my_remote_tool(input_text: str, operation:"
+" str = \"uppercase\") -> dict:"
 msgstr ""
+"@mcp.tool(\"my_remote_tool\")  \n"
+"def my_remote_tool(input_text: str, operation: str = \"uppercase\") -> dict:"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:90
 #: a6b3d368caa74d40ba69a16d8eedd7ab
-msgid ""
-"\"\"\"Convert text using specified operation.\"\"\" if operation == "
-"\"uppercase\":"
+msgid "\"\"\"Convert text using specified operation.\"\"\" if operation == \"uppercase\":"
 msgstr "\"\"\"使用指定的操作转换文本。\"\"\" 如果操作 == \"uppercase\":"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:92
@@ -242,12 +242,12 @@ msgstr "raise ValueError(f\"未知操作: {operation}\")"
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:98
 #: 4d984e4e3977461080213b0274d630e7
 msgid "return {"
-msgstr ""
+msgstr "返回 {"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:99
 #: 3e94fd23a619433188b16c2900923424
 msgid "\"result\": result, \"operation\": operation, \"success\": True"
-msgstr ""
+msgstr "\"result\": 结果, \"operation\": 操作, \"success\": True"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:102
 #: d732de2551054678b985922ecb74c372
@@ -258,16 +258,14 @@ msgstr "请提供具体的英文文本内容，我将为您进行翻译。"
 #: 036c39c21adb433dab1b8845d79295fa
 msgid "@mcp.tool(\"health_check\") def health_check() -> dict:"
 msgstr ""
+"@mcp.tool(\"health_check\") \n"
+"def health_check() -> dict:"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:106
 #: d0accfb1cc314544928e023e7b9e46b7
 #, python-brace-format
-msgid ""
-"\"\"\"Health check endpoint.\"\"\" return {\"status\": \"healthy\", "
-"\"service\": \"my_service\"}"
-msgstr ""
-"\"\"\"健康检查端点。\"\"\" return {\"status\": \"健康\", \"service\": "
-"\"my_service\"}"
+msgid "\"\"\"Health check endpoint.\"\"\" return {\"status\": \"healthy\", \"service\": \"my_service\"}"
+msgstr "\"\"\"健康检查端点。\"\"\" return {\"status\": \"健康\", \"service\": \"my_service\"}"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:109
 #: e6dc7ffef29a499fa0132cb23645663a
@@ -279,7 +277,7 @@ msgstr ""
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:112
 #: f44b8e47dbe9452eb98fba9e76162408
 msgid "if __name__ == \"__main__\":"
-msgstr ""
+msgstr "如果 __name__ == \"__main__\":"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:113
 #: 8eb90b187c934b029574b11bf865d022
@@ -289,7 +287,7 @@ msgstr ""
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:115
 #: c59cf594a4b64969b9fc10de1c35cbe8
 msgid "**requirements.txt:** .. code-block:: text"
-msgstr ""
+msgstr "**requirements.txt：** .. code-block:: text"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:118
 #: 7714601d2b4e4e25ac4d574df79e9b63
@@ -315,8 +313,8 @@ msgstr "步骤 5：部署服务器"
 #: b049484ac84344a9bb9594dcc0f0db4c
 msgid ""
 "**Option A: Cloud Deployment (Recommended)** - Deploy to cloud platform "
-"(AWS, GCP, Azure, Heroku, etc.) - Provide public URL - Include deployment"
-" documentation"
+"(AWS, GCP, Azure, Heroku, etc.) - Provide public URL - Include deployment "
+"documentation"
 msgstr "**选项A：云部署（推荐）** - 部署至云平台（AWS、GCP、Azure、Heroku等） - 提供公共URL - 包含部署文档"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:179
@@ -329,7 +327,8 @@ msgstr "**选项 B：自托管与文档支持** - 提供详细的设置说明 - 
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:184
 #: ef40aa3eaf5a4dd88c1a76bf7a875e53
-msgid "**Example deployment documentation (README.md):** .. code-block:: markdown"
+msgid ""
+"**Example deployment documentation (README.md):** .. code-block:: markdown"
 msgstr "**示例部署文档 (README.md):** .. code-block:: markdown"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:187
@@ -502,8 +501,7 @@ msgstr "使用指定操作转换文本。"
 #: 33500a7cbac944c980f4c604b931575a
 msgid ""
 "**Parameters:** - `input_text` (string, required): Text to process - "
-"`operation` (string, optional): Operation to perform "
-"(uppercase/lowercase)"
+"`operation` (string, optional): Operation to perform (uppercase/lowercase)"
 msgstr ""
 "**参数：**  \n"
 "- `input_text`（字符串，必填）：需要处理的文本  \n"
@@ -523,8 +521,8 @@ msgstr ""
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:335
 #: 307887b51d7c47c0be56936226d510a8
 msgid ""
-"**Tool Documentation:** Add comprehensive docstrings to your tool "
-"functions in the server code."
+"**Tool Documentation:** Add comprehensive docstrings to your tool functions "
+"in the server code."
 msgstr "**工具文档：** 在服务器代码中的工具函数添加全面的文档字符串。"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:339
@@ -634,6 +632,10 @@ msgid ""
 "```bash pytest tests/integration/test_my_remote_tool.py python "
 "examples/my_remote_tool_example.py ```"
 msgstr ""
+"```bash\n"
+"pytest tests/integration/test_my_remote_tool.py\n"
+"python examples/my_remote_tool_example.py\n"
+"```"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:434
 #: e6c1c20591ee47bc9560aff0745bee9c
@@ -690,21 +692,19 @@ msgstr "方面 | 本地工具 | 远程工具 |"
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:450
 #: c53249f91a8942ce9f73f74d0d8b7ad8
 msgid ""
-"|--------|-------------|--------------| | **__init__.py** | ✅ Must modify"
-" 4 locations | ❌ No modification needed | | **File Location** | "
+"|--------|-------------|--------------| | **__init__.py** | ✅ Must modify 4 "
+"locations | ❌ No modification needed | | **File Location** | "
 "``src/tooluniverse/xxx_tool.py`` | ``src/tooluniverse/remote/xxx/`` | | "
 "**Config Location** | ``data/xxx_tools.json`` | "
-"``data/remote_tools/xxx_tools.json`` | | **Server Deployment** | Not "
-"needed | ✅ Must provide public access | | **Testing** | Unit tests | "
-"Integration tests (mock server) | | **Dependencies** | Python only | "
-"Server + dependencies |"
+"``data/remote_tools/xxx_tools.json`` | | **Server Deployment** | Not needed "
+"| ✅ Must provide public access | | **Testing** | Unit tests | Integration "
+"tests (mock server) | | **Dependencies** | Python only | Server + "
+"dependencies |"
 msgstr ""
 "|--------|-------------|--------------|  \n"
 "| **__init__.py** | ✅ 必须修改 4 处 | ❌ 无需修改 |  \n"
-"| **文件位置** | ``src/tooluniverse/xxx_tool.py`` | "
-"``src/tooluniverse/remote/xxx/`` |  \n"
-"| **配置文件位置** | ``data/xxx_tools.json`` | "
-"``data/remote_tools/xxx_tools.json`` |  \n"
+"| **文件位置** | ``src/tooluniverse/xxx_tool.py`` | ``src/tooluniverse/remote/xxx/`` |  \n"
+"| **配置文件位置** | ``data/xxx_tools.json`` | ``data/remote_tools/xxx_tools.json`` |  \n"
 "| **服务器部署** | 不需要 | ✅ 必须提供公共访问 |  \n"
 "| **测试** | 单元测试 | 集成测试（模拟服务器） |  \n"
 "| **依赖** | 仅 Python | 服务器 + 依赖 |"
@@ -718,36 +718,36 @@ msgstr "常见错误"
 #: de375712cf334b08852d346119bae510
 msgid ""
 "**❌ Server not accessible** - Tool will fail with connection errors - "
-"Solution: Ensure server is publicly accessible or provide clear "
-"deployment docs"
+"Solution: Ensure server is publicly accessible or provide clear deployment "
+"docs"
 msgstr "**❌ 服务器无法访问** - 工具将因连接错误而失败 - 解决方案：确保服务器可公开访问或提供明确的部署文档"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:465
 #: 4078598082ab4799997bed72acc3f122
 msgid ""
-"**❌ Wrong config location** - Config must be in ``data/remote_tools/`` - "
-"Not in ``data/``"
+"**❌ Wrong config location** - Config must be in ``data/remote_tools/`` - Not"
+" in ``data/``"
 msgstr "**❌ 配置文件位置错误** - 配置文件必须位于 ``data/remote_tools/`` - 而不是 ``data/``"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:469
 #: 6ea3618372c14fd3afe63c24a01bceb0
 msgid ""
-"**❌ Missing server code** - Include complete server implementation - "
-"Don't just provide config"
+"**❌ Missing server code** - Include complete server implementation - Don't "
+"just provide config"
 msgstr "**❌ 缺少服务器代码** - 请包含完整的服务器实现 - 不要仅提供配置"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:473
 #: a5e401ffe43244bbb9e391f86426fa94
 msgid ""
-"**❌ No deployment documentation** - Users need to know how to run the "
-"server - Include setup and deployment instructions"
+"**❌ No deployment documentation** - Users need to know how to run the server"
+" - Include setup and deployment instructions"
 msgstr "**❌ 缺少部署文档** - 用户需要了解如何运行服务器 - 请包含设置和部署说明"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:477
 #: 4ce2fe293f6c41f882b1e1fd5eff7fbc
 msgid ""
-"**❌ Poor error handling** - Server should return proper error responses -"
-" Tool should handle network failures gracefully"
+"**❌ Poor error handling** - Server should return proper error responses - "
+"Tool should handle network failures gracefully"
 msgstr "**❌ 错误处理不佳** - 服务器应返回正确的错误响应 - 工具应能够优雅地处理网络故障"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:482
@@ -793,8 +793,7 @@ msgstr ""
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:501
 #: 10700a867cf44362b30b5e349e059291
 msgid ""
-"tools = tu.list_tools() print(\"my_remote_tool\" in tools)  # Should be "
-"True"
+"tools = tu.list_tools() print(\"my_remote_tool\" in tools)  # Should be True"
 msgstr ""
 "tools = tu.list_tools()  \n"
 "print(\"my_remote_tool\" in tools)  # 应为 True"
@@ -802,8 +801,8 @@ msgstr ""
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:504
 #: 8fa618a093434991a70a78da437bb3e6
 msgid ""
-"**Server returns unexpected format** - Ensure server follows MCP protocol"
-" - Check that responses match expected schema - Verify tool parameter "
+"**Server returns unexpected format** - Ensure server follows MCP protocol - "
+"Check that responses match expected schema - Verify tool parameter "
 "validation"
 msgstr "**服务器返回意外格式** - 确保服务器遵循MCP协议 - 检查响应是否符合预期的架构 - 验证工具参数的有效性"
 
@@ -820,15 +819,14 @@ msgstr "成功提交您的远程工具后："
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:514
 #: 8751bdbdda294a6db7381cd9623eabee
 msgid ""
-"🏠 **Local Tools**: :doc:`local_tools` - Learn about contributing local "
-"tools"
+"🏠 **Local Tools**: :doc:`local_tools` - Learn about contributing local tools"
 msgstr "🏠 **本地工具**：:doc:`local_tools` - 了解如何贡献本地工具"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:515
 #: 6f03d847c3c648aebb0cf10e85850a0f
 msgid ""
-"📚 **MCP Server Development**: :doc:`../remote_tools/mcp_server` - "
-"Advanced MCP server patterns"
+"📚 **MCP Server Development**: :doc:`../remote_tools/mcp_server` - Advanced "
+"MCP server patterns"
 msgstr "📚 **MCP服务器开发**：:doc:`../remote_tools/mcp_server` - 高级MCP服务器模式"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:516
@@ -843,19 +841,16 @@ msgstr "🔍 **架构**: :doc:`../reference/architecture` - 了解 ToolUniverse 
 msgid ""
 "📊 **Comparison**: Review the tool type comparison table in "
 ":doc:`../contributing/index`"
-msgstr ""
+msgstr "📊 **比较**：请查看 :doc:`../contributing/index` 中的工具类型比较表"
 
 #: ../../expand_tooluniverse/contributing/remote_tools.rst:520
 #: b369eb0852584abaa8a17c2294652489
 msgid ""
 "**Success Tips**: Start with simple servers, test thoroughly with real "
-"deployments, and provide clear documentation for users to run your "
-"service!"
+"deployments, and provide clear documentation for users to run your service!"
 msgstr "**成功提示**：从简单的服务器开始，使用真实部署进行充分测试，并提供清晰的文档以帮助用户运行您的服务！"
 
 #~ msgid ""
-#~ "📊 **Comparison**: :doc:`../reference/comparison` -"
-#~ " Compare tool types and usage "
-#~ "scenarios"
+#~ "📊 **Comparison**: :doc:`../reference/comparison` - Compare tool types and "
+#~ "usage scenarios"
 #~ msgstr "📊 **比较**：:doc:`../reference/comparison` - 比较工具类型和使用场景"
-

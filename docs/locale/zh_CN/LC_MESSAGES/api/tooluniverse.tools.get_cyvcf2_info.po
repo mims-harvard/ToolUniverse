@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_cyvcf2\\_info 模块"
 
 #: e170ce47a74a4ac0b67d525016ee772b of tooluniverse.tools.get_cyvcf2_info:1
 msgid "get_cyvcf2_info"
-msgstr ""
+msgstr "get_cyvcf2_info 获取信息"
 
 #: c2ecf9400d21457f8e9ec419eb555138 da28811f2a7842e79f815fc354ab164f of
 #: tooluniverse.tools.get_cyvcf2_info:3

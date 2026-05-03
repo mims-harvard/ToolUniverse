@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_drug\\_description\\_by\\_chemblI
 #: 2c9c78776743429b8c7ed24046ce66ec of
 #: tooluniverse.tools.OpenTargets_get_drug_description_by_chemblId:1
 msgid "OpenTargets_get_drug_description_by_chemblId"
-msgstr ""
+msgstr "OpenTargets_通过ChemblId获取药物描述"
 
 #: 1a1bb493754e45769c9ac7a93da1bf9e fbe898f870e84e9aab74350addcb5a98 of
 #: tooluniverse.tools.OpenTargets_get_drug_description_by_chemblId:3

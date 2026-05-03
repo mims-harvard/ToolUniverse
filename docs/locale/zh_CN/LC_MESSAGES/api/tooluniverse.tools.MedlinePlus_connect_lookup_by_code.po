@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.MedlinePlus\\_connect\\_lookup\\_by\\_code 模块"
 #: 1b1150f0dfbd4cccbefe104ec14517d5 of
 #: tooluniverse.tools.MedlinePlus_connect_lookup_by_code:1
 msgid "MedlinePlus_connect_lookup_by_code"
-msgstr ""
+msgstr "MedlinePlus_connect_按代码查找"
 
 #: 70119f039aa54be2a598d6954c64f117 8fe2f9535e824a8e97b1d4986369b2d9 of
 #: tooluniverse.tools.MedlinePlus_connect_lookup_by_code:3

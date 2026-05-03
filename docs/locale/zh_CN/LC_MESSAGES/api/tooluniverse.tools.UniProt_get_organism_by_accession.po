@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_organism\\_by\\_accession 模块"
 #: c8c2f34012934af79af664ce68f78b16 of
 #: tooluniverse.tools.UniProt_get_organism_by_accession:1
 msgid "UniProt_get_organism_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取生物体"
 
 #: 92fb905e02f54a25a0915e147cd631ec a890f084e7294829b1f10bd8d5ce7e7d of
 #: tooluniverse.tools.UniProt_get_organism_by_accession:3

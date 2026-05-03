@@ -1,0 +1,152 @@
+[
+  {
+    "name": "SpliceAI_predict_splice",
+    "description": "Predict splice-altering effects using SpliceAI deep learning model. Returns delta scores for acceptor gain (DS_AG), acceptor loss (DS_AL), donor gain (DS_DG), donor loss (DS_DL). Scores ≥0.2 suggest splice impact, ≥0.5 moderate, ≥0.8 high pathogenicity. Critical for intronic/exonic variant interpretation.",
+    "type": "SpliceAITool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Variant in chr-pos-ref-alt format (e.g., chr8-140300616-T-G) or colon-separated"
+        },
+        "genome": {
+          "type": "string",
+          "enum": ["37", "38"],
+          "description": "Genome build: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 38",
+          "default": "38"
+        },
+        "distance": {
+          "type": "integer",
+          "description": "Distance parameter for model (default: 50). Larger values capture more distal effects.",
+          "default": 50
+        },
+        "mask": {
+          "type": "boolean",
+          "description": "Use masked scores (recommended for variant interpretation). Raw scores better for alternative splicing analysis.",
+          "default": false
+        }
+      },
+      "required": ["variant"]
+    },
+    "fields": {
+      "operation": "predict_splice",
+      "timeout": 60
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "variant": {"type": "string"},
+            "genome": {"type": "string"},
+            "scores": {"type": "array"},
+            "max_delta_score": {"type": "number"},
+            "interpretation": {"type": "string"}
+          }
+        },
+        "source": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"variant": "chr8-140300616-T-G", "genome": "38"}
+    ]
+  },
+  {
+    "name": "SpliceAI_get_max_delta",
+    "description": "Get simplified maximum SpliceAI delta score and pathogenicity interpretation for a variant. Returns single max score across all splice effects (AG/AL/DG/DL) with interpretation: benign (<0.2), low (0.2-0.5), moderate (0.5-0.8), high (≥0.8). Best for quick variant triage.",
+    "type": "SpliceAITool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Variant in chr-pos-ref-alt format (e.g., chr8-140300616-T-G)"
+        },
+        "genome": {
+          "type": "string",
+          "enum": ["37", "38"],
+          "description": "Genome build: 37 or 38 (default: 38)",
+          "default": "38"
+        }
+      },
+      "required": ["variant"]
+    },
+    "fields": {
+      "operation": "get_max_delta",
+      "timeout": 60
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "variant": {"type": "string"},
+            "genome": {"type": "string"},
+            "max_delta_score": {"type": "number"},
+            "interpretation": {"type": "string"},
+            "pathogenicity_threshold": {"type": "string"}
+          }
+        },
+        "source": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"variant": "chr8-140300616-T-G"}
+    ]
+  },
+  {
+    "name": "SpliceAI_predict_pangolin",
+    "description": "Predict splice-altering effects using Pangolin model (alternative to SpliceAI). Pangolin uses a different architecture and may provide complementary predictions. Returns splice effect scores per transcript. Useful for validation or when SpliceAI gives borderline results.",
+    "type": "SpliceAITool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Variant in chr-pos-ref-alt format (e.g., chr8-140300616-T-G)"
+        },
+        "genome": {
+          "type": "string",
+          "enum": ["37", "38"],
+          "description": "Genome build: 37 or 38 (default: 38)",
+          "default": "38"
+        },
+        "distance": {
+          "type": "integer",
+          "description": "Distance parameter for model (default: 1000)",
+          "default": 1000
+        },
+        "mask": {
+          "type": "boolean",
+          "description": "Use masked scores",
+          "default": false
+        }
+      },
+      "required": ["variant"]
+    },
+    "fields": {
+      "operation": "predict_splice_pangolin",
+      "timeout": 60
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "variant": {"type": "string"},
+            "genome": {"type": "string"},
+            "scores": {"type": "array"}
+          }
+        },
+        "source": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"variant": "chr8-140300616-T-G", "genome": "38"}
+    ]
+  }
+]

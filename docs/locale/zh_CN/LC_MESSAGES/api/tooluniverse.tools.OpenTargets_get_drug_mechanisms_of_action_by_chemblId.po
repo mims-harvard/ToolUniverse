@@ -32,7 +32,7 @@ msgstr ""
 #: 9b2d0a9f36554587ab3c0abcab00b217 of
 #: tooluniverse.tools.OpenTargets_get_drug_mechanisms_of_action_by_chemblId:1
 msgid "OpenTargets_get_drug_mechanisms_of_action_by_chemblId"
-msgstr ""
+msgstr "OpenTargets_通过ChemblId获取药物作用机制"
 
 #: 061741431d4e4ccc8f7312719d352c85 91560543f00a4af2b6f12d9ddf7f45a5 of
 #: tooluniverse.tools.OpenTargets_get_drug_mechanisms_of_action_by_chemblId:3

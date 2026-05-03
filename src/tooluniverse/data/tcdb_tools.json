@@ -1,0 +1,214 @@
+[
+  {
+    "name": "TCDB_get_transporter",
+    "description": "Look up a membrane transporter protein in TCDB (Transporter Classification Database) by UniProt accession. Returns TC classification number(s), family description, associated PDB structures, and human gene info if applicable. TC# format: class.subclass.family.subfamily.protein (e.g., 2.A.1.1.28 for human GLUT1).",
+    "type": "TCDBTool",
+    "fields": {
+      "operation": "get_transporter"
+    },
+    "timeout": 60,
+    "args": [
+      {
+        "name": "uniprot_accession",
+        "type": "string",
+        "description": "UniProt accession ID of the transporter protein (e.g., P11166 for GLUT1, P08183 for P-glycoprotein/MDR1). Aliases: uniprot_id, accession.",
+        "required": true
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_accession": {"type": "string"},
+                "tc_entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "tc_number": {"type": "string"},
+                      "family_description": {"type": ["string", "null"]},
+                      "pdb_structures": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                      }
+                    }
+                  }
+                },
+                "human_info": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": ["string", "null"]},
+                    "symbol": {"type": ["string", "null"]},
+                    "aliases": {"type": ["string", "null"]},
+                    "tc_number": {"type": ["string", "null"]}
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"uniprot_accession": "P11166"},
+      {"uniprot_accession": "P08183"}
+    ]
+  },
+  {
+    "name": "TCDB_search_family",
+    "description": "Search TCDB transporter families by TC family ID prefix or family name text. Returns matching family descriptions and member counts. Use family_id for hierarchical browsing (e.g., '2.A.1' for MFS superfamily, '1.A' for all alpha-type channels) or family_name for text search (e.g., 'Major Facilitator', 'ABC').",
+    "type": "TCDBTool",
+    "fields": {
+      "operation": "search_family"
+    },
+    "timeout": 60,
+    "args": [
+      {
+        "name": "family_id",
+        "type": "string",
+        "description": "TC family ID or prefix to search (e.g., '2.A.1' for Major Facilitator Superfamily, '1.A.1' for VIC superfamily). Matches all families starting with this prefix.",
+        "required": false
+      },
+      {
+        "name": "family_name",
+        "type": "string",
+        "description": "Text to search in family descriptions (e.g., 'Major Facilitator', 'ABC', 'glucose'). Case-insensitive.",
+        "required": false
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "description": "Maximum number of families to return (default 20, max 100).",
+        "required": false
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_matches": {"type": "integer"},
+                "families": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "family_id": {"type": "string"},
+                      "description": {"type": "string"},
+                      "member_count": {"type": "integer"}
+                    }
+                  }
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "family_id": {"type": ["string", "null"]},
+                    "family_name": {"type": ["string", "null"]}
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"family_id": "2.A.1"},
+      {"family_name": "ABC"}
+    ]
+  },
+  {
+    "name": "TCDB_search_by_substrate",
+    "description": "Search TCDB for transporters that transport a given substrate. Returns TC numbers, family descriptions, and matching substrate ChEBI IDs. Useful for finding which transporters handle a specific molecule (e.g., glucose, sodium, chloride, ATP).",
+    "type": "TCDBTool",
+    "fields": {
+      "operation": "search_by_substrate"
+    },
+    "timeout": 60,
+    "args": [
+      {
+        "name": "substrate_name",
+        "type": "string",
+        "description": "Name of the substrate to search for (e.g., 'glucose', 'sodium', 'chloride', 'ATP'). Case-insensitive partial match. Aliases: substrate.",
+        "required": true
+      },
+      {
+        "name": "limit",
+        "type": "integer",
+        "description": "Maximum number of results to return (default 20, max 100).",
+        "required": false
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_matches": {"type": "integer"},
+                "transporters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "tc_number": {"type": "string"},
+                      "family_description": {"type": ["string", "null"]},
+                      "matching_substrates": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "chebi_id": {"type": ["string", "null"]},
+                            "name": {"type": "string"}
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "query": {"type": "string"}
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"substrate_name": "glucose"},
+      {"substrate_name": "chloride"}
+    ]
+  }
+]

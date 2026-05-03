@@ -7,60 +7,58 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse \n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-18 18:52-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.cli.toolspace_cli.rst:2
 #: 43f55413e005487e90425d8dfb3168ff
 msgid "tooluniverse.cli.toolspace\\_cli module"
-msgstr ""
+msgstr "tooluniverse.cli.toolspace\\_cli 模块"
 
 #: 55674f3f4024403eabc660ce292b4e71 of tooluniverse.cli.toolspace_cli:1
 msgid "Space CLI Management Tool"
-msgstr ""
+msgstr "空间 CLI 管理工具"
 
 #: 953bed70ed98470b90f2594328f8e467 of tooluniverse.cli.toolspace_cli:3
 msgid ""
-"This module provides command-line tools for managing Space "
-"configurations."
-msgstr ""
+"This module provides command-line tools for managing Space configurations."
+msgstr "此模块提供用于管理空间配置的命令行工具。"
 
 #: d810201a7dcc4adabc7223fe872d3e81 of tooluniverse.cli.toolspace_cli.main:1
 msgid "Main CLI entry point."
-msgstr ""
+msgstr "主命令行界面入口点。"
 
 #: 2feadc1a86fa43ba91f6eabc19449888 of
 #: tooluniverse.cli.toolspace_cli.handle_list:1
 msgid "Handle list command."
-msgstr ""
+msgstr "处理列表命令。"
 
 #: f18e1b3770274cd4961fa576509ad1f5 of
 #: tooluniverse.cli.toolspace_cli.handle_validate:1
 msgid "Handle validate command."
-msgstr ""
+msgstr "处理验证命令。"
 
 #: 5e12f9a504fb48269dd25da0a2ff1e86 of
 #: tooluniverse.cli.toolspace_cli.handle_create:1
 msgid "Handle create command."
-msgstr ""
+msgstr "处理创建命令。"
 
 #: e42fd8aee24344cf8cc19ee4c2f49f2a of
 #: tooluniverse.cli.toolspace_cli.handle_search:1
 msgid "Handle search command (placeholder)."
-msgstr ""
+msgstr "处理搜索命令（占位符）。"
 
 #: 5c4a4a02a8a94d64bf2ebfaa51999ef3 of
 #: tooluniverse.cli.toolspace_cli.handle_info:1
 msgid "Handle info command."
-msgstr ""
-
+msgstr "处理 info 命令。"

@@ -46,7 +46,21 @@
       "HPO_ID"
     ],
     "type": "MonarchDiseasesForMultiplePheno",
-    "tool_url": "/association"
+    "tool_url": "/association",
+    "test_examples": [
+      {
+        "HPO_ID_list": ["HP:0001250"],
+        "limit": 5,
+        "offset": 1
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of disease names associated with the provided HPO phenotype IDs"
+    }
   },
   {
     "name": "get_phenotype_by_HPO_ID",
@@ -74,7 +88,20 @@
       "HPO_ID"
     ],
     "type": "Monarch",
-    "tool_url": "/entity/{url_key}"
+    "tool_url": "/entity/{url_key}",
+    "test_examples": [
+      {
+        "id": "HP:0001250"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "detail": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "name": "get_HPO_ID_by_phenotype",
@@ -114,6 +141,166 @@
       "HPO_ID"
     ],
     "type": "Monarch",
-    "tool_url": "/search"
+    "tool_url": "/search",
+    "test_examples": [
+      {
+        "query": "epilepsy",
+        "limit": 5,
+        "offset": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  {
+    "name": "Monarch_search_gene",
+    "description": "Search Monarch Initiative knowledge graph for a gene by symbol or name. Returns HGNC/NCBIGene CURIEs, cross-species orthologs, and gene metadata. Use this first to get the gene CURIE needed for Monarch_get_gene_phenotypes and Monarch_get_gene_diseases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene symbol or name (e.g., 'TP53', 'BRCA1', 'WDR7')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of results to return (default: 10)",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of initial entries to skip.",
+          "default": 0
+        }
+      },
+      "required": ["query"]
+    },
+    "query_schema": {
+      "query": null,
+      "category": ["biolink:Gene"],
+      "limit": 10,
+      "offset": 0
+    },
+    "label": ["Monarch", "Gene", "Search", "Cross-Species"],
+    "type": "Monarch",
+    "tool_url": "/search",
+    "test_examples": [
+      {"query": "TP53", "limit": 5},
+      {"query": "WDR7", "limit": 5}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "List of matching gene entities with IDs, names, and categories"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  {
+    "name": "Monarch_get_gene_phenotypes",
+    "description": "Get phenotypes associated with a gene from Monarch Initiative (cross-species). Input is a gene CURIE (e.g., 'HGNC:11998' for TP53). Returns human and model organism phenotypes (HP/MP terms). Use Monarch_search_gene first to find the CURIE.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "description": "Gene CURIE identifier (e.g., 'HGNC:11998' for TP53, 'HGNC:1100' for BRCA1). Use Monarch_search_gene to find this."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum phenotype associations to return (default: 100)",
+          "default": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of initial entries to skip.",
+          "default": 0
+        }
+      },
+      "required": ["subject"]
+    },
+    "query_schema": {
+      "subject": null,
+      "category": ["biolink:GeneToPhenotypicFeatureAssociation"],
+      "limit": 100,
+      "offset": 0
+    },
+    "label": ["Monarch", "Gene", "Phenotype", "Cross-Species"],
+    "type": "Monarch",
+    "tool_url": "/association",
+    "test_examples": [
+      {"subject": "HGNC:11998", "limit": 20}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "List of gene-phenotype associations with phenotype IDs and labels"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    }
+  },
+  {
+    "name": "Monarch_get_gene_diseases",
+    "description": "Get diseases associated with a gene from Monarch Initiative. Input is a gene CURIE (e.g., 'HGNC:11998' for TP53). Returns disease associations with evidence. Bridges gene→disease across species for hypothesis generation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string",
+          "description": "Gene CURIE identifier (e.g., 'HGNC:11998' for TP53). Use Monarch_search_gene to find this."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum disease associations to return (default: 100)",
+          "default": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of initial entries to skip.",
+          "default": 0
+        }
+      },
+      "required": ["subject"]
+    },
+    "query_schema": {
+      "subject": null,
+      "category": ["biolink:CausalGeneToDiseaseAssociation"],
+      "limit": 100,
+      "offset": 0
+    },
+    "label": ["Monarch", "Gene", "Disease", "Cross-Species"],
+    "type": "Monarch",
+    "tool_url": "/association",
+    "test_examples": [
+      {"subject": "HGNC:11998", "limit": 20}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "List of gene-disease associations"
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    }
   }
 ]

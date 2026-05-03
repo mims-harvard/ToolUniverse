@@ -43,7 +43,7 @@
             "description": "Publication year"
           },
           "doi": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Digital Object Identifier (if available)"
           },
           "url": {
@@ -55,8 +55,8 @@
             "description": "Abstract of the document"
           },
           "source": {
-            "type": "string",
-            "description": "Source identifier (always 'HAL')"
+            "type": ["string", "null"],
+            "description": "Source identifier (always 'HAL' when present)"
           }
         }
       }

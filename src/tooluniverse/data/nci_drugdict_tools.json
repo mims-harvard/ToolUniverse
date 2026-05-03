@@ -1,0 +1,287 @@
+[
+  {
+    "name": "NCIDrugDict_search",
+    "description": "Search the NCI (National Cancer Institute) Drug Dictionary for cancer drugs, agents, and therapeutic compounds. Returns drug names, definitions, NCI concept IDs, drug aliases (brand names, code names, chemical names), and links to drug information summaries. Supports searching by drug name, brand name, or chemical name. The NCI Drug Dictionary contains over 9000 drug entries used in cancer treatment and clinical trials.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Drug name to search for (e.g., 'imatinib', 'pembrolizumab', 'tamoxifen', 'cisplatin')"
+        },
+        "matchType": {
+          "type": "string",
+          "default": "Begins",
+          "description": "Match type: 'Begins' (starts with) or 'Contains' (default: Begins)"
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return (default 10)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/search"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "imatinib",
+        "matchType": "Begins",
+        "size": 3
+      },
+      {
+        "query": "pembrolizumab",
+        "matchType": "Contains",
+        "size": 3
+      },
+      {
+        "query": "tamoxifen",
+        "size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "NCI Drug Dictionary search results",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "properties": {
+                "totalResults": {
+                  "type": "integer",
+                  "description": "Total number of matching drugs"
+                },
+                "from": {
+                  "type": "integer",
+                  "description": "Result offset"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "description": "Array of matching drug entries",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "termId": {
+                    "type": "integer",
+                    "description": "NCI drug term ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Drug name as matched"
+                  },
+                  "preferredName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Preferred drug name (if entry is an alias)"
+                  },
+                  "nciConceptId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NCI concept ID (e.g., 'C1687')"
+                  },
+                  "nciConceptName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NCI concept name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Entry type: DrugTerm or DrugAlias"
+                  },
+                  "termNameType": {
+                    "type": "string",
+                    "description": "Name type: PreferredName, USBrandName, CodeName, ChemicalStructureName, etc."
+                  },
+                  "definition": {
+                    "type": "object",
+                    "description": "Drug definition with html and text versions",
+                    "properties": {
+                      "html": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "aliases": {
+                    "type": "array",
+                    "description": "Drug aliases (brand names, code names, etc.)",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "drugInfoSummaryLink": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Link to NCI drug information summary page"
+                  },
+                  "prettyUrlName": {
+                    "type": "string",
+                    "description": "URL-friendly drug name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCIDrugDict_get_drug",
+    "description": "Get detailed information for a specific drug from the NCI Drug Dictionary by its term ID. Returns the drug definition, NCI concept ID, all aliases (brand names, code names, chemical names, CAS registry numbers, NSC numbers), and link to drug information summary page. Use NCIDrugDict_search first to find term IDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "term_id": {
+          "type": "integer",
+          "description": "NCI Drug Dictionary term ID (e.g., 37862 for imatinib mesylate, 695789 for pembrolizumab)"
+        }
+      },
+      "required": [
+        "term_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/{term_id}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "term_id": 37862
+      },
+      {
+        "term_id": 695789
+      },
+      {
+        "term_id": 42555
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed drug information from NCI Drug Dictionary",
+          "properties": {
+            "termId": {
+              "type": "integer",
+              "description": "NCI drug term ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Drug name"
+            },
+            "nciConceptId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NCI concept ID"
+            },
+            "nciConceptName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NCI concept name"
+            },
+            "type": {
+              "type": "string",
+              "description": "Entry type (DrugTerm)"
+            },
+            "definition": {
+              "type": "object",
+              "description": "Drug definition with mechanism of action, indications",
+              "properties": {
+                "html": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            },
+            "aliases": {
+              "type": "array",
+              "description": "All drug aliases including brand names, code names, CAS numbers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Alias type: USBrandName, ForeignBrandName, CodeName, CASRegistryName, NSCNumber, ChemicalStructureName, Synonym, LexicalVariant, Abbreviation"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "drugInfoSummaryLink": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Link to NCI drug information page",
+              "properties": {
+                "uri": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.drugbank\\_filter\\_drugs\\_by\\_name 模块"
 #: c56710b0ab824d2fb66e7877d66ae20f of
 #: tooluniverse.tools.drugbank_filter_drugs_by_name:1
 msgid "drugbank_filter_drugs_by_name"
-msgstr ""
+msgstr "drugbank_按名称筛选药物"
 
 #: 887b5cbc0a844faaa702b19119c105ec e804f11864c24ec394e35af293400ea2 of
 #: tooluniverse.tools.drugbank_filter_drugs_by_name:3

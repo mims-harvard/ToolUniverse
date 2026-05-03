@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_contraindications\\_by\\_drug\\_name 模�
 #: 306233f812b3466daea2b10d653403d0 of
 #: tooluniverse.tools.FDA_get_contraindications_by_drug_name:1
 msgid "FDA_get_contraindications_by_drug_name"
-msgstr ""
+msgstr "FDA_根据药品名称获取禁忌症"
 
 #: 45b5ac9440ad433d8862c136eb4b5e66 6b6660c37cfa47d09f5082f153e03a76 of
 #: tooluniverse.tools.FDA_get_contraindications_by_drug_name:3

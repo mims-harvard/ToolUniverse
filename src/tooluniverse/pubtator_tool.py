@@ -35,6 +35,16 @@ class PubTatorTool(BaseTool):
     # ------------------------------------------------------------------ public API --------------
     def run(self, arguments: Dict[str, Any]):
         args = arguments.copy()
+        # Pop limit early so it doesn't leak to the API as a query param.
+        # The PubTator3 search API ignores the page_size param and always
+        # returns 10 results per page, so we apply client-side truncation.
+        _limit = args.pop("limit", None)
+        if _limit is not None:
+            try:
+                _limit = int(_limit)
+            except (TypeError, ValueError):
+                _limit = None
+
         # Special case for PubTatorRelation: combine parameters into a single "text" parameter and use "/search/" endpoint.
         if self._tool_subtype == "PubTatorRelation":
             subject = args.pop("subject_id", None)
@@ -104,7 +114,8 @@ class PubTatorTool(BaseTool):
         )
         if not response.ok:
             return {
-                "error": f"Request failed with status code {response.status_code}: {response.text}"
+                "status": "error",
+                "error": f"Request failed with status code {response.status_code}: {response.text}",
             }
 
         # ---------- auto-detect & return ----------
@@ -114,6 +125,16 @@ class PubTatorTool(BaseTool):
             # Extra filtering for PubTatorSearch: filter low-score items and facets.
             if self._tool_subtype == "PubTatorSearch" and isinstance(result, dict):
                 result = self._filter_search_results(result)
+                # Apply client-side limit: PubTator3 API ignores page_size
+                # and always returns 10 results, so truncate here.
+                if (
+                    _limit is not None
+                    and "results" in result
+                    and isinstance(result["results"], list)
+                ):
+                    result["results"] = result["results"][:_limit]
+            if isinstance(result, dict) and "status" not in result:
+                return {"status": "success", **result}
             return result
         if "text" in ctype or "xml" in ctype:
             return response.text
@@ -151,7 +172,9 @@ class PubTatorTool(BaseTool):
     def _filter_search_results(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Filter PubTatorSearch results by score threshold and remove facet items that only have 'name', 'type', and 'value'."""
         # Filter result items based on score threshold.
-        threshold = 230  # Adjust threshold as needed
+        # Note: common single-word queries like "cancer" score ~222, so use a
+        # conservative threshold to avoid silently dropping all results.
+        threshold = 100
         if "results" in result and isinstance(result["results"], list):
             filtered_results = []
             for item in result["results"]:

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_ligand\\_smiles\\_by\\_chem\\_comp\\_id 模块"
 #: a5ee93185899478c83b12794d11fbf5e of
 #: tooluniverse.tools.get_ligand_smiles_by_chem_comp_id:1
 msgid "get_ligand_smiles_by_chem_comp_id"
-msgstr ""
+msgstr "get_ligand_smiles_by_chem_comp_id（通过化学组分ID获取配体SMILES）"
 
 #: 27ffc69c7d784c54b4097d53d49f4372 89b95271730b45e4b53f4192d62f5e0e of
 #: tooluniverse.tools.get_ligand_smiles_by_chem_comp_id:3

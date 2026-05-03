@@ -1,0 +1,90 @@
+[
+  {
+    "name": "CrystalStructure_validate",
+    "type": "CrystalStructureTool",
+    "description": "Validate crystal structure by computing theoretical density from unit cell parameters (a, b, c in Angstroms; alpha, beta, gamma in degrees), Z (formula units per cell), and molecular weight (g/mol). Compares against an optional reported density and flags deviations >1% (warning) or >5% (mismatch). Auto-detects crystal system (cubic, tetragonal, orthorhombic, hexagonal, trigonal, monoclinic, triclinic). Uses V = abc*sqrt(1 - cos2a - cos2b - cos2g + 2*cos(a)*cos(b)*cos(g)) and d = Z*MW/(V*Na). Angles default to 90 degrees; b and c default to a for cubic systems.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["validate"],
+          "description": "Operation type"
+        },
+        "a": {
+          "type": "number",
+          "description": "Unit cell parameter a in Angstroms"
+        },
+        "b": {
+          "type": "number",
+          "description": "Unit cell parameter b in Angstroms (defaults to a)"
+        },
+        "c": {
+          "type": "number",
+          "description": "Unit cell parameter c in Angstroms (defaults to a)"
+        },
+        "alpha": {
+          "type": "number",
+          "description": "Unit cell angle alpha in degrees (default 90)"
+        },
+        "beta": {
+          "type": "number",
+          "description": "Unit cell angle beta in degrees (default 90)"
+        },
+        "gamma": {
+          "type": "number",
+          "description": "Unit cell angle gamma in degrees (default 90)"
+        },
+        "Z": {
+          "type": "integer",
+          "description": "Number of formula units per unit cell"
+        },
+        "mw": {
+          "type": "number",
+          "description": "Molecular weight in g/mol"
+        },
+        "reported_density": {
+          "type": "number",
+          "description": "Optional reported density in g/cm^3 to compare against"
+        }
+      },
+      "required": ["operation", "a", "Z", "mw"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "crystal_system": {"type": "string"},
+                "volume_ang3": {"type": "number"},
+                "calculated_density_g_cm3": {"type": "number"},
+                "reported_density_g_cm3": {"type": "number"},
+                "percent_error": {"type": "number"},
+                "verdict": {"type": "string"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "validate",
+        "a": 5.64,
+        "Z": 4,
+        "mw": 58.44,
+        "reported_density": 2.16
+      }
+    ]
+  }
+]

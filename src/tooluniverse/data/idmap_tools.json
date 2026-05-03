@@ -23,7 +23,58 @@
       ]
     },
     "query_schema": "query getDiseaseDbXRefsByName($name: String!) {\n  search(queryString: $name, entityNames: [\"disease\"], page: { index: 0, size: 1 }) {\n    hits {\n      id\n      name\n      object {\n        ... on Disease {\n          id\n          name\n          dbXRefs\n        }\n      }\n    }\n  }\n}",
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "name": "rheumatoid arthritis"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "object": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "dbXRefs": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_ids_by_efoId",
@@ -49,7 +100,39 @@
       ]
     },
     "query_schema": "query getDiseaseDbXRefs($efoId: String!) {\n  disease(efoId: $efoId) {\n    id\n    name\n    dbXRefs\n  }\n}",
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000685"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "dbXRefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_map_any_disease_id_to_all_other_ids",
@@ -75,6 +158,37 @@
       ]
     },
     "query_schema": "query mapAnyDiseaseIdToDbXRefs($inputId: String!) {\n  mapIds(queryTerms: [$inputId], entityNames: [\"disease\"]) {\n    mappings {\n      term\n      hits {\n        id\n        name\n        object {\n          ... on Disease {\n            id\n            name\n            dbXRefs\n          }\n        }\n      }\n    }\n  }\n}",
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "inputId": "1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "mapIds": {
+              "type": "object",
+              "properties": {
+                "mappings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 ]

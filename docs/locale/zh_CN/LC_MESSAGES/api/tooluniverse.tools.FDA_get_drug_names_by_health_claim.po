@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_health\\_claim 模块
 #: bda09c24d80e4b56bf05a697428dc7f1 of
 #: tooluniverse.tools.FDA_get_drug_names_by_health_claim:1
 msgid "FDA_get_drug_names_by_health_claim"
-msgstr ""
+msgstr "FDA_get_drug_names_by_health_claim（根据健康声明获取药品名称）"
 
 #: 29847f6e6812476a93920d1011cb9686 6d3d16b62fa24469b632c3706cf916c9 of
 #: tooluniverse.tools.FDA_get_drug_names_by_health_claim:3

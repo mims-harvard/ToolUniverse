@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def extract_clinical_trial_outcomes(
-    nct_ids: list[Any],
+    nct_ids: list[str],
     outcome_measure: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -21,7 +21,7 @@ def extract_clinical_trial_outcomes(
 
     Parameters
     ----------
-    nct_ids : list[Any]
+    nct_ids : list[str]
         List of NCT IDs of the clinical trials (e.g., ['NCT04852770', 'NCT01728545']).
     outcome_measure : str
         Outcome measure to extract. Example values include 'primary' (primary outcome...
@@ -38,10 +38,16 @@ def extract_clinical_trial_outcomes(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"nct_ids": nct_ids, "outcome_measure": outcome_measure}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "extract_clinical_trial_outcomes",
-            "arguments": {"nct_ids": nct_ids, "outcome_measure": outcome_measure},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

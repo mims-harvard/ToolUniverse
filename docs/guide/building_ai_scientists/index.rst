@@ -1,42 +1,184 @@
-Building AI Scientists
-======================
+Set Up ToolUniverse
+===================
 
-Overview
---------
+Open your AI agent and run this single prompt to get started:
 
-A customized AI scientist can be developed by integrating ToolUniverse with LLMs, reasoning models, and AI agents. In this configuration, the LLMs and reasoning models provide the core capabilities for reasoning and tool usage, while ToolUniverse serves as the scientific environment for interaction and experimentation.
+.. code-block:: text
 
-The development process typically involves three steps:
+   Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.
 
-1. Installing ToolUniverse with a single command (``pip install tooluniverse``)
-2. Connecting ToolUniverse to the chosen model so it can access the tools provided by ToolUniverse
-3. Instructing the model to use these tools to address a given scientific problem
+Your agent will walk you through MCP configuration, API keys, and validation step by step.
 
-How AI Scientists Operate
--------------------------
+Choose your platform
+--------------------
 
-Once the setup is complete, the AI scientist operates as follows: given a user instruction or task, it formulates a plan or hypothesis, employs the tool finder in ToolUniverse to identify relevant tools, and iteratively applies these tools to gather information, conduct experiments, verify hypotheses, and request human feedback when necessary. For each required tool call, the AI scientist generates arguments that conform to the ToolUniverse protocol, after which ToolUniverse executes the tool and returns the results for further reasoning.
+.. grid:: 1 1 2 3
+   :gutter: 3
+   :class-container: platform-grid
 
-Model Types
------------
+   .. grid-item-card::
+      :link: claude_desktop
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
 
-The models used to construct AI scientists can include:
+      **Claude Desktop**
+      ^^^
+      Desktop app with native MCP integration
 
-- **LLMs**: API-based (GPT, Claude, Gemini) or open-weight models (LLaMA, DeepSeek, Qwen)
-- **Reasoning Models**: Enhance problem-solving capabilities by applying built-in chains of thought to analyze the current step before interacting with ToolUniverse
-- **Agentic Systems**: Such as Gemini CLI or Claude Code, integrate reasoning models with agentic feedback loops to autonomously manage multi-step problem solving and tool use
-- **Specialized Agents**: Trained for specific scientific domains, enabling stronger performance on targeted tasks
+   .. grid-item-card::
+      :link: claude_code
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
 
-Integration Methods
--------------------
+      **Claude Code**
+      ^^^
+      Terminal-based AI coding agent
+
+   .. grid-item-card::
+      :link: cursor
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Cursor**
+      ^^^
+      AI-first code editor with MCP support
+
+   .. grid-item-card::
+      :link: windsurf
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Windsurf**
+      ^^^
+      Agentic IDE with autonomous coding agents
+
+   .. grid-item-card::
+      :link: antigravity
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Antigravity**
+      ^^^
+      Google's free agentic IDE with parallel agents
+
+   .. grid-item-card::
+      :link: cline
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Cline**
+      ^^^
+      VS Code extension with MCP integration
+
+   .. grid-item-card::
+      :link: trae
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Trae**
+      ^^^
+      AI coding assistant with MCP support
+
+   .. grid-item-card::
+      :link: opencode
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **OpenCode**
+      ^^^
+      Open-source AI coding platform
+
+   .. grid-item-card::
+      :link: gemini_cli
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Gemini CLI**
+      ^^^
+      Command-line interface with Google Gemini
+
+   .. grid-item-card::
+      :link: qwen_code
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Qwen Code**
+      ^^^
+      Code editor for AI scientist workflows
+
+   .. grid-item-card::
+      :link: codex_cli
+      :link-type: doc
+      :class-card: platform-card hover-lift
+      :shadow: md
+
+      **Codex CLI**
+      ^^^
+      Terminal-based interface with OpenAI Codex
+
+MCP configuration
+-----------------
+
+All platforms use the same MCP config snippet:
+
+.. code-block:: json
+
+   {
+     "mcpServers": {
+       "tooluniverse": {
+         "command": "uvx",
+         "args": ["--refresh", "tooluniverse"],
+         "env": {"PYTHONIOENCODING": "utf-8"}
+       }
+     }
+   }
+
+For advanced MCP options, see :doc:`mcp_support`.
+
+Agent skills
+------------
+
+Skills are pre-built research workflows that guide your agent through complex tasks. Install all skills with one command:
+
+.. code-block:: bash
+
+   npx skills add mims-harvard/ToolUniverse
+
+Then ask your agent: *"research the drug metformin"*, *"find targets for Alzheimer's disease"*, or *"analyze protein structure for EGFR"*. See the full :doc:`../skills_showcase`.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Integration Methods
+   :hidden:
+   :caption: Platform Setup Guides
 
    claude_desktop
    claude_code
+   cursor
+   windsurf
+   antigravity
+   cline
+   trae
+   opencode
    gemini_cli
    qwen_code
    codex_cli
-   chatgpt_api
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+   :caption: MCP & Integration
+
+   mcp_support
+   mcpb_introduction
+   mcp_name_shortening
+   compact_mode

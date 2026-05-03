@@ -103,7 +103,6 @@
 "name": "get_h5py_info"
 "name": "get_harmony_pytorch_info"
 "name": "get_hmmlearn_info"
-"name": "get_hyperopt_info"
 "name": "get_igraph_info"
 "name": "get_jcvi_info"
 "name": "get_khmer_info"

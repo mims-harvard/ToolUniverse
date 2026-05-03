@@ -1,0 +1,555 @@
+[
+  {
+    "name": "GlyGen_get_glycan",
+    "description": "Get detailed glycan structure information from GlyGen by GlyTouCan accession. Returns mass, monosaccharide count, IUPAC/WURCS representations, species, glycoprotein associations, and publications. Essential for glycomics research. Example: G17689DH returns a 12-monosaccharide biantennary N-glycan found in human and hamster.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "glytoucan_ac": {
+          "type": "string",
+          "description": "GlyTouCan accession ID for the glycan. Examples: 'G17689DH', 'G62765YT', 'G00055MO'."
+        }
+      },
+      "required": [
+        "glytoucan_ac"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "glycan",
+      "query_mode": "detail"
+    },
+    "type": "GlyGenTool",
+    "test_examples": [
+      {
+        "glytoucan_ac": "G17689DH"
+      },
+      {
+        "glytoucan_ac": "G62765YT"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "glytoucan_ac": {
+                  "type": "string",
+                  "description": "GlyTouCan accession ID"
+                },
+                "mass": {
+                  "type": "number",
+                  "description": "Molecular mass in Daltons"
+                },
+                "number_monosaccharides": {
+                  "type": "integer",
+                  "description": "Number of monosaccharide residues"
+                },
+                "glycan_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Glycan classification type"
+                },
+                "iupac": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "IUPAC condensed notation"
+                },
+                "wurcs": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "WURCS linear notation"
+                },
+                "species": {
+                  "type": "array",
+                  "description": "Species where glycan is found"
+                },
+                "glycoprotein_count": {
+                  "type": "integer",
+                  "description": "Number of associated glycoproteins"
+                },
+                "publication_count": {
+                  "type": "integer",
+                  "description": "Number of associated publications"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GlyGen_search_glycans",
+    "description": "Search GlyGen for glycans by mass range, monosaccharide count, organism, or glycan type. Returns matching glycan accessions with mass, protein counts, and relevance scores. Use for finding glycans within specific structural or biological criteria.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "mass_min": {
+          "type": "number",
+          "description": "Minimum molecular mass in Daltons. Example: 1000."
+        },
+        "mass_max": {
+          "type": "number",
+          "description": "Maximum molecular mass in Daltons. Example: 3000."
+        },
+        "monosaccharide_min": {
+          "type": "integer",
+          "description": "Minimum number of monosaccharide residues."
+        },
+        "monosaccharide_max": {
+          "type": "integer",
+          "description": "Maximum number of monosaccharide residues."
+        },
+        "glycan_type": {
+          "type": "string",
+          "description": "Glycan type filter. Examples: 'N-linked', 'O-linked'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default 20, max 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset (1-indexed, default 1)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint_type": "glycan",
+      "query_mode": "search"
+    },
+    "type": "GlyGenTool",
+    "test_examples": [
+      {
+        "mass_min": 1000,
+        "mass_max": 2000,
+        "monosaccharide_min": 5,
+        "monosaccharide_max": 10,
+        "limit": 5
+      },
+      {
+        "mass_min": 2000,
+        "mass_max": 3000,
+        "monosaccharide_min": 10,
+        "monosaccharide_max": 15,
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "glytoucan_ac": {
+                    "type": "string"
+                  },
+                  "mass": {
+                    "type": "number"
+                  },
+                  "number_proteins": {
+                    "type": "integer"
+                  },
+                  "number_enzymes": {
+                    "type": "integer"
+                  },
+                  "number_species": {
+                    "type": "integer"
+                  },
+                  "hit_score": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "list_id": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GlyGen_get_glycoprotein",
+    "description": "Get detailed glycoprotein information from GlyGen by UniProt accession. Returns protein name, glycosylation sites (N-linked, O-linked), site positions, attached glycan structures, and associated diseases/pathways. Essential for studying protein glycosylation. Example: P14210 (Hepatocyte Growth Factor) has 77 glycosylation annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_ac": {
+          "type": "string",
+          "description": "UniProt accession ID. Examples: 'P14210' (HGF), 'P02724' (Glycophorin A), 'P01857' (IgG1)."
+        }
+      },
+      "required": [
+        "uniprot_ac"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "protein",
+      "query_mode": "detail"
+    },
+    "type": "GlyGenTool",
+    "test_examples": [
+      {
+        "uniprot_ac": "P14210"
+      },
+      {
+        "uniprot_ac": "P02724"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "protein_name": {
+                  "type": "string"
+                },
+                "gene_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "species": {
+                  "type": "string"
+                },
+                "glycosylation_count": {
+                  "type": "integer",
+                  "description": "Total number of glycosylation annotations"
+                },
+                "glycosylation_sites": {
+                  "type": "array",
+                  "description": "Glycosylation site details with positions, types, and attached glycans"
+                },
+                "disease_count": {
+                  "type": "integer"
+                },
+                "pathway_count": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GlyGen_search_glycoproteins",
+    "description": "Search GlyGen for glycoproteins by organism, glycosylation evidence type, protein name, or gene name. Returns matching proteins with glycosylation site counts and relevance scores. Useful for finding glycosylated proteins in specific organisms or pathways.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "organism_id": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID. Examples: 9606 (human), 10090 (mouse), 10029 (Chinese hamster)."
+        },
+        "glycosylation_evidence": {
+          "type": "string",
+          "description": "Evidence level filter. Options: 'reported' (experimentally confirmed)."
+        },
+        "glycosylation_type": {
+          "type": "string",
+          "description": "Type of glycosylation. Examples: 'N-linked', 'O-linked'."
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Protein name to search. Example: 'transferrin'."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene name to search. Example: 'EGFR'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default 20, max 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset (1-indexed, default 1)."
+        }
+      }
+    },
+    "fields": {
+      "endpoint_type": "protein",
+      "query_mode": "search"
+    },
+    "type": "GlyGenTool",
+    "test_examples": [
+      {
+        "organism_id": 9606,
+        "glycosylation_evidence": "reported",
+        "limit": 5
+      },
+      {
+        "gene_name": "EGFR",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uniprot_canonical_ac": {
+                    "type": "string"
+                  },
+                  "protein_name": {
+                    "type": "string"
+                  },
+                  "gene_name": {
+                    "type": "string"
+                  },
+                  "organism": {
+                    "type": "string"
+                  },
+                  "glycosylation_count": {
+                    "type": "integer"
+                  },
+                  "hit_score": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "list_id": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GlyGen_get_site",
+    "description": "Get detailed information about a specific glycosylation site from GlyGen. Returns the amino acid position, flanking sequences, attached glycans, SNVs at the site, phosphorylation, and mutagenesis data. Useful for studying site-specific glycosylation and its biological consequences.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "site_id": {
+          "type": "string",
+          "description": "Glycosylation site identifier in format UniProtAC.start_pos.end_pos. Examples: 'P02724-1.52.52', 'P14210-1.294.294'."
+        }
+      },
+      "required": [
+        "site_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "site",
+      "query_mode": "detail"
+    },
+    "type": "GlyGenTool",
+    "test_examples": [
+      {
+        "site_id": "P02724-1.52.52"
+      },
+      {
+        "site_id": "P14210-1.294.294"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "site_id": {
+                  "type": "string"
+                },
+                "uniprot_ac": {
+                  "type": "string"
+                },
+                "start_pos": {
+                  "type": "integer"
+                },
+                "end_pos": {
+                  "type": "integer"
+                },
+                "site_seq": {
+                  "type": "string",
+                  "description": "Amino acid at the glycosylation site"
+                },
+                "upstream_seq": {
+                  "type": "string",
+                  "description": "Upstream flanking sequence"
+                },
+                "downstream_seq": {
+                  "type": "string",
+                  "description": "Downstream flanking sequence"
+                },
+                "glycosylation": {
+                  "type": "array",
+                  "description": "Glycosylation annotations at this site"
+                },
+                "snv": {
+                  "type": "array",
+                  "description": "SNVs at this position"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

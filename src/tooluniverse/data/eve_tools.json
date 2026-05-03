@@ -1,0 +1,116 @@
+[
+    {
+        "name": "EVE_get_variant_score",
+        "description": "Get EVE (Evolutionary Variant Effect) pathogenicity score for a variant. EVE uses unsupervised deep learning on evolutionary data. Scores: 0-1 where >0.5 is likely pathogenic. Accessed via Ensembl VEP API.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variant": {
+                    "type": "string",
+                    "description": "Variant in HGVS format (e.g., 'ENST00000269305.4:c.100G>A', 'NM_000546.5:c.215C>G')"
+                },
+                "chrom": {
+                    "type": "string",
+                    "description": "Chromosome (1-22, X, Y). Use with pos, ref, alt instead of variant."
+                },
+                "pos": {
+                    "type": "integer",
+                    "description": "Genomic position (GRCh38)"
+                },
+                "ref": {
+                    "type": "string",
+                    "description": "Reference allele"
+                },
+                "alt": {
+                    "type": "string",
+                    "description": "Alternate allele"
+                },
+                "species": {
+                    "type": "string",
+                    "default": "human",
+                    "description": "Species (default: human)"
+                }
+            }
+        },
+        "fields": {
+            "operation": "get_variant_score"
+        },
+        "type": "EVETool",
+        "test_examples": [
+            {
+                "chrom": "17",
+                "pos": 7674220,
+                "ref": "G",
+                "alt": "A"
+            },
+            {
+                "chrom": "7",
+                "pos": 140753336,
+                "ref": "T",
+                "alt": "A"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "variant": {"type": "string"},
+                        "eve_scores": {"type": "array"},
+                        "threshold": {"type": "object"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["EVE", "Pathogenicity", "Evolution"],
+        "metadata": {
+            "tags": ["pathogenicity", "evolutionary", "variant_effect", "unsupervised"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "EVE_get_gene_info",
+        "description": "Check if EVE scores are available for a gene and get gene information. EVE covers ~3,000 disease-related human genes. Returns Ensembl ID and link to EVE website.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR')"
+                }
+            },
+            "required": ["gene_symbol"]
+        },
+        "fields": {
+            "operation": "get_gene_info"
+        },
+        "type": "EVETool",
+        "test_examples": [
+            {"gene_symbol": "TP53"},
+            {"gene_symbol": "BRCA1"}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "gene_symbol": {"type": "string"},
+                        "ensembl_id": {"type": "string"},
+                        "eve_website": {"type": "string"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["EVE", "Gene", "Info"],
+        "metadata": {
+            "tags": ["gene_info", "coverage"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    }
+]

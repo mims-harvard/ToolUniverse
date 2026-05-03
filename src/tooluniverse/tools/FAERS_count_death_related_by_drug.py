@@ -1,7 +1,7 @@
 """
 FAERS_count_death_related_by_drug
 
-Count adverse events associated with patient death for a given drug. Data source: FDA Adverse Eve...
+Count adverse events associated with patient death for a given drug. Only medicinalproduct is req...
 """
 
 from typing import Any, Optional, Callable
@@ -14,9 +14,9 @@ def FAERS_count_death_related_by_drug(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Count adverse events associated with patient death for a given drug. Data source: FDA Adverse Eve...
+    Count adverse events associated with patient death for a given drug. Only medicinalproduct is req...
 
     Parameters
     ----------
@@ -31,14 +31,18 @@ def FAERS_count_death_related_by_drug(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v for k, v in {"medicinalproduct": medicinalproduct}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "FAERS_count_death_related_by_drug",
-            "arguments": {"medicinalproduct": medicinalproduct},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

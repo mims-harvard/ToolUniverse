@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_child\\_safety\\_info
 #: 5c1d6765cfd14c29b5495688a3cb3ccf of
 #: tooluniverse.tools.FDA_get_drug_names_by_child_safety_info:1
 msgid "FDA_get_drug_names_by_child_safety_info"
-msgstr ""
+msgstr "FDA_get_drug_names_by_child_safety_info（根据儿童安全信息获取药品名称）"
 
 #: 1205ccdb67a043239f70d7002b3bab15 444ed8c5db03476e8aa9504be63bfec2 of
 #: tooluniverse.tools.FDA_get_drug_names_by_child_safety_info:3

@@ -1,0 +1,273 @@
+[
+  {
+    "name": "CellMarker_search_by_gene",
+    "type": "CellMarkerTool",
+    "description": "Search the CellMarker 2.0 database for cell types that express a given marker gene. Returns curated cell type annotations from single-cell RNA-seq studies and experimental literature. CellMarker 2.0 covers >500 cell types across >400 tissue types in human and mouse. Use this to identify which cell types a gene marks, enabling cell type annotation in scRNA-seq analysis. Example: CD3D marks T cells, CD68 marks macrophages, EPCAM marks epithelial cells.",
+    "category": "Genomics & Transcriptomics",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_by_gene"],
+          "description": "Operation type"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol to search for (e.g., 'CD3D', 'CD68', 'EPCAM', 'MS4A1')"
+        },
+        "species": {
+          "type": "string",
+          "enum": ["Human", "Mouse"],
+          "description": "Species filter: 'Human' or 'Mouse'. If omitted, searches both species."
+        },
+        "tissue_type": {
+          "type": "string",
+          "description": "Filter results by tissue type (e.g., 'Blood', 'Lung', 'Brain'). Case-insensitive partial match."
+        }
+      },
+      "required": ["operation", "gene_symbol"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {"type": "string"},
+        "species": {"type": "string"},
+        "total_records": {"type": "integer"},
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "species": {"type": "string"},
+              "tissue_class": {"type": "string"},
+              "tissue_type": {"type": "string"},
+              "cell_type": {"type": "string"},
+              "cell_name": {"type": "string"},
+              "cell_marker": {"type": "string"},
+              "source": {"type": "string"},
+              "supports": {"type": "integer"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_by_gene",
+        "gene_symbol": "CD3D",
+        "species": "Human"
+      },
+      {
+        "operation": "search_by_gene",
+        "gene_symbol": "CD68",
+        "species": "Human",
+        "tissue_type": "Blood"
+      }
+    ]
+  },
+  {
+    "name": "CellMarker_search_by_cell_type",
+    "type": "CellMarkerTool",
+    "description": "Search the CellMarker 2.0 database for marker genes of a specific cell type. Returns curated lists of marker genes that define a cell type, sourced from single-cell RNA-seq studies and experimental literature. Use this to find canonical markers for cell type annotation, or to build gene sets for cell scoring. Example: 'T cell' returns CD3D, CD3E, CD3G, etc. 'Macrophage' returns CD68, CD163, MARCO, etc.",
+    "category": "Genomics & Transcriptomics",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_by_cell_type"],
+          "description": "Operation type"
+        },
+        "cell_name": {
+          "type": "string",
+          "description": "Cell type name to search for (e.g., 'T cell', 'Macrophage', 'B cell', 'Fibroblast')"
+        },
+        "species": {
+          "type": "string",
+          "enum": ["Human", "Mouse"],
+          "description": "Species filter. If omitted, searches both species."
+        },
+        "tissue_type": {
+          "type": "string",
+          "description": "Filter results by tissue type (e.g., 'Blood', 'Lung', 'Brain'). Case-insensitive partial match."
+        }
+      },
+      "required": ["operation", "cell_name"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cell_name": {"type": "string"},
+        "species": {"type": "string"},
+        "total_records": {"type": "integer"},
+        "unique_markers": {"type": "integer"},
+        "marker_genes": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "species": {"type": "string"},
+              "tissue_class": {"type": "string"},
+              "tissue_type": {"type": "string"},
+              "cell_type": {"type": "string"},
+              "cell_name": {"type": "string"},
+              "cell_marker": {"type": "string"},
+              "source": {"type": "string"},
+              "supports": {"type": "integer"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_by_cell_type",
+        "cell_name": "Macrophage",
+        "species": "Human"
+      },
+      {
+        "operation": "search_by_cell_type",
+        "cell_name": "T cell",
+        "species": "Human",
+        "tissue_type": "Blood"
+      }
+    ]
+  },
+  {
+    "name": "CellMarker_list_cell_types",
+    "type": "CellMarkerTool",
+    "description": "List available cell types in the CellMarker 2.0 database for a given tissue and species. Returns all annotated cell types found in that tissue context. Use this to explore what cell types have been characterized in a specific tissue, or to get an overview of CellMarker's coverage. Supports both normal and cancer cell contexts.",
+    "category": "Genomics & Transcriptomics",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_cell_types"],
+          "description": "Operation type"
+        },
+        "tissue_type": {
+          "type": "string",
+          "description": "Tissue type to list cell types for (e.g., 'Blood', 'Lung', 'Brain', 'Liver'). If omitted, returns a global list."
+        },
+        "species": {
+          "type": "string",
+          "enum": ["Human", "Mouse"],
+          "description": "Species to query (default: 'Human')"
+        },
+        "cell_class": {
+          "type": "string",
+          "enum": ["all", "cancer"],
+          "description": "Cell class filter: 'all' for normal+cancer (default), 'cancer' for cancer cells only"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "species": {"type": "string"},
+        "tissue_type": {"type": "string"},
+        "total_cell_types": {"type": "integer"},
+        "cell_types": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cell_name": {"type": "string"},
+              "tissue_class": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_cell_types",
+        "tissue_type": "Blood",
+        "species": "Human"
+      },
+      {
+        "operation": "list_cell_types",
+        "tissue_type": "Lung",
+        "species": "Human",
+        "cell_class": "cancer"
+      }
+    ]
+  },
+  {
+    "name": "CellMarker_search_cancer_markers",
+    "type": "CellMarkerTool",
+    "description": "Search the CellMarker 2.0 database for cancer-specific cell markers. Returns marker genes and cell types found in cancer tissue contexts. Use this to identify tumor-specific markers, immune cell markers in the tumor microenvironment, or cancer stem cell markers. Filters results to 'Cancer cell' annotations only. At least one search parameter is required: cancer_type (tissue), gene_symbol, or cell_type.",
+    "category": "Genomics & Transcriptomics",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_cancer_markers"],
+          "description": "Operation type"
+        },
+        "cancer_type": {
+          "type": "string",
+          "description": "Cancer tissue type (e.g., 'Breast', 'Lung', 'Brain', 'Liver'). Filters by tissue where cancer occurs."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Marker gene to search in cancer context (e.g., 'CD274' for PD-L1, 'EPCAM')"
+        },
+        "cell_type": {
+          "type": "string",
+          "description": "Cancer cell type to search for (e.g., 'Cancer stem cell', 'T cell', 'Macrophage')"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "object",
+          "properties": {
+            "cancer_type": {"type": "string"},
+            "gene_symbol": {"type": "string"},
+            "cell_type": {"type": "string"}
+          }
+        },
+        "total_records": {"type": "integer"},
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "species": {"type": "string"},
+              "tissue_class": {"type": "string"},
+              "tissue_type": {"type": "string"},
+              "cell_type": {"type": "string"},
+              "cell_name": {"type": "string"},
+              "cell_marker": {"type": "string"},
+              "source": {"type": "string"},
+              "supports": {"type": "integer"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_cancer_markers",
+        "gene_symbol": "CD274"
+      },
+      {
+        "operation": "search_cancer_markers",
+        "cancer_type": "Breast",
+        "cell_type": "T cell"
+      }
+    ]
+  }
+]

@@ -1,0 +1,68 @@
+# ToolUniverse Default Configuration
+# ====================================
+# This file ships with ToolUniverse and represents the factory defaults.
+# Copy it to your workspace (.tooluniverse/profile.yaml) and edit freely.
+#
+# Workspace layout:
+#   .tooluniverse/
+#   ├── .env           ← API keys (never commit to git)
+#   └── profile.yaml   ← this file (safe to commit)
+
+name: default
+version: "1.0"
+description: Default ToolUniverse configuration — loads all tools with default settings
+
+# ── Tool selection ──────────────────────────────────────────────────────────
+# By default all tools are loaded. Uncomment and edit to restrict.
+tools:
+  categories: []          # [] = all categories. e.g. [literature, drug, genomics]
+  include_tools: []       # add specific tools by name
+  exclude_tools: []       # remove specific tools by name
+  include_tool_types: []  # filter by type: api, agentic, local, remote
+  exclude_tool_types: []  # e.g. [agentic] to skip LLM-dependent tools
+
+# ── Cache ───────────────────────────────────────────────────────────────────
+cache:
+  enabled: true       # set false to disable all caching
+  memory_size: 256    # max results kept in memory (LRU eviction)
+  persist: true       # write cache to disk (SQLite) across sessions
+  # ttl: 3600         # seconds before a result expires. Omit = cache forever.
+
+# ── LLM configuration ───────────────────────────────────────────────────────
+# Required only for agentic tools (AgenticTool). Set your API key in .env.
+# llm_config:
+#   default_provider: CHATGPT   # CHATGPT, GEMINI, OPENROUTER, VLLM
+#   models:
+#     default: gpt-4o
+#   temperature: 0.2
+
+# ── Hooks ───────────────────────────────────────────────────────────────────
+# Post-process tool outputs automatically.
+# hooks:
+#   - type: output_summarization
+#     enabled: true
+#     config:
+#       max_length: 500
+
+# ── External tool sources ───────────────────────────────────────────────────
+# Load tools from additional packages (HuggingFace, local path, HTTP URL).
+sources: []
+# sources:
+#   - hf:community/genomics-tools
+#   - ./my-local-tools/
+
+# ── Inherit from another profile ────────────────────────────────────────────
+# Deep-merges the base profile before applying this config.
+# extends: hf:community/base-bio-tools
+
+# ── Required environment variables ─────────────────────────────────────────
+# Warns at startup if any of these are missing. Does not set them.
+# Put actual values in .env, not here.
+required_env: []
+# required_env:
+#   - OPENAI_API_KEY
+#   - PUBMED_API_KEY
+
+# ── Log level ───────────────────────────────────────────────────────────────
+# Controls tooluniverse logger verbosity.
+# log_level: INFO   # DEBUG, INFO, WARNING, ERROR, CRITICAL

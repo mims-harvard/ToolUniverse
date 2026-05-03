@@ -1,0 +1,166 @@
+[
+    {
+        "name": "DisProt_search",
+        "description": "Search DisProt for intrinsically disordered proteins by text query (gene name, protein name, organism, or keyword). DisProt is a manually curated database providing experimentally validated disorder annotations with evidence codes and literature references. Returns DisProt ID, UniProt accession, protein name, organism, disorder content fraction, and number of annotated regions. Useful for finding disordered proteins in a specific pathway or organism. Example: searching 'TP53' returns DP00086 (p53, 37.7% disorder, 63 regions); searching 'amyloid' returns proteins associated with amyloid formation.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search term: gene name (e.g., 'TP53'), protein name (e.g., 'kinase'), organism (e.g., 'sapiens'), or keyword (e.g., 'amyloid', 'phase separation')."
+                },
+                "page_size": {
+                    "type": "integer",
+                    "description": "Number of results to return (default 10, max 20)."
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint": "search"
+        },
+        "type": "DisProtTool",
+        "test_examples": [
+            {
+                "query": "TP53"
+            },
+            {
+                "query": "amyloid",
+                "page_size": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "disprot_id": {"type": "string", "description": "DisProt accession (e.g., DP00086)"},
+                                    "acc": {"type": "string", "description": "UniProt accession"},
+                                    "name": {"type": "string", "description": "Protein name"},
+                                    "gene": {"type": "string", "description": "Gene symbol"},
+                                    "organism": {"type": "string"},
+                                    "length": {"type": "integer"},
+                                    "disorder_content": {"type": ["number", "null"], "description": "Fraction of sequence that is disordered (0-1)"},
+                                    "regions_counter": {"type": ["integer", "null"], "description": "Number of annotated disorder regions"},
+                                    "dataset": {"type": "array", "items": {"type": "string"}, "description": "Dataset categories"}
+                                }
+                            },
+                            "description": "List of matching disordered proteins"
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "query": {"type": "string"},
+                                "returned": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "DisProt_get_entry",
+        "description": "Get detailed disorder region annotations for a protein from DisProt. Accepts either a DisProt ID (e.g., DP00086) or UniProt accession (e.g., P04637). Returns experimentally validated disordered regions with residue ranges, evidence codes, experimental methods, cross-references to PDB structures, and classification terms. Essential for understanding intrinsically disordered regions (IDRs) in a protein of interest. Example: P04637 (TP53) has 63 disorder regions, 37.7% disorder content, including transactivation domain regions validated by NMR and X-ray crystallography.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637'). Both formats accepted."
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "endpoint": "get_entry"
+        },
+        "type": "DisProtTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "DP00086"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "disprot_id": {"type": "string"},
+                                "acc": {"type": "string"},
+                                "name": {"type": "string"},
+                                "gene": {"type": "string"},
+                                "organism": {"type": "string"},
+                                "length": {"type": "integer"},
+                                "disorder_content": {"type": ["number", "null"]},
+                                "regions_counter": {"type": ["integer", "null"]},
+                                "dataset": {"type": "array", "items": {"type": "string"}},
+                                "regions": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "region_id": {"type": ["string", "null"]},
+                                            "start": {"type": ["integer", "null"]},
+                                            "end": {"type": ["integer", "null"]},
+                                            "term_name": {"type": ["string", "null"], "description": "Disorder classification term"},
+                                            "term_namespace": {"type": ["string", "null"]},
+                                            "evidence_code": {"type": ["string", "null"]},
+                                            "method": {"type": ["string", "null"]},
+                                            "cross_refs": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "db": {"type": "string"},
+                                                        "id": {"type": "string"}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "description": "Experimentally validated disorder regions"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_regions": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

@@ -1,0 +1,148 @@
+name: Publish to MCP Registry
+
+on:
+  # Called by PyPI workflow after successful publish
+  workflow_call:
+    inputs:
+      version:
+        description: 'Version to publish'
+        required: true
+        type: string
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 1.0.17.5). Leave empty to use pyproject.toml version.'
+        required: false
+        type: string
+
+jobs:
+  publish-mcp:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for GitHub OIDC authentication
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: |
+          # Always read the current version from pyproject.toml as source of truth
+          PYPROJECT_VERSION=$(python3 -c "
+          import re
+          with open('pyproject.toml') as f:
+              m = re.search(r'version\s*=\s*\"([^\"]+)\"', f.read())
+              print(m.group(1) if m else '')
+          ")
+          echo "pyproject.toml version: $PYPROJECT_VERSION"
+          
+          # Use explicit input if provided, otherwise use pyproject.toml
+          if [ -n "${{ inputs.version }}" ]; then
+            VERSION="${{ inputs.version }}"
+            echo "Using input version: $VERSION"
+          else
+            VERSION="$PYPROJECT_VERSION"
+            echo "Using pyproject.toml version: $VERSION"
+          fi
+          
+          # Guard: fail if version is empty
+          if [ -z "$VERSION" ]; then
+            echo "::error::Could not determine version. Aborting."
+            exit 1
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Publishing version: $VERSION"
+
+      - name: Update server.json version
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          # Update version in server.json using jq
+          jq --arg v "$VERSION" '.version = $v | .packages[0].version = $v' server.json > server.json.tmp
+          mv server.json.tmp server.json
+          echo "Updated server.json to version $VERSION"
+          echo "--- server.json content ---"
+          cat server.json
+
+      - name: Wait for PyPI to be available
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          echo "Waiting for tooluniverse==$VERSION to be available on PyPI..."
+          
+          # Install pip if needed
+          python3 -m pip install --upgrade pip > /dev/null 2>&1
+          
+          for i in {1..30}; do
+            # Check PyPI API directly
+            PYPI_VERSION=$(curl -s "https://pypi.org/pypi/tooluniverse/json" | jq -r '.info.version')
+            echo "Attempt $i/30: PyPI latest version is $PYPI_VERSION, waiting for $VERSION"
+            
+            if [ "$PYPI_VERSION" = "$VERSION" ]; then
+              echo "Version $VERSION is available on PyPI!"
+              break
+            fi
+            
+            if [ $i -eq 30 ]; then
+              echo "Warning: Timeout waiting for PyPI. Proceeding anyway..."
+            fi
+            
+            sleep 30
+          done
+
+      - name: Install MCP Publisher CLI
+        run: |
+          echo "Downloading mcp-publisher..."
+          curl -sL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          chmod +x mcp-publisher
+          ./mcp-publisher --help
+
+      - name: Login to MCP Registry (GitHub OIDC)
+        run: |
+          echo "Authenticating with MCP Registry using GitHub OIDC..."
+          ./mcp-publisher login github-oidc
+
+      - name: Validate server.json (dry run)
+        run: |
+          echo "Running dry-run validation..."
+          ./mcp-publisher publish --dry-run
+
+      - name: Publish to MCP Registry
+        id: mcp_publish
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          echo "Publishing version $VERSION to MCP Registry..."
+          OUTPUT=$(./mcp-publisher publish 2>&1) && {
+            echo "$OUTPUT"
+            echo "result=published" >> $GITHUB_OUTPUT
+          } || {
+            echo "$OUTPUT"
+            # Treat duplicate version as success (already published)
+            if echo "$OUTPUT" | grep -q "duplicate version"; then
+              echo "Version $VERSION is already published to MCP Registry. Skipping."
+              echo "result=already_published" >> $GITHUB_OUTPUT
+            else
+              echo "::error::MCP Registry publish failed for version $VERSION"
+              exit 1
+            fi
+          }
+
+      - name: Verify publication
+        if: steps.mcp_publish.outputs.result == 'published'
+        run: |
+          echo "Verifying publication..."
+          sleep 10
+          echo "Checking MCP Registry for io.github.mims-harvard/tooluniverse..."
+          curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=mims-harvard" | jq '.servers[] | {name: .name, version: .version, description: .description}'
+
+      - name: Summary
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          RESULT="${{ steps.mcp_publish.outputs.result }}"
+          if [ "$RESULT" = "already_published" ]; then
+            echo "::notice::Version $VERSION was already published to MCP Registry. No action needed."
+          else
+            echo "::notice::Version $VERSION successfully published to MCP Registry."
+          fi

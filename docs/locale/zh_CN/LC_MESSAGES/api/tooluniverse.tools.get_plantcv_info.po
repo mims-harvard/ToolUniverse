@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_plantcv\\_info 模块"
 
 #: fd71c4142c3548ada7d82a0555ebb7db of tooluniverse.tools.get_plantcv_info:1
 msgid "get_plantcv_info"
-msgstr ""
+msgstr "get_plantcv_信息"
 
 #: 72b6ebdcac994a74a3023d7172cb8242 b7d156a59a074ee6a31204ec7e3bd13f of
 #: tooluniverse.tools.get_plantcv_info:3

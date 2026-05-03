@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.MedRxiv\\_search\\_preprints 模块"
 #: b513624539274c70a48623f23284e6ab of
 #: tooluniverse.tools.MedRxiv_search_preprints:1
 msgid "MedRxiv_search_preprints"
-msgstr ""
+msgstr "MedRxiv_预印本搜索"
 
 #: 56e2be44d3224b63b219ebe95835b94f bf3fdb562dfa4089802bd588af02637a of
 #: tooluniverse.tools.MedRxiv_search_preprints:3

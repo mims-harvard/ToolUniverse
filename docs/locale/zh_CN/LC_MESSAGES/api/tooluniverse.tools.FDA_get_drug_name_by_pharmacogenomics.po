@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_pharmacogenomics 模�
 #: 102ed45122d94271aead70c82cf8a9c8 of
 #: tooluniverse.tools.FDA_get_drug_name_by_pharmacogenomics:1
 msgid "FDA_get_drug_name_by_pharmacogenomics"
-msgstr ""
+msgstr "FDA_通过药物基因组学获取药物名称"
 
 #: 4a1a403fd6ba4711b85514a68fe3d16c f30fdd14e84248a081a465689ea307a1 of
 #: tooluniverse.tools.FDA_get_drug_name_by_pharmacogenomics:3

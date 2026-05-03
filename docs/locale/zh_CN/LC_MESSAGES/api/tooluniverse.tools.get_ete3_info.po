@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_ete3\\_info 模块"
 
 #: 11928df2d3254f628d0b964e2950e304 of tooluniverse.tools.get_ete3_info:1
 msgid "get_ete3_info"
-msgstr ""
+msgstr "get_ete3_信息"
 
 #: aa7dc6639cf24f1684e9024ca1955c23 d49536bc11a24e3494572312b6e3cd44 of
 #: tooluniverse.tools.get_ete3_info:3

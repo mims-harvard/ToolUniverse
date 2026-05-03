@@ -573,7 +573,7 @@ msgstr "测试：``tests/test_guideline_tools.py``"
 #~ msgstr ""
 
 #~ msgid "NCBI PubMed Central"
-#~ msgstr ""
+#~ msgstr "NCBI PubMed 中央库"
 
 #~ msgid "Peer-reviewed published guidelines, filtered by \"Guideline\" type"
 #~ msgstr "经过同行评审的已发布指南，按“指南”类型筛选"

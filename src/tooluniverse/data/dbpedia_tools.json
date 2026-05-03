@@ -1,0 +1,47 @@
+[
+  {
+    "type": "DBpediaSPARQLTool",
+    "name": "DBpedia_SPARQL_query",
+    "description": "Execute SPARQL queries against DBpedia to retrieve structured knowledge. DBpedia extracts structured information from Wikipedia and makes it available as linked data. This tool is particularly useful for querying information about people, places, organizations, works, and other entities, especially in humanities and social sciences domains. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sparql": {
+          "type": "string",
+          "description": "SPARQL query string to execute against DBpedia. Use SPARQL syntax to query entities, relationships, and properties. DBpedia uses different property names than Wikidata (e.g., dbo:abstract, dbo:birthDate, rdfs:label)."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Optional result limit override. If not specified, uses the LIMIT clause in the SPARQL query or returns all results.",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "sparql",
+        "max_results"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of query results from DBpedia SPARQL endpoint",
+      "items": {
+        "type": "object",
+        "description": "Each result is a dictionary with variable names as keys and their values from the SPARQL query results"
+      }
+    },
+    "test_examples": [
+      {
+        "sparql": "SELECT ?person ?name ?birthDate WHERE { ?person rdf:type dbo:Person . ?person rdfs:label ?name . ?person dbo:birthDate ?birthDate . FILTER(LANG(?name) = 'en') } LIMIT 5",
+        "max_results": 5
+      },
+      {
+        "sparql": "SELECT ?book ?title ?author WHERE { ?book rdf:type dbo:Book . ?book rdfs:label ?title . ?book dbo:author ?author . FILTER(LANG(?title) = 'en') } LIMIT 3",
+        "max_results": 3
+      },
+      {
+        "sparql": "SELECT ?place ?name ?country WHERE { ?place rdf:type dbo:Place . ?place rdfs:label ?name . ?place dbo:country ?country . FILTER(LANG(?name) = 'en') } LIMIT 3",
+        "max_results": 3
+      }
+    ]
+  }
+]

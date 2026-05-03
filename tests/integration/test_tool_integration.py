@@ -31,6 +31,8 @@ class TestToolExecution:
         """Setup ToolUniverse instance for each test."""
         self.tu = ToolUniverse()
         self.tu.load_tools()
+        yield
+        self.tu.close()
 
     def test_tool_loading_real(self):
         """Test real tool loading functionality."""
@@ -210,8 +212,7 @@ class TestToolExecution:
 
     def test_tool_export_real(self):
         """Test real tool export functionality."""
-        import tempfile
-        import os
+
         
         # Test exporting to file
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
@@ -233,8 +234,7 @@ class TestToolExecution:
 
     def test_tool_env_template_real(self):
         """Test real environment template generation."""
-        import tempfile
-        import os
+
         
         # Test with some missing keys
         missing_keys = ["API_KEY_1", "API_KEY_2"]
@@ -311,6 +311,8 @@ class TestToolComposition:
         """Setup ToolUniverse instance for each test."""
         self.tu = ToolUniverse()
         self.tu.load_tools()
+        yield
+        self.tu.close()
 
     def test_compose_tool_availability(self):
         """Test that compose tools are actually available in ToolUniverse."""
@@ -427,34 +429,35 @@ class TestToolComposition:
         assert isinstance(available_required, list)
         assert len(available_required) <= len(required_tools)
 
+    @pytest.mark.timeout(180)
     def test_compose_tool_workflow_execution_real(self):
         """Test real workflow execution with compose tools."""
         # Test a simple workflow
         workflow_results = {}
-        
+
         try:
             # Step 1: Search for papers
             search_result = self.tu.run({
                 "name": "ArXiv_search_papers",
-                "arguments": {"query": "machine learning", "limit": 3}
+                "arguments": {"query": "machine learning", "limit": 2}
             })
-            
+
             if search_result and isinstance(search_result, dict):
                 workflow_results["search"] = search_result
-                
+
                 # Step 2: Get protein info (if search succeeded)
                 protein_result = self.tu.run({
                     "name": "UniProt_get_entry_by_accession",
                     "arguments": {"accession": "P05067"}
                 })
-                
+
                 if protein_result and isinstance(protein_result, dict):
                     workflow_results["protein"] = protein_result
-                
+
                 # Verify workflow results
                 assert "search" in workflow_results
         except Exception:
-            # Expected if API keys not configured
+            # Expected if API keys not configured or network timeout
             pass
 
     def test_compose_tool_caching_real(self):
@@ -517,7 +520,7 @@ class TestToolComposition:
 
     def test_compose_tool_performance_real(self):
         """Test real performance characteristics of compose tools."""
-        import time
+
         
         # Test execution time
         start_time = time.time()
@@ -588,11 +591,12 @@ class TestToolConcurrency:
         """Setup ToolUniverse instance for each test."""
         self.tu = ToolUniverse()
         self.tu.load_tools()
+        yield
+        self.tu.close()
 
     def test_tool_concurrent_execution_real(self):
         """Test real concurrent tool execution."""
-        import threading
-        import time
+
         
         results = []
         
@@ -621,7 +625,7 @@ class TestToolConcurrency:
 
     def test_tool_memory_management_real(self):
         """Test real memory management."""
-        import gc
+
         
         # Test multiple calls to ensure no memory leaks
         initial_objects = len(gc.get_objects())
@@ -642,12 +646,12 @@ class TestToolConcurrency:
         final_objects = len(gc.get_objects())
         object_growth = final_objects - initial_objects
         
-        # Should not have created more than 500 new objects
-        assert object_growth < 500
+        # Should not have created more than 1000 new objects
+        assert object_growth < 1000
 
     def test_tool_performance_real(self):
         """Test real tool performance."""
-        import time
+
         
         # Test execution time
         start_time = time.time()

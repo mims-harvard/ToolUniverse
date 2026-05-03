@@ -1,0 +1,246 @@
+[
+  {
+    "name": "MarineRegions_search_by_name",
+    "description": "Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns MRGID (Marine Regions Gazetteer ID), coordinates, place type, and source information. No authentication required. Covers IHO sea areas, exclusive economic zones, large marine ecosystems, ICES ecoregions, and 40,000+ other marine geographic features worldwide. Useful for standardizing geographic references in marine biology, oceanography, and environmental research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the marine geographic feature. Examples: 'North Sea', 'Pacific Ocean', 'Mediterranean Sea', 'Caribbean Sea', 'Arctic Ocean', 'Coral Sea', 'Gulf of Mexico'"
+        },
+        "like": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, perform a partial/fuzzy name match (LIKE search). Default: true"
+        },
+        "fuzzy": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, perform fuzzy matching for approximate name searches. Default: false"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Pagination offset. Default: 0 (first page)"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.marineregions.org/rest/getGazetteerRecordsByName.json/{name}/like/true/false/{offset}",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "name": "North Sea",
+        "offset": 0
+      },
+      {
+        "name": "Mediterranean Sea",
+        "offset": 0
+      },
+      {
+        "name": "Gulf of Mexico",
+        "offset": 0
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of matching marine geographic features",
+          "items": {
+            "type": "object",
+            "properties": {
+              "MRGID": {
+                "type": "integer",
+                "description": "Marine Regions Gazetteer ID (unique identifier)"
+              },
+              "gazetteerSource": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source database"
+              },
+              "placeType": {
+                "type": "string",
+                "description": "Feature type (e.g., IHO Sea Area, Large Marine Ecosystem, ICES Ecoregion, EEZ)"
+              },
+              "latitude": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Centroid latitude"
+              },
+              "longitude": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Centroid longitude"
+              },
+              "preferredGazetteerName": {
+                "type": "string",
+                "description": "Official standardized name"
+              },
+              "preferredGazetteerNameLang": {
+                "type": "string",
+                "description": "Language of the name"
+              },
+              "status": {
+                "type": "string",
+                "description": "Status: standard, synonym, or deleted"
+              },
+              "accepted": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "MRGID of accepted (canonical) record"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MarineRegions_get_record",
+    "description": "Get detailed information about a specific marine geographic feature by its MRGID (Marine Regions Gazetteer ID) from VLIZ. Returns full metadata including bounding box, coordinates, place type, status, and source. No authentication required. Common MRGIDs: 2350 (North Sea), 1901 (Pacific Ocean), 1902 (Atlantic Ocean), 4319 (Mediterranean Sea), 8466 (Indian Ocean), 1903 (Arctic Ocean), 1904 (Southern Ocean).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "mrgid": {
+          "type": "integer",
+          "description": "Marine Regions Gazetteer ID. Examples: 2350 (North Sea), 1901 (Pacific Ocean), 1902 (Atlantic Ocean), 4319 (Mediterranean Sea), 8466 (Indian Ocean)"
+        }
+      },
+      "required": [
+        "mrgid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://marineregions.org/mrgid/{mrgid}.json",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "mrgid": 2350
+      },
+      {
+        "mrgid": 1902
+      },
+      {
+        "mrgid": 4319
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Marine geographic feature details",
+          "properties": {
+            "MRGID": {
+              "type": "integer"
+            },
+            "gazetteerSource": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "placeType": {
+              "type": "string"
+            },
+            "latitude": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "longitude": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "minLatitude": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "maxLatitude": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "minLongitude": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "maxLongitude": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "preferredGazetteerName": {
+              "type": "string"
+            },
+            "preferredGazetteerNameLang": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "accepted": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

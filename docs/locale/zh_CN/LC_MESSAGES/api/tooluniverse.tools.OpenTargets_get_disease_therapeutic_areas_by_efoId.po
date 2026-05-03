@@ -32,7 +32,7 @@ msgstr ""
 #: 10199a464fdb48d988fec0bfa53cfbbd of
 #: tooluniverse.tools.OpenTargets_get_disease_therapeutic_areas_by_efoId:1
 msgid "OpenTargets_get_disease_therapeutic_areas_by_efoId"
-msgstr ""
+msgstr "OpenTargets_根据EFO ID获取疾病治疗领域"
 
 #: 0235b1adac49425fa085303301fe89c7 89c7dcbb07a6414f81edf2c08192ea71 of
 #: tooluniverse.tools.OpenTargets_get_disease_therapeutic_areas_by_efoId:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ADMETAI\\_predict\\_CYP\\_interactions 模块"
 #: 7d3d7084b79a4642817a568be82b58c0 of
 #: tooluniverse.tools.ADMETAI_predict_CYP_interactions:1
 msgid "ADMETAI_predict_CYP_interactions"
-msgstr ""
+msgstr "ADMETAI_预测_CYP_相互作用"
 
 #: 63ada3d050db4921bf36797183808996 c664177b7b9d47759232456b0338c890 of
 #: tooluniverse.tools.ADMETAI_predict_CYP_interactions:3

@@ -301,7 +301,7 @@ class TestBackwardCompatibility:
         }, use_cache=False)
         
         # Results should be the same (both with cache disabled)
-        assert type(result1) == type(result2)
+        assert isinstance(result1, type(result2))
         
         # Test validate parameter
         result3 = self.tu.run_one_function({

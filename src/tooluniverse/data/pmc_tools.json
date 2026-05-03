@@ -2,7 +2,7 @@
   {
     "type": "PMCTool",
     "name": "PMC_search_papers",
-    "description": "Search for full-text biomedical literature using PMC (PubMed Central) API. PMC is the free full-text archive of biomedical and life sciences journal literature at the U.S. National Institutes of Health's National Library of Medicine.",
+    "description": "Search for full-text biomedical literature using the PMC (PubMed Central) API. PMC is the free full-text archive of biomedical and life sciences journal literature at the U.S. National Institutes of Health's National Library of Medicine. Uses `limit` (default 10); accepts `retmax` as an alias for `limit`.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,6 +17,12 @@
           "minimum": 1,
           "maximum": 100
         },
+        "retmax": {
+          "type": "integer",
+          "description": "Alias for limit (NCBI eutils naming). If both retmax and limit are provided, limit is used.",
+          "minimum": 1,
+          "maximum": 100
+        },
         "date_from": {
           "type": "string",
           "description": "Start date for publication date filter (YYYY/MM/DD format). Optional parameter to limit search to papers published from this date onwards."
@@ -28,11 +34,15 @@
         "article_type": {
           "type": "string",
           "description": "Article type filter (e.g., 'research-article', 'review', 'case-report'). Optional parameter to limit search to specific article types."
+        },
+        "include_abstract": {
+          "type": "boolean",
+          "description": "If true, attempts to enrich results with an abstract (best-effort) by fetching PubMed abstracts for items that have a PMID.",
+          "default": false
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
@@ -46,8 +56,11 @@
             "description": "Title of the paper"
           },
           "abstract": {
-            "type": "string",
-            "description": "Abstract of the paper"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Abstract of the paper (null when not available via esummary)"
           },
           "authors": {
             "type": "array",
@@ -57,7 +70,10 @@
             "description": "List of author names"
           },
           "year": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Publication year"
           },
           "pmc_id": {
@@ -65,19 +81,52 @@
             "description": "PMC identifier"
           },
           "pmid": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "PubMed identifier"
           },
           "doi": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Digital Object Identifier (DOI) of the paper"
           },
+          "doi_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "DOI resolver URL"
+          },
           "url": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "URL to access the paper on PMC"
           },
+          "pdf_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PDF URL on PMC (when available)"
+          },
+          "abstract_source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Source of abstract text (when include_abstract=true)"
+          },
           "venue": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Journal or venue name"
           },
           "open_access": {
@@ -89,7 +138,10 @@
             "description": "Source identifier (always 'PMC')"
           },
           "article_type": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Type of article (e.g., research-article, review)"
           },
           "citations": {

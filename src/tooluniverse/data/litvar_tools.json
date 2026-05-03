@@ -1,0 +1,182 @@
+[
+  {
+    "name": "LitVar_search_variants",
+    "description": "Search for genetic variants in the NCBI LitVar2 database by rsID, gene name, or HGVS notation. LitVar2 links genetic variants to their mentions in PubMed literature. Returns variant identifiers, associated gene names, HGVS nomenclature, publication counts, and clinical significance when available. Useful for finding which variants have been studied for a gene or identifying literature-linked variants by rsID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: rsID (e.g., 'rs328', 'rs7903146'), gene name (e.g., 'BRCA1', 'TP53'), or HGVS notation (e.g., 'p.V600E')"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ncbi.nlm.nih.gov/research/litvar2-api/variant/autocomplete/"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "rs328"
+      },
+      {
+        "query": "BRCA1"
+      },
+      {
+        "query": "rs7903146"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of matching variants from LitVar2",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "LitVar internal identifier (e.g., 'litvar@rs328##')"
+              },
+              "rsid": {
+                "type": "string",
+                "description": "dbSNP rsID if available"
+              },
+              "gene": {
+                "type": "array",
+                "description": "Associated gene symbols",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "name": {
+                "type": "string",
+                "description": "Variant name (e.g., 'p.S447X', 'c.5382insC')"
+              },
+              "hgvs": {
+                "type": "string",
+                "description": "HGVS notation for the variant"
+              },
+              "pmids_count": {
+                "type": "integer",
+                "description": "Number of PubMed articles mentioning this variant"
+              },
+              "data_clinical_significance": {
+                "type": "array",
+                "description": "ClinVar clinical significance (e.g., 'pathogenic', 'benign')",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "flag_rsid_variant": {
+                "type": "boolean",
+                "description": "Whether this variant has an rsID"
+              },
+              "match": {
+                "type": "string",
+                "description": "How the query matched this variant"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "LitVar_get_variant_publications",
+    "description": "Get PubMed publication IDs (PMIDs) that mention a specific genetic variant, from NCBI LitVar2. Requires the variant rsID. Returns a list of PubMed IDs and PMC IDs where the variant is mentioned. The max parameter controls the maximum number of PMIDs returned. Use LitVar_search_variants first to find variant rsIDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID of the variant (e.g., 'rs328', 'rs7903146', 'rs429358', 'rs80357906')"
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format (default 'json')"
+        },
+        "max": {
+          "type": "integer",
+          "default": 50,
+          "description": "Maximum number of PMIDs to return (default 50)"
+        }
+      },
+      "required": [
+        "rsid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ncbi.nlm.nih.gov/research/litvar2-api/variant/get/litvar%40{rsid}%23%23/publications"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "rsid": "rs328",
+        "max": 10
+      },
+      {
+        "rsid": "rs7903146",
+        "max": 5
+      },
+      {
+        "rsid": "rs429358",
+        "max": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Publication data for the variant",
+          "properties": {
+            "pmids": {
+              "type": "array",
+              "description": "PubMed IDs of articles mentioning this variant",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "pmcids": {
+              "type": "array",
+              "description": "PubMed Central IDs of articles mentioning this variant",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pmids_count": {
+              "type": "integer",
+              "description": "Total number of PubMed articles mentioning this variant"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

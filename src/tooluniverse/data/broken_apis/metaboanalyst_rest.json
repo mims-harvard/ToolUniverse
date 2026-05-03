@@ -1,0 +1,46 @@
+{
+  "api_name": "MetaboAnalyst Public REST API",
+  "base_url": "https://rest.xialab.ca/api/mapcompounds",
+  "failure_mode": "HTTP 500 (Internal Server Error)",
+  "root_cause": "The public REST endpoint (rest.xialab.ca/api/mapcompounds) is a broken Payara Java EE servlet returning HTTP 500 for all inputs. The MetaboAnalyst R package actually uses a completely different internal endpoint (www.xialab.ca/api/internal_mapcompounds) that accepts R binary .rds multipart uploads and returns serialized R objects — not accessible from Python or curl. The public JSON API documented in tutorials has been broken since at least December 2024 with no fix from the team.",
+  "confirmed_broken_date": "2026-02-26",
+  "last_retry_date": "2026-02-26",
+  "retry_count": 6,
+  "github_issues": [
+    "https://github.com/xia-lab/MetaboAnalystR/issues/331",
+    "https://github.com/xia-lab/MetaboAnalystR/issues/369"
+  ],
+  "retry_after": "2026-06-01",
+  "retry_notes": "Both issues opened Dec 2024 / Dec 2025 with no maintainer response. Check if either is resolved before retrying.",
+  "workaround": "Use KEGG REST API (rest.kegg.jp) for compound name resolution and pathway-metabolite mappings, combined with local scipy.stats.hypergeom for enrichment statistics and Benjamini-Hochberg FDR correction. Implemented in src/tooluniverse/metaboanalyst_tool.py",
+  "workaround_tool_file": "src/tooluniverse/metaboanalyst_tool.py",
+  "investigation_notes": [
+    "rest.xialab.ca/api/mapcompounds returns HTTP 500 for all inputs including official tutorial examples",
+    "www.xialab.ca/api/internal_mapcompounds returns HTTP 415 for JSON — requires multipart/form-data with R .rds binary file",
+    "R source code (.do.api.call) confirmed: POST body = list(rds = upload_file('tosend.rds', 'application/octet-stream')), response = unserialize(raw bytes)",
+    "The 'REST API' documented at rest.xialab.ca is a separate broken servlet; the working internal API requires R binary serialization",
+    "www.xialab.ca/api/login still returns 200 (session management works), but computation endpoints are broken"
+  ],
+  "attempted_config": {
+    "name": "MetaboAnalyst_pathway_enrichment",
+    "type": "MetaboAnalystTool",
+    "description": "Perform pathway enrichment analysis using MetaboAnalyst REST API",
+    "endpoint": "https://rest.xialab.ca/api/mapcompounds",
+    "method": "POST",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "queryList": {
+          "type": "string",
+          "description": "Semicolon-separated metabolite names"
+        },
+        "inputType": {
+          "type": "string",
+          "enum": ["name", "hmdb", "kegg", "pubchem"],
+          "description": "Input identifier type"
+        }
+      },
+      "required": ["queryList", "inputType"]
+    }
+  }
+}

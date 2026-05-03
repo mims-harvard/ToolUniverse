@@ -1,0 +1,1343 @@
+[
+  {
+    "type": "AgenticTool",
+    "name": "CodeQualityAnalyzer",
+    "description": "Analyzes code quality from multiple dimensions including algorithmic correctness, functional implementation capability, performance characteristics, and best practices. Provides detailed feedback and improvement suggestions.",
+    "prompt": "You are an expert software engineer and code quality analyst. Please analyze the following code implementation and provide comprehensive quality assessment.\n\n## CODE TO ANALYZE\nTool Name: {tool_name}\nTool Description: {tool_description}\nTool Parameters: {tool_parameters}\nImplementation Code: {implementation_code}\nTest Cases: {test_cases}\nTest Execution Results: {test_execution_results}\n\n## ANALYSIS REQUIREMENTS\nPlease provide a comprehensive analysis covering the following dimensions:\n\n### 1. ALGORITHMIC CORRECTNESS (0-10)\n- Mathematical accuracy and logical correctness\n- Algorithm efficiency and time/space complexity\n- Edge case handling and boundary conditions\n- Error propagation and numerical stability\n- Correctness of domain-specific calculations\n\n### 2. FUNCTIONAL IMPLEMENTATION CAPABILITY (0-10)\n- Completeness of required functionality\n- Parameter validation and input handling\n- Return value accuracy and format consistency\n- Integration with external libraries/APIs\n- Feature completeness vs. requirements\n\n### 3. PERFORMANCE CHARACTERISTICS (0-10)\n- Time complexity analysis\n- Space complexity analysis\n- Memory usage optimization\n- Computational efficiency\n- Scalability considerations\n\n### 4. CODE QUALITY AND STRUCTURE (0-10)\n- Code readability and maintainability\n- Function and variable naming\n- Code organization and modularity\n- Documentation quality\n- Adherence to coding standards\n\n### 5. ERROR HANDLING AND ROBUSTNESS (0-10)\n- Exception handling coverage\n- Input validation robustness\n- Error message clarity and usefulness\n- Graceful degradation strategies\n- Recovery mechanisms\n\n### 6. TESTING AND VALIDATION (0-10)\n- Test coverage completeness\n- Test case quality and relevance\n- Edge case testing\n- Performance testing\n- Integration testing considerations\n- **IMPORTANT**: When test_execution_results are provided, use them to validate actual code behavior and adjust scoring accordingly\n\n### 7. SECURITY AND SAFETY (0-10)\n- Input sanitization and validation\n- Resource usage limits\n- Access control considerations\n- Data privacy protection\n- Security best practices\n\n### 8. MAINTAINABILITY AND EXTENSIBILITY (0-10)\n- Code modularity and reusability\n- Configuration flexibility\n- Future enhancement readiness\n- Dependency management\n- Technical debt assessment\n\n## TEST EXECUTION ANALYSIS\nWhen test_execution_results are provided:\n- Analyze actual test outcomes vs. expected results\n- Identify discrepancies between code behavior and test expectations\n- Use real execution data to validate code correctness\n- Adjust quality scores based on actual performance\n- Provide specific feedback on test failures and their implications\n\n## OUTPUT FORMAT\nProvide your analysis in the following JSON format:\n\n{\n  \"overall_score\": <0-10>,\n  \"scores\": {\n    \"algorithmic_correctness\": <0-10>,\n    \"functional_capability\": <0-10>,\n    \"performance\": <0-10>,\n    \"code_quality\": <0-10>,\n    \"error_handling\": <0-10>,\n    \"testing\": <0-10>,\n    \"security\": <0-10>,\n    \"maintainability\": <0-10>\n  },\n  \"feedback\": {\n    \"strengths\": [\"list of code strengths\"],\n    \"weaknesses\": [\"list of specific weaknesses\"],\n    \"critical_issues\": [\"list of critical issues that must be fixed\"],\n    \"improvement_opportunities\": [\"list of areas for improvement\"]\n  },\n  \"algorithm_analysis\": {\n    \"complexity\": \"O(n) analysis\",\n    \"correctness_verification\": \"mathematical verification details\",\n    \"edge_cases\": \"identified edge cases\",\n    \"numerical_stability\": \"numerical computation stability assessment\"\n  },\n  \"functional_verification\": {\n    \"requirements_coverage\": \"percentage of requirements covered\",\n    \"missing_features\": [\"list of missing features\"],\n    \"integration_points\": [\"external dependencies and integration points\"],\n    \"api_consistency\": \"API design consistency assessment\"\n  },\n  \"test_execution_analysis\": {\n    \"test_results_summary\": \"summary of test execution outcomes\",\n    \"pass_rate\": \"percentage of tests passed\",\n    \"failed_tests\": [\"list of failed tests with reasons\"],\n    \"actual_vs_expected\": \"analysis of actual vs expected behavior\"\n  },\n  \"recommendations\": [\n    {\n      \"priority\": \"high|medium|low\",\n      \"category\": \"algorithm|functionality|performance|quality|security\",\n      \"description\": \"specific improvement description\",\n      \"action\": \"concrete action to take\",\n      \"expected_impact\": \"expected improvement impact\"\n    }\n  ]\n}\n\n## ANALYSIS GUIDELINES\n- Be thorough and objective in your assessment\n- Provide specific examples from the code when possible\n- Focus on actionable feedback and concrete improvements\n- Consider both immediate fixes and long-term improvements\n- Evaluate code from both technical and business perspectives\n- Provide evidence-based scoring with clear justification\n- **When test_execution_results are available, prioritize actual behavior over theoretical analysis**",
+    "input_arguments": [
+      "tool_name",
+      "tool_description",
+      "tool_parameters",
+      "implementation_code",
+      "test_cases",
+      "test_execution_results"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "description": "Name of the tool being analyzed"
+        },
+        "tool_description": {
+          "type": "string",
+          "description": "Description of what the tool is supposed to do"
+        },
+        "tool_parameters": {
+          "type": "string",
+          "description": "JSON string of tool parameters and their types"
+        },
+        "implementation_code": {
+          "type": "string",
+          "description": "The actual implementation code to analyze"
+        },
+        "test_cases": {
+          "type": "string",
+          "description": "JSON string of test cases for the tool"
+        },
+        "test_execution_results": {
+          "type": "string",
+          "description": "JSON string of test execution results including pass/fail status and actual outputs"
+        }
+      },
+      "required": [
+        "tool_name",
+        "tool_description",
+        "tool_parameters",
+        "implementation_code",
+        "test_cases"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 8192,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "overall_score": {
+          "type": "number",
+          "description": "Overall quality score from 0-10"
+        },
+        "scores": {
+          "type": "object",
+          "description": "Detailed scores for each quality dimension with sub-scores and issues",
+          "properties": {
+            "functionality": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number"
+                },
+                "details": {
+                  "type": "object",
+                  "properties": {
+                    "correctness": {
+                      "type": "number"
+                    },
+                    "completeness": {
+                      "type": "number"
+                    },
+                    "algorithm_choice": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "code_quality": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number"
+                },
+                "details": {
+                  "type": "object",
+                  "properties": {
+                    "simplicity": {
+                      "type": "number"
+                    },
+                    "readability": {
+                      "type": "number"
+                    },
+                    "organization": {
+                      "type": "number"
+                    },
+                    "idiomaticity": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "performance": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number"
+                },
+                "details": {
+                  "type": "object",
+                  "properties": {
+                    "time_efficiency": {
+                      "type": "number"
+                    },
+                    "space_efficiency": {
+                      "type": "number"
+                    },
+                    "algorithm_optimality": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "stability": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number"
+                },
+                "details": {
+                  "type": "object",
+                  "properties": {
+                    "error_handling": {
+                      "type": "number"
+                    },
+                    "input_validation": {
+                      "type": "number"
+                    },
+                    "edge_cases": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "maintainability": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number"
+                },
+                "details": {
+                  "type": "object",
+                  "properties": {
+                    "documentation": {
+                      "type": "number"
+                    },
+                    "modularity": {
+                      "type": "number"
+                    },
+                    "testability": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "improvement_suggestions": {
+          "type": "array",
+          "description": "Specific improvement suggestions with priorities",
+          "items": {
+            "type": "object",
+            "properties": {
+              "priority": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "functionality",
+                  "code_quality",
+                  "performance",
+                  "stability",
+                  "maintainability"
+                ]
+              },
+              "suggestion": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "impact": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "feedback": {
+          "type": "object",
+          "description": "Detailed feedback on code quality",
+          "properties": {
+            "strengths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "weaknesses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "critical_issues": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "improvement_opportunities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "description": "Specific improvement recommendations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "priority": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "category": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "expected_impact": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "overall_score",
+        "scores",
+        "improvement_suggestions",
+        "feedback"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "TestCaseGenerator",
+    "description": "Generates diverse and representative ToolUniverse tool call dictionaries for a given tool based on its parameter schema. Each tool call should be a JSON object with 'name' (the tool's name) and 'arguments' (a dict of input arguments), covering different parameter combinations, edge cases, and typical usage. Can generate targeted test cases based on previous optimization feedback.",
+    "prompt": "You are an expert software tester. Generate 3-5 diverse ToolUniverse tool call dictionaries for the given tool configuration. Each tool call must be a JSON object with 'name' (tool name) and 'arguments' (input parameters).\n\nFEEDBACK-DRIVEN GENERATION:\nIf tool_config contains '_optimization_feedback' and '_iteration', generate targeted test cases addressing the specific issues mentioned in the feedback. Focus on edge cases, parameter combinations, or usage patterns that need better coverage.\n\nSTANDARD GENERATION:\nCover typical usage, edge cases, and boundary conditions when possible.\n\nTool configuration: {tool_config}\n\nReturn a JSON object with key 'test_cases' containing an array of test case objects. Example format:\n{\"test_cases\": [{\"name\":\"tool_name_with_underscores\",\"arguments\":{\"param\":\"value\"}},{\"name\":\"tool_name_with_underscores\",\"arguments\":{\"param\":123}}]}",
+    "input_arguments": [
+      "tool_config"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "object",
+          "description": "The full configuration of the tool to generate test cases for. May include '_optimization_feedback' and '_iteration' fields for feedback-driven test generation."
+        }
+      },
+      "required": [
+        "tool_config"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 4096,
+      "return_json": true,
+      "response_format": {
+        "type": "json_object"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "test_cases": {
+          "type": "array",
+          "description": "Generated test cases for the tool",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Tool name"
+              },
+              "arguments": {
+                "type": "object",
+                "description": "Input arguments"
+              }
+            },
+            "required": [
+              "name",
+              "arguments"
+            ]
+          }
+        }
+      },
+      "required": [
+        "test_cases"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ArgumentDescriptionOptimizer",
+    "description": "Optimizes the descriptions of tool arguments/parameters based on test case results and actual usage patterns. Provides improved descriptions that are more accurate and user-friendly.",
+    "prompt": "You are an expert technical writer specializing in API documentation. Given a tool's parameter schema and test case results, analyze how each parameter is used and optimize their descriptions to be clear, accurate, and concise.\n\nCRITICAL CONSTRAINTS - PARAMETER DESCRIPTION SCOPE:\n1. If the parameter schema contains '_previous_feedback', use that feedback to address specific issues and improve the parameter descriptions accordingly.\n2. Parameter descriptions should be HIGHLY SPECIFIC to each individual parameter.\n3. NEVER repeat or reference the main tool functionality - assume the user already knows what the tool does.\n4. Focus EXCLUSIVELY on parameter-specific details: data types, formats, constraints, valid values, required formats, examples when helpful.\n5. Each description should answer: 'What should I put in this specific parameter?' not 'What does the tool do?'\n6. Avoid generic phrases like 'for this tool', 'used by the tool', 'enables functionality' unless they provide specific technical context.\n7. Be precise about technical requirements (e.g., 'JSON string', 'integer between 1-100', 'URL format', etc.)\n8. Every word must serve a purpose - eliminate filler words and redundant phrases.\n\nOriginal parameter schema:\n{parameter_schema}\n\nTest results showing parameter usage:\n{test_results}\n\nFor each parameter, suggest an improved description that:\n1. Is brief but informative (1-2 sentences max)\n2. Accurately reflects the parameter's specific purpose, data type, and constraints\n3. Uses clear, simple language with precise technical details\n4. Avoids redundancy with the parameter name\n5. Addresses any issues mentioned in previous feedback\n6. Contains only essential information about what value should be provided\n\nReturn a JSON object with keys: 'optimized_parameters' (object with parameter names as keys and optimized descriptions as values) and 'rationale' (explaining the key changes made).",
+    "input_arguments": [
+      "parameter_schema",
+      "test_results"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "parameter_schema": {
+          "type": "string",
+          "description": "JSON string of the original parameter schema with properties and descriptions."
+        },
+        "test_results": {
+          "type": "string",
+          "description": "A JSON string containing test case input/output pairs showing parameter usage."
+        }
+      },
+      "required": [
+        "parameter_schema",
+        "test_results"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 1536,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "optimized_parameters": {
+          "type": "object",
+          "description": "Optimized parameter descriptions",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "description": "Explanation of key changes made"
+        }
+      },
+      "required": [
+        "optimized_parameters",
+        "rationale"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ToolSpecificationGenerator",
+    "description": "Generates complete ToolUniverse-compliant tool specifications based on a description and analysis of similar existing tools. Creates comprehensive tool configurations including parameters, prompts, and metadata.",
+    "prompt": "You are an expert tool architect. Generate a complete ToolUniverse tool specification.\n\n## REQUIREMENTS\nTool Description: {tool_description}\nReference Information: {reference_info}\nTemplate: {specification_template}\n\n## CRITICAL RULES\n\n🚨 **JSON FORMAT**: Return ONLY valid JSON. No markdown, no explanations.\n\n🚨 **IMPLEMENTATION STRATEGY**: For computational tools, generate implementation STRATEGY as text, NOT source code.\n\n🚨 **PACKAGE PRIORITY**: Use established packages (requests, pandas, numpy, etc.) over custom code.\n\n## TOOL TYPE SELECTION\n- **BioinformaticsTool**: Biological data, genomics, pathways\n- **DataAnalysisTool**: Data processing, analysis, ML\n- **APITool**: Web APIs, REST services\n- **CustomTool**: General purpose (PREFERRED)\n- **AgenticTool**: ONLY for subjective tasks requiring LLM\n\n## TEMPLATE FORMAT\n\n**CustomTool (Preferred):**\n```json\n{\n  \"type\": \"ExampleTool\",\n  \"name\": \"tool_name\",\n  \"description\": \"Tool description\",\n  \"implementation\": \"Implementation strategy: Use package X for Y. Steps: 1) Validate input, 2) Process data, 3) Return result. Dependencies: package1, package2. Error handling: try-except for errors.\",\n  \"parameter\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"param\": {\"type\": \"string\", \"description\": \"...\", \"required\": true}\n    },\n    \"required\": [\"param\"]\n  },\n  \"return_schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"result\": {\"type\": \"string\"}\n    }\n  },\n  \"test_examples\": [\n    {\n      \"input\": {\"param\": \"test\"},\n      \"expected_output_type\": \"object\",\n      \"description\": \"Test case\"\n    }\n  ],\n  \"metadata\": {\n    \"tags\": [\"tag1\", \"tag2\"],\n    \"difficulty_level\": \"intermediate\",\n    \"estimated_execution_time\": \"< 1 second\"\n  }\n}\n```\n\n## GENERATION REQUIREMENTS\n1. Choose appropriate tool type based on functionality\n2. Generate comprehensive implementation strategy text\n3. Use package recommendations from reference_info\n4. Include proper parameter and return schemas\n5. Provide realistic test examples\n6. Return ONLY valid JSON\n\nReturn the complete tool specification as valid JSON.",
+    "input_arguments": [
+      "tool_description",
+      "reference_info",
+      "specification_template"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "Description of the desired tool functionality"
+        },
+        "reference_info": {
+          "type": "string",
+          "description": "JSON string containing all reference information including similar tools, API documentation, and package recommendations"
+        },
+        "specification_template": {
+          "type": "string",
+          "description": "Template example showing the expected specification format"
+        }
+      },
+      "required": [
+        "tool_description",
+        "reference_info",
+        "specification_template"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 2000,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "object",
+          "description": "Generated tool specification",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "parameter": {
+              "type": "object"
+            },
+            "return_schema": {
+              "type": "object"
+            },
+            "test_examples": {
+              "type": "array"
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "required": [
+        "result"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ToolImplementationGenerator",
+    "description": "Generates domain-specific, functional code implementations based on tool descriptions and requirements with intelligent algorithm selection",
+    "prompt": "You are an expert software engineer. Generate a complete, production-ready Python tool implementation.\n\n## REQUEST\nTool Specification: {tool_specification}\nReference Information: {reference_info}\n\n## TEMPLATE EXAMPLE\nUse this EXACT structure for your implementation:\n\n{template_example}\n\n## ERROR FEEDBACK\n{error_feedback}\n\n## KEY POINTS TO REMEMBER\n\n### 🎯 Core Requirements\n- Generate COMPLETE Python class with imports, decorators, and full implementation\n- Use @register_tool decorator and inherit from BaseTool (see template above)\n- Include proper __init__(self, tool_config=None) and run(self, arguments) methods\n- Return JSON format: {\"status\": \"success/error\", \"data/error\": ...}\n- Follow the EXACT structure shown in the template example\n\n### 🛡️ Error Handling\n- Always wrap main logic in try-except\n- Use self.validate_parameters(arguments) for parameter validation\n- Provide clear, actionable error messages\n- Handle edge cases gracefully\n\n### 📦 Package Usage\n- Use recommended packages from reference_info when available\n- Include proper import statements\n- Avoid standalone module names (no \"requests\" as separate line)\n- Add packages to dependencies list\n\n### 🏗️ Code Structure\n- Follow Python best practices (PEP 8)\n- Use descriptive variable names\n- Add meaningful docstrings\n- Keep functions focused and readable\n- Ensure syntactically correct Python\n- Follow the template structure EXACTLY\n\n### ⚠️ Common Pitfalls to Avoid\n- Don't output just module names without import\n- Don't create incomplete try blocks\n- Don't forget parameter validation\n- Don't skip error handling\n- Don't make assumptions about input data\n- Use the template example as your guide for correct @register_tool usage\n- LEARN FROM PREVIOUS ERRORS: If this is a retry attempt, carefully avoid the errors mentioned above\n\n## RESPONSE FORMAT\nReturn JSON:\n{\n    \"implementation\": {\n        \"source_code\": \"<complete Python class code following the template>\",\n        \"dependencies\": [\"<required packages>\"],\n        \"imports\": [\"<import statements>\"]\n    }\n}\n\nBe creative, be thorough, and make it work!",
+    "input_arguments": [
+      "tool_specification",
+      "reference_info",
+      "template_example",
+      "error_feedback"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_specification": {
+          "type": "string",
+          "description": "Complete tool specification as JSON string"
+        },
+        "reference_info": {
+          "type": "string",
+          "description": "Optional reference information including API docs and package recommendations",
+          "default": "{}"
+        },
+        "template_example": {
+          "type": "string",
+          "description": "Template example showing correct @register_tool usage",
+          "default": ""
+        },
+        "error_feedback": {
+          "type": "string",
+          "description": "Error feedback from previous generation attempts",
+          "default": ""
+        }
+      },
+      "required": [
+        "tool_specification"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 50000,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "implementation": {
+          "type": "object",
+          "description": "Generated implementation details",
+          "properties": {
+            "source_code": {
+              "type": "string"
+            },
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "algorithm_description": {
+              "type": "string"
+            },
+            "complexity": {
+              "type": "string"
+            },
+            "test_cases": {
+              "type": "array"
+            },
+            "package_justification": {
+              "type": "string"
+            },
+            "alternative_packages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "quality_metrics": {
+          "type": "object",
+          "description": "Quality assessment metrics",
+          "properties": {
+            "estimated_accuracy": {
+              "type": "string"
+            },
+            "performance_characteristics": {
+              "type": "string"
+            },
+            "robustness_level": {
+              "type": "string"
+            }
+          }
+        },
+        "documentation": {
+          "type": "object",
+          "description": "Implementation documentation",
+          "properties": {
+            "usage_examples": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "parameter_explanations": {
+              "type": "string"
+            },
+            "return_format": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "implementation",
+        "quality_metrics",
+        "documentation"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "UnifiedCodeOptimizer",
+    "description": "Comprehensive code optimizer that handles simplification, performance, stability, and quality improvements in a single unified agent",
+    "prompt": "You are an expert code optimizer. Analyze and improve the implementation based on the optimization context.\n\n## CURRENT TOOL SPECIFICATION\n{tool_spec}\n\n## CURRENT IMPLEMENTATION\n{tool_implementation}\n\n## OPTIMIZATION CONTEXT\n{optimization_context}\n\n## CRITICAL INSTRUCTION CHECK\n\n🚨 **HIGHEST PRIORITY**: Check optimization_context for \"instruction\" field. If present, follow it as TOP PRIORITY.\n\nCommon instructions:\n- User refused dependencies → Use standard library only\n- Installation failed → Use different packages or standard library\n- Reimplementation required → Generate completely new approach\n\n## ERROR ANALYSIS & FIXING\n\n🔍 **CRITICAL**: If optimization_context contains \"detailed_errors\", you MUST fix these specific errors:\n\nFor each error in detailed_errors:\n- **Error Type**: Analyze the specific exception (ImportError, AttributeError, etc.)\n- **Error Message**: Read the exact error message\n- **Error Location**: Check the file and line number\n- **Root Cause**: Understand WHY this error occurs\n- **Fix Strategy**: Determine the EXACT fix needed\n\n### 🚨 **REPEATED ERROR HANDLING**\n\n**CRITICAL RULE**: If you see the SAME error repeated across iterations:\n1. **STOP** using the same approach\n2. **CHANGE** the implementation strategy completely\n3. **USE** different packages or standard library\n4. **AVOID** the problematic import/code pattern\n\n**For ImportError specifically:**\n- If `ModuleNotFoundError: No module named 'X.Y'` → Use main package `X` instead\n- If `ImportError: cannot import name 'Y'` → Use different import or alternative package\n- If package doesn't exist → Use standard library or different package\n\n### 🔄 **ITERATION LEARNING**\n\n- **Check improvement_history**: See what was tried before\n- **Avoid repeating**: Don't use the same failing approach\n- **Learn from errors**: Each error tells you what NOT to do\n- **Change strategy**: If same error persists, completely change approach\n\n## REQUIREMENT: ONLY OPTIMIZE IMPLEMENTATION\n\n🚨 **ONLY modify implementation code. DO NOT change:**\n- Tool specification (name, description, parameters)\n- Return schema\n- Test examples\n- Metadata\n\n## OPTIMIZATION GOALS\n\n### 🎯 Core Objectives\n- **FIX SPECIFIC ERRORS**: Address each error in detailed_errors\n- **AVOID REPEATING**: Don't repeat the same failing approach\n- **CHANGE STRATEGY**: If same error persists, use completely different approach\n- Improve efficiency and performance\n- Enhance readability and maintainability\n- Simplify complex logic\n- Strengthen error handling\n\n### 🔧 Quality Focus\n- Remove redundant/dead code\n- Optimize algorithms and data structures\n- Improve naming and comments\n- Ensure consistent style\n- Learn from improvement history\n\n### 🛡️ Stability\n- Add input validation\n- Handle edge cases\n- Improve exception handling\n- Add resource cleanup\n- Make code robust\n\n### ⚡ Performance\n- Replace inefficient patterns\n- Optimize memory usage\n- Cache expensive operations\n- Use appropriate data structures\n- Minimize unnecessary computations\n\n### ⚠️ What NOT to Do\n- Don't break existing functionality\n- Don't add unnecessary complexity\n- Don't optimize prematurely\n- Don't remove important error handling\n- **DON'T REPEAT THE SAME FAILING APPROACH**\n- **DON'T IGNORE SPECIFIC ERRORS**\n- **Don't modify tool specification**\n\n## RESPONSE FORMAT\nReturn JSON:\n{\n  \"implementation\": {\n    \"source_code\": \"<improved Python code>\",\n    \"dependencies\": [\"<required packages>\"],\n    \"imports\": [\"<import statements>\"]\n  }\n}\n\n**REMEMBER**: Fix the specific errors mentioned in detailed_errors. If the same error keeps happening, change your approach completely!\n\n## MANDATORY SELF-CHECK\n\nBefore generating code, you MUST ask yourself:\n1. \"What specific errors am I trying to fix?\"\n2. \"Have I seen these exact errors before?\"\n3. \"Am I using the same approach that failed?\"\n4. \"What completely different approach can I try?\"\n\nIf you answered YES to questions 2 and 3, you MUST use a completely different approach!\n\n**Examples of different approaches:**\n- ImportError → Use different package or standard library\n- AttributeError → Use different method or API\n- ConnectionError → Use different endpoint or offline approach\n- ValidationError → Use different validation logic\n\n**CRITICAL**: If the same error persists across iterations, you MUST change your implementation strategy completely!\n\n## ERROR-SPECIFIC FIXES\n\n**For 'dict' object has no attribute 'to_dict' error:**\n- This suggests the code is trying to call .to_dict() on a dictionary\n- Fix: Remove .to_dict() calls or convert dict to proper object first\n- Alternative: Use json.dumps() instead of .to_dict()\n\n**For 'Missing or empty function name' error:**\n- This suggests tool registration or function call issues\n- Fix: Ensure proper tool registration and function naming\n- Alternative: Use different tool calling mechanism\n\n**For AttributeError in general:**\n- Check if the object has the expected attributes\n- Use hasattr() to check before calling methods\n- Convert objects to proper types before method calls",
+    "input_arguments": [
+      "tool_spec",
+      "tool_implementation",
+      "optimization_context"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_spec": {
+          "type": "string",
+          "description": "Tool specification (name, description, parameter schema, return schema, test examples) as JSON string"
+        },
+        "tool_implementation": {
+          "type": "string",
+          "description": "Current tool implementation (source_code, dependencies, imports) as JSON string"
+        },
+        "optimization_context": {
+          "type": "string",
+          "description": "JSON string containing comprehensive optimization context including quality report, test results, iteration info, and improvement history"
+        }
+      },
+      "required": [
+        "tool_spec",
+        "tool_implementation",
+        "optimization_context"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 4096,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "implementation": {
+          "type": "object",
+          "description": "Optimized implementation",
+          "properties": {
+            "source_code": {
+              "type": "string",
+              "description": "Optimized Python source code"
+            },
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Required packages"
+            },
+            "imports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Import statements"
+            },
+            "improvements": {
+              "type": "array",
+              "description": "List of improvements made",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "simplification",
+                      "performance",
+                      "stability",
+                      "quality"
+                    ]
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "impact": {
+                    "type": "string"
+                  },
+                  "lines_changed": {
+                    "type": "string"
+                  },
+                  "before_after": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "complexity_analysis": {
+              "type": "object",
+              "properties": {
+                "time_complexity": {
+                  "type": "string"
+                },
+                "space_complexity": {
+                  "type": "string"
+                },
+                "improvements": {
+                  "type": "string"
+                },
+                "optimization_notes": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "source_code",
+            "dependencies",
+            "imports",
+            "improvements"
+          ]
+        }
+      },
+      "required": [
+        "implementation"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ToolSpecificationOptimizer",
+    "description": "Optimizes tool specifications for clarity, completeness, and usability with comprehensive benchmarking against similar tools",
+    "prompt": "You are an expert in tool design and user experience optimization. Analyze and optimize the provided tool specification based on comprehensive optimization context.\n\n## TOOL SPECIFICATION TO OPTIMIZE\nCurrent Configuration:\n{tool_config}\n\n## OPTIMIZATION CONTEXT\n{optimization_context}\n\n## OPTIMIZATION FRAMEWORK\n\n### 1. QUALITY-BASED IMPROVEMENTS\n- Address issues identified in quality report\n- Improve areas with low scores\n- Enhance clarity and completeness\n- Fix parameter validation issues\n\n### 2. TEST-DRIVEN OPTIMIZATION\n- Analyze test failures and edge cases\n- Improve error handling based on test results\n- Add missing test scenarios\n- Optimize for robustness\n\n### 3. ITERATIVE IMPROVEMENTS\n- Consider current iteration and target score\n- Learn from improvement history\n- Focus on areas with most impact\n- Avoid repeating previous attempts\n\n### 4. USABILITY ENHANCEMENTS\n- Simplify complex parameters\n- Add better defaults\n- Improve error messages\n- Enhance documentation\n\n### 5. PERFORMANCE OPTIMIZATION\n- Optimize parameter validation\n- Improve resource efficiency\n- Enhance response time\n- Better error handling\n\n## CRITICAL: RETURN SCHEMA & TEST EXAMPLES\n\nYour optimized_config MUST include:\n\n1. **return_schema** - Detailed JSON schema for the tool's output:\n   {\n     \"type\": \"object\",\n     \"properties\": {\n       \"success\": {\"type\": \"boolean\", \"description\": \"Whether operation succeeded\"},\n       \"result\": {\"type\": \"object\", \"description\": \"Main result data\"},\n       \"error\": {\"type\": \"string\", \"description\": \"Error message if failed\"},\n       \"execution_time_ms\": {\"type\": \"integer\", \"description\": \"Execution time in milliseconds\"}\n     },\n     \"required\": [\"success\"]\n   }\n\n2. **test_examples** - Comprehensive test cases based on actual test results:\n   [\n     {\n       \"input\": {\"param\": \"value\"},\n       \"expected_output\": {\"success\": true, \"result\": {...}},\n       \"description\": \"Test case description\"\n     }\n   ]\n\n## OPTIMIZATION PROCESS\n1. Analyze optimization context comprehensively\n2. Review quality report and test execution results\n3. Consider iteration history and target goals\n4. Identify specific improvement areas\n5. Generate optimized specification\n6. Provide detailed rationale for changes\n\n## RESPONSE FORMAT\nReturn ONLY a valid JSON object (no markdown code blocks, no additional text):\n\n{\n    \"optimized_config\": {\n        \"name\": \"<optimized name>\",\n        \"description\": \"<improved description>\",\n        \"parameter\": {\n            \"type\": \"object\",\n            \"properties\": \"<optimized parameters>\",\n            \"required\": \"<updated required fields>\"\n        },\n        \"return_schema\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"success\": {\"type\": \"boolean\", \"description\": \"Whether operation succeeded\"},\n                \"result\": {\"type\": \"object\", \"description\": \"Main result data\"},\n                \"error\": {\"type\": \"string\", \"description\": \"Error message if failed\"},\n                \"execution_time_ms\": {\"type\": \"integer\", \"description\": \"Execution time in milliseconds\"}\n            },\n            \"required\": [\"success\"]\n        },\n        \"test_examples\": [\n            {\n                \"input\": {\"param\": \"value\"},\n                \"expected_output\": {\"success\": true, \"result\": {...}},\n                \"description\": \"Test case description\"\n            }\n        ],\n        \"metadata\": {\n            \"tags\": [\"<relevant tags>\"],\n            \"difficulty_level\": \"<user difficulty>\",\n            \"estimated_execution_time\": \"<typical runtime>\"\n        }\n    },\n    \"improvements\": [\n        {\n            \"area\": \"<improvement area>\",\n            \"change\": \"<what was changed>\",\n            \"rationale\": \"<why this improves the tool>\",\n            \"impact\": \"<expected user impact>\",\n            \"based_on\": \"<quality report issue or test failure>\",\n            \"iteration_context\": \"<how this fits in optimization history>\"\n        }\n    ],\n    \"quality_score\": {\n        \"before\": \"<0-10>\",\n        \"after\": \"<0-10>\",\n        \"improvement\": \"<difference>\",\n        \"target_progress\": \"<progress toward target score>\"\n    },\n    \"recommendations\": [\n        {\n            \"type\": \"enhancement|fix|optimization\",\n            \"description\": \"<recommendation>\",\n            \"priority\": \"high|medium|low\",\n            \"source\": \"<quality report or test results>\",\n            \"next_iteration_focus\": \"<what to focus on next>\"\n        }\n    ]\n}",
+    "input_arguments": [
+      "tool_config",
+      "optimization_context"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "string",
+          "description": "JSON string of the current tool configuration to optimize"
+        },
+        "optimization_context": {
+          "type": "string",
+          "description": "JSON string containing comprehensive optimization context including quality report, test results, iteration info, and improvement history"
+        }
+      },
+      "required": [
+        "tool_config",
+        "optimization_context"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 2048,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "optimized_config": {
+          "type": "object",
+          "description": "Optimized tool configuration",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "parameter": {
+              "type": "object"
+            },
+            "return_schema": {
+              "type": "object",
+              "description": "JSON schema for tool output"
+            },
+            "test_examples": {
+              "type": "array",
+              "description": "Test cases for the tool",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "input": {
+                    "type": "object"
+                  },
+                  "expected_output": {
+                    "type": "object"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        "improvements": {
+          "type": "array",
+          "description": "List of improvements made",
+          "items": {
+            "type": "object",
+            "properties": {
+              "area": {
+                "type": "string"
+              },
+              "change": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              },
+              "impact": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "quality_score": {
+          "type": "object",
+          "description": "Quality score comparison",
+          "properties": {
+            "before": {
+              "type": "number"
+            },
+            "after": {
+              "type": "number"
+            },
+            "improvement": {
+              "type": "number"
+            }
+          }
+        },
+        "recommendations": {
+          "type": "array",
+          "description": "Further recommendations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "enhancement",
+                  "fix",
+                  "optimization"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "string",
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "optimized_config",
+        "improvements",
+        "quality_score",
+        "recommendations"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ToolOptimizer",
+    "description": "Optimizes tool configurations based on quality feedback. Improves tool specifications and implementations to address identified issues.",
+    "prompt": "You are an expert tool optimizer. Improve this tool based on the quality feedback:\n\nOriginal Tool Configuration: {tool_config}\nQuality Feedback: {quality_feedback}\nOptimization Target: {optimization_target}\n\nGenerate an optimized version in this JSON format:\n{\n  \"optimized_tool\": {\n    \"name\": \"improved_tool_name\",\n    \"type\": \"tool_type\",\n    \"description\": \"enhanced_description\",\n    \"parameter\": {\n      \"type\": \"object\",\n      \"properties\": {},\n      \"required\": []\n    },\n    \"category\": \"category\",\n    \"implementation\": {\n      \"source_code\": \"improved_code\",\n      \"dependencies\": [],\n      \"main_function\": \"execute_tool\"\n    }\n  },\n  \"improvements_made\": [\n    \"Added input validation\",\n    \"Enhanced error handling\",\n    \"Improved parameter descriptions\"\n  ],\n  \"optimization_notes\": \"Summary of key improvements\"\n}\n\nFocus on:\n1. Fixing identified weaknesses\n2. Enhancing parameter validation\n3. Improving error handling\n4. Adding missing functionality\n5. Optimizing for the specified target\n6. Maintaining backward compatibility where possible",
+    "input_arguments": [
+      "tool_config",
+      "quality_feedback",
+      "optimization_target"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "string",
+          "description": "JSON string of the original tool configuration"
+        },
+        "quality_feedback": {
+          "type": "string",
+          "description": "JSON string of quality evaluation feedback"
+        },
+        "optimization_target": {
+          "type": "string",
+          "description": "What to optimize for (improve_quality, enhance_performance, etc.)"
+        }
+      },
+      "required": [
+        "tool_config",
+        "quality_feedback",
+        "optimization_target"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 3072,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "optimized_tool": {
+          "type": "object",
+          "description": "Optimized tool configuration",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "parameter": {
+              "type": "object"
+            },
+            "category": {
+              "type": "string"
+            },
+            "implementation": {
+              "type": "object"
+            }
+          }
+        },
+        "improvements_made": {
+          "type": "array",
+          "description": "List of improvements made",
+          "items": {
+            "type": "string"
+          }
+        },
+        "optimization_notes": {
+          "type": "string",
+          "description": "Summary of key improvements"
+        }
+      },
+      "required": [
+        "optimized_tool",
+        "improvements_made",
+        "optimization_notes"
+      ]
+    }
+  },
+  {
+    "type": "ComposeTool",
+    "name": "ToolDiscover",
+    "description": "Generates new ToolUniverse-compliant tools based on short descriptions through an intelligent discovery and refinement process. Automatically determines the optimal tool type and category, discovers similar existing tools, generates initial specifications, and iteratively refines the tool configuration using agentic optimization tools until it meets quality standards.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "Short description of the desired tool functionality and purpose. Tool Discover will automatically analyze this to determine the optimal tool type (PackageTool, RESTTool, XMLTool, or AgenticTool) and appropriate category."
+        },
+        "max_iterations": {
+          "type": "integer",
+          "description": "Maximum number of refinement iterations to perform.",
+          "default": 20
+        },
+        "save_to_file": {
+          "type": "boolean",
+          "description": "Whether to save the generated tool configuration and report to a file.",
+          "default": true
+        },
+        "output_file": {
+          "type": "string",
+          "description": "Optional file path to save the generated tool. If not provided, uses auto-generated filename."
+        }
+      },
+      "required": [
+        "tool_description",
+        "max_iterations",
+        "save_to_file",
+        "output_file"
+      ]
+    },
+    "auto_load_dependencies": true,
+    "fail_on_missing_tools": false,
+    "required_tools": [],
+    "composition_file": "tool_discover.py",
+    "composition_function": "compose",
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "object",
+          "description": "Generated tool configuration"
+        },
+        "quality_score": {
+          "type": "number",
+          "description": "Final quality score"
+        },
+        "saved_files": {
+          "type": "array",
+          "description": "List of saved files",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "tool_config",
+        "quality_score",
+        "saved_files"
+      ]
+    }
+  },
+  {
+    "type": "ComposeTool",
+    "name": "ToolDescriptionOptimizer",
+    "description": "Optimizes a tool's description and parameter descriptions by generating test cases, executing them, analyzing the results, and suggesting improved descriptions for both the tool and its arguments. Optionally saves a comprehensive optimization report to a file without overwriting the original.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "object",
+          "description": "The full configuration of the tool to optimize."
+        },
+        "save_to_file": {
+          "type": "boolean",
+          "description": "If true, save the optimized description to a file (do not overwrite the original).",
+          "default": false
+        },
+        "output_file": {
+          "type": "string",
+          "description": "Optional file path to save the optimized description. If not provided, use '<tool_name>_optimized_description.txt'."
+        },
+        "max_iterations": {
+          "type": "integer",
+          "description": "Maximum number of optimization rounds to perform.",
+          "default": 3
+        },
+        "satisfaction_threshold": {
+          "type": "number",
+          "description": "Quality score threshold (1-10) to consider optimization satisfactory.",
+          "default": 8
+        }
+      },
+      "required": [
+        "tool_config",
+        "save_to_file",
+        "output_file",
+        "max_iterations",
+        "satisfaction_threshold"
+      ]
+    },
+    "auto_load_dependencies": true,
+    "fail_on_missing_tools": false,
+    "required_tools": [
+      "TestCaseGenerator",
+      "DescriptionAnalyzer",
+      "ArgumentDescriptionOptimizer",
+      "DescriptionQualityEvaluator"
+    ],
+    "composition_file": "tool_description_optimizer.py",
+    "composition_function": "compose",
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "optimized_tool": {
+          "type": "object",
+          "description": "Tool with optimized descriptions"
+        },
+        "optimization_report": {
+          "type": "object",
+          "description": "Detailed optimization report",
+          "properties": {
+            "iterations_performed": {
+              "type": "integer"
+            },
+            "final_quality_score": {
+              "type": "number"
+            },
+            "improvements_made": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "saved_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "optimized_tool",
+        "optimization_report"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "PackageEvaluator",
+    "description": "Evaluates and ranks Python packages based on requirements using LLM analysis",
+    "prompt": "You are an expert Python package evaluator. Analyze packages and recommend the best fit.\n\n## REQUIREMENTS\n{requirements}\n\n## FUNCTIONALITY NEEDED\n{functionality}\n\n## PACKAGE CANDIDATES\n{candidates}\n\n## EVALUATION CRITERIA\n1. **Functionality Match**: Does it provide exactly what's needed?\n2. **Maturity**: Version number, last update, stability\n3. **Popularity**: Downloads, stars, community size\n4. **Maintenance**: Recent commits, active development\n5. **Documentation**: Quality and completeness\n6. **Dependencies**: Minimal, well-maintained dependencies\n7. **License**: Compatible with project needs\n8. **Performance**: Known for speed/efficiency\n9. **Compatibility**: Python version support\n10. **Ease of Use**: API simplicity, learning curve\n\n## ANALYSIS APPROACH\nFor each package:\n1. Match functionality against requirements\n2. Assess quality indicators (version, docs, maintenance)\n3. Identify strengths and weaknesses\n4. Calculate suitability score (0-100)\n5. Provide specific reasoning\n\n## RESPONSE FORMAT\nReturn JSON:\n{\n  \"rankings\": [\n    {\n      \"name\": \"package-name\",\n      \"score\": 95,\n      \"strengths\": [\"specific strengths\"],\n      \"weaknesses\": [\"specific weaknesses\"],\n      \"functionality_match\": \"how well it matches requirements\",\n      \"recommendation\": \"use|consider|avoid\",\n      \"reasoning\": \"detailed explanation\",\n      \"usage_example\": \"quick code snippet showing how to use it\"\n    }\n  ],\n  \"top_recommendation\": {\n    \"name\": \"best-package\",\n    \"why\": \"clear explanation of why this is best\",\n    \"alternatives\": [\"backup options\"]\n  },\n  \"implementation_guidance\": \"how to implement using recommended package\"\n}",
+    "input_arguments": [
+      "requirements",
+      "functionality",
+      "candidates"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "requirements": {
+          "type": "string",
+          "description": "What the tool needs to accomplish"
+        },
+        "functionality": {
+          "type": "string",
+          "description": "Specific functions/features required"
+        },
+        "candidates": {
+          "type": "string",
+          "description": "JSON string of candidate packages with metadata"
+        }
+      },
+      "required": [
+        "requirements",
+        "functionality",
+        "candidates"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 4096,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "rankings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              },
+              "strengths": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "weaknesses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "functionality_match": {
+                "type": "string"
+              },
+              "recommendation": {
+                "type": "string"
+              },
+              "reasoning": {
+                "type": "string"
+              },
+              "usage_example": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "top_recommendation": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "why": {
+              "type": "string"
+            },
+            "alternatives": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "implementation_guidance": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "rankings",
+        "top_recommendation",
+        "implementation_guidance"
+      ]
+    }
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ImplementationDebugger",
+    "description": "Analyzes failed implementation generation and suggests retry strategies",
+    "prompt": "You are a debugging expert. Analyze the error and provide a fix.\n\n## ERROR INFO\nTool Name: {tool_name}\nTool Description: {tool_description}\nTool Parameters: {tool_parameters}\nImplementation Code: {implementation_code}\nRuntime Error: {runtime_error}\nTest Case: {test_case}\n\n## KEY POINTS TO REMEMBER\n\n### 🔍 Error Analysis Process\n- Identify the exact error type (ImportError, NameError, AttributeError, etc.)\n- Trace the error to its root cause\n- Understand the context and execution flow\n- Check for missing dependencies or imports\n- Look for data type mismatches or logic errors\n\n### 🛠️ Common Error Types & Solutions\n- **ImportError**: Missing packages, wrong import paths, circular imports\n- **NameError**: Undefined variables, scope issues, typos in variable names\n- **AttributeError**: Wrong object types, missing methods, API changes\n- **TypeError**: Wrong argument types, missing required parameters\n- **ValueError**: Invalid data values, parsing errors, validation failures\n- **KeyError**: Missing dictionary keys, wrong data structure access\n- **IndexError**: List/array bounds, empty collections\n- **FileNotFoundError**: Missing files, wrong paths, permission issues\n\n### 🎯 Fix Strategy\n- Provide specific, actionable code changes\n- Explain WHY the fix will work\n- Consider edge cases and potential side effects\n- Ensure the fix doesn't break other functionality\n- Test the fix with the given test case\n\n### ⚠️ What NOT to Do\n- Don't give generic advice without specific code changes\n- Don't ignore the context of the error\n- Don't suggest fixes that might break other parts\n- Don't assume the error is always in the obvious place\n- Don't provide fixes without understanding the root cause\n\n## RESPONSE FORMAT\nPlease respond with a valid JSON object:\n\n{\n  \"error_analysis\": {\n    \"error_type\": \"<type of error>\",\n    \"root_cause\": \"<what caused the error>\",\n    \"fix_needed\": \"<what needs to be fixed>\"\n  },\n  \"fix_recommendations\": [\n    {\n      \"description\": \"<what to fix>\",\n      \"code_changes\": \"<specific changes>\",\n      \"explanation\": \"<why this works>\"\n    }\n  ]\n}\n\nFix it!",
+    "input_arguments": [
+      "tool_description",
+      "tool_parameters",
+      "previous_attempts",
+      "error_messages",
+      "api_documentation_context"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "Description of the tool that failed to generate"
+        },
+        "tool_parameters": {
+          "type": "string",
+          "description": "JSON string of tool parameters"
+        },
+        "previous_attempts": {
+          "type": "string",
+          "description": "JSON string of previous generation attempts and their issues"
+        },
+        "error_messages": {
+          "type": "string",
+          "description": "Error messages from failed attempts"
+        },
+        "api_documentation_context": {
+          "type": "string",
+          "description": "API documentation context from web search",
+          "default": "{}"
+        }
+      },
+      "required": [
+        "tool_description",
+        "tool_parameters"
+      ]
+    },
+    "configs": {
+      "api_type": "CHATGPT",
+      "model_id": "gpt-5",
+      "temperature": 1.0,
+      "max_new_tokens": 3072,
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "failure_reason": {
+          "type": "string"
+        },
+        "simplified_description": {
+          "type": "string"
+        },
+        "retry_strategy": {
+          "type": "string"
+        },
+        "better_search_terms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requirement_breakdown": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "implementation_hints": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "failure_reason",
+        "simplified_description",
+        "retry_strategy"
+      ]
+    }
+  }
+]

@@ -1,0 +1,270 @@
+[
+  {
+    "name": "Metabolite_get_info",
+    "description": "Get compound information for a metabolite by HMDB ID, compound name, or PubChem CID. Returns common name, IUPAC name, molecular formula, molecular weight, canonical SMILES, and InChIKey via PubChem. Accepts HMDB IDs (e.g., HMDB0000122), compound names (e.g., glucose), or PubChem CIDs (numeric).",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_info"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID (e.g., HMDB0000122 or HMDB0000001)"
+        },
+        "compound_name": {
+          "type": "string",
+          "description": "Compound name (e.g., glucose, L-alanine, caffeine)"
+        },
+        "pubchem_cid": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "PubChem CID (e.g., 5793)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pubchem_cid": {
+          "type": "integer"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "iupac_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "formula": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "molecular_weight": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "smiles": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "inchikey": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "hmdb_id": "HMDB0000122"
+      },
+      {
+        "compound_name": "caffeine"
+      },
+      {
+        "pubchem_cid": 5793
+      }
+    ]
+  },
+  {
+    "name": "Metabolite_search",
+    "description": "Search for metabolites by compound name or molecular formula via PubChem. Returns up to 10 matching compounds with PubChem CID, name, formula, molecular weight, and SMILES. Use search_type='name' for name/keyword search (default) or search_type='formula' for exact molecular formula search (e.g., C6H12O6).",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query: compound name (e.g., glucose) or molecular formula (e.g., C6H12O6)"
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Search type: 'name' for compound name search, 'formula' for molecular formula search (default: name)",
+          "default": "name"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array"
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "glucose"
+      },
+      {
+        "query": "C6H12O6",
+        "search_type": "formula"
+      }
+    ]
+  },
+  {
+    "name": "Metabolite_get_diseases",
+    "description": "Get curated disease associations for a metabolite using CTD (Comparative Toxicogenomics Database). Accepts HMDB ID, compound name, or PubChem CID. Resolves the identifier to PubChem to get the canonical compound name, then queries CTD for chemical-disease associations with direct evidence. Returns disease name, disease ID (MeSH), disease categories, direct evidence type (marker/mechanism), and supporting PubMed IDs.",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_diseases"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID (e.g., HMDB0000122)"
+        },
+        "compound_name": {
+          "type": "string",
+          "description": "Compound name (e.g., glucose, cholesterol)"
+        },
+        "pubchem_cid": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "PubChem CID (e.g., 5793)"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of disease associations to return (default: 50)",
+          "default": 50
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string"
+        },
+        "compound_name": {
+          "type": "string"
+        },
+        "pubchem_cid": {
+          "type": "integer"
+        },
+        "ctd_query_term": {
+          "type": "string"
+        },
+        "disease_count": {
+          "type": "integer"
+        },
+        "diseases": {
+          "type": "array"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "hmdb_id": "HMDB0000122",
+        "limit": 5
+      },
+      {
+        "compound_name": "cholesterol",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "HMDB_search",
+    "description": "Alias for Metabolite_search. Search for metabolites by compound name or molecular formula via PubChem. Accepts common names, synonyms (e.g., 'glucosylceramide', 'glucose', 'ATP').",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search"
+        },
+        "query": {
+          "type": "string",
+          "description": "Compound name or molecular formula to search"
+        }
+      },
+      "required": ["query"]
+    },
+    "test_examples": [{"query": "glucose"}]
+  },
+  {
+    "name": "HMDB_get_metabolite",
+    "description": "Alias for Metabolite_get_info. Get compound information by HMDB ID, compound name, or PubChem CID.",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_info"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID (e.g., HMDB0000122)"
+        },
+        "compound_name": {
+          "type": "string",
+          "description": "Compound name (e.g., glucose)"
+        }
+      },
+      "required": []
+    },
+    "test_examples": [{"hmdb_id": "HMDB0000122"}]
+  },
+  {
+    "name": "HMDB_get_diseases",
+    "description": "Alias for Metabolite_get_diseases. Get disease associations for a metabolite via CTD database.",
+    "type": "MetaboliteTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_diseases"
+        },
+        "hmdb_id": {
+          "type": "string",
+          "description": "HMDB ID (e.g., HMDB0000122)"
+        },
+        "compound_name": {
+          "type": "string",
+          "description": "Compound name (e.g., glucose)"
+        }
+      },
+      "required": []
+    },
+    "test_examples": [{"hmdb_id": "HMDB0000122", "limit": 5}]
+  }
+]

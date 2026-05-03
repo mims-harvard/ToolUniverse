@@ -346,7 +346,7 @@ msgstr ""
 #: ../../tutorials/aiscientists/adding_mcp_tools.md:218
 #: 560dcba3d01b4df6b302239db06ed8b7
 msgid "支持的传输协议"
-msgstr ""
+msgstr "Supported Transmission Protocols"
 
 #: ../../tutorials/aiscientists/adding_mcp_tools.md:220
 #: 3f608e206b4e4f9c8e894d5f6e27834d
@@ -376,7 +376,7 @@ msgstr "错误处理与重试"
 #: ../../tutorials/aiscientists/adding_mcp_tools.md:260
 #: 5149ff0fffbf4bcc93aaa56c1b495cfc
 msgid "配置文件组织"
-msgstr ""
+msgstr "配置文件组织结构"
 
 #: ../../tutorials/aiscientists/adding_mcp_tools.md:262
 #: df5eef0367a54135920e3b3bf0d9801a
@@ -401,12 +401,12 @@ msgstr ""
 #: ../../tutorials/aiscientists/adding_mcp_tools.md:317
 #: 272304d88657411cba37efaa7181235a
 msgid "示例 1: 医疗专家咨询系统"
-msgstr ""
+msgstr "示例 1：医疗专家咨询系统"
 
 #: ../../tutorials/aiscientists/adding_mcp_tools.md:340
 #: f6bf5928869548f5b59cf6807e1d8dcd
 msgid "示例 2: 数据分析工具集"
-msgstr ""
+msgstr "示例 2：数据分析工具集"
 
 #: ../../tutorials/aiscientists/adding_mcp_tools.md:363
 #: c58c1437319a4339b608334aaa589bed

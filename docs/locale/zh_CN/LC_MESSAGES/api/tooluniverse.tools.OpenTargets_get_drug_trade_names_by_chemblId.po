@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_drug\\_trade\\_names\\_by\\_chemb
 #: tooluniverse.tools.OpenTargets_get_drug_trade_names_by_chemblId:1
 msgid "OpenTargets_get_drug_trade_names_by_chemblId"
 msgstr ""
+"OpenTargets_get_drug_trade_names_by_chemblId  \n"
+"获取药物商品名通过ChemblId"
 
 #: 7a72b9e0ea7e4fbf8dc93b60ca189e28 8070da4688ef4cdc95d5881667ef7646 of
 #: tooluniverse.tools.OpenTargets_get_drug_trade_names_by_chemblId:3

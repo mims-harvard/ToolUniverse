@@ -9,19 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def ToolMetadataStandardizer(
-    metadata_list: list[Any],
+    metadata_list: list[str],
     limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Standardizes and groups semantically equivalent metadata strings (e.g., sources, tags) into canon...
 
     Parameters
     ----------
-    metadata_list : list[Any]
+    metadata_list : list[str]
         List of raw metadata strings (e.g., sources, tags) to standardize and group.
     limit : int
         If provided, the maximum number of canonical strings to return. The LLM will ...
@@ -34,14 +34,20 @@ def ToolMetadataStandardizer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"metadata_list": metadata_list, "limit": limit}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ToolMetadataStandardizer",
-            "arguments": {"metadata_list": metadata_list, "limit": limit},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

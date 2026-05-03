@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.DBLP\\_search\\_publications 模块"
 #: f911e34928c549b58d1acbad5172b205 of
 #: tooluniverse.tools.DBLP_search_publications:1
 msgid "DBLP_search_publications"
-msgstr ""
+msgstr "DBLP_搜索_出版物"
 
 #: b0c8ddef0bbf46b0b2cc69af49c52562 e4ce624fb1c749068fda09f4bad95870 of
 #: tooluniverse.tools.DBLP_search_publications:3

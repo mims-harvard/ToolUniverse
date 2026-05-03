@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_schnetpack\\_info 模块"
 #: c5c36a496de14383a142ff58a5408141 of
 #: tooluniverse.tools.get_schnetpack_info:1
 msgid "get_schnetpack_info"
-msgstr ""
+msgstr "get_schnetpack_信息"
 
 #: 1a02e832fc0142b494bc8d3f53dc4070 3ca3754293c84608ab9cf82d9d78928a of
 #: tooluniverse.tools.get_schnetpack_info:3

@@ -29,6 +29,9 @@ msgstr "tooluniverse.tools.get\\_clinical\\_trial\\_locations 模块"
 #: tooluniverse.tools.get_clinical_trial_locations:1
 msgid "get_clinical_trial_locations"
 msgstr ""
+"get_clinical_trial_locations\n"
+"\n"
+"获取临床试验地点"
 
 #: 599864ec5ad246dbbf2699b459d42cf0 5d27435dd9b04e4d96cb51b92d629871 of
 #: tooluniverse.tools.get_clinical_trial_locations:3

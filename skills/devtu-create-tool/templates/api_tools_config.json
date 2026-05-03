@@ -1,0 +1,188 @@
+[
+  {
+    "name": "search_items",
+    "type": "SearchItemsTool",
+    "description": "Search for items by query term. Supports partial matching and returns paginated results with item details including ID, name, and description. Use for: discovering items, finding specific records, building item lists. Example: Search 'protein' to find all protein-related items.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search term for item name or description. Case-insensitive, supports partial matches. Examples: 'protein', 'gene', 'drug name'"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return. Range: 1-100. Default: 20",
+          "default": 20
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination. Default: 1",
+          "default": 1
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Request status: 'success' or 'error'"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of results in this response"
+        },
+        "total": {
+          "type": "integer",
+          "description": "Total number of matching results"
+        },
+        "page": {
+          "type": "integer",
+          "description": "Current page number"
+        },
+        "next": {
+          "type": ["string", "null"],
+          "description": "URL for next page, null if last page"
+        },
+        "previous": {
+          "type": ["string", "null"],
+          "description": "URL for previous page, null if first page"
+        },
+        "results": {
+          "type": "array",
+          "description": "Array of search results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique item identifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "Item name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Item description"
+              },
+              "score": {
+                "type": "number",
+                "description": "Search relevance score"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is 'error'"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "protein"
+      },
+      {
+        "query": "gene",
+        "limit": 10,
+        "page": 1
+      }
+    ]
+  },
+  {
+    "name": "get_item_details",
+    "type": "GetItemDetailsTool",
+    "description": "Retrieve detailed information for a specific item by ID. Returns complete item data including metadata, relationships, and attributes. Use for: viewing full item information, analyzing item properties, retrieving specific records. Example: Get details for item ID 'ITM12345'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "description": "Unique item identifier. Format: 'ITM' followed by digits. Example: 'ITM12345'"
+        },
+        "include_related": {
+          "type": "boolean",
+          "description": "Include related items in response. Default: false",
+          "default": false
+        }
+      },
+      "required": ["item_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Request status: 'success' or 'error'"
+        },
+        "data": {
+          "type": "object",
+          "description": "Item details",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique item identifier"
+            },
+            "name": {
+              "type": "string",
+              "description": "Item name"
+            },
+            "description": {
+              "type": "string",
+              "description": "Full item description"
+            },
+            "created_date": {
+              "type": "string",
+              "description": "Creation date in ISO 8601 format"
+            },
+            "updated_date": {
+              "type": "string",
+              "description": "Last update date in ISO 8601 format"
+            },
+            "attributes": {
+              "type": "object",
+              "description": "Item-specific attributes",
+              "additionalProperties": true
+            },
+            "related_items": {
+              "type": "array",
+              "description": "Related items (if include_related=true)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "relationship": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if status is 'error'"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "item_id": "ITM12345"
+      },
+      {
+        "item_id": "ITM67890",
+        "include_related": true
+      }
+    ]
+  }
+]

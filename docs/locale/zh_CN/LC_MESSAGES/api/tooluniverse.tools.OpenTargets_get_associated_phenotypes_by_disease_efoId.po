@@ -32,7 +32,7 @@ msgstr ""
 #: 27d9507bf078480c909cd1019fc7ce15 of
 #: tooluniverse.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId:1
 msgid "OpenTargets_get_associated_phenotypes_by_disease_efoId"
-msgstr ""
+msgstr "OpenTargets_通过疾病 EFO ID 获取相关表型"
 
 #: 3224126b2e0d4d9b891f61da2e1d8cb3 a3b2abcc3f144c8d91e95bde948765d4 of
 #: tooluniverse.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId:3

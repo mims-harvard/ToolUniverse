@@ -1,0 +1,192 @@
+[
+  {
+    "name": "Bioregistry_resolve_reference",
+    "description": "Resolve a compact identifier (prefix:id) to provider URLs across 2600+ biological databases. Given a database prefix (e.g., 'uniprot', 'chebi', 'go', 'pubmed') and an identifier, returns URLs from all known providers. Useful for cross-database linking and identifier resolution.",
+    "type": "BioregistryTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "resolve_reference",
+          "description": "Operation type (fixed: resolve_reference)"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Database prefix (e.g., 'uniprot', 'chebi', 'go', 'pubmed', 'ensembl', 'hgnc')"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Database identifier (e.g., 'P04637' for UniProt, '17234' for ChEBI, '0006915' for GO)"
+        }
+      },
+      "required": ["prefix", "identifier"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "identifier": {
+              "type": "string"
+            },
+            "providers": {
+              "type": "object"
+            },
+            "provider_count": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "prefix": "uniprot",
+        "identifier": "P04637"
+      },
+      {
+        "prefix": "chebi",
+        "identifier": "17234"
+      }
+    ]
+  },
+  {
+    "name": "Bioregistry_get_registry",
+    "description": "Get metadata for a biological database/ontology by its Bioregistry prefix. Returns name, description, homepage, ID pattern, URI format, example IDs, and synonyms. Covers 2600+ resources including UniProt, ChEBI, GO, PDB, Ensembl, HGNC, and many more.",
+    "type": "BioregistryTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_registry",
+          "description": "Operation type (fixed: get_registry)"
+        },
+        "prefix": {
+          "type": "string",
+          "description": "Bioregistry prefix (e.g., 'uniprot', 'chebi', 'go', 'pdb', 'ensembl', 'hgnc', 'pubmed')"
+        }
+      },
+      "required": ["prefix"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "homepage": {
+              "type": "string"
+            },
+            "pattern": {
+              "type": "string"
+            },
+            "uri_format": {
+              "type": "string"
+            },
+            "example": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "prefix": "uniprot"
+      },
+      {
+        "prefix": "chebi"
+      }
+    ]
+  },
+  {
+    "name": "Bioregistry_search_registries",
+    "description": "Search the Bioregistry for databases, ontologies, and resources by keyword. Use to find the correct prefix for identifier resolution, or to discover databases related to a topic (e.g., 'protein', 'gene ontology', 'metabolite').",
+    "type": "BioregistryTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_registries",
+          "description": "Operation type (fixed: search_registries)"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search term (e.g., 'protein', 'gene expression', 'metabolite')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "prefix": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "total": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "protein"
+      },
+      {
+        "query": "gene ontology"
+      }
+    ]
+  }
+]

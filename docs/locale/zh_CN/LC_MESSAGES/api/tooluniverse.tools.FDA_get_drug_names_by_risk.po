@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_risk 模块"
 #: 23abcc73f55744a58e532e5efa1d0949 of
 #: tooluniverse.tools.FDA_get_drug_names_by_risk:1
 msgid "FDA_get_drug_names_by_risk"
-msgstr ""
+msgstr "FDA_get_drug_names_by_risk（根据风险获取药品名称）"
 
 #: 304ca1eca3cd4ba884ec40ce91cdce20 6c7fbbe9084c478f9d20aa2a522ce8a9 of
 #: tooluniverse.tools.FDA_get_drug_names_by_risk:3

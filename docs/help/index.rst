@@ -5,6 +5,7 @@ Get help and find answers for ToolUniverse.
 
 .. toctree::
    :maxdepth: 1
+   :hidden:
 
    faq
    troubleshooting

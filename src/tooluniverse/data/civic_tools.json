@@ -1,0 +1,953 @@
+[
+  {
+    "name": "civic_search_genes",
+    "description": "Search for genes in CIViC (Clinical Interpretation of Variants in Cancer) database. CIViC is a community knowledgebase for expert-curated interpretations of variants in cancer. Returns genes with their IDs, names, and descriptions. Use this to find genes of interest before querying variants or evidence.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of genes to return (default: 10, recommended max: 100)",
+          "default": 10
+        },
+        "name": {
+          "type": "string",
+          "description": "Gene symbol to search for (e.g., \"EGFR\", \"BRAF\", \"BRCA1\"). Alias: use 'query' or 'gene_name' instead."
+        },
+        "query": {
+          "type": "string",
+          "description": "Gene symbol to search for (e.g., \"FLT3\", \"KRAS\", \"TP53\"). Alias for 'name'."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol to search for. Alias for 'name'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query GetGenes($limit: Int, $entrezSymbols: [String!]) { genes(first: $limit, entrezSymbols: $entrezSymbols) { nodes { id name description entrezId } } }",
+      "operation_name": "GetGenes",
+      "array_wrap": {
+        "name": "entrezSymbols",
+        "query": "entrezSymbols",
+        "gene_name": "entrezSymbols"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "genes": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "CIViC gene ID"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Gene symbol/name"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Gene description"
+                      },
+                      "entrezId": {
+                        "type": [
+                          "string",
+                          "integer"
+                        ],
+                        "description": "Entrez Gene ID"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "limit": 5
+      },
+      {
+        "name": "BRCA1",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "civic_get_variants_by_gene",
+    "description": "Get all variants associated with a specific gene in CIViC database. Returns variant information including names, coordinates, and associated evidence. Use gene_name or gene_symbol (e.g., 'EGFR', 'BRAF') for convenience, or gene_id if already known. Uses cursor-based pagination to return up to 500 variants per call.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "integer",
+          "description": "CIViC gene ID (e.g., 19 for EGFR, 12 for BRAF). Find gene IDs using civic_search_genes."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'EGFR', 'BRAF', 'TP53'). Will be looked up automatically. Aliases: gene, gene_symbol, query."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for gene_name. Standard gene symbol (e.g., 'KRAS', 'BRCA1', 'EGFR')."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for gene_name. Gene symbol (e.g., 'EGFR', 'KRAS')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of variants to return (default: 500, uses cursor pagination to bypass CIViC's 100/page server cap)",
+          "default": 500
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query GetVariantsByGene($gene_id: Int!, $page_size: Int, $after: String) { gene(id: $gene_id) { id name variants(first: $page_size, after: $after) { nodes { id name ... on GeneVariant { feature { id name } } } pageInfo { hasNextPage endCursor } } } }",
+      "operation_name": "GetVariantsByGene"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "gene": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "variants": {
+                  "type": "object",
+                  "properties": {
+                    "nodes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "description": "CIViC variant ID"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Variant name (e.g., 'G12C', 'L858R', 'V600E')"
+                          },
+                          "feature": {
+                            "type": "object",
+                            "description": "Parent gene feature",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "Gene name"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string",
+              "description": "Optional note about duplicate variant names or other data quality observations"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_name": "EGFR",
+        "limit": 20
+      },
+      {
+        "gene_symbol": "KRAS",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "civic_get_variant",
+    "description": "Get detailed information about a specific variant in CIViC database by variant ID. Variants represent specific genetic alterations (SNVs, indels, structural variants, etc.) with clinical significance in cancer. Returns variant name, coordinates, gene association, and related information.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "integer",
+          "description": "CIViC variant ID (e.g., 4170)"
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "query": "query GetVariant($variant_id: Int!) { variant(id: $variant_id) { id name variantAliases variantTypes { id name soid } molecularProfiles(first: 5) { nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions } } }",
+      "operation_name": "GetVariant"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "variant": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "CIViC variant ID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Variant name"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "variant_id": 2
+      }
+    ]
+  },
+  {
+    "name": "civic_search_variants",
+    "description": "Search for variants in CIViC database. Returns a list of variants with their IDs and names. Use 'query' to search by variant name (e.g., 'V600E'), or 'gene'/'gene_name' to get all variants for a specific gene (e.g., 'EGFR'). To find a specific variant in a gene, combine gene_name + variant_name (e.g., gene_name='EGFR', variant_name='L858R'). Note: CIViC stores variants without gene prefix — do not combine gene and variant in a single string.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of variants to return (default: 20, recommended max: 100)",
+          "default": 20
+        },
+        "query": {
+          "type": "string",
+          "description": "Variant name to search for (e.g., \"T790M\", \"V600E\", \"exon 19 deletion\"). Returns name-matching variants."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to filter variants by (e.g., 'EGFR', 'BRAF', 'KRAS'). Returns all variants for that gene."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for gene. Gene symbol (e.g., 'TP53', 'BRCA1')."
+        },
+        "variant_name": {
+          "type": "string",
+          "description": "Specific variant name to filter within a gene (e.g., 'L858R', 'V600E', 'T790M'). Use together with gene_name — CIViC stores variants without the gene prefix (use 'L858R' not 'EGFR L858R')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query SearchVariants($query: String, $limit: Int) { variants(name: $query, first: $limit) { nodes { id name ... on GeneVariant { feature { id name } } } } }",
+      "operation_name": "SearchVariants"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "variants": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "limit": 10
+      },
+      {
+        "query": "V600E",
+        "limit": 5
+      }
+    ],
+    "aliases": ["CIViC_search_variants"]
+  },
+  {
+    "name": "civic_get_evidence_item",
+    "description": "Get detailed information about a specific evidence item in CIViC database by evidence ID. Evidence items link molecular profiles or variants to clinical outcomes, therapies, or disease states with curated literature support. Returns evidence description, level (A-E), type (PREDICTIVE, DIAGNOSTIC, PROGNOSTIC), significance, direction, status, disease, therapies, molecular profile, and citation.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "evidence_id": {
+          "type": "integer",
+          "description": "CIViC evidence item ID (e.g., 116)"
+        }
+      },
+      "required": [
+        "evidence_id"
+      ]
+    },
+    "fields": {
+      "query": "query GetEvidenceItem($evidence_id: Int!) { evidenceItem(id: $evidence_id) { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } }",
+      "operation_name": "GetEvidenceItem"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "evidenceItem": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "evidenceLevel": {
+                  "type": "string",
+                  "description": "Evidence level (A, B, C, D, E)"
+                },
+                "evidenceType": {
+                  "type": "string",
+                  "description": "Evidence type (PREDICTIVE, DIAGNOSTIC, PROGNOSTIC, etc.)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "evidence_id": 116
+      }
+    ]
+  },
+  {
+    "name": "civic_search_evidence_items",
+    "description": "Search for evidence items in CIViC database. Evidence items are curated statements linking variants or molecular profiles to clinical outcomes, therapies, or disease states. Returns evidence with disease, therapies, significance, direction, and citation. Filter by therapy name (e.g., 'imatinib'), disease name (e.g., 'leukemia'), or molecular profile name (e.g., 'BRAF V600E').",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of evidence items to return (default: 20, recommended max: 100)",
+          "default": 20
+        },
+        "status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by curation status. Default: ACCEPTED (peer-reviewed). Options: ACCEPTED, SUBMITTED, REJECTED, ALL (returns all statuses combined)."
+        },
+        "therapy": {
+          "type": "string",
+          "description": "Filter by therapy/drug name (e.g., 'imatinib', 'pembrolizumab'). Alias: therapy_name. Note: matches any evidence item where the therapy appears, including combination regimens — results may include multi-drug combinations."
+        },
+        "therapy_name": {
+          "type": "string",
+          "description": "Alias for therapy. Filter by therapy/drug name."
+        },
+        "disease": {
+          "type": "string",
+          "description": "Filter by disease name (e.g., 'leukemia', 'melanoma', 'lung cancer'). Alias: disease_name. Note: CIViC uses specific disease names (e.g., 'Lung Non-small Cell Carcinoma', not 'NSCLC'); try partial names or multiple searches if results are empty."
+        },
+        "disease_name": {
+          "type": "string",
+          "description": "Alias for disease. Filter by disease name."
+        },
+        "molecular_profile": {
+          "type": "string",
+          "description": "Filter by molecular profile name (e.g., 'BRAF V600E', 'EGFR T790M', 'KRAS G12C'). Uses substring matching — 'FLT3 ITD' will also match 'FLT3 ITD AND FLT3 D835Y'. For gene fusions, CIViC uses double-colon notation: 'GENE::PARTNER Fusion' (e.g., 'FGFR2::BICC1 Fusion', 'ALK::EML4 Fusion'). Use civic_search_molecular_profiles to discover exact profile names."
+        },
+        "evidence_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by evidence type. Values: PREDICTIVE (drug response), DIAGNOSTIC (disease diagnosis), PROGNOSTIC (patient outcomes), PREDISPOSING (disease risk), ONCOGENIC (variant pathogenicity), FUNCTIONAL (molecular function)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query SearchEvidenceItems($limit: Int, $status: EvidenceStatusFilter, $therapyName: String, $diseaseName: String, $molecularProfileName: String, $evidenceType: EvidenceType) { evidenceItems(first: $limit, status: $status, therapyName: $therapyName, diseaseName: $diseaseName, molecularProfileName: $molecularProfileName, evidenceType: $evidenceType) { nodes { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } } }",
+      "operation_name": "SearchEvidenceItems",
+      "param_map": {
+        "therapy": "therapyName",
+        "therapy_name": "therapyName",
+        "disease": "diseaseName",
+        "disease_name": "diseaseName",
+        "molecular_profile": "molecularProfileName",
+        "evidence_type": "evidenceType"
+      },
+      "variable_defaults": {
+        "status": "ACCEPTED"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "evidenceItems": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "evidenceLevel": {
+                        "type": "string"
+                      },
+                      "evidenceType": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "limit": 5,
+        "therapy": "imatinib",
+        "disease": "leukemia"
+      }
+    ]
+  },
+  {
+    "name": "civic_get_assertion",
+    "description": "Get detailed information about a specific assertion in CIViC database by assertion ID. Assertions are higher-level clinical interpretations that integrate multiple evidence items into formal statements about clinical actionability. Returns assertion description, evidence summary, and associated molecular profile or variant information.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "assertion_id": {
+          "type": "integer",
+          "description": "CIViC assertion ID (e.g., 101)"
+        }
+      },
+      "required": [
+        "assertion_id"
+      ]
+    },
+    "fields": {
+      "query": "query GetAssertion($assertion_id: Int!) { assertion(id: $assertion_id) { id description status } }",
+      "operation_name": "GetAssertion"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "assertion": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Assertion status (ACCEPTED, SUBMITTED, etc.)"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "assertion_id": 101
+      }
+    ]
+  },
+  {
+    "name": "civic_search_assertions",
+    "description": "Search for assertions in CIViC database. Assertions are higher-level clinical interpretations that integrate multiple evidence items into formal statements about clinical actionability. Returns a list of assertions with descriptions and associated molecular profiles or variants. Filter by therapy (e.g., 'ponatinib'), disease (e.g., 'leukemia'), or variant name.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of assertions to return (default: 20, recommended max: 100)",
+          "default": 20
+        },
+        "therapy": {
+          "type": "string",
+          "description": "Filter by therapy/drug name (e.g., 'imatinib', 'ponatinib'). Alias: therapy_name."
+        },
+        "therapy_name": {
+          "type": "string",
+          "description": "Alias for therapy. Filter by therapy/drug name."
+        },
+        "disease": {
+          "type": "string",
+          "description": "Filter by disease name (e.g., 'leukemia', 'melanoma'). Alias: disease_name."
+        },
+        "disease_name": {
+          "type": "string",
+          "description": "Alias for disease. Filter by disease name."
+        },
+        "variant_name": {
+          "type": "string",
+          "description": "Filter by variant name (e.g., 'V600E', 'T315I')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query SearchAssertions($limit: Int, $therapyName: String, $diseaseName: String, $variantName: String) { assertions(first: $limit, therapyName: $therapyName, diseaseName: $diseaseName, variantName: $variantName) { nodes { id description status } } }",
+      "operation_name": "SearchAssertions",
+      "param_map": {
+        "therapy": "therapyName",
+        "therapy_name": "therapyName",
+        "disease": "diseaseName",
+        "disease_name": "diseaseName",
+        "variant_name": "variantName"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "assertions": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "limit": 5,
+        "therapy": "imatinib",
+        "disease": "leukemia"
+      }
+    ]
+  },
+  {
+    "name": "civic_get_molecular_profile",
+    "description": "Get detailed information about a specific molecular profile in CIViC database by molecular profile ID. Molecular profiles represent combinations of variants or features (e.g., 'BRAF V600E') that serve as biomarkers for clinical interpretation. Returns profile name, description, clinical significance score, and associated evidence items with diseases, therapies, and evidence levels.",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "molecular_profile_id": {
+          "type": "integer",
+          "description": "CIViC molecular profile ID (e.g., 12 for BRAF V600E)"
+        },
+        "evidence_limit": {
+          "type": "integer",
+          "description": "Maximum number of evidence items to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": [
+        "molecular_profile_id"
+      ]
+    },
+    "fields": {
+      "query": "query GetMolecularProfile($molecular_profile_id: Int!, $evidence_limit: Int) { molecularProfile(id: $molecular_profile_id) { id name molecularProfileScore description evidenceItems(first: $evidence_limit) { nodes { id name evidenceLevel evidenceDirection significance status disease { name } therapies { name } } } } }",
+      "operation_name": "GetMolecularProfile"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "molecularProfile": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "molecularProfileScore": {
+                  "type": "number",
+                  "description": "CIViC clinical actionability score"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Clinical description of the molecular profile"
+                },
+                "evidenceItems": {
+                  "type": "object",
+                  "properties": {
+                    "nodes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "evidenceLevel": {
+                            "type": "string",
+                            "description": "A-E evidence level"
+                          },
+                          "evidenceDirection": {
+                            "type": "string"
+                          },
+                          "significance": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "disease": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "therapies": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "molecular_profile_id": 12,
+        "evidence_limit": 5
+      }
+    ]
+  },
+  {
+    "name": "civic_search_molecular_profiles",
+    "description": "Search for molecular profiles in CIViC database. Molecular profiles represent combinations of variants or features (e.g., 'BRAF V600E', 'EGFR T790M') that serve as biomarkers for clinical interpretation. Returns a list of molecular profiles with IDs and names. Use the 'query' parameter to filter by profile name (alias: 'name').",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of molecular profiles to return (default: 20, recommended max: 100)",
+          "default": 20
+        },
+        "query": {
+          "type": "string",
+          "description": "Filter by molecular profile name (e.g., 'BRAF V600E', 'EGFR T790M', 'FLT3 ITD'). Returns profiles whose name contains this string. Alias: 'name'."
+        },
+        "name": {
+          "type": "string",
+          "description": "Alias for query. Filter by molecular profile name (e.g., 'PD-L1', 'KRAS G12C')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query SearchMolecularProfiles($limit: Int, $query: String) { molecularProfiles(first: $limit, name: $query) { nodes { id name } } }",
+      "operation_name": "SearchMolecularProfiles",
+      "param_map": {
+        "name": "query"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "molecularProfiles": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "BRAF V600E",
+        "limit": 5
+      },
+      {
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "civic_search_diseases",
+    "description": "Search for diseases in CIViC database. Returns a list of cancer diseases and conditions (with IDs and names) that are associated with variants and evidence in CIViC. Use 'query' or 'name' to filter by disease name (e.g., 'leukemia', 'melanoma').",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of diseases to return (default: 20, recommended max: 100)",
+          "default": 20
+        },
+        "name": {
+          "type": "string",
+          "description": "Filter by disease name (e.g., 'leukemia', 'melanoma', 'lung cancer'). Alias: query."
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for name. Filter by disease name."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query SearchDiseases($limit: Int, $name: String) { browseDiseases(first: $limit, name: $name) { nodes { id name } } }",
+      "operation_name": "SearchDiseases",
+      "param_map": {
+        "query": "name"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "browseDiseases": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "name": "leukemia",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "civic_search_therapies",
+    "description": "Search for therapies (drugs/treatments) in CIViC database. Returns a list of cancer therapies and drugs (with IDs and names) that are associated with variants and evidence in CIViC. Use 'query' or 'name' to filter by therapy name (e.g., 'imatinib', 'pembrolizumab').",
+    "type": "CIViCTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of therapies to return (default: 20, recommended max: 100)",
+          "default": 20
+        },
+        "name": {
+          "type": "string",
+          "description": "Filter by therapy/drug name (e.g., 'imatinib', 'ponatinib', 'pembrolizumab'). Alias: query."
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for name. Filter by therapy/drug name."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "query": "query SearchTherapies($limit: Int, $name: String) { browseTherapies(first: $limit, name: $name) { nodes { id name } } }",
+      "operation_name": "SearchTherapies",
+      "param_map": {
+        "query": "name"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "browseTherapies": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "name": "imatinib",
+        "limit": 5
+      }
+    ]
+  }
+]

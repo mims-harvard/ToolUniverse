@@ -1,0 +1,454 @@
+[
+  {
+    "type": "AgenticTool",
+    "name": "UnifiedToolGenerator",
+    "description": "Generates complete ToolUniverse tools using simplified XML format that simultaneously creates both implementation code and specification",
+    "prompt": "You are an expert tool architect. Generate a complete ToolUniverse tool with both implementation code and specification simultaneously.\n\n## INPUT\nTool Description: {tool_description}\nReference Information: \n{reference_info}\nTemplate Structure: \n{xml_template}\n\n## TASK\nGenerate a tool that follows the exact XML structure shown in xml_template, filling in both the code and spec sections with complete, functional content.\n\n## CODE SECTION REQUIREMENTS\n\n1. **Structure & Imports**\n   - Include ALL necessary imports at the top\n   - Use @register_tool decorator with camelCase tool name\n   - Inherit from BaseTool\n   - Implement __init__(self, tool_config=None) calling super().__init__(tool_config)\n   - Implement run(self, arguments: Dict[str, Any]) -> Dict[str, Any]\n\n2. **Return Format**\n   - Success: {\"status\": \"success\", \"data\": <result>}\n   - Error: {\"status\": \"error\", \"error\": <error_message>}\n\n3. **Implementation Quality**\n   - Write COMPLETE, EXECUTABLE code (not pseudocode or placeholders)\n   - Validate all inputs properly\n   - Handle edge cases (empty inputs, invalid types, boundary conditions)\n   - Add comprehensive error handling with clear error messages\n   - Use descriptive variable names\n   - Add comments only for complex logic\n   - Follow Python best practices (PEP 8)\n   - Keep code clean and simple - avoid over-engineering\n\n4. **Package Selection** (use reference_info)\n   - Prioritize packages mentioned in reference_info with high quality scores\n   - Use Python standard library when possible\n   - For external packages: prefer widely-used ones (requests, pandas, numpy, etc.)\n   - Avoid obscure or unmaintained packages\n   - Do NOT import packages that aren't actually used\n\n5. **Functionality**\n   - Implement the core functionality completely\n   - Make the tool actually work, not just a skeleton\n   - Test logic should work with the provided test examples\n\n## SPEC SECTION REQUIREMENTS\n\n1. **Naming Conventions**\n   - type: PascalCase class name (e.g., \"StringReverserTool\")\n   - name: camelCase tool identifier (e.g., \"stringReverser\")\n   - Ensure type matches the actual class name in code\n\n2. **Required Fields**\n   - type: string (PascalCase class name)\n   - name: string (camelCase identifier)\n   - description: string (clear, concise description of what the tool does)\n   - parameter: object (JSON Schema for input parameters)\n   - return_schema: object (JSON Schema for return value)\n   - test_examples: array (simplified format - just input objects)\n   - label: array of strings (categorization tags)\n\n3. **Optional Fields**\n   - Add custom fields if the tool needs specific configuration settings that the code will access via tool_config\n   - implementation: string (optional strategy description)\n\n4. **Parameter Schema**\n   - Use proper JSON Schema types (string, number, integer, boolean, object, array)\n   - Include descriptions for each parameter\n   - Mark required parameters in both properties (required: true) and required array\n   - Provide reasonable constraints (min/max, enum values, patterns)\n\n5. **Return Schema**\n   - Document the complete return structure\n   - Include status, data, and error fields\n   - Describe what data contains on success\n\n6. **Test Examples**\n   - Provide 3-5 realistic test cases\n   - Use simplified format: just the input object (e.g., {\"param1\": \"value1\"})\n   - Cover different scenarios: normal cases, edge cases, different parameter combinations\n   - Ensure test inputs match the parameter schema\n\n7. **Labels**\n   - Add 3-5 relevant categorization labels\n   - Use clear, searchable terms (e.g., \"string\", \"text-processing\", \"utility\")\n\n## PACKAGE RECOMMENDATION USAGE\n\nWhen reference_info contains package_recommendations:\n- Review the quality scores and reasoning\n- Use the highest-rated packages that fit the task\n- Consider alternatives if the top choice has constraints\n- Mention the package selection rationale briefly in comments if non-obvious\n\n## CRITICAL RULES\n\n1. Follow the EXACT XML structure from xml_template (no additions, no omissions)\n2. MUST wrap code and spec content in CDATA sections: <code><![CDATA[...]]></code>\n3. Return ONLY the XML content - no markdown code blocks, no explanations, no extra text\n4. Ensure the type field in spec exactly matches the class name in code\n5. Generate complete, working code - not templates or TODOs\n6. Make test examples that will actually work with your implementation\n\nGenerate production-ready, functional tools!",
+    "input_arguments": [
+      "tool_description",
+      "reference_info",
+      "xml_template"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "Description of the desired tool functionality"
+        },
+        "reference_info": {
+          "type": "string",
+          "description": "JSON string containing curated reference information including API documentation and package recommendations"
+        },
+        "xml_template": {
+          "type": "string",
+          "description": "XML template example showing the expected format with code and spec sections"
+        }
+      },
+      "required": [
+        "tool_description",
+        "reference_info",
+        "xml_template"
+      ]
+    },
+    "configs": {
+      "return_json": false
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "XML-formatted tool definition with code and spec sections"
+    },
+    "test_examples": [
+      {
+        "tool_description": "A tool that searches for drugs",
+        "reference_info": "PubMed API documentation for literature search",
+        "xml_template": "<tool><name>example</name></tool>"
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "XMLToolOptimizer",
+    "description": "Optimizes tools defined in XML format based on test results and quality feedback",
+    "prompt": "You are an expert code and spec optimizer. Optimize the XML-defined tool based on comprehensive context.\n\n## CURRENT XML TOOL\n{xml_tool}\n\n## OPTIMIZATION CONTEXT\n{optimization_context}\n\n## CRITICAL: CHECK FOR INSTRUCTIONS\n\nIf optimization_context contains an \"instruction\" field, follow it as TOP PRIORITY:\n- User refused dependencies → Use standard library only\n- Installation failed → Use different packages\n- Reimplementation required → Generate completely new approach\n\n## OPTIMIZATION STRATEGY\n\n### Analyze Test Results First\nIf test_results.test_details exists:\n1. Examine ALL test outputs - each test has `output.result`\n2. Look for error patterns in test outputs\n3. Check if errors are from:\n   - Schema validation (spec issue - fix the <spec>)\n   - Code execution (code issue - fix the <code>)\n   - Both (fix both)\n4. Schema issues: Check \"required\" fields, parameter types, format\n5. Code issues: Check imports, logic, error handling\n\n### Fix Schema Issues (Common Problems)\nIf validation errors appear:\n- \"required\": true should be \"required\": [\"field1\", \"field2\"] (array format)\n- Check parameter types match tool expectations\n- Ensure return_schema matches actual returns\n- Verify all referenced fields exist\n\n### Fix Code Issues\nIf test outputs show errors:\n1. Analyze each error type from test outputs\n2. Identify root cause from error message\n3. Apply targeted fixes to the <code> section\n4. Ensure fixes don't break existing functionality\n\n### Improve Code Quality\n1. Simplify complex logic\n2. Remove unnecessary code\n3. Optimize algorithms and data structures\n4. Improve error handling\n5. Enhance input validation\n\n### Learn from History\n- Check improvement_history for past attempts\n- Avoid repeating failed approaches\n- If same error persists, completely change strategy\n\n## RESPONSE FORMAT\n\nReturn the optimized XML in the EXACT same format as xml_tool:\n\n<code><![CDATA[\n  [optimized Python code]\n]]></code>\n<spec><![CDATA[\n  [updated JSON spec if needed]\n]]></spec>\n\n## RULES\n1. Optimize BOTH <code> AND <spec> - spec issues are common causes of failures\n2. Keep the same XML structure with CDATA sections\n3. MUST wrap content in CDATA: <code><![CDATA[...]]></code>\n4. When fixing validation errors, update <spec> parameter.required field\n5. Maintain tool name and core functionality\n6. Ensure code is executable and syntactically correct\n7. Return ONLY the XML (no markdown blocks, no explanations)\n\nMake it work, make it simple, make it better!",
+    "input_arguments": [
+      "xml_tool",
+      "optimization_context"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "xml_tool": {
+          "type": "string",
+          "description": "Current XML-formatted tool definition with code and spec sections"
+        },
+        "optimization_context": {
+          "type": "string",
+          "description": "JSON string containing test results, quality feedback, iteration info, improvement history, and any special instructions"
+        }
+      },
+      "required": [
+        "xml_tool",
+        "optimization_context"
+      ]
+    },
+    "configs": {
+      "return_json": false
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "Optimized XML-formatted tool definition"
+    },
+    "test_examples": [
+      {
+        "xml_tool": "<tool><name>example</name></tool>",
+        "optimization_context": "The quick brown fox jumps over the lazy dog."
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "ReferenceInfoAnalyzer",
+    "description": "Analyzes and curates reference information to provide high-quality context for tool generation",
+    "prompt": "You are an expert at analyzing technical documentation and extracting relevant information for tool development.\n\n## TASK\nAnalyze the collected reference information and extract the most relevant, high-quality context for generating a tool.\n\n## INPUT\nTool Description: {tool_description}\nRaw Reference Information: {raw_reference_info}\n\n## ANALYSIS PROCESS\n\n1. **Relevance Filtering**\n   - Identify which documentation, packages, and examples are most relevant\n   - Score each item by relevance (0-10)\n   - Filter out low-quality or irrelevant information\n\n2. **Key Information Extraction**\n   - Extract API endpoints, methods, parameters\n   - Identify recommended packages and their purposes\n   - Note common usage patterns and best practices\n   - Capture important constraints or requirements\n\n3. **Context Curation**\n   - Organize information by category (APIs, packages, examples)\n   - Prioritize official documentation over third-party sources\n   - Include code examples where available\n   - Summarize complex information concisely\n\n4. **Package Recommendations**\n   - List recommended packages with rationale\n   - Note package purposes and key features\n   - Identify potential alternatives\n   - Flag any compatibility or dependency concerns\n\n## OUTPUT FORMAT\n\nReturn JSON:\n\n{\n  \"curated_info\": {\n    \"api_documentation\": [\n      {\n        \"source\": \"documentation source\",\n        \"relevance_score\": 9,\n        \"key_points\": [\"important point 1\", \"important point 2\"],\n        \"url\": \"documentation URL\"\n      }\n    ],\n    \"package_recommendations\": [\n      {\n        \"package_name\": \"package-name\",\n        \"purpose\": \"what it's used for\",\n        \"relevance_score\": 8,\n        \"features\": [\"key feature 1\", \"key feature 2\"],\n        \"alternatives\": [\"alternative package\"]\n      }\n    ],\n    \"usage_examples\": [\n      {\n        \"description\": \"example description\",\n        \"code_snippet\": \"example code\",\n        \"source\": \"where found\"\n      }\n    ],\n    \"best_practices\": [\n      \"best practice 1\",\n      \"best practice 2\"\n    ],\n    \"important_constraints\": [\n      \"constraint or limitation to consider\"\n    ]\n  },\n  \"summary\": \"Brief summary of key findings\",\n  \"confidence_score\": 8.5,\n  \"recommendations\": [\n    \"Specific recommendation for implementation\"\n  ]\n}\n\n## GUIDELINES\n- Be selective - quality over quantity\n- Prioritize actionable information\n- Provide specific, concrete details\n- Flag uncertainties or gaps in information\n- Focus on what's most helpful for code generation",
+    "input_arguments": [
+      "tool_description",
+      "raw_reference_info"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "Description of the tool being generated"
+        },
+        "raw_reference_info": {
+          "type": "string",
+          "description": "JSON string containing raw reference information from web search and package discovery"
+        }
+      },
+      "required": [
+        "tool_description",
+        "raw_reference_info"
+      ]
+    },
+    "configs": {
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "curated_info": {
+          "type": "object",
+          "description": "Curated and organized reference information"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Brief summary of key findings"
+        },
+        "confidence_score": {
+          "type": "number",
+          "description": "Confidence in the quality of curated information (0-10)"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific recommendations for implementation"
+        }
+      },
+      "required": [
+        "curated_info",
+        "summary"
+      ]
+    },
+    "test_examples": [
+      {
+        "tool_description": "A tool that searches for drugs",
+        "raw_reference_info": "REST API endpoint: https://api.example.com/v1"
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "PackageAnalyzer",
+    "description": "Analyzes package candidates and recommends the best options based on quality metrics and suitability",
+    "prompt": "You are an expert Python package evaluator. Analyze package candidates and recommend the best options.\n\n## TASK\nEvaluate packages for a tool and recommend the most suitable ones.\n\n## INPUT\nTool Description: {tool_description}\nPackage Candidates: {package_candidates}\n\n## EVALUATION CRITERIA\n\n1. **Functionality Match** (weight: 30%)\n   - Does it provide required functionality?\n   - How well does it match the use case?\n   - Is it specifically designed for this purpose?\n\n2. **Quality Indicators** (weight: 25%)\n   - Download statistics (popularity)\n   - GitHub stars and activity\n   - Version maturity (avoid 0.x if possible)\n   - Last update recency\n\n3. **Maintenance** (weight: 20%)\n   - Active development\n   - Regular releases\n   - Responsive maintainers\n   - Issue resolution rate\n\n4. **Documentation** (weight: 15%)\n   - Quality and completeness\n   - Code examples\n   - API reference\n   - Tutorials available\n\n5. **Ecosystem** (weight: 10%)\n   - Minimal dependencies\n   - Python version compatibility\n   - License compatibility\n   - Community size\n\n## ANALYSIS PROCESS\n\n1. Score each package on criteria above (0-10)\n2. Calculate weighted total score\n3. Identify pros and cons\n4. Recommend top 3 packages\n5. Suggest implementation approach\n\n## OUTPUT FORMAT\n\nReturn JSON:\n\n{\n  \"recommended_packages\": [\n    {\n      \"package_name\": \"package-name\",\n      \"overall_score\": 8.5,\n      \"scores\": {\n        \"functionality_match\": 9,\n        \"quality\": 8,\n        \"maintenance\": 9,\n        \"documentation\": 8,\n        \"ecosystem\": 8\n      },\n      \"pros\": [\n        \"Well-documented\",\n        \"Actively maintained\",\n        \"Popular and reliable\"\n      ],\n      \"cons\": [\n        \"Slightly heavy dependencies\"\n      ],\n      \"usage_guidance\": \"Use for main functionality, handles X well\",\n      \"installation\": \"pip install package-name\"\n    }\n  ],\n  \"implementation_strategy\": \"Detailed recommendation on how to use these packages together\",\n  \"alternatives\": [\n    {\n      \"package_name\": \"alternative\",\n      \"reason\": \"Lighter weight but less features\"\n    }\n  ],\n  \"warnings\": [\n    \"Potential issue or consideration\"\n  ]\n}\n\n## GUIDELINES\n- Prioritize well-maintained, popular packages\n- Favor packages with good documentation\n- Consider standard library alternatives\n- Be honest about limitations\n- Provide actionable recommendations",
+    "input_arguments": [
+      "tool_description",
+      "package_candidates"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "Description of the tool being generated"
+        },
+        "package_candidates": {
+          "type": "string",
+          "description": "JSON string containing package candidates with their metadata (from PyPI, search results, etc.)"
+        }
+      },
+      "required": [
+        "tool_description",
+        "package_candidates"
+      ]
+    },
+    "configs": {
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "recommended_packages": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Top recommended packages with detailed analysis"
+        },
+        "implementation_strategy": {
+          "type": "string",
+          "description": "How to use recommended packages together"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Alternative packages to consider"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Potential issues or considerations"
+        }
+      },
+      "required": [
+        "recommended_packages",
+        "implementation_strategy"
+      ]
+    },
+    "test_examples": [
+      {
+        "tool_description": "A tool that searches for drugs",
+        "package_candidates": "[\"requests\", \"httpx\", \"aiohttp\"]"
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "TestResultsAnalyzer",
+    "description": "Analyzes test execution results and extracts key issues for targeted optimization",
+    "prompt": "You are an expert test analyst. Analyze test results and identify root causes of failures.\n\n## TASK\nAnalyze test execution results and provide actionable insights for optimization.\n\n## INPUT\nTest Results: {test_results}\nTool Implementation: {tool_implementation}\n\n## ANALYSIS PROCESS\n\n1. **Error Pattern Recognition**\n   - Group similar errors together\n   - Identify recurring patterns\n   - Classify error types (import, runtime, logic, etc.)\n\n2. **Root Cause Analysis**\n   - Trace errors to their source\n   - Identify underlying issues\n   - Distinguish symptoms from causes\n\n3. **Impact Assessment**\n   - Determine severity of each issue\n   - Assess how many tests affected\n   - Identify blocking vs. non-blocking issues\n\n4. **Solution Prioritization**\n   - Rank issues by impact and fix difficulty\n   - Identify quick wins\n   - Flag complex issues needing major refactoring\n\n## OUTPUT FORMAT\n\nReturn JSON:\n\n{\n  \"key_issues\": [\n    {\n      \"issue_type\": \"ImportError|AttributeError|TypeError|ValueError|LogicError\",\n      \"description\": \"Clear description of the issue\",\n      \"affected_tests\": 3,\n      \"severity\": \"critical|high|medium|low\",\n      \"root_cause\": \"Underlying reason for the failure\",\n      \"suggested_fix\": \"Specific, actionable fix\",\n      \"code_location\": \"Where the fix should be applied\"\n    }\n  ],\n  \"optimization_priorities\": [\n    {\n      \"priority\": 1,\n      \"focus_area\": \"Error handling|Input validation|Logic fix|Dependency issue\",\n      \"description\": \"What needs to be optimized\",\n      \"expected_impact\": \"How many tests this will fix\",\n      \"difficulty\": \"easy|medium|hard\"\n    }\n  ],\n  \"error_patterns\": [\n    {\n      \"pattern\": \"Description of recurring pattern\",\n      \"occurrences\": 5,\n      \"fix_approach\": \"How to fix this pattern\"\n    }\n  ],\n  \"success_analysis\": {\n    \"passing_tests\": 2,\n    \"total_tests\": 5,\n    \"success_rate\": 0.4,\n    \"what_works_well\": [\"Aspect that's working correctly\"]\n  },\n  \"detailed_errors\": [\n    {\n      \"test_description\": \"Test that failed\",\n      \"error_type\": \"ImportError\",\n      \"error_message\": \"Exact error message\",\n      \"traceback\": \"Relevant traceback lines\",\n      \"analysis\": \"Why this error occurred\"\n    }\n  ],\n  \"recommendations\": [\n    \"Specific recommendation for improvement\"\n  ]\n}\n\n## GUIDELINES\n- Focus on actionable insights\n- Provide specific, not generic, fixes\n- Prioritize high-impact issues\n- Be clear and concise\n- Include code-level details when possible",
+    "input_arguments": [
+      "test_results",
+      "tool_implementation"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "test_results": {
+          "type": "string",
+          "description": "JSON string containing test execution results with pass/fail status, error messages, and tracebacks"
+        },
+        "tool_implementation": {
+          "type": "string",
+          "description": "Current tool implementation code for context"
+        }
+      },
+      "required": [
+        "test_results",
+        "tool_implementation"
+      ]
+    },
+    "configs": {
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "key_issues": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Main issues identified from test failures"
+        },
+        "optimization_priorities": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Prioritized list of optimization actions"
+        },
+        "error_patterns": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Recurring error patterns found"
+        },
+        "success_analysis": {
+          "type": "object",
+          "description": "Analysis of what's working well"
+        },
+        "detailed_errors": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Detailed breakdown of each error"
+        },
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Overall recommendations"
+        }
+      },
+      "required": [
+        "key_issues",
+        "optimization_priorities"
+      ]
+    },
+    "test_examples": [
+      {
+        "test_results": "{\"passed\": 8, \"failed\": 2, \"errors\": []}",
+        "tool_implementation": "def search(): pass"
+      }
+    ]
+  },
+  {
+    "type": "AgenticTool",
+    "name": "CodeQualityAnalyzer",
+    "description": "Analyzes code quality from multiple dimensions including algorithmic correctness, functional implementation capability, performance characteristics, and best practices. Provides detailed feedback and improvement suggestions.",
+    "prompt": "You are an expert software engineer and code quality analyst. Please analyze the following code implementation and provide comprehensive quality assessment.\n\n## CODE TO ANALYZE\nTool Name: {tool_name}\nTool Description: {tool_description}\nTool Parameters: {tool_parameters}\nImplementation Code: {implementation_code}\nTest Cases: {test_cases}\nTest Execution Results: {test_execution_results}\n\n## ANALYSIS REQUIREMENTS\nPlease provide a comprehensive analysis covering the following dimensions:\n\n### 1. ALGORITHMIC CORRECTNESS (0-10)\n- Mathematical accuracy and logical correctness\n- Algorithm efficiency and time/space complexity\n- Edge case handling and boundary conditions\n\n### 2. FUNCTIONAL IMPLEMENTATION CAPABILITY (0-10)\n- Completeness of required functionality\n- Parameter validation and input handling\n- Return value accuracy and format consistency\n\n### 3. PERFORMANCE CHARACTERISTICS (0-10)\n- Time complexity analysis\n- Space complexity analysis\n- Computational efficiency\n\n### 4. CODE QUALITY AND STRUCTURE (0-10)\n- Code readability and maintainability\n- Function and variable naming\n- Code organization and modularity\n\n### 5. ERROR HANDLING AND ROBUSTNESS (0-10)\n- Exception handling coverage\n- Input validation robustness\n- Error message clarity\n\n## OUTPUT FORMAT\n\nProvide your analysis in the following JSON format:\n\n{\n  \"overall_score\": <0-10>,\n  \"scores\": {\n    \"algorithmic_correctness\": <0-10>,\n    \"functional_capability\": <0-10>,\n    \"performance\": <0-10>,\n    \"code_quality\": <0-10>,\n    \"error_handling\": <0-10>\n  },\n  \"feedback\": {\n    \"strengths\": [\"list of code strengths\"],\n    \"weaknesses\": [\"list of specific weaknesses\"],\n    \"critical_issues\": [\"list of critical issues that must be fixed\"]\n  },\n  \"recommendations\": [\n    {\n      \"priority\": \"high|medium|low\",\n      \"description\": \"specific improvement description\",\n      \"action\": \"concrete action to take\"\n    }\n  ]\n}\n\n## ANALYSIS GUIDELINES\n- Be thorough and objective in your assessment\n- Provide specific examples from the code when possible\n- Focus on actionable feedback\n- **When test_execution_results are available, prioritize actual behavior over theoretical analysis**",
+    "input_arguments": [
+      "tool_name",
+      "tool_description",
+      "tool_parameters",
+      "implementation_code",
+      "test_cases",
+      "test_execution_results"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_name": {
+          "type": "string",
+          "description": "Name of the tool being analyzed"
+        },
+        "tool_description": {
+          "type": "string",
+          "description": "Description of what the tool is supposed to do"
+        },
+        "tool_parameters": {
+          "type": "string",
+          "description": "JSON string of tool parameters and their types"
+        },
+        "implementation_code": {
+          "type": "string",
+          "description": "The actual implementation code to analyze"
+        },
+        "test_cases": {
+          "type": "string",
+          "description": "JSON string of test cases for the tool"
+        },
+        "test_execution_results": {
+          "type": "string",
+          "description": "JSON string of test execution results including pass/fail status and actual outputs"
+        }
+      },
+      "required": [
+        "tool_name",
+        "tool_description",
+        "tool_parameters",
+        "implementation_code",
+        "test_cases",
+        "test_execution_results"
+      ]
+    },
+    "configs": {
+      "return_json": true
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Code quality analysis results including scores, feedback, and recommendations"
+    },
+    "test_examples": [
+      {
+        "tool_name": "ExampleTool",
+        "tool_description": "A sample utility that performs arithmetic operations",
+        "tool_parameters": "{\"operand1\":\"number\",\"operand2\":\"number\"}",
+        "implementation_code": "def add(a, b):\n    return a + b",
+        "test_cases": "[{\"input\": [1, 2], \"expected\": 3}, {\"input\": [5, -2], \"expected\": 3}]",
+        "test_execution_results": "[{\"input\": [1, 2], \"expected\": 3, \"actual\": 3, \"status\": \"pass\"}, {\"input\": [5, -2], \"expected\": 3, \"actual\": 3, \"status\": \"pass\"}]"
+      }
+    ]
+  },
+  {
+    "type": "ComposeTool",
+    "name": "ToolDiscover",
+    "description": "Generates new ToolUniverse-compliant tools based on short descriptions using XML format for simultaneous code and specification generation. Automatically discovers similar tools, curates high-quality reference information, and iteratively optimizes the tool using agentic optimization.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tool_description": {
+          "type": "string",
+          "description": "Short description of the desired tool functionality"
+        },
+        "max_iterations": {
+          "type": "integer",
+          "description": "Maximum number of optimization iterations",
+          "default": 2
+        },
+        "save_to_file": {
+          "type": "boolean",
+          "description": "Whether to save the generated tool files",
+          "default": true
+        },
+        "output_file": {
+          "type": "string",
+          "description": "Optional file path to save the generated tool"
+        },
+        "save_dir": {
+          "type": "string",
+          "description": "Directory path to save the generated tool files (defaults to current working directory)",
+          "default": null
+        }
+      },
+      "required": [
+        "tool_description"
+      ]
+    },
+    "auto_load_dependencies": true,
+    "fail_on_missing_tools": false,
+    "required_tools": [],
+    "composition_file": "tool_discover.py",
+    "composition_function": "compose",
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "tool_config": {
+          "type": "object",
+          "description": "Generated tool configuration"
+        },
+        "quality_score": {
+          "type": "number",
+          "description": "Final quality score"
+        },
+        "saved_files": {
+          "type": "array",
+          "description": "List of saved files",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output_directory": {
+          "type": "string",
+          "description": "Directory where the files were saved"
+        }
+      },
+      "required": [
+        "tool_config",
+        "quality_score",
+        "saved_files"
+      ]
+    },
+    "test_examples": [
+      {
+        "tool_description": "A tool that searches for drugs",
+        "max_iterations": 2,
+        "save_to_file": true,
+        "output_file": "output.json",
+        "save_dir": "./generated_tools"
+      }
+    ]
+  }
+]

@@ -17,7 +17,12 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Number of results to return (default: 10)",
+          "description": "Number of results to return (default: 10). Alias: size.",
+          "default": 10
+        },
+        "size": {
+          "type": "integer",
+          "description": "Alias for rows. Number of results to return (default: 10).",
           "default": 10
         },
         "ontology": {
@@ -33,9 +38,18 @@
           "type": "boolean",
           "description": "Include obsolete terms (default: false)",
           "default": false
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Alias for rows. Maximum number of results to return (default: 10, max: 100)."
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "examples": [
       {
@@ -56,9 +70,116 @@
         }
       }
     ],
-    "tags": ["ontology", "search", "ebi", "ols"],
+    "tags": [
+      "ontology",
+      "search",
+      "ebi",
+      "ols"
+    ],
     "author": "EBI OLS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "query": "gene:TP53",
+        "rows": 10,
+        "ontology": "efo",
+        "exact_match": false,
+        "include_obsolete": false
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "object",
+          "properties": {
+            "docs": {
+              "type": "array"
+            },
+            "numFound": {
+              "type": "integer"
+            },
+            "start": {
+              "type": "integer"
+            }
+          }
+        },
+        "responseHeader": {
+          "type": "object",
+          "properties": {
+            "QTime": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "integer"
+            }
+          }
+        },
+        "facet_counts": {
+          "type": "object",
+          "properties": {
+            "facet_fields": {
+              "type": "object",
+              "properties": {
+                "ontologyPreferredPrefix": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isDefiningOntology": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "ontologyId": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "ontologyIri": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isObsolete": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "type": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "query": {
+          "type": "string"
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "ontology": {
+              "type": "string"
+            },
+            "exact_match": {
+              "type": "boolean"
+            },
+            "include_obsolete": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
   },
   {
     "type": "OLSTool",
@@ -75,9 +196,13 @@
         "ontology_id": {
           "type": "string",
           "description": "The ID of the ontology to retrieve"
+        },
+        "ontology": {
+          "type": "string",
+          "description": "Alias for ontology_id. The ontology abbreviation (e.g. mondo, hp, go, ordo)."
         }
       },
-      "required": ["operation", "ontology_id"]
+      "required": []
     },
     "examples": [
       {
@@ -88,9 +213,54 @@
         }
       }
     ],
-    "tags": ["ontology", "metadata", "ebi", "ols"],
+    "tags": [
+      "ontology",
+      "metadata",
+      "ebi",
+      "ols"
+    ],
     "author": "EBI OLS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "ontology_id": "efo"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "ontologyId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "null"
+        },
+        "description": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "null"
+        },
+        "homepage": {
+          "type": "string"
+        },
+        "preferredPrefix": {
+          "type": "string"
+        },
+        "number_of_terms": {
+          "type": "null"
+        },
+        "numberOfClasses": {
+          "type": "integer"
+        },
+        "repository": {
+          "type": "null"
+        }
+      }
+    }
   },
   {
     "type": "OLSTool",
@@ -119,7 +289,7 @@
           "default": 20
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "examples": [
       {
@@ -137,9 +307,53 @@
         }
       }
     ],
-    "tags": ["ontology", "search", "ebi", "ols"],
+    "tags": [
+      "ontology",
+      "search",
+      "ebi",
+      "ols"
+    ],
     "author": "EBI OLS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "search": "cancer",
+        "page": 0,
+        "size": 20
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        }
+      }
+    }
   },
   {
     "type": "OLSTool",
@@ -155,10 +369,18 @@
         },
         "id": {
           "type": "string",
-          "description": "The ID or IRI of the term to retrieve"
+          "description": "Ontology term ID or IRI (e.g. HP:0001903, http://purl.obolibrary.org/obo/HP_0001903)"
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Alias for id \u2014 ontology term ID (e.g. HP:0001903)"
+        },
+        "term_iri": {
+          "type": "string",
+          "description": "Alias for id. Full IRI or short-form ID (e.g., GO:0008150, EFO:0003971). Same as id."
         }
       },
-      "required": ["operation", "id"]
+      "required": []
     },
     "examples": [
       {
@@ -169,14 +391,54 @@
         }
       }
     ],
-    "tags": ["ontology", "term", "metadata", "ebi", "ols"],
+    "tags": [
+      "ontology",
+      "term",
+      "metadata",
+      "ebi",
+      "ols"
+    ],
     "author": "EBI OLS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "id": "HP:0001903"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "iri": {
+          "type": "string"
+        },
+        "ontologyName": {
+          "type": "string"
+        },
+        "shortForm": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "oboId": {
+          "type": "string"
+        },
+        "isObsolete": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "array"
+        },
+        "synonyms": {
+          "type": "array"
+        }
+      }
+    }
   },
   {
     "type": "OLSTool",
     "name": "ols_get_term_children",
-    "description": "Get child terms of a specific term in an ontology",
+    "description": "Get child terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') \u2014 the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -187,11 +449,15 @@
         },
         "term_iri": {
           "type": "string",
-          "description": "The IRI of the term to retrieve children for"
+          "description": "The full IRI of the term (e.g., http://www.ebi.ac.uk/efo/EFO_0000408)"
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Short-form CURIE (e.g., 'HP:0001928', 'GO:0008150'). Ontology is auto-inferred from prefix."
         },
         "ontology": {
           "type": "string",
-          "description": "The ontology ID"
+          "description": "Ontology ID (e.g., 'hp', 'go', 'efo'). Auto-inferred from term_id prefix when not supplied."
         },
         "include_obsolete": {
           "type": "boolean",
@@ -204,7 +470,7 @@
           "default": 20
         }
       },
-      "required": ["operation", "term_iri", "ontology"]
+      "required": []
     },
     "examples": [
       {
@@ -217,14 +483,62 @@
         }
       }
     ],
-    "tags": ["ontology", "hierarchy", "term", "ebi", "ols"],
+    "tags": [
+      "ontology",
+      "hierarchy",
+      "term",
+      "ebi",
+      "ols"
+    ],
     "author": "EBI OLS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "term_iri": "http://www.ebi.ac.uk/efo/EFO_0000384",
+        "ontology": "efo",
+        "include_obsolete": false,
+        "size": 20
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer"
+        },
+        "numElements": {
+          "type": "integer"
+        },
+        "totalPages": {
+          "type": "integer"
+        },
+        "totalElements": {
+          "type": "integer"
+        },
+        "elements": {
+          "type": "array"
+        },
+        "term_iri": {
+          "type": "string"
+        },
+        "ontology": {
+          "type": "string"
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "include_obsolete": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
   },
   {
     "type": "OLSTool",
     "name": "ols_get_term_ancestors",
-    "description": "Get ancestor terms of a specific term in an ontology",
+    "description": "Get ancestor terms of a specific term in an ontology. Use `term_id` with CURIE format (e.g., 'HP:0001928') \u2014 the ontology is auto-inferred from the prefix. Or supply `term_iri` + `ontology` explicitly.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -235,11 +549,15 @@
         },
         "term_iri": {
           "type": "string",
-          "description": "The IRI of the term to retrieve ancestors for"
+          "description": "The full IRI of the term (e.g., http://www.ebi.ac.uk/efo/EFO_0000408)"
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Short-form CURIE (e.g., 'HP:0001928', 'GO:0008150'). Ontology is auto-inferred from prefix."
         },
         "ontology": {
           "type": "string",
-          "description": "The ontology ID"
+          "description": "Ontology ID (e.g., 'hp', 'go', 'efo'). Auto-inferred from term_id prefix when not supplied."
         },
         "include_obsolete": {
           "type": "boolean",
@@ -252,7 +570,7 @@
           "default": 20
         }
       },
-      "required": ["operation", "term_iri", "ontology"]
+      "required": []
     },
     "examples": [
       {
@@ -264,9 +582,57 @@
         }
       }
     ],
-    "tags": ["ontology", "hierarchy", "term", "ebi", "ols"],
+    "tags": [
+      "ontology",
+      "hierarchy",
+      "term",
+      "ebi",
+      "ols"
+    ],
     "author": "EBI OLS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "term_iri": "http://www.ebi.ac.uk/efo/EFO_0000384",
+        "ontology": "efo",
+        "include_obsolete": false,
+        "size": 20
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "page": {
+          "type": "integer"
+        },
+        "numElements": {
+          "type": "integer"
+        },
+        "totalPages": {
+          "type": "integer"
+        },
+        "totalElements": {
+          "type": "integer"
+        },
+        "elements": {
+          "type": "array"
+        },
+        "term_iri": {
+          "type": "string"
+        },
+        "ontology": {
+          "type": "string"
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "include_obsolete": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
   },
   {
     "type": "OLSTool",
@@ -292,9 +658,15 @@
           "type": "integer",
           "description": "Number of similar terms to return (default: 10)",
           "default": 10
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Alias for term_iri. Short-form ontology ID (e.g., GO:0008150) or full IRI."
         }
       },
-      "required": ["operation", "term_iri", "ontology"]
+      "required": [
+        "ontology"
+      ]
     },
     "examples": [
       {
@@ -307,8 +679,64 @@
         }
       }
     ],
-    "tags": ["ontology", "similarity", "llm", "ebi", "ols"],
+    "tags": [
+      "ontology",
+      "similarity",
+      "llm",
+      "ebi",
+      "ols"
+    ],
     "author": "EBI OLS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "term_iri": "http://www.ebi.ac.uk/efo/EFO_0000384",
+        "ontology": "efo",
+        "size": 10
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "iri": {
+                "type": "string"
+              },
+              "ontologyName": {
+                "type": "string"
+              },
+              "shortForm": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "oboId": {
+                "type": "null"
+              },
+              "isObsolete": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "total_items": {
+          "type": "integer"
+        },
+        "showing": {
+          "type": "integer"
+        },
+        "term_iri": {
+          "type": "string"
+        },
+        "ontology": {
+          "type": "string"
+        }
+      }
+    }
   }
 ]

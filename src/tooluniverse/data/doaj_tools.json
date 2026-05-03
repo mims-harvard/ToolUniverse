@@ -36,7 +36,7 @@
             "description": "Title of the article or journal"
           },
           "abstract": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Abstract of the article (HTML tags removed)"
           },
           "authors": {
@@ -47,23 +47,23 @@
             "description": "List of author names (for articles)"
           },
           "year": {
-            "type": "integer",
+            "type": ["integer", "null"],
             "description": "Publication year"
           },
           "doi": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Digital Object Identifier"
           },
           "venue": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Journal name (for articles)"
           },
           "url": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "URL to the article or journal"
           },
           "citations": {
-            "type": "integer",
+            "type": ["integer", "null"],
             "description": "Number of citations (not available from DOAJ)"
           },
           "open_access": {
@@ -78,12 +78,16 @@
             "description": "List of subject keywords"
           },
           "article_type": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Type of article"
           },
           "publisher": {
-            "type": "string",
-            "description": "Publisher name"
+            "oneOf": [
+              {"type": "string"},
+              {"type": "object", "properties": {"country": {"type": "string"}, "name": {"type": "string"}}},
+              {"type": "null"}
+            ],
+            "description": "Publisher name (string for articles) or publisher object with country and name (for journals)"
           },
           "source": {
             "type": "string",

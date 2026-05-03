@@ -1,0 +1,80 @@
+[
+    {
+        "name": "T3DB_get_toxin",
+        "description": "Get detailed toxin information from the Toxin and Toxin-Target Database (T3DB) by T3DB ID. Returns chemical properties (name, CAS, formula, molecular weight), mechanism of toxicity, health effects, route of exposure, and protein/gene targets with UniProt IDs. Covers 3,678 common toxins including pollutants, pesticides, drugs, and food toxins. Use for toxicology research, environmental health, and chemical safety assessment.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "toxin_id": {
+                    "type": "string",
+                    "description": "T3DB toxin ID (e.g., 'T3D0001' for Arsenic, 'T3D0002' for Lead). Numeric-only input is auto-prefixed with T3D."
+                }
+            },
+            "required": ["toxin_id"]
+        },
+        "fields": {
+            "endpoint_type": "get_toxin"
+        },
+        "type": "T3DBTool",
+        "test_examples": [
+            {"toxin_id": "T3D0001"},
+            {"toxin_id": "T3D0024"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {"type": "object"},
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "T3DB_search_toxins",
+        "description": "Search for toxins by name or keyword in the T3DB (Toxin and Toxin-Target Database). Returns matching toxin IDs and names. Use T3DB_get_toxin with the returned ID for detailed information. Covers pollutants, pesticides, drugs, food toxins, and environmental chemicals.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Toxin name or keyword (e.g., 'arsenic', 'lead', 'mercury', 'bisphenol')"
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint_type": "search_toxins"
+        },
+        "type": "T3DBTool",
+        "test_examples": [
+            {"query": "arsenic"},
+            {"query": "mercury"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {"type": "array"},
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    }
+                }
+            ]
+        }
+    }
+]

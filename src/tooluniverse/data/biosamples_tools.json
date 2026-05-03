@@ -1,0 +1,343 @@
+[
+  {
+    "name": "BioSamples_get_sample",
+    "description": "Get detailed metadata for a specific biological sample from the EBI BioSamples database by accession. Returns sample name, organism, tissue, disease, experimental context, and links to associated data archives (ENA, ArrayExpress, EVA). BioSamples contains 60+ million samples from all major sequence and functional genomics archives. Example: SAMEA104228123 returns a metagenomic sample from the Qiita microbiome project.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "BioSamples accession. Formats: SAMEA* (EBI), SAMN* (NCBI), SAMD* (DDBJ). Examples: 'SAMEA104228123', 'SAMD00000603'."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_sample"
+    },
+    "type": "BioSamplesTool",
+    "test_examples": [
+      {
+        "accession": "SAMEA104228123"
+      },
+      {
+        "accession": "SAMD00000603"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "taxon_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "type": "string"
+                },
+                "release_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "update_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "characteristics": {
+                  "type": "object"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "BioSamples_search",
+    "description": "Search the EBI BioSamples database by text query across 60+ million biological samples. Returns matching samples with accessions, names, organisms, and key characteristics. Useful for finding source material metadata for sequencing, proteomics, and other experiments. Example: searching 'breast cancer' returns thousands of tumor samples with tissue/disease annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Free-text search query. Examples: 'breast cancer', 'liver tissue', 'CRISPR screen', 'Mus musculus brain'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum results to return (1-50, default 10)."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number (0-indexed, default 0)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search"
+    },
+    "type": "BioSamplesTool",
+    "test_examples": [
+      {
+        "query": "breast cancer",
+        "limit": 5
+      },
+      {
+        "query": "Arabidopsis thaliana root",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "key_characteristics": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_elements": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "total_pages": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "current_page": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "BioSamples_search_by_filter",
+    "description": "Search the EBI BioSamples database with structured attribute filters. More precise than text search - filters by specific metadata fields like organism, tissue, or disease. Example: attribute='organism', value='Homo sapiens' returns human samples; attribute='disease', value='melanoma' returns melanoma-specific samples.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "attribute": {
+          "type": "string",
+          "description": "Attribute name to filter on. Common attributes: 'organism', 'tissue', 'disease', 'cell type', 'sex', 'age'."
+        },
+        "value": {
+          "type": "string",
+          "description": "Value to match for the attribute. Examples: 'Homo sapiens', 'liver', 'melanoma', 'female'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum results to return (1-50, default 10)."
+        }
+      },
+      "required": [
+        "attribute",
+        "value"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_by_filter"
+    },
+    "type": "BioSamplesTool",
+    "test_examples": [
+      {
+        "attribute": "organism",
+        "value": "Homo sapiens",
+        "limit": 5
+      },
+      {
+        "attribute": "organism",
+        "value": "Mus musculus",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "key_characteristics": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_elements": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "filter": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

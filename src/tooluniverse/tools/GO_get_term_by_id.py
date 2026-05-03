@@ -14,7 +14,7 @@ def GO_get_term_by_id(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieves basic GO term information by ID using GOlr search.
 
@@ -31,12 +31,17 @@ def GO_get_term_by_id(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"id": id}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "GO_get_term_by_id", "arguments": {"id": id}},
+        {
+            "name": "GO_get_term_by_id",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

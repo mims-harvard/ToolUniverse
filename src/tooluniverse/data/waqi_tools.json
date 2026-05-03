@@ -1,0 +1,158 @@
+[
+  {
+    "name": "WAQI_get_air_quality",
+    "description": "Get real-time Air Quality Index (AQI) data for a city or monitoring station using the World Air Quality Index API with the public demo token. Returns AQI values, dominant pollutant, and individual pollutant readings (PM2.5, PM10, NO2, O3, SO2, CO). No personal API key required (uses demo token with limited quota). Useful for environmental research, health risk assessment, and air quality monitoring.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string",
+          "description": "City name or station name to get AQI for. Examples: 'beijing', 'london', 'new-york', 'paris', 'delhi', 'los-angeles'. Use lowercase with hyphens for multi-word cities."
+        }
+      },
+      "required": [
+        "city"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.waqi.info/feed/{city}/",
+      "params": {
+        "token": "demo"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "city": "beijing"
+      },
+      {
+        "city": "london"
+      },
+      {
+        "city": "los-angeles"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Air quality data for the location",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "API status: ok or error"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "aqi": {
+                  "type": "integer",
+                  "description": "AQI value (0-500+). 0-50=Good, 51-100=Moderate, 101-150=Unhealthy for Sensitive, 151-200=Unhealthy, 201-300=Very Unhealthy, 300+=Hazardous"
+                },
+                "dominentpol": {
+                  "type": "string",
+                  "description": "Dominant pollutant: pm25, pm10, o3, no2, so2, co"
+                },
+                "city": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Station/city name"
+                    },
+                    "geo": {
+                      "type": "array",
+                      "items": {
+                        "type": "number"
+                      },
+                      "description": "[latitude, longitude]"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "iaqi": {
+                  "type": "object",
+                  "description": "Individual pollutant AQI values",
+                  "properties": {
+                    "pm25": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number",
+                          "description": "PM2.5 AQI value"
+                        }
+                      }
+                    },
+                    "pm10": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number",
+                          "description": "PM10 AQI value"
+                        }
+                      }
+                    },
+                    "no2": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "o3": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "so2": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "co": {
+                      "type": "object",
+                      "properties": {
+                        "v": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "time": {
+                  "type": "object",
+                  "properties": {
+                    "s": {
+                      "type": "string",
+                      "description": "Timestamp of the measurement"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

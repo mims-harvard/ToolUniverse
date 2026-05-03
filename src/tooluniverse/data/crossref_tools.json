@@ -1,124 +1,71 @@
 [
   {
-    "type": "CrossrefTool",
+    "type": "CrossrefRESTTool",
     "name": "Crossref_search_works",
-    "description": "Search Crossref Works API for articles by keyword. Returns articles with title, abstract, journal, year, DOI, and URL. Supports filtering by publication type and date range.",
+    "description": "Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. Returns metadata including title, abstract, journal, authors, publication year, DOI, URL, citations, and publisher. Supports filtering by publication type (journal article, conference paper, etc.) and date range. Use this to discover academic literature, verify citations, or build bibliographies. Find DOIs to use with Crossref_get_work for complete metadata.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search query for Crossref works. Use keywords separated by spaces to refine your search."
+          "description": "Search query for Crossref works. Use keywords separated by spaces to refine your search across titles, abstracts, authors, and other bibliographic fields."
         },
         "limit": {
           "type": "integer",
-          "description": "Number of articles to return. This sets the maximum number of articles retrieved from Crossref.",
+          "description": "Number of articles to return. This sets the maximum number of articles retrieved from Crossref. Max 100 per request.",
           "default": 10
         },
         "filter": {
           "type": "string",
-          "description": "Optional filter string for Crossref API. Examples: 'type:journal-article,from-pub-date:2020-01-01'"
+          "description": "Optional filter string for Crossref API. Examples: 'type:journal-article' (only journal articles), 'from-pub-date:2020-01-01' (published after date), 'has-abstract:true' (only with abstracts). Multiple filters comma-separated."
         }
       },
       "required": [
-        "query",
-        "limit",
-        "filter"
+        "query"
       ]
     },
     "return_schema": {
       "type": "array",
-      "description": "List of Crossref articles matching the search query",
+      "description": "Array of Crossref work objects (articles/publications)",
       "items": {
         "type": "object",
         "properties": {
+          "DOI": {
+            "type": "string"
+          },
           "title": {
-            "type": "string",
-            "description": "Title of the article"
-          },
-          "abstract": {
-            "type": "string",
-            "description": "Abstract of the article (HTML tags removed)"
-          },
-          "authors": {
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "List of author names"
+            }
           },
-          "journal": {
-            "type": "string",
-            "description": "Journal name where the article was published"
+          "author": {
+            "type": "array"
           },
-          "year": {
-            "type": "integer",
-            "description": "Publication year"
-          },
-          "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the article"
-          },
-          "citations": {
-            "type": "integer",
-            "description": "Number of citations"
-          },
-          "open_access": {
-            "type": "boolean",
-            "description": "Open access status"
-          },
-          "keywords": {
+          "container-title": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of subject keywords"
+            "description": "Journal name"
           },
-          "article_type": {
-            "type": "string",
-            "description": "Type of article"
+          "published": {
+            "type": "object"
           },
           "publisher": {
-            "type": "string",
-            "description": "Publisher name"
+            "type": "string"
           },
-          "source": {
+          "type": {
             "type": "string",
-            "description": "Source identifier (always 'Crossref')"
+            "description": "Publication type (e.g., journal-article)"
           },
-          "data_quality": {
-            "type": "object",
-            "description": "Data quality indicators",
-            "properties": {
-              "has_abstract": {
-                "type": "boolean"
-              },
-              "has_authors": {
-                "type": "boolean"
-              },
-              "has_journal": {
-                "type": "boolean"
-              },
-              "has_year": {
-                "type": "boolean"
-              },
-              "has_doi": {
-                "type": "boolean"
-              },
-              "has_citations": {
-                "type": "boolean"
-              },
-              "has_keywords": {
-                "type": "boolean"
-              },
-              "has_url": {
-                "type": "boolean"
-              }
-            }
+          "is-referenced-by-count": {
+            "type": "integer",
+            "description": "Citation count"
+          },
+          "abstract": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "array",
+            "description": "List of references"
           }
         }
       }
@@ -133,6 +80,290 @@
         "limit": 1,
         "filter": "type:journal-article,from-pub-date:2020-01-01"
       }
+    ],
+    "fields": {
+      "endpoint": "https://api.crossref.org/works",
+      "method": "GET"
+    }
+  },
+  {
+    "type": "CrossrefRESTTool",
+    "name": "Crossref_get_work",
+    "description": "Get complete metadata for a specific scholarly work by its DOI (Digital Object Identifier). Returns comprehensive bibliographic information including title, abstract, full author list with affiliations and ORCIDs, journal details, publication dates, volume/issue/pages, references, citations, license, funding information, and related identifiers. Essential for verifying citations, extracting complete metadata, or building reference managers. DOIs can be found using Crossref_search_works (format: 10.####/...).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "Digital Object Identifier in format '10.####/...' (e.g., '10.1038/nature12373', '10.1371/journal.pone.0123456'). Find DOIs using Crossref_search_works or from publication citations."
+        }
+      },
+      "required": [
+        "doi"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.crossref.org/works/{doi}",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "DOI": {
+          "type": "string"
+        },
+        "title": {
+          "type": "array"
+        },
+        "abstract": {
+          "type": "string"
+        },
+        "author": {
+          "type": "array"
+        },
+        "container-title": {
+          "type": "array"
+        },
+        "published": {
+          "type": "object"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "is-referenced-by-count": {
+          "type": "integer"
+        },
+        "reference": {
+          "type": "array"
+        },
+        "license": {
+          "type": "array"
+        },
+        "funder": {
+          "type": "array"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "doi": "10.1038/nature12373"
+      },
+      {
+        "doi": "10.1371/journal.pone.0123456"
+      }
+    ]
+  },
+  {
+    "type": "CrossrefRESTTool",
+    "name": "Crossref_get_journal",
+    "description": "Get metadata for a specific journal by its ISSN (International Standard Serial Number). Returns journal details including title, publisher, ISSN variants (print/electronic), coverage dates, and publication frequency. Use this to verify journal information, assess journal credibility for submissions, check publisher details, or validate ISSNs. Find ISSNs from publication metadata or journal databases (format: ####-####).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "issn": {
+          "type": "string",
+          "description": "Journal ISSN in format ####-#### (e.g., '1476-4687' for Nature, '1932-6203' for PLOS ONE). Both print and electronic ISSNs are accepted."
+        }
+      },
+      "required": [
+        "issn"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.crossref.org/journals/{issn}",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "ISSN": {
+          "type": "array"
+        },
+        "coverage": {
+          "type": "object"
+        },
+        "flags": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "issn": "1476-4687"
+      },
+      {
+        "issn": "1932-6203"
+      }
+    ]
+  },
+  {
+    "type": "CrossrefRESTTool",
+    "name": "Crossref_list_funders",
+    "description": "Search and list research funding organizations in the Crossref database. Returns funder details including funder ID, name, location, DOI count, and alternative names. Use this to discover funder identifiers for filtering publications by funding source, or to explore research funding patterns. Essential for grant analysis, funding compliance, or finding publications funded by specific organizations (e.g., NIH, NSF, ERC).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for funder names (e.g., 'National Science Foundation', 'NIH', 'European Research Council', 'Wellcome Trust')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of funders to return (default: 20, max: 100).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://api.crossref.org/funders",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "List of funders.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "alt-names": {
+            "type": "array"
+          },
+          "tokens": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "National Science Foundation",
+        "limit": 5
+      },
+      {
+        "query": "NIH"
+      }
+    ]
+  },
+  {
+    "type": "CrossrefRESTTool",
+    "name": "Crossref_get_funder",
+    "description": "Get detailed metadata for a specific research funder by its Crossref funder ID. Returns comprehensive funder information including official name, alternative names, location, hierarchy (parent organizations), DOI count, and URI. Use this to understand funder details, verify funder identifiers, or explore funding relationships. Find funder IDs using Crossref_list_funders (format: numeric ID like '100000001' for NSF, '100000002' for NIH).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "funder_id": {
+          "type": "string",
+          "description": "Crossref funder identifier (e.g., '100000001' for NSF, '100000002' for NIH, '501100000780' for European Commission). Find IDs using Crossref_list_funders."
+        }
+      },
+      "required": [
+        "funder_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.crossref.org/funders/{funder_id}",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "alt-names": {
+          "type": "array"
+        },
+        "uri": {
+          "type": "string"
+        },
+        "hierarchy": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "funder_id": "100000001"
+      },
+      {
+        "funder_id": "100000002"
+      }
+    ]
+  },
+  {
+    "type": "CrossrefRESTTool",
+    "name": "Crossref_list_types",
+    "description": "List all publication types available in Crossref (e.g., journal-article, book-chapter, conference-paper, dataset, preprint). Returns type identifiers and labels. Use this to discover valid publication type filters for Crossref_search_works, understand the classification of research outputs, or analyze publication type distributions. Essential for constructing precise search queries or filtering results by publication category.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "endpoint": "https://api.crossref.org/types",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "List of publication types.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {}
     ]
   }
 ]

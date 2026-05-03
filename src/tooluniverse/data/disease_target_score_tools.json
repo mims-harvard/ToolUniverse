@@ -79,7 +79,14 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "datasourceId": "chembl",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "chembl_disease_target_score",
@@ -157,7 +164,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "eva_disease_target_score",
@@ -227,7 +240,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "eva_somatic_disease_target_score",
@@ -297,7 +316,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "cancer_gene_census_disease_target_score",
@@ -367,7 +392,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "cancer_biomarkers_disease_target_score",
@@ -437,7 +468,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "europepmc_disease_target_score",
@@ -507,7 +544,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "expression_atlas_disease_target_score",
@@ -577,7 +620,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "genomics_england_disease_target_score",
@@ -647,7 +696,13 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   },
   {
     "name": "reactome_disease_target_score",
@@ -717,6 +772,12 @@
         }
       }
     },
-    "type": "DiseaseTargetScoreTool"
+    "type": "DiseaseTargetScoreTool",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000339",
+        "pageSize": 100
+      }
+    ]
   }
 ]

@@ -1,0 +1,566 @@
+[
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_get_interactor",
+    "description": "Get detailed information about a specific interactor from IntAct database by IntAct identifier (e.g., 'EBI-1004115'). Note: This requires an IntAct-specific identifier, not UniProt IDs. For UniProt IDs, use intact_get_interactions instead. Returns interactor details including names, aliases, organism, and cross-references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "IntAct identifier (e.g., 'EBI-1004115') or UniProt ID (e.g., 'P04637') or gene name"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format"
+        }
+      },
+      "required": [
+        "identifier"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/intact/ws/interactor/{identifier}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "object"
+      ],
+      "description": "Interactor information including names, organism, cross-references (returns array for multiple results or object for single result)"
+    },
+    "test_examples": [
+      {
+        "identifier": "EBI-1004115"
+      },
+      {
+        "identifier": "P04637"
+      }
+    ]
+  },
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_get_interactions",
+    "description": "Get all interactions involving a specific interactor (protein or gene) by identifier. Uses EBI Search API (IntAct domain) for reliable access. Returns list of interactions with interaction IDs (e.g., 'EBI-366083-EBI-366083') in the 'interaction_ids' field. These IDs can be used with intact_get_interaction_details or intact_get_interaction_network to get detailed information. Accepts UniProt IDs, gene names, or IntAct identifiers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "IntAct identifier, UniProt ID, or gene name"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "identifier"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/intact/ws/interaction/{identifier}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of interactions involving the interactor"
+    },
+    "test_examples": [
+      {
+        "identifier": "P04637"
+      },
+      {
+        "identifier": "EBI-1004115"
+      }
+    ]
+  },
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_search_interactions",
+    "description": "Search for interactions in IntAct database using EBI Search API (IntAct domain). Supports searching by protein names, gene names, interaction types, or other criteria. Use '*' as query to get all interactions (may be slow). Returns interaction entries with interaction IDs (e.g., 'EBI-366083-EBI-366083') in the 'interaction_ids' field. These IDs can be used with intact_get_interaction_details or intact_get_interaction_network to get detailed information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query string (e.g., protein name, gene name, interaction type)"
+        },
+        "first": {
+          "type": "integer",
+          "description": "First result index for pagination (default: 0)",
+          "default": 0,
+          "minimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 25, max: 100)",
+          "default": 25,
+          "maximum": 100
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/intact/ws/interaction/search",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Search results with interactions"
+    },
+    "test_examples": [
+      {
+        "query": "P04637",
+        "max": 10
+      },
+      {
+        "query": "BRCA1",
+        "max": 20
+      }
+    ]
+  },
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_get_interaction_details",
+    "description": "Get detailed information about a specific interaction by its IntAct interaction ID. Requires an IntAct interaction ID in format 'EBI-XXXXXX-EBI-YYYYYY' (e.g., 'EBI-366083-EBI-366083'). To get interaction IDs: 1) Use intact_get_interactions with a protein/gene identifier - it returns 'interaction_ids' field, or 2) Use intact_search_interactions - it also returns 'interaction_ids' field. Then use one of those IDs with this tool to get detailed interaction information. Returns complete interaction data including participants, interaction type, detection methods, and publications.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "interaction_id": {
+          "type": "string",
+          "description": "IntAct interaction ID in format 'EBI-XXXXXX-EBI-YYYYYY' (e.g., 'EBI-366083-EBI-366083'). Get these IDs from intact_get_interactions or intact_search_interactions results (see 'interaction_ids' field)"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "interaction_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/intact/ws/interaction/{interaction_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Complete interaction details"
+    },
+    "test_examples": [
+      {
+        "interaction_id": "EBI-10000001"
+      }
+    ]
+  },
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_get_interaction_network",
+    "description": "Get interaction network centered on a specific interactor. Uses EBI Search API (IntAct domain) for reliable access. Accepts IntAct identifiers (e.g., 'EBI-1004115'), UniProt IDs (e.g., 'P04637'), or gene names (e.g., 'BRCA1'). Returns interactions with interaction IDs in the 'interaction_ids' field. These IDs can be used with intact_get_interaction_details for detailed information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "IntAct identifier, UniProt ID, or gene name. Aliases: uniprot_id, protein_id, gene_symbol, gene_name."
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "Alias for identifier: UniProt accession (e.g., 'P04637')."
+        },
+        "protein_id": {
+          "type": "string",
+          "description": "Alias for identifier: protein identifier."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for identifier: gene symbol (e.g., 'BRCA1')."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for identifier: gene name."
+        },
+        "depth": {
+          "type": "integer",
+          "description": "Network depth: 1 for direct interactions only, 2 for 2-hop network, etc. (default: 1)",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 3
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return (default: 50, max: 200). Alias: size.",
+          "default": 50
+        },
+        "size": {
+          "type": "integer",
+          "description": "Alias for limit. Maximum number of interactions to return (default: 50).",
+          "default": 50
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json"
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Alias for gene_symbol/identifier. Common protein name (e.g., MDM2, TP53)."
+        },
+        "protein": {
+          "type": "string",
+          "description": "Alias for identifier. Gene symbol or protein name (e.g., 'TP53', 'BRCA1')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/intact/ws/interaction/network/{identifier}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "hitCount": {
+              "type": "integer"
+            },
+            "interaction_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "identifier": "P04637",
+        "depth": 1
+      }
+    ]
+  },
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_get_interactions_by_organism",
+    "description": "Get all interactions for a specific organism by taxonomy ID. Uses EBI Search API (IntAct domain) to find interactions involving proteins from the specified organism. Returns list of interactions with interaction IDs in the 'interaction_ids' field. These IDs can be used with intact_get_interaction_details to get detailed information. Common taxonomy IDs: 9606 (Homo sapiens), 10090 (Mus musculus), 10116 (Rattus norvegicus), 7227 (Drosophila melanogaster), 6239 (Caenorhabditis elegans), 7955 (Danio rerio).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxid": {
+          "type": "string",
+          "description": "NCBI taxonomy ID (e.g., '9606' for human, '10090' for mouse). Find taxonomy IDs at https://www.ncbi.nlm.nih.gov/taxonomy"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 25, max: 100)",
+          "default": 25,
+          "maximum": 100
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "taxid"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ebisearch/ws/rest/intact",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of interactions for the organism"
+    },
+    "test_examples": [
+      {
+        "taxid": "9606",
+        "size": 10
+      },
+      {
+        "taxid": "10090",
+        "size": 20
+      }
+    ]
+  },
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_get_interactions_by_complex",
+    "description": "Search for protein complexes in IntAct database using Complex Web Service. Accepts complex names (e.g., 'TP53', 'ndc80'), complex ACs (e.g., 'CPX-915'), or gene names. Returns complex information including complex AC, name, description, organism, and interactors. Use the complex ACs from results to find related interactions. Note: This searches for complexes, not interactions directly. To find interactions involving a complex, use the complex name or AC with intact_search_interactions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "complex_id": {
+          "type": "string",
+          "description": "Complex name (e.g., 'TP53', 'ndc80'), complex AC (e.g., 'CPX-915'), or gene name"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 25, max: 100)",
+          "default": 25,
+          "maximum": 100
+        },
+        "first": {
+          "type": "integer",
+          "description": "First result index for pagination (default: 0)",
+          "default": 0,
+          "minimum": 0
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "complex_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/intact/complex-ws/search",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of complexes matching the search. Each complex includes complexAC, complexName, organismName, description, predictedComplex, and interactors."
+    },
+    "test_examples": [
+      {
+        "complex_id": "TP53",
+        "size": 10
+      },
+      {
+        "complex_id": "ndc80",
+        "size": 5
+      }
+    ]
+  },
+  {
+    "type": "IntActRESTTool",
+    "name": "intact_get_complex_details",
+    "description": "Get detailed information about a specific protein complex by its complex AC (Complex Accession, e.g., 'CPX-915'). Returns comprehensive complex information including: complex AC, name, synonyms, systematic name, functions, properties, species, ligands, complex assemblies, participants (with interactor details), and associated diseases. To find complex ACs, use intact_get_interactions_by_complex to search for complexes first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "complex_ac": {
+          "type": "string",
+          "description": "Complex AC (Complex Accession) in format 'CPX-XXXXX' (e.g., 'CPX-915', 'CPX-10081'). Get complex ACs from intact_get_interactions_by_complex search results."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "complex_ac"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/intact/complex-ws/complex/{complex_ac}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Complete complex details including complexAC, name, synonyms, systematicName, functions, properties, species, ligands, complexAssemblies, participants, diseases, and other metadata",
+      "properties": {
+        "complexAc": {
+          "type": "string",
+          "description": "Complex AC (e.g., 'CPX-915')"
+        },
+        "name": {
+          "type": "string",
+          "description": "Complex name"
+        },
+        "systematicName": {
+          "type": "string",
+          "description": "Systematic name of the complex"
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Alternative names for the complex"
+        },
+        "functions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Functional descriptions of the complex"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Properties and characteristics of the complex"
+        },
+        "ac": {
+          "type": "string",
+          "description": "Additional accession identifier"
+        },
+        "species": {
+          "type": "string",
+          "description": "Organism information"
+        },
+        "ligands": {
+          "type": "array",
+          "description": "Associated ligands"
+        },
+        "complexAssemblies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Complex assembly information"
+        },
+        "participants": {
+          "type": "array",
+          "description": "Complex participants with interactor details, stoichiometry, and features"
+        },
+        "diseases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Associated diseases"
+        },
+        "crossReferences": {
+          "type": "array",
+          "description": "Cross-references to other databases (GO, PubMed, PDB, etc.)"
+        },
+        "institution": {
+          "type": "string",
+          "description": "Institution that curated the complex data"
+        },
+        "institutionURL": {
+          "type": "string",
+          "description": "URL of the institution"
+        },
+        "agonists": {
+          "type": "array",
+          "description": "Agonists associated with the complex"
+        },
+        "antagonists": {
+          "type": "array",
+          "description": "Antagonists associated with the complex"
+        },
+        "comments": {
+          "type": "array",
+          "description": "Additional comments about the complex"
+        },
+        "predictedComplex": {
+          "type": "boolean",
+          "description": "Whether the complex is predicted or experimentally verified"
+        },
+        "evidenceType": {
+          "type": "object",
+          "description": "Evidence type information including identifier, description, and confidence score",
+          "properties": {
+            "identifier": {
+              "type": "string",
+              "description": "Evidence type identifier (e.g., ECO code)"
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the evidence type"
+            },
+            "searchURL": {
+              "type": "string",
+              "description": "URL to search for evidence type details"
+            },
+            "confidenceScore": {
+              "type": "integer",
+              "description": "Confidence score for the evidence"
+            }
+          }
+        },
+        "releaseDates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Release dates for the complex data"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "complex_ac": "CPX-915"
+      },
+      {
+        "complex_ac": "CPX-10081"
+      }
+    ]
+  }
+]

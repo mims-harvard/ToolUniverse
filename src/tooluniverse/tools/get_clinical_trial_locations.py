@@ -9,22 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def get_clinical_trial_locations(
-    nct_ids: list[Any],
-    location: str,
+    nct_ids: list[str],
+    location: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Retrieves the locations where the clinical trials are being conducted, using their NCT IDs.
 
     Parameters
     ----------
-    nct_ids : list[Any]
+    nct_ids : list[str]
         List of NCT IDs of the clinical trials (e.g., ['NCT04852770', 'NCT01728545']).
     location : str
-        Placeholder.
+        Unused filter parameter, kept for backward compatibility. Can be omitted or s...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +34,20 @@ def get_clinical_trial_locations(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"nct_ids": nct_ids, "location": location}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "get_clinical_trial_locations",
-            "arguments": {"nct_ids": nct_ids, "location": location},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

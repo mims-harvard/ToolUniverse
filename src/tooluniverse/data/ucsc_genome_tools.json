@@ -1,0 +1,365 @@
+[
+  {
+    "name": "UCSC_search",
+    "description": "Search the UCSC Genome Browser for genes, transcripts, or genomic features by name. Returns position matches across tracks (MANE, RefSeq, GENCODE, HGNC, etc.) for a given genome assembly. Supports searching for gene symbols, transcript IDs, SNP rsIDs, or chromosomal bands. Example: searching 'TP53' in hg38 returns chr17:7668421-7687490 from MANE Select and other tracks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search_term": {
+          "type": "string",
+          "description": "Gene symbol, transcript ID, SNP rsID, or genomic feature to search. Examples: 'TP53', 'BRCA1', 'rs429358', 'ENST00000269305'."
+        },
+        "genome": {
+          "type": "string",
+          "description": "UCSC genome assembly identifier. Default: 'hg38'. Others: 'hg19', 'mm10', 'mm39', 'dm6', 'ce11', 'danRer11', 'sacCer3'."
+        }
+      },
+      "required": [
+        "search_term"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search"
+    },
+    "type": "UCSCGenomeTool",
+    "test_examples": [
+      {
+        "search_term": "TP53",
+        "genome": "hg38"
+      },
+      {
+        "search_term": "BRCA1",
+        "genome": "hg38"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "genome": {
+                  "type": "string"
+                },
+                "search_term": {
+                  "type": "string"
+                },
+                "match_count": {
+                  "type": "integer"
+                },
+                "matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "track": {
+                        "type": "string"
+                      },
+                      "track_description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "position": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "transcript_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UCSC_get_sequence",
+    "description": "Get DNA sequence from the UCSC Genome Browser for a specified genomic region. Returns the nucleotide sequence for a given chromosome, start, and end position in a genome assembly. Useful for primer design, sequence analysis, and regulatory element inspection. Example: hg38, chr17, start=7668421, end=7668521 returns 100bp of TP53 sequence.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genome": {
+          "type": "string",
+          "description": "UCSC genome assembly identifier. Examples: 'hg38' (human), 'mm39' (mouse), 'dm6' (fly), 'sacCer3' (yeast)."
+        },
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome name. Examples: 'chr1', 'chr17', 'chrX', 'chrM'."
+        },
+        "start": {
+          "type": "integer",
+          "description": "0-based start position (inclusive). Example: 7668421."
+        },
+        "end": {
+          "type": "integer",
+          "description": "End position (exclusive). Must be > start and span <= 100000 bp. Example: 7668521."
+        }
+      },
+      "required": [
+        "genome",
+        "chrom",
+        "start",
+        "end"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_sequence"
+    },
+    "type": "UCSCGenomeTool",
+    "test_examples": [
+      {
+        "genome": "hg38",
+        "chrom": "chr17",
+        "start": 7668421,
+        "end": 7668521
+      },
+      {
+        "genome": "hg38",
+        "chrom": "chrM",
+        "start": 4321,
+        "end": 5678
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "genome": {
+                  "type": "string"
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "length": {
+                  "type": "integer"
+                },
+                "dna": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UCSC_get_track",
+    "description": "Get annotation track data from the UCSC Genome Browser for a specified genomic region. Retrieves features like genes, regulatory elements, conservation scores, variants, or repeats from any of UCSC's 370+ tracks. Use UCSC_search first to find the genomic coordinates of your gene of interest. Example: track 'knownGene' on hg38 chr17:7668421-7687490 returns GENCODE gene annotations for the TP53 region.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genome": {
+          "type": "string",
+          "description": "UCSC genome assembly. Examples: 'hg38', 'hg19', 'mm39'."
+        },
+        "track": {
+          "type": "string",
+          "description": "Track name. Common tracks: 'knownGene' (GENCODE genes), 'ncbiRefSeq' (RefSeq), 'snp151' (dbSNP), 'encodeCcreCombined' (ENCODE cCREs), 'phastCons100way' (conservation), 'rmsk' (repeats)."
+        },
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome name. Examples: 'chr1', 'chr17', 'chrX'."
+        },
+        "start": {
+          "type": "integer",
+          "description": "0-based start position (inclusive)."
+        },
+        "end": {
+          "type": "integer",
+          "description": "End position (exclusive). Must be > start."
+        },
+        "maxItemsOutput": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of items to return. Default: 100. Set to limit large result sets."
+        }
+      },
+      "required": [
+        "genome",
+        "track",
+        "chrom",
+        "start",
+        "end"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_track"
+    },
+    "type": "UCSCGenomeTool",
+    "test_examples": [
+      {
+        "genome": "hg38",
+        "track": "knownGene",
+        "chrom": "chr17",
+        "start": 7668421,
+        "end": 7687490,
+        "maxItemsOutput": 10
+      },
+      {
+        "genome": "hg38",
+        "track": "encodeCcreCombined",
+        "chrom": "chr1",
+        "start": 11000,
+        "end": 15000,
+        "maxItemsOutput": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "genome": {
+                  "type": "string"
+                },
+                "track": {
+                  "type": "string"
+                },
+                "track_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "end": {
+                  "type": "integer"
+                },
+                "item_count": {
+                  "type": "integer"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

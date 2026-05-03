@@ -151,6 +151,23 @@ class BaseTool:
         else:
             return False, "Invalid JSON string of function call"
 
+    def get_schema_const_operation(self) -> str:
+        """Return the operation value from the tool's parameter schema, or empty string.
+
+        Checks `const` first (single fixed value), then falls back to the first
+        value in `enum` (single-value enum is equivalent to const).
+        """
+        op_schema = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("operation", {})
+        )
+        const = op_schema.get("const", "")
+        if const:
+            return const
+        enum = op_schema.get("enum", [])
+        return enum[0] if enum else ""
+
     def get_required_parameters(self):
         """
         Retrieve required parameters from the endpoint definition.
@@ -182,20 +199,99 @@ class BaseTool:
 
         try:
             import jsonschema
+        except ImportError:
+            # jsonschema not available, skip validation
+            return None
 
-            jsonschema.validate(arguments, schema)
+        try:
+            # Filter out internal control parameters before validation
+            # Only filter known internal parameters, not all underscore-prefixed params
+            # to allow optional streaming parameter _tooluniverse_stream
+            internal_params = {"ctx", "_tooluniverse_stream"}
+            filtered_arguments = {
+                k: v for k, v in arguments.items() if k not in internal_params
+            }
+
+            jsonschema.validate(filtered_arguments, schema)
             return None
         except jsonschema.ValidationError as e:
+            # Create a more agent-friendly error message
+            error_msg = f"Parameter validation failed for '{e.path[-1] if e.path else 'root'}': {e.message}"
+
+            # Add type hint if it's a type error
+            if e.validator == "type":
+                error_msg += (
+                    f". Expected {e.validator_value}, got {type(e.instance).__name__}."
+                )
+
+            # Add allowed values if it's an enum error
+            if e.validator == "enum":
+                error_msg += f". Allowed values: {e.validator_value}."
+
+            # Feature-25A-03: when a required property is missing, check if the user
+            # provided a case-variant of it (e.g. kinase_id instead of kinase_ID).
+            # If so, surface a "Did you mean?" hint to help them fix the typo.
+            if e.validator == "required" and isinstance(filtered_arguments, dict):
+                # e.message looks like: "'kinase_ID' is a required property"
+                # Extract the missing property name from the message.
+                import re as _re
+
+                _m = _re.match(r"'([^']+)' is a required property", e.message)
+                if _m:
+                    missing_prop = _m.group(1)
+                    provided_lower = {k.lower(): k for k in filtered_arguments}
+                    if missing_prop.lower() in provided_lower:
+                        wrong_key = provided_lower[missing_prop.lower()]
+                        error_msg += (
+                            f" (you passed '{wrong_key}' — "
+                            f"did you mean '{missing_prop}'?)"
+                        )
+
             return ToolValidationError(
-                f"Parameter validation failed: {e.message}",
+                error_msg,
                 details={
                     "validation_error": str(e),
                     "path": list(e.absolute_path) if e.absolute_path else [],
                     "schema": schema,
+                    "parameter": str(e.path[-1]) if e.path else "root",
+                    "expected": str(e.validator_value)
+                    if hasattr(e, "validator_value")
+                    else None,
                 },
             )
         except Exception as e:
             return ToolValidationError(f"Validation error: {str(e)}")
+
+    # Maps keyword groups to (ToolError subclass, message prefix).
+    # Checked in order; first match wins.
+    _ERROR_CLASSIFICATION = [
+        (
+            {"auth", "unauthorized", "401", "403", "api key", "token"},
+            ToolAuthError,
+            "Authentication failed",
+        ),
+        (
+            {"rate limit", "429", "quota", "limit exceeded"},
+            ToolRateLimitError,
+            "Rate limit exceeded",
+        ),
+        (
+            {"unavailable", "timeout", "connection", "network", "not found", "404"},
+            ToolUnavailableError,
+            "Tool unavailable",
+        ),
+        (
+            {"validation", "invalid", "schema", "parameter"},
+            ToolValidationError,
+            "Validation error",
+        ),
+        ({"config", "configuration", "setup"}, ToolConfigError, "Configuration error"),
+        (
+            {"import", "module", "dependency", "package"},
+            ToolDependencyError,
+            "Dependency error",
+        ),
+    ]
 
     def handle_error(self, exception: Exception) -> ToolError:
         """
@@ -210,46 +306,40 @@ class BaseTool:
         Returns
             Structured ToolError instance
         """
-        error_str = str(exception).lower()
-
-        if any(
-            keyword in error_str
-            for keyword in ["auth", "unauthorized", "401", "403", "api key", "token"]
-        ):
-            return ToolAuthError(f"Authentication failed: {exception}")
-        elif any(
-            keyword in error_str
-            for keyword in ["rate limit", "429", "quota", "limit exceeded"]
-        ):
-            return ToolRateLimitError(f"Rate limit exceeded: {exception}")
-        elif any(
-            keyword in error_str
-            for keyword in [
-                "unavailable",
-                "timeout",
-                "connection",
-                "network",
-                "not found",
-                "404",
-            ]
-        ):
-            return ToolUnavailableError(f"Tool unavailable: {exception}")
-        elif any(
-            keyword in error_str
-            for keyword in ["validation", "invalid", "schema", "parameter"]
-        ):
+        # ValueError always signals a caller-side input problem (not server error)
+        if isinstance(exception, ValueError):
             return ToolValidationError(f"Validation error: {exception}")
-        elif any(
-            keyword in error_str for keyword in ["config", "configuration", "setup"]
-        ):
-            return ToolConfigError(f"Configuration error: {exception}")
-        elif any(
-            keyword in error_str
-            for keyword in ["import", "module", "dependency", "package"]
-        ):
-            return ToolDependencyError(f"Dependency error: {exception}")
-        else:
-            return ToolServerError(f"Unexpected error: {exception}")
+
+        # Feature-25A-01: for HTTP errors, include the response body so callers see
+        # the upstream API's actual message rather than a generic "Base API error".
+        response = getattr(exception, "response", None)
+        response_detail = ""
+        if response is not None:
+            try:
+                body = response.json()
+                # Surface common error fields used across APIs
+                for key in ("message", "error", "detail", "description", "reason"):
+                    if key in body:
+                        response_detail = f" — API said: {body[key]}"
+                        break
+                else:
+                    # Fall back to raw text (truncated to avoid noise)
+                    text = response.text
+                    if text:
+                        response_detail = f" — API response: {text[:200]}"
+            except Exception:
+                text = getattr(response, "text", "")
+                if text:
+                    response_detail = f" — API response: {text[:200]}"
+
+        error_str = str(exception).lower()
+        full_msg = f"{exception}{response_detail}"
+
+        for keywords, error_class, prefix in self._ERROR_CLASSIFICATION:
+            if any(kw in error_str for kw in keywords):
+                return error_class(f"{prefix}: {full_msg}")
+
+        return ToolServerError(f"Unexpected error: {full_msg}")
 
     def get_cache_key(self, arguments: Dict[str, Any]) -> str:
         """

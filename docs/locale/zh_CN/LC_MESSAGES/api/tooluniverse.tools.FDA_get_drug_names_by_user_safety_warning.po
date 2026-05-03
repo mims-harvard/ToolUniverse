@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_user\\_safety\\_warni
 #: 45b19555bf6e44ffa767db15dcd6e714 of
 #: tooluniverse.tools.FDA_get_drug_names_by_user_safety_warning:1
 msgid "FDA_get_drug_names_by_user_safety_warning"
-msgstr ""
+msgstr "FDA_根据用户安全警告获取药品名称"
 
 #: 1880c98124f944159f7d79d313697ca3 b06cb42eca1547f08221980ee9f2d6e4 of
 #: tooluniverse.tools.FDA_get_drug_names_by_user_safety_warning:3

@@ -1,0 +1,95 @@
+[
+    {
+        "name": "MassIVE_search_datasets",
+        "description": "Search the MassIVE proteomics repository for mass spectrometry datasets. MassIVE hosts thousands of proteomics datasets accessible via the ProXI standard API. Returns dataset accessions, titles, species, instruments, and keywords. Optionally filter by NCBI taxonomy ID for species.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "page_size": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Number of results to return (max 100)"
+                },
+                "species": {
+                    "type": ["string", "null"],
+                    "description": "NCBI taxonomy ID to filter by species (e.g., '9606' for human, '10090' for mouse)"
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "operation": "search_datasets"
+        },
+        "type": "MassIVETool",
+        "test_examples": [
+            {
+                "page_size": 3
+            },
+            {
+                "page_size": 3,
+                "species": "9606"
+            }
+        ],
+        "return_schema": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "accessions": {"type": "array", "items": {"type": "string"}},
+                    "title": {"type": "string"},
+                    "summary": {"type": "string"},
+                    "species": {"type": "array", "items": {"type": "string"}},
+                    "instruments": {"type": "array", "items": {"type": "string"}},
+                    "keywords": {"type": "array", "items": {"type": "string"}}
+                }
+            }
+        },
+        "label": ["MassIVE", "Proteomics", "Datasets"],
+        "metadata": {
+            "tags": ["proteomics", "mass_spectrometry", "datasets", "repository"],
+            "estimated_execution_time": "3-5 seconds"
+        }
+    },
+    {
+        "name": "MassIVE_get_dataset",
+        "description": "Get detailed information about a specific MassIVE proteomics dataset by its accession number (MSV or PXD format). Returns title, summary, species, instruments, keywords, contacts, publications, and post-translational modifications.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "MassIVE dataset accession (e.g., 'MSV000079514') or ProteomeXchange accession (e.g., 'PXD003971')"
+                }
+            },
+            "required": ["accession"]
+        },
+        "fields": {
+            "operation": "get_dataset"
+        },
+        "type": "MassIVETool",
+        "test_examples": [
+            {
+                "accession": "MSV000079514"
+            }
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "accessions": {"type": "array", "items": {"type": "string"}},
+                "title": {"type": "string"},
+                "summary": {"type": "string"},
+                "species": {"type": "array", "items": {"type": "string"}},
+                "instruments": {"type": "array", "items": {"type": "string"}},
+                "keywords": {"type": "array", "items": {"type": "string"}},
+                "contacts": {"type": "array", "items": {"type": "object"}},
+                "publications": {"type": "array", "items": {"type": "object"}},
+                "modifications": {"type": "array", "items": {"type": "string"}}
+            }
+        },
+        "label": ["MassIVE", "Proteomics", "Dataset Detail"],
+        "metadata": {
+            "tags": ["proteomics", "mass_spectrometry", "dataset_detail", "repository"],
+            "estimated_execution_time": "3-5 seconds"
+        }
+    }
+]

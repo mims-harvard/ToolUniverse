@@ -1,0 +1,235 @@
+[
+  {
+    "name": "GNPS_get_spectrum",
+    "description": "Retrieve a mass spectrometry (MS/MS) reference spectrum from the GNPS spectral library using a Universal Spectrum Identifier (USI). Returns precursor m/z, charge, number of peaks, m/z range, and the top 20 peaks by intensity. GNPS is the world's largest community-curated spectral library for metabolomics and natural products research. Example: 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737' retrieves a reference spectrum with precursor m/z 405.264 and 83 peaks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "usi": {
+          "type": "string",
+          "description": "Universal Spectrum Identifier. Format: 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB{id}'. Example: 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737'."
+        }
+      },
+      "required": [
+        "usi"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_spectrum"
+    },
+    "type": "GNPSTool",
+    "test_examples": [
+      {
+        "usi": "mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737"
+      },
+      {
+        "usi": "mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00000579622"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "usi": {
+                  "type": "string"
+                },
+                "precursor_mz": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "precursor_charge": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "n_peaks": {
+                  "type": "integer"
+                },
+                "mz_range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "top_20_peaks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "mz": {
+                        "type": "number"
+                      },
+                      "intensity": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "spectrum_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "splash": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GNPS_compare_spectra",
+    "description": "Compare two MS/MS spectra from the GNPS spectral library using Universal Spectrum Identifiers (USIs). Returns metadata for both spectra (precursor m/z, peak counts) and a link to the interactive mirror plot visualization. Useful for assessing spectral similarity between known and unknown compounds in metabolomics workflows.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "usi1": {
+          "type": "string",
+          "description": "First spectrum USI. Example: 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737'."
+        },
+        "usi2": {
+          "type": "string",
+          "description": "Second spectrum USI. Example: 'mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00000579622'."
+        }
+      },
+      "required": [
+        "usi1",
+        "usi2"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "compare_spectra"
+    },
+    "type": "GNPSTool",
+    "test_examples": [
+      {
+        "usi1": "mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00005435737",
+        "usi2": "mzspec:GNPS:GNPS-LIBRARY:accession:CCMSLIB00000579622"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "spectrum_1": {
+                  "type": "object",
+                  "properties": {
+                    "usi": {
+                      "type": "string"
+                    },
+                    "precursor_mz": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "n_peaks": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "spectrum_2": {
+                  "type": "object",
+                  "properties": {
+                    "usi": {
+                      "type": "string"
+                    },
+                    "precursor_mz": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "n_peaks": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "mirror_plot_url": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

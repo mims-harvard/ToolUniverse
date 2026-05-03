@@ -1,0 +1,222 @@
+[
+  {
+    "name": "iDigBio_search_records",
+    "description": "Search iDigBio (Integrated Digitized Biocollections) for natural history specimen records from 800+ museums and herbaria worldwide. iDigBio contains 130M+ digitized specimens including plants, animals, fungi, and fossils. Returns specimen records with taxonomic names, collection locations (GPS coordinates), institution codes, collection dates, and catalog numbers. Essential for biodiversity research, biogeography, and ecological studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "scientificname": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Scientific name to search for. Examples: 'Quercus robur', 'Homo sapiens', 'Drosophila melanogaster'"
+        },
+        "kingdom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Kingdom filter. Values: 'Plantae', 'Animalia', 'Fungi', 'Bacteria', 'Chromista'"
+        },
+        "phylum": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Phylum filter. Examples: 'Chordata', 'Arthropoda', 'Magnoliophyta'"
+        },
+        "family": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Family filter. Examples: 'Rosaceae', 'Felidae', 'Orchidaceae'"
+        },
+        "genus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Genus filter. Examples: 'Rosa', 'Quercus', 'Drosophila'"
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Country filter. Examples: 'United States', 'Germany', 'Brazil'"
+        },
+        "stateprovince": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "State or province filter. Examples: 'California', 'Bavaria', 'Minas Gerais'"
+        },
+        "institutioncode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Institution code filter. Examples: 'USNM' (Smithsonian), 'CAS' (California Academy), 'NHMUK' (Natural History Museum London)"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of records to return (default 10, max 5000)"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://search.idigbio.org/v2/search/records"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "kingdom": "Plantae",
+        "stateprovince": "California",
+        "limit": 5
+      },
+      {
+        "family": "Orchidaceae",
+        "country": "Brazil",
+        "limit": 5
+      },
+      {
+        "genus": "Quercus",
+        "country": "United States",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "iDigBio specimen search results",
+          "properties": {
+            "itemCount": {
+              "type": "integer",
+              "description": "Total number of matching records"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "items": {
+              "type": "array",
+              "description": "List of specimen records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": "string",
+                    "description": "Unique record identifier"
+                  },
+                  "indexTerms": {
+                    "type": "object",
+                    "description": "Indexed searchable fields",
+                    "properties": {
+                      "scientificname": {
+                        "type": "string",
+                        "description": "Scientific name"
+                      },
+                      "kingdom": {
+                        "type": "string"
+                      },
+                      "phylum": {
+                        "type": "string"
+                      },
+                      "class": {
+                        "type": "string"
+                      },
+                      "order": {
+                        "type": "string"
+                      },
+                      "family": {
+                        "type": "string"
+                      },
+                      "genus": {
+                        "type": "string"
+                      },
+                      "country": {
+                        "type": "string"
+                      },
+                      "stateprovince": {
+                        "type": "string"
+                      },
+                      "county": {
+                        "type": "string"
+                      },
+                      "municipality": {
+                        "type": "string"
+                      },
+                      "continent": {
+                        "type": "string"
+                      },
+                      "catalognumber": {
+                        "type": "string"
+                      },
+                      "institutioncode": {
+                        "type": "string",
+                        "description": "Museum/institution code"
+                      },
+                      "collectioncode": {
+                        "type": "string"
+                      },
+                      "eventdate": {
+                        "type": "string",
+                        "description": "Collection date"
+                      },
+                      "geopoint": {
+                        "type": "object",
+                        "properties": {
+                          "lat": {
+                            "type": "number"
+                          },
+                          "lon": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "individualcount": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Original verbatim data from institution"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,167 @@
+[
+    {
+        "name": "RGD_get_gene",
+        "description": "Get detailed rat gene information from the Rat Genome Database by RGD ID. Returns gene symbol, name, description (including AGR-aggregated functional summary with disease associations, pathways, and interactions), gene type, and Ensembl cross-reference. Use when looking up specific rat genes for toxicology, pharmacology, or disease model research.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "rgd_id": {
+                    "type": "string",
+                    "description": "RGD gene ID (numeric, e.g., '2218' for Brca1). Can include 'RGD:' prefix."
+                }
+            },
+            "required": ["rgd_id"]
+        },
+        "fields": {
+            "endpoint_type": "get_gene"
+        },
+        "type": "RGDTool",
+        "test_examples": [
+            {"rgd_id": "2218"},
+            {"rgd_id": "RGD:3001"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {"type": "object"},
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "RGD_search_genes",
+        "description": "Search for rat genes by symbol or keyword in the Rat Genome Database. Returns matching genes with RGD IDs, symbols, names, types, and descriptions. Supports rat, human, and mouse species. Use for finding rat orthologs, toxicology studies, or rat disease model genes.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Gene symbol or keyword (e.g., 'Brca1', 'Tp53', 'insulin')"
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species to search: 'rat' (default), 'human', 'mouse'",
+                    "default": "rat"
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "endpoint_type": "search_genes"
+        },
+        "type": "RGDTool",
+        "test_examples": [
+            {"query": "Brca1"},
+            {"query": "Tp53", "species": "rat"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {"type": "array"},
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "RGD_get_annotations",
+        "description": "Get disease, phenotype, pathway, and GO annotations for a rat gene from RGD. Returns curated annotations with ontology terms, evidence codes, and qualifiers. Filter by aspect: D=Disease, P=Pathway, W=Phenotype, F=Molecular Function, C=Cellular Component, E=Expression. Essential for rat disease model research and toxicogenomics.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "rgd_id": {
+                    "type": "string",
+                    "description": "RGD gene ID (e.g., '2218' for Brca1)"
+                },
+                "aspect": {
+                    "type": "string",
+                    "description": "Filter by annotation type: 'D' (Disease), 'P' (Pathway), 'W' (Phenotype), 'F' (Function), 'C' (Component), 'E' (Expression). Leave empty for all.",
+                    "default": ""
+                }
+            },
+            "required": ["rgd_id"]
+        },
+        "fields": {
+            "endpoint_type": "get_annotations"
+        },
+        "type": "RGDTool",
+        "test_examples": [
+            {"rgd_id": "2218", "aspect": "D"},
+            {"rgd_id": "3001"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {"type": "array"},
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "RGD_get_orthologs",
+        "description": "Get orthologs of a rat gene across species (human, mouse, chinchilla, dog, pig, etc.) from RGD. Returns ortholog gene symbols, RGD IDs, names, and species. Use for cross-species comparison in model organism genetics, finding human disease gene orthologs in rat.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "rgd_id": {
+                    "type": "string",
+                    "description": "RGD gene ID (e.g., '2218' for Brca1)"
+                }
+            },
+            "required": ["rgd_id"]
+        },
+        "fields": {
+            "endpoint_type": "get_orthologs"
+        },
+        "type": "RGDTool",
+        "test_examples": [
+            {"rgd_id": "2218"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {"type": "array"},
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    }
+                }
+            ]
+        }
+    }
+]

@@ -1,0 +1,160 @@
+[
+    {
+        "name": "Ensembl_get_cross_references",
+        "description": "Get all external database cross-references for an Ensembl stable identifier. Returns linked records from HGNC, EntrezGene, UniProt, GeneCards, Reactome, MIM/OMIM, ArrayExpress, and other databases. Essential for mapping between Ensembl and other identifier systems, discovering related database entries, or building cross-database links for a gene. Can filter by specific external database. Example: 'ENSG00000141510' (TP53) returns 157 cross-references across 11 databases including HGNC:11998, EntrezGene:7157, GeneCards:TP53, MIM_GENE:191170, and Reactome pathways.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ensembl_id": {
+                    "type": "string",
+                    "description": "Ensembl stable identifier. Can be gene (ENSG*), transcript (ENST*), or translation (ENSP*). Examples: 'ENSG00000141510' (TP53 gene), 'ENST00000269305' (TP53 canonical transcript)."
+                },
+                "external_db": {
+                    "type": ["string", "null"],
+                    "description": "Optional: filter by external database name. Examples: 'HGNC', 'EntrezGene', 'Uniprot_gn', 'MIM_GENE', 'Reactome_gene', 'GeneCards'. If not specified, returns all cross-references."
+                }
+            },
+            "required": ["ensembl_id"]
+        },
+        "fields": {
+            "endpoint": "xrefs_by_id"
+        },
+        "type": "EnsemblXrefsTool",
+        "test_examples": [
+            {
+                "ensembl_id": "ENSG00000141510"
+            },
+            {
+                "ensembl_id": "ENSG00000141510",
+                "external_db": "HGNC"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "ensembl_id": {"type": "string"},
+                                "xrefs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "dbname": {"type": "string"},
+                                            "db_display_name": {"type": ["string", "null"]},
+                                            "primary_id": {"type": "string"},
+                                            "display_id": {"type": "string"},
+                                            "description": {"type": ["string", "null"]},
+                                            "info_type": {"type": ["string", "null"]},
+                                            "synonyms": {"type": "array", "items": {"type": "string"}}
+                                        }
+                                    }
+                                },
+                                "database_summary": {
+                                    "type": "object",
+                                    "description": "Count of xrefs per database"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_xrefs": {"type": "integer"},
+                                "databases_found": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Ensembl_lookup_gene_by_symbol",
+        "description": "Look up Ensembl gene IDs for a gene symbol across external databases. Given a gene symbol (e.g., 'TP53'), returns all matching Ensembl gene and transcript IDs. Useful for converting gene symbols to Ensembl stable identifiers for use with other Ensembl APIs. Example: symbol 'TP53' in human returns ENSG00000141510 (gene) and related transcript/translation IDs; 'BRCA1' returns ENSG00000012048.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "description": "Gene symbol to look up. Examples: 'TP53', 'BRCA1', 'EGFR', 'BRAF', 'KRAS'."
+                },
+                "species": {
+                    "type": "string",
+                    "description": "Species name. Default: 'human'. Examples: 'human', 'mouse', 'rat', 'zebrafish'."
+                },
+                "external_db": {
+                    "type": ["string", "null"],
+                    "description": "Optional: filter by external database. Examples: 'HGNC', 'EntrezGene'."
+                }
+            },
+            "required": ["symbol"]
+        },
+        "fields": {
+            "endpoint": "xrefs_by_symbol"
+        },
+        "type": "EnsemblXrefsTool",
+        "test_examples": [
+            {
+                "symbol": "TP53",
+                "species": "human"
+            },
+            {
+                "symbol": "BRCA1",
+                "species": "human"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "symbol": {"type": "string"},
+                                "species": {"type": "string"},
+                                "ensembl_ids": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "type": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "properties": {
+                                "source": {"type": "string"},
+                                "total_results": {"type": "integer"}
+                            }
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

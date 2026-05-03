@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_clinical\\_trial\\_outcome\\_measures 模块"
 #: b63a6bcee9d148048ee8bcdf6614653e of
 #: tooluniverse.tools.get_clinical_trial_outcome_measures:1
 msgid "get_clinical_trial_outcome_measures"
-msgstr ""
+msgstr "get_clinical_trial_outcome_measures（获取临床试验结局指标）"
 
 #: 01993987c61c4882b47203482c78c5c4 87f3ba15ff44460c8f4b84273744991e of
 #: tooluniverse.tools.get_clinical_trial_outcome_measures:3

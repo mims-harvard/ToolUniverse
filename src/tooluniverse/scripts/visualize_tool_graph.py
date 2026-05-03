@@ -652,7 +652,7 @@ def export_static_image(graph_data, output_path, format_type="png"):
             missing_deps.append("networkx")
 
         error_msg = f"""
-❌ Static export requires additional dependencies: {', '.join(missing_deps)}
+❌ Static export requires additional dependencies: {", ".join(missing_deps)}
 
 To install graph visualization dependencies:
     pip install tooluniverse[graph]

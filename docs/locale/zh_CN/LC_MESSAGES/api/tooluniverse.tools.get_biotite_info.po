@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_biotite\\_info 模块"
 
 #: d6a20289c7604696bcec333f25a5c895 of tooluniverse.tools.get_biotite_info:1
 msgid "get_biotite_info"
-msgstr ""
+msgstr "get_biotite_info 获取黑云母信息"
 
 #: 21f118dc704540c082a9fb903ebc6f95 a15e235693f24a59ad0cbefc4e315075 of
 #: tooluniverse.tools.get_biotite_info:3

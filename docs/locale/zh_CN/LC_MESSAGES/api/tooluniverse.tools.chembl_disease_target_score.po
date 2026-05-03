@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.chembl\\_disease\\_target\\_score 模块"
 #: a423bf930005440db78a98a2c9bf52c3 of
 #: tooluniverse.tools.chembl_disease_target_score:1
 msgid "chembl_disease_target_score"
-msgstr ""
+msgstr "chembl_疾病_靶点_评分"
 
 #: 76f1a8f6cc2e49d1a5a0f65f40e362a1 9ff4b721c2f44ae2a198d32724ef267c of
 #: tooluniverse.tools.chembl_disease_target_score:3

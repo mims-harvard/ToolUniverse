@@ -14,7 +14,7 @@ def main():
 
     # Get FDA tool
     tool_name = "FDA_get_active_ingredient_info_by_drug_name"
-    tool_config = tu.get_tool_description(tool_name)
+    tool_config = tu.tool_specification(tool_name)
 
     # Test 1: Multi-round optimization
     result = tu.run(

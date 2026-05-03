@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_velocyto\\_info 模块"
 
 #: 4dd86ce40efa4f9e802a8ba4335fc679 of tooluniverse.tools.get_velocyto_info:1
 msgid "get_velocyto_info"
-msgstr ""
+msgstr "获取_velocyto_信息"
 
 #: be4550de2d69466e9b51dd37170e692c d8413780ed0943e4ba89303f3ef7eaf8 of
 #: tooluniverse.tools.get_velocyto_info:3

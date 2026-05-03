@@ -1,0 +1,900 @@
+[
+  {
+    "name": "FlyBase_get_gene",
+    "description": "Get detailed Drosophila melanogaster (fruit fly) gene information from FlyBase via the Alliance of Genome Resources. Returns gene symbol, name, synopsis, genomic location, synonyms, and cross-references. FlyBase is the primary database for Drosophila genetics. Example: 'FB:FBgn0003996' returns the white (w) gene with its function as an ABCG2-class transporter.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "FlyBase gene ID with 'FB:' prefix. Examples: 'FB:FBgn0003996' (white/w), 'FB:FBgn0000490' (decapentaplegic/dpp), 'FB:FBgn0004647' (Notch/N), 'FB:FBgn0000546' (eyeless/ey), 'FB:FBgn0003731' (hedgehog/hh)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_detail"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "FB:FBgn0003996"
+      },
+      {
+        "gene_id": "FB:FBgn0000490"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "species": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "short_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "taxon_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data_provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "gene_synopsis": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "automated_gene_synopsis": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "so_term": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genomic_location": {
+                  "type": "object",
+                  "properties": {
+                    "chromosome": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "end": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "assembly": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "strand": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "cross_references": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "data_provider": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FlyBase_get_gene_orthologs",
+    "description": "Get orthologs of a Drosophila gene across other species from the Alliance of Genome Resources. Returns orthologous genes in human, mouse, zebrafish, worm, yeast, and other model organisms with prediction method details and best-score indicators. Essential for translational research from fly models to human disease genes. Example: 'FB:FBgn0004647' (Notch) returns orthologs including human NOTCH1-4.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "FlyBase gene ID with 'FB:' prefix. Examples: 'FB:FBgn0004647' (Notch/N), 'FB:FBgn0003996' (white/w), 'FB:FBgn0000546' (eyeless/ey)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of orthologs to return (1-100). Default: 20."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination. Default: 1."
+        },
+        "stringency": {
+          "type": "string",
+          "description": "Stringency filter for orthology calls: 'stringent' (high confidence) or 'moderate'. Default: 'stringent'."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_orthologs"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "FB:FBgn0004647",
+        "limit": 10
+      },
+      {
+        "gene_id": "FB:FBgn0000546",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "subject_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subject_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subject_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ortholog_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ortholog_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ortholog_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_best_score": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_best_score_reverse": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "methods": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "method_count": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "stringency": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FlyBase_get_gene_alleles",
+    "description": "Get alleles and variants for a Drosophila gene from FlyBase via the Alliance of Genome Resources. Returns allele symbols, categories (insertion, point mutation, etc.), associated phenotypes, disease annotations, and variant details including genomic coordinates. Example: 'FB:FBgn0000490' (dpp) returns alleles like dpp[MI03752] with variant location and molecular consequence.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "FlyBase gene ID with 'FB:' prefix. Examples: 'FB:FBgn0003996' (white/w), 'FB:FBgn0000490' (dpp), 'FB:FBgn0004647' (Notch/N)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of alleles to return (1-100). Default: 20."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination. Default: 1."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_alleles"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "FB:FBgn0000490",
+        "limit": 5
+      },
+      {
+        "gene_id": "FB:FBgn0003996",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "symbol_text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "has_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "has_phenotype": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "location": {
+                          "type": [
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FlyBase_get_gene_expression",
+    "description": "Get expression summary for a Drosophila gene from the Alliance of Genome Resources. Returns a ribbon summary of expression across anatomical systems (nervous system, integumental system, reproductive system, etc.) with annotation counts. Useful for understanding where a fly gene is expressed. Example: 'FB:FBgn0000490' (dpp) shows expression in alimentary system (43 annotations), integumental system (56), respiratory system (32).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "FlyBase gene ID with 'FB:' prefix. Examples: 'FB:FBgn0000490' (dpp), 'FB:FBgn0003996' (white/w), 'FB:FBgn0004647' (Notch/N)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_expression_summary"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "FB:FBgn0000490"
+      },
+      {
+        "gene_id": "FB:FBgn0004647"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_annotations": {
+                  "type": "integer"
+                },
+                "expression_groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "group_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "total_annotations": {
+                        "type": "integer"
+                      },
+                      "terms": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "annotation_count": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FlyBase_get_gene_interactions",
+    "description": "Get molecular or genetic interactions for a Drosophila gene from the Alliance of Genome Resources. Molecular interactions are physical protein-protein interactions. Genetic interactions are phenotype-based (suppression, enhancement, etc.). Returns interacting gene pairs with species and interaction type. Example: 'FB:FBgn0000490' (dpp) has 169 genetic interactions including genetic suppression with anchor.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "FlyBase gene ID with 'FB:' prefix. Examples: 'FB:FBgn0003996' (white/w), 'FB:FBgn0000490' (dpp), 'FB:FBgn0004647' (Notch/N)."
+        },
+        "interaction_type": {
+          "type": "string",
+          "description": "Type of interaction: 'molecular' (physical PPI) or 'genetic' (phenotype-based). Default: 'molecular'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return (1-100). Default: 20."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination. Default: 1."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_interactions"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "FB:FBgn0000490",
+        "interaction_type": "genetic",
+        "limit": 5
+      },
+      {
+        "gene_id": "FB:FBgn0003996",
+        "interaction_type": "molecular",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "subject_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subject_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "interaction_type": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "FlyBase_get_gene_disease_models",
+    "description": "Get disease models involving a Drosophila gene from the Alliance of Genome Resources. Drosophila is a powerful model organism for human disease research. Returns genotype-based disease models with associated human disease names and Disease Ontology IDs. Example: 'FB:FBgn0000490' (dpp) has 946 disease model entries including models for ALS, Parkinson's disease, and other neurodegenerative conditions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "FlyBase gene ID with 'FB:' prefix. Examples: 'FB:FBgn0000490' (dpp), 'FB:FBgn0004647' (Notch/N), 'FB:FBgn0003996' (white/w)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of disease models to return (1-100). Default: 20."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number for pagination. Default: 1."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_disease_models"
+    },
+    "type": "AllianceGenomeTool",
+    "test_examples": [
+      {
+        "gene_id": "FB:FBgn0000490",
+        "limit": 5
+      },
+      {
+        "gene_id": "FB:FBgn0004647",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "model_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "model_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data_provider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "diseases": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "disease_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "disease_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "association_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

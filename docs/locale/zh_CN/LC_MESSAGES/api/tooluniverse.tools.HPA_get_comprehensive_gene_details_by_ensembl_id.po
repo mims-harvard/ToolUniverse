@@ -32,7 +32,7 @@ msgstr ""
 #: 8199ba4d04f5451aa5bf62343595aaa0 of
 #: tooluniverse.tools.HPA_get_comprehensive_gene_details_by_ensembl_id:1
 msgid "HPA_get_comprehensive_gene_details_by_ensembl_id"
-msgstr ""
+msgstr "HPA_通过Ensembl ID获取综合基因详情"
 
 #: 5430e97930b74f4c8cdef19b3064b7cf ac818380a620438e9c1cbd782f09a4e9 of
 #: tooluniverse.tools.HPA_get_comprehensive_gene_details_by_ensembl_id:3

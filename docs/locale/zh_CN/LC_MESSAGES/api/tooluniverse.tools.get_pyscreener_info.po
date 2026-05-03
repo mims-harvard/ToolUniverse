@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_pyscreener\\_info 模块"
 #: 38f2f815d0e94d1a9a6fcb1d966effe6 of
 #: tooluniverse.tools.get_pyscreener_info:1
 msgid "get_pyscreener_info"
-msgstr ""
+msgstr "get_pyscreener_info 获取_pyscreener_信息"
 
 #: 3ed24d61bf684b189fe3b48db1f6cbba 7734bb31147b45dfb15b02c581dd2a79 of
 #: tooluniverse.tools.get_pyscreener_info:3

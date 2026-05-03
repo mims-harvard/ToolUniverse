@@ -96,7 +96,7 @@ class DepmapCorrelationTool:
             else:
                 # Fallback to text file format
                 gene_names_path = os.path.join(self.data_dir, "gene_names.txt")
-                with open(gene_names_path, "r") as f:
+                with open(gene_names_path, "r", encoding="utf-8") as f:
                     self.gene_names = np.array([line.strip() for line in f])
 
             # Create bidirectional mapping for efficient gene symbol lookups

@@ -7,17 +7,17 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version:  ToolUniverse\n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-18 20:15-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.data.rst:2 3fe3393a8e444fcc81f11c330f230cc7
@@ -29,8 +29,5 @@ msgid "Submodules"
 msgstr "子模块"
 
 #: ../../api/tooluniverse.data.rst:13 e710130b66e1453292676935cf660f52
-msgid ""
-"tooluniverse.data.fda\\_drugs\\_with\\_brand\\_generic\\_names\\_for\\_tool"
-" module"
-msgstr ""
-
+msgid "tooluniverse.data.fda\\_drugs\\_with\\_brand\\_generic\\_names\\_for\\_tool module"
+msgstr "tooluniverse.data.fda\\_drugs\\_with\\_brand\\_generic\\_names\\_for\\_tool 模块"

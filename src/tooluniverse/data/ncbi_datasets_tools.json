@@ -1,0 +1,710 @@
+[
+  {
+    "name": "NCBIDatasets_get_gene",
+    "description": "Get comprehensive gene information from NCBI by Gene ID. Returns gene symbol, description, chromosomal location, genomic coordinates, cross-references to UniProt/Ensembl/OMIM, synonyms, and annotation details. Covers all organisms in NCBI Gene database. Example: gene_id 7157 returns TP53 (tumor protein p53) on chromosome 17.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "NCBI Gene ID (numeric). Examples: '7157' (TP53), '672' (BRCA1), '3630' (INS), '22059' (mouse Trp53)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_by_id"
+    },
+    "type": "NCBIDatasetsTool",
+    "test_examples": [
+      {
+        "gene_id": "7157"
+      },
+      {
+        "gene_id": "672"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "NCBI Gene ID"
+                },
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Gene symbol"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Gene description/full name"
+                },
+                "tax_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "NCBI Taxonomy ID"
+                },
+                "taxname": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Species scientific name"
+                },
+                "common_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Species common name"
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Gene biotype (e.g., PROTEIN_CODING)"
+                },
+                "chromosomes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "orientation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "swiss_prot_accessions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "ensembl_gene_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "omim_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "nomenclature_authority": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "genomic_locations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "assembly": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "chromosome": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "begin": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "orientation": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIDatasets_get_gene_by_symbol",
+    "description": "Look up gene information by gene symbol and organism. Searches NCBI Gene database using official gene symbols. Specify the taxon as common name (human, mouse, rat) or taxonomy ID. Returns gene ID, description, chromosomal location, and database cross-references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "description": "Gene symbol. Examples: 'TP53', 'BRCA1', 'INS', 'EGFR'."
+        },
+        "taxon": {
+          "type": "string",
+          "description": "Organism as common name or taxonomy ID. Examples: 'human', 'mouse', 'rat', '9606', '10090'. Default: 'human'."
+        }
+      },
+      "required": [
+        "symbol"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_by_symbol"
+    },
+    "type": "NCBIDatasetsTool",
+    "test_examples": [
+      {
+        "symbol": "BRCA1",
+        "taxon": "human"
+      },
+      {
+        "symbol": "Trp53",
+        "taxon": "mouse"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxname": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chromosomes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "swiss_prot_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ensembl_gene_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "synonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query_symbol": {
+                  "type": "string"
+                },
+                "query_taxon": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIDatasets_get_orthologs",
+    "description": "Get orthologous genes across species for a given NCBI Gene ID. Returns orthologs identified by NCBI's Ortholog pipeline, including gene symbols, species, and gene types for each ortholog. Useful for comparative genomics and cross-species gene function studies. Example: gene_id 7157 (TP53) returns mouse Trp53, rat Tp53, zebrafish tp53, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "NCBI Gene ID (numeric). Examples: '7157' (TP53), '672' (BRCA1), '3630' (INS)."
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Maximum number of orthologs to return (1-100). Default: 20."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_orthologs"
+    },
+    "type": "NCBIDatasetsTool",
+    "test_examples": [
+      {
+        "gene_id": "7157",
+        "page_size": 10
+      },
+      {
+        "gene_id": "672"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "taxname": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chromosomes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIDatasets_get_taxonomy",
+    "description": "Get detailed taxonomy information from NCBI by taxonomy ID. Returns organism name, rank, full lineage, counts of genes/assemblies/RNA types, and child taxa. Covers all organisms in NCBI Taxonomy including bacteria, archaea, eukaryotes, and viruses. Example: tax_id 9606 returns Homo sapiens with 20,625 protein-coding genes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tax_id": {
+          "type": "string",
+          "description": "NCBI Taxonomy ID (numeric). Examples: '9606' (Homo sapiens), '10090' (Mus musculus), '7227' (Drosophila melanogaster), '562' (E. coli)."
+        }
+      },
+      "required": [
+        "tax_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "taxonomy"
+    },
+    "type": "NCBIDatasetsTool",
+    "test_examples": [
+      {
+        "tax_id": "9606"
+      },
+      {
+        "tax_id": "7227"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "tax_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "organism_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genbank_common_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "blast_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "lineage": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "counts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query_tax_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIDatasets_suggest_taxonomy",
+    "description": "Suggest taxonomic names matching a query string. Searches NCBI Taxonomy for organisms by partial name, returning matching scientific names, taxonomy IDs, common names, and ranks. Useful for finding taxonomy IDs from partial organism names. Example: 'drosophila' returns D. melanogaster (7227), D. simulans (7240), etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Partial organism name to search. Examples: 'drosophila', 'escherichia', 'arabidopsis', 'saccharomyces'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "taxonomy_suggest"
+    },
+    "type": "NCBIDatasetsTool",
+    "test_examples": [
+      {
+        "query": "drosophila"
+      },
+      {
+        "query": "arabidopsis"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scientific_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tax_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "group_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "matched_term": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

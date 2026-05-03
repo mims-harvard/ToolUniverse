@@ -32,7 +32,7 @@ msgstr ""
 #: 7c58aee2215348cc87a2f4fefa6cffd1 of
 #: tooluniverse.tools.HPA_get_comparative_expression_by_gene_and_cellline:1
 msgid "HPA_get_comparative_expression_by_gene_and_cellline"
-msgstr ""
+msgstr "HPA_按基因和细胞系获取比较表达"
 
 #: 4de56a8954344436a5465386cfe9afb5 ff25d075181d4abaa3e970783354b222 of
 #: tooluniverse.tools.HPA_get_comparative_expression_by_gene_and_cellline:3

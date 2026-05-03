@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ArXiv\\_search\\_papers 模块"
 #: d68ae7ce1254459bbf389b241ad49d6d of
 #: tooluniverse.tools.ArXiv_search_papers:1
 msgid "ArXiv_search_papers"
-msgstr ""
+msgstr "ArXiv_搜索_论文"
 
 #: 8c42d3ef251c4f6191d757ad11f4fb54 d256b9f51c5b48dba7c63a5da74c8102 of
 #: tooluniverse.tools.ArXiv_search_papers:3

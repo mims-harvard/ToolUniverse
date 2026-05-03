@@ -1,0 +1,324 @@
+[
+  {
+    "name": "BiGG_list_models",
+    "type": "BiGGModelsTool",
+    "description": "Get list of all genome-scale metabolic models in BiGG database (85+ models). Returns model IDs, organisms, reaction counts, metabolite counts, and gene counts for bacteria, archaea, and eukaryotes. Models cover E. coli, yeast, human, and other organisms. Use for: discovering available models, finding organism-specific models, comparing model sizes, metabolic modeling projects. Essential first step for flux balance analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_models"],
+          "description": "Operation type"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bigg_id": {"type": "string"},
+              "organism": {"type": "string"},
+              "reaction_count": {"type": "integer"},
+              "metabolite_count": {"type": "integer"},
+              "gene_count": {"type": "integer"}
+            }
+          }
+        },
+        "count": {"type": "integer"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_models"
+      }
+    ]
+  },
+  {
+    "name": "BiGG_get_model",
+    "type": "BiGGModelsTool",
+    "description": "Get detailed information for a specific metabolic model. Returns organism, genome accession, reaction/metabolite/gene counts, and publication reference (PMID). Use for: understanding model scope, checking model currency, finding publications, model selection. Essential metadata before downloading or analyzing a model. Example model IDs: iJO1366 (E. coli), iMM904 (S. cerevisiae), Recon3D (human).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_model"],
+          "description": "Operation type"
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Required: BiGG model ID (e.g., 'iJO1366', 'iMM904', 'Recon3D')"
+        }
+      },
+      "required": ["operation", "model_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "model": {
+          "type": "object",
+          "properties": {
+            "organism": {"type": "string"},
+            "genome": {"type": "string"},
+            "metabolite_count": {"type": "integer"},
+            "gene_count": {"type": "integer"},
+            "reaction_count": {"type": "integer"},
+            "reference_type": {"type": "string"},
+            "reference_id": {"type": "string"}
+          }
+        },
+        "model_id": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_model",
+        "model_id": "iJO1366"
+      }
+    ]
+  },
+  {
+    "name": "BiGG_get_model_reactions",
+    "type": "BiGGModelsTool",
+    "description": "Get all reactions in a metabolic model. Returns reaction IDs, names, and organisms for all biochemical reactions in the model. Use for: analyzing metabolic capabilities, finding specific pathways, reaction enumeration, model comparison. Follow with BiGG_get_reaction for detailed reaction information including stoichiometry and gene-reaction rules.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_model_reactions"],
+          "description": "Operation type"
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Required: BiGG model ID"
+        }
+      },
+      "required": ["operation", "model_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "reactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bigg_id": {"type": "string"},
+              "name": {"type": "string"},
+              "organism": {"type": "string"}
+            }
+          }
+        },
+        "count": {"type": "integer"},
+        "model_id": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_model_reactions",
+        "model_id": "e_coli_core"
+      }
+    ]
+  },
+  {
+    "name": "BiGG_get_reaction",
+    "type": "BiGGModelsTool",
+    "description": "Get detailed reaction information including stoichiometry, metabolites, gene-reaction rules, and database links. Query from specific model or universal database. Returns reaction equation, participating metabolites with coefficients, GPR (gene-protein-reaction) associations, bounds, and cross-references (KEGG, MetaCyc, BRENDA). Use for: understanding reaction mechanisms, gene associations, flux constraints, pathway analysis. Essential for metabolic modeling.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_reaction"],
+          "description": "Operation type"
+        },
+        "reaction_id": {
+          "type": "string",
+          "description": "Required: BiGG reaction ID (e.g., 'GAPD', 'PGI')"
+        },
+        "model_id": {
+          "type": "string",
+          "default": "universal",
+          "description": "Model ID or 'universal' for universal reaction database"
+        }
+      },
+      "required": ["operation", "reaction_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "reaction": {
+          "type": "object",
+          "properties": {
+            "bigg_id": {"type": "string"},
+            "name": {"type": "string"},
+            "metabolites": {"type": "array"},
+            "database_links": {"type": "object"},
+            "models_containing_reaction": {"type": "array"}
+          }
+        },
+        "reaction_id": {"type": "string"},
+        "model_id": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_reaction",
+        "reaction_id": "GAPD",
+        "model_id": "iJO1366"
+      }
+    ]
+  },
+  {
+    "name": "BiGG_get_metabolite",
+    "type": "BiGGModelsTool",
+    "description": "Get detailed metabolite information including formula, compartments, and database cross-references. Query from specific model or universal database. Returns metabolite names, formulas, compartment locations, and links to KEGG, MetaCyc, HMDB, ChEBI. Shows which models contain this metabolite. Use for: compound identification, formula lookup, database integration, metabolite annotation. Essential for understanding metabolic networks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_metabolite"],
+          "description": "Operation type"
+        },
+        "metabolite_id": {
+          "type": "string",
+          "description": "Required: BiGG metabolite ID (e.g., 'g3p_c' with compartment, or 'g3p' without)"
+        },
+        "model_id": {
+          "type": "string",
+          "default": "universal",
+          "description": "Model ID or 'universal' for universal metabolite database"
+        }
+      },
+      "required": ["operation", "metabolite_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "metabolite": {
+          "type": "object",
+          "properties": {
+            "bigg_id": {"type": "string"},
+            "name": {"type": "string"},
+            "formula": {"type": "string"},
+            "database_links": {"type": "object"},
+            "compartments_in_models": {"type": "array"}
+          }
+        },
+        "metabolite_id": {"type": "string"},
+        "model_id": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_metabolite",
+        "metabolite_id": "g3p",
+        "model_id": "universal"
+      }
+    ]
+  },
+  {
+    "name": "BiGG_search",
+    "type": "BiGGModelsTool",
+    "description": "Search BiGG database for models, reactions, metabolites, or genes. Returns matching entries with IDs, names, and organism info. Search types: models (find organisms), reactions (find biochemical reactions), metabolites (find compounds), genes (find gene names/IDs). Use for: discovery, finding specific entities, cross-model searches, identifying pathways. Flexible search across entire database.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search"],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Required: Search term (e.g., 'glucose', 'gapA', 'E. coli')"
+        },
+        "search_type": {
+          "type": "string",
+          "enum": ["models", "reactions", "metabolites", "genes"],
+          "default": "reactions",
+          "description": "What to search for"
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bigg_id": {"type": "string"},
+              "name": {"type": "string"},
+              "organism": {"type": "string"},
+              "model_bigg_id": {"type": "string"}
+            }
+          }
+        },
+        "count": {"type": "integer"},
+        "query": {"type": "string"},
+        "search_type": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search",
+        "query": "glucose",
+        "search_type": "metabolites"
+      }
+    ]
+  },
+  {
+    "name": "BiGG_get_database_version",
+    "type": "BiGGModelsTool",
+    "description": "Get BiGG Models database version and last update date. Returns BiGG version number, API version, and timestamp of last database update. Use for: checking data currency, version control, documentation, reproducibility. Check this to ensure using latest metabolic models data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_database_version"],
+          "description": "Operation type"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "bigg_models_version": {"type": "string"},
+        "api_version": {"type": "string"},
+        "last_updated": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_database_version"
+      }
+    ]
+  }
+]

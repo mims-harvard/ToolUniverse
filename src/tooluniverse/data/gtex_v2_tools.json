@@ -1,0 +1,944 @@
+[
+  {
+    "name": "GTEx_get_median_gene_expression",
+    "type": "GTExV2Tool",
+    "description": "Get median gene expression levels across GTEx tissues. Returns median expression in TPM (Transcripts Per Million) for one or more genes across 54 tissue sites. Filter by specific tissues or get expression across all tissues. Based on Adult GTEx V11 (January 2026). Use for: tissue-specific expression profiling, identifying highly expressed genes, comparing expression patterns across tissues. Example: Get brain vs liver expression for TP53 gene.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_median_gene_expression"
+          ],
+          "description": "Operation type"
+        },
+        "gencode_id": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene identifier(s): gene symbol (e.g. 'TP53'), unversioned Ensembl ID (e.g. 'ENSG00000141510'), or versioned GENCODE ID (e.g. 'ENSG00000141510.18'). Auto-resolved to versioned GENCODE ID. Can be single string or array."
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: Tissue IDs to filter (e.g. ['Liver', 'Brain_Cortex']). Omit for all tissues. See GTEx_get_tissue_sites for valid IDs"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default: gtex_v8; v10 returns empty for most endpoints)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number for pagination (0-based)"
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250,
+          "description": "Results per page"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias for gencode_id (e.g., \"TP53\", \"COL5A1\")"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "median": {
+            "type": "number"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_median_gene_expression",
+        "gencode_id": "ENSG00000141510.18"
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_tissue_sites",
+    "type": "GTExV2Tool",
+    "description": "Get all available GTEx tissue sites with metadata. Returns tissue IDs, names, sample counts, eGene counts, and color codes for 54 non-diseased tissue sites. Includes RNA-seq sample summaries with donor age and sex statistics. Use for: discovering available tissues, finding tissue IDs for queries, checking sample sizes, understanding tissue coverage. Essential first step before querying tissue-specific data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_tissue_sites"
+          ],
+          "description": "Operation type"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8",
+          "description": "GTEx dataset version"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number"
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250,
+          "description": "Results per page"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "tissueSiteDetail": {
+            "type": "string"
+          },
+          "tissueSite": {
+            "type": "string"
+          },
+          "colorHex": {
+            "type": "string"
+          },
+          "eGeneCount": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "expressedGeneCount": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "rnaSeqSampleSummary": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_tissue_sites"
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_eqtl_genes",
+    "type": "GTExV2Tool",
+    "description": "Get eQTL genes (eGenes) with significant cis-eQTLs. Returns genes with at least one significant expression quantitative trait locus (eQTL) in specified tissues. Includes allelic fold change, p-values, q-values (FDR < 0.05), and effect sizes. Filter by tissue or get all eGenes. Use for: identifying genes with genetic regulation, finding tissue-specific eQTLs, studying regulatory variants, genetic association studies. Essential for understanding genetic control of gene expression.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_eqtl_genes"
+          ],
+          "description": "Operation type"
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: Filter by tissue IDs. Omit for all tissues"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8",
+          "description": "GTEx dataset version"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "pValue": {
+            "type": "number"
+          },
+          "qValue": {
+            "type": "number"
+          },
+          "log2AllelicFoldChange": {
+            "type": "number"
+          },
+          "empiricalPValue": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_eqtl_genes",
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_single_tissue_eqtls",
+    "type": "GTExV2Tool",
+    "description": "Get significant single-tissue eQTL associations. Returns precomputed gene-variant associations with p-values, effect sizes (NES), and genomic positions. Query by gene ID, variant ID, tissue, or combination. Results show which genetic variants affect gene expression in specific tissues. Use for: finding eQTLs for candidate genes, looking up variant effects, tissue-specific regulatory analysis, GWAS follow-up. Must provide at least one filter: gencode_id, variant_id, or tissue_site_detail_id.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_single_tissue_eqtls"
+          ],
+          "description": "Operation type"
+        },
+        "gencode_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: Versioned GENCODE ID(s) to query"
+        },
+        "variant_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: GTEx variant ID(s) to query"
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: Tissue ID(s) to filter. At least one of gencode_id, variant_id, or tissue_site_detail_id required"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "variantId": {
+            "type": "string"
+          },
+          "snpId": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "pValue": {
+            "type": "number"
+          },
+          "nes": {
+            "type": "number"
+          },
+          "chromosome": {
+            "type": "string"
+          },
+          "pos": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_single_tissue_eqtls",
+        "gencode_id": [
+          "ENSG00000227232.5"
+        ],
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "GTEx_calculate_eqtl",
+    "type": "GTExV2Tool",
+    "description": "Calculate custom eQTL for any gene-variant pair in any tissue. Dynamically calculates gene-variant association statistics including p-value, normalized effect size (NES), t-statistic, and genotype data. Works for both significant and non-significant associations. Returns detailed statistics even if association not in precomputed results. Use for: testing specific hypotheses, custom variant-gene pairs, dynamic eQTL analysis, validating findings. Requires all three: gencode_id, variant_id, and tissue_site_detail_id.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "calculate_eqtl"
+          ],
+          "description": "Operation type"
+        },
+        "gencode_id": {
+          "type": "string",
+          "description": "Required: Versioned GENCODE ID (e.g. ENSG00000141510.18)"
+        },
+        "variant_id": {
+          "type": "string",
+          "description": "Required: GTEx variant ID"
+        },
+        "tissue_site_detail_id": {
+          "type": "string",
+          "description": "Required: Tissue ID (e.g. 'Whole_Blood')"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8"
+        }
+      },
+      "required": [
+        "gencode_id",
+        "variant_id",
+        "tissue_site_detail_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gencodeId": {
+          "type": "string"
+        },
+        "geneSymbol": {
+          "type": "string"
+        },
+        "variantId": {
+          "type": "string"
+        },
+        "tissueSiteDetailId": {
+          "type": "string"
+        },
+        "pValue": {
+          "type": "number"
+        },
+        "nes": {
+          "type": "number"
+        },
+        "tStatistic": {
+          "type": "number"
+        },
+        "pValueThreshold": {
+          "type": "number"
+        },
+        "data": {
+          "type": "array"
+        },
+        "genotypes": {
+          "type": "array"
+        },
+        "maf": {
+          "type": "number"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "calculate_eqtl",
+        "gencode_id": "ENSG00000227232.5",
+        "variant_id": "chr1_64764_C_T_b38",
+        "tissue_site_detail_id": "Whole_Blood",
+        "dataset_id": "gtex_v8"
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_top_expressed_genes",
+    "type": "GTExV2Tool",
+    "description": "Get top expressed genes in a specific tissue sorted by median expression. Returns gene list with expression levels (TPM), useful for understanding tissue-specific gene signatures. Option to filter mitochondrial genes (default: true). Use for: tissue characterization, finding housekeeping genes, identifying tissue markers, quality control. Essential for understanding what genes are active in each tissue type.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_top_expressed_genes"
+          ],
+          "description": "Operation type"
+        },
+        "tissue_site_detail_id": {
+          "type": "string",
+          "description": "Required: Tissue ID (e.g. 'Liver', 'Brain_Cortex'). Use GTEx_get_tissue_sites to find valid IDs"
+        },
+        "filter_mt_genes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Exclude mitochondrial genes from results"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250
+        }
+      },
+      "required": [
+        "tissue_site_detail_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "median": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_top_expressed_genes",
+        "tissue_site_detail_id": "Liver",
+        "items_per_page": 50
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_dataset_info",
+    "type": "GTExV2Tool",
+    "description": "Get GTEx dataset metadata and version information. Returns dataset details including GENCODE version, genome build (GRCh38/hg38), dbSNP build, sample counts, tissue counts, and release information. Shows Adult GTEx V11 details (January 2026) by default. Use for: understanding data versions, checking sample sizes, verifying genome builds, documentation. Check this first to understand what data is available.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_dataset_info"
+          ],
+          "description": "Operation type"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "description": "Optional: Specific dataset ID. Omit to get all datasets"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "datasetId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "gencodeVersion": {
+            "type": "string"
+          },
+          "genomeBuild": {
+            "type": "string"
+          },
+          "dbSnpBuild": {
+            "type": "integer"
+          },
+          "subjectCount": {
+            "type": "integer"
+          },
+          "tissueCount": {
+            "type": "integer"
+          },
+          "rnaSeqSampleCount": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_dataset_info"
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_gene_expression",
+    "type": "GTExV2Tool",
+    "description": "Get gene expression data at individual sample level (not aggregated). Returns normalized expression values (TPM) for each sample, allowing detailed distribution analysis. Can subset by donor attributes (sex, age_bracket) for demographic-specific analysis. Much more data than median expression. Use for: expression variability analysis, outlier detection, sample-level QC, demographic comparisons. Warning: large result sets for multiple genes/tissues.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_gene_expression"
+          ],
+          "description": "Operation type"
+        },
+        "gencode_id": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Required: Versioned GENCODE ID(s)"
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: Filter by tissues"
+        },
+        "attribute_subset": {
+          "type": "string",
+          "enum": [
+            "sex",
+            "ageBracket"
+          ],
+          "description": "Optional: Subset by donor sex or age bracket"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250
+        }
+      },
+      "required": [
+        "gencode_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gencodeId": {
+            "type": "string"
+          },
+          "geneSymbol": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "unit": {
+            "type": "string"
+          },
+          "subsetGroup": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene_expression",
+        "gencode_id": "ENSG00000141510.18",
+        "tissue_site_detail_id": [
+          "Liver"
+        ],
+        "attribute_subset": "sex"
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_sample_info",
+    "type": "GTExV2Tool",
+    "description": "Get detailed GTEx sample and subject metadata. Returns sample IDs, tissue types, donor demographics (age, sex), ischemic time, RIN scores, Hardy scale, pathology notes, and QC metrics. Filter by sample ID, subject ID, tissue, demographics, or data type. Use for: sample selection, cohort design, QC filtering, demographic analysis, understanding data provenance. Essential for selecting appropriate samples for analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_sample_info"
+          ],
+          "description": "Operation type"
+        },
+        "sample_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: GTEx sample IDs"
+        },
+        "subject_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: GTEx subject/donor IDs"
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional: Filter by tissues"
+        },
+        "sex": {
+          "type": "string",
+          "enum": [
+            "male",
+            "female"
+          ],
+          "description": "Optional: Filter by donor sex"
+        },
+        "age_bracket": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "20-29",
+              "30-39",
+              "40-49",
+              "50-59",
+              "60-69",
+              "70-79"
+            ]
+          },
+          "description": "Optional: Filter by age brackets"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sampleId": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string"
+          },
+          "tissueSiteDetailId": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "ageBracket": {
+            "type": "string"
+          },
+          "ischemicTime": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "rin": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "hardyScale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pathologyNotes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_sample_info",
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ],
+        "sex": "female",
+        "items_per_page": 10
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_multi_tissue_eqtls",
+    "type": "GTExV2Tool",
+    "description": "Get multi-tissue eQTL meta-analysis results (Metasoft). Returns m-values (posterior probability of eQTL effect in each tissue), normalized effect sizes, p-values, and standard errors across all tissues for a gene-variant pair. Shows tissue-sharing patterns of eQTL effects. Use for: understanding tissue-specificity of eQTLs, finding shared vs tissue-specific effects, cross-tissue meta-analysis, regulatory mechanism studies. Requires gencode_id, optionally filter by variant_id.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_multi_tissue_eqtls"
+          ],
+          "description": "Operation type"
+        },
+        "gencode_id": {
+          "type": "string",
+          "description": "Required: Versioned GENCODE ID"
+        },
+        "variant_id": {
+          "type": "string",
+          "description": "Optional: GTEx variant ID to filter specific variant"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250
+        }
+      },
+      "required": [
+        "gencode_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gencodeId": {
+            "type": "string"
+          },
+          "variantId": {
+            "type": "string"
+          },
+          "metaP": {
+            "type": "number"
+          },
+          "tissues": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "mValue": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "pValue": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "nes": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "se": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_multi_tissue_eqtls",
+        "gencode_id": "ENSG00000141510.16"
+      }
+    ]
+  }
+]

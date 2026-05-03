@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_chembl\\_webresource\\_client\\_info 模块"
 #: c148910cc1ac4f15a044e3b91a56f014 of
 #: tooluniverse.tools.get_chembl_webresource_client_info:1
 msgid "get_chembl_webresource_client_info"
-msgstr ""
+msgstr "get_chembl_webresource_client_info 获取 Chembl WebResource 客户端信息"
 
 #: 498cec85db8741548981f87ad6ba9cae 5c73e526d63042a9a9ae13930ea2647a of
 #: tooluniverse.tools.get_chembl_webresource_client_info:3

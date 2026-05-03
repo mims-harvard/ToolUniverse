@@ -1,0 +1,203 @@
+[
+  {
+    "name": "COSMIC_search_mutations",
+    "description": "Search COSMIC database for somatic mutations in cancer. COSMIC is the world's largest expert-curated database of somatic mutations in human cancer. Search by gene name, mutation ID, or mutation description. Returns mutation IDs, gene names, CDS changes, and amino acid changes. No authentication required.",
+    "type": "COSMICTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search",
+          "description": "Operation type (fixed: search)"
+        },
+        "terms": {
+          "type": "string",
+          "description": "Search query - gene name (e.g., BRAF), mutation (e.g., V600E), or mutation ID (e.g., COSM476). Aliases: query or gene also accepted."
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for terms. Search query - gene name, mutation, or COSMIC ID."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 500)",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "genome_build": {
+          "type": "integer",
+          "description": "Genome build version: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 37",
+          "default": 37,
+          "enum": [37, 38]
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "description": "Total number of matching mutations"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mutation_id": {
+                "type": "string",
+                "description": "COSMIC mutation ID (e.g., COSM476)"
+              },
+                  "display": {
+                    "type": "array",
+                    "description": "Display array with mutation details [mutation_id, gene, CDS, AA]",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+              "GeneName": {
+                "type": "string",
+                "description": "Gene symbol"
+              },
+              "MutationCDS": {
+                "type": "string",
+                "description": "CDS-level mutation notation"
+              },
+              "MutationAA": {
+                "type": "string",
+                "description": "Amino acid change notation"
+              },
+              "PrimarySite": {
+                "type": "string",
+                "description": "Primary tissue/organ site"
+              },
+              "PrimaryHistology": {
+                "type": "string",
+                "description": "Primary histology/cancer type"
+              }
+            }
+          }
+        },
+        "genome_build": {
+          "type": "string",
+          "description": "Genome build used (GRCh37 or GRCh38)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search",
+        "terms": "BRAF V600E",
+        "max_results": 10
+      },
+      {
+        "operation": "search",
+        "terms": "TP53",
+        "max_results": 20
+      }
+    ]
+  },
+  {
+    "name": "COSMIC_get_mutations_by_gene",
+    "description": "Get all somatic mutations for a specific gene from COSMIC database. Returns comprehensive mutation data for a gene symbol including CDS changes, amino acid changes, cancer types, and genomic positions. Useful for exploring the mutational landscape of cancer genes like BRAF, TP53, EGFR, KRAS, etc.",
+    "type": "COSMICTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_by_gene",
+          "description": "Operation type (fixed: get_by_gene)"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., BRAF, TP53, EGFR, KRAS, PIK3CA). Alias: gene_name also accepted."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for gene parameter. Gene symbol (e.g., FLT3, BRAF, TP53)."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of mutations to return (default: 100, max: 500)",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "genome_build": {
+          "type": "integer",
+          "description": "Genome build version: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 37",
+          "default": 37,
+          "enum": [37, 38]
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol queried"
+        },
+        "total_count": {
+          "type": "integer",
+          "description": "Total number of mutations found"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mutation_id": {
+                "type": "string",
+                "description": "COSMIC mutation ID"
+              },
+              "GeneName": {
+                "type": "string"
+              },
+              "MutationCDS": {
+                "type": "string"
+              },
+              "MutationAA": {
+                "type": "string"
+              },
+              "MutationGenomePosition": {
+                "type": "string",
+                "description": "Genomic coordinates"
+              },
+              "PrimarySite": {
+                "type": "string"
+              },
+              "PrimaryHistology": {
+                "type": "string"
+              },
+              "Fathmm": {
+                "type": "string",
+                "description": "FATHMM pathogenicity prediction"
+              }
+            }
+          }
+        },
+        "genome_build": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_by_gene",
+        "gene": "BRAF",
+        "max_results": 50
+      },
+      {
+        "operation": "get_by_gene",
+        "gene": "TP53",
+        "max_results": 100
+      }
+    ]
+  }
+]

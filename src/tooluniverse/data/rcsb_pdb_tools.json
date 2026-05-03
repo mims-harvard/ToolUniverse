@@ -99,7 +99,12 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "4HHB"
+      }
+    ]
   },
   {
     "name": "get_polymer_entity_ids_by_pdb_id",
@@ -168,7 +173,12 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ]
   },
   {
     "name": "get_polymer_entity_type_by_entity_id",
@@ -245,7 +255,12 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "entity_id": "1A8M_1"
+      }
+    ]
   },
   {
     "name": "get_source_organism_by_pdb_id",
@@ -322,7 +337,12 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ]
   },
   {
     "name": "get_citation_info_by_pdb_id",
@@ -364,6 +384,69 @@
         "pubmed.rcsb_pubmed_mesh_descriptors_lineage.id",
         "pubmed.rcsb_pubmed_mesh_descriptors_lineage.name"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "rcsb_primary_citation": {
+                    "type": "object",
+                    "properties": {
+                      "rcsb_authors": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "rcsb_journal_abbrev": {
+                        "type": "string"
+                      },
+                      "year": {
+                        "type": "integer"
+                      },
+                      "pdbx_database_id_DOI": {
+                        "type": "string"
+                      },
+                      "rcsb_ORCID_identifiers": {
+                        "type": "null"
+                      }
+                    }
+                  },
+                  "pubmed": {
+                    "type": "object",
+                    "properties": {
+                      "rcsb_pubmed_abstract_text": {
+                        "type": "string"
+                      },
+                      "rcsb_pubmed_mesh_descriptors_lineage": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -399,6 +482,48 @@
       "return_fields": [
         "entity_poly.rcsb_sample_sequence_length"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "polymer_entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "entity_poly": {
+                          "type": "object",
+                          "properties": {
+                            "rcsb_sample_sequence_length": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -473,11 +598,16 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "4HHB"
+      }
+    ]
   },
   {
     "name": "get_mutation_annotations_by_pdb_id",
-    "description": "Retrieve mutation annotations for a given PDB structure.",
+    "description": "Retrieve mutation annotations for a given PDB structure. Returns mutation count, the pdbx_mutation flag (YES/NO), the details field (contains mutation identity like \"T790M\"), fragment description, and protein description. Note: if all returned fields are null, the structure has no annotated mutations in RCSB.",
     "label": [
       "Mutation",
       "Annotation",
@@ -504,9 +634,62 @@
         ]
       },
       "return_fields": [
-        "entity_poly.rcsb_mutation_count",
-        "rcsb_polymer_entity.pdbx_mutation"
+        "polymer_entities.entity_poly.rcsb_mutation_count",
+        "polymer_entities.rcsb_polymer_entity.pdbx_mutation",
+        "polymer_entities.rcsb_polymer_entity.details",
+        "polymer_entities.rcsb_polymer_entity.pdbx_fragment",
+        "polymer_entities.rcsb_polymer_entity.pdbx_description"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "2JIV"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "polymer_entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "entity_poly": {
+                          "type": "object",
+                          "properties": {
+                            "rcsb_mutation_count": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "rcsb_polymer_entity": {
+                          "type": "object",
+                          "properties": {
+                            "pdbx_mutation": {
+                              "type": "null"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -558,6 +741,38 @@
         "em_3d_reconstruction.refinement_type",
         "em_3d_reconstruction.magnification_calibration"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "7BV2"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "em_3d_fitting_list": {
+                    "type": "null"
+                  },
+                  "em_3d_reconstruction": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -600,6 +815,24 @@
         "rcsb_struct_symmetry.type",
         "rcsb_struct_symmetry.oligomeric_state"
       ]
+    },
+    "test_examples": [
+      {
+        "assembly_id": "1A8M-1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "assemblies": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -636,6 +869,59 @@
         "pdbx_struct_assembly.method_details",
         "pdbx_struct_assembly.details"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "assemblies": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "rcsb_assembly_info": {
+                          "type": "object",
+                          "properties": {
+                            "assembly_id": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "pdbx_struct_assembly": {
+                          "type": "object",
+                          "properties": {
+                            "method_details": {
+                              "type": "null"
+                            },
+                            "details": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -672,6 +958,62 @@
         "polymer_entities.rcsb_entity_host_organism.taxonomy_lineage.name",
         "polymer_entities.rcsb_entity_source_organism.ncbi_parent_scientific_name"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "polymer_entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "rcsb_entity_host_organism": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "taxonomy_lineage": {
+                                "type": "null"
+                              }
+                            }
+                          }
+                        },
+                        "rcsb_entity_source_organism": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "ncbi_parent_scientific_name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -708,6 +1050,43 @@
         "rcsb_accession_info.initial_release_date",
         "rcsb_accession_info.deposit_date"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "rcsb_accession_info": {
+                    "type": "object",
+                    "properties": {
+                      "initial_release_date": {
+                        "type": "string"
+                      },
+                      "deposit_date": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -744,6 +1123,54 @@
         "polymer_entities.entity_src_gen.host_org_common_name",
         "polymer_entities.entity_src_gen.pdbx_host_org_scientific_name"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "polymer_entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "entity_src_gen": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "host_org_common_name": {
+                                "type": "null"
+                              },
+                              "pdbx_host_org_scientific_name": {
+                                "type": "null"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -781,6 +1208,24 @@
         "rcsb_polymer_entity.rcsb_ec_lineage.depth",
         "rcsb_polymer_entity.rcsb_ec_lineage.name"
       ]
+    },
+    "test_examples": [
+      {
+        "entity_id": "5FMB_2"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "polymer_entities": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -817,6 +1262,24 @@
         "rcsb_entity_source_organism.rcsb_gene_name.value",
         "rcsb_entity_source_organism.rcsb_gene_name.provenance_source"
       ]
+    },
+    "test_examples": [
+      {
+        "entity_id": "1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "polymer_entities": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -851,6 +1314,24 @@
       "return_fields": [
         "rcsb_polymer_entity.formula_weight"
       ]
+    },
+    "test_examples": [
+      {
+        "entity_id": "1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "polymer_entities": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -886,6 +1367,89 @@
         "nonpolymer_entities.nonpolymer_entity_instances.rcsb_nonpolymer_instance_feature_summary.comp_id",
         "assemblies.nonpolymer_entity_instances.nonpolymer_entity.nonpolymer_comp.rcsb_chem_comp_info.bond_count"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1IEP"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "nonpolymer_entities": {
+                    "type": ["array", "null"],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "nonpolymer_entity_instances": {
+                          "type": ["array", "null"],
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "rcsb_nonpolymer_instance_feature_summary": {
+                                "type": ["array", "null"],
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "comp_id": {"type": "string"}
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "assemblies": {
+                    "type": ["array", "null"],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "nonpolymer_entity_instances": {
+                          "type": ["array", "null"],
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "nonpolymer_entity": {
+                                "type": "object",
+                                "properties": {
+                                  "nonpolymer_comp": {
+                                    "type": "object",
+                                    "properties": {
+                                      "rcsb_chem_comp_info": {
+                                        "type": "object",
+                                        "properties": {
+                                          "bond_count": {"type": "integer"}
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -925,6 +1489,35 @@
         "exptl_crystal_grow.temp",
         "exptl_crystal_grow.pdbx_details"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "exptl_crystal_grow": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -963,6 +1556,24 @@
         "rcsb_polymer_entity_annotation.type",
         "rcsb_polymer_entity_annotation.description"
       ]
+    },
+    "test_examples": [
+      {
+        "entity_id": "1IEP_1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "polymer_entities": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -999,6 +1610,24 @@
         "pdbx_entity_branch_descriptor.type",
         "pdbx_entity_branch_descriptor.descriptor"
       ]
+    },
+    "test_examples": [
+      {
+        "entity_id": "1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "branched_entities": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1035,6 +1664,24 @@
         "rcsb_polymer_instance_feature.feature_positions.beg_seq_id",
         "rcsb_polymer_instance_feature.feature_positions.end_seq_id"
       ]
+    },
+    "test_examples": [
+      {
+        "instance_id": "1NDO.A"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "polymer_entity_instances": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1075,6 +1722,63 @@
         "cell.angle_gamma",
         "symmetry.space_group_name_H_M"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "cell": {
+                    "type": "object",
+                    "properties": {
+                      "length_a": {
+                        "type": "number"
+                      },
+                      "length_b": {
+                        "type": "number"
+                      },
+                      "length_c": {
+                        "type": "number"
+                      },
+                      "angle_alpha": {
+                        "type": "number"
+                      },
+                      "angle_beta": {
+                        "type": "number"
+                      },
+                      "angle_gamma": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "symmetry": {
+                    "type": "object",
+                    "properties": {
+                      "space_group_name_H_M": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1111,6 +1815,57 @@
         "refine.ls_R_factor_R_work",
         "pdbx_vrpt_summary_geometry.clashscore"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "refine": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ls_R_factor_R_free": {
+                          "type": "null"
+                        },
+                        "ls_R_factor_R_work": {
+                          "type": "null"
+                        }
+                      }
+                    }
+                  },
+                  "pdbx_vrpt_summary_geometry": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "clashscore": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1144,6 +1899,40 @@
       "return_fields": [
         "struct.title"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "struct": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1177,6 +1966,40 @@
       "return_fields": [
         "rcsb_entry_info.polymer_entity_count"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "rcsb_entry_info": {
+                    "type": "object",
+                    "properties": {
+                      "polymer_entity_count": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1210,6 +2033,40 @@
       "return_fields": [
         "rcsb_entry_container_identifiers.emdb_ids"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "rcsb_entry_container_identifiers": {
+                    "type": "object",
+                    "properties": {
+                      "emdb_ids": {
+                        "type": "null"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1243,6 +2100,24 @@
       "return_fields": [
         "rcsb_polymer_entity_container_identifiers.uniprot_ids"
       ]
+    },
+    "test_examples": [
+      {
+        "entity_id": "1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "polymer_entities": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1276,6 +2151,35 @@
       "return_fields": [
         "exptl_crystal_grow.pH"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "exptl_crystal_grow": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1309,6 +2213,40 @@
       "return_fields": [
         "symmetry.space_group_name_H_M"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "symmetry": {
+                    "type": "object",
+                    "properties": {
+                      "space_group_name_H_M": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1342,6 +2280,40 @@
       "return_fields": [
         "struct_keywords.pdbx_keywords"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "struct_keywords": {
+                    "type": "object",
+                    "properties": {
+                      "pdbx_keywords": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1377,6 +2349,49 @@
         "software.version",
         "software.type"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "software": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "null"
+                        },
+                        "type": {
+                          "type": "null"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1410,6 +2425,43 @@
       "return_fields": [
         "refine.ls_d_res_high"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "refine": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ls_d_res_high": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1446,6 +2498,35 @@
         "rcsb_binding_affinity.provenance_code",
         "rcsb_binding_affinity.symbol"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "rcsb_binding_affinity": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1480,6 +2561,24 @@
       "return_fields": [
         "rcsb_chem_comp_descriptor.SMILES"
       ]
+    },
+    "test_examples": [
+      {
+        "chem_comp_id": "ATP"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "chem_comps": {
+              "type": "array"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1521,6 +2620,61 @@
         "refine.solvent_model_param_bsol",
         "refine.solvent_model_param_ksol"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "refine": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ls_R_factor_R_work": {
+                          "type": "null"
+                        },
+                        "ls_R_factor_R_free": {
+                          "type": "null"
+                        },
+                        "occupancy_max": {
+                          "type": "null"
+                        },
+                        "occupancy_min": {
+                          "type": "null"
+                        },
+                        "pdbx_overall_phase_error": {
+                          "type": "null"
+                        },
+                        "solvent_model_param_bsol": {
+                          "type": "null"
+                        },
+                        "solvent_model_param_ksol": {
+                          "type": "null"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1563,6 +2717,43 @@
         "polymer_entities.rcsb_target_cofactors.resource_name",
         "polymer_entities.rcsb_target_cofactors.resource_version"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "polymer_entities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "rcsb_target_cofactors": {
+                          "type": "null"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1603,6 +2794,35 @@
         "nonpolymer_entities.nonpolymer_comp.pdbx_chem_comp_audit.details",
         "nonpolymer_entities.nonpolymer_comp.pdbx_chem_comp_audit.ordinal"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "nonpolymer_entities": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -1638,6 +2858,35 @@
         "nonpolymer_entities.nonpolymer_comp.chem_comp.pdbx_formal_charge",
         "nonpolymer_entities.nonpolymer_comp.chem_comp.pdbx_ambiguous_flag"
       ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CRN"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rcsb_id": {
+                    "type": "string"
+                  },
+                  "nonpolymer_entities": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 ]

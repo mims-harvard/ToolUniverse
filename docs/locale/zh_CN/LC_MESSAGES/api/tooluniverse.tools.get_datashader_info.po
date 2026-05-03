@@ -29,6 +29,9 @@ msgstr "tooluniverse.tools.get\\_datashader\\_info 模块"
 #: tooluniverse.tools.get_datashader_info:1
 msgid "get_datashader_info"
 msgstr ""
+"get_datashader_info\n"
+"\n"
+"获取_datashader_信息"
 
 #: 10c24f5158ad4ffab942f13ee216ef8a 634713870a424564ba61f44f7c45032f of
 #: tooluniverse.tools.get_datashader_info:3

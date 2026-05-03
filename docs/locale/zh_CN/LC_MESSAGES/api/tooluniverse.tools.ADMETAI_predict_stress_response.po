@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ADMETAI\\_predict\\_stress\\_response 模块"
 #: 00c9e49cd45e449a982e01fdc884cd42 of
 #: tooluniverse.tools.ADMETAI_predict_stress_response:1
 msgid "ADMETAI_predict_stress_response"
-msgstr ""
+msgstr "ADMETAI_预测应激反应"
 
 #: 08badac248464079b656e2fa58fd5902 fb0eb66bbbb04b1ca0e1690a7726d749 of
 #: tooluniverse.tools.ADMETAI_predict_stress_response:3

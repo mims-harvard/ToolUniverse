@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.odphp\\_topicsearch 模块"
 
 #: a6c7e3fc5bab4314ac99885e0ad12b7e of tooluniverse.tools.odphp_topicsearch:1
 msgid "odphp_topicsearch"
-msgstr ""
+msgstr "odphp_主题搜索"
 
 #: 91ca84253b53438e963ac1d33174b0a8 e847668a28dc4391b2437a9f535df0d8 of
 #: tooluniverse.tools.odphp_topicsearch:3

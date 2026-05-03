@@ -1,7 +1,7 @@
 Available Tools
 ==========================
 
-ToolUniverse provides over 600 scientific tools organized into local and remote categories. This overview helps you discover and navigate the available tools for your research needs.
+ToolUniverse provides over 1000 scientific tools organized into local and remote categories. This overview helps you discover and navigate the available tools for your research needs.
 
 Tool Registry
 ---------------
@@ -33,15 +33,15 @@ Remote tools integrate external services, APIs, and specialized systems running 
    **Discover Available Tools:**
 
    * :doc:`../guide/listing_tools` - Browse tools by category and explore the full catalog
-   * :doc:`../tutorials/finding_tools` - Learn advanced search techniques and filters
+   * :doc:`../guide/finding_tools` - Learn advanced search techniques and filters
    * :doc:`../tools/remote_tools` - Set up remote tool integrations
    * :doc:`../guide/loading_tools` - Load and configure local tools
 
 Overview
 -----------------------------
 
-* **Total Configuration Files**: 90
-* **Total Tools**: 706
+* **Total Configuration Files**: 141
+* **Total Tools**: 834
 
 Local Tools
 -----------
@@ -143,12 +143,32 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Biomodels Tools <biomodels_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Biorxiv Tools <biorxiv_tools>
 
 .. toctree::
    :maxdepth: 1
 
-   Boltz Tools <boltz_tools>
+   Blast Tools <blast_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Boltz Mcp Loader Tools <boltz_mcp_loader_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Cbioportal Tools <cbioportal_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Cdc Tools <cdc_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -163,7 +183,22 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Clinical Trials Tools <clinical_trials_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Clinicaltrials Gov Tools <clinicaltrials_gov_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Clinvar Tools <clinvar_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Compact Mode Tools <compact_mode_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -198,6 +233,16 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Dbpedia Tools <dbpedia_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Dbsnp Tools <dbsnp_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Disease Target Score Tools <disease_target_score_tools>
 
 .. toctree::
@@ -223,7 +268,27 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Emdb Tools <emdb_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Encode Tools <encode_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Enrichr Tools <enrichr_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Ensembl Tools <ensembl_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Euhealth Tools <euhealth_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -243,6 +308,11 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Fda Drug Adverse Event Detail Tools <fda_drug_adverse_event_detail_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Fda Drug Adverse Event Tools <fda_drug_adverse_event_tools>
 
 .. toctree::
@@ -253,7 +323,22 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   File Download Tools <file_download_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Finder Tools <finder_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Gbif Tools <gbif_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Gdc Tools <gdc_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -263,12 +348,22 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
-   Genomics Tools <genomics_tools>
+   Geo Tools <geo_tools>
 
 .. toctree::
    :maxdepth: 1
 
-   Geo Tools <geo_tools>
+   Gnomad Tools <gnomad_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Gtex Tools <gtex_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Gtopdb Tools <gtopdb_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -279,6 +374,16 @@ Builtin Tools
    :maxdepth: 1
 
    Hal Tools <hal_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Hca Tools <hca_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Health Disparities Tools <health_disparities_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -294,6 +399,26 @@ Builtin Tools
    :maxdepth: 1
 
    Idmap Tools <idmap_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Iedb Tools <iedb_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Interpro Tools <interpro_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Jaspar Tools <jaspar_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Kegg Tools <kegg_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -323,6 +448,11 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Mgnify Tools <mgnify_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Molecule 2D Tools <molecule_2d_tools>
 
 .. toctree::
@@ -338,7 +468,27 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Mpd Tools <mpd_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Nhanes Tools <nhanes_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Obis Tools <obis_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Odphp Tools <odphp_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Ols Tools <ols_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -358,6 +508,11 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Optimizer Tools <optimizer_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Osf Preprints Tools <osf_preprints_tools>
 
 .. toctree::
@@ -368,12 +523,32 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Package Discovery Tools <package_discovery_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Paleobiology Tools <paleobiology_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Pathway Commons Tools <pathway_commons_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Pmc Tools <pmc_tools>
 
 .. toctree::
    :maxdepth: 1
 
    Ppi Tools <ppi_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Pride Tools <pride_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -398,7 +573,22 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Pypi Package Inspector Tools <pypi_package_inspector_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Python Executor Tools <python_executor_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Rcsb Pdb Tools <rcsb_pdb_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Rcsb Search Tools <rcsb_search_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -408,7 +598,37 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Regulomedb Tools <regulomedb_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Remap Tools <remap_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Rnacentral Tools <rnacentral_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Rxnorm Tools <rxnorm_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Screen Tools <screen_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Semantic Scholar Tools <semantic_scholar_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Smolagent Tools <smolagent_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -423,7 +643,17 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Tool Discovery Agents <tool_discovery_agents>
+
+.. toctree::
+   :maxdepth: 1
+
    Txagent Client Tools <txagent_client_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Umls Tools <umls_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -458,7 +688,32 @@ Builtin Tools
 .. toctree::
    :maxdepth: 1
 
+   Web Search Tools <web_search_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Who Gho Tools <who_gho_tools>
+
+.. toctree::
+   :maxdepth: 1
+
    Wikidata Sparql Tools <wikidata_sparql_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Wikipathways Tools <wikipathways_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Wikipedia Tools <wikipedia_tools>
+
+.. toctree::
+   :maxdepth: 1
+
+   Worms Tools <worms_tools>
 
 .. toctree::
    :maxdepth: 1
@@ -508,7 +763,7 @@ Tools by Type
   * ADMETAI_predict_stress_response (from :doc:`admetai_tools`)
   * ADMETAI_predict_toxicity (from :doc:`admetai_tools`)
 
-**AgenticTool** (50 tools)
+**AgenticTool** (52 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
@@ -517,14 +772,15 @@ Tools by Type
   * AdverseEventICDMapper (from :doc:`adverse_event_tools`)
   * AdverseEventPredictionQuestionGenerator (from :doc:`adverse_event_tools`)
   * AdverseEventPredictionQuestionGeneratorWithContext (from :doc:`adverse_event_tools`)
-  * ArgumentDescriptionOptimizer (from :doc:`agentic_tools`)
+  * ArgumentDescriptionOptimizer (from :doc:`optimizer_tools`)
   * ClinicalTrialDesignAgent (from :doc:`drug_discovery_agents`)
-  * CodeOptimizer (from :doc:`agentic_tools`)
-  * CodeQualityAnalyzer (from :doc:`agentic_tools`)
+  * CodeQualityAnalyzer (from :doc:`tool_discovery_agents`)
   * CompoundDiscoveryAgent (from :doc:`drug_discovery_agents`)
   * DataAnalysisValidityReviewer (from :doc:`agentic_tools`)
   * DescriptionAnalyzer (from :doc:`agentic_tools`)
+  * DescriptionAnalyzer (from :doc:`optimizer_tools`)
   * DescriptionQualityEvaluator (from :doc:`agentic_tools`)
+  * DescriptionQualityEvaluator (from :doc:`optimizer_tools`)
   * DiseaseAnalyzerAgent (from :doc:`drug_discovery_agents`)
   * DomainExpertValidator (from :doc:`agentic_tools`)
   * DrugInteractionAnalyzerAgent (from :doc:`drug_discovery_agents`)
@@ -542,25 +798,26 @@ Tools by Type
   * MethodologyRigorReviewer (from :doc:`agentic_tools`)
   * NoveltySignificanceReviewer (from :doc:`agentic_tools`)
   * OverallSummaryAgent (from :doc:`literature_search_tools`)
+  * PackageAnalyzer (from :doc:`tool_discovery_agents`)
   * ProtocolOptimizer (from :doc:`agentic_tools`)
   * QualityCheckerAgent (from :doc:`literature_search_tools`)
   * QuestionRephraser (from :doc:`agentic_tools`)
+  * ReferenceInfoAnalyzer (from :doc:`tool_discovery_agents`)
   * ReproducibilityTransparencyReviewer (from :doc:`agentic_tools`)
   * ResultSummarizerAgent (from :doc:`literature_search_tools`)
   * ResultsInterpretationReviewer (from :doc:`agentic_tools`)
   * ScientificTextSummarizer (from :doc:`agentic_tools`)
-  * TestCaseGenerator (from :doc:`agentic_tools`)
+  * TestCaseGenerator (from :doc:`optimizer_tools`)
+  * TestResultsAnalyzer (from :doc:`tool_discovery_agents`)
   * ToolCompatibilityAnalyzer (from :doc:`tool_composition_tools`)
-  * ToolImplementationGenerator (from :doc:`agentic_tools`)
   * ToolMetadataGenerator (from :doc:`agentic_tools`)
   * ToolMetadataStandardizer (from :doc:`agentic_tools`)
-  * ToolOptimizer (from :doc:`agentic_tools`)
   * ToolOutputSummarizer (from :doc:`output_summarization_tools`)
   * ToolQualityEvaluator (from :doc:`agentic_tools`)
   * ToolRelationshipDetector (from :doc:`agentic_tools`)
-  * ToolSpecificationGenerator (from :doc:`agentic_tools`)
-  * ToolSpecificationOptimizer (from :doc:`agentic_tools`)
+  * UnifiedToolGenerator (from :doc:`tool_discovery_agents`)
   * WritingPresentationReviewer (from :doc:`agentic_tools`)
+  * XMLToolOptimizer (from :doc:`tool_discovery_agents`)
   * call_agentic_human (from :doc:`agentic_tools`)
 
 **AlphaFoldRESTTool** (3 tools)
@@ -577,17 +834,44 @@ Tools by Type
 *Local Tools:*
   * ArXiv_search_papers (from :doc:`arxiv_tools`)
 
+**BinaryDownloadTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * download_binary_file (from :doc:`file_download_tools`)
+
 **BioGRIDRESTTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * BioGRID_get_interactions (from :doc:`ppi_tools`)
 
+**BioModelsTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * biomodels_get_files (from :doc:`biomodels_tools`)
+  * biomodels_search (from :doc:`biomodels_tools`)
+
 **BioRxivTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * BioRxiv_search_preprints (from :doc:`biorxiv_tools`)
+
+**CBioPortalRESTTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * cBioPortal_get_cancer_studies (from :doc:`cbioportal_tools`)
+  * cBioPortal_get_mutations (from :doc:`cbioportal_tools`)
+
+**CDCRESTTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * cdc_data_get_dataset (from :doc:`cdc_tools`)
+  * cdc_data_search_datasets (from :doc:`cdc_tools`)
 
 **CMAGuidelinesTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -619,11 +903,23 @@ Tools by Type
 *Local Tools:*
   * ChEMBL_search_similar_molecules (from :doc:`chembl_tools`)
 
-**ClinVarTool** (1 tools)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**ClinVarGetClinicalSignificance** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
-  * ClinVar_search_variants (from :doc:`genomics_tools`)
+  * clinvar_get_clinical_significance (from :doc:`clinvar_tools`)
+
+**ClinVarGetVariantDetails** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * clinvar_get_variant_details (from :doc:`clinvar_tools`)
+
+**ClinVarSearchVariants** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * clinvar_search_variants (from :doc:`clinvar_tools`)
 
 **ClinicalTrialsDetailsTool** (9 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -638,6 +934,13 @@ Tools by Type
   * get_clinical_trial_outcome_measures (from :doc:`clinicaltrials_gov_tools`)
   * get_clinical_trial_references (from :doc:`clinicaltrials_gov_tools`)
   * get_clinical_trial_status_and_dates (from :doc:`clinicaltrials_gov_tools`)
+
+**ClinicalTrialsGovTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * clinical_trials_get_details (from :doc:`clinical_trials_tools`)
+  * clinical_trials_search (from :doc:`clinical_trials_tools`)
 
 **ClinicalTrialsSearchTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -655,8 +958,8 @@ Tools by Type
   * LiteratureSearchTool (from :doc:`compose_tools`)
   * MultiAgentLiteratureSearch (from :doc:`literature_search_tools`)
   * OutputSummarizationComposer (from :doc:`output_summarization_tools`)
-  * ToolDescriptionOptimizer (from :doc:`compose_tools`)
-  * ToolDiscover (from :doc:`compose_tools`)
+  * ToolDescriptionOptimizer (from :doc:`optimizer_tools`)
+  * ToolDiscover (from :doc:`tool_discovery_agents`)
   * ToolGraphComposer (from :doc:`tool_composition_tools`)
   * ToolGraphGenerationPipeline (from :doc:`compose_tools`)
   * ToolMetadataGenerationPipeline (from :doc:`compose_tools`)
@@ -679,6 +982,12 @@ Tools by Type
 *Local Tools:*
   * DBLP_search_publications (from :doc:`dblp_tools`)
 
+**DBpediaSPARQLTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * DBpedia_SPARQL_query (from :doc:`dbpedia_tools`)
+
 **DOAJTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -697,12 +1006,6 @@ Tools by Type
   * drugbank_vocab_filter (from :doc:`dataset_tools`)
   * drugbank_vocab_search (from :doc:`dataset_tools`)
 
-**DbSnpTool** (1 tools)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-*Local Tools:*
-  * dbSNP_get_variant_by_rsid (from :doc:`genomics_tools`)
-
 **DiseaseTargetScoreTool** (10 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -718,19 +1021,42 @@ Tools by Type
   * genomics_england_disease_target_score (from :doc:`disease_target_score_tools`)
   * reactome_disease_target_score (from :doc:`disease_target_score_tools`)
 
+**DynamicPackageDiscovery** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * dynamic_package_discovery (from :doc:`package_discovery_tools`)
+
 **EFOTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * OSL_get_efo_id_by_disease_name (from :doc:`efo_tools`)
 
-**EmbeddingDatabase** (4 tools)
+**EMDBRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * EMDB_get_structure (from :doc:`emdb_tools`)
+
+**ENCODEFilesTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * ENCODE_list_files (from :doc:`encode_tools`)
+
+**ENCODESearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * ENCODE_search_experiments (from :doc:`encode_tools`)
+
+**EmbeddingDatabase** (3 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * embedding_database_add (from :doc:`embedding_tools`)
   * embedding_database_create (from :doc:`embedding_tools`)
-  * embedding_database_load (from :doc:`embedding_tools`)
   * embedding_database_search (from :doc:`embedding_tools`)
 
 **EmbeddingSync** (2 tools)
@@ -746,11 +1072,54 @@ Tools by Type
 *Local Tools:*
   * enrichr_gene_enrichment_analysis (from :doc:`enrichr_tools`)
 
-**EnsemblTool** (1 tools)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**EnsemblGetSequence** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
-  * Ensembl_lookup_gene_by_symbol (from :doc:`genomics_tools`)
+  * ensembl_get_sequence (from :doc:`ensembl_tools`)
+
+**EnsemblGetVariants** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * ensembl_get_variants (from :doc:`ensembl_tools`)
+
+**EnsemblLookupGene** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * ensembl_lookup_gene (from :doc:`ensembl_tools`)
+
+**EuHealthDeepDiveTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * euhealthinfo_deepdive (from :doc:`euhealth_tools`)
+
+**EuHealthTopicSearchTool** (20 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * euhealthinfo_search_alcohol_tobacco_psychoactive_use (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_births (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_cancer (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_cancer_registry (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_causes_of_death (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_covid_19 (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_deaths (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_diabetes_mellitus_epidemiology_registry (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_disability (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_healthcare_expenditure (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_hospital_in_patient_data (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_infectious_diseases (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_key_indicators_registries_surveys (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_mental_health (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_obesity (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_population_health_survey (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_primary_care_workforce (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_surveillance (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_surveillance_mortality_rates (from :doc:`euhealth_tools`)
+  * euhealthinfo_search_vaccination (from :doc:`euhealth_tools`)
 
 **EuropePMCGuidelinesTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -764,6 +1133,12 @@ Tools by Type
 *Local Tools:*
   * EuropePMC_search_articles (from :doc:`europe_pmc_tools`)
 
+**ExecuteTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * execute_tool (from :doc:`compact_mode_tools`)
+
 **FDACountAdditiveReactionsTool** (6 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -774,6 +1149,16 @@ Tools by Type
   * FAERS_count_additive_reaction_outcomes (from :doc:`fda_drug_adverse_event_tools`)
   * FAERS_count_additive_reports_by_reporter_country (from :doc:`fda_drug_adverse_event_tools`)
   * FAERS_count_additive_seriousness_classification (from :doc:`fda_drug_adverse_event_tools`)
+
+**FDADrugAdverseEventDetailTool** (5 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * FAERS_search_adverse_event_reports (from :doc:`fda_drug_adverse_event_detail_tools`)
+  * FAERS_search_reports_by_drug_and_indication (from :doc:`fda_drug_adverse_event_detail_tools`)
+  * FAERS_search_reports_by_drug_and_outcome (from :doc:`fda_drug_adverse_event_detail_tools`)
+  * FAERS_search_reports_by_drug_and_reaction (from :doc:`fda_drug_adverse_event_detail_tools`)
+  * FAERS_search_serious_reports_by_drug (from :doc:`fda_drug_adverse_event_detail_tools`)
 
 **FDADrugAdverseEventTool** (9 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -788,6 +1173,12 @@ Tools by Type
   * FAERS_count_reactions_by_drug_event (from :doc:`fda_drug_adverse_event_tools`)
   * FAERS_count_reportercountry_by_drug_event (from :doc:`fda_drug_adverse_event_tools`)
   * FAERS_count_seriousness_by_drug_event (from :doc:`fda_drug_adverse_event_tools`)
+
+**FDADrugInteractionDetailTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * FAERS_search_reports_by_drug_combination (from :doc:`fda_drug_adverse_event_detail_tools`)
 
 **FDADrugLabel** (155 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -949,11 +1340,23 @@ Tools by Type
   * FDA_retrieve_drug_names_by_patient_medication_info (from :doc:`fda_drug_labeling_tools`)
   * FDA_retrieve_patient_medication_info_by_drug_name (from :doc:`fda_drug_labeling_tools`)
 
+**FDADrugLabelAggregated** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * FDA_get_drug_names_by_indication_aggregated (from :doc:`fda_drug_labeling_tools`)
+
 **FDADrugLabelGetDrugGenericNameTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * FDA_get_drug_generic_name (from :doc:`fda_drug_labeling_tools`)
+
+**FDADrugLabelStats** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * FDA_get_drug_names_by_indication_stats (from :doc:`fda_drug_labeling_tools`)
 
 **FatcatScholarTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -961,17 +1364,71 @@ Tools by Type
 *Local Tools:*
   * Fatcat_search_scholar (from :doc:`fatcat_tools`)
 
-**GEORESTTool** (1 tools)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**FileDownloadTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
-  * GEO_search_expression_data (from :doc:`geo_tools`)
+  * download_file (from :doc:`file_download_tools`)
+
+**GBIFOccurrenceTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * GBIF_search_occurrences (from :doc:`gbif_tools`)
+
+**GBIFTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * GBIF_search_species (from :doc:`gbif_tools`)
+
+**GDCCasesTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * GDC_search_cases (from :doc:`gdc_tools`)
+
+**GDCFilesTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * GDC_list_files (from :doc:`gdc_tools`)
+
+**GEOGetDatasetInfo** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * geo_get_dataset_info (from :doc:`geo_tools`)
+
+**GEOGetSampleInfo** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * geo_get_sample_info (from :doc:`geo_tools`)
+
+**GEOSearchDatasets** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * geo_search_datasets (from :doc:`geo_tools`)
 
 **GINGuidelinesTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * GIN_Guidelines_Search (from :doc:`unified_guideline_tools`)
+
+**GTExEQTLTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * GTEx_query_eqtl (from :doc:`gtex_tools`)
+
+**GTExExpressionTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * GTEx_get_expression_summary (from :doc:`gtex_tools`)
 
 **GWASAssociationByID** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1007,7 +1464,7 @@ Tools by Type
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
-  * GWAS_search_associations_by_gene (from :doc:`genomics_tools`)
+  * GWAS_search_associations_by_gene (from :doc:`gwas_tools`)
 
 **GWASSNPByID** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1067,17 +1524,36 @@ Tools by Type
 *Local Tools:*
   * DailyMed_get_spl_by_setid (from :doc:`dailymed_tools`)
 
-**GnomadTool** (1 tools)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**GetToolInfo** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
-  * gnomAD_query_variant (from :doc:`genomics_tools`)
+  * get_tool_info (from :doc:`compact_mode_tools`)
+
+**GrepTools** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * grep_tools (from :doc:`compact_mode_tools`)
+
+**GtoPdbRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * GtoPdb_get_targets (from :doc:`gtopdb_tools`)
 
 **HALTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * HAL_search_archive (from :doc:`hal_tools`)
+
+**HCATool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * hca_get_file_manifest (from :doc:`hca_tools`)
+  * hca_search_projects (from :doc:`hca_tools`)
 
 **HPAGetBiologicalProcessTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1157,17 +1633,86 @@ Tools by Type
 *Local Tools:*
   * HPA_search_genes_by_query (from :doc:`hpa_tools`)
 
+**HPASearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * HPA_generic_search (from :doc:`hpa_tools`)
+
+**HealthDisparitiesTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * health_disparities_get_county_rankings_info (from :doc:`health_disparities_tools`)
+  * health_disparities_get_svi_info (from :doc:`health_disparities_tools`)
+
 **HumanBaseTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * humanbase_ppi_analysis (from :doc:`humanbase_tools`)
 
+**IEDBTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * iedb_search_epitopes (from :doc:`iedb_tools`)
+
+**InterProRESTTool** (3 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * InterPro_get_domain_details (from :doc:`interpro_tools`)
+  * InterPro_get_protein_domains (from :doc:`interpro_tools`)
+  * InterPro_search_domains (from :doc:`interpro_tools`)
+
+**JASPARRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * JASPAR_get_transcription_factors (from :doc:`jaspar_tools`)
+
+**KEGGFindGenes** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * kegg_find_genes (from :doc:`kegg_tools`)
+
+**KEGGGetGeneInfo** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * kegg_get_gene_info (from :doc:`kegg_tools`)
+
+**KEGGGetPathwayInfo** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * kegg_get_pathway_info (from :doc:`kegg_tools`)
+
+**KEGGListOrganisms** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * kegg_list_organisms (from :doc:`kegg_tools`)
+
+**KEGGSearchPathway** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * kegg_search_pathway (from :doc:`kegg_tools`)
+
+**ListTools** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * list_tools (from :doc:`compact_mode_tools`)
+
 **MCPAutoLoaderTool** (5 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
-  * mcp_auto_loader_boltz (from :doc:`boltz_tools`)
+  * mcp_auto_loader_boltz (from :doc:`boltz_mcp_loader_tools`)
   * mcp_auto_loader_expert_feedback (from :doc:`expert_feedback_tools`)
   * mcp_auto_loader_server1 (from :doc:`mcp_client_tools_example`)
   * mcp_auto_loader_txagent (from :doc:`txagent_client_tools`)
@@ -1185,6 +1730,24 @@ Tools by Type
 *Local Tools:*
   * mcp_mock_calculator (from :doc:`mcp_client_tools_example`)
   * mcp_mock_greeter (from :doc:`mcp_client_tools_example`)
+
+**MGnifyAnalysesTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * MGnify_list_analyses (from :doc:`mgnify_tools`)
+
+**MGnifyStudiesTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * MGnify_search_studies (from :doc:`mgnify_tools`)
+
+**MPDRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * MPD_get_phenotype_data (from :doc:`mpd_tools`)
 
 **MarkItDownTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1233,6 +1796,20 @@ Tools by Type
 *Local Tools:*
   * get_joint_associated_diseases_by_HPO_ID_list (from :doc:`monarch_tools`)
 
+**NCBIBlastTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * BLAST_nucleotide_search (from :doc:`blast_tools`)
+  * BLAST_protein_search (from :doc:`blast_tools`)
+
+**NHANESTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * nhanes_get_dataset_info (from :doc:`nhanes_tools`)
+  * nhanes_search_datasets (from :doc:`nhanes_tools`)
+
 **NICEGuidelineFullTextTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1244,6 +1821,18 @@ Tools by Type
 
 *Local Tools:*
   * NICE_Clinical_Guidelines_Search (from :doc:`unified_guideline_tools`)
+
+**OBISOccurrenceTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * OBIS_search_occurrences (from :doc:`obis_tools`)
+
+**OBISTaxaTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * OBIS_search_taxa (from :doc:`obis_tools`)
 
 **ODPHPItemList** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1269,6 +1858,18 @@ Tools by Type
 *Local Tools:*
   * odphp_topicsearch (from :doc:`odphp_tools`)
 
+**OLSTool** (7 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * ols_find_similar_terms (from :doc:`ols_tools`)
+  * ols_get_ontology_info (from :doc:`ols_tools`)
+  * ols_get_term_ancestors (from :doc:`ols_tools`)
+  * ols_get_term_children (from :doc:`ols_tools`)
+  * ols_get_term_info (from :doc:`ols_tools`)
+  * ols_search_ontologies (from :doc:`ols_tools`)
+  * ols_search_terms (from :doc:`ols_tools`)
+
 **OSFPreprintsTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1293,7 +1894,7 @@ Tools by Type
 *Local Tools:*
   * openalex_literature_search (from :doc:`openalex_tools`)
 
-**OpenTarget** (54 tools)
+**OpenTarget** (55 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
@@ -1322,6 +1923,7 @@ Tools by Type
   * OpenTargets_get_drug_description_by_chemblId (from :doc:`opentarget_tools`)
   * OpenTargets_get_drug_indications_by_chemblId (from :doc:`opentarget_tools`)
   * OpenTargets_get_drug_mechanisms_of_action_by_chemblId (from :doc:`opentarget_tools`)
+  * OpenTargets_get_drug_names_by_chemblId (from :doc:`opentarget_tools`)
   * OpenTargets_get_drug_synonyms_by_chemblId (from :doc:`opentarget_tools`)
   * OpenTargets_get_drug_trade_names_by_chemblId (from :doc:`opentarget_tools`)
   * OpenTargets_get_drug_warnings_by_chemblId (from :doc:`opentarget_tools`)
@@ -1365,7 +1967,13 @@ Tools by Type
 *Local Tools:*
   * PMC_search_papers (from :doc:`pmc_tools`)
 
-**PackageTool** (164 tools)
+**PRIDERESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * PRIDE_search_proteomics (from :doc:`pride_tools`)
+
+**PackageTool** (163 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
@@ -1427,7 +2035,6 @@ Tools by Type
   * get_hmmlearn_info (from :doc:`machine_learning_tools`)
   * get_holoviews_info (from :doc:`visualization_tools`)
   * get_htmd_info (from :doc:`structural_biology_tools`)
-  * get_hyperopt_info (from :doc:`machine_learning_tools`)
   * get_igraph_info (from :doc:`visualization_tools`)
   * get_imageio_info (from :doc:`image_processing_tools`)
   * get_imbalanced_learn_info (from :doc:`machine_learning_tools`)
@@ -1534,6 +2141,19 @@ Tools by Type
   * get_xgboost_info (from :doc:`machine_learning_tools`)
   * get_zarr_info (from :doc:`scientific_computing_tools`)
 
+**PaleobiologyRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * Paleobiology_get_fossils (from :doc:`paleobiology_tools`)
+
+**PathwayCommonsTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * pc_get_interactions (from :doc:`pathway_commons_tools`)
+  * pc_search_pathways (from :doc:`pathway_commons_tools`)
+
 **ProteinStructure3DTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1572,6 +2192,30 @@ Tools by Type
 *Local Tools:*
   * PubTator3_EntityAutocomplete (from :doc:`pubtator_tools`)
   * PubTator3_LiteratureSearch (from :doc:`pubtator_tools`)
+
+**PyPIPackageInspector** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * PyPIPackageInspector (from :doc:`pypi_package_inspector_tools`)
+
+**PythonCodeExecutor** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * python_code_executor (from :doc:`python_executor_tools`)
+
+**PythonScriptRunner** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * python_script_runner (from :doc:`python_executor_tools`)
+
+**RCSBSearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * PDB_search_similar_structures (from :doc:`rcsb_search_tools`)
 
 **RCSBTool** (39 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1617,11 +2261,35 @@ Tools by Type
   * get_taxonomy_by_pdb_id (from :doc:`rcsb_pdb_tools`)
   * get_uniprot_accession_by_entity_id (from :doc:`rcsb_pdb_tools`)
 
+**RNAcentralGetTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * RNAcentral_get_by_accession (from :doc:`rnacentral_tools`)
+
+**RNAcentralSearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * RNAcentral_search (from :doc:`rnacentral_tools`)
+
+**ReMapRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * ReMap_get_transcription_factor_binding (from :doc:`remap_tools`)
+
 **ReactomeRESTTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * Reactome_get_pathway_reactions (from :doc:`reactome_tools`)
+
+**RegulomeDBRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * RegulomeDB_query_variant (from :doc:`regulomedb_tools`)
 
 **RemoteTool** (14 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1642,6 +2310,18 @@ Tools by Type
   * run_transcriptformer_embedding_retrieval (from :doc:`transcriptformer_tools`)
   * submit_expert_response (from :doc:`expert_feedback_tools`)
 
+**RxNormTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * RxNorm_get_drug_names (from :doc:`rxnorm_tools`)
+
+**SCREENRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * SCREEN_get_regulatory_elements (from :doc:`screen_tools`)
+
 **STRINGRESTTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1660,6 +2340,13 @@ Tools by Type
 *Local Tools:*
   * SemanticScholar_search_papers (from :doc:`semantic_scholar_tools`)
 
+**SmolAgentTool** (2 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * advanced_literature_search_agent (from :doc:`smolagent_tools`)
+  * open_deep_research_agent (from :doc:`smolagent_tools`)
+
 **SpecialTool** (2 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1672,6 +2359,12 @@ Tools by Type
 
 *Local Tools:*
   * TRIP_Database_Guidelines_Search (from :doc:`unified_guideline_tools`)
+
+**TextDownloadTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * download_text_content (from :doc:`file_download_tools`)
 
 **ToolFinderEmbedding** (2 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1692,11 +2385,15 @@ Tools by Type
 *Local Tools:*
   * Tool_Finder_LLM (from :doc:`finder_tools`)
 
-**UCSCTool** (1 tools)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**UMLSRESTTool** (5 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
-  * UCSC_get_genes_by_region (from :doc:`genomics_tools`)
+  * icd_search_codes (from :doc:`umls_tools`)
+  * loinc_search_codes (from :doc:`umls_tools`)
+  * snomed_search_concepts (from :doc:`umls_tools`)
+  * umls_get_concept_details (from :doc:`umls_tools`)
+  * umls_search_concepts (from :doc:`umls_tools`)
 
 **URLHTMLTagTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1721,7 +2418,7 @@ Tools by Type
   * get_patent_overview_by_text_query (from :doc:`uspto_tools`)
   * get_patent_term_adjustment_data (from :doc:`uspto_tools`)
 
-**UniProtRESTTool** (10 tools)
+**UniProtRESTTool** (12 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
@@ -1735,12 +2432,26 @@ Tools by Type
   * UniProt_get_recommended_name_by_accession (from :doc:`uniprot_tools`)
   * UniProt_get_sequence_by_accession (from :doc:`uniprot_tools`)
   * UniProt_get_subcellular_location_by_accession (from :doc:`uniprot_tools`)
+  * UniProt_id_mapping (from :doc:`uniprot_tools`)
+  * UniProt_search (from :doc:`uniprot_tools`)
 
 **UnpaywallTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * Unpaywall_check_oa_status (from :doc:`unpaywall_tools`)
+
+**WHOGHOQueryTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * who_gho_query_health_data (from :doc:`who_gho_tools`)
+
+**WHOGHORESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * who_gho_get_data (from :doc:`who_gho_tools`)
 
 **WHOGuidelineFullTextTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1754,11 +2465,59 @@ Tools by Type
 *Local Tools:*
   * WHO_Guidelines_Search (from :doc:`unified_guideline_tools`)
 
+**WebAPIDocumentationSearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * web_api_documentation_search (from :doc:`web_search_tools`)
+
+**WebSearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * web_search (from :doc:`web_search_tools`)
+
+**WikiPathwaysGetTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * WikiPathways_get_pathway (from :doc:`wikipathways_tools`)
+
+**WikiPathwaysSearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * WikiPathways_search (from :doc:`wikipathways_tools`)
+
 **WikidataSPARQLTool** (1 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Local Tools:*
   * Wikidata_SPARQL_query (from :doc:`wikidata_sparql_tools`)
+
+**WikipediaContentTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * Wikipedia_get_content (from :doc:`wikipedia_tools`)
+
+**WikipediaSearchTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * Wikipedia_search (from :doc:`wikipedia_tools`)
+
+**WikipediaSummaryTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * Wikipedia_get_summary (from :doc:`wikipedia_tools`)
+
+**WoRMSRESTTool** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * WoRMS_search_species (from :doc:`worms_tools`)
 
 **XMLTool** (19 tools)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1767,15 +2526,15 @@ Tools by Type
   * drugbank_filter_drugs_by_name (from :doc:`xml_tools`)
   * drugbank_get_drug_basic_info_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
   * drugbank_get_drug_chemistry_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
+  * drugbank_get_drug_desc_pharmacology_by_moa (from :doc:`xml_tools`)
   * drugbank_get_drug_interactions_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
   * drugbank_get_drug_name_and_description_by_indication (from :doc:`xml_tools`)
   * drugbank_get_drug_name_and_description_by_pathway_name (from :doc:`xml_tools`)
   * drugbank_get_drug_name_and_description_by_target_name (from :doc:`xml_tools`)
-  * drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action (from :doc:`xml_tools`)
-  * drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
   * drugbank_get_drug_products_by_name_or_drugbank_id (from :doc:`xml_tools`)
   * drugbank_get_drug_references_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
   * drugbank_get_indications_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
+  * drugbank_get_pathways_reactions_by_drug_or_id (from :doc:`xml_tools`)
   * drugbank_get_pharmacology_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
   * drugbank_get_safety_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
   * drugbank_get_targets_by_drug_name_or_drugbank_id (from :doc:`xml_tools`)
@@ -1789,6 +2548,30 @@ Tools by Type
 
 *Local Tools:*
   * Zenodo_search_records (from :doc:`zenodo_tools`)
+
+**dbSNPGetFrequencies** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * dbsnp_get_frequencies (from :doc:`dbsnp_tools`)
+
+**dbSNPGetVariantByRsID** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * dbsnp_get_variant_by_rsid (from :doc:`dbsnp_tools`)
+
+**dbSNPSearchByGene** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * dbsnp_search_by_gene (from :doc:`dbsnp_tools`)
+
+**gnomADGetGeneConstraints** (1 tools)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Local Tools:*
+  * gnomad_get_gene_constraints (from :doc:`gnomad_tools`)
 
 
 Quick Tool Search

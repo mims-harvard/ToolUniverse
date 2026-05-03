@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UCSC\\_get\\_genes\\_by\\_region 模块"
 #: cae3e556cb9e479cb79c44e26f2484fe of
 #: tooluniverse.tools.UCSC_get_genes_by_region:1
 msgid "UCSC_get_genes_by_region"
-msgstr ""
+msgstr "UCSC_按区域获取基因"
 
 #: b58c20f7f0d1483986653732734ea5ba b87b20abc7e74a65885a65d9134724f6 of
 #: tooluniverse.tools.UCSC_get_genes_by_region:3

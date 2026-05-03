@@ -1,0 +1,546 @@
+[
+  {
+    "name": "AllenBrain_search_genes",
+    "description": "Search for genes in the Allen Brain Atlas by gene symbol (acronym) or name. Returns gene metadata including Entrez ID, chromosome, homologene ID. Useful for finding gene IDs needed to query expression data. Example: 'Gad1' returns glutamate decarboxylase 1 records for mouse and rat.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_acronym": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gene symbol/acronym for exact match. Examples: 'Gad1', 'Pvalb', 'Sst', 'Bdnf', 'Th'."
+        },
+        "gene_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gene name for partial match search (alternative to gene_acronym). Example: 'glutamate decarboxylase'."
+        },
+        "num_rows": {
+          "type": "integer",
+          "description": "Max results to return. Default: 50.",
+          "default": 50
+        }
+      }
+    },
+    "fields": {
+      "query_type": "gene_search"
+    },
+    "type": "AllenBrainTool",
+    "test_examples": [
+      {
+        "gene_acronym": "Gad1"
+      },
+      {
+        "gene_name": "parvalbumin",
+        "num_rows": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Allen Brain Atlas gene ID"
+          },
+          "acronym": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Gene symbol"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Full gene name"
+          },
+          "entrez_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "NCBI Entrez Gene ID"
+          },
+          "homologene_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "chromosome_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "organism_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "2=mouse, 1=human, 3=rat"
+          },
+          "ensembl_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "alias_tags": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "original_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "original_symbol": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sphinx_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "version_status": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "AllenBrain_search_structures",
+    "description": "Search for brain structures/regions in the Allen Brain Atlas ontology by acronym or name. Returns structure hierarchy, atlas coordinates, and color coding. Example: 'CA1' returns hippocampal Field CA1 across multiple atlases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "acronym": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Structure acronym for exact match. Examples: 'CA1', 'VISp', 'TH', 'HIP', 'CTX'."
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Structure name for partial match (alternative to acronym). Example: 'hippocampus', 'cerebellum'."
+        },
+        "num_rows": {
+          "type": "integer",
+          "description": "Max results to return. Default: 50.",
+          "default": 50
+        }
+      }
+    },
+    "fields": {
+      "query_type": "structure_search"
+    },
+    "type": "AllenBrainTool",
+    "test_examples": [
+      {
+        "acronym": "CA1"
+      },
+      {
+        "name": "hippocampus",
+        "num_rows": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Structure ID"
+          },
+          "acronym": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "safe_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "color_hex_triplet": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Hex color for visualization"
+          },
+          "graph_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "graph_order": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "parent_structure_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "structure_id_path": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Hierarchical path of structure IDs"
+          },
+          "depth": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Depth in the ontology hierarchy"
+          },
+          "ontology_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "atlas_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "hemisphere_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "failed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "failed_facet": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "st_level": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "weight": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "AllenBrain_get_expression_datasets",
+    "description": "Get gene expression experiment datasets from the Allen Mouse Brain Atlas for a given gene. Returns section data sets including plane of section, section thickness, and linked gene info. These datasets contain ISH (in situ hybridization) gene expression images. Example: 'Gad1' returns 22 ISH experiment datasets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_acronym": {
+          "type": "string",
+          "description": "Gene symbol/acronym. Examples: 'Gad1', 'Pvalb', 'Sst', 'Bdnf', 'Th', 'Slc17a7'."
+        },
+        "product_id": {
+          "type": "integer",
+          "description": "Product ID for the dataset type. 1=Mouse Brain ISH, 2=Mouse Brain microarray. Default: 1.",
+          "default": 1
+        },
+        "num_rows": {
+          "type": "integer",
+          "description": "Max results to return. Default: 50.",
+          "default": 50
+        }
+      },
+      "required": [
+        "gene_acronym"
+      ]
+    },
+    "fields": {
+      "query_type": "expression_data"
+    },
+    "type": "AllenBrainTool",
+    "test_examples": [
+      {
+        "gene_acronym": "Gad1"
+      },
+      {
+        "gene_acronym": "Pvalb",
+        "num_rows": 10
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Section data set ID"
+          },
+          "plane_of_section_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "section_thickness": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "expression": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "failed": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "delegate": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "storage_directory": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "specimen_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "reference_space_id": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "qc_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "genes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "acronym": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "entrez_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "AllenBrain_get_structure",
+    "description": "Get detailed information about a brain structure by its Allen Brain Atlas structure ID. Returns full structure record including name, hierarchy path, parent structure, color code. Example: structure_id=382 returns 'Field CA1' in hippocampus.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "structure_id": {
+          "type": "integer",
+          "description": "Allen Brain Atlas structure ID. Examples: 382 (CA1), 375 (Hippocampus), 315 (Isocortex), 997 (root)."
+        }
+      },
+      "required": [
+        "structure_id"
+      ]
+    },
+    "fields": {
+      "query_type": "structure_lookup"
+    },
+    "type": "AllenBrainTool",
+    "test_examples": [
+      {
+        "structure_id": 382
+      },
+      {
+        "structure_id": 375
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "acronym": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "safe_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "color_hex_triplet": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "graph_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "graph_order": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "parent_structure_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "structure_id_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "depth": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "ontology_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "atlas_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "hemisphere_id": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "failed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "failed_facet": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "st_level": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "weight": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+]

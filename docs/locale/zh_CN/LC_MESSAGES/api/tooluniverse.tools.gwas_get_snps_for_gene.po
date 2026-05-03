@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_get\\_snps\\_for\\_gene 模块"
 #: 0f27829f62c943fc8d0be3568945c8e3 of
 #: tooluniverse.tools.gwas_get_snps_for_gene:1
 msgid "gwas_get_snps_for_gene"
-msgstr ""
+msgstr "gwas_get_snps_for_gene（获取基因相关SNPs）"
 
 #: 1cba4848c0e344ec97a1f085b112054f eb3936d857564293b61b5d46b8427718 of
 #: tooluniverse.tools.gwas_get_snps_for_gene:3

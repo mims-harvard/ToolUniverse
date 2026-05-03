@@ -1,0 +1,350 @@
+[
+  {
+    "name": "BioTools_search",
+    "type": "BaseRESTTool",
+    "description": "Search the ELIXIR Bio.tools registry for bioinformatics software tools, databases, and web services. Bio.tools is the comprehensive registry of bioinformatics resources maintained by ELIXIR, containing 30,000+ entries. Returns tool names, descriptions, types, topics, and homepages. Use this to find software for specific bioinformatics tasks (e.g., 'sequence alignment', 'variant calling', 'protein structure prediction'). Example: search 'RNA-seq' to find RNA sequencing analysis tools.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Free-text search query. Searches across tool names, descriptions, and topics. Examples: 'blast', 'RNA-seq analysis', 'protein folding', 'variant calling', 'metagenomics'."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number for paginated results (1-based). Default: 1."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results per page (1-50). Default: 10."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        }
+      },
+      "required": ["q"]
+    },
+    "fields": {
+      "endpoint": "https://bio.tools/api/t/",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Search results containing a list of matching bioinformatics tools",
+          "properties": {
+            "count": {"type": "integer", "description": "Total number of matching tools"},
+            "next": {"type": ["string", "null"], "description": "URL for next page of results"},
+            "previous": {"type": ["string", "null"], "description": "URL for previous page"},
+            "list": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "biotoolsID": {"type": "string"},
+                  "description": {"type": "string"},
+                  "homepage": {"type": "string"},
+                  "toolType": {"type": "array", "items": {"type": "string"}},
+                  "topic": {"type": "array"},
+                  "function": {"type": "array"},
+                  "language": {"type": "array"},
+                  "operatingSystem": {"type": "array"},
+                  "license": {"type": ["string", "null"]}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"q": "blast", "page": 1, "size": 5, "format": "json"},
+      {"q": "RNA-seq", "page": 1, "size": 5, "format": "json"}
+    ]
+  },
+  {
+    "name": "BioTools_get_tool",
+    "type": "BaseRESTTool",
+    "description": "Get detailed information about a specific bioinformatics tool from the ELIXIR Bio.tools registry by its biotoolsID. Returns comprehensive metadata including name, description, homepage, tool type (command-line, web app, database, etc.), EDAM topics and operations, supported input/output data formats, programming languages, operating systems, license, documentation links, and credits. Use biotoolsID values discovered via BioTools_search. Example: 'samtools' for SAMtools, 'blast' for NCBI BLAST.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "biotoolsID": {
+          "type": "string",
+          "description": "The unique Bio.tools identifier for the tool. Use lowercase. Examples: 'samtools', 'blast', 'bwa', 'gatk', 'star'. Find IDs using BioTools_search."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        }
+      },
+      "required": ["biotoolsID"]
+    },
+    "fields": {
+      "endpoint": "https://bio.tools/api/t/{biotoolsID}/",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed tool information from Bio.tools registry",
+          "properties": {
+            "name": {"type": "string"},
+            "biotoolsID": {"type": "string"},
+            "biotoolsCURIE": {"type": "string"},
+            "description": {"type": "string"},
+            "homepage": {"type": "string"},
+            "version": {"type": "array"},
+            "toolType": {"type": "array", "items": {"type": "string"}},
+            "topic": {"type": "array"},
+            "function": {"type": "array"},
+            "language": {"type": "array", "items": {"type": "string"}},
+            "operatingSystem": {"type": "array", "items": {"type": "string"}},
+            "license": {"type": ["string", "null"]},
+            "maturity": {"type": ["string", "null"]},
+            "link": {"type": "array"},
+            "download": {"type": "array"},
+            "documentation": {"type": "array"},
+            "credit": {"type": "array"},
+            "collectionID": {"type": "array"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"biotoolsID": "samtools", "format": "json"},
+      {"biotoolsID": "blast", "format": "json"}
+    ]
+  },
+  {
+    "name": "BioTools_search_by_topic",
+    "type": "BaseRESTTool",
+    "description": "Search the ELIXIR Bio.tools registry for bioinformatics tools by EDAM scientific topic. Returns tools classified under a specific research domain. Useful topics include: 'Proteomics', 'Genomics', 'Transcriptomics', 'Structural biology', 'Phylogenetics', 'Metabolomics', 'Metagenomics', 'Epigenomics', 'Sequence analysis', 'Systems biology', 'Machine learning', 'Molecular interactions', 'Population genetics'. Use this to discover all available software for a specific research field.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "EDAM topic name. Examples: 'Proteomics', 'Genomics', 'Transcriptomics', 'Structural biology', 'Phylogenetics', 'Metabolomics', 'Metagenomics', 'Machine learning', 'Drug discovery'."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based). Default: 1."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Results per page (1-50). Default: 10."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        }
+      },
+      "required": ["topic"]
+    },
+    "fields": {
+      "endpoint": "https://bio.tools/api/t/",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Tools matching the specified scientific topic",
+          "properties": {
+            "count": {"type": "integer"},
+            "next": {"type": ["string", "null"]},
+            "previous": {"type": ["string", "null"]},
+            "list": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "biotoolsID": {"type": "string"},
+                  "description": {"type": "string"},
+                  "homepage": {"type": "string"},
+                  "toolType": {"type": "array"},
+                  "topic": {"type": "array"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"topic": "Proteomics", "page": 1, "size": 5, "format": "json"},
+      {"topic": "Structural biology", "page": 1, "size": 5, "format": "json"}
+    ]
+  },
+  {
+    "name": "BioTools_search_by_operation",
+    "type": "BaseRESTTool",
+    "description": "Search the ELIXIR Bio.tools registry for bioinformatics tools by EDAM operation (what the tool does). Returns tools that perform a specific computational operation. Useful operations include: 'Sequence alignment', 'Structure prediction', 'Variant calling', 'Gene expression analysis', 'Phylogenetic inference', 'Protein function prediction', 'Molecular docking', 'Genome annotation', 'Visualisation', 'Data retrieval', 'Statistical calculation', 'Clustering'. Use this to find software for a specific analysis task.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "EDAM operation name describing what the tool does. Examples: 'Sequence alignment', 'Structure prediction', 'Variant calling', 'Molecular docking', 'Visualisation', 'Genome annotation'."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based). Default: 1."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Results per page (1-50). Default: 10."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        }
+      },
+      "required": ["operation"]
+    },
+    "fields": {
+      "endpoint": "https://bio.tools/api/t/",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Tools matching the specified computational operation",
+          "properties": {
+            "count": {"type": "integer"},
+            "next": {"type": ["string", "null"]},
+            "previous": {"type": ["string", "null"]},
+            "list": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "biotoolsID": {"type": "string"},
+                  "description": {"type": "string"},
+                  "homepage": {"type": "string"},
+                  "toolType": {"type": "array"},
+                  "function": {"type": "array"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"operation": "Sequence alignment", "page": 1, "size": 5, "format": "json"},
+      {"operation": "Variant calling", "page": 1, "size": 5, "format": "json"}
+    ]
+  },
+  {
+    "name": "BioTools_search_by_type",
+    "type": "BaseRESTTool",
+    "description": "Search the ELIXIR Bio.tools registry for bioinformatics resources by tool type. Returns resources of a specific category. Available types: 'Command-line tool', 'Web application', 'Web API', 'Web service', 'Database portal', 'Desktop application', 'Library', 'Plug-in', 'Suite', 'Script', 'Workflow', 'Workbench', 'Ontology', 'Bioinformatics portal'. Use this to find, for example, all database portals or all web APIs for a research domain.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "toolType": {
+          "type": "string",
+          "description": "Bio.tools resource type. Examples: 'Command-line tool', 'Web application', 'Web API', 'Database portal', 'Library', 'Suite', 'Workflow'."
+        },
+        "q": {
+          "type": ["string", "null"],
+          "description": "Optional free-text query to further filter results. Example: 'proteomics' to find only proteomics-related tools of the specified type."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "description": "Page number (1-based). Default: 1."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Results per page (1-50). Default: 10."
+        },
+        "format": {
+          "type": "string",
+          "default": "json",
+          "description": "Response format. Must be 'json'."
+        }
+      },
+      "required": ["toolType"]
+    },
+    "fields": {
+      "endpoint": "https://bio.tools/api/t/",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Tools matching the specified resource type",
+          "properties": {
+            "count": {"type": "integer"},
+            "next": {"type": ["string", "null"]},
+            "previous": {"type": ["string", "null"]},
+            "list": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "biotoolsID": {"type": "string"},
+                  "description": {"type": "string"},
+                  "homepage": {"type": "string"},
+                  "toolType": {"type": "array"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"toolType": "Database portal", "page": 1, "size": 5, "format": "json"},
+      {"toolType": "Web API", "q": "genomics", "page": 1, "size": 5, "format": "json"}
+    ]
+  }
+]

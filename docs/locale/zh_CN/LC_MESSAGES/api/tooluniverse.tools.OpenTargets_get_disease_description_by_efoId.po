@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_disease\\_description\\_by\\_efoI
 #: 65f22e9ab12e4e2a90ae999a552efbe7 of
 #: tooluniverse.tools.OpenTargets_get_disease_description_by_efoId:1
 msgid "OpenTargets_get_disease_description_by_efoId"
-msgstr ""
+msgstr "OpenTargets_通过EFO ID获取疾病描述"
 
 #: 3f77ea2ab90f404d9b285552ce621f73 b9f7715e5cb64a7d9b30c167eff173dc of
 #: tooluniverse.tools.OpenTargets_get_disease_description_by_efoId:3

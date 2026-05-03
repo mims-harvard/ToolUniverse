@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_space\\_group\\_by\\_pdb\\_id 模块"
 #: 0f6460c40cbc4209bb9b825bfc3e7f11 of
 #: tooluniverse.tools.get_space_group_by_pdb_id:1
 msgid "get_space_group_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取空间群"
 
 #: 97a2a93fb94b42ea96c6983daa673e23 9d63b400c51a4912b6f619633d794764 of
 #: tooluniverse.tools.get_space_group_by_pdb_id:3

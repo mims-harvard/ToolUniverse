@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OSF\\_search\\_preprints 模块"
 #: 2639f03124614c5da8d22cab8e478d2c of
 #: tooluniverse.tools.OSF_search_preprints:1
 msgid "OSF_search_preprints"
-msgstr ""
+msgstr "OSF_预印本搜索"
 
 #: 60a7faba10ae49559fd026927a7b0bc8 b69d4529bde449fe9192e1ee443c05bf of
 #: tooluniverse.tools.OSF_search_preprints:3

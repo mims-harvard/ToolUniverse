@@ -1,0 +1,183 @@
+[
+  {
+    "name": "FDAGSRS_search_substances",
+    "type": "FDAGSRSTool",
+    "description": "Search FDA GSRS (Global Substance Registration System) for substances by name, UNII code, InChIKey, or formula. Returns official FDA substance records with UNII identifiers, substance class, structure, and cross-references (DrugBank, WHO-ATC, CAS, EC/EINECS, CFR). No API key required. Example: 'aspirin' -> UNII R16CO5Y76E, chemical, approved.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: drug/chemical name, UNII code, InChIKey, or molecular formula. Examples: 'aspirin', 'semaglutide', 'R16CO5Y76E', 'C9H8O4', 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N'."
+        },
+        "substance_class": {
+          "type": ["string", "null"],
+          "description": "Filter by substance class. Options: 'chemical', 'protein', 'mixture', 'polymer', 'nucleicAcid', 'structurallyDiverse', 'specifiedSubstanceG1'. Default: no filter (all classes)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of results to return (1-50, default 10)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "operation": "search_substances"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {"type": "string"},
+                  "unii": {"type": "string"},
+                  "name": {"type": "string"},
+                  "substanceClass": {"type": "string"},
+                  "status": {"type": "string"},
+                  "formula": {"type": "string"},
+                  "smiles": {"type": "string"},
+                  "synonyms": {"type": "array"},
+                  "xrefs": {"type": "object"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "aspirin", "limit": 5},
+      {"query": "semaglutide"},
+      {"query": "metformin", "substance_class": "chemical"}
+    ]
+  },
+  {
+    "name": "FDAGSRS_get_substance",
+    "type": "FDAGSRSTool",
+    "description": "Get full FDA substance record by UNII (Unique Ingredient Identifier) code. Returns complete substance data including all names, cross-references (DrugBank, WHO-ATC, CAS, EC number, CFR), structure, and approval status. No API key required. UNII is the official FDA identifier for all regulated substances. Example: UNII 'R16CO5Y76E' = aspirin.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "unii": {
+          "type": "string",
+          "description": "FDA UNII (Unique Ingredient Identifier) code. 10-character alphanumeric string. Examples: 'R16CO5Y76E' (aspirin), '9100L32L2N' (ibuprofen), '4T6H12BN9U' (metformin), '57GNO57U7G' (semaglutide)."
+        }
+      },
+      "required": ["unii"]
+    },
+    "fields": {
+      "operation": "get_substance"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "uuid": {"type": "string"},
+                "unii": {"type": "string"},
+                "name": {"type": "string"},
+                "substanceClass": {"type": "string"},
+                "status": {"type": "string"},
+                "structure": {"type": "object"},
+                "names": {"type": "array"},
+                "codes": {"type": "array"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"unii": "R16CO5Y76E"},
+      {"unii": "9100L32L2N"},
+      {"unii": "4T6H12BN9U"}
+    ]
+  },
+  {
+    "name": "FDAGSRS_get_structure",
+    "type": "FDAGSRSTool",
+    "description": "Get chemical structure data for an FDA-regulated substance by UNII code. Returns SMILES, molecular formula, InChIKey, molfile, molecular weight, stereochemistry, and optical activity. No API key required. Only works for chemical substances; returns error for proteins, mixtures, or non-chemical substances. Example: UNII 'R16CO5Y76E' (aspirin) -> SMILES 'CC(=O)Oc1ccccc1C(O)=O'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "unii": {
+          "type": "string",
+          "description": "FDA UNII code for the chemical substance. Examples: 'R16CO5Y76E' (aspirin), '9100L32L2N' (ibuprofen), '4T6H12BN9U' (metformin), 'IY9XDZ35W2' (cisplatin)."
+        }
+      },
+      "required": ["unii"]
+    },
+    "fields": {
+      "operation": "get_structure"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string"},
+                "smiles": {"type": "string"},
+                "formula": {"type": "string"},
+                "molfile": {"type": "string"},
+                "inchiKey": {"type": "string"},
+                "mwt": {},
+                "charge": {},
+                "stereoChemistry": {"type": "string"},
+                "opticalActivity": {"type": "string"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"unii": "R16CO5Y76E"},
+      {"unii": "9100L32L2N"},
+      {"unii": "IY9XDZ35W2"}
+    ]
+  }
+]

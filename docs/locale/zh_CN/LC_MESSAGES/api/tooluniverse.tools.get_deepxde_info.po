@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_deepxde\\_info 模块"
 
 #: 03f81b848d10449697e99b7cd4c4d465 of tooluniverse.tools.get_deepxde_info:1
 msgid "get_deepxde_info"
-msgstr ""
+msgstr "获取_deepxde_信息"
 
 #: 119c90bb84a540529bee0dd8eb9c6c51 16219f6f38fe4bff89467a82b9945f55 of
 #: tooluniverse.tools.get_deepxde_info:3

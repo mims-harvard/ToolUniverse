@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_optlang\\_info 模块"
 #: d3610de3dc9d4be8b81fd78145f1e470 of tooluniverse.tools.get_optlang_info:1
 msgid "get_optlang_info"
 msgstr ""
+"get_optlang_info\n"
+"\n"
+"获取_optlang_信息"
 
 #: 1dfeed8a956a4f38ac68cc714626c962 5c6774c7605e4062b0bacbc90d1f3ebe of
 #: tooluniverse.tools.get_optlang_info:3

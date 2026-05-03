@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_disease\\_ids\\_by\\_name 模块"
 #: tooluniverse.tools.OpenTargets_get_disease_ids_by_name:1
 msgid "OpenTargets_get_disease_ids_by_name"
 msgstr ""
+"OpenTargets_get_disease_ids_by_name  \n"
+"获取疾病名称对应的ID"
 
 #: 3a7a015d8a6349c1b46a36ac63871c00 d0a592412dc94f73a867f4f0549d617c of
 #: tooluniverse.tools.OpenTargets_get_disease_ids_by_name:3

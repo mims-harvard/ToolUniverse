@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_gene\\_basic\\_info\\_by\\_ensembl\\_id �
 #: 9bb9ed203aae462ca3979d4e25d8aa33 of
 #: tooluniverse.tools.HPA_get_gene_basic_info_by_ensembl_id:1
 msgid "HPA_get_gene_basic_info_by_ensembl_id"
-msgstr ""
+msgstr "HPA_通过Ensembl ID获取基因基本信息"
 
 #: 153ae4432a174d95a8e5c5b18576c475 c2b458bd7e8a4a93af54785be54ffc89 of
 #: tooluniverse.tools.HPA_get_gene_basic_info_by_ensembl_id:3

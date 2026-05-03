@@ -533,10 +533,18 @@ def load_mcp_tools_to_tooluniverse(tu, server_urls: Optional[List[str]] = None):
             }
 
             # Add auto-loader to ToolUniverse
+            # Use lazy loading to get the MCPAutoLoaderTool class
+            from .tool_registry import get_tool_class_lazy
+
+            mcp_auto_loader_class = get_tool_class_lazy("MCPAutoLoaderTool")
+
+            if mcp_auto_loader_class is None:
+                raise ValueError("MCPAutoLoaderTool class not found in tool registry")
+
             tu.register_custom_tool(
-                tool_class=None,  # Will be loaded by MCPAutoLoaderTool
-                tool_type="MCPAutoLoaderTool",
-                config=loader_config,
+                tool_class=mcp_auto_loader_class,
+                tool_name="MCPAutoLoaderTool",
+                tool_config=loader_config,
             )
 
             print(f"✅ Added MCP auto-loader for {url}")

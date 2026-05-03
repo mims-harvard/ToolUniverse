@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.OpenTargets_get_chemical_probes_by_target_ensemblID:1
 msgid "OpenTargets_get_chemical_probes_by_target_ensemblID"
 msgstr ""
+"OpenTargets_get_chemical_probes_by_target_ensemblID  \n"
+"获取化学探针通过目标EnsemblID"
 
 #: e4f326cd215e4fffb9b87e30715a9dd8 e5c232d8d36a4f0fbbf241d3e76b8079 of
 #: tooluniverse.tools.OpenTargets_get_chemical_probes_by_target_ensemblID:3

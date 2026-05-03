@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_reference\\_info\\_by\\_drug\\_name 模�
 #: 71bebefcbe7a40a399f154decc23247e of
 #: tooluniverse.tools.FDA_get_reference_info_by_drug_name:1
 msgid "FDA_get_reference_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取参考信息"
 
 #: 8d5379d2bd4443b8a3b09a63797eb03f 8ff451d03a0b4f3ca9cd8cce101dfd15 of
 #: tooluniverse.tools.FDA_get_reference_info_by_drug_name:3

@@ -1,0 +1,152 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.mims-harvard/tooluniverse",
+  "description": "1000+ scientific tools for AI scientists: life science, reserach, literature, and more.",
+  "websiteUrl": "https://aiscientist.tools",
+  "repository": {
+    "url": "https://github.com/mims-harvard/ToolUniverse",
+    "source": "github"
+  },
+  "version": "1.1.11",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "tooluniverse",
+      "version": "1.1.11",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "tooluniverse-smcp-stdio"
+        },
+        {
+          "type": "positional",
+          "value": "--compact-mode",
+          "description": "Compact mode enabled by default: only exposes 4 core tools (tool finder, tool executor, etc.) to prevent context window overflow. All 1000+ tools remain accessible via the execute_tool function."
+        },
+        {
+          "type": "named",
+          "name": "--categories",
+          "valueHint": "CATEGORY",
+          "description": "Specific tool categories to load (e.g., uniprot ChEMBL opentarget pubmed). Omit to load all tools. See full list: https://zitniklab.hms.harvard.edu/ToolUniverse/tools/tools_config_index.html",
+          "isRepeated": true
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "OPENAI_API_KEY",
+          "description": "OpenAI API key for LLM-based tool finding and embedding features",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "description": "Anthropic API key for Claude-based features",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "GEMINI_API_KEY",
+          "description": "Google Gemini API key for Gemini-based features",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "OPENROUTER_API_KEY",
+          "description": "OpenRouter API key for accessing 100+ LLM models",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "AZURE_OPENAI_API_KEY",
+          "description": "Azure OpenAI API key (alternative to OpenAI)",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "HF_TOKEN",
+          "description": "HuggingFace token for accessing models and datasets",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "NCBI_API_KEY",
+          "description": "NCBI/PubMed API key for higher rate limits (10 req/sec vs 3 req/sec). Register at https://www.ncbi.nlm.nih.gov/account/",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "SEMANTIC_SCHOLAR_API_KEY",
+          "description": "Semantic Scholar API key for higher rate limits (100 req/sec vs 1 req/sec). Register at https://www.semanticscholar.org/product/api",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "BIOGRID_API_KEY",
+          "description": "BioGRID API key for protein-protein interaction queries. Register free at https://webservice.thebiogrid.org/",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "DISGENET_API_KEY",
+          "description": "DisGeNET API key for gene-disease association data. Register free at https://www.disgenet.org/",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "OMIM_API_KEY",
+          "description": "OMIM API key for Mendelian disease data. Register at https://omim.org/api",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "ONCOKB_API_TOKEN",
+          "description": "OncoKB API token for precision oncology annotations. Register at https://www.oncokb.org/apiAccess",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "NVIDIA_API_KEY",
+          "description": "NVIDIA NIM API key for AlphaFold2 structure prediction, molecular docking, and genomics tools. Get key at https://build.nvidia.com",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "USPTO_API_KEY",
+          "description": "USPTO API key for patent data access. Register at https://developer.uspto.gov/",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "UMLS_API_KEY",
+          "description": "UMLS API key for medical terminology and concept mapping. Register at https://uts.nlm.nih.gov/uts/",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "BRENDA_EMAIL",
+          "description": "BRENDA enzyme database login email. Register at https://www.brenda-enzymes.org/",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "BRENDA_PASSWORD",
+          "description": "BRENDA enzyme database login password",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.github.mims-harvard/publisher": {
+      "tool": "manual",
+      "maintainer": "Shanghua Gao <shanghuagao@gmail.com>",
+      "paper": "https://arxiv.org/abs/2509.23426"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+[
+  {
+    "type": "RCSBSearchTool",
+    "name": "PDB_search_similar_structures",
+    "description": "Search for protein structures similar to a given PDB ID or sequence using RCSB PDB structure similarity search. Supports sequence-based, structure-based, and text-based search. Suitable for antibodies, proteins, and other biologics. Use text search to find PDB IDs by drug name, protein name, or keywords.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "PDB ID (e.g., '1ABC'), protein sequence (amino acids), or search text (e.g., drug name, protein name, keyword). For structure search, provide PDB ID. For sequence search, provide amino acid sequence. For text search, provide drug name, protein name, or keyword."
+        },
+        "search_type": {
+          "type": "string",
+          "enum": [
+            "sequence",
+            "structure",
+            "text"
+          ],
+          "default": "sequence",
+          "description": "Type of search: 'sequence' for sequence-based similarity search, 'structure' for structure-based similarity search using PDB ID, 'text' for text-based search by name or keyword"
+        },
+        "similarity_threshold": {
+          "type": "number",
+          "default": 0.7,
+          "description": "Similarity threshold (0-1). Higher values return more similar structures. Values outside 0-1 will be clamped. For sequence search, this is the identity cutoff. For structure search, this is the structure similarity threshold. Not used for text search."
+        },
+        "max_results": {
+          "type": "integer",
+          "default": 20,
+          "description": "Maximum number of results to return (1-100). Values outside this range will be clamped."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The query used for search"
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Type of search performed"
+        },
+        "similarity_threshold": {
+          "type": "number",
+          "description": "Similarity threshold used (only for sequence/structure searches, null for text search)"
+        },
+        "total_found": {
+          "type": "integer",
+          "description": "Number of similar structures found"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pdb_id": {
+                "type": "string",
+                "description": "PDB ID of similar structure"
+              },
+              "rank": {
+                "type": "integer",
+                "description": "Rank of the result"
+              },
+              "score": {
+                "type": "number",
+                "description": "Similarity score (if available)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "hemoglobin",
+        "search_type": "text",
+        "similarity_threshold": 0.7,
+        "max_results": 5
+      }
+    ]
+  }
+]

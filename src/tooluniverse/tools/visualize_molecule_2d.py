@@ -59,20 +59,26 @@ def visualize_molecule_2d(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "smiles": smiles,
+            "inchi": inchi,
+            "molecule_name": molecule_name,
+            "width": width,
+            "height": height,
+            "output_format": output_format,
+            "show_atom_numbers": show_atom_numbers,
+            "show_bond_numbers": show_bond_numbers,
+            "include_stereo": include_stereo,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "visualize_molecule_2d",
-            "arguments": {
-                "smiles": smiles,
-                "inchi": inchi,
-                "molecule_name": molecule_name,
-                "width": width,
-                "height": height,
-                "output_format": output_format,
-                "show_atom_numbers": show_atom_numbers,
-                "show_bond_numbers": show_bond_numbers,
-                "include_stereo": include_stereo,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

@@ -1,0 +1,403 @@
+[
+  {
+    "name": "DNA_translate_reading_frames",
+    "type": "ScientificCalculatorTool",
+    "description": "Translate a DNA sequence to protein in all 3 forward reading frames and identify the longest ORF. Uses the standard genetic code (NCBI Code 1). Returns protein sequences for each frame, longest ORF per frame, and the best frame with longest uninterrupted protein. Use for: reading frame analysis, finding the correct ORF in an unknown sequence, comparing all three frames.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["translate_reading_frames"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A, T, G, C only). Case insensitive. Spaces and newlines are stripped."
+        },
+        "frame": {
+          "type": ["string", "null"],
+          "enum": ["1", "2", "3", "all", null],
+          "default": "all",
+          "description": "Reading frame to translate: '1', '2', '3', or 'all' (default). Frame 1 starts at position 0, frame 2 at position 1, frame 3 at position 2."
+        },
+        "genetic_code": {
+          "type": ["integer", "null"],
+          "default": 1,
+          "description": "NCBI genetic code number. Currently only 1 (standard) is supported."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "sequence_length": {"type": "integer"},
+            "frames": {
+              "type": "object",
+              "description": "Translation results per frame"
+            },
+            "best_frame": {"type": "integer"},
+            "best_orf": {"type": "string"},
+            "best_orf_length_aa": {"type": "integer"}
+          },
+          "required": ["sequence_length", "frames", "best_frame"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "translate_reading_frames",
+        "sequence": "ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAG"
+      },
+      {
+        "operation": "translate_reading_frames",
+        "sequence": "ATGAAACCCGGGTTTTAAATGCCCAAAGGG",
+        "frame": "1"
+      }
+    ]
+  },
+  {
+    "name": "MolecularFormula_analyze",
+    "type": "ScientificCalculatorTool",
+    "description": "Analyze a molecular formula to calculate molar mass, degrees of unsaturation (DoU), and elemental composition (mass percentages). OR determine empirical/molecular formula from combustion analysis data (masses of CO2, H2O produced from burning a sample). Supports elements: C, H, N, O, S, P, F, Cl, Br, I. Use for: formula analysis, combustion analysis problems, elemental composition, molecular weight calculation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["analyze_formula", "combustion_analysis"],
+          "description": "Operation: 'analyze_formula' to analyze a known formula, or 'combustion_analysis' to determine formula from combustion data."
+        },
+        "formula": {
+          "type": ["string", "null"],
+          "description": "Molecular formula string (e.g., 'C6H12O6', 'C8H9NO2'). Required for analyze_formula mode."
+        },
+        "sample_g": {
+          "type": ["number", "null"],
+          "description": "Mass of sample burned in grams. Required for combustion_analysis mode."
+        },
+        "CO2_g": {
+          "type": ["number", "null"],
+          "description": "Mass of CO2 collected in grams. Required for combustion_analysis mode."
+        },
+        "H2O_g": {
+          "type": ["number", "null"],
+          "description": "Mass of H2O collected in grams. Required for combustion_analysis mode."
+        },
+        "N2_g": {
+          "type": ["number", "null"],
+          "default": 0.0,
+          "description": "Mass of N2 collected in grams (optional, default 0)."
+        },
+        "molar_mass": {
+          "type": ["number", "null"],
+          "description": "Known molar mass in g/mol to determine molecular formula from empirical formula (optional, combustion mode only)."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "formula": {"type": "string"},
+            "molar_mass": {"type": "number"},
+            "degrees_of_unsaturation": {"type": "number"},
+            "dou_interpretation": {"type": "string"},
+            "elemental_composition": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "analyze_formula",
+        "formula": "C6H12O6"
+      },
+      {
+        "operation": "analyze_formula",
+        "formula": "C6H6"
+      },
+      {
+        "operation": "combustion_analysis",
+        "sample_g": 0.5,
+        "CO2_g": 0.7472,
+        "H2O_g": 0.1834
+      }
+    ]
+  },
+  {
+    "name": "EquilibriumSolver_calculate",
+    "type": "ScientificCalculatorTool",
+    "description": "Solve chemical equilibrium problems: simple Ksp dissolution, Ksp with complex formation (amphoterism), and common-ion effect. Uses numerical methods (Newton's method for complex systems, bisection for common-ion). Handles the full charge-balance equation for Ksp+Kf systems. Use for: solubility calculations, Ksp problems, common-ion effect, complex formation equilibria, amphoteric dissolution.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["ksp_simple", "ksp_complex", "common_ion"],
+          "description": "Problem type: 'ksp_simple' for basic dissolution, 'ksp_complex' for dissolution + complex formation, 'common_ion' for Ksp with added common ion."
+        },
+        "Ksp": {
+          "type": "number",
+          "description": "Solubility product constant (Ksp)."
+        },
+        "Kf": {
+          "type": ["number", "null"],
+          "description": "Formation constant for complex ion (required for ksp_complex mode)."
+        },
+        "stoich_cation": {
+          "type": ["integer", "null"],
+          "default": 1,
+          "description": "Stoichiometric coefficient 'a' for the cation in MaXb (default: 1)."
+        },
+        "stoich_anion": {
+          "type": ["integer", "null"],
+          "default": 1,
+          "description": "Stoichiometric coefficient 'b' for the anion in MaXb (default: 1)."
+        },
+        "common_ion_conc": {
+          "type": ["number", "null"],
+          "description": "Common ion concentration in mol/L (required for common_ion mode)."
+        }
+      },
+      "required": ["operation", "Ksp"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "problem_type": {"type": "string"},
+            "solubility_mol_per_L": {"type": "number"}
+          },
+          "required": ["solubility_mol_per_L"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "ksp_simple",
+        "Ksp": 1.8e-10,
+        "stoich_cation": 1,
+        "stoich_anion": 1
+      },
+      {
+        "operation": "ksp_complex",
+        "Ksp": 5.3e-27,
+        "Kf": 2e33,
+        "stoich_cation": 1,
+        "stoich_anion": 3
+      },
+      {
+        "operation": "common_ion",
+        "Ksp": 1.8e-10,
+        "stoich_cation": 1,
+        "stoich_anion": 1,
+        "common_ion_conc": 0.1
+      }
+    ]
+  },
+  {
+    "name": "EnzymeKinetics_calculate",
+    "type": "ScientificCalculatorTool",
+    "description": "Calculate enzyme kinetic parameters from experimental data. Supports: (1) Michaelis-Menten Km/Vmax determination via Lineweaver-Burk linearization and nonlinear grid-search fitting, (2) Hill coefficient analysis for cooperative binding, (3) Ki determination from inhibition data (competitive, uncompetitive, noncompetitive). No external dependencies. Use for: enzyme characterization, inhibitor Ki determination, cooperativity analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["michaelis_menten", "hill", "inhibition"],
+          "description": "Calculation type: 'michaelis_menten' for Km/Vmax, 'hill' for Hill coefficient, 'inhibition' for Ki."
+        },
+        "substrate_concs": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Substrate concentrations (at least 3 values). Must be positive."
+        },
+        "velocities": {
+          "type": ["array", "null"],
+          "items": {"type": "number"},
+          "description": "Measured velocities corresponding to substrate_concs. Required for michaelis_menten and hill modes."
+        },
+        "velocities_no_inhibitor": {
+          "type": ["array", "null"],
+          "items": {"type": "number"},
+          "description": "Velocities without inhibitor (required for inhibition mode)."
+        },
+        "velocities_with_inhibitor": {
+          "type": ["array", "null"],
+          "items": {"type": "number"},
+          "description": "Velocities with inhibitor (required for inhibition mode)."
+        },
+        "inhibitor_conc": {
+          "type": ["number", "null"],
+          "description": "Inhibitor concentration (required for inhibition mode)."
+        },
+        "inhibition_type": {
+          "type": ["string", "null"],
+          "enum": ["competitive", "uncompetitive", "noncompetitive", null],
+          "default": "competitive",
+          "description": "Type of inhibition (default: competitive)."
+        }
+      },
+      "required": ["operation", "substrate_concs"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "calculation_type": {"type": "string"},
+            "Km": {"type": "number"},
+            "Vmax": {"type": "number"}
+          },
+          "required": ["calculation_type"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "michaelis_menten",
+        "substrate_concs": [1, 2, 5, 10, 20],
+        "velocities": [0.5, 0.8, 1.2, 1.4, 1.5]
+      },
+      {
+        "operation": "hill",
+        "substrate_concs": [0.1, 0.5, 1, 2, 5, 10, 50],
+        "velocities": [0.02, 0.1, 0.2, 0.35, 0.6, 0.8, 0.95]
+      },
+      {
+        "operation": "inhibition",
+        "substrate_concs": [1, 2, 5, 10, 20],
+        "velocities_no_inhibitor": [0.5, 0.8, 1.2, 1.5, 1.7],
+        "velocities_with_inhibitor": [0.3, 0.5, 0.8, 1.0, 1.1],
+        "inhibitor_conc": 5,
+        "inhibition_type": "competitive"
+      }
+    ]
+  },
+  {
+    "name": "Statistics_test",
+    "type": "ScientificCalculatorTool",
+    "description": "Perform basic statistical tests using pure Python (no scipy/numpy required). Supports: (1) Chi-square goodness-of-fit test with p-value via gamma function, (2) Fisher's exact test for 2x2 contingency tables via hypergeometric distribution, (3) Simple linear regression (OLS) with R-squared, t-statistics, and p-values via incomplete beta function, (4) Two-sample t-test (Welch's) for comparing group means. Use for: hypothesis testing, contingency table analysis, regression analysis, group comparison.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["chi_square", "fisher_exact", "linear_regression", "t_test"],
+          "description": "Test type: 'chi_square' for goodness-of-fit, 'fisher_exact' for 2x2 tables, 'linear_regression' for OLS, 't_test' for two-sample Welch's t-test."
+        },
+        "observed": {
+          "type": ["array", "null"],
+          "items": {"type": "number"},
+          "description": "Observed counts/frequencies (required for chi_square)."
+        },
+        "expected": {
+          "type": ["array", "null"],
+          "items": {"type": "number"},
+          "description": "Expected counts/frequencies (required for chi_square). Will be rescaled to match observed total if totals differ."
+        },
+        "a": {
+          "type": ["integer", "null"],
+          "description": "Top-left cell of 2x2 table (required for fisher_exact)."
+        },
+        "b": {
+          "type": ["integer", "null"],
+          "description": "Top-right cell of 2x2 table (required for fisher_exact)."
+        },
+        "c": {
+          "type": ["integer", "null"],
+          "description": "Bottom-left cell of 2x2 table (required for fisher_exact)."
+        },
+        "d": {
+          "type": ["integer", "null"],
+          "description": "Bottom-right cell of 2x2 table (required for fisher_exact)."
+        },
+        "alternative": {
+          "type": ["string", "null"],
+          "enum": ["two-sided", "less", "greater", null],
+          "default": "two-sided",
+          "description": "Alternative hypothesis for Fisher's exact test (default: two-sided)."
+        },
+        "data_x": {
+          "type": ["array", "null"],
+          "items": {"type": "number"},
+          "description": "X values for linear_regression, or group 1 data for t_test."
+        },
+        "data_y": {
+          "type": ["array", "null"],
+          "items": {"type": "number"},
+          "description": "Y values for linear_regression, or group 2 data for t_test."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "test_type": {"type": "string"},
+            "p_value": {"type": "number"}
+          },
+          "required": ["test_type"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "chi_square",
+        "observed": [90, 110],
+        "expected": [100, 100]
+      },
+      {
+        "operation": "fisher_exact",
+        "a": 10,
+        "b": 5,
+        "c": 3,
+        "d": 20
+      },
+      {
+        "operation": "linear_regression",
+        "data_x": [1, 2, 3, 4, 5],
+        "data_y": [2.1, 4.0, 5.9, 8.1, 10.0]
+      },
+      {
+        "operation": "t_test",
+        "data_x": [5.1, 4.9, 5.2, 5.0, 4.8, 5.3],
+        "data_y": [6.1, 5.9, 6.2, 6.0, 5.8, 6.3]
+      }
+    ]
+  }
+]

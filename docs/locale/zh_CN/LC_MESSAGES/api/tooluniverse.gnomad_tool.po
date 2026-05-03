@@ -26,7 +26,7 @@ msgstr "tooluniverse.gnomad\\_tool 模块"
 
 #: eac2e35e0a8f437791690beff43a1d9b of tooluniverse.gnomad_tool.GnomadTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: fd93646537024604a6973c34c8edf27e of tooluniverse.gnomad_tool.GnomadTool:1
 msgid ""

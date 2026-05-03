@@ -3,7 +3,7 @@ Opentarget Tools
 
 **Configuration File**: ``opentarget_tools.json``
 **Tool Type**: Local
-**Tools Count**: 53
+**Tools Count**: 54
 
 This page contains all tools defined in the ``opentarget_tools.json`` configuration file.
 
@@ -795,6 +795,37 @@ Retrieve the mechanisms of action associated with a specific drug using chemblId
 
       query = {
           "name": "OpenTargets_get_drug_mechanisms_of_action_by_chemblId",
+          "arguments": {
+              "chemblId": "example_value"
+          }
+      }
+      result = tu.run(query)
+
+
+**OpenTargets_get_drug_names_by_chemblId** (Type: OpenTarget)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get drug generic name and brand names (trade names) based on ChEMBL ID. Returns the drug name (ty...
+
+.. dropdown:: OpenTargets_get_drug_names_by_chemblId tool specification
+
+   **Tool Information:**
+
+   * **Name**: ``OpenTargets_get_drug_names_by_chemblId``
+   * **Type**: ``OpenTarget``
+   * **Description**: Get drug generic name and brand names (trade names) based on ChEMBL ID. Returns the drug name (typically generic name), trade names (brand names), and synonyms.
+
+   **Parameters:**
+
+   * ``chemblId`` (string) (required)
+     The ChEMBL ID of the drug.
+
+   **Example Usage:**
+
+   .. code-block:: python
+
+      query = {
+          "name": "OpenTargets_get_drug_names_by_chemblId",
           "arguments": {
               "chemblId": "example_value"
           }

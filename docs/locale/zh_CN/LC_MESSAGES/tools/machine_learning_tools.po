@@ -410,28 +410,14 @@ msgid ""
 msgstr "``info_type``（字符串）（必填） 要检索的关于 hmmlearn 的信息类型"
 
 #: ../../tools/machine_learning_tools.rst:229 24fda37268994b4ba9962027ddd2e66a
-msgid "**get_hyperopt_info** (Type: PackageTool)"
-msgstr "**get_hyperopt_info**（类型：PackageTool）"
 
 #: ../../tools/machine_learning_tools.rst:231 0e9649323a474b2f8b5a2d1bbbc8ffa3
-msgid ""
-"Get comprehensive information about Hyperopt – distributed hyperparameter"
-" optimization"
-msgstr "获取关于 Hyperopt —— 分布式超参数优化的全面信息"
 
 #: ../../tools/machine_learning_tools.rst ce7d2d5ddb0742e68a93091050de9143
-msgid "get_hyperopt_info tool specification"
-msgstr "get_hyperopt_info 工具规格说明"
 
 #: ../../tools/machine_learning_tools.rst:237 9b9524a4760d4b56a3c0bdaec61d16a2
-msgid "**Name**: ``get_hyperopt_info``"
-msgstr "**名称**：``get_hyperopt_info``"
 
 #: ../../tools/machine_learning_tools.rst:239 7694634fa2874638a6f4af3732f8f8e1
-msgid ""
-"**Description**: Get comprehensive information about Hyperopt – "
-"distributed hyperparameter optimization"
-msgstr "**描述**：获取关于 Hyperopt —— 分布式超参数优化的全面信息"
 
 #: ../../tools/machine_learning_tools.rst:260 f618d66041ba4a519f2096e15f1f2249
 msgid "**get_imbalanced_learn_info** (Type: PackageTool)"

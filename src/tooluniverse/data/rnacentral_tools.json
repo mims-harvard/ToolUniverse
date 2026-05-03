@@ -1,0 +1,99 @@
+[
+  {
+    "name": "RNAcentral_search",
+    "type": "RNAcentralSearchTool",
+    "description": "Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Use to find accessions, types, species, and descriptions for ncRNA analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keyword, accession, or sequence-based query (per RNAcentral API)."
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of records per page (1–100)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "https://rnacentral.org/api/v1/rna/",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "RNAcentral rna list response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "count": {"type": "integer"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rnacentral_id": {"type": "string"},
+                  "description": {"type": "string"},
+                  "rna_type": {"type": "string"},
+                  "taxon": {"type": "object", "properties": {"scientific_name": {"type": "string"}, "taxid": {"type": "integer"}}}
+                }
+              }
+            }
+          }
+        },
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"query": "let-7", "page_size": 1},
+      {"query": "U6", "page_size": 1}
+    ],
+    "label": ["RNAcentral", "ncRNA", "Search"],
+    "metadata": {
+      "tags": ["rna", "mirna", "lncrna", "annotation"],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "RNAcentral_get_by_accession",
+    "type": "RNAcentralGetTool",
+    "description": "Retrieve a single RNAcentral entry by accession for detailed annotations and source cross-references. Use for cross-database ID mapping and metadata.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "RNAcentral accession (e.g., 'URS000075C808')."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://rnacentral.org/api/v1/rna/{accession}",
+      "format": "json"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "RNAcentral accession response",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"},
+        "url": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"accession": "URS000075C808"}
+    ],
+    "label": ["RNAcentral", "ncRNA", "Record"],
+    "metadata": {
+      "tags": ["rna", "accession", "annotation"],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  }
+]

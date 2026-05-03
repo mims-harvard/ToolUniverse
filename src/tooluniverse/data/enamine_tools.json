@@ -1,0 +1,152 @@
+[
+  {
+    "name": "Enamine_search_catalog",
+    "description": "Search Enamine compound catalog by keyword or name. Enamine is a leading supplier with 37B+ make-on-demand compounds (REAL database), 300K+ building blocks, and 3M+ screening compounds.",
+    "type": "EnamineTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_catalog"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query - compound name or keyword"
+        },
+        "catalog": {
+          "type": "string",
+          "description": "Catalog: REAL (make-on-demand), BB (building blocks), SCR (screening), all (default: all)",
+          "default": "all"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "pyridine"
+      }
+    ]
+  },
+  {
+    "name": "Enamine_get_compound",
+    "description": "Get compound details by Enamine ID. Returns structure, availability, pricing, and ordering information.",
+    "type": "EnamineTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_compound"
+        },
+        "enamine_id": {
+          "type": "string",
+          "description": "Enamine compound ID (e.g., Z1234567890)"
+        }
+      },
+      "required": [
+        "enamine_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "enamine_id": "Z1234567890"
+      }
+    ]
+  },
+  {
+    "name": "Enamine_search_smiles",
+    "description": "Search Enamine by chemical structure (SMILES). Supports exact match, substructure, and similarity search. Ideal for finding purchasable analogs of hit compounds.",
+    "type": "EnamineTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_smiles"
+        },
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string for the query compound"
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Search type: exact, substructure, similarity (default: similarity)",
+          "default": "similarity"
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "smiles": "c1cccnc1"
+      }
+    ]
+  },
+  {
+    "name": "Enamine_get_libraries",
+    "description": "Get information about available Enamine compound libraries including REAL database, building blocks, screening compounds, and specialized libraries (fragments, covalent).",
+    "type": "EnamineTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_libraries"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ]
+  }
+]

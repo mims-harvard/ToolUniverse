@@ -1,0 +1,130 @@
+[
+  {
+    "name": "KEGG_list_brite_hierarchies",
+    "type": "KEGGExtTool",
+    "description": "List all available KEGG BRITE hierarchy classification files. KEGG BRITE is a collection of hierarchical text (htext) files capturing functional hierarchies of various biological objects, especially those represented as KEGG objects. Returns hierarchy IDs and names including: ko00001 (KEGG Orthology), ko01000 (Enzymes), ko01001 (Protein kinases), ko01002 (Peptidases and inhibitors), ko02000 (Transporters), ko03000 (Transcription factors), ko04030 (G protein-coupled receptors), ko04040 (Ion channels), ko04050 (Cytokine receptors), ko04090 (CD molecules), br08001 (Compounds with biological roles), br08901 (KEGG pathway maps), and many more. Use the hierarchy ID with KEGG_get_brite_hierarchy to retrieve the full classification tree.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "list_brite"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "List of all KEGG BRITE hierarchies",
+          "properties": {
+            "hierarchy_count": {
+              "type": "integer",
+              "description": "Total number of hierarchies available"
+            },
+            "hierarchies": {
+              "type": "array",
+              "description": "Array of hierarchy objects",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hierarchy_id": {
+                    "type": "string",
+                    "description": "Hierarchy ID (e.g., 'ko01000', 'br08901')"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Hierarchy name (e.g., 'Enzymes', 'KEGG pathway maps')"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "name": "KEGG_get_brite_hierarchy",
+    "type": "KEGGExtTool",
+    "description": "Get the full hierarchical classification tree for a specific KEGG BRITE hierarchy in JSON format. Returns a nested tree structure where each node has a 'name' field and optionally a 'children' array of sub-nodes. This is extremely useful for functional classification of genes, proteins, enzymes, transporters, receptors, etc. Common hierarchies: 'ko01000' (Enzymes by EC number), 'ko01001' (Protein kinases), 'ko01002' (Peptidases and inhibitors), 'ko02000' (Transporters), 'ko03000' (Transcription factors), 'ko04030' (GPCRs), 'ko04040' (Ion channels), 'ko04050' (Cytokine receptors), 'ko04090' (CD molecules), 'ko01504' (Antimicrobial resistance genes), 'ko03200' (Viral proteins). The tree can be very large (e.g., ko00001 has thousands of entries).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hierarchy_id": {
+          "type": "string",
+          "description": "KEGG BRITE hierarchy ID. Examples: 'ko01000' (Enzymes), 'ko01001' (Protein kinases), 'ko02000' (Transporters), 'ko03000' (Transcription factors), 'ko04030' (GPCRs), 'ko04040' (Ion channels). Use KEGG_list_brite_hierarchies to see all available IDs."
+        }
+      },
+      "required": [
+        "hierarchy_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_brite_hierarchy"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Hierarchical tree structure with nested children",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Hierarchy ID (e.g., 'ko01000')"
+            },
+            "children": {
+              "type": "array",
+              "description": "Top-level classification categories, each with nested children",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Category name"
+                  },
+                  "children": {
+                    "type": "array",
+                    "description": "Sub-categories"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "hierarchy_id": "ko01000"
+      },
+      {
+        "hierarchy_id": "ko01001"
+      }
+    ]
+  }
+]

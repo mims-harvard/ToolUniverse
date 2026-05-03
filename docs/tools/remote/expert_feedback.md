@@ -1,19 +1,19 @@
 # Human Expert Feedback System
 ![Web UI](ui.jpg)
-## 📖 Overview
+##  Overview
 
 The Human Expert Feedback System is a sophisticated **human-in-the-loop** consultation platform designed for ToolUniverse. It enables AI systems to seamlessly consult with human experts when encountering complex decisions, particularly in medical and scientific domains where expert knowledge is crucial.
 
-### 🎯 Key Capabilities
+###  Key Capabilities
 
-- **🔄 Real-time Consultation**: Submit questions to human experts and receive responses in real-time
-- **🌐 Modern Web Interface**: Beautiful, responsive dashboard with auto-refresh for expert interactions
-- **⚡ MCP Integration**: Built on Model Context Protocol for seamless ToolUniverse integration
-- **🎨 Priority Management**: Support for normal, high, and urgent priority requests with visual indicators
-- **📱 Multi-Interface**: Web-based and terminal-based interfaces for different user preferences
-- **🔌 Flexible Deployment**: Auto-port discovery and custom configuration options
+- ** Real-time Consultation**: Submit questions to human experts and receive responses in real-time
+- ** Modern Web Interface**: Beautiful, responsive dashboard with auto-refresh for expert interactions
+- ** MCP Integration**: Built on Model Context Protocol for seamless ToolUniverse integration
+- ** Priority Management**: Support for normal, high, and urgent priority requests with visual indicators
+- ** Multi-Interface**: Web-based and terminal-based interfaces for different user preferences
+- ** Flexible Deployment**: Auto-port discovery and custom configuration options
 
-### 🩺 Use Cases
+###  Use Cases
 
 - **Medical AI**: Get expert medical opinions for complex patient cases
 - **Scientific Research**: Consult domain experts for research methodology and analysis
@@ -23,7 +23,7 @@ The Human Expert Feedback System is a sophisticated **human-in-the-loop** consul
 
 <img width="1504" height="729" alt="image" src="https://github.com/user-attachments/assets/f24229ca-fc6f-40ca-a0b4-073cf7df370f" />
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Install Package
 ```bash
@@ -55,15 +55,14 @@ tooluniverse-expert-feedback-web
 3. Enter Router-Expert server port (or press Enter for 9877)
 4. Web interface opens automatically at http://localhost:8090
 
-## 🏗️ Architecture
+## ️ Architecture
 
 **Dual Server Design:**
 - **Router-ToolUniverse Server (Port 9876)**: Handles ToolUniverse tool calls
 - **Router-Expert Server (Port 9877)**: Handles expert web interface communication
 - **Shared Data**: Both servers access the same expert system instance
 
-
-## 💻 Usage in ToolUniverse
+##  Usage in ToolUniverse
 
 **Set Environment Variable:**
 
@@ -80,16 +79,16 @@ tooluni.load_tools()
 
 # Submit question to expert
 result = tooluni.run({
-    "name": "expert_consult_human_expert",
-    "arguments": {
-        "question": "What is the recommended dosage of aspirin for elderly patients?",
-        "specialty": "cardiology",
-        "priority": "high"  # normal, high, urgent
-    }
+   "name": "expert_consult_human_expert",
+   "arguments": {
+       "question": "What is the recommended dosage of aspirin for elderly patients?",
+       "specialty": "cardiology",
+       "priority": "high"  # normal, high, urgent
+   }
 })
 ```
 
-## 🔧 Available Tools
+##  Available Tools
 
 | Tool | Purpose |
 |------|---------|
@@ -99,7 +98,7 @@ result = tooluni.run({
 | `submit_expert_response` | Submit expert responses |
 | `get_expert_status` | Get system status |
 
-## ⚙️ Command Options
+## ️ Command Options
 
 ```bash
 # Start server (auto port)
@@ -112,13 +111,13 @@ tooluniverse-expert-feedback --start-server --port 8000
 tooluniverse-expert-feedback-web
 ```
 
-## 📁 Files
+##  Files
 
 - **`tooluniverse-expert-feedback`** -  Router server
 - **`tooluniverse-expert-feedback-web`** - Launcher Router-Expert with auto-detection
 - **`simple_test.py`** - Basic test script
 
-## 🎨 Web Interface Features
+##  Web Interface Features
 
 - **Modern UI**: Gradient backgrounds, card layouts, responsive design
 - **Auto-refresh**: 15-second updates with countdown timer
@@ -128,4 +127,4 @@ tooluniverse-expert-feedback-web
 
 ---
 
-*🧑‍⚕️ Built for professionals and AI systems*
+*‍️ Built for professionals and AI systems*

@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_htmd\\_info 模块"
 
 #: 81e38740449c4ab0b8759d52a1fea1a4 of tooluniverse.tools.get_htmd_info:1
 msgid "get_htmd_info"
-msgstr ""
+msgstr "获取_htmd_信息"
 
 #: 187583daa1bf40049859b58135933de2 465c5ffd367e40269dd84c0453e1982e of
 #: tooluniverse.tools.get_htmd_info:3

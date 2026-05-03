@@ -1,0 +1,248 @@
+[
+  {
+    "name": "ProteomicsDB_get_protein_expression",
+    "type": "ProteomicsDBTool",
+    "description": "Get mass spectrometry-based protein expression data across human tissues, cell lines, and body fluids from ProteomicsDB. Given a UniProt accession (e.g., P04637 for TP53), returns quantitative expression values (log10 iBAQ or TOP3) for each biological source where the protein was detected. ProteomicsDB provides MS-based proteomics data complementary to antibody-based expression in HPA and cancer proteomics in PDC. Filter by tissue category (tissue, cell line, fluid) and calculation method (iBAQ, TOP3). Expression values are log10-transformed normalized intensities. Returns tissue name, group, category, and expression statistics per source.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_protein_expression"],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession for the protein (e.g., 'P04637' for TP53, 'P00533' for EGFR, 'P01116' for KRAS)"
+        },
+        "tissue_category": {
+          "type": "string",
+          "enum": ["tissue", "cell line", "cell_line", "fluid", "all"],
+          "description": "Filter by biological source category. 'tissue' for normal tissues, 'cell line' for cell lines, 'fluid' for body fluids, 'all' for everything. Default: all."
+        },
+        "calculation_method": {
+          "type": "string",
+          "enum": ["iBAQ", "TOP3"],
+          "description": "Protein quantification method. iBAQ (intensity-Based Absolute Quantification) or TOP3 (sum of top 3 peptide intensities). Default: iBAQ."
+        }
+      },
+      "required": ["operation", "uniprot_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {"type": "string", "description": "UniProt accession queried"},
+        "protein_name": {"type": "string", "description": "Full protein name"},
+        "gene_name": {"type": "string", "description": "Gene symbol"},
+        "calculation_method": {"type": "string", "description": "Quantification method used"},
+        "tissue_category": {"type": "string", "description": "Tissue category filter applied"},
+        "num_tissues": {"type": "integer", "description": "Number of tissues/sources with expression data"},
+        "expression_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tissue_id": {"type": "string", "description": "BTO ontology tissue identifier"},
+              "tissue_name": {"type": "string", "description": "Tissue or cell line name"},
+              "tissue_group": {"type": "string", "description": "Anatomical grouping (e.g., brain, liver, kidney)"},
+              "tissue_category": {"type": "string", "description": "Category: tissue, cell line, or fluid"},
+              "expression_value": {"type": ["number", "null"], "description": "Log10 normalized intensity (main value)"},
+              "median_expression": {"type": ["number", "null"], "description": "Median log10 normalized intensity"},
+              "min_expression": {"type": ["number", "null"], "description": "Minimum log10 normalized intensity"},
+              "max_expression": {"type": ["number", "null"], "description": "Maximum log10 normalized intensity"}
+            }
+          },
+          "description": "Expression records sorted by expression value descending"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_protein_expression",
+        "uniprot_id": "P04637"
+      },
+      {
+        "operation": "get_protein_expression",
+        "uniprot_id": "P04637",
+        "tissue_category": "tissue",
+        "calculation_method": "iBAQ"
+      }
+    ]
+  },
+  {
+    "name": "ProteomicsDB_search_proteins",
+    "type": "ProteomicsDBTool",
+    "description": "Search ProteomicsDB for proteins by gene symbol, UniProt accession, or protein name. ProteomicsDB contains mass spectrometry-based proteomics data for human (and other organisms) proteins. Returns matching protein entries with UniProt IDs, gene names, protein names, entry names, and molecular masses. Useful for finding the correct UniProt accession before querying expression data with ProteomicsDB_get_protein_expression. Searches across gene name, UniProt ID, and protein name fields simultaneously.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_proteins"],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search term - gene symbol (e.g., 'KRAS', 'TP53'), UniProt ID (e.g., 'P04637'), or protein name keyword (e.g., 'kinase', 'GTPase KRas')"
+        },
+        "organism_id": {
+          "type": "integer",
+          "description": "NCBI taxonomy ID for organism filter. Default: 9606 (human). Other options: 10090 (mouse), 10116 (rat)."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 100)"
+        }
+      },
+      "required": ["operation", "query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "description": "Search query used"},
+        "organism_id": {"type": "integer", "description": "Organism taxonomy ID filter"},
+        "num_results": {"type": "integer", "description": "Number of unique proteins found"},
+        "proteins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "protein_id": {"type": "integer", "description": "ProteomicsDB internal protein ID"},
+              "uniprot_id": {"type": "string", "description": "UniProt accession (e.g., P04637, P04637-2 for isoforms)"},
+              "entry_name": {"type": "string", "description": "UniProt entry name (e.g., P53_HUMAN)"},
+              "protein_name": {"type": "string", "description": "Full protein name"},
+              "gene_name": {"type": "string", "description": "Gene symbol"},
+              "organism_id": {"type": "integer", "description": "NCBI taxonomy ID"},
+              "mass_da": {"type": ["number", "null"], "description": "Molecular mass in Daltons"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_proteins",
+        "query": "KRAS"
+      },
+      {
+        "operation": "search_proteins",
+        "query": "P04637"
+      }
+    ]
+  },
+  {
+    "name": "ProteomicsDB_get_expression_summary",
+    "type": "ProteomicsDBTool",
+    "description": "Get a tissue expression summary for a protein from ProteomicsDB, showing the top tissues/cell lines/fluids ranked by MS-based expression level. Given a UniProt accession, returns the top N biological sources where the protein is most highly expressed (by iBAQ quantification), along with total counts of tissues, cell lines, and body fluids where the protein was detected. Useful for quickly identifying which tissues/cell lines express a protein most abundantly based on mass spectrometry evidence. Complements antibody-based tissue expression from HPA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_expression_summary"],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession for the protein (e.g., 'P04637' for TP53, 'P00533' for EGFR)"
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "Number of top tissues to return, ranked by expression level (default: 10)"
+        }
+      },
+      "required": ["operation", "uniprot_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {"type": "string", "description": "UniProt accession queried"},
+        "protein_name": {"type": "string", "description": "Full protein name"},
+        "gene_name": {"type": "string", "description": "Gene symbol"},
+        "total_sources": {"type": "integer", "description": "Total number of biological sources with data"},
+        "tissue_count": {"type": "integer", "description": "Number of tissues with expression data"},
+        "cell_line_count": {"type": "integer", "description": "Number of cell lines with expression data"},
+        "fluid_count": {"type": "integer", "description": "Number of body fluids with expression data"},
+        "top_n": {"type": "integer", "description": "Number of top sources returned"},
+        "top_expression": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tissue_id": {"type": "string"},
+              "tissue_name": {"type": "string"},
+              "tissue_group": {"type": "string"},
+              "tissue_category": {"type": "string"},
+              "expression_value": {"type": ["number", "null"]},
+              "median_expression": {"type": ["number", "null"]},
+              "min_expression": {"type": ["number", "null"]},
+              "max_expression": {"type": ["number", "null"]}
+            }
+          },
+          "description": "Top tissues/cell lines by expression level"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_expression_summary",
+        "uniprot_id": "P04637"
+      },
+      {
+        "operation": "get_expression_summary",
+        "uniprot_id": "P00533",
+        "top_n": 5
+      }
+    ]
+  },
+  {
+    "name": "ProteomicsDB_list_tissues",
+    "type": "ProteomicsDBTool",
+    "description": "List all available tissues, cell lines, and body fluids in ProteomicsDB with their BTO ontology IDs, names, categories, and anatomical groupings. Optionally filter by category (tissue, cell line, or fluid). Returns the full catalog of biological sources for which ProteomicsDB has mass spectrometry-based proteomics data, including tissue ID (BTO identifier), name, category, and anatomical group. Useful for discovering what biological sources are available before querying specific protein expression data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_tissues"],
+          "description": "Operation type"
+        },
+        "tissue_category": {
+          "type": "string",
+          "enum": ["tissue", "cell line", "cell_line", "fluid"],
+          "description": "Filter by biological source category. Optional - omit to list all categories."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "filter_category": {"type": ["string", "null"], "description": "Category filter applied (null if none)"},
+        "total_sources": {"type": "integer", "description": "Total number of sources returned"},
+        "category_counts": {
+          "type": "object",
+          "description": "Count of sources per category"
+        },
+        "tissues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tissue_id": {"type": "string", "description": "BTO tissue ontology ID"},
+              "name": {"type": "string", "description": "Tissue/cell line/fluid name"},
+              "category": {"type": "string", "description": "Category: tissue, cell line, or fluid"},
+              "group": {"type": "string", "description": "Anatomical grouping (e.g., brain, liver)"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_tissues",
+        "tissue_category": "fluid"
+      }
+    ]
+  }
+]

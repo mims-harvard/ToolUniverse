@@ -1,0 +1,188 @@
+[
+  {
+    "name": "Harmonizome_get_gene",
+    "description": "Get comprehensive gene information from Harmonizome (Ma'ayan Lab), which integrates data from 100+ genomics datasets covering gene expression, protein interactions, pathways, diseases, drug targets, and more. Returns gene symbol, name, NCBI Entrez ID, description, synonyms, and linked protein identifiers. Useful as a quick gene summary with curated descriptions from RefSeq. Example: TP53 returns description about tumor suppressor protein, NCBI ID 7157, synonyms [TRP53, LFS1, P53, BMFS5, BCC7], and linked UniProt protein P53_HUMAN.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Official gene symbol (case-insensitive). Examples: 'TP53', 'BRCA1', 'EGFR', 'KRAS', 'CDK2'."
+        }
+      },
+      "required": ["gene_symbol"]
+    },
+    "fields": {
+      "endpoint": "get_gene"
+    },
+    "type": "HarmonizomeTool",
+    "test_examples": [
+      {"gene_symbol": "TP53"},
+      {"gene_symbol": "BRCA1"}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "symbol": {"type": "string"},
+        "name": {"type": "string"},
+        "ncbi_entrez_gene_id": {"type": "integer"},
+        "ncbi_entrez_gene_url": {"type": "string"},
+        "description": {"type": ["string", "null"]},
+        "synonyms": {"type": "array", "items": {"type": "string"}},
+        "proteins": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "symbol": {"type": "string"},
+              "href": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "Harmonizome_list_datasets",
+    "description": "List all 100+ integrated genomics datasets available in Harmonizome (Ma'ayan Lab). Returns dataset names that can be used to explore gene-gene set associations. Covers gene expression (Allen Brain Atlas, GTEx, BioGPS, CCLE, TCGA), pathways (BioCarta, KEGG, Reactome, WikiPathways), protein interactions (BioGRID, PPI Hub), gene regulation (ChEA, ENCODE, JASPAR), drug targets (DrugBank, CTD), disease associations (OMIM, ClinVar, GAD, GWAS), phenotypes (MGI, HPO), and more.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "list_datasets"
+    },
+    "type": "HarmonizomeTool",
+    "test_examples": [{}],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "href": {"type": "string"}
+        }
+      }
+    }
+  },
+  {
+    "name": "Harmonizome_get_dataset",
+    "description": "Get detailed information about a specific dataset integrated in Harmonizome (Ma'ayan Lab). Returns the dataset description, association type, measurement method, attribute type, PubMed references, and a catalog of gene sets within the dataset. Use Harmonizome_list_datasets first to find available dataset names. Example: 'CTD Gene-Disease Associations' returns 5218 gene sets with curated disease-gene associations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_name": {
+          "type": "string",
+          "description": "Exact dataset name from Harmonizome. Examples: 'CTD Gene-Disease Associations', 'KEGG Pathways', 'BioGRID Protein-Protein Interactions'. Use Harmonizome_list_datasets to find names."
+        },
+        "gene_set_limit": {
+          "type": "integer",
+          "description": "Maximum number of gene set names to return (default: 50)."
+        }
+      },
+      "required": ["dataset_name"]
+    },
+    "fields": {
+      "endpoint": "get_dataset"
+    },
+    "type": "HarmonizomeTool",
+    "test_examples": [
+      {"dataset_name": "CTD Gene-Disease Associations"},
+      {"dataset_name": "KEGG Pathways", "gene_set_limit": 10}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "name": {"type": ["string", "null"]},
+        "description": {"type": ["string", "null"]},
+        "association": {"type": ["string", "null"]},
+        "measurement": {"type": ["string", "null"]},
+        "attribute_type": {"type": ["string", "null"]},
+        "attribute_group": {"type": ["string", "null"]},
+        "dataset_group": {"type": ["string", "null"]},
+        "pubmed_ids": {"type": "array", "items": {"type": ["integer", "string"]}},
+        "gene_sets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"}
+            }
+          }
+        },
+        "total_gene_sets": {"type": "integer"}
+      }
+    }
+  },
+  {
+    "name": "Harmonizome_search",
+    "description": "Search Harmonizome across genes, datasets, or attributes by keyword. For gene search, returns matching gene symbols with names and NCBI IDs via exact lookup and suggest API. For dataset search, filters the 100+ dataset catalog by keyword. For attribute search, returns auto-complete suggestions. Use entity_type to control what is searched.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Examples: 'TP53', 'BRCA1', 'kinase', 'expression', 'pathway'."
+        },
+        "entity_type": {
+          "type": "string",
+          "description": "What to search for: 'gene' (default), 'dataset', or 'attribute'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default: 20)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "search"
+    },
+    "type": "HarmonizomeTool",
+    "test_examples": [
+      {"query": "TP53", "entity_type": "gene"},
+      {"query": "expression", "entity_type": "dataset", "limit": 5}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {}
+    }
+  },
+  {
+    "name": "Harmonizome_search_genes",
+    "description": "Search for genes by keyword in Harmonizome (Ma'ayan Lab). Returns matching gene symbols that can be used with Harmonizome_get_gene for detailed information. Note: Harmonizome API does not support server-side text filtering; this endpoint returns a paginated list from the gene catalog. Use Harmonizome_search with entity_type='gene' for keyword-based gene search.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keyword. Examples: 'kinase', 'tumor suppressor', 'receptor'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results to return (default: 20)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "search_genes"
+    },
+    "type": "HarmonizomeTool",
+    "test_examples": [
+      {"query": "kinase"},
+      {"query": "tumor suppressor", "limit": 10}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "symbol": {"type": "string"},
+          "href": {"type": "string"}
+        }
+      }
+    }
+  }
+]

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gnomAD\\_query\\_variant 模块"
 #: aa56cb223e6f4088ab42cab5dc2e2d8f of
 #: tooluniverse.tools.gnomAD_query_variant:1
 msgid "gnomAD_query_variant"
-msgstr ""
+msgstr "gnomAD_查询变异"
 
 #: 11d7194b913f41b09d9d8448886a2f79 f3e30c5ff3eb43dd9655410a21b0df1d of
 #: tooluniverse.tools.gnomAD_query_variant:3

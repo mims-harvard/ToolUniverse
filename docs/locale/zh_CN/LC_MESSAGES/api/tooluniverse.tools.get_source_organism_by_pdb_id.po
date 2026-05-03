@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_source\\_organism\\_by\\_pdb\\_id 模块"
 #: dade23fc907849d1acd87953acb179b4 of
 #: tooluniverse.tools.get_source_organism_by_pdb_id:1
 msgid "get_source_organism_by_pdb_id"
-msgstr ""
+msgstr "get_source_organism_by_pdb_id 获取源生物体信息通过PDB ID"
 
 #: 0e581685f60b4fb8bc7c23194aabe24e b718561ddbcf4684a33484be0c2c648e of
 #: tooluniverse.tools.get_source_organism_by_pdb_id:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.PubChem\\_get\\_CID\\_by\\_compound\\_name 模块"
 #: 5d7468935794435f9056cdfcdb36f85b of
 #: tooluniverse.tools.PubChem_get_CID_by_compound_name:1
 msgid "PubChem_get_CID_by_compound_name"
-msgstr ""
+msgstr "PubChem_通过化合物名称获取CID"
 
 #: 6cabcb83f2624c46b68ca01b28e30d24 84edb47d7c824ab29b425c4ed7e1a9e9 of
 #: tooluniverse.tools.PubChem_get_CID_by_compound_name:3

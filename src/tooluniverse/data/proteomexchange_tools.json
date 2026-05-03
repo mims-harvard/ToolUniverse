@@ -1,0 +1,233 @@
+[
+  {
+    "name": "ProteomeXchange_get_dataset",
+    "description": "Get detailed metadata for a ProteomeXchange proteomics dataset by PX identifier. Returns title, species, instruments, publications (PubMed/DOI), file count, and cross-references to partner repositories (PRIDE, MassIVE, PeptideAtlas, jPOST). ProteomeXchange is the central hub for proteomics data sharing. Example: PXD000001 returns the first ProteomeXchange dataset (Erwinia carotovora TMT LC-MS/MS from Cambridge).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "px_id": {
+          "type": "string",
+          "description": "ProteomeXchange dataset identifier (PXD format). Examples: 'PXD000001' (first PX dataset), 'PXD000561' (human proteome map)."
+        }
+      },
+      "required": [
+        "px_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_dataset"
+    },
+    "type": "ProteomeXchangeTool",
+    "test_examples": [
+      {
+        "px_id": "PXD000001"
+      },
+      {
+        "px_id": "PXD000561"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "px_id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "species": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "identifiers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "instruments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "publications": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pubmed_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "doi": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "file_count": {
+                  "type": "integer"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ProteomeXchange_search_datasets",
+    "description": "Search ProteomeXchange proteomics datasets via the MassIVE PROXI interface. Returns dataset accessions, titles, and species. ProteomeXchange aggregates data from PRIDE, MassIVE, PeptideAtlas, jPOST, and iProX. Useful for finding proteomics studies related to specific organisms, diseases, or proteins.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional search filter (dataset accession or keyword). Examples: 'MSV000091816', 'PXD'. Leave empty to list recent datasets."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum results to return (1-50, default 10)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "search_datasets"
+    },
+    "type": "ProteomeXchangeTool",
+    "test_examples": [
+      {
+        "limit": 5
+      },
+      {
+        "query": "PXD",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_returned": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

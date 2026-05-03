@@ -32,7 +32,7 @@ msgstr ""
 #: 378ea363cc424febb2ae994188969259 of
 #: tooluniverse.tools.FAERS_count_additive_reports_by_reporter_country:1
 msgid "FAERS_count_additive_reports_by_reporter_country"
-msgstr ""
+msgstr "FAERS_按报告者国家分类的附加报告数量"
 
 #: 6a9bb5aa5fdf4bca9b1c2e3538ba21aa e0177046da544b618ccdd632a8c032b5 of
 #: tooluniverse.tools.FAERS_count_additive_reports_by_reporter_country:3

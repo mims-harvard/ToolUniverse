@@ -1,0 +1,426 @@
+[
+  {
+    "name": "ITIS_search_by_scientific_name",
+    "description": "Search the ITIS (Integrated Taxonomic Information System) database by scientific name. ITIS is the authoritative US taxonomic database covering plants, animals, fungi, and microbes worldwide. Returns matching taxa with their TSN (Taxonomic Serial Number), kingdom, and authority. Example: 'Homo sapiens' returns the human TSN (180092) with Linnaeus, 1758 as authority.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "scientific_name": {
+          "type": "string",
+          "description": "Scientific name to search for (genus, species, or binomial). Examples: 'Homo sapiens', 'Canis lupus', 'Drosophila melanogaster', 'Escherichia coli', 'Quercus'."
+        }
+      },
+      "required": [
+        "scientific_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_scientific"
+    },
+    "type": "ITISTool",
+    "test_examples": [
+      {
+        "scientific_name": "Homo sapiens"
+      },
+      {
+        "scientific_name": "Drosophila melanogaster"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tsn": {
+                    "type": "string",
+                    "description": "Taxonomic Serial Number (unique ITIS identifier)"
+                  },
+                  "combined_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Full scientific name"
+                  },
+                  "author": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic authority (author, year)"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Kingdom classification"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ITIS_search_by_common_name",
+    "description": "Search the ITIS (Integrated Taxonomic Information System) database by common/vernacular name. Returns matching taxa with their TSN and the language of the common name. Useful for finding the scientific classification of organisms known by their everyday names. Example: 'bald eagle' returns Haliaeetus leucocephalus (TSN 175420).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "common_name": {
+          "type": "string",
+          "description": "Common or vernacular name to search for. Examples: 'bald eagle', 'chimpanzee', 'blue whale', 'corn', 'honey bee'."
+        }
+      },
+      "required": [
+        "common_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_common"
+    },
+    "type": "ITISTool",
+    "test_examples": [
+      {
+        "common_name": "chimpanzee"
+      },
+      {
+        "common_name": "bald eagle"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tsn": {
+                    "type": "string",
+                    "description": "Taxonomic Serial Number"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common name found"
+                  },
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Language of the common name"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ITIS_get_hierarchy",
+    "description": "Get the full taxonomic hierarchy for an organism by its ITIS TSN (Taxonomic Serial Number). Returns the complete classification from Kingdom down to the queried taxon level, including intermediate ranks like Phylum, Class, Order, Family, Genus. Useful for understanding evolutionary relationships and classification. Example: TSN 180092 (Homo sapiens) returns: Animalia > Chordata > Mammalia > Primates > Hominidae > Homo > Homo sapiens.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tsn": {
+          "type": "string",
+          "description": "ITIS Taxonomic Serial Number. Examples: '180092' (Homo sapiens), '180091' (Homo), '573082' (Pan troglodytes), '174371' (Drosophila melanogaster)."
+        }
+      },
+      "required": [
+        "tsn"
+      ]
+    },
+    "fields": {
+      "endpoint": "hierarchy"
+    },
+    "type": "ITISTool",
+    "test_examples": [
+      {
+        "tsn": "180092"
+      },
+      {
+        "tsn": "174371"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tsn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "TSN of this rank"
+                  },
+                  "taxon_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxon name at this rank"
+                  },
+                  "rank_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic rank (Kingdom, Phylum, Class, etc.)"
+                  },
+                  "parent_tsn": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parent TSN"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_tsn": {
+                  "type": "string"
+                },
+                "hierarchy_depth": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ITIS_get_full_record",
+    "description": "Get the complete taxonomic record from ITIS for a given TSN (Taxonomic Serial Number). Returns scientific name, authority, taxonomic rank, usage status (valid/invalid), common names in multiple languages, and parent TSN. Provides comprehensive metadata needed for proper species identification and citation. Example: TSN 180092 returns Homo sapiens Linnaeus, 1758 with common names Human/Humans/man.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tsn": {
+          "type": "string",
+          "description": "ITIS Taxonomic Serial Number. Examples: '180092' (Homo sapiens), '573082' (Pan troglodytes), '174371' (Drosophila melanogaster), '180130' (Canis lupus familiaris)."
+        }
+      },
+      "required": [
+        "tsn"
+      ]
+    },
+    "fields": {
+      "endpoint": "full_record"
+    },
+    "type": "ITISTool",
+    "test_examples": [
+      {
+        "tsn": "180092"
+      },
+      {
+        "tsn": "573082"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "tsn": {
+                  "type": "string",
+                  "description": "Taxonomic Serial Number"
+                },
+                "scientific_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Full scientific name"
+                },
+                "kingdom": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Kingdom"
+                },
+                "author": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxonomic authority"
+                },
+                "usage_rating": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Usage status (valid/invalid/accepted)"
+                },
+                "common_names": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "language": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Common names in various languages"
+                },
+                "parent_tsn": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Parent taxon TSN"
+                },
+                "rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxonomic rank"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_tsn": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

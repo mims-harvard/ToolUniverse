@@ -32,7 +32,7 @@ msgstr ""
 #: 1bd34a070ffb4d63b24b484b3ce48c96 of
 #: tooluniverse.tools.OpenTargets_get_drug_withdrawn_blackbox_status_by_chemblId:1
 msgid "OpenTargets_get_drug_withdrawn_blackbox_status_by_chemblId"
-msgstr ""
+msgstr "OpenTargets_根据ChemblId获取药物撤市黑匣子状态"
 
 #: bf9e20fc94b7459cb7aa7c7e8e1da0f4 fb2f338307fe4c5ab66fc97bf4850d9f of
 #: tooluniverse.tools.OpenTargets_get_drug_withdrawn_blackbox_status_by_chemblId:3

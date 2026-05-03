@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_disease\\_synonyms\\_by\\_efoId �
 #: 33492e3696fb42f1a6abde3f53405659 of
 #: tooluniverse.tools.OpenTargets_get_disease_synonyms_by_efoId:1
 msgid "OpenTargets_get_disease_synonyms_by_efoId"
-msgstr ""
+msgstr "OpenTargets_通过EFO ID获取疾病同义词"
 
 #: 3831909107374850993d58ca8aa1f31c 4cf4a53a88c845d6897799a68cbe222e of
 #: tooluniverse.tools.OpenTargets_get_disease_synonyms_by_efoId:3

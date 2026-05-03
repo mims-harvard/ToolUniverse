@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_poretools\\_info 模块"
 
 #: a9bb12c311b7403da83f395ccb3ffad7 of tooluniverse.tools.get_poretools_info:1
 msgid "get_poretools_info"
-msgstr ""
+msgstr "获取_poretools_信息"
 
 #: 083224c2be204f9c9579341301248e82 65691c58501f4886b18212befddc14e3 of
 #: tooluniverse.tools.get_poretools_info:3

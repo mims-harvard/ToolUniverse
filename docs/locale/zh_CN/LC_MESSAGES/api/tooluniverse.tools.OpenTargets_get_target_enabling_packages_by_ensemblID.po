@@ -32,7 +32,7 @@ msgstr ""
 #: c64ebdad233e4818aa60858c6124fb85 of
 #: tooluniverse.tools.OpenTargets_get_target_enabling_packages_by_ensemblID:1
 msgid "OpenTargets_get_target_enabling_packages_by_ensemblID"
-msgstr ""
+msgstr "OpenTargets_通过EnsemblID获取靶点激活包"
 
 #: 5571b4f23a2c4f91b2839143a50f117a 6bc479548ccb4d7a9ffae7072314b287 of
 #: tooluniverse.tools.OpenTargets_get_target_enabling_packages_by_ensemblID:3

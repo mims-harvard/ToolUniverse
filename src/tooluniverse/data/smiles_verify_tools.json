@@ -1,0 +1,73 @@
+[
+  {
+    "name": "SMILES_verify",
+    "type": "SMILESVerifyTool",
+    "description": "Parse a SMILES string without RDKit and compute molecular properties: molecular weight, molecular formula, heavy atom count, total atom count, valence electron count, formal charge, ring count, and degrees of unsaturation. Optionally verify computed values against expected constraints (MW, heavy atoms, valence electrons, formula). Supports organic subset atoms (C, N, O, S, P, F, Cl, Br, I), bracket atoms with charges and explicit H, aromatic notation (lowercase), and ring closures. Useful for SMILES validation, property verification, and lightweight cheminformatics without RDKit.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string to parse and verify (e.g., 'c1ccccc1' for benzene, 'CC(=O)O' for acetic acid)"
+        },
+        "expected_mw": {
+          "type": "number",
+          "description": "Optional expected molecular weight to verify against (tolerance +/- 0.5 Da)"
+        },
+        "expected_heavy_atoms": {
+          "type": "integer",
+          "description": "Optional expected heavy atom count to verify against"
+        },
+        "expected_valence_electrons": {
+          "type": "integer",
+          "description": "Optional expected total valence electron count to verify against"
+        },
+        "expected_formula": {
+          "type": "string",
+          "description": "Optional expected molecular formula string to verify against (e.g., 'C6H6')"
+        }
+      },
+      "required": ["smiles"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "smiles": {"type": "string"},
+                "molecular_formula": {"type": "string"},
+                "molecular_weight": {"type": "number"},
+                "heavy_atom_count": {"type": "integer"},
+                "valence_electrons": {"type": "integer"},
+                "formal_charge": {"type": "integer"},
+                "ring_count": {"type": "integer"},
+                "degrees_of_unsaturation": {"type": "number"},
+                "constraint_checks": {"type": "array"},
+                "all_constraints_met": {"type": "boolean"}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "smiles": "c1ccccc1"
+      },
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+        "expected_formula": "C9H8O4"
+      }
+    ]
+  }
+]

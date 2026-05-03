@@ -1,28 +1,42 @@
 {
-    "mcpautoloadertool_defaults": {
-        "transport": "http",
-        "auto_register": true,
-        "tool_prefix": "mcp_",
-        "selected_tools": null,
-        "timeout": 30,
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "operation": {
-                    "type": "string",
-                    "enum": ["discover", "generate_configs", "call_tool"],
-                    "description": "The operation to perform: discover tools, generate configs, or call a tool directly"
-                },
-                "tool_name": {
-                    "type": "string",
-                    "description": "Name of the MCP tool to call (required for call_tool operation)"
-                },
-                "tool_arguments": {
-                    "type": "object",
-                    "description": "Arguments to pass to the MCP tool (for call_tool operation)"
-                }
-            },
-            "required": ["operation"]
+  "mcpautoloadertool_defaults": {
+    "transport": "http",
+    "auto_register": true,
+    "tool_prefix": "mcp_",
+    "selected_tools": null,
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "discover",
+            "generate_configs",
+            "call_tool"
+          ],
+          "description": "The operation to perform: discover tools, generate configs, or call a tool directly"
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Name of the MCP tool to call (required for call_tool operation)"
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Arguments to pass to the MCP tool (for call_tool operation)"
         }
+      },
+      "required": [
+        "operation"
+      ]
     }
+  },
+  "test_examples": [
+    {}
+  ],
+  "return_schema": {
+    "type": "object",
+    "description": "Output of the tool execution.",
+    "properties": {}
+  }
 }

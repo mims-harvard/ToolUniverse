@@ -21,11 +21,12 @@ class GWASGeneSearch(BaseTool):
     def run(self, arguments):
         gene_name = arguments.get("gene_name")
         if not gene_name:
-            return {"error": "Missing required parameter: gene_name"}
+            return {"status": "error", "error": "Missing required parameter: gene_name"}
 
         # Search for associations by gene name
+        size = int(arguments.get("size", 5))
         url = f"{self.base_url}/v2/associations"
-        params = {"mapped_gene": gene_name, "size": 20, "page": 0}
+        params = {"mapped_gene": gene_name, "size": size, "page": 0}
 
         try:
             response = self.session.get(url, params=params, timeout=30)
@@ -40,9 +41,7 @@ class GWASGeneSearch(BaseTool):
             return {
                 "gene_name": gene_name,
                 "association_count": len(associations),
-                "associations": (
-                    associations[:5] if associations else []
-                ),  # Return first 5
+                "associations": associations,
                 "total_found": (
                     data.get("page", {}).get("totalElements", 0)
                     if "page" in data
@@ -51,6 +50,6 @@ class GWASGeneSearch(BaseTool):
             }
 
         except requests.exceptions.RequestException as e:
-            return {"error": f"Request failed: {str(e)}"}
+            return {"status": "error", "error": f"Request failed: {str(e)}"}
         except Exception as e:
-            return {"error": f"Unexpected error: {str(e)}"}
+            return {"status": "error", "error": f"Unexpected error: {str(e)}"}

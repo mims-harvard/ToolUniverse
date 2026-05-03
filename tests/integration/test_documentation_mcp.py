@@ -22,6 +22,8 @@ class TestToolUniverseMCPIntegration:
         """Setup ToolUniverse instance for each test."""
         self.tu = ToolUniverse()
         self.tu.load_tools()
+        yield
+        self.tu.close()
 
     def test_mcp_server_creation_real(self):
         """Test real MCP server creation and basic functionality."""

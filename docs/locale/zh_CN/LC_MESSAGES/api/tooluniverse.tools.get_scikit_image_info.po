@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_scikit\\_image\\_info 模块"
 #: a6b6e11a5fe44bbda0eb1a08a5c436cc of
 #: tooluniverse.tools.get_scikit_image_info:1
 msgid "get_scikit_image_info"
-msgstr ""
+msgstr "get_scikit_image_info 获取scikit图像信息"
 
 #: 5a553b597db84c079e9cfc838fed7b01 60fea7414c214f558ae7c0d916e6eebd of
 #: tooluniverse.tools.get_scikit_image_info:3
@@ -71,4 +71,4 @@ msgstr "返回类型"
 #: 540e2bb8f8fd4492b815089a769053ac of
 #: tooluniverse.tools.get_scikit_image_info.get_scikit_image_info:12
 msgid ":py:class:`Any`"
-msgstr ""
+msgstr ":py:class:`任意`"

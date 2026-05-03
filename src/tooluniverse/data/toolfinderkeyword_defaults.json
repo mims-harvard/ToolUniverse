@@ -1,34 +1,46 @@
 {
-    "toolfinderkeyword_defaults": {
-        "exclude_tools": [
-            "Tool_RAG",
-            "Tool_Finder",
-            "Finish",
-            "CallAgent",
-            "ToolFinderLLM",
-            "ToolFinderKeyword"
-        ],
-        "include_categories": null,
-        "exclude_categories": null,
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query describing the desired functionality"
-                },
-                "categories": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional list of tool categories to filter by"
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Maximum number of tools to return (default: 10)",
-                    "default": 10
-                }
-            },
-            "required": ["query"]
+  "toolfinderkeyword_defaults": {
+    "exclude_tools": [
+      "Tool_RAG",
+      "Tool_Finder",
+      "Finish",
+      "CallAgent",
+      "ToolFinderLLM",
+      "ToolFinderKeyword"
+    ],
+    "include_categories": null,
+    "exclude_categories": null,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query describing the desired functionality"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional list of tool categories to filter by"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of tools to return (default: 10)",
+          "default": 10
         }
+      },
+      "required": [
+        "query"
+      ]
     }
+  },
+  "test_examples": [
+    {}
+  ],
+  "return_schema": {
+    "type": "object",
+    "description": "Output of the tool execution.",
+    "properties": {}
+  }
 }

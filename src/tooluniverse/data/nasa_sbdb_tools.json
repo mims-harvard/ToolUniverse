@@ -1,0 +1,292 @@
+[
+  {
+    "name": "NASASBDB_get_body",
+    "description": "Get physical and orbital data for an asteroid, comet, or small solar system body from NASA's Small Body Database (SBDB). Returns object classification (asteroid/comet type), orbital class (NEO, MBA, Centaur, TNO, etc.), physical parameters (magnitude, size estimates), and detailed orbital elements. SBDB catalogs 1.3 million+ small bodies. Search by name (e.g., 'Ceres', 'Halley', 'Apophis'), number (e.g., '433' for Eros), or provisional designation (e.g., '2020 SO').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sstr": {
+          "type": "string",
+          "description": "Small body identifier: name, number, or designation. Examples: 'Ceres' (1 Ceres), '433' (433 Eros), 'Apophis' (99942 Apophis), 'Bennu' (101955 Bennu), 'Halley' (1P/Halley comet), '2020 SO', '67P' (Churyumov-Gerasimenko)"
+        },
+        "phys-par": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Whether to include physical parameters: 'true' (default) or 'false'"
+        }
+      },
+      "required": [
+        "sstr"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://ssd-api.jpl.nasa.gov/sbdb.api",
+      "params": {
+        "full-prec": "true"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "sstr": "Ceres",
+        "phys-par": "true"
+      },
+      {
+        "sstr": "Apophis",
+        "phys-par": "true"
+      },
+      {
+        "sstr": "433"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Small body database record",
+          "properties": {
+            "object": {
+              "type": "object",
+              "description": "Object identification and classification",
+              "properties": {
+                "des": {
+                  "type": "string",
+                  "description": "Primary designation"
+                },
+                "fullname": {
+                  "type": "string",
+                  "description": "Full name (e.g., '1 Ceres (A801 AA)')"
+                },
+                "shortname": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "kind": {
+                  "type": "string",
+                  "description": "Object kind: 'an' (numbered asteroid), 'au' (unnumbered asteroid), 'cn' (numbered comet), 'cu' (unnumbered comet)"
+                },
+                "neo": {
+                  "type": "boolean",
+                  "description": "Near-Earth Object classification"
+                },
+                "pha": {
+                  "type": "boolean",
+                  "description": "Potentially Hazardous Asteroid classification"
+                },
+                "spkid": {
+                  "type": "string",
+                  "description": "JPL SPK body ID"
+                },
+                "orbit_class": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Orbit class name (e.g., 'Main-belt Asteroid', 'Near-Earth Object, Atira')"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "phys_par": {
+              "type": "array",
+              "description": "Physical parameters list",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Parameter name (H=absolute magnitude, G=slope, diameter, albedo, rot_per)"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sigma": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "desc": {
+                    "type": "string"
+                  },
+                  "ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "orbit": {
+              "type": "object",
+              "description": "Orbital elements and solution details"
+            },
+            "signature": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NASASBDB_close_approaches",
+    "description": "Query NASA's Close Approach Data (CAD) API for asteroids and comets making close approaches to Earth or other planets. Returns upcoming or historical close approaches with distances, velocities, and object properties. Useful for planetary defense research, monitoring near-Earth objects, and studying asteroid flybys. Distance units: AU (1 AU = 149.6 million km). Minimum distance 0 (impact), typical close approaches < 0.05 AU.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dist-max": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Maximum approach distance in AU. Examples: '0.01' (1.5 million km), '0.05' (7.5 million km), '0.5' (75 million km). Default: 0.05"
+        },
+        "date-min": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start date for search (YYYY-MM-DD format). Default: current date."
+        },
+        "date-max": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End date for search (YYYY-MM-DD format). Example: '2025-12-31'"
+        },
+        "h-max": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Filter by maximum absolute magnitude H (smaller H = larger object). H<18 is ~1km diameter, H<22 is ~100m diameter."
+        },
+        "des": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by specific body designation (e.g., '99942' for Apophis, '2020 SO')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results (default 50, max 10000)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://ssd-api.jpl.nasa.gov/cad.api"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "dist-max": "0.01",
+        "date-min": "2024-01-01",
+        "date-max": "2024-12-31",
+        "limit": 10
+      },
+      {
+        "dist-max": "0.05",
+        "date-min": "2025-01-01",
+        "date-max": "2025-06-30",
+        "h-max": 22,
+        "limit": 10
+      },
+      {
+        "des": "99942",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Close approach data results",
+          "properties": {
+            "signature": {
+              "type": "object"
+            },
+            "count": {
+              "type": ["string", "integer"],
+              "description": "Number of results returned"
+            },
+            "total": {
+              "type": ["string", "integer", "null"],
+              "description": "Total matching events"
+            },
+            "fields": {
+              "type": "array",
+              "description": "Column names for data rows: des (designation), orbit_id, jd (Julian date), cd (calendar date), dist (distance AU), dist_min, dist_max, v_rel (relative velocity km/s), v_inf, t_sigma_f, h (absolute magnitude)",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data": {
+              "type": "array",
+              "description": "Close approach records as arrays matching field order",
+              "items": {
+                "type": "array",
+                "description": "Row: [designation, orbit_id, Julian_date, calendar_date, distance_AU, dist_min_AU, dist_max_AU, v_rel_km_s, v_inf_km_s, time_sigma, h_magnitude]",
+                "items": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

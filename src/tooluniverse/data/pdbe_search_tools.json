@@ -1,0 +1,382 @@
+[
+  {
+    "name": "PDBeSearch_search_structures",
+    "description": "Search PDB structures through PDBe's Solr search interface by keyword, protein name, or gene name. Returns PDB IDs, titles, resolution, experimental methods, deposition dates, and organisms, sorted by resolution (best first). Complements RCSB PDB tools with powerful full-text search. Example: searching 'insulin' returns 400+ structures; 'BRCA1' returns 148 structures including BRCT domains.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query - protein name, gene name, or keyword. Supports Solr syntax. Examples: 'insulin', 'BRCA1', 'kinase AND human', 'TP53'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum results to return (1-50, default 10)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_structures"
+    },
+    "type": "PDBeSearchTool",
+    "test_examples": [
+      {
+        "query": "insulin",
+        "limit": 5
+      },
+      {
+        "query": "BRCA1",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pdb_id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "resolution": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "experimental_method": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "deposition_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "number_of_entities": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "organism": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_found": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBeSearch_get_compound",
+    "description": "Get PDB ligand/compound information by compound ID from PDBe. Returns chemical name, formula, molecular weight, InChI, InChI key, SMILES, and systematic names. Useful for looking up small molecules that co-crystallize with proteins. Example: 'ATP' returns adenosine-5'-triphosphate (C10H16N5O13P3, MW 507.18); 'HEM' returns protoporphyrin IX containing iron.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "compound_id": {
+          "type": "string",
+          "description": "PDB ligand/compound 3-letter code. Examples: 'ATP' (adenosine triphosphate), 'HEM' (heme), 'NAG' (N-acetyl-D-glucosamine), 'FAD' (flavin adenine dinucleotide)."
+        }
+      },
+      "required": [
+        "compound_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_compound"
+    },
+    "type": "PDBeSearchTool",
+    "test_examples": [
+      {
+        "compound_id": "ATP"
+      },
+      {
+        "compound_id": "HEM"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "compound_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "formula": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "compound_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchi_key": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PDBeSearch_search_by_organism",
+    "description": "Search PDB structures filtered by organism through PDBe's Solr search. Combines keyword search with organism name filtering. Useful for finding species-specific protein structures. Example: searching for 'kinase' in 'Homo sapiens' returns human protein kinase structures sorted by resolution.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "organism": {
+          "type": "string",
+          "description": "Scientific name of organism. Examples: 'Homo sapiens', 'Escherichia coli', 'Mus musculus', 'Saccharomyces cerevisiae'."
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional keyword query to combine with organism filter. Examples: 'kinase', 'receptor'. Default searches all structures for the organism."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum results to return (1-50, default 10)."
+        }
+      },
+      "required": [
+        "organism"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_by_organism"
+    },
+    "type": "PDBeSearchTool",
+    "test_examples": [
+      {
+        "organism": "Escherichia coli",
+        "query": "ribosome",
+        "limit": 5
+      },
+      {
+        "organism": "Saccharomyces cerevisiae",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pdb_id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "resolution": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "experimental_method": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "deposition_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organism": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_found": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "organism_filter": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

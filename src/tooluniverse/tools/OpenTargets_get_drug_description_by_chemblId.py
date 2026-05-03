@@ -14,7 +14,7 @@ def OpenTargets_get_drug_description_by_chemblId(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get drug name, year of first approval, type, cross references, and max clinical trial phase based...
 
@@ -31,14 +31,16 @@ def OpenTargets_get_drug_description_by_chemblId(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"chemblId": chemblId}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_get_drug_description_by_chemblId",
-            "arguments": {"chemblId": chemblId},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

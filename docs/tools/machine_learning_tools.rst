@@ -3,7 +3,7 @@ Machine Learning Tools
 
 **Configuration File**: ``packages/machine_learning_tools.json``
 **Tool Type**: Local
-**Tools Count**: 21
+**Tools Count**: 20
 
 This page contains all tools defined in the ``machine_learning_tools.json`` configuration file.
 
@@ -220,37 +220,6 @@ Get comprehensive information about hmmlearn – Hidden Markov Models in Python
           "name": "get_hmmlearn_info",
           "arguments": {
               "info_type": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**get_hyperopt_info** (Type: PackageTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Get comprehensive information about Hyperopt – distributed hyperparameter optimization
-
-.. dropdown:: get_hyperopt_info tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``get_hyperopt_info``
-   * **Type**: ``PackageTool``
-   * **Description**: Get comprehensive information about Hyperopt – distributed hyperparameter optimization
-
-   **Parameters:**
-
-   * ``include_examples`` (boolean) (required)
-     Whether to include usage examples and quick start guide
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "get_hyperopt_info",
-          "arguments": {
-              "include_examples": true
           }
       }
       result = tu.run(query)

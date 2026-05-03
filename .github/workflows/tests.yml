@@ -13,78 +13,80 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.12']
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential libffi-dev libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncurses5-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev libjpeg-dev libpng-dev libtiff-dev libwebp-dev libopenjp2-7-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libfontconfig1-dev libblas-dev liblapack-dev libatlas-base-dev gfortran libpoppler-cpp-dev libpoppler-dev libhdf5-dev libnetcdf-dev libgl1 libglib2.0-0 libsm6 libxext6 libxrender-dev libgomp1 libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 libgdk-pixbuf2.0-dev libffi-dev shared-mime-info graphviz libgraphviz-dev
-      
+
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
-      
+
       - name: Cache SDK generation
         uses: actions/cache@v3
         with:
           path: src/tooluniverse/tools
           key: ${{ runner.os }}-sdk-${{ hashFiles('scripts/build_tools.py', 'src/tooluniverse/data/*.json') }}
-      
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-      
+
       - name: Install project with dev extras
         run: |
           uv pip install -e .[dev] --system
-      
+
+      - name: Check code formatting/linting requirements
+        uses: astral-sh/ruff-action@v3
+        with:
+          version: "latest"
+
+
       - name: Generate SDK
         run: python scripts/build_tools.py
-      
-      - name: Run fast tests (excluding tools, examples, and api)
+
+      - name: Run core tests (unit + integration)
+        timeout-minutes: 15
         run: |
-          pytest tests/ -v \
+          pytest tests/unit/ tests/integration/ -v \
             --cov=tooluniverse \
             --cov-report=xml \
             --cov-report=term \
             -n auto \
-            -m "not slow and not require_api_keys and not network and not require_gpu" \
-            --ignore=tests/tools \
-            --ignore=tests/examples \
-            --ignore=tests/api
-      
+            -m "not slow and not require_api_keys and not network and not require_gpu"
+
       - name: Test doctor CLI tool
         run: |
           python -m src.tooluniverse.doctor
-      
+
       - name: Run tools, examples, and api tests (optional, requires network)
         if: github.event.inputs.run_tools_tests == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           pytest tests/tools/ tests/examples/ tests/api/ -v \
             --tb=short \
             -m "not slow and not require_api_keys"
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         if: github.ref == 'refs/heads/main'
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
-      
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.python-version }}
           path: coverage.xml
-
-

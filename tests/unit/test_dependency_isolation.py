@@ -93,112 +93,134 @@ class TestDependencyIsolation:
         assert "Tool2" in tool_errors
 
     def test_tool_universe_get_tool_health_no_tools(self):
-        """Test get_tool_health when no tools are loaded."""
-        tu = ToolUniverse()
-        health = tu.get_tool_health()
-        
-        assert health["total"] == 0
-        assert health["available"] == 0
-        assert health["unavailable"] == 0
-        assert health["unavailable_list"] == []
-        assert health["details"] == {}
+        """Test get_tool_health after explicitly clearing all tools."""
+        try:
+            tu = ToolUniverse()
+            # clear_tools() resets to a clean empty state regardless of
+            # workspace auto-load (Phase 11 behaviour)
+            tu.clear_tools()
+            health = tu.get_tool_health()
+
+            assert health["total"] == 0
+            assert health["available"] == 0
+            assert health["unavailable"] == 0
+            assert health["unavailable_list"] == []
+            assert health["details"] == {}
+        finally:
+            tu.close()
 
     def test_tool_universe_get_tool_health_specific_tool(self):
         """Test get_tool_health for specific tool."""
-        tu = ToolUniverse()
-        
-        # Test non-existent tool
-        health = tu.get_tool_health("NonExistentTool")
-        assert health["available"] is False
-        assert health["error"] == "Not found"
-        
-        # Test tool with error
-        mark_tool_unavailable("BrokenTool", ImportError('No module named "test"'))
-        health = tu.get_tool_health("BrokenTool")
-        # For tools with errors, it returns the error details directly
-        assert "error" in health
-        assert "error_type" in health
-        assert "missing_package" in health
-        assert health["error"] == 'No module named "test"'
+        try:
+            tu = ToolUniverse()
+            
+            # Test non-existent tool
+            health = tu.get_tool_health("NonExistentTool")
+            assert health["available"] is False
+            assert health["error"] == "Not found"
+            
+            # Test tool with error
+            mark_tool_unavailable("BrokenTool", ImportError('No module named "test"'))
+            health = tu.get_tool_health("BrokenTool")
+            # For tools with errors, it returns the error details directly
+            assert "error" in health
+            assert "error_type" in health
+            assert "missing_package" in health
+            assert health["error"] == 'No module named "test"'
+        finally:
+            tu.close()
 
     def test_tool_universe_get_tool_health_with_loaded_tools(self):
         """Test get_tool_health with loaded tools."""
-        tu = ToolUniverse()
-        tu.load_tools()
-        
-        health = tu.get_tool_health()
-        assert health["total"] > 0
-        assert health["available"] >= 0
-        assert health["unavailable"] >= 0
-        assert health["total"] == health["available"] + health["unavailable"]
+        try:
+            tu = ToolUniverse()
+            tu.load_tools()
+            
+            health = tu.get_tool_health()
+            assert health["total"] > 0
+            assert health["available"] >= 0
+            assert health["unavailable"] >= 0
+            assert health["total"] == health["available"] + health["unavailable"]
+        finally:
+            tu.close()
 
     @patch('tooluniverse.execute_function.get_tool_class_lazy')
     def test_init_tool_handles_failure_gracefully(self, mock_get_tool_class):
         """Test that init_tool handles failures gracefully."""
-        tu = ToolUniverse()
-        
-        # Mock tool class that raises exception
-        mock_tool_class = MagicMock()
-        mock_tool_class.side_effect = ImportError('No module named "test"')
-        mock_get_tool_class.return_value = mock_tool_class
-        
-        # Should return None instead of raising
-        result = tu.init_tool(tool_name="TestTool")
-        assert result is None
-        
-        # Should have recorded the error
-        errors = get_tool_errors()
-        assert "TestTool" in errors
+        try:
+            tu = ToolUniverse()
+            
+            # Mock tool class that raises exception
+            mock_tool_class = MagicMock()
+            mock_tool_class.side_effect = ImportError('No module named "test"')
+            mock_get_tool_class.return_value = mock_tool_class
+            
+            # Should return None instead of raising
+            result = tu.init_tool(tool_name="TestTool")
+            assert result is None
+            
+            # Should have recorded the error
+            errors = get_tool_errors()
+            assert "TestTool" in errors
+        finally:
+            tu.close()
 
     @patch('tooluniverse.execute_function.get_tool_class_lazy')
     def test_get_tool_instance_checks_error_registry(self, mock_get_tool_class):
         """Test that _get_tool_instance checks error registry."""
-        tu = ToolUniverse()
-        
-        # Mark a tool as unavailable
-        mark_tool_unavailable("BrokenTool", ImportError('No module named "test"'))
-        
-        # Mock tool config
-        tu.all_tool_dict["BrokenTool"] = {"type": "BrokenTool", "name": "BrokenTool"}
-        
-        # Should return None without trying to initialize
-        result = tu._get_tool_instance("BrokenTool")
-        assert result is None
-        
-        # Should not have called get_tool_class_lazy
-        mock_get_tool_class.assert_not_called()
+        try:
+            tu = ToolUniverse()
+            
+            # Mark a tool as unavailable
+            mark_tool_unavailable("BrokenTool", ImportError('No module named "test"'))
+            
+            # Mock tool config
+            tu.all_tool_dict["BrokenTool"] = {"type": "BrokenTool", "name": "BrokenTool"}
+            
+            # Should return None without trying to initialize
+            result = tu._get_tool_instance("BrokenTool")
+            assert result is None
+            
+            # Should not have called get_tool_class_lazy
+            mock_get_tool_class.assert_not_called()
+        finally:
+            tu.close()
 
     def test_get_tool_instance_caches_successful_tools(self):
         """Test that successful tools are cached."""
-        tu = ToolUniverse()
-        # Load only a small subset of tools to avoid timeout
-        tu.load_tools(include_tools=[
-            "UniProt_get_entry_by_accession", 
-            "ChEMBL_get_molecule_by_chembl_id"
-        ])
-        
-        # Find a tool that can be successfully initialized
-        successful_tool = None
-        for tool_name in tu.all_tool_dict.keys():
-            try:
-                result = tu._get_tool_instance(tool_name)
-                if result is not None:
-                    successful_tool = tool_name
-                    break
-            except Exception:
-                continue
-        
-        # If we found a successful tool, test caching
-        if successful_tool:
-            # Should be cached
-            assert successful_tool in tu.callable_functions
+        try:
+            tu = ToolUniverse()
+            # Load only a small subset of tools to avoid timeout
+            tu.load_tools(include_tools=[
+                "UniProt_get_entry_by_accession", 
+                "ChEMBL_get_molecule_by_chembl_id"
+            ])
             
-            # Second call should return cached instance
-            result2 = tu._get_tool_instance(successful_tool)
-            assert tu.callable_functions[successful_tool] is result2
-        else:
-            # If no tools can be initialized, that's also a valid test result
-            pytest.skip("No tools could be successfully initialized")
+            # Find a tool that can be successfully initialized
+            successful_tool = None
+            for tool_name in list(tu.all_tool_dict.keys()):
+                try:
+                    result = tu._get_tool_instance(tool_name)
+                    if result is not None:
+                        successful_tool = tool_name
+                        break
+                except Exception:
+                    continue
+            
+            # If we found a successful tool, test caching
+            if successful_tool:
+                # Should be cached
+                assert successful_tool in tu.callable_functions
+                
+                # Second call should return cached instance
+                result2 = tu._get_tool_instance(successful_tool)
+                assert tu.callable_functions[successful_tool] is result2
+            else:
+                # If no tools can be initialized, that's also a valid test result
+                pytest.skip("No tools could be successfully initialized")
+        finally:
+            if 'tu' in locals():
+                tu.close()
 
     def test_error_registry_persistence(self):
         """Test that error registry persists across multiple operations."""
@@ -206,14 +228,17 @@ class TestDependencyIsolation:
         mark_tool_unavailable("Tool1", ImportError('No module named "torch"'))
         mark_tool_unavailable("Tool2", ImportError('No module named "admet_ai"'))
         
-        # Create new ToolUniverse instance
-        tu = ToolUniverse()
-        
-        # Errors should still be there
-        errors = get_tool_errors()
-        assert len(errors) == 2
-        assert "Tool1" in errors
-        assert "Tool2" in errors
+        try:
+            # Create new ToolUniverse instance
+            tu = ToolUniverse()
+            
+            # Errors should still be there
+            errors = get_tool_errors()
+            assert len(errors) == 2
+            assert "Tool1" in errors
+            assert "Tool2" in errors
+        finally:
+            tu.close()
 
     def test_doctor_cli_import(self):
         """Test that doctor CLI can be imported."""

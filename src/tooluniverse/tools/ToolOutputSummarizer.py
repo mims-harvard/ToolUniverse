@@ -18,7 +18,7 @@ def ToolOutputSummarizer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     AI-powered tool for summarizing long tool outputs, focusing on key information relevant to the or...
 
@@ -43,20 +43,26 @@ def ToolOutputSummarizer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "tool_output": tool_output,
+            "query_context": query_context,
+            "tool_name": tool_name,
+            "focus_areas": focus_areas,
+            "max_length": max_length,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ToolOutputSummarizer",
-            "arguments": {
-                "tool_output": tool_output,
-                "query_context": query_context,
-                "tool_name": tool_name,
-                "focus_areas": focus_areas,
-                "max_length": max_length,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

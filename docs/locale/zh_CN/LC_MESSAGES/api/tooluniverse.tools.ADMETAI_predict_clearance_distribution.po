@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ADMETAI\\_predict\\_clearance\\_distribution 模块"
 #: 0100441001954129ac5d78ce0c1489fe of
 #: tooluniverse.tools.ADMETAI_predict_clearance_distribution:1
 msgid "ADMETAI_predict_clearance_distribution"
-msgstr ""
+msgstr "ADMETAI_预测清除率分布"
 
 #: 48193b9eddf74477b54529453eaf1669 9dccb47459f44277901b5617c5791f67 of
 #: tooluniverse.tools.ADMETAI_predict_clearance_distribution:3

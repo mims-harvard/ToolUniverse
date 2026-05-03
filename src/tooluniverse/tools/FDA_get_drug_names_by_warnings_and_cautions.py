@@ -17,7 +17,7 @@ def FDA_get_drug_names_by_warnings_and_cautions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve drug names based on specific warnings and cautions information.
 
@@ -40,19 +40,25 @@ def FDA_get_drug_names_by_warnings_and_cautions(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "warnings_and_cautions_info": warnings_and_cautions_info,
+            "indication": indication,
+            "limit": limit,
+            "skip": skip,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "FDA_get_drug_names_by_warnings_and_cautions",
-            "arguments": {
-                "warnings_and_cautions_info": warnings_and_cautions_info,
-                "indication": indication,
-                "limit": limit,
-                "skip": skip,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

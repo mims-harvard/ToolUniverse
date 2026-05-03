@@ -209,11 +209,11 @@ msgstr ""
 #: ../../SUMMARY.md:121 ../../SUMMARY.md:312 73e20ec535f84742b85eb6bfe2933565
 #: d455760c9ee846fda857a66af90178bd
 msgid "✅ `build_multilang.sh` - 完整双语构建"
-msgstr ""
+msgstr "✅ `build_multilang.sh` - 完整的多语言构建"
 
 #: ../../SUMMARY.md:122 576f51ca90a845bfb9aeecd5dbeeadfc
 msgid "✅ `quick_build_zh.sh` - 快速中文测试"
-msgstr ""
+msgstr "✅ `quick_build_zh.sh` - 快速中文构建测试"
 
 #: ../../SUMMARY.md:123 b30ed730104d451b99b3b805e1bdd084
 msgid "✅ `show_multilang_features.sh` - 功能演示"
@@ -249,7 +249,7 @@ msgstr "🚀 使用说明"
 
 #: ../../SUMMARY.md:144 145783ae94694202ae7b7c4cfefb8f11
 msgid "最简单的方式"
-msgstr ""
+msgstr "最简便的方法"
 
 #: ../../SUMMARY.md:151 2ba2e8dda8464ed0b13dd88a2ebc50c1
 msgid "**自动完成：**"
@@ -265,7 +265,7 @@ msgstr ""
 
 #: ../../SUMMARY.md:154 ebdbf552452340a7bbbf730bcf7d648e
 msgid "✅ 构建英文版本"
-msgstr ""
+msgstr "✅ Build English Version"
 
 #: ../../SUMMARY.md:155 0d82b2fb4156410b8211f9c4539e0953
 msgid "✅ 更新中文翻译"
@@ -301,11 +301,11 @@ msgstr ""
 
 #: ../../SUMMARY.md:198 1a5eb32508514bdea88e403f923f8f3f
 msgid "终端输出示例"
-msgstr ""
+msgstr "Terminal Output 示例"
 
 #: ../../SUMMARY.md:244 eff4a742b0fc441cb392fad31b06d9e8
 msgid "🎯 关键改进"
-msgstr ""
+msgstr "🎯 关键改进点"
 
 #: ../../SUMMARY.md:246 75ffe10dc9514188a0bae3cd3c8f091c
 msgid "Before (之前)"
@@ -321,7 +321,7 @@ msgstr "📝 翻译工作流程"
 
 #: ../../SUMMARY.md:265 3818a665970542e79eea80ced1e19470
 msgid "1. 构建（自动更新翻译）"
-msgstr ""
+msgstr "1. Build（自动更新翻译）"
 
 #: ../../SUMMARY.md:270 fec8fa34af3a440789cf805173ff3d51
 msgid "2. 编辑翻译"
@@ -333,7 +333,7 @@ msgstr ""
 
 #: ../../SUMMARY.md:282 ff9c03cd47694f8c9c3e088aff1f90b2
 msgid "翻译立即生效！✨"
-msgstr ""
+msgstr "翻译即时生效！✨"
 
 #: ../../SUMMARY.md:284 841d47c46942484ab77976c3a3f8cdfa
 msgid "🌟 主要特点"
@@ -357,7 +357,7 @@ msgstr "自动生成索引页"
 
 #: ../../SUMMARY.md:291 68dee7d0b62841f8a3d20d06719a1df6
 msgid "✅ 灵活性"
-msgstr ""
+msgstr "✅ Flexibility"
 
 #: ../../SUMMARY.md:292 286396fc001647638c67031116ca4994
 msgid "环境变量配置"
@@ -449,7 +449,7 @@ msgstr ""
 
 #: ../../SUMMARY.md:321 6d530563e04b41029ed93a99aaf8d87a
 msgid "✅ `_static/language_switcher.css` - 切换器样式"
-msgstr ""
+msgstr "✅ `_static/language_switcher.css` - 切换器样式表"
 
 #: ../../SUMMARY.md:323 8d3e438054d34eb798c57770af7e59ca
 msgid "文档"
@@ -485,7 +485,7 @@ msgstr ""
 
 #: ../../SUMMARY.md:333 b1f7b9f0a96642ddb15c16dfc8150540
 msgid "`locale/zh_CN/LC_MESSAGES/quickstart.po`"
-msgstr ""
+msgstr "locale/zh_CN/LC_MESSAGES/quickstart.po"
 
 #: ../../SUMMARY.md:334 8587ab04031e4483b10f8aec4cbfd043
 msgid "`locale/zh_CN/LC_MESSAGES/installation.po`"
@@ -493,11 +493,11 @@ msgstr ""
 
 #: ../../SUMMARY.md:335 183d55ccd4a34136b1a4d3807042f6df
 msgid "`locale/zh_CN/LC_MESSAGES/getting_started.po`"
-msgstr ""
+msgstr "locale/zh_CN/LC_MESSAGES/getting_started.po"
 
 #: ../../SUMMARY.md:336 30b4af85f9204ef683d4fe218e779183
 msgid "`locale/zh_CN/LC_MESSAGES/faq.po`"
-msgstr ""
+msgstr "locale/zh_CN/LC_MESSAGES/faq.po"
 
 #: ../../SUMMARY.md:338 3ccb1f9d2879415e81d37d654818c039
 msgid "添加更多语言"

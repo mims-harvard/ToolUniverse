@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_name\\_by\\_inactive\\_ingredient 
 #: 9926e4b2e4d04d5d9762e19bd54aa630 of
 #: tooluniverse.tools.FDA_get_drug_name_by_inactive_ingredient:1
 msgid "FDA_get_drug_name_by_inactive_ingredient"
-msgstr ""
+msgstr "FDA_通过非活性成分获取药品名称"
 
 #: ba969bb241e24140876a0c961dd268e6 efac58d74ba342f18f803cf0342f69bf of
 #: tooluniverse.tools.FDA_get_drug_name_by_inactive_ingredient:3

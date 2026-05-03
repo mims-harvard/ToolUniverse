@@ -1,0 +1,375 @@
+[
+  {
+    "name": "Bgee_search_genes",
+    "description": "Search for genes in the Bgee comparative gene expression database across 29+ animal species. Bgee integrates RNA-Seq, Affymetrix, EST, and in situ hybridization data to provide curated expression calls. Search by gene symbol, name, or description. Returns matching genes with species information, biotype, and expression summaries. Example: searching 'TP53' returns tumor protein p53 across human, mouse, zebrafish, and other model organisms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene name, symbol, or description to search for. Examples: 'TP53', 'insulin', 'BRCA1', 'sonic hedgehog'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "gene_search"
+    },
+    "type": "BgeeTool",
+    "test_examples": [
+      {
+        "query": "TP53"
+      },
+      {
+        "query": "insulin"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl gene ID"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene symbol"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene description"
+                  },
+                  "species_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI taxonomy ID"
+                  },
+                  "species_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Scientific species name"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common species name"
+                  },
+                  "gene_biotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene biotype (e.g., protein_coding)"
+                  },
+                  "match_source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the match was found (name, description, etc.)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "total_matches": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Bgee_get_gene_expression",
+    "description": "Get expression data for a gene across tissues and organs from the Bgee database. Returns where a gene is expressed with expression scores, confidence levels, and quality ratings. Supports RNA-Seq, Affymetrix, EST, and in situ hybridization data types. Requires both an Ensembl gene ID and NCBI taxonomy ID. Example: ENSG00000141510 (TP53) with species 9606 (human) returns expression across 145+ tissues including ventricular zone (score 95.11), ganglionic eminence, and monocytes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Ensembl gene ID. Examples: 'ENSG00000141510' (human TP53), 'ENSMUSG00000059552' (mouse Trp53), 'ENSDARG00000115148' (zebrafish tp53)."
+        },
+        "species_id": {
+          "type": "string",
+          "description": "NCBI taxonomy ID for the species. Examples: '9606' (human), '10090' (mouse), '7955' (zebrafish), '7227' (fruit fly)."
+        }
+      },
+      "required": [
+        "gene_id",
+        "species_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "gene_expression"
+    },
+    "type": "BgeeTool",
+    "test_examples": [
+      {
+        "gene_id": "ENSG00000141510",
+        "species_id": "9606"
+      },
+      {
+        "gene_id": "ENSMUSG00000059552",
+        "species_id": "10090"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tissue_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Uberon or CL ontology ID"
+                  },
+                  "tissue_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Anatomical entity name"
+                  },
+                  "expression_score": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Expression score (0-100)"
+                  },
+                  "score_confidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Confidence level (high/low)"
+                  },
+                  "expression_state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "expressed or not expressed"
+                  },
+                  "quality": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Quality rating (gold/silver/bronze)"
+                  },
+                  "data_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Data types supporting expression call"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "gene_id": {
+                  "type": "string"
+                },
+                "species_id": {
+                  "type": "string"
+                },
+                "total_calls": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "data_types": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Bgee_list_species",
+    "description": "List all species available in the Bgee gene expression database. Returns species with taxonomy IDs, genome versions, and common names. Bgee currently covers 29+ animal species including major model organisms (human, mouse, zebrafish, fruit fly, C. elegans, rat) and additional vertebrates and invertebrates. Useful for discovering which species are available before querying gene expression data.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "species_list"
+    },
+    "type": "BgeeTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "species_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI taxonomy ID"
+                  },
+                  "genus": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genus name"
+                  },
+                  "species_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species epithet"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common name"
+                  },
+                  "genome_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genome assembly version"
+                  },
+                  "full_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Full binomial name"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_species": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

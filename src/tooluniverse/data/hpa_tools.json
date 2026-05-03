@@ -1,5 +1,47 @@
 [
   {
+    "type": "HPASearchTool",
+    "name": "HPA_generic_search",
+    "description": "Generic search tool for Human Protein Atlas. Allows custom search queries and retrieval of specific columns.",
+    "fields": {
+      "endpoint": "https://www.proteinatlas.org/api/search_download.php",
+      "timeout": 30,
+      "format": "json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search_query": {
+          "type": "string",
+          "description": "Search term for the query"
+        },
+        "columns": {
+          "type": "string",
+          "description": "Comma-separated list of columns to retrieve. Defaults to 'g,gs,gd'. Common options: 'g' (Gene), 'gs' (Synonym), 'e' (Ensembl), 'u' (UniProt), 'pe' (Protein existence), 's' (Subcellular location), 'scml' (Main location), 'scal' (Addl location), 'rnat' (RNA tissue specificity), 'rnatsm' (RNA tissue nTPM), 'rnablm' (RNA blood nTPM), 'rnascm' (RNA single cell nTPM)."
+        },
+        "format": {
+          "type": "string",
+          "description": "Response format (json or tsv). Defaults to 'json'."
+        }
+      },
+      "required": [
+        "search_query"
+      ]
+    },
+    "input_description": "Input a search query and optional columns/format.",
+    "output_description": "Returns a list of matching entries from the Human Protein Atlas.",
+    "test_examples": [
+      {
+        "search_query": "machine learning optimization",
+        "columns": "g,gs,gd",
+        "format": "json"
+      }
+    ],
+    "return_schema": {
+      "type": "array"
+    }
+  },
+  {
     "type": "HPASearchGenesTool",
     "name": "HPA_search_genes_by_query",
     "description": "Search for matching genes by gene name, keywords, or cell line names and return Ensembl ID list. This is the entry tool for many HPA query workflows.",
@@ -21,7 +63,23 @@
       ]
     },
     "input_description": "Input a search query string such as 'BCAS1' or 'MCF7'. The tool will search HPA database for matching genes.",
-    "output_description": "Returns a list containing all matching genes, each with official name, Ensembl ID, and known synonyms. Use the Ensembl ID for subsequent detailed queries."
+    "output_description": "Returns a list containing all matching genes, each with official name, Ensembl ID, and known synonyms. Use the Ensembl ID for subsequent detailed queries.",
+    "test_examples": [
+      {
+        "search_query": "TP53"
+      },
+      {
+        "search_query": "BRCA1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetComparativeExpressionTool",
@@ -50,7 +108,21 @@
       ]
     },
     "input_description": "Input gene name (e.g., TP53) and cell line name (e.g., hela). The tool will query the RNA expression level of the specified gene in the specific cell line and simultaneously obtain and compare the average expression level of the gene in healthy tissues.",
-    "output_description": "Returns comparison results containing gene basic information, cell line expression value, and healthy tissue expression value. Provides expression values in nTPM units and textual description of expression level differences. Includes gene symbol, synonyms, expression unit explanation, and detailed comparison summary."
+    "output_description": "Returns comparison results containing gene basic information, cell line expression value, and healthy tissue expression value. Provides expression values in nTPM units and textual description of expression level differences. Includes gene symbol, synonyms, expression unit explanation, and detailed comparison summary.",
+    "test_examples": [
+      {
+        "gene_name": "TP53",
+        "cell_line": "HeLa"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetDiseaseExpressionTool",
@@ -84,7 +156,22 @@
       ]
     },
     "input_description": "Input gene name (e.g., BRCA1) and disease name (e.g., breast_cancer). Optionally specify tissue type to precisely locate disease-related tissue. The tool will query the RNA expression level of the specified gene in disease state.",
-    "output_description": "Returns comparison analysis of gene expression in disease state versus healthy state. Contains nTPM values for disease expression and healthy expression. Provides fold change analysis and determination of expression up/down regulation."
+    "output_description": "Returns comparison analysis of gene expression in disease state versus healthy state. Contains nTPM values for disease expression and healthy expression. Provides fold change analysis and determination of expression up/down regulation.",
+    "test_examples": [
+      {
+        "gene_name": "TP53",
+        "tissue_type": "liver",
+        "disease_name": "Diabetes Mellitus"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetBiologicalProcessTool",
@@ -113,7 +200,62 @@
       ]
     },
     "input_description": "Input gene name (e.g., TP53). Optionally choose whether to filter specific biological process categories. The tool will retrieve gene function annotation information from Human Protein Atlas.",
-    "output_description": "Returns list of all biological processes the gene is involved in. Highlights target processes (apoptosis, biological rhythm, cell cycle, host-virus interaction, necrosis, transcription, transcription regulation). Provides total process count statistics and detailed descriptions of target processes."
+    "output_description": "Returns list of all biological processes the gene is involved in. Highlights target processes (apoptosis, biological rhythm, cell cycle, host-virus interaction, necrosis, transcription, transcription regulation). Provides total process count statistics and detailed descriptions of target processes.",
+    "test_examples": [
+      {
+        "gene_name": "TP53",
+        "filter_processes": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene_name": {
+          "type": "string"
+        },
+        "gene_symbol": {
+          "type": "string"
+        },
+        "gene_synonym": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "biological_processes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "target_processes_found": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "target_process": {
+                "type": "string"
+              },
+              "full_description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "target_process_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "total_processes": {
+          "type": "integer"
+        },
+        "target_processes_count": {
+          "type": "integer"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetGenePageDetailsTool",
@@ -152,7 +294,165 @@
       ]
     },
     "input_description": "Input Ensembl Gene ID (e.g., ENSG00000064787). The tool will parse HPA's single gene XML page to get the most comprehensive data. Optionally include detailed information for images, antibodies, and expression data.",
-    "output_description": "Returns comprehensive gene details including basic information, tissue immunohistochemistry (IHC) image URL list with metadata, subcellular immunofluorescence (IF) image URL list with metadata, antibody validation data, detailed expression data for tissues and cell lines, subcellular localization information, and statistical summary (antibody count, image count, expression tissue count, etc.)."
+    "output_description": "Returns comprehensive gene details including basic information, tissue immunohistochemistry (IHC) image URL list with metadata, subcellular immunofluorescence (IF) image URL list with metadata, antibody validation data, detailed expression data for tissues and cell lines, subcellular localization information, and statistical summary (antibody count, image count, expression tissue count, etc.).",
+    "test_examples": [
+      {
+        "ensembl_id": "ENSG00000141510",
+        "include_images": true,
+        "include_antibodies": true,
+        "include_expression": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "ensembl_id": {
+          "type": "string"
+        },
+        "gene_name": {
+          "type": "string"
+        },
+        "gene_description": {
+          "type": "string"
+        },
+        "chromosome_location": {
+          "type": "string"
+        },
+        "uniprot_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "total_antibodies": {
+              "type": "integer"
+            },
+            "total_ihc_images": {
+              "type": "integer"
+            },
+            "total_if_images": {
+              "type": "integer"
+            },
+            "tissues_with_expression": {
+              "type": "integer"
+            },
+            "cell_lines_with_expression": {
+              "type": "integer"
+            }
+          }
+        },
+        "gene_synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "protein_classes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ihc_images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "image_type": {
+                "type": "string"
+              },
+              "tissue_name": {
+                "type": "string"
+              },
+              "organ": {
+                "type": "string"
+              },
+              "ontology_terms": {
+                "type": "string"
+              },
+              "image_url": {
+                "type": "string"
+              },
+              "selected": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "if_images": {
+          "type": "array"
+        },
+        "antibodies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "antibody_id": {
+                "type": "string"
+              },
+              "source": {
+                "type": "string"
+              },
+              "applications": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "validation_status": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "expression_summary": {
+          "type": "object",
+          "properties": {
+            "tissue_specificity": {
+              "type": "string"
+            },
+            "subcellular_location": {
+              "type": "array"
+            },
+            "protein_class": {
+              "type": "array"
+            },
+            "predicted_location": {
+              "type": "string"
+            },
+            "tissue_expression_summary": {
+              "type": "string"
+            },
+            "subcellular_expression_summary": {
+              "type": "string"
+            }
+          }
+        },
+        "tissue_expression": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tissue_name": {
+                "type": "string"
+              },
+              "organ": {
+                "type": "string"
+              },
+              "expression_level": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cell_line_expression": {
+          "type": "array"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetCancerPrognosticsTool",
@@ -176,7 +476,55 @@
       ]
     },
     "input_description": "Input a single Ensembl Gene ID. The tool will use HPA's efficient JSON API to retrieve cancer prognostic data.",
-    "output_description": "Returns a list of cancers where the gene has significant prognostic value, including the prognostic type (favorable/unfavorable), p-value, and summary statistics. Explains whether high/low expression correlates with better/worse patient survival."
+    "output_description": "Returns a list of cancers where the gene has significant prognostic value, including the prognostic type (favorable/unfavorable), p-value, and summary statistics. Explains whether high/low expression correlates with better/worse patient survival.",
+    "test_examples": [
+      {
+        "ensembl_id": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "ensembl_id": {
+          "type": "string"
+        },
+        "gene": {
+          "type": "string"
+        },
+        "gene_synonym": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prognostic_cancers_count": {
+          "type": "integer"
+        },
+        "prognostic_summary": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cancer_type": {
+                "type": "string"
+              },
+              "prognostic_type": {
+                "type": "string"
+              },
+              "p_value": {
+                "type": "string"
+              },
+              "is_prognostic": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetProteinInteractionsTool",
@@ -200,7 +548,35 @@
       ]
     },
     "input_description": "Input a single gene name. The tool will query HPA's protein-protein interaction database.",
-    "output_description": "Returns a list of proteins that are known to interact with the protein product of the queried gene. Includes interaction partner count and detailed interaction summary."
+    "output_description": "Returns a list of proteins that are known to interact with the protein product of the queried gene. Includes interaction partner count and detailed interaction summary.",
+    "test_examples": [
+      {
+        "gene_name": "TP53"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string"
+        },
+        "gene_synonym": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "interactions": {
+          "type": "string"
+        },
+        "interactor_count": {
+          "type": "integer"
+        },
+        "interactors": {
+          "type": "array"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetRnaExpressionByTissueTool",
@@ -232,7 +608,21 @@
       ]
     },
     "input_description": "Input an Ensembl Gene ID and a list of tissue names. The tool will perform intelligent tissue name matching.",
-    "output_description": "Returns a dictionary mapping queried tissue names to their expression data, including matched tissue name, expression value in nTPM, and categorized expression level (Very high/High/Medium/Low/Very low). Also provides a sample of available tissues for reference."
+    "output_description": "Returns a dictionary mapping queried tissue names to their expression data, including matched tissue name, expression value in nTPM, and categorized expression level (Very high/High/Medium/Low/Very low). Also provides a sample of available tissues for reference.",
+    "test_examples": [
+      {
+        "ensembl_id": "ENSG00000141510",
+        "tissue_names": []
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetContextualBiologicalProcessTool",
@@ -261,7 +651,21 @@
       ]
     },
     "input_description": "Input a gene name and a context (tissue or cell line name). This composite tool will perform multi-step analysis combining biological processes and expression data.",
-    "output_description": "Returns a comprehensive contextual analysis including: gene's biological processes, expression level in the specified context, contextual conclusion about functional relevance, and intelligent interpretation of whether the gene's roles are likely important in the given tissue/cell line context."
+    "output_description": "Returns a comprehensive contextual analysis including: gene's biological processes, expression level in the specified context, contextual conclusion about functional relevance, and intelligent interpretation of whether the gene's roles are likely important in the given tissue/cell line context.",
+    "test_examples": [
+      {
+        "gene_name": "TP53",
+        "context_name": "The quick brown fox jumps over the lazy dog."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetRnaExpressionBySourceTool",
@@ -295,7 +699,22 @@
       ]
     },
     "input_description": "Input gene name (e.g., GFAP), source type (tissue/blood/brain/single_cell), and specific source name (e.g., liver). The tool will directly query the specific column for highly efficient data retrieval.",
-    "output_description": "Returns precise RNA expression data with nTPM value, expression level categorization (Very high/High/Medium/Low/Very low), and metadata about the query. Includes gene information, source details, expression unit explanation, and the specific data column used."
+    "output_description": "Returns precise RNA expression data with nTPM value, expression level categorization (Very high/High/Medium/Low/Very low), and metadata about the query. Includes gene information, source details, expression unit explanation, and the specific data column used.",
+    "test_examples": [
+      {
+        "gene_name": "TP53",
+        "source_type": "tissue",
+        "source_name": "liver"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetSubcellularLocationTool",
@@ -319,7 +738,44 @@
       ]
     },
     "input_description": "Input gene name (e.g., CCNB1). The tool will use optimized scml and scal columns to efficiently retrieve subcellular location annotations.",
-    "output_description": "Returns comprehensive subcellular location data including main locations (primary sites), additional locations (secondary sites), total location count, and a formatted location summary. Provides both structured data and human-readable summary."
+    "output_description": "Returns comprehensive subcellular location data including main locations (primary sites), additional locations (secondary sites), total location count, and a formatted location summary. Provides both structured data and human-readable summary.",
+    "test_examples": [
+      {
+        "gene_name": "TP53"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene_name": {
+          "type": "string"
+        },
+        "gene_synonym": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "main_locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "additional_locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "total_locations": {
+          "type": "integer"
+        },
+        "location_summary": {
+          "type": "string"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetGeneJSONTool",
@@ -343,7 +799,44 @@
       ]
     },
     "input_description": "Input Ensembl Gene ID (e.g., ENSG00000134057). This enhanced tool now uses HPA's direct JSON API for more comprehensive and faster data retrieval.",
-    "output_description": "Returns gene information in compatible JSON format including Ensembl ID, gene name, gene synonyms, Uniprot ID, biological process annotations, and comprehensive RNA tissue-specific expression data."
+    "output_description": "Returns gene information in compatible JSON format including Ensembl ID, gene name, gene synonyms, Uniprot ID, biological process annotations, and comprehensive RNA tissue-specific expression data.",
+    "test_examples": [
+      {
+        "ensembl_id": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "Ensembl": {
+          "type": "string"
+        },
+        "Gene": {
+          "type": "string"
+        },
+        "Gene synonym": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Uniprot": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Biological process": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "RNA tissue specific nTPM": {
+          "type": "null"
+        }
+      }
+    }
   },
   {
     "type": "HPAGetGeneXMLTool",
@@ -367,6 +860,19 @@
       ]
     },
     "input_description": "Input Ensembl Gene ID (e.g., ENSG00000134057). This tool uses TSV format to get detailed gene expression and annotation data.",
-    "output_description": "Returns detailed gene data in TSV format. Includes gene basic information, biological processes, RNA expression levels, and covers expression data from multiple cell lines for in-depth analysis."
+    "output_description": "Returns detailed gene data in TSV format. Includes gene basic information, biological processes, RNA expression levels, and covers expression data from multiple cell lines for in-depth analysis.",
+    "test_examples": [
+      {
+        "ensembl_id": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "tsv_data": {
+          "type": "string"
+        }
+      }
+    }
   }
 ]

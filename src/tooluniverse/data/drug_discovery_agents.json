@@ -26,11 +26,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4.1",
-      "temperature": 0.7,
-      "max_new_tokens": 3000,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "disease_name": "Diabetes Mellitus",
+        "context": "The quick brown fox jumps over the lazy dog."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -66,11 +73,19 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4.1",
-      "temperature": 0.8,
-      "max_new_tokens": 4000,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "disease_name": "Diabetes Mellitus",
+        "targets": "EGFR, BRAF, ALK",
+        "context": "The quick brown fox jumps over the lazy dog."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -106,11 +121,19 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4.1",
-      "temperature": 0.6,
-      "max_new_tokens": 5000,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "compounds": "Aspirin",
+        "admet_data": "{\"compound\": \"aspirin\", \"solubility\": \"high\", \"toxicity\": \"low\"}",
+        "disease_context": "Diabetes Mellitus"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -140,11 +163,18 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4.1",
-      "temperature": 0.5,
-      "max_new_tokens": 3000,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "compounds": "Aspirin",
+        "patient_context": "The quick brown fox jumps over the lazy dog."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -180,11 +210,19 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4.1",
-      "temperature": 0.6,
-      "max_new_tokens": 4000,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "topic": "BRCA1 mutations and breast cancer treatment",
+        "literature_data": "{\"pmids\": [12345678], \"summary\": \"Review of cancer treatments\"}",
+        "focus_area": "targeted therapy"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -226,11 +264,20 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4.1",
-      "temperature": 0.7,
-      "max_new_tokens": 4000,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "compounds": "Aspirin",
+        "admet_data": "{\"compound\": \"aspirin\", \"solubility\": \"high\", \"toxicity\": \"low\"}",
+        "efficacy_data": "{\"IC50\": 25, \"selectivity\": 100}",
+        "target_profile": "{\"selectivity\": \"high\", \"potency\": \"nanomolar\"}"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -272,11 +319,20 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "gpt-4.1",
-      "temperature": 0.6,
-      "max_new_tokens": 5000,
       "return_json": true
+    },
+    "test_examples": [
+      {
+        "drug_name": "Aspirin",
+        "indication": "type 2 diabetes",
+        "preclinical_data": "{\"efficacy\": \"positive\", \"safety\": \"acceptable\"}",
+        "target_population": "adults with advanced solid tumors"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   }
 ]

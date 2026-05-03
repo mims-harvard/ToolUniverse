@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_active\\_ingredient �
 #: tooluniverse.tools.FDA_get_drug_names_by_active_ingredient:1
 msgid "FDA_get_drug_names_by_active_ingredient"
 msgstr ""
+"FDA_get_drug_names_by_active_ingredient  \n"
+"获取药物活性成分名称"
 
 #: 64a41c07698f4dddb0c70a6297031305 fc090e9d41034ff28acfb0a90adbe27f of
 #: tooluniverse.tools.FDA_get_drug_names_by_active_ingredient:3

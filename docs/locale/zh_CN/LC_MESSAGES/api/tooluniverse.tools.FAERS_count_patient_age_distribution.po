@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_patient\\_age\\_distribution 模块"
 #: 2702347c39644a0ab04cd5793f1f82fe of
 #: tooluniverse.tools.FAERS_count_patient_age_distribution:1
 msgid "FAERS_count_patient_age_distribution"
-msgstr ""
+msgstr "FAERS_患者年龄分布统计"
 
 #: ec8340447f04415b96a7e60234840763 f53224c4da664e829a916223288b480b of
 #: tooluniverse.tools.FAERS_count_patient_age_distribution:3

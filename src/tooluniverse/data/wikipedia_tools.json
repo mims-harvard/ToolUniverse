@@ -1,0 +1,180 @@
+[
+  {
+    "type": "WikipediaSearchTool",
+    "name": "Wikipedia_search",
+    "description": "Search Wikipedia articles using MediaWiki API. Returns a list of matching articles with titles, snippets, and metadata. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query string to find Wikipedia articles"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 10, max: 50)",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "language": {
+          "type": "string",
+          "description": "Wikipedia language code (e.g., 'en' for English, 'zh' for Chinese, 'fr' for French). Default: 'en'",
+          "default": "en"
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Search results from Wikipedia",
+      "properties": {
+        "query": {"type": "string", "description": "The search query"},
+        "language": {"type": "string", "description": "Wikipedia language code used"},
+        "total_results": {"type": "integer", "description": "Number of results returned"},
+        "results": {
+          "type": "array",
+          "description": "List of search results",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {"type": "string", "description": "Article title"},
+              "snippet": {"type": "string", "description": "Text snippet from the article"},
+              "size": {"type": "integer", "description": "Article size in bytes"},
+              "wordcount": {"type": "integer", "description": "Word count"},
+              "timestamp": {"type": "string", "description": "Last modified timestamp"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "artificial intelligence",
+        "limit": 5,
+        "language": "en"
+      },
+      {
+        "query": "量子计算",
+        "limit": 3,
+        "language": "zh"
+      },
+      {
+        "query": "Renaissance",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "WikipediaContentTool",
+    "name": "Wikipedia_get_content",
+    "description": "Extract content from a Wikipedia article. Can extract introduction, summary, or full article content. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Wikipedia article title (exact title as it appears on Wikipedia)"
+        },
+        "language": {
+          "type": "string",
+          "description": "Wikipedia language code (e.g., 'en' for English, 'zh' for Chinese). Default: 'en'",
+          "default": "en"
+        },
+        "extract_type": {
+          "type": "string",
+          "enum": ["intro", "summary", "full"],
+          "description": "Type of content to extract: 'intro' (first paragraph only), 'summary' (first few paragraphs, default), or 'full' (entire article)",
+          "default": "summary"
+        },
+        "max_chars": {
+          "type": "integer",
+          "description": "Maximum characters to return for intro/summary (ignored for 'full'). Default: 2000",
+          "default": 2000,
+          "minimum": 100
+        }
+      },
+      "required": ["title"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Wikipedia article content",
+      "properties": {
+        "title": {"type": "string", "description": "Article title"},
+        "pageid": {"type": "integer", "description": "Wikipedia page ID"},
+        "url": {"type": "string", "description": "Full URL to the article"},
+        "content": {"type": "string", "description": "Extracted article content"},
+        "content_length": {"type": "integer", "description": "Length of content in characters"},
+        "extract_type": {"type": "string", "description": "Type of extraction performed"},
+        "links": {
+          "type": "array",
+          "description": "List of linked article titles (first 20)",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "title": "Artificial intelligence",
+        "extract_type": "summary",
+        "max_chars": 1000
+      },
+      {
+        "title": "Renaissance",
+        "extract_type": "intro"
+      },
+      {
+        "title": "量子力学",
+        "language": "zh",
+        "extract_type": "summary"
+      }
+    ]
+  },
+  {
+    "type": "WikipediaSummaryTool",
+    "name": "Wikipedia_get_summary",
+    "description": "Get a brief summary/introduction from a Wikipedia article. This is a convenience tool that extracts just the first paragraph(s) of an article. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Wikipedia article title (exact title as it appears on Wikipedia)"
+        },
+        "language": {
+          "type": "string",
+          "description": "Wikipedia language code (e.g., 'en' for English). Default: 'en'",
+          "default": "en"
+        },
+        "max_chars": {
+          "type": "integer",
+          "description": "Maximum characters to return. Default: 500",
+          "default": 500,
+          "minimum": 100
+        }
+      },
+      "required": ["title"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Wikipedia article summary",
+      "properties": {
+        "title": {"type": "string", "description": "Article title"},
+        "pageid": {"type": "integer", "description": "Wikipedia page ID"},
+        "url": {"type": "string", "description": "Full URL to the article"},
+        "content": {"type": "string", "description": "Article introduction/summary"},
+        "content_length": {"type": "integer", "description": "Length of content in characters"}
+      }
+    },
+    "test_examples": [
+      {
+        "title": "Machine learning",
+        "max_chars": 500
+      },
+      {
+        "title": "Shakespeare",
+        "max_chars": 300
+      }
+    ]
+  }
+]

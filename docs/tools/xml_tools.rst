@@ -135,6 +135,49 @@ Get drug chemical properties including molecular formula, weight, and structure 
       result = tu.run(query)
 
 
+**drugbank_get_drug_desc_pharmacology_by_moa** (Type: XMLTool)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get drug name, ID, description, pharmacodynamics, mechanism of action, and pharmacokinetics by dr...
+
+.. dropdown:: drugbank_get_drug_desc_pharmacology_by_moa tool specification
+
+   **Tool Information:**
+
+   * **Name**: ``drugbank_get_drug_desc_pharmacology_by_moa``
+   * **Type**: ``XMLTool``
+   * **Description**: Get drug name, ID, description, pharmacodynamics, mechanism of action, and pharmacokinetics by drug mechanism of action.
+
+   **Parameters:**
+
+   * ``query`` (string) (required)
+     Query string to search for in mechanism of action descriptions
+
+   * ``case_sensitive`` (boolean) (required)
+     Select True to perform a case-sensitive search
+
+   * ``exact_match`` (boolean) (required)
+     Select True to require an exact match
+
+   * ``limit`` (integer) (required)
+     Maximum number of results to return
+
+   **Example Usage:**
+
+   .. code-block:: python
+
+      query = {
+          "name": "drugbank_get_drug_desc_pharmacology_by_moa",
+          "arguments": {
+              "query": "example_value",
+              "case_sensitive": true,
+              "exact_match": true,
+              "limit": 10
+          }
+      }
+      result = tu.run(query)
+
+
 **drugbank_get_drug_interactions_by_drug_name_or_drugbank_id** (Type: XMLTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -307,92 +350,6 @@ Get associated drug names and descriptions for a particular target, enzyme, carr
       result = tu.run(query)
 
 
-**drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action** (Type: XMLTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Get drug name, ID, description, pharmacodynamics, mechanism of action, and pharmacokinetics by dr...
-
-.. dropdown:: drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action``
-   * **Type**: ``XMLTool``
-   * **Description**: Get drug name, ID, description, pharmacodynamics, mechanism of action, and pharmacokinetics by drug mechanism of action.
-
-   **Parameters:**
-
-   * ``query`` (string) (required)
-     Query string to search for in mechanism of action descriptions
-
-   * ``case_sensitive`` (boolean) (required)
-     Select True to perform a case-sensitive search
-
-   * ``exact_match`` (boolean) (required)
-     Select True to require an exact match
-
-   * ``limit`` (integer) (required)
-     Maximum number of results to return
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action",
-          "arguments": {
-              "query": "example_value",
-              "case_sensitive": true,
-              "exact_match": true,
-              "limit": 10
-          }
-      }
-      result = tu.run(query)
-
-
-**drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id** (Type: XMLTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Get drug pathways and metabolic reactions by drug name or DrugBank ID.
-
-.. dropdown:: drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id``
-   * **Type**: ``XMLTool``
-   * **Description**: Get drug pathways and metabolic reactions by drug name or DrugBank ID.
-
-   **Parameters:**
-
-   * ``query`` (string) (required)
-     Drug name or Drugbank ID to search for
-
-   * ``case_sensitive`` (boolean) (required)
-     Select True to perform a case-sensitive search
-
-   * ``exact_match`` (boolean) (required)
-     Select True to require an exact match
-
-   * ``limit`` (integer) (required)
-     Maximum number of results to return
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id",
-          "arguments": {
-              "query": "example_value",
-              "case_sensitive": true,
-              "exact_match": true,
-              "limit": 10
-          }
-      }
-      result = tu.run(query)
-
-
 **drugbank_get_drug_products_by_name_or_drugbank_id** (Type: XMLTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -512,6 +469,49 @@ Get drug indications and therapeutic uses by drug name or DrugBank ID.
 
       query = {
           "name": "drugbank_get_indications_by_drug_name_or_drugbank_id",
+          "arguments": {
+              "query": "example_value",
+              "case_sensitive": true,
+              "exact_match": true,
+              "limit": 10
+          }
+      }
+      result = tu.run(query)
+
+
+**drugbank_get_pathways_reactions_by_drug_or_id** (Type: XMLTool)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get drug pathways and metabolic reactions by drug name or DrugBank ID.
+
+.. dropdown:: drugbank_get_pathways_reactions_by_drug_or_id tool specification
+
+   **Tool Information:**
+
+   * **Name**: ``drugbank_get_pathways_reactions_by_drug_or_id``
+   * **Type**: ``XMLTool``
+   * **Description**: Get drug pathways and metabolic reactions by drug name or DrugBank ID.
+
+   **Parameters:**
+
+   * ``query`` (string) (required)
+     Drug name or Drugbank ID to search for
+
+   * ``case_sensitive`` (boolean) (required)
+     Select True to perform a case-sensitive search
+
+   * ``exact_match`` (boolean) (required)
+     Select True to require an exact match
+
+   * ``limit`` (integer) (required)
+     Maximum number of results to return
+
+   **Example Usage:**
+
+   .. code-block:: python
+
+      query = {
+          "name": "drugbank_get_pathways_reactions_by_drug_or_id",
           "arguments": {
               "query": "example_value",
               "case_sensitive": true,

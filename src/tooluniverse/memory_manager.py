@@ -12,16 +12,16 @@ import threading
 
 
 class MemoryManager:
-    """专门管理multi-agent系统的记忆"""
+    """Manages session-based memory for multi-agent systems."""
 
     def __init__(self, max_sessions=1000, session_timeout=3600):
-        self.sessions = {}  # 存储所有会话
+        self.sessions = {}
         self.max_sessions = max_sessions
-        self.session_timeout = session_timeout  # 会话超时时间（秒）
-        self.lock = threading.Lock()  # 线程安全
+        self.session_timeout = session_timeout  # seconds
+        self.lock = threading.Lock()
 
     def create_session(self, user_id: str = None, session_name: str = None) -> str:
-        """创建新的会话"""
+        """Create a new session and return its ID."""
         with self.lock:
             session_id = f"{user_id or 'anonymous'}_{uuid.uuid4().hex[:8]}_{int(datetime.now().timestamp())}"
 
@@ -41,13 +41,12 @@ class MemoryManager:
                 "status": "active",
             }
 
-            # 清理过期会话
             self._cleanup_expired_sessions()
 
             return session_id
 
     def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
-        """获取会话信息"""
+        """Retrieve session data by ID, updating last-accessed timestamp."""
         with self.lock:
             if session_id in self.sessions:
                 self.sessions[session_id]["last_accessed"] = datetime.now()
@@ -55,7 +54,7 @@ class MemoryManager:
             return None
 
     def update_session_context(self, session_id: str, updates: Dict[str, Any]) -> bool:
-        """更新会话上下文"""
+        """Update the context dictionary for an existing session."""
         with self.lock:
             if session_id in self.sessions:
                 session = self.sessions[session_id]
@@ -67,12 +66,12 @@ class MemoryManager:
     def add_agent_result(
         self, session_id: str, agent_name: str, result: Any, phase: str = None
     ) -> bool:
-        """添加agent执行结果"""
+        """Record an agent execution result in the session history."""
         with self.lock:
             if session_id in self.sessions:
                 session = self.sessions[session_id]
 
-                # 添加到历史记录
+                # Append to execution history
                 history_entry = {
                     "agent": agent_name,
                     "result": result,
@@ -81,7 +80,7 @@ class MemoryManager:
                 }
                 session["context"]["history"].append(history_entry)
 
-                # 更新结果
+                # Update latest result for this agent
                 session["context"]["results"][agent_name] = result
                 session["last_accessed"] = datetime.now()
 
@@ -89,14 +88,14 @@ class MemoryManager:
             return False
 
     def get_context_for_agent(self, session_id: str, agent_name: str) -> str:
-        """获取适合传递给agent的context信息"""
+        """Build a JSON context string suitable for passing to an agent."""
         session = self.get_session(session_id)
         if not session:
             return "{}"
 
         context = session["context"]
 
-        # 构建适合agent的context
+        # Build agent-facing context with recent history
         agent_context = {
             "session_id": session_id,
             "user_id": session["user_id"],
@@ -104,18 +103,18 @@ class MemoryManager:
             "user_query": context["user_query"],
             "current_phase": context["current_phase"],
             "previous_results": context["results"],
-            "execution_history": context["history"][-5:],  # 只保留最近5条历史
+            "execution_history": context["history"][-5:],
             "timestamp": datetime.now().isoformat(),
         }
 
         return json.dumps(agent_context, indent=2)
 
     def set_current_phase(self, session_id: str, phase: str) -> bool:
-        """设置当前执行阶段"""
+        """Set the current execution phase for a session."""
         return self.update_session_context(session_id, {"current_phase": phase})
 
     def get_session_summary(self, session_id: str) -> Dict[str, Any]:
-        """获取会话摘要"""
+        """Return a summary dictionary for the given session."""
         session = self.get_session(session_id)
         if not session:
             return {}
@@ -133,7 +132,7 @@ class MemoryManager:
         }
 
     def list_user_sessions(self, user_id: str) -> List[Dict[str, Any]]:
-        """获取用户的所有会话"""
+        """List all sessions for a given user, sorted by last access time."""
         with self.lock:
             user_sessions = []
             for session_id, session in self.sessions.items():
@@ -142,7 +141,7 @@ class MemoryManager:
             return sorted(user_sessions, key=lambda x: x["last_accessed"], reverse=True)
 
     def _cleanup_expired_sessions(self):
-        """清理过期会话"""
+        """Remove sessions that have exceeded the timeout."""
         current_time = datetime.now()
         expired_sessions = []
 
@@ -154,7 +153,7 @@ class MemoryManager:
             del self.sessions[session_id]
 
     def close_session(self, session_id: str) -> bool:
-        """关闭会话"""
+        """Mark a session as closed."""
         with self.lock:
             if session_id in self.sessions:
                 self.sessions[session_id]["status"] = "closed"
@@ -162,5 +161,5 @@ class MemoryManager:
             return False
 
 
-# 全局记忆管理器实例
+# Global memory manager instance
 memory_manager = MemoryManager()

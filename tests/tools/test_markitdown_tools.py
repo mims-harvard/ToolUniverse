@@ -16,7 +16,8 @@ def tu():
     """Set up test environment."""
     tu = ToolUniverse()
     tu.load_tools(tool_type=["markitdown"])
-    return tu
+    yield tu
+    tu.close()
 
 
 def test_markitdown_tools_exist(tu):

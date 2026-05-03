@@ -1,0 +1,284 @@
+[
+  {
+    "name": "SwissModel_get_models",
+    "description": "Get all available protein homology models from SWISS-MODEL Repository for a UniProt accession. Returns pre-computed 3D structure models with template information, sequence coverage, QMEAN quality scores, creation dates, and complex partner information. SWISS-MODEL is one of the most widely used protein structure prediction servers. Example: P04637 (human p53) returns 4 homology models; P00533 (EGFR) returns 380 models including many complex structures.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession identifier. Examples: 'P04637' (human p53), 'P00533' (human EGFR), 'Q9Y6I3' (human EPN1)."
+        }
+      },
+      "required": [
+        "uniprot_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_models"
+    },
+    "type": "SwissModelTool",
+    "test_examples": [
+      {
+        "uniprot_id": "P04637"
+      },
+      {
+        "uniprot_id": "Q9Y6I3"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_id": {
+                  "type": "string"
+                },
+                "sequence_length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "crc64": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "model_count": {
+                  "type": "integer"
+                },
+                "models": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "template": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "method": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "coverage": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "from_residue": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "to_residue": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "created_date": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "provider": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "qmean_global": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "qmean_z_score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "api_version": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SwissModel_get_summary",
+    "description": "Get a summary of the best available homology model from SWISS-MODEL Repository for a UniProt accession. Returns the model with highest sequence coverage, total model count, methods distribution, and quality metrics. Useful for quickly checking if a homology model exists for a protein of interest. Example: P04637 (human p53) has 4 models, best covers residues 12-351 (86.5% coverage).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession identifier. Examples: 'P04637' (human p53), 'P00533' (human EGFR)."
+        }
+      },
+      "required": [
+        "uniprot_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_model_summary"
+    },
+    "type": "SwissModelTool",
+    "test_examples": [
+      {
+        "uniprot_id": "P04637"
+      },
+      {
+        "uniprot_id": "P00533"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_id": {
+                  "type": "string"
+                },
+                "sequence_length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "total_models": {
+                  "type": "integer"
+                },
+                "best_model": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "template": {
+                      "type": "string"
+                    },
+                    "method": {
+                      "type": "string"
+                    },
+                    "coverage": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "from_residue": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "to_residue": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "created_date": {
+                      "type": "string"
+                    },
+                    "coordinates_url": {
+                      "type": "string"
+                    },
+                    "qmean_global": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "methods_distribution": {
+                  "type": "object"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

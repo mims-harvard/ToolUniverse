@@ -1,0 +1,169 @@
+[
+  {
+    "type": "FileDownloadTool",
+    "name": "download_file",
+    "description": "Download files from HTTP/HTTPS URLs with cross-platform support (Windows, Mac, Linux). Similar to curl but platform-independent. Can save to specified path or temporary directory.",
+    "fields": {
+      "return_key": "file_path"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "HTTP or HTTPS URL to download from (e.g., https://example.com/file.txt)",
+          "format": "uri"
+        },
+        "output_path": {
+          "type": "string",
+          "description": "Optional path to save the file. If not specified, file will be saved to system temp directory.",
+          "example": "/tmp/downloaded_file.txt or C:\\Users\\Downloads\\file.txt"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Request timeout in seconds",
+          "minimum": 1,
+          "maximum": 300,
+          "default": 30
+        },
+        "return_content": {
+          "type": "boolean",
+          "description": "If true, return file content as text instead of saving to disk (default: false)",
+          "default": false
+        },
+        "chunk_size": {
+          "type": "integer",
+          "description": "Download chunk size in bytes (default: 8192)",
+          "minimum": 1024,
+          "maximum": 10485760,
+          "default": 8192
+        },
+        "follow_redirects": {
+          "type": "boolean",
+          "description": "Follow HTTP redirects (default: true)",
+          "default": true
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    },
+    "test_examples": [
+      {
+        "url": "https://www.wikipedia.org",
+        "output_path": "./downloads/output.txt",
+        "timeout": 30,
+        "return_content": false,
+        "chunk_size": 8192,
+        "follow_redirects": true
+      }
+    ]
+  },
+  {
+    "type": "BinaryDownloadTool",
+    "name": "download_binary_file",
+    "description": "Download binary files (images, videos, executables) with chunked streaming for better memory management. Optimized for large files.",
+    "fields": {
+      "return_key": "file_path"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "url",
+        "output_path"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "HTTP or HTTPS URL to download from",
+          "format": "uri"
+        },
+        "output_path": {
+          "type": "string",
+          "description": "Full path where to save the binary file (e.g., /tmp/image.jpg or C:\\Users\\Downloads\\video.mp4)",
+          "example": "/path/to/save/file.bin"
+        },
+        "chunk_size": {
+          "type": "integer",
+          "description": "Download chunk size in bytes (default: 1MB for binary files)",
+          "minimum": 1024,
+          "maximum": 10485760,
+          "default": 1048576
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Request timeout in seconds",
+          "minimum": 1,
+          "maximum": 300,
+          "default": 30
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    },
+    "test_examples": [
+      {
+        "url": "https://www.wikipedia.org",
+        "output_path": "./downloads/output.txt",
+        "chunk_size": 1048576,
+        "timeout": 30
+      }
+    ]
+  },
+  {
+    "type": "TextDownloadTool",
+    "name": "download_text_content",
+    "description": "Download and return text content from URLs. Optimized for text files with automatic encoding detection.",
+    "fields": {
+      "return_key": "content"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "HTTP or HTTPS URL to download text from",
+          "format": "uri"
+        },
+        "encoding": {
+          "type": "string",
+          "description": "Text encoding (e.g., utf-8, latin1). Auto-detected if not specified.",
+          "example": "utf-8"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Request timeout in seconds",
+          "minimum": 1,
+          "maximum": 300,
+          "default": 30
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    },
+    "test_examples": [
+      {
+        "url": "https://www.wikipedia.org",
+        "encoding": "utf-8",
+        "timeout": 30
+      }
+    ]
+  }
+]

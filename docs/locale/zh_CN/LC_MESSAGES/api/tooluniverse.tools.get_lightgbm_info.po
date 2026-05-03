@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_lightgbm\\_info 模块"
 
 #: 67a7e375ee5546778229dc94dcaf2c51 of tooluniverse.tools.get_lightgbm_info:1
 msgid "get_lightgbm_info"
-msgstr ""
+msgstr "get_lightgbm_info 获取 LightGBM 信息"
 
 #: 256248013d8841aab5b184d2e84f2b64 a8c805757ced421c91882fd0eab9f383 of
 #: tooluniverse.tools.get_lightgbm_info:3

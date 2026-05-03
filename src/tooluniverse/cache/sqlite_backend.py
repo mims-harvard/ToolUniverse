@@ -26,6 +26,7 @@ class CacheEntry:
     created_at: float
     last_accessed: float
     hit_count: int
+    expires_at: Optional[float] = None  # Store expires_at from database
 
 
 class PersistentCache:
@@ -133,6 +134,7 @@ class PersistentCache:
                 created_at=row[5],
                 last_accessed=row[6],
                 hit_count=row[8],
+                expires_at=row[7],  # Store expires_at from database
             )
 
             self._conn.execute(
@@ -153,12 +155,18 @@ class PersistentCache:
         namespace: str,
         version: str,
         ttl: Optional[int],
+        created_at: Optional[float] = None,
+        expires_at: Optional[float] = None,
     ):
         if not self.enabled or not self._conn:
             return
         with self._lock:
+            # Use provided timestamps if available, otherwise calculate them
+            if created_at is None:
+                created_at = time.time()
+            if expires_at is None and ttl is not None:
+                expires_at = created_at + ttl
             now = time.time()
-            expires_at = now + ttl if ttl else None
             payload = self._serialize(value)
             self._conn.execute(
                 """
@@ -181,7 +189,7 @@ class PersistentCache:
                     version,
                     payload,
                     ttl,
-                    now,
+                    created_at,
                     now,
                     expires_at,
                 ),
@@ -214,7 +222,7 @@ class PersistentCache:
                 cur = self._conn.execute(
                     """
                     SELECT cache_key, namespace, version, value, ttl,
-                           created_at, last_accessed, hit_count
+                           created_at, last_accessed, expires_at, hit_count
                     FROM cache_entries WHERE namespace = ?
                     """,
                     (namespace,),
@@ -223,7 +231,7 @@ class PersistentCache:
                 cur = self._conn.execute(
                     """
                     SELECT cache_key, namespace, version, value, ttl,
-                           created_at, last_accessed, hit_count
+                           created_at, last_accessed, expires_at, hit_count
                     FROM cache_entries
                     """
                 )
@@ -238,7 +246,8 @@ class PersistentCache:
                 ttl=row[4],
                 created_at=row[5],
                 last_accessed=row[6],
-                hit_count=row[7],
+                hit_count=row[8],
+                expires_at=row[7],
             )
 
     def stats(self) -> Dict[str, Any]:

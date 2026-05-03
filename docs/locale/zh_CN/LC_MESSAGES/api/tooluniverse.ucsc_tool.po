@@ -26,7 +26,7 @@ msgstr "tooluniverse.ucsc\\_tool 模块"
 
 #: 1d5b4d1626714742a5955243a358eb81 of tooluniverse.ucsc_tool.UCSCTool:1
 msgid "Bases: :py:class:`~tooluniverse.base_tool.BaseTool`"
-msgstr ""
+msgstr "基础：:py:class:`~tooluniverse.base_tool.BaseTool`"
 
 #: 9529e9770cab4165b9f878a85ecd14cb of tooluniverse.ucsc_tool.UCSCTool:1
 msgid ""

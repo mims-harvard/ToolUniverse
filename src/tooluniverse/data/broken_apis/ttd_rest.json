@@ -1,0 +1,37 @@
+{
+    "api_name": "TTD (Therapeutic Target Database) REST API",
+    "base_url": "https://db.idrblab.net/ttd/api/",
+    "failure_mode": "HTTP 404 on all API endpoints",
+    "root_cause": "TTD is a Vue.js Single Page Application with a Django backend. All attempted REST API URL patterns (/api/ttd/target, /api/ttd/drug, /api/v1/target, /rest/target/search, etc.) return Django 404 debug pages. The website renders HTML for all routes including /search/targetResult and /data/target/details/. No Swagger/OpenAPI documentation exists. Data is available only as downloadable flat files (TSV/TXT) at /data/upload/summary/TTD_download.html, not through a REST API.",
+    "confirmed_broken_date": "2026-02-26",
+    "last_retry_date": "2026-02-26",
+    "retry_count": 3,
+    "github_issues": [],
+    "retry_after": "2026-08-26",
+    "workaround": "Use existing tools: Open Targets (60+ tools for target-drug-disease associations), DGIdb (4 tools for drug-gene interactions), ChEMBL (29 tools for target/drug data), Pharos (4 tools for druggable genome). TTD target data is also cross-referenced in these databases.",
+    "workaround_tool_file": "Already covered by opentarget_tools.json, dgidb_tools.json, chembl_tools.json, pharos_tools.json",
+    "investigation_notes": [
+        "Tested 12+ URL patterns including /api/ttd/target?name=EGFR, /api/ttd/drug?name=imatinib, /api/ttd/target/T67092, /api/swagger, /api/docs",
+        "All /api/ routes return Django debug 404 page",
+        "Non-API routes (/search/targetResult, /data/target/details/T67092) return HTML (Vue.js SPA)",
+        "No JSON Content-Type returned from any endpoint",
+        "Website appears to be a Vue.js frontend with no public REST API backend",
+        "TTD data is available as downloadable flat files (TSV format) but not via REST"
+    ],
+    "attempted_config": {
+        "endpoints_tested": [
+            "https://db.idrblab.net/ttd/api/ttd/target?name=EGFR",
+            "https://db.idrblab.net/ttd/api/ttd/drug?name=imatinib",
+            "https://db.idrblab.net/ttd/api/ttd/target/T67092",
+            "https://db.idrblab.net/ttd/api/swagger",
+            "https://db.idrblab.net/ttd/api/docs",
+            "https://db.idrblab.net/ttd/api/v1/target?name=EGFR",
+            "https://db.idrblab.net/ttd/rest/target/search?q=EGFR",
+            "https://db.idrblab.net/api/target?name=EGFR",
+            "https://db.idrblab.net/ttd/target/?format=json",
+            "https://db.idrblab.net/ttd/target/T67092/?format=json",
+            "https://db.idrblab.net/ttd/data/api/target?name=EGFR",
+            "https://db.idrblab.net/ttd/search/api/target?q=EGFR"
+        ]
+    }
+}

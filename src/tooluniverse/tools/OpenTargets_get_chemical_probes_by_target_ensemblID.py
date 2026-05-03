@@ -14,7 +14,7 @@ def OpenTargets_get_chemical_probes_by_target_ensemblID(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve chemical probes associated with a specific target using its ensemblID.
 
@@ -31,14 +31,16 @@ def OpenTargets_get_chemical_probes_by_target_ensemblID(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"ensemblId": ensemblId}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_get_chemical_probes_by_target_ensemblID",
-            "arguments": {"ensemblId": ensemblId},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

@@ -1,0 +1,801 @@
+[
+  {
+    "type": "MPDRESTTool",
+    "name": "MPD_get_phenotype_data",
+    "description": "Get mouse phenotype data from Mouse Phenome Database for specific strains and phenotypes",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "strain": {
+          "type": "string",
+          "description": "Mouse strain (e.g., C57BL/6J, BALB/c, DBA/2J)",
+          "default": "C57BL/6J"
+        },
+        "phenotype_category": {
+          "type": "string",
+          "description": "Phenotype category (behavior, physiology, morphology)",
+          "default": "behavior"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of results to return",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        }
+      },
+      "required": [
+        "strain"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.encodeproject.org/search/?type=Experiment&biosample_ontology.term_name={strain}&biosample_ontology.classification=primary_cell&format=json&limit={limit}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "@context": {
+              "type": "string"
+            },
+            "@graph": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@id": {
+                    "type": "string"
+                  },
+                  "@type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_term_name": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "audit": {
+                    "type": "object",
+                    "properties": {
+                      "INTERNAL_ACTION": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "path": {
+                              "type": "string"
+                            },
+                            "level_name": {
+                              "type": "string"
+                            },
+                            "level": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "detail": {
+                              "type": "string"
+                            },
+                            "category": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "WARNING": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "path": {
+                              "type": "string"
+                            },
+                            "level_name": {
+                              "type": "string"
+                            },
+                            "level": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "detail": {
+                              "type": "string"
+                            },
+                            "category": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "award": {
+                    "type": "object",
+                    "properties": {
+                      "project": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "biosample_ontology": {
+                    "type": "object",
+                    "properties": {
+                      "term_name": {
+                        "type": "string"
+                      },
+                      "classification": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "dbxrefs": {
+                    "type": "array"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "@id": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "lab": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "related_series": {
+                    "type": "array"
+                  },
+                  "replicates": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "library": {
+                          "type": "object",
+                          "properties": {
+                            "biosample": {
+                              "type": "object",
+                              "properties": {
+                                "organism": {
+                                  "type": "object",
+                                  "properties": {
+                                    "scientific_name": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "applied_modifications": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "modified_site_by_target_id": {
+                                        "type": "object",
+                                        "properties": {
+                                          "organism": {
+                                            "type": "object",
+                                            "properties": {
+                                              "schema_version": {
+                                                "type": "string"
+                                              },
+                                              "@type": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              "name": {
+                                                "type": "string"
+                                              },
+                                              "taxon_id": {
+                                                "type": "string"
+                                              },
+                                              "scientific_name": {
+                                                "type": "string"
+                                              },
+                                              "@id": {
+                                                "type": "string"
+                                              },
+                                              "uuid": {
+                                                "type": "string"
+                                              },
+                                              "status": {
+                                                "type": "string"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "life_stage": {
+                                  "type": "string"
+                                },
+                                "accession": {
+                                  "type": "string"
+                                },
+                                "treatments": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "duration": {
+                                        "type": "integer"
+                                      },
+                                      "treatment_term_name": {
+                                        "type": "string"
+                                      },
+                                      "amount": {
+                                        "type": "integer"
+                                      },
+                                      "duration_units": {
+                                        "type": "string"
+                                      },
+                                      "amount_units": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "construction_method": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "@id": {
+                          "type": "string"
+                        },
+                        "technical_replicate_number": {
+                          "type": "integer"
+                        },
+                        "biological_replicate_number": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "@id": {
+              "type": "string"
+            },
+            "@type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "all": {
+              "type": "string"
+            },
+            "clear_filters": {
+              "type": "string"
+            },
+            "columns": {
+              "type": "object",
+              "properties": {
+                "@id": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "accession": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "assay_term_name": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "assay_title": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "biosample_ontology.classification": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "target.@id": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "target.label": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "target.genes.symbol": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "biosample_summary": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "biosample_ontology.term_name": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "dbxrefs": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "description": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "lab.title": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "award.project": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "status": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "files.@id": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "related_series": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.accession": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.biological_replicate_number": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.technical_replicate_number": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.antibody.accession": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.organism.scientific_name": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.life_stage": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.age_display": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.treatments.treatment_term_name": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.treatments.treatment_term_id": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.treatments.amount": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.treatments.amount_units": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.treatments.duration": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.treatments.duration_units": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.synchronization": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.post_synchronization_time": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.post_synchronization_time_units": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.applied_modifications.modified_site_by_target_id.organism": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.applied_modifications.introduced_gene.organism": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.@id": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.mixed_biosamples": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.biosample.subcellular_fraction_term_name": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.construction_platform.term_name": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "replicates.library.construction_method": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "facet_groups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "facet_fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "facets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "terms": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "doc_count": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "total": {
+                    "type": "integer"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "appended": {
+                    "type": "boolean"
+                  },
+                  "open_on_load": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "filters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "term": {
+                    "type": "string"
+                  },
+                  "remove": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "notification": {
+              "type": "string"
+            },
+            "sort": {
+              "type": "object",
+              "properties": {
+                "date_created": {
+                  "type": "object",
+                  "properties": {
+                    "order": {
+                      "type": "string"
+                    },
+                    "unmapped_type": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "label": {
+                  "type": "object",
+                  "properties": {
+                    "order": {
+                      "type": "string"
+                    },
+                    "unmapped_type": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "uuid": {
+                  "type": "object",
+                  "properties": {
+                    "order": {
+                      "type": "string"
+                    },
+                    "unmapped_type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "title": {
+              "type": "string"
+            },
+            "total": {
+              "type": "integer"
+            }
+          }
+        },
+        "url": {
+          "type": "string"
+        },
+        "query_info": {
+          "type": "object",
+          "properties": {
+            "strain": {
+              "type": "string"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "data_source": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "strain": "C57BL/6J",
+        "phenotype_category": "behavior",
+        "limit": 5
+      },
+      {
+        "strain": "BALB/c",
+        "phenotype_category": "physiology",
+        "limit": 3
+      },
+      {
+        "strain": "DBA/2J",
+        "phenotype_category": "morphology",
+        "limit": 5
+      }
+    ]
+  }
+]

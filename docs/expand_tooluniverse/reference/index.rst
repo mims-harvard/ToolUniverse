@@ -8,8 +8,11 @@ Architecture
 
 Understanding the internal architecture of ToolUniverse helps you build better tools and integrate more effectively with the system.
 
-**I want to understand the overall architecture:**
-→ :doc:`architecture` - System architecture and design patterns
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   architecture
 
 **I want to compare tool types:**
 → Review the tool type comparison table in :doc:`../contributing/index`
@@ -126,11 +129,11 @@ Next Steps
 
 Ready to dive deeper? Choose your focus:
 
-* 🏗️ **Architecture**: :doc:`architecture` - Understand system design
-* ⚖️ **Comparison**: Review the tool type comparison table in :doc:`../contributing/index`
-* 🏠 **Local Tools**: :doc:`../local_tools/index` - Learn local tool development
-* 🔗 **Remote Tools**: :doc:`../remote_tools/index` - Learn remote tool integration
-* 🎁 **Contributing**: :doc:`../contributing/index` - Submit tools to ToolUniverse
+* ️ **Architecture**: :doc:`architecture` - Understand system design
+* ️ **Comparison**: Review the tool type comparison table in :doc:`../contributing/index`
+* **Local Tools**: :doc:`../local_tools/index` - Learn local tool development
+* **Remote Tools**: :doc:`../remote_tools/index` - Learn remote tool integration
+* **Contributing**: :doc:`../contributing/index` - Submit tools to ToolUniverse
 
 .. tip::
    **Reference First**: Understanding the architecture and differences between tool types will help you make better decisions about which approach to use for your specific needs.

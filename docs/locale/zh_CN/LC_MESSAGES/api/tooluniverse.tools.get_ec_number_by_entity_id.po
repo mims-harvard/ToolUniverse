@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get_ec_number_by_entity_id 模块"
 #: 73b5f63a98b84d9e8938708030fefebb of
 #: tooluniverse.tools.get_ec_number_by_entity_id:1
 msgid "get_ec_number_by_entity_id"
-msgstr ""
+msgstr "通过实体ID获取EC编号"
 
 #: 3bea6f78aa9243a6a6970097a8cf0c7e cd5a98e535b64d7e9d6fbf938fff85f8 of
 #: tooluniverse.tools.get_ec_number_by_entity_id:3

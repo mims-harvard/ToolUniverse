@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_tskit\\_info 模块"
 #: 6b1ff7ca1e5b4ffba0974e1b22ec9853 of tooluniverse.tools.get_tskit_info:1
 msgid "get_tskit_info"
 msgstr ""
+"get_tskit_info\n"
+"\n"
+"获取_tskit_信息"
 
 #: 19db7afa827f4fc8b14ef4e079caeee6 29897308d837486fbc368cfd88f7983c of
 #: tooluniverse.tools.get_tskit_info:3

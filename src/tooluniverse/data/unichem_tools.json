@@ -1,0 +1,226 @@
+[
+  {
+    "name": "UniChem_search_compound",
+    "description": "Search UniChem for a chemical compound by InChIKey, source compound ID, or UCI (UniChem Compound Identifier). Returns cross-references to the compound across 40+ chemical databases including ChEMBL, DrugBank, PDBe, PubChem, KEGG, ChEBI, HMDB, and more. UniChem is EBI's unified chemical cross-referencing service. Example: searching InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (aspirin) returns mappings to CHEMBL25, DB00945, C01405, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "compound": {
+          "type": "string",
+          "description": "The compound identifier to search. Can be an InChIKey (e.g., 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N'), source compound ID (e.g., 'CHEMBL25'), or UCI number."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the compound identifier. One of: 'inchikey', 'sourceID', 'uci'. Default: 'inchikey'."
+        },
+        "sourceID": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Required when type='sourceID'. The source database ID (e.g., 1=ChEMBL, 2=DrugBank, 7=ChEBI, 22=PubChem). Use UniChem_list_sources to see all IDs."
+        }
+      },
+      "required": [
+        "compound",
+        "type"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_compound"
+    },
+    "type": "UniChemTool",
+    "test_examples": [
+      {
+        "compound": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
+        "type": "inchikey"
+      },
+      {
+        "compound": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
+        "type": "inchikey"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "inchi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchikey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "formula": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_count": {
+                  "type": "integer"
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_name": {
+                        "type": "string"
+                      },
+                      "source_long_name": {
+                        "type": "string"
+                      },
+                      "compound_id": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UniChem_list_sources",
+    "description": "List all chemical database sources registered in UniChem. Returns the complete catalog of 40+ databases with their source IDs, names, descriptions, compound counts, and URLs. Use this to discover which databases are available for cross-referencing and to find source IDs for the UniChem_search_compound tool. Major sources include ChEMBL (id=1), DrugBank (id=2), PDBe (id=3), PubChem (id=22), KEGG (id=6), ChEBI (id=7), HMDB (id=18).",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "list_sources"
+    },
+    "type": "UniChemTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "source_count": {
+                  "type": "integer"
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "long_name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "compound_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "last_updated": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

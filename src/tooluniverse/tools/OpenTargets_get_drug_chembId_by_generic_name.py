@@ -14,7 +14,7 @@ def OpenTargets_get_drug_chembId_by_generic_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch the drug chemblId and description based on the drug generic name.
 
@@ -31,14 +31,16 @@ def OpenTargets_get_drug_chembId_by_generic_name(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"drugName": drugName}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_get_drug_chembId_by_generic_name",
-            "arguments": {"drugName": drugName},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.Wikidata\\_SPARQL\\_query 模块"
 #: 19c1370b4f6043d88e21cd23404403d1 of
 #: tooluniverse.tools.Wikidata_SPARQL_query:1
 msgid "Wikidata_SPARQL_query"
-msgstr ""
+msgstr "Wikidata_SPARQL查询"
 
 #: 0606fa67b7964af1afc9aca9a728ae26 e40d510e97ad490fb035f96f64c37e17 of
 #: tooluniverse.tools.Wikidata_SPARQL_query:3

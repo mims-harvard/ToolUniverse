@@ -47,16 +47,22 @@ def odphp_myhealthfinder(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "lang": lang,
+            "age": age,
+            "sex": sex,
+            "pregnant": pregnant,
+            "strip_html": strip_html,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "odphp_myhealthfinder",
-            "arguments": {
-                "lang": lang,
-                "age": age,
-                "sex": sex,
-                "pregnant": pregnant,
-                "strip_html": strip_html,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

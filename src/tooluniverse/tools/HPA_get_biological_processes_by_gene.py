@@ -15,7 +15,7 @@ def HPA_get_biological_processes_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get biological process information for a gene, with special focus on key processes like apoptosis...
 
@@ -34,14 +34,23 @@ def HPA_get_biological_processes_by_gene(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "gene_name": gene_name,
+            "filter_processes": filter_processes,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "HPA_get_biological_processes_by_gene",
-            "arguments": {"gene_name": gene_name, "filter_processes": filter_processes},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

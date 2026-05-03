@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_medication\\_guide\\_info\\_by\\_drug\\_n
 #: 02213ca9862044389976eb6c55cece4a of
 #: tooluniverse.tools.FDA_get_medication_guide_info_by_drug_name:1
 msgid "FDA_get_medication_guide_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取用药指南信息"
 
 #: 581aaba6c55d4f62a4a0cda8da07b0ab db1aa160daee44f4a117d7d339975cc2 of
 #: tooluniverse.tools.FDA_get_medication_guide_info_by_drug_name:3

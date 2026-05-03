@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get_release_deposit_dates_by_pdb_id 模块"
 #: 5a195a6bc61e48dcaca250cd578fcfee of
 #: tooluniverse.tools.get_release_deposit_dates_by_pdb_id:1
 msgid "get_release_deposit_dates_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取释放押金日期"
 
 #: 748e678274f046ef80336429ad177954 76769b1e688e4ea8a3480ea09d448034 of
 #: tooluniverse.tools.get_release_deposit_dates_by_pdb_id:3

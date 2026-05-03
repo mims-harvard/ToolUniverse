@@ -32,7 +32,7 @@ msgstr ""
 #: e823328ccb31432d9c5abe46f5741c32 of
 #: tooluniverse.tools.drugbank_get_drug_chemistry_by_drug_name_or_drugbank_id:1
 msgid "drugbank_get_drug_chemistry_by_drug_name_or_drugbank_id"
-msgstr ""
+msgstr "drugbank_通过药物名称或DrugBank ID获取药物化学信息"
 
 #: 5fa6c03fc4d44127b19dee5631f0e4a5 da89f51e59a44f68bc8082efe4c19fdd of
 #: tooluniverse.tools.drugbank_get_drug_chemistry_by_drug_name_or_drugbank_id:3

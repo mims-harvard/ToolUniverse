@@ -1,0 +1,518 @@
+[
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_protein",
+    "description": "Get comprehensive protein information from Proteins API by UniProt accession. Returns protein annotations, sequences, features, and cross-references. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Single protein information (when single accession provided) including annotations, sequences, features, and cross-references. Contains fields: accession, id, proteinExistence, info, organism, secondaryAccession, protein, gene, comments, features, dbReferences, references, etc."
+        },
+        {
+          "type": "array",
+          "description": "List of protein results (when multiple accessions provided in batch). Each item contains 'accession', 'status', 'data', and 'url' fields."
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "P05067"
+      },
+      {
+        "accession": "P04637"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      },
+      {
+        "accession": "P05067,P04637"
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_variants",
+    "description": "Get variation data for a protein including disease-associated variants, natural variants, and population data. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Returns variant information with positions, amino acid changes, disease associations, and evidence. Note: Not all proteins have annotated variants.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of variants to return per protein (default: 100)",
+          "default": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/variation",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of protein variations with positions, amino acid changes, disease associations, and evidence. Each variant includes fields like 'ftId', 'wildType', 'alternativeSequence', 'begin', 'end', 'somaticStatus', 'association', etc."
+    },
+    "test_examples": [
+      {
+        "accession": "P05067",
+        "size": 5
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_proteomics",
+    "description": "Get proteomics data for a protein including mass spectrometry evidence, PTM sites, and expression data. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Note: This tool extracts proteomics-related data from the main protein endpoint (the separate proteomics endpoint is not available). Returns PTM comments, modified residues, and related features.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/proteomics",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Proteomics data including PTM comments, modified residues, and related features."
+    },
+    "test_examples": [
+      {
+        "accession": "P05067"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_epitopes",
+    "description": "Get epitope sequences for a protein. Returns B-cell and T-cell epitope information with antigenicity predictions. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Note: This tool extracts epitope-related data from the main protein endpoint (the separate epitopes endpoint is not available). Returns immunology comments and epitope features if present.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/epitopes",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Epitope sequences and annotations including immunology comments and epitope features."
+    },
+    "test_examples": [
+      {
+        "accession": "P04637"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_search",
+    "description": "Search proteins in Proteins API by gene name, protein name, or accession. Defaults to human proteins (taxid=9606) for gene/name searches; use organism param to override. Gene names (e.g., 'BRCA1') search by gene parameter, accessions (e.g., 'P05067') search by accession parameter, and longer queries (e.g., 'insulin') search by protein parameter. Returns list of matching proteins with full annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query. Can be: gene name (e.g., 'BRCA1', 'TP53'), protein name (e.g., 'insulin', 'hemoglobin'), or UniProt accession (e.g., 'P05067'). The tool automatically determines the appropriate search parameter."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 25, max: 100)",
+          "default": 25,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Alias for query. Gene symbol to search (e.g., TP53, BRCA1)."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for query. Gene name to search."
+        },
+        "reviewed": {
+          "type": "boolean",
+          "description": "If true, return only reviewed Swiss-Prot entries. If false or omitted, includes unreviewed TrEMBL entries."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of protein objects matching the search query. Each protein contains accession, id, organism, protein names, gene names, features, and other annotations."
+    },
+    "test_examples": [
+      {
+        "query": "BRCA1",
+        "size": 5
+      },
+      {
+        "query": "insulin",
+        "size": 5
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_genome_mappings",
+    "description": "Get reference genome mappings for a protein using the Proteins API. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. This extracts genome-related cross-references (Ensembl, RefSeq, EMBL, GenBank) from the main protein endpoint, which may contain genomic location information. Note: The separate genome endpoint is not available, so this tool extracts genome-related cross-references from the main protein data. Use UniProt or EBI Search (domain='uniprot') to find accessions such as 'P05067' or 'P04637'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/genome",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of genome mapping records for the requested protein."
+    },
+    "test_examples": [
+      {
+        "accession": "P05067"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_features",
+    "description": "Get detailed sequence features for a protein, including domains, regions, motifs, modified residues, and other annotated features. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Note: This tool extracts features from the main protein endpoint (the separate features endpoint is not available). Returns all sequence feature annotations for the protein.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/features",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of sequence feature annotations for the requested protein."
+    },
+    "test_examples": [
+      {
+        "accession": "P05067"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_xrefs",
+    "description": "Get cross-references for a protein from the Proteins API, including links to other databases (Ensembl, PDB, Reactome, EMBL, RefSeq, etc.). Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Note: This tool extracts cross-references from the main protein endpoint (the separate xrefs endpoint is not available). Returns database cross-reference records.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/xrefs",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of cross-reference records for the requested protein."
+    },
+    "test_examples": [
+      {
+        "accession": "P04637"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_comments",
+    "description": "Get functional annotations and comments for a protein from the Proteins API. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. This includes curated comments on function, subcellular location, disease involvement, and other annotations. Note: This tool extracts comments from the main protein endpoint (the separate comments endpoint is not available). Returns all functional annotation comments.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/comments",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of comment/annotation records for the requested protein."
+    },
+    "test_examples": [
+      {
+        "accession": "P05067"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ProteinsAPIRESTTool",
+    "name": "proteins_api_get_publications",
+    "description": "Get publications associated with a protein from the Proteins API. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Returns literature references linked to the UniProt accession, including PubMed IDs and citation details. Note: This tool extracts publications from the main protein endpoint (the separate publications endpoint is not available). Returns all publication references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "description": "UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), comma-separated string (e.g., 'P05067,P04637'), or list (e.g., ['P05067', 'P04637']). Use UniProt search or ebi_search_domain with domain='uniprot' to find valid accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml"
+          ],
+          "default": "json",
+          "description": "Response format. JSON is recommended for most use cases."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/publications",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of publication records associated with the requested protein."
+    },
+    "test_examples": [
+      {
+        "accession": "P04637"
+      },
+      {
+        "accession": [
+          "P05067",
+          "P04637"
+        ]
+      }
+    ]
+  }
+]

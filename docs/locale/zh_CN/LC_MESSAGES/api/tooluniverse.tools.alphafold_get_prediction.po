@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.alphafold\\_get\\_prediction 模块"
 #: 295b6bf06a2a47218b4d84ad004a9b99 of
 #: tooluniverse.tools.alphafold_get_prediction:1
 msgid "alphafold_get_prediction"
-msgstr ""
+msgstr "alphafold_获取预测结果"
 
 #: 256c2202713042d7bd32d9207f8fb062 33f719b81a0943caafe0435b95275978 of
 #: tooluniverse.tools.alphafold_get_prediction:3

@@ -1,0 +1,96 @@
+[
+  {
+    "name": "HOCOMOCO_search_motifs",
+    "type": "HocomocoTool",
+    "description": "Search HOCOMOCO v14 for transcription factor binding motifs by gene or protein name. Returns motif IDs, quality scores, consensus sequences, and TF classification. HOCOMOCO contains high-quality TF binding models derived from ChIP-Seq data for human and mouse. Complementary to JASPAR. Example: query 'TP53' returns P53.H14CORE.0.P.B with consensus sequence and quality grade.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene symbol or protein name to search for TF binding motifs. Examples: 'TP53', 'CTCF', 'STAT3', 'SOX2', 'MYC'."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint_type": "search_motifs"
+    },
+    "test_examples": [
+      {"query": "TP53"},
+      {"query": "CTCF"}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "motif_id": {"type": ["string", "null"]},
+          "gene_name_human": {"type": ["string", "null"]},
+          "gene_name_mouse": {"type": ["string", "null"]},
+          "quality": {"type": ["string", "null"]},
+          "consensus": {"type": ["string", "null"]},
+          "model_length": {"type": ["integer", "null"]},
+          "uniprot_ac_human": {"type": ["string", "null"]},
+          "uniprot_ac_mouse": {"type": ["string", "null"]},
+          "tfclass": {"type": ["object", "null"]}
+        }
+      }
+    }
+  },
+  {
+    "name": "HOCOMOCO_get_motif",
+    "type": "HocomocoTool",
+    "description": "Get detailed information about a specific HOCOMOCO transcription factor binding motif. Returns gene names, UniProt IDs, TF classification, quality metrics, consensus sequence, and optionally the position weight matrix (PWM). Quality grades: A (best), B, C, D (lowest). Data sources: P (ChIP-Seq peaks), S (HT-SELEX). Example: 'P53.H14CORE.0.P.B' returns TP53 motif details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "motif_id": {
+          "type": "string",
+          "description": "HOCOMOCO motif identifier. Format: GENE.COLLECTION.SUBTYPE.SOURCE.QUALITY. Examples: 'P53.H14CORE.0.P.B', 'CTCF.H14CORE.0.P.B', 'STAT3.H14CORE.0.P.B'."
+        },
+        "include_pwm": {
+          "type": "boolean",
+          "description": "Whether to include the position weight matrix (PWM) in the response. Default: false.",
+          "default": false
+        }
+      },
+      "required": ["motif_id"]
+    },
+    "fields": {
+      "endpoint_type": "get_motif"
+    },
+    "test_examples": [
+      {"motif_id": "P53.H14CORE.0.P.B"},
+      {"motif_id": "CTCF.H14CORE.0.P.B", "include_pwm": true}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "motif_id": {"type": ["string", "null"]},
+        "gene_name_human": {"type": ["string", "null"]},
+        "gene_name_mouse": {"type": ["string", "null"]},
+        "gene_synonyms_human": {"type": ["array", "null"]},
+        "gene_synonyms_mouse": {"type": ["array", "null"]},
+        "quality": {"type": ["string", "null"]},
+        "consensus": {"type": ["string", "null"]},
+        "model_length": {"type": ["integer", "null"]},
+        "data_sources": {"type": ["string", "null"]},
+        "motif_subtype": {"type": ["integer", "null"]},
+        "uniprot_id_human": {"type": ["string", "null"]},
+        "uniprot_id_mouse": {"type": ["string", "null"]},
+        "uniprot_ac_human": {"type": ["string", "null"]},
+        "uniprot_ac_mouse": {"type": ["string", "null"]},
+        "hgnc_ids": {"type": ["array", "null"]},
+        "entrezgene_ids_human": {"type": ["array", "null"]},
+        "entrezgene_ids_mouse": {"type": ["array", "null"]},
+        "tfclass": {"type": ["object", "null"]},
+        "motif_cluster": {"type": ["string", "null"]},
+        "quality_metrics": {"type": ["object", "null"]},
+        "previous_names": {"type": ["array", "null"]},
+        "retracted": {"type": ["boolean", "null"]},
+        "pwm": {"type": ["array", "null"]}
+      }
+    }
+  }
+]

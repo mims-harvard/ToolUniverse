@@ -1,0 +1,367 @@
+[
+  {
+    "name": "EnsemblCompara_get_orthologues",
+    "description": "Find orthologous genes (genes in different species that evolved from a common ancestor) using Ensembl Compara. Essential for comparative genomics - finding the mouse, zebrafish, or fly equivalent of a human gene. Returns orthologue gene IDs, species, homology type (one-to-one, one-to-many), and taxonomy level of divergence. Example: TP53 in human has a one-to-one orthologue (Trp53) in mouse.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol or Ensembl gene ID. Examples: 'BRCA1', 'TP53', 'ENSG00000141510', 'ENSG00000012048'."
+        },
+        "species": {
+          "type": "string",
+          "description": "Source species (default: 'human'). Examples: 'human', 'mouse', 'zebrafish', 'drosophila_melanogaster'."
+        },
+        "target_species": {
+          "type": "string",
+          "description": "Target species to limit orthologue search. Examples: 'mouse', 'zebrafish', 'rat', 'drosophila_melanogaster'. Default: all species."
+        },
+        "target_taxon": {
+          "type": "integer",
+          "description": "NCBI taxon ID to limit orthologue search. Examples: 10090 (mouse), 7955 (zebrafish), 7227 (fruit fly). Alternative to target_species."
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "fields": {
+      "endpoint": "orthologues"
+    },
+    "type": "EnsemblComparaTool",
+    "test_examples": [
+      {
+        "gene": "BRCA1",
+        "target_species": "mouse"
+      },
+      {
+        "gene": "TP53",
+        "species": "human",
+        "target_taxon": 10090
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source Ensembl gene ID"
+                  },
+                  "target_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target orthologue Ensembl gene ID"
+                  },
+                  "target_protein": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target orthologue Ensembl protein ID"
+                  },
+                  "target_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target species name"
+                  },
+                  "homology_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Type: ortholog_one2one, ortholog_one2many, ortholog_many2many"
+                  },
+                  "taxonomy_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic level of divergence (e.g., Euarchontoglires, Mammalia)"
+                  },
+                  "method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Method used (ENSEMBL_ORTHOLOGUES)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_gene": {
+                  "type": "string"
+                },
+                "query_species": {
+                  "type": "string"
+                },
+                "total_orthologues": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblCompara_get_paralogues",
+    "description": "Find paralogous genes (genes within the same species that arose from gene duplication events) using Ensembl Compara. Paralogues often have related but diverged functions. Returns paralogue gene IDs, duplication type, and evolutionary context. Example: TP53 has paralogues TP63 (ENSG00000073282) and TP73 (ENSG00000078900) in human, from ancient vertebrate gene duplication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol or Ensembl gene ID. Examples: 'TP53', 'BRCA1', 'ENSG00000141510'."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species (default: 'human'). Examples: 'human', 'mouse', 'zebrafish'."
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "fields": {
+      "endpoint": "paralogues"
+    },
+    "type": "EnsemblComparaTool",
+    "test_examples": [
+      {
+        "gene": "TP53"
+      },
+      {
+        "gene": "BRCA1",
+        "species": "human"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source Ensembl gene ID"
+                  },
+                  "paralogue_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Paralogue Ensembl gene ID"
+                  },
+                  "paralogue_protein": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Paralogue Ensembl protein ID"
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species name"
+                  },
+                  "paralogy_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Type of paralogy (within_species_paralog, etc.)"
+                  },
+                  "taxonomy_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Level of gene duplication event"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_gene": {
+                  "type": "string"
+                },
+                "query_species": {
+                  "type": "string"
+                },
+                "total_paralogues": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblCompara_get_gene_tree",
+    "description": "Get the phylogenetic gene tree showing evolutionary relationships of a gene family across species from Ensembl Compara. Gene trees trace the history of speciation and duplication events for a gene family. Returns tree members (genes across species), tree structure, and optionally Newick format. Useful for evolutionary analysis and understanding gene family expansion. Example: TP53 gene tree shows conservation across vertebrates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol or Ensembl gene ID. Examples: 'TP53', 'BRCA1', 'ENSG00000141510'. Ensembl IDs are more reliable than symbols for gene tree retrieval."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species (default: 'human'). Used when providing a gene symbol. Examples: 'human', 'mouse'."
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "fields": {
+      "endpoint": "gene_tree"
+    },
+    "type": "EnsemblComparaTool",
+    "test_examples": [
+      {
+        "gene": "BRCA1",
+        "species": "human"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "tree_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Gene tree stable ID"
+                },
+                "newick": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Tree in Newick format (if available)"
+                },
+                "rooted": {
+                  "type": [
+                    "boolean",
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Whether tree is rooted (may be 0/1 integer or boolean)"
+                },
+                "members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Gene tree members (gene_id, species) - max 50 shown"
+                },
+                "total_members": {
+                  "type": "integer",
+                  "description": "Total members in the gene tree"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_gene": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

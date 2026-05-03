@@ -38,11 +38,55 @@
       ]
     },
     "configs": {
-      "api_type": "CHATGPT",
-      "model_id": "o4-mini-0416",
-      "temperature": 0.1,
-      "max_new_tokens": 3000,
       "return_json": false
+    },
+    "test_examples": [
+      {
+        "source_tool": "{\"name\": \"get_gene_info\", \"output\": \"gene_data\"}",
+        "target_tool": "{\"name\": \"analyze_mutations\", \"input\": \"gene_data\"}",
+        "analysis_depth": "quick"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "direct_mappings": {
+          "type": "object",
+          "properties": {
+            "target_param1": {
+              "type": "string"
+            },
+            "target_param2": {
+              "type": "string"
+            }
+          }
+        },
+        "derived_mappings": {
+          "type": "object",
+          "properties": {
+            "target_param3": {
+              "type": "string"
+            },
+            "target_param4": {
+              "type": "string"
+            }
+          }
+        },
+        "missing_parameters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "default_values": {
+          "type": "object",
+          "properties": {
+            "param7": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -111,6 +155,24 @@
       "ToolCompatibilityAnalyzer"
     ],
     "composition_file": "tool_graph_composer.py",
-    "composition_function": "compose"
+    "composition_function": "compose",
+    "test_examples": [
+      {
+        "output_path": "./tool_composition_graph",
+        "analysis_depth": "detailed",
+        "min_compatibility_score": 60,
+        "exclude_categories": [
+          "tool_finder",
+          "special_tools"
+        ],
+        "max_tools_per_category": 50,
+        "force_rebuild": false
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
   }
 ]

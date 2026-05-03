@@ -12,7 +12,7 @@
         },
         "threshold": {
           "type": "number",
-          "description": "Probability threshold for responder classification (0.0-1.0). Values ≥ threshold classify sample as likely responder. Default 0.5 provides balanced sensitivity/specificity. Consider lower thresholds (~0.3) for higher sensitivity.",
+          "description": "Probability threshold for responder classification (0.0-1.0). Values \u2265 threshold classify sample as likely responder. Default 0.5 provides balanced sensitivity/specificity. Consider lower thresholds (~0.3) for higher sensitivity.",
           "default": 0.5,
           "minimum": 0.0,
           "maximum": 1.0
@@ -37,7 +37,7 @@
           "properties": {
             "is_responder": {
               "type": "boolean",
-              "description": "True if predicted responder (probability ≥ threshold)"
+              "description": "True if predicted responder (probability \u2265 threshold)"
             },
             "top_concepts": {
               "type": "array",
@@ -78,6 +78,13 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/immune_compass.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/immune_compass",
       "mcp_tool_name": "run_compass_prediction"
-    }
+    },
+    "test_examples": [
+      {
+        "gene_expression_data_path": "TP53",
+        "threshold": 0.5,
+        "root_path": "example_string"
+      }
+    ]
   }
 ]

@@ -15,7 +15,7 @@ def LiteratureContextReviewer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reviews coverage, relevance, and critical synthesis of prior scholarship.
 
@@ -34,17 +34,23 @@ def LiteratureContextReviewer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "paper_title": paper_title,
+            "literature_review": literature_review,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "LiteratureContextReviewer",
-            "arguments": {
-                "paper_title": paper_title,
-                "literature_review": literature_review,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

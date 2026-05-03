@@ -7,60 +7,58 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse \n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-19 00:41-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.cli.rst:2 d4f6f542e96543a8bb6928bafbd8dbad
 msgid "tooluniverse.cli package"
-msgstr ""
+msgstr "tooluniverse.cli 软件包"
 
 #~ msgid "Space CLI Management Tool"
-#~ msgstr ""
+#~ msgstr "空间 CLI 管理工具"
 
 #~ msgid ""
-#~ "This module provides command-line tools"
-#~ " for managing Space configurations."
-#~ msgstr ""
+#~ "This module provides command-line tools for managing Space configurations."
+#~ msgstr "该模块提供用于管理空间配置的命令行工具。"
 
 #~ msgid "Main CLI entry point."
-#~ msgstr ""
+#~ msgstr "主命令行界面入口点。"
 
 #~ msgid "Handle list command."
-#~ msgstr ""
+#~ msgstr "处理列表命令。"
 
 #~ msgid "Handle validate command."
-#~ msgstr ""
+#~ msgstr "处理验证命令。"
 
 #~ msgid "Handle create command."
-#~ msgstr ""
+#~ msgstr "处理创建命令。"
 
 #~ msgid "Handle search command (placeholder)."
-#~ msgstr ""
+#~ msgstr "处理搜索命令（占位符）。"
 
 #~ msgid "Handle info command."
-#~ msgstr ""
+#~ msgstr "处理 info 命令。"
 
 #~ msgid "Submodules"
-#~ msgstr ""
+#~ msgstr "子模块"
 
 #~ msgid "tooluniverse.cli.toolspace\\_cli module"
-#~ msgstr ""
+#~ msgstr "tooluniverse.cli.toolspace\\_cli 模块"
 
 #~ msgid "ToolUniverse CLI Tools"
-#~ msgstr ""
+#~ msgstr "ToolUniverse CLI 工具"
 
 #~ msgid ""
-#~ "This package contains command-line tools"
-#~ " for managing ToolUniverse configurations."
-#~ msgstr ""
-
+#~ "This package contains command-line tools for managing ToolUniverse "
+#~ "configurations."
+#~ msgstr "此软件包包含用于管理 ToolUniverse 配置的命令行工具。"

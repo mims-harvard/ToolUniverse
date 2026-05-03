@@ -1,74 +1,108 @@
 [
   {
-    "type": "MedRxivTool",
-    "name": "MedRxiv_search_preprints",
-    "description": "Search medRxiv preprints using the public medRxiv API. Returns preprints with title, authors, year, DOI, and URL.",
+    "type": "BioRxivTool",
+    "name": "MedRxiv_get_preprint",
+    "description": "Get full metadata for a specific medRxiv preprint by its DOI. Returns comprehensive metadata including title, authors, abstract, publication date, version, category, and URLs. Response time: <1 second. Use when you have a medRxiv DOI (format: 10.1101/YYYY.MM.DD.XXXXXXX). To SEARCH for medRxiv preprints by keywords, use EuropePMC_search_articles with 'SRC:PPR' filter (fast, relevance-ranked), or web_search with 'site:medrxiv.org'. medRxiv API does not support text search.",
     "parameter": {
       "type": "object",
       "properties": {
-        "query": {
+        "doi": {
           "type": "string",
-          "description": "Search query for medRxiv preprints. Use keywords separated by spaces to refine your search."
+          "description": "medRxiv DOI. Can be full DOI (e.g., '10.1101/2021.04.29.21256344') or just the numeric part after '10.1101/' (e.g., '2021.04.29.21256344'). Find DOIs using EuropePMC_search_articles, web_search, or from paper citations."
         },
-        "max_results": {
-          "type": "integer",
-          "description": "Maximum number of preprints to return. Default is 10, maximum is 200.",
-          "default": 10
+        "server": {
+          "type": "string",
+          "description": "Server to query - always 'medrxiv' for this tool.",
+          "default": "medrxiv",
+          "enum": ["medrxiv"]
         }
       },
-      "required": [
-        "query",
-        "max_results"
-      ]
+      "required": ["doi"]
+    },
+    "fields": {
+      "server": "medrxiv"
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of medRxiv preprints matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the preprint"
+      "type": "object",
+      "description": "Full preprint metadata from medRxiv",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "Digital Object Identifier"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the preprint"
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
           },
-          "authors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of author names"
-          },
-          "year": {
-            "type": "integer",
-            "description": "Publication year"
-          },
-          "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the preprint on medRxiv"
-          },
-          "abstract": {
-            "type": "string",
-            "description": "Abstract of the preprint"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source identifier (always 'medRxiv')"
-          }
+          "description": "List of author names"
+        },
+        "author_corresponding": {
+          "type": ["string", "null"],
+          "description": "Corresponding author name"
+        },
+        "author_corresponding_institution": {
+          "type": ["string", "null"],
+          "description": "Corresponding author's institution"
+        },
+        "abstract": {
+          "type": "string",
+          "description": "Full abstract text"
+        },
+        "date": {
+          "type": "string",
+          "description": "Publication date (YYYY-MM-DD format)"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version number of the preprint"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of submission"
+        },
+        "license": {
+          "type": "string",
+          "description": "License type (e.g., 'cc_by', 'cc0')"
+        },
+        "category": {
+          "type": "string",
+          "description": "Subject category"
+        },
+        "published": {
+          "type": ["string", "null"],
+          "description": "Published DOI if the preprint has been published in a journal"
+        },
+        "url": {
+          "type": ["string", "null"],
+          "description": "URL to the preprint on medRxiv"
+        },
+        "pdf_url": {
+          "type": ["string", "null"],
+          "description": "Direct PDF download URL"
+        },
+        "xml_url": {
+          "type": ["string", "null"],
+          "description": "JATS XML source URL"
+        },
+        "server": {
+          "type": "string",
+          "description": "Server the preprint is hosted on (will be 'medrxiv')"
         }
       }
     },
     "test_examples": [
       {
-        "query": "COVID",
-        "max_results": 2
+        "doi": "10.1101/2021.04.29.21256344",
+        "server": "medrxiv"
       },
       {
-        "query": "vaccine",
-        "max_results": 1
+        "doi": "2021.04.29.21256344",
+        "server": "medrxiv"
       }
     ]
   }

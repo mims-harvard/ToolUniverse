@@ -1,0 +1,307 @@
+[
+  {
+    "name": "ENAPortal_search_studies",
+    "description": "Search the European Nucleotide Archive (ENA) for sequencing studies using text queries or taxonomy filters. Returns study accessions, titles, submitting centers, and publication dates. ENA is the world's largest repository of nucleotide sequences (>3 billion records). Supports powerful query syntax: use 'description=\"keyword\"' for text search, 'tax_tree(TAXID)' for taxonomy-based queries, or combine with AND/OR. Example: searching 'description=\"SARS-CoV-2\"' returns COVID-19 sequencing studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "ENA search query. IMPORTANT: Plain text keywords (e.g., 'cancer') will cause HTTP 400. Always wrap text keywords with description=\"...\". Examples: 'description=\"cancer\"', 'tax_tree(9606)' (human), 'description=\"transcriptomics\" AND tax_tree(10090)' (mouse transcriptomics)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum results to return (1-100, default 10)."
+        },
+        "fields": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated fields to return. Default: 'study_accession,study_title,center_name,first_public,description'. Other fields: 'last_updated,tax_id,scientific_name'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_studies"
+    },
+    "type": "ENAPortalTool",
+    "test_examples": [
+      {
+        "query": "description=\"SARS-CoV-2\"",
+        "limit": 3
+      },
+      {
+        "query": "tax_tree(9606)",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "study_accession": {
+                    "type": "string"
+                  },
+                  "study_title": {
+                    "type": "string"
+                  },
+                  "center_name": {
+                    "type": "string"
+                  },
+                  "first_public": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "aliases": [
+      "ENA_search"
+    ]
+  },
+  {
+    "name": "ENAPortal_search_samples",
+    "description": "Search the European Nucleotide Archive (ENA) for biological samples by taxonomy or text query. Returns sample accessions, descriptions, taxonomy, and publication dates. Useful for finding source material metadata across the world's nucleotide archives (INSDC). Example: 'tax_tree(562)' finds all E. coli samples; 'description=\"liver\"' finds samples with liver in the description.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "ENA search query. Examples: 'tax_tree(562)' (E. coli), 'description=\"liver\"', 'tax_tree(9606) AND description=\"tumor\"'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum results to return (1-100, default 10)."
+        },
+        "fields": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated fields. Default: 'sample_accession,sample_alias,description,tax_id,scientific_name,first_public'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_samples"
+    },
+    "type": "ENAPortalTool",
+    "test_examples": [
+      {
+        "query": "tax_tree(562)",
+        "limit": 3
+      },
+      {
+        "query": "description=\"liver\"",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sample_accession": {
+                    "type": "string"
+                  },
+                  "sample_alias": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "tax_id": {
+                    "type": "string"
+                  },
+                  "scientific_name": {
+                    "type": "string"
+                  },
+                  "first_public": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ENAPortal_count_records",
+    "description": "Count the number of records matching a query in the European Nucleotide Archive (ENA). Supports counting studies, samples, reads, and other result types. Useful for estimating dataset sizes before downloading. Example: counting studies with 'description=\"transcriptomics\"' returns ~9,000+, showing the breadth of transcriptomics data in ENA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "ENA search query. Examples: 'description=\"cancer\"', 'tax_tree(9606)', 'description=\"CRISPR\" AND tax_tree(10090)'."
+        },
+        "result_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Type of records to count. Options: 'study', 'sample', 'read_run', 'analysis', 'assembly'. Default: 'study'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "count"
+    },
+    "type": "ENAPortalTool",
+    "test_examples": [
+      {
+        "query": "description=\"transcriptomics\""
+      },
+      {
+        "query": "tax_tree(9606)",
+        "result_type": "sample"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Number of matching records"
+                },
+                "result_type": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

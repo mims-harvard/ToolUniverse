@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_drug\\_chembId\\_by\\_generic\\_n
 #: 598ab1a9128b4bb9a9b323964180abbb of
 #: tooluniverse.tools.OpenTargets_get_drug_chembId_by_generic_name:1
 msgid "OpenTargets_get_drug_chembId_by_generic_name"
-msgstr ""
+msgstr "OpenTargets_根据通用名获取药物化学ID"
 
 #: 1f4a4dd6e372497cb5fe99ab1ec8d51b 9403d2191d27418b8e2916ab5b77f825 of
 #: tooluniverse.tools.OpenTargets_get_drug_chembId_by_generic_name:3

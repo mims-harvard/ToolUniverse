@@ -1,0 +1,17 @@
+[
+  {
+    "name": "mcp_auto_loader_esm",
+    "description": "Automatically discover and load ESM-C protein embedding tools from MCP Server",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "",
+    "server_url": "http://${ESM_MCP_SERVER_HOST}:8008/mcp",
+    "required_api_keys": [
+      "ESM_MCP_SERVER_HOST"
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "MCP server auto-discovered tools and their execution results. Structure varies by discovered tool.",
+      "additionalProperties": true
+    }
+  }
+]

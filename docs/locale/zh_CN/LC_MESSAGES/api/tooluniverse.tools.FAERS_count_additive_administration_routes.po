@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_additive\\_administration\\_routes �
 #: 9db77d009de5485e96e49bc91080688a of
 #: tooluniverse.tools.FAERS_count_additive_administration_routes:1
 msgid "FAERS_count_additive_administration_routes"
-msgstr ""
+msgstr "FAERS_count_additive_给药途径"
 
 #: 031eca962b064befa6fbe945a3fad031 8ee403a8ab754150ab334e4ca9e53601 of
 #: tooluniverse.tools.FAERS_count_additive_administration_routes:3

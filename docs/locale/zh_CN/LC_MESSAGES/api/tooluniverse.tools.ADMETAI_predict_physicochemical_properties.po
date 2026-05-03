@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ADMETAI\\_predict\\_physicochemical\\_properties 模�
 #: a4353c50b8c1439da5891ccf5d1527e3 of
 #: tooluniverse.tools.ADMETAI_predict_physicochemical_properties:1
 msgid "ADMETAI_predict_physicochemical_properties"
-msgstr ""
+msgstr "ADMETAI_预测理化性质"
 
 #: 3e0f6ea622fa4d8d8162f62c1b68c8e0 f4e54ccc9faf40839b35d12473a6e045 of
 #: tooluniverse.tools.ADMETAI_predict_physicochemical_properties:3

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_polymer\\_entity\\_annotations 模块"
 #: e0d9a284c3ce45c4940753cc43c9c42a of
 #: tooluniverse.tools.get_polymer_entity_annotations:1
 msgid "get_polymer_entity_annotations"
-msgstr ""
+msgstr "get_polymer_entity_annotations 获取聚合物实体注释"
 
 #: 43bf21cadcf343b19cf4b3318894af70 ccf2044aba914547ad7aeb93a5e42920 of
 #: tooluniverse.tools.get_polymer_entity_annotations:3

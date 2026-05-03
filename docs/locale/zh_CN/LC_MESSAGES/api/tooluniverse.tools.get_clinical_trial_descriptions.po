@@ -29,6 +29,9 @@ msgstr "tooluniverse.tools.get\\_clinical\\_trial\\_descriptions 模块"
 #: tooluniverse.tools.get_clinical_trial_descriptions:1
 msgid "get_clinical_trial_descriptions"
 msgstr ""
+"get_clinical_trial_descriptions\n"
+"\n"
+"获取临床试验描述"
 
 #: 308b5a51294e4c1bbe08f78c4975fc08 e586a1473fe54ab6b1c2ebcfc31982de of
 #: tooluniverse.tools.get_clinical_trial_descriptions:3

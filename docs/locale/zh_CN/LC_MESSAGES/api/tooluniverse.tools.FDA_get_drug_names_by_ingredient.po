@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_ingredient 模块"
 #: 11fb8e1c4bce4bb282c358f448c24d45 of
 #: tooluniverse.tools.FDA_get_drug_names_by_ingredient:1
 msgid "FDA_get_drug_names_by_ingredient"
-msgstr ""
+msgstr "FDA_按成分获取药品名称"
 
 #: 604457b79cb64042944f0ae5b79c3299 a5a573974c9a41dcb2a1117b001c574c of
 #: tooluniverse.tools.FDA_get_drug_names_by_ingredient:3

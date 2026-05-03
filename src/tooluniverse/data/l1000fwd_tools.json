@@ -1,0 +1,70 @@
+[
+  {
+    "name": "L1000FWD_sig_search",
+    "type": "L1000FWDTool",
+    "description": "Transcriptomic signature query against the LINCS L1000 Connectivity Map via the L1000FWD Fireworks REST API (maayanlab.cloud/L1000FWD). Accepts two gene sets representing transcriptional changes in a condition of interest: genes increasing and genes decreasing. Internally issues a POST to /sig_search to register the query, then fetches ranked hits from /result/topn/{result_id}. Each returned hit is an L1000 perturbation record containing sig_id, combined score, p-value, and q-value. mode='similar' retrieves perturbations that activate the same transcriptional programme (e.g. disease mimics); mode='opposite' retrieves perturbations that invert it, the classical computational drug-repurposing approach. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["sig_search"],
+          "description": "Operation type"
+        },
+        "up_genes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of up-regulated gene symbols (e.g., ['MYC', 'TP53'])"
+        },
+        "down_genes": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of down-regulated gene symbols (e.g., ['CDKN1A', 'RB1'])"
+        },
+        "n_results": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Number of top results to return (default 10)"
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["similar", "opposite"],
+          "default": "similar",
+          "description": "Return signatures 'similar' to or 'opposite' of the query signature (default: 'similar')"
+        }
+      },
+      "required": ["operation", "up_genes", "down_genes"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "List of matching L1000 signature hits with sig_id, combined_scores, pvals, qvals, scores, zscores"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "sig_search",
+        "up_genes": ["MYC", "TP53"],
+        "down_genes": ["CDKN1A"],
+        "n_results": 5,
+        "mode": "similar"
+      }
+    ]
+  }
+]

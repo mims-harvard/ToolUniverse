@@ -267,7 +267,7 @@ msgstr "**语义学者** - `语义学者 <https://www.semanticscholar.org/>`_"
 msgid ""
 "**Chan Zuckerberg Initiative** - `Chan Zuckerberg Initiative "
 "<https://chanzuckerberg.com/>`_"
-msgstr ""
+msgstr "**陈·扎克伯格倡议** - `陈·扎克伯格倡议 <https://chanzuckerberg.com/>`_"
 
 #: ../../reference/data_sources.rst:56 a527bf3df5084022bb270c2ff2dcece9
 msgid ""

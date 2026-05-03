@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_gene\\_ontology\\_terms\\_by\\_go
 #: 47d77b20362746ea9244fb81b0510317 of
 #: tooluniverse.tools.OpenTargets_get_gene_ontology_terms_by_goID:1
 msgid "OpenTargets_get_gene_ontology_terms_by_goID"
-msgstr ""
+msgstr "OpenTargets_通过GO ID获取基因本体术语"
 
 #: 652fb8827f044fdbaa7564ad2f6e8984 983aba9b407549829b4ac27331307b8a of
 #: tooluniverse.tools.OpenTargets_get_gene_ontology_terms_by_goID:3

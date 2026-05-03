@@ -3,12 +3,49 @@ Hpa Tools
 
 **Configuration File**: ``hpa_tools.json``
 **Tool Type**: Local
-**Tools Count**: 13
+**Tools Count**: 14
 
 This page contains all tools defined in the ``hpa_tools.json`` configuration file.
 
 Available Tools
 ---------------
+
+**HPA_generic_search** (Type: HPASearchTool)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Generic search tool for Human Protein Atlas. Allows custom search queries and retrieval of specif...
+
+.. dropdown:: HPA_generic_search tool specification
+
+   **Tool Information:**
+
+   * **Name**: ``HPA_generic_search``
+   * **Type**: ``HPASearchTool``
+   * **Description**: Generic search tool for Human Protein Atlas. Allows custom search queries and retrieval of specific columns.
+
+   **Parameters:**
+
+   * ``search_query`` (string) (required)
+     Search term for the query
+
+   * ``columns`` (string) (optional)
+     Comma-separated list of columns to retrieve. Defaults to 'g,gs,gd'. Common options: 'g' (Gene), 'gs' (Synonym), 'e' (Ensembl), 'u' (UniProt), 'pe' (Protein existence), 's' (Subcellular location), 'scml' (Main location), 'scal' (Addl location), 'rnat' (RNA tissue specificity), 'rnatsm' (RNA tissue nTPM), 'rnablm' (RNA blood nTPM), 'rnascm' (RNA single cell nTPM).
+
+   * ``format`` (string) (optional)
+     Response format (json or tsv). Defaults to 'json'.
+
+   **Example Usage:**
+
+   .. code-block:: python
+
+      query = {
+          "name": "HPA_generic_search",
+          "arguments": {
+              "search_query": "example_value"
+          }
+      }
+      result = tu.run(query)
+
 
 **HPA_get_biological_processes_by_gene** (Type: HPAGetBiologicalProcessTool)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

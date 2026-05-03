@@ -1,0 +1,420 @@
+[
+  {
+    "name": "PubChemBioAssay_get_assay",
+    "description": "Get detailed description of a PubChem BioAssay by its AID (Assay ID). PubChem BioAssay stores over 1.3 million biological screening results from drug discovery, toxicology, and biological pathway research. Returns assay name, description, protocol, targets, and source information. Example: AID 1234 returns 'NIH Compound Library Profiling: Compound and DTT Dependent Redox Cycling H2O2 Generation' from University of Pittsburgh MLSC.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID (AID). Examples: 1234 (Redox Cycling H2O2 assay), 1259393 (TSHR counter screen), 504832 (Tox21 p53 activation)."
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_assay"
+    },
+    "type": "PubChemBioAssayTool",
+    "test_examples": [
+      {
+        "aid": 1234
+      },
+      {
+        "aid": 1259393
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "aid": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Assay ID"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Assay name"
+                },
+                "source_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Data source organization"
+                },
+                "description": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Assay description paragraphs"
+                },
+                "protocol": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Experimental protocol"
+                },
+                "comment": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Additional comments"
+                },
+                "targets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "molecule_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gi": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "description": "Molecular targets of the assay"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "aid": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PubChemBioAssay_search_by_gene",
+    "description": "Search for PubChem BioAssays that target a specific gene. Returns the list of assay IDs targeting the gene along with summaries for the top results. Useful for finding screening data, drug discovery efforts, and toxicology studies targeting a particular gene product. Example: searching for 'TP53' returns assays for p53 activation, p53-mediated apoptosis, and Tox21 genotoxicity screens; 'TSHR' returns thyroid stimulating hormone receptor assays.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Human gene symbol. Examples: 'TP53' (tumor protein p53), 'EGFR' (epidermal growth factor receptor), 'TSHR' (thyroid stimulating hormone receptor), 'ESR1' (estrogen receptor alpha)."
+        }
+      },
+      "required": [
+        "gene_symbol"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_by_gene"
+    },
+    "type": "PubChemBioAssayTool",
+    "test_examples": [
+      {
+        "gene_symbol": "TSHR"
+      },
+      {
+        "gene_symbol": "ESR1"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "total_assays": {
+                  "type": "integer",
+                  "description": "Total number of assays targeting this gene"
+                },
+                "assays": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "aid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "method": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "targets": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "has_score": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "gene_symbol": {
+                  "type": "string"
+                },
+                "total_assays": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PubChemBioAssay_get_assay_summary",
+    "description": "Get summary and molecular target information for a PubChem BioAssay. Returns the assay name, source, method type, scoring information, and detailed target gene/protein data. More concise than get_assay but includes gene symbol and ID mapping for targets. Example: AID 1259393 returns target gene TSHR (Gene ID 7253), protein 'thyroid stimulating hormone receptor', method type 'Summary'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID (AID). Examples: 1259393, 504832, 1234."
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_assay_summary"
+    },
+    "type": "PubChemBioAssayTool",
+    "test_examples": [
+      {
+        "aid": 1259393
+      },
+      {
+        "aid": 1234
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "aid": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "method": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "has_score": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "number_of_tids": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "targets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "gene_targets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene_symbols": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "gene_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer"
+                        }
+                      },
+                      "protein_names": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "aid": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

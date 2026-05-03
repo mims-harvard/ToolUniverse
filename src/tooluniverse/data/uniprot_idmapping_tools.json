@@ -1,0 +1,401 @@
+[
+  {
+    "name": "UniProtIDMap_convert_ids",
+    "description": "Convert protein/gene identifiers between databases using the UniProt ID Mapping service. Submits a mapping job and polls for results. Supports 100+ databases including UniProtKB, Gene Names, Ensembl, RefSeq, PDB, ChEMBL, and more. The canonical service for cross-database identifier conversion in proteomics and genomics. Example: convert gene names TP53,BRCA1,EGFR to UniProtKB accessions (P04637, P38398, P00533). Returns mapped IDs with from/to pairs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "string",
+          "description": "Comma-separated identifiers to convert. Examples: 'TP53,BRCA1,EGFR' (gene names), 'P04637,P38398' (UniProt ACs), 'ENSG00000141510' (Ensembl)."
+        },
+        "from_db": {
+          "type": "string",
+          "description": "Source database. Common values: 'Gene_Name', 'UniProtKB_AC-ID', 'Ensembl', 'Ensembl_Genomes', 'RefSeq_Protein', 'PDB', 'ChEMBL', 'GeneCards', 'HGNC'. See UniProt ID Mapping docs for full list."
+        },
+        "to_db": {
+          "type": "string",
+          "description": "Target database. Common values: 'UniProtKB', 'UniProtKB-Swiss-Prot', 'Gene_Name', 'Ensembl', 'RefSeq_Protein', 'PDB', 'ChEMBL', 'GeneCards'. Default: 'UniProtKB'.",
+          "default": "UniProtKB"
+        },
+        "tax_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "NCBI Taxonomy ID to restrict results. Examples: 9606 (human), 10090 (mouse), 10116 (rat). Optional but recommended for gene names."
+        }
+      },
+      "required": [
+        "ids",
+        "from_db"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "convert"
+    },
+    "type": "UniProtIDMappingTool",
+    "test_examples": [
+      {
+        "ids": "TP53,BRCA1,EGFR",
+        "from_db": "Gene_Name",
+        "to_db": "UniProtKB",
+        "tax_id": 9606
+      },
+      {
+        "ids": "P04637",
+        "from_db": "UniProtKB_AC-ID",
+        "to_db": "PDB"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "from_db": {
+                  "type": "string"
+                },
+                "to_db": {
+                  "type": "string"
+                },
+                "result_count": {
+                  "type": "integer"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string"
+                      },
+                      "to": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "failed_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "job_id": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UniProtIDMap_to_pdb",
+    "description": "Convert UniProt accessions to PDB structure IDs using the UniProt ID Mapping service. Shortcut for the common use case of finding 3D structures for proteins. Returns all PDB entries associated with each UniProt accession, useful for structural biology workflows. Example: P04637 (TP53) maps to dozens of PDB structures; P00533 (EGFR) maps to hundreds.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_ids": {
+          "type": "string",
+          "description": "Comma-separated UniProt accession IDs. Examples: 'P04637' (TP53), 'P38398' (BRCA1), 'P00533' (EGFR), 'P04637,P38398,P00533'."
+        }
+      },
+      "required": [
+        "uniprot_ids"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "to_pdb"
+    },
+    "type": "UniProtIDMappingTool",
+    "test_examples": [
+      {
+        "uniprot_ids": "P04637"
+      },
+      {
+        "uniprot_ids": "P04637,P38398"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "query_ids": {
+                  "type": "string"
+                },
+                "result_count": {
+                  "type": "integer"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string"
+                      },
+                      "to": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UniProtIDMap_gene_to_uniprot",
+    "description": "Convert gene names or symbols to UniProt accessions using the UniProt ID Mapping service. Shortcut for the most common ID mapping task in bioinformatics: going from gene symbols to UniProt protein IDs. Restricts to a species via taxonomy ID to avoid ambiguous results. Example: 'TP53' in human (9606) maps to P04637 (canonical) plus isoforms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_names": {
+          "type": "string",
+          "description": "Comma-separated gene symbols. Examples: 'TP53', 'BRCA1,TP53,EGFR,KRAS', 'INS,GCG'."
+        },
+        "tax_id": {
+          "type": "integer",
+          "description": "NCBI Taxonomy ID. Required. 9606 = human, 10090 = mouse, 10116 = rat, 7227 = fruit fly, 6239 = C. elegans.",
+          "default": 9606
+        },
+        "reviewed_only": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, return only Swiss-Prot (reviewed) entries. Default: false (all UniProtKB entries)."
+        }
+      },
+      "required": [
+        "gene_names"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_to_uniprot"
+    },
+    "type": "UniProtIDMappingTool",
+    "test_examples": [
+      {
+        "gene_names": "TP53,BRCA1,EGFR",
+        "tax_id": 9606
+      },
+      {
+        "gene_names": "INS",
+        "tax_id": 9606,
+        "reviewed_only": true
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_names": {
+                  "type": "string"
+                },
+                "species_taxid": {
+                  "type": "integer"
+                },
+                "result_count": {
+                  "type": "integer"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "from": {
+                        "type": "string"
+                      },
+                      "to": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UniProtIDMap_list_databases",
+    "description": "List all available database identifiers supported by the UniProt ID Mapping service. Returns grouped databases with their display names and whether they can be used as source or target in ID conversion. Use this to discover what databases are available for cross-referencing. Over 100 databases are supported including sequence databases, 3D structure databases, genome annotation databases, organism-specific databases, and more.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "list_databases"
+    },
+    "type": "UniProtIDMappingTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "group_count": {
+                  "type": "integer"
+                },
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "group_name": {
+                        "type": "string"
+                      },
+                      "databases": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "display_name": {
+                              "type": "string"
+                            },
+                            "from_supported": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

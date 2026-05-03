@@ -28,6 +28,9 @@ msgstr "tooluniverse.tools.get\\_qutip\\_info 模块"
 #: 7b492b57383f42a99b47151583875bd8 of tooluniverse.tools.get_qutip_info:1
 msgid "get_qutip_info"
 msgstr ""
+"get_qutip_info\n"
+"\n"
+"获取_qutip_信息"
 
 #: 9a42e711b081483ba94798d96d5c7c60 fa5704bc152d433899b59c23dbfecc74 of
 #: tooluniverse.tools.get_qutip_info:3

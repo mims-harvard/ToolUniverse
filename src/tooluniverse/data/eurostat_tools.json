@@ -1,0 +1,159 @@
+[
+  {
+    "name": "Eurostat_get_dataset",
+    "description": "Retrieve statistical data from Eurostat (EU statistical office) for a specific dataset and filter combination. Eurostat provides 10,000+ datasets covering EU member states for economics (GDP, inflation, trade), social statistics (population, employment, poverty), health, environment, agriculture, and more. Returns time-series values with dimension metadata. Common datasets: 'demo_pjan' (population by age/sex), 'nama_10_gdp' (GDP), 'ilc_li01' (poverty rate), 'env_air_gge' (GHG emissions), 'hlth_ehis_fv3e' (health). Use Eurostat database explorer to find dataset codes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "datasetCode": {
+          "type": "string",
+          "description": "Eurostat dataset code. Examples: 'demo_pjan' (population by age/sex), 'nama_10_gdp' (GDP), 'ilc_li01' (at-risk-of-poverty rate), 'env_air_gge' (GHG emissions), 'une_rt_a' (unemployment rate), 'tec00001' (GDP per capita)"
+        },
+        "geo": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Country/region code filter. EU country codes: DE (Germany), FR (France), IT (Italy), ES (Spain), PL (Poland), NL (Netherlands), BE (Belgium), SE (Sweden). Use 'EU27_2020' for EU average."
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Unit of measurement filter (dataset-specific). Examples: 'PC' (percentage), 'NR' (number), 'CP_MEUR' (million EUR current prices), 'PC_GDP' (% of GDP), 'T' (tonnes)"
+        },
+        "na_item": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "National accounts item filter for economic datasets (e.g., 'B1GQ' for GDP, 'P3' for final consumption)"
+        },
+        "time": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Time filter (year or time range). Examples: '2022', '2015:2022' (range)"
+        }
+      },
+      "required": [
+        "datasetCode"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/{datasetCode}",
+      "params": {
+        "format": "JSON",
+        "lang": "en"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "datasetCode": "nama_10_gdp",
+        "geo": "DE",
+        "unit": "CP_MEUR",
+        "na_item": "B1GQ"
+      },
+      {
+        "datasetCode": "demo_pjan",
+        "geo": "FR",
+        "unit": "NR"
+      },
+      {
+        "datasetCode": "une_rt_a",
+        "geo": "ES",
+        "unit": "PC"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Eurostat dataset response in JSON-stat format",
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "class": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string",
+              "description": "Dataset title"
+            },
+            "source": {
+              "type": "string"
+            },
+            "updated": {
+              "type": "string"
+            },
+            "value": {
+              "type": "object",
+              "description": "Data values indexed by position string. Position indices correspond to ordered combination of dimension values."
+            },
+            "status": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Status flags for data points (e.g., estimated, provisional)"
+            },
+            "dimension": {
+              "type": "object",
+              "description": "Dimension metadata defining the structure. Each dimension has 'category' with 'index' (position mapping) and 'label' (value labels).",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "object",
+                    "properties": {
+                      "index": {
+                        "type": "object",
+                        "description": "Dimension value to position index"
+                      },
+                      "label": {
+                        "type": "object",
+                        "description": "Dimension value code to label"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "id": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Ordered list of dimension IDs"
+            },
+            "size": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Size of each dimension"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

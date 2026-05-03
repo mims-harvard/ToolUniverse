@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.get\\_structure\\_determination\\_software\\_by\\_pdb
 #: bc4e5bc923e649f0a9bb27b823a17a66 of
 #: tooluniverse.tools.get_structure_determination_software_by_pdb_id:1
 msgid "get_structure_determination_software_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取结构测定软件"
 
 #: 4b2ca317e93b419dbb7423c7ce557621 dbc998e982ce4a6384fd1d9eba7d1560 of
 #: tooluniverse.tools.get_structure_determination_software_by_pdb_id:3

@@ -11,14 +11,14 @@ from ._shared_client import get_shared_client
 def MedlinePlus_connect_lookup_by_code(
     cs: str,
     c: str,
-    dn: str,
-    language: str,
-    format: str,
+    dn: Optional[str] = "",
+    language: Optional[str] = "en",
+    format: Optional[str] = "application/json",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Look up corresponding MedlinePlus page information through MedlinePlus Connect Web Service using ...
 
@@ -33,7 +33,7 @@ def MedlinePlus_connect_lookup_by_code(
     language : str
         Return information language, "en" for English, "es" for Spanish, default "en".
     format : str
-        Return format, options "json" or "xml", default "json".
+        Return format, options "application/json" or "text/xml", default "application...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -43,20 +43,26 @@ def MedlinePlus_connect_lookup_by_code(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "cs": cs,
+            "c": c,
+            "dn": dn,
+            "language": language,
+            "format": format,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "MedlinePlus_connect_lookup_by_code",
-            "arguments": {
-                "cs": cs,
-                "c": c,
-                "dn": dn,
-                "language": language,
-                "format": format,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

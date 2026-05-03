@@ -1,0 +1,173 @@
+[
+  {
+    "name": "GTEx_get_expression_summary",
+    "type": "GTExExpressionTool",
+    "description": "Summarize tissue-specific expression (e.g., median TPM) for a gene across GTEx tissues. Accepts gene symbols (TP53, BRCA1) or Ensembl IDs. Use to profile baseline expression patterns for targets/biomarkers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'TP53', 'BRCA1', 'FBN1'). Auto-resolved to versioned GENCODE ID."
+        },
+        "ensembl_gene_id": {
+          "type": "string",
+          "description": "Ensembl gene identifier (e.g., 'ENSG00000141510' or 'ENSG00000141510.11'). Use gene_symbol instead if you have a gene name."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://gtexportal.org/api/v2/expression/geneExpression",
+      "format": "json"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "geneExpression": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "tissueSiteDetailId": {"type": "string"},
+                      "median": {"type": "number"},
+                      "geneSymbol": {"type": "string"},
+                      "gencodeId": {"type": "string"},
+                      "unit": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            },
+            "url": {"type": "string"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_symbol": "TP53"},
+      {"ensembl_gene_id": "ENSG00000141510"}
+    ],
+    "label": ["GTEx", "Expression", "Summary"],
+    "metadata": {
+      "tags": ["expression", "tissue", "baseline"],
+      "estimated_execution_time": "< 2 seconds"
+    }
+  },
+  {
+    "name": "GTEx_query_eqtl",
+    "type": "GTExEQTLTool",
+    "description": "Query GTEx single-tissue eQTL associations for a gene. Accepts gene symbols (TP53, BRCA1) or Ensembl IDs. Use to identify regulatory variants (variantId, pValue, slope) relevant to expression regulation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to versioned GENCODE ID."
+        },
+        "ensembl_gene_id": {
+          "type": "string",
+          "description": "Ensembl gene identifier (e.g., 'ENSG00000141510'). Use gene_symbol instead if you have a gene name."
+        },
+        "gene_id": {
+          "type": "string",
+          "description": "Alias for ensembl_gene_id. Ensembl gene ID (e.g., 'ENSG00000141510')."
+        },
+        "gene_input": {
+          "type": "string",
+          "description": "Alias for gene_symbol. Gene symbol or Ensembl ID (e.g., 'TP53', 'ENSG00000141510')."
+        },
+        "tissue_id": {
+          "type": "string",
+          "description": "GTEx tissue ID to filter eQTL results (e.g., 'Brain_Cortex', 'Whole_Blood', 'Liver'). Case-sensitive."
+        },
+        "tissue": {
+          "type": "string",
+          "description": "Alias for tissue_id. GTEx tissue name (e.g., 'Brain_Cortex', 'Whole_Blood')."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "Page number (1-based)."
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of records per page (1–100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://gtexportal.org/api/v2/association/singleTissueEqtl",
+      "format": "json"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "singleTissueEqtl": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variantId": {"type": "string"},
+                      "pValue": {"type": "number"},
+                      "slope": {"type": "number"},
+                      "tissueSiteDetailId": {"type": "string"},
+                      "geneSymbol": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            },
+            "url": {"type": "string"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_symbol": "TP53", "page": 1, "size": 5},
+      {"ensembl_gene_id": "ENSG00000141510", "page": 1, "size": 5}
+    ],
+    "label": ["GTEx", "eQTL", "Association"],
+    "metadata": {
+      "tags": ["eqtl", "variant", "regulation"],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
+]

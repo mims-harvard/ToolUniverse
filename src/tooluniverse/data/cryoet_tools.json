@@ -1,0 +1,418 @@
+[
+  {
+    "name": "CryoET_list_datasets",
+    "type": "CryoETTool",
+    "required_packages": ["requests"],
+    "description": "Search and list cryo-electron tomography (cryo-ET) datasets from the CZ BioHub CryoET Data Portal (cryoetdataportal.czscience.com). Returns dataset metadata including title, description, organism, tissue/cell type, sample type, and S3/HTTPS data access paths. Supports filtering by organism name or tissue name. Use for: discovering available cryo-ET datasets, finding datasets by organism (e.g. 'Homo sapiens', 'Saccharomyces cerevisiae'), filtering by tissue or cell type. Returns up to `limit` datasets per call; use `offset` for pagination.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": ["list_datasets"],
+          "default": "list_datasets"
+        },
+        "organism_name": {
+          "type": ["string", "null"],
+          "description": "Filter by organism name (case-insensitive substring match). Examples: 'Homo sapiens', 'Saccharomyces cerevisiae', 'Coxiella burnetii'."
+        },
+        "tissue_name": {
+          "type": ["string", "null"],
+          "description": "Filter by tissue or cell type name (case-insensitive substring match). Examples: 'kidney', 'endothelial', 'prokaryotic cell'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of datasets to return (default: 10, max recommended: 50).",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of datasets to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {"type": "integer"},
+                "datasets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "integer"},
+                      "title": {"type": "string"},
+                      "description": {"type": "string"},
+                      "organismName": {"type": "string"},
+                      "tissueName": {"type": "string"},
+                      "cellName": {"type": "string"},
+                      "sampleType": {"type": "string"},
+                      "depositionDate": {"type": "string"},
+                      "releaseDate": {"type": "string"},
+                      "s3Prefix": {"type": "string"},
+                      "httpsPrefix": {"type": "string"}
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "required": ["count", "datasets"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_datasets",
+        "organism_name": "Homo sapiens",
+        "limit": 3
+      }
+    ]
+  },
+  {
+    "name": "CryoET_get_dataset",
+    "type": "CryoETTool",
+    "required_packages": ["requests"],
+    "description": "Get full metadata for a specific CryoET Data Portal dataset by its numeric ID. Returns complete dataset information including organism taxonomy, tissue/cell identifiers, sample preparation details, publication references, data access paths (S3 and HTTPS), and file size. Use this after `CryoET_list_datasets` to retrieve detailed information for a specific dataset. The dataset ID is an integer (e.g. 10053, 10174).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": ["get_dataset"],
+          "default": "get_dataset"
+        },
+        "dataset_id": {
+          "type": "integer",
+          "description": "Numeric dataset ID from the CryoET Data Portal (e.g. 10053, 10174, 10460)."
+        }
+      },
+      "required": ["operation", "dataset_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": "integer"},
+                    "title": {"type": "string"},
+                    "description": {"type": "string"},
+                    "organismName": {"type": "string"},
+                    "organismTaxid": {"type": "integer"},
+                    "tissueName": {"type": "string"},
+                    "cellName": {"type": "string"},
+                    "sampleType": {"type": "string"},
+                    "samplePreparation": {"type": "string"},
+                    "gridPreparation": {"type": "string"},
+                    "depositionDate": {"type": "string"},
+                    "releaseDate": {"type": "string"},
+                    "datasetPublications": {"type": "string"},
+                    "relatedDatabaseEntries": {"type": "string"},
+                    "s3Prefix": {"type": "string"},
+                    "httpsPrefix": {"type": "string"},
+                    "fileSize": {"type": "number"}
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "required": ["dataset"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_dataset",
+        "dataset_id": 10053
+      }
+    ]
+  },
+  {
+    "name": "CryoET_list_runs",
+    "type": "CryoETTool",
+    "required_packages": ["requests"],
+    "description": "List the experimental tilt-series acquisition runs within a specific CryoET Data Portal dataset. Each run corresponds to one sample grid position with its own tilt series, tomograms, and annotations. Returns run names and data access paths. Use this after `CryoET_get_dataset` to enumerate the runs for a dataset before fetching tomograms or annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": ["list_runs"],
+          "default": "list_runs"
+        },
+        "dataset_id": {
+          "type": "integer",
+          "description": "Numeric dataset ID (e.g. 10053)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of runs to return (default: 20).",
+          "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of runs to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": ["operation", "dataset_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {"type": "integer"},
+                "count": {"type": "integer"},
+                "runs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "integer"},
+                      "name": {"type": "string"},
+                      "datasetId": {"type": "integer"},
+                      "s3Prefix": {"type": "string"},
+                      "httpsPrefix": {"type": "string"}
+                    }
+                  }
+                }
+              },
+              "required": ["dataset_id", "count", "runs"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_runs",
+        "dataset_id": 10053,
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "CryoET_list_tomograms",
+    "type": "CryoETTool",
+    "required_packages": ["requests"],
+    "description": "List tomographic reconstructions for a specific experimental run from the CryoET Data Portal. Returns voxel spacing (Angstroms), tomogram dimensions (sizeX/Y/Z voxels), reconstruction method (WBP = Weighted Back Projection, SIRT, etc.), processing pipeline, and download URLs for OME-Zarr (cloud-native) and MRC (traditional) formats. Use after `CryoET_list_runs` to find tomograms; use `isPortalStandard` flag to identify quality-controlled tomograms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": ["list_tomograms"],
+          "default": "list_tomograms"
+        },
+        "run_id": {
+          "type": "integer",
+          "description": "Numeric run ID (e.g. 3430). Obtain from CryoET_list_runs."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of tomograms to return (default: 10).",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of tomograms to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": ["operation", "run_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "run_id": {"type": "integer"},
+                "count": {"type": "integer"},
+                "tomograms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "integer"},
+                      "name": {"type": "string"},
+                      "runId": {"type": "integer"},
+                      "voxelSpacing": {"type": "number"},
+                      "sizeX": {"type": "integer"},
+                      "sizeY": {"type": "integer"},
+                      "sizeZ": {"type": "integer"},
+                      "reconstructionMethod": {"type": "string"},
+                      "processing": {"type": "string"},
+                      "isPortalStandard": {"type": "boolean"},
+                      "s3OmezarrDir": {"type": "string"},
+                      "httpsMrcFile": {"type": "string"}
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "required": ["run_id", "count", "tomograms"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_tomograms",
+        "run_id": 3430
+      }
+    ]
+  },
+  {
+    "name": "CryoET_list_annotations",
+    "type": "CryoETTool",
+    "required_packages": ["requests"],
+    "description": "List biological annotations (segmentations, point annotations, surface meshes) for a specific cryo-ET run from the CryoET Data Portal. Annotations label cellular structures such as membranes, ribosomes, and organelles. Returns object name (e.g. 'membrane', 'ribosome'), GO/EMDB ontology ID, annotation method description, count of annotated instances, software used, and metadata paths. Filter by `curator_recommended_only=true` to get curated high-quality annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": ["list_annotations"],
+          "default": "list_annotations"
+        },
+        "run_id": {
+          "type": "integer",
+          "description": "Numeric run ID (e.g. 3430). Obtain from CryoET_list_runs."
+        },
+        "curator_recommended_only": {
+          "type": "boolean",
+          "description": "If true, return only curator-recommended high-quality annotations (default: false).",
+          "default": false
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of annotations to return (default: 20).",
+          "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of annotations to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": ["operation", "run_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "run_id": {"type": "integer"},
+                "count": {"type": "integer"},
+                "annotations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": "integer"},
+                      "objectName": {"type": "string"},
+                      "objectId": {"type": "string"},
+                      "objectDescription": {"type": "string"},
+                      "objectCount": {"type": "integer"},
+                      "annotationMethod": {"type": "string"},
+                      "annotationSoftware": {"type": "string"},
+                      "isCuratorRecommended": {"type": "boolean"},
+                      "methodType": {"type": "string"},
+                      "depositionDate": {"type": "string"},
+                      "s3MetadataPath": {"type": "string"},
+                      "httpsMetadataPath": {"type": "string"}
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "required": ["run_id", "count", "annotations"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_annotations",
+        "run_id": 3430
+      }
+    ]
+  }
+]

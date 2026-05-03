@@ -1,0 +1,229 @@
+[
+  {
+    "name": "EnsemblLD_get_ld_variants",
+    "description": "Get linkage disequilibrium (LD) data for a variant from the Ensembl REST API. Returns all variants in LD with the query variant in a specified 1000 Genomes population, with r-squared and D' statistics. LD measures the non-random association of alleles at different loci, critical for GWAS interpretation and fine-mapping. Example: rs1042779 in KHV population returns 708 LD partners with r2 and D' values.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "rs ID of the variant. Examples: 'rs1042779', 'rs429358', 'rs7903146', 'rs6792369'."
+        },
+        "population": {
+          "type": "string",
+          "description": "1000 Genomes population. Format: '1000GENOMES:phase_3:<POP>'. Common populations: 'KHV' (Kinh Vietnamese), 'CEU' (CEPH Utah), 'YRI' (Yoruba), 'CHB' (Han Chinese Beijing), 'GBR' (British), 'JPT' (Japanese Tokyo), 'ASW' (African SW US). Example: '1000GENOMES:phase_3:CEU'."
+        },
+        "r2_threshold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum r-squared threshold to report. Default: 0.05. Set higher (e.g., 0.8) for strong LD only."
+        },
+        "d_prime_threshold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum D' threshold. Default: none. Set e.g., 0.8 for high D' only."
+        }
+      },
+      "required": [
+        "variant_id",
+        "population"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "ld_variants"
+    },
+    "type": "EnsemblLDTool",
+    "test_examples": [
+      {
+        "variant_id": "rs1042779",
+        "population": "1000GENOMES:phase_3:KHV"
+      },
+      {
+        "variant_id": "rs429358",
+        "population": "1000GENOMES:phase_3:CEU",
+        "r2_threshold": 0.5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "query_variant": {
+                  "type": "string"
+                },
+                "population": {
+                  "type": "string"
+                },
+                "ld_count": {
+                  "type": "integer"
+                },
+                "ld_variants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant1": {
+                        "type": "string"
+                      },
+                      "variant2": {
+                        "type": "string"
+                      },
+                      "r2": {
+                        "type": "number"
+                      },
+                      "d_prime": {
+                        "type": "number"
+                      },
+                      "population_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EnsemblLD_get_ld_pairwise",
+    "description": "Get pairwise linkage disequilibrium (LD) statistics between two specific variants from the Ensembl REST API. Returns r-squared and D' across ALL 1000 Genomes populations, allowing comparison of LD patterns across ancestries. Useful for assessing whether two GWAS signals are correlated or independent. Example: rs6792369 vs rs1042779 shows r2=1.0 in East Asian populations but r2=0.84 in African populations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant1": {
+          "type": "string",
+          "description": "rs ID of the first variant. Examples: 'rs6792369', 'rs429358'."
+        },
+        "variant2": {
+          "type": "string",
+          "description": "rs ID of the second variant. Examples: 'rs1042779', 'rs7412'."
+        }
+      },
+      "required": [
+        "variant1",
+        "variant2"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "ld_pairwise"
+    },
+    "type": "EnsemblLDTool",
+    "test_examples": [
+      {
+        "variant1": "rs6792369",
+        "variant2": "rs1042779"
+      },
+      {
+        "variant1": "rs429358",
+        "variant2": "rs7412"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant1": {
+                  "type": "string"
+                },
+                "variant2": {
+                  "type": "string"
+                },
+                "population_count": {
+                  "type": "integer"
+                },
+                "ld_by_population": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "population_name": {
+                        "type": "string"
+                      },
+                      "r2": {
+                        "type": "number"
+                      },
+                      "d_prime": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

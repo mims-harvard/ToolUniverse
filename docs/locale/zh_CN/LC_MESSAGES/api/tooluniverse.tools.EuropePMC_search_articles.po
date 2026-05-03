@@ -29,6 +29,8 @@ msgstr "tooluniverse.tools.EuropePMC\\_search\\_articles 模块"
 #: tooluniverse.tools.EuropePMC_search_articles:1
 msgid "EuropePMC_search_articles"
 msgstr ""
+"EuropePMC_search_articles  \n"
+"欧洲PMC搜索文章"
 
 #: 50afe0879c5a4b9c99a7d35f401b4f98 6591bebeada949fd90f31c1b8ccbac58 of
 #: tooluniverse.tools.EuropePMC_search_articles:3

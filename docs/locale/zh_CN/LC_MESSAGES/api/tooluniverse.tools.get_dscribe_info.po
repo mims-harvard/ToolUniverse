@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_dscribe\\_info 模块"
 
 #: ccc0a8ed747443e9bd76f1438824fa89 of tooluniverse.tools.get_dscribe_info:1
 msgid "get_dscribe_info"
-msgstr ""
+msgstr "get_dscribe_info 获取描述信息"
 
 #: 086b4e18c7274c6388ebccd0b1ad2865 c576ecb8d4f642e4885f4f46510d2c02 of
 #: tooluniverse.tools.get_dscribe_info:3

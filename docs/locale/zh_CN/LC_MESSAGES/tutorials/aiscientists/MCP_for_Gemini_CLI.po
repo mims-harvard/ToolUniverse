@@ -449,12 +449,12 @@ msgstr "**解决方案**："
 #: ../../tutorials/aiscientists/MCP_for_Gemini_CLI.md:249
 #: ace6b82fd8c14df6aff62250b8305673
 msgid ""
-"Verify ToolUniverse is properly installed and the `tooluniverse-mcp-claude` "
+"Verify ToolUniverse is properly installed and the `tooluniverse-smcp-stdio` "
 "command is runnable. Test it directly in your terminal: `cd "
-"/path/to/your/ToolUniverse && uv run tooluniverse-mcp-claude --help`"
+"/path/to/your/ToolUniverse && uv run tooluniverse-smcp-stdio --help`"
 msgstr ""
-"确认 ToolUniverse 已正确安装，且 `tooluniverse-mcp-claude` 命令可正常运行。可在终端中直接测试：`cd "
-"/path/to/your/ToolUniverse && uv run tooluniverse-mcp-claude --help`"
+"确认 ToolUniverse 已正确安装，且 `tooluniverse-smcp-stdio` 命令可正常运行。可在终端中直接测试：`cd "
+"/path/to/your/ToolUniverse && uv run tooluniverse-smcp-stdio --help`"
 
 #: ../../tutorials/aiscientists/MCP_for_Gemini_CLI.md:251
 #: 29d643ac022c48fd999e8b3daa4d3c6b

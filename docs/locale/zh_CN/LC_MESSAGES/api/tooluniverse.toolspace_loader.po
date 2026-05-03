@@ -7,64 +7,65 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse \n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-18 17:56-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.toolspace_loader.rst:2
 #: ffeea3c9abaa4229bc7594cc262562e0
 msgid "tooluniverse.toolspace\\_loader module"
-msgstr ""
+msgstr "tooluniverse.toolspace\\_loader 模块"
 
 #: 39486c2659fd4614be9444a0ca8fa57d of tooluniverse.toolspace_loader:1
 msgid "Space Smart URI Loader"
-msgstr ""
+msgstr "空间智能URI加载器"
 
 #: bffe451409734f03a0c305bd8ee4afde of tooluniverse.toolspace_loader:3
 msgid ""
-"This module provides intelligent loading of Space configurations from"
-" various sources including HuggingFace Hub, GitHub, local files, and HTTP"
-" URLs."
-msgstr ""
+"This module provides intelligent loading of Space configurations from "
+"various sources including HuggingFace Hub, GitHub, local files, and HTTP "
+"URLs."
+msgstr "该模块提供从多个来源智能加载空间配置，包括 HuggingFace Hub、GitHub、本地文件和 HTTP URL。"
 
 #: b66db95000794d5eb2a3e727a12e37ad of
 #: tooluniverse.toolspace_loader.SpaceLoader:1
 msgid "Bases: :py:class:`object`"
-msgstr ""
+msgstr "基类：:py:class:`object`"
 
 #: 6609176099eb4b1eb6ea2695429efce2 of
 #: tooluniverse.toolspace_loader.SpaceLoader:1
 msgid "Smart loader for Space configurations from various sources."
-msgstr ""
+msgstr "用于从各种来源加载空间配置的智能加载器。"
 
 #: ddbf675ce7694567969719e0a09691c1 of
 #: tooluniverse.toolspace_loader.SpaceLoader.__init__:1
 msgid "Initialize the Space loader."
-msgstr ""
+msgstr "初始化空间加载器。"
 
-#: ../../api/tooluniverse.toolspace_loader.rst 6d29162a67854a4ab7bf3141caf17241
-#: 8e6986ff42174f17a660e0eb1039bfe5 cf6820d1e06e4099967697a20b737afb
+#: ../../api/tooluniverse.toolspace_loader.rst
+#: 6d29162a67854a4ab7bf3141caf17241 8e6986ff42174f17a660e0eb1039bfe5
+#: cf6820d1e06e4099967697a20b737afb
 msgid "Parameters"
-msgstr ""
+msgstr "参数"
 
 #: dec5b9f774bd4343a27ff6fcf7a35b83 of
 #: tooluniverse.toolspace_loader.SpaceLoader.__init__:3
 msgid "Directory for caching downloaded configurations"
-msgstr ""
+msgstr "用于缓存已下载配置的目录"
 
 #: de73df25bb8846c0bc2c1ba0923b40d7 of
 #: tooluniverse.toolspace_loader.SpaceLoader.load:1
 msgid "Load Space configuration from URI."
-msgstr ""
+msgstr "从 URI 加载空间配置。"
 
 #: 48846072968c49a2ae68f85ff0d4c221 of
 #: tooluniverse.toolspace_loader.SpaceLoader.load:3
@@ -75,100 +76,106 @@ msgid ""
 "Local files: \"./config.yaml\", \"/absolute/path.yaml\" - HTTP URLs: "
 "\"https://example.com/config.yaml\""
 msgstr ""
+"支持多种格式：  \n"
+"- 官方别名：\"drug-discovery\"、\"literature\"、\"clinical\"  \n"
+"- HuggingFace：\"username/repo\"、\"hf:username/repo@v1.0.0\"  \n"
+"- GitHub：\"gh:user/repo/path/file.yaml\"  \n"
+"- 本地文件：\"./config.yaml\"、\"/absolute/path.yaml\"  \n"
+"- HTTP URL：\"https://example.com/config.yaml\""
 
 #: 690c0931374046b8a99d01607117cd93 f877a9ac9b304c60b39d996136836a1a of
 #: tooluniverse.toolspace_loader.SpaceLoader.load:10
 #: tooluniverse.toolspace_loader.load_toolspace:3
 msgid "Configuration URI"
-msgstr ""
+msgstr "配置 URI"
 
-#: ../../api/tooluniverse.toolspace_loader.rst 3c5c10bff0f74a13b1cddf25b5fe97b3
-#: 45dc5440ac6e4622ad1109d33d610238
+#: ../../api/tooluniverse.toolspace_loader.rst
+#: 3c5c10bff0f74a13b1cddf25b5fe97b3 45dc5440ac6e4622ad1109d33d610238
 msgid "Returns"
-msgstr ""
+msgstr "退货"
 
 #: 2949c7261423471b927b17b34102b20a bcf9952d7daf4d0ca5a18cc800a55f46 of
 #: tooluniverse.toolspace_loader.SpaceLoader.load:12
 #: tooluniverse.toolspace_loader.load_toolspace:6
 msgid "Parsed configuration dictionary"
-msgstr ""
+msgstr "解析后的配置字典"
 
-#: ../../api/tooluniverse.toolspace_loader.rst 65b66414496d44fc83b17ca0df2d4ae9
+#: ../../api/tooluniverse.toolspace_loader.rst
+#: 65b66414496d44fc83b17ca0df2d4ae9
 msgid "Raises"
-msgstr ""
+msgstr "提升"
 
 #: 456956357d264cf4a9350d60b652dca8 of
 #: tooluniverse.toolspace_loader.SpaceLoader.load:14
 msgid "If URI format is not supported or configuration is invalid"
-msgstr ""
+msgstr "如果不支持URI格式或配置无效"
 
 #: 2a3a68f35062481282dc53c2c41e60e9 of
 #: tooluniverse.toolspace_loader.SpaceLoader.load:15
 msgid "If local file does not exist"
-msgstr ""
+msgstr "如果本地文件不存在"
 
 #: beae5f6c5c114564924b5f034fc16641 of
 #: tooluniverse.toolspace_loader.SpaceLoader.load:16
 msgid "If HTTP request fails"
-msgstr ""
+msgstr "如果 HTTP 请求失败"
 
-#: ../../api/tooluniverse.toolspace_loader.rst 695fdbfa982d4cfe94286b68e6bc7c75
-#: 7477b09222ce48118e4e5fa676a4e0d1
+#: ../../api/tooluniverse.toolspace_loader.rst
+#: 695fdbfa982d4cfe94286b68e6bc7c75 7477b09222ce48118e4e5fa676a4e0d1
 msgid "Return type"
-msgstr ""
+msgstr "返回类型"
 
 #: 9d83366967384c028edbcf479145ae2e of
 #: tooluniverse.toolspace_loader.SpaceLoader._detect_uri_type:1
 msgid "Detect URI type based on format."
-msgstr ""
+msgstr "根据格式检测URI类型。"
 
 #: 325fd949f31d4799936cdaac0419e7d3 of
 #: tooluniverse.toolspace_loader.SpaceLoader._load_from_hf:1
 msgid "Load configuration from HuggingFace Hub."
-msgstr ""
+msgstr "从 HuggingFace Hub 加载配置。"
 
 #: 7adf00d386004e318feabbff9d04f761 of
 #: tooluniverse.toolspace_loader.SpaceLoader._load_from_github:1
 msgid "Load configuration from GitHub."
-msgstr ""
+msgstr "从 GitHub 加载配置。"
 
 #: 3da352030ccd4968bbee96821b896fa1 of
 #: tooluniverse.toolspace_loader.SpaceLoader._load_from_gitlab:1
 msgid "Load configuration from GitLab."
-msgstr ""
+msgstr "从 GitLab 加载配置。"
 
 #: f768f53f719247088af1f77a0725a614 of
 #: tooluniverse.toolspace_loader.SpaceLoader._load_from_gitee:1
 msgid "Load configuration from Gitee."
-msgstr ""
+msgstr "从 Gitee 加载配置。"
 
 #: 29a63887a1da4acca579bf0972cb8071 of
 #: tooluniverse.toolspace_loader.SpaceLoader._load_from_url:1
 msgid "Load configuration from HTTP URL."
-msgstr ""
+msgstr "从 HTTP URL 加载配置。"
 
 #: 6cbc7762b3ad4f4a811971cefbbc72b7 of
 #: tooluniverse.toolspace_loader.SpaceLoader._load_from_file:1
 msgid "Load configuration from local file."
-msgstr ""
+msgstr "从本地文件加载配置。"
 
 #: 00b09cad63b14d2f9b11c8005fb33622 of
 #: tooluniverse.toolspace_loader.load_toolspace:1
 msgid "Convenience function to load a Space configuration."
-msgstr ""
+msgstr "用于加载空间配置的便捷功能。"
 
 #: d74c7730c3514a6398cbcfe3a37b4cc3 of
 #: tooluniverse.toolspace_loader.load_toolspace:4
 msgid "Optional cache directory"
-msgstr ""
+msgstr "可选缓存目录"
 
 #: 93717adbb0f24544b671c97c60d9001c of
 #: tooluniverse.toolspace_loader.list_available_aliases:1
 msgid "List all available official aliases."
-msgstr ""
+msgstr "列出所有可用的官方别名。"
 
 #: 12a10bc9fd23471c9379e5e97b853245 of
 #: tooluniverse.toolspace_loader.get_alias_info:1
 msgid "Get information about an official alias."
-msgstr ""
-
+msgstr "获取有关官方别名的信息。"

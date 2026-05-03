@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.FAERS\\_count\\_additive\\_event\\_reports\\_by\\_cou
 #: 61c61fa278a24ef7853304d421f0bb80 of
 #: tooluniverse.tools.FAERS_count_additive_event_reports_by_country:1
 msgid "FAERS_count_additive_event_reports_by_country"
-msgstr ""
+msgstr "按国家统计FAERS附加事件报告数"
 
 #: 8ee3844906424562912882d79d175c2d bcaa133055334a9891967679b66c4ad6 of
 #: tooluniverse.tools.FAERS_count_additive_event_reports_by_country:3

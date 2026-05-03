@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_protein\\_classification\\_by\\_pdb\\_id 模块
 #: e6e81c53691549bd88cb4d44f6fd838e of
 #: tooluniverse.tools.get_protein_classification_by_pdb_id:1
 msgid "get_protein_classification_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取蛋白质分类"
 
 #: 6d8141eea90c4239bb45275de02eef0d 890dbefa910642eb890759c14b5b1430 of
 #: tooluniverse.tools.get_protein_classification_by_pdb_id:3

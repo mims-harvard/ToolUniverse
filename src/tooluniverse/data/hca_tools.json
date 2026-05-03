@@ -1,0 +1,150 @@
+[
+    {
+        "name": "hca_search_projects",
+        "type": "HCATool",
+        "description": "Searches for single-cell projects in the Human Cell Atlas (HCA) Data Coordination Platform (DCP). This tool allows filtering projects based on specific organs and disease states.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "search_projects"
+                    ],
+                    "default": "search_projects",
+                    "description": "The specific action to perform. Must be set to 'search_projects'."
+                },
+                "organ": {
+                    "type": "string",
+                    "description": "The organ to filter projects by. Examples include 'heart', 'liver', 'brain', 'kidney'. This field is optional."
+                },
+                "disease": {
+                    "type": "string",
+                    "description": "The disease state to filter by. Examples include 'normal', 'cancer', 'covid-19'. This field is optional."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of projects to return. The default is 10. Use this to control the size of the result set.",
+                    "default": 10
+                }
+            },
+            "required": [
+                "action"
+            ]
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "A dictionary containing the search results, including the total count of hits and a list of project details.",
+            "properties": {
+                "total_hits": {
+                    "type": "integer",
+                    "description": "The total number of projects matching the search criteria."
+                },
+                "projects": {
+                    "type": "array",
+                    "description": "A list of project objects containing metadata about each matching project.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "The title of the project."
+                            },
+                            "entryId": {
+                                "type": "string",
+                                "description": "The unique identifier (UUID) for the project. This ID is used to retrieve file manifests."
+                            },
+                            "organ": {
+                                "type": ["array", "null"],
+                                "description": "A list of organs associated with the project."
+                            },
+                            "disease": {
+                                "type": "array",
+                                "description": "A list of diseases associated with the project."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "action": "search_projects",
+                "organ": "heart",
+                "limit": 2
+            }
+        ]
+    },
+    {
+        "name": "hca_get_file_manifest",
+        "type": "HCATool",
+        "description": "Retrieves a list of downloadable files for a specific Human Cell Atlas (HCA) project identified by its Project ID.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string",
+                    "enum": [
+                        "get_file_manifest"
+                    ],
+                    "default": "get_file_manifest",
+                    "description": "The specific action to perform. Must be set to 'get_file_manifest'."
+                },
+                "project_id": {
+                    "type": "string",
+                    "description": "The unique UUID of the project (entryId) for which to retrieve files. This ID is typically obtained from the 'hca_search_projects' tool."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "The maximum number of files to list. The default is 10.",
+                    "default": 10
+                }
+            },
+            "required": [
+                "action",
+                "project_id"
+            ]
+        },
+        "return_schema": {
+            "type": "object",
+            "description": "A dictionary containing the file manifest, including the total file count and a list of file details.",
+            "properties": {
+                "total_files": {
+                    "type": "integer",
+                    "description": "The total number of files available for the project."
+                },
+                "files": {
+                    "type": "array",
+                    "description": "A list of file objects with download links and metadata.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the file."
+                            },
+                            "url": {
+                                "type": "string",
+                                "description": "The direct download URL for the file."
+                            },
+                            "format": {
+                                "type": "string",
+                                "description": "The format of the file (e.g., 'h5', 'fastq')."
+                            },
+                            "size": {
+                                "type": "integer",
+                                "description": "The size of the file in bytes."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "test_examples": [
+            {
+                "action": "get_file_manifest",
+                "project_id": "7027adc6-c9c9-46f3-84ee-9badc3a4f53b"
+            }
+        ]
+    }
+]

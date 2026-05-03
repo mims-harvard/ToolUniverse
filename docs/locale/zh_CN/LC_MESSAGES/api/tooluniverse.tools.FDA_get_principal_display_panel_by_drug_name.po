@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_principal\\_display\\_panel\\_by\\_drug\\
 #: 86d17eaa318d4eb5b2ce1ae57b4ec597 of
 #: tooluniverse.tools.FDA_get_principal_display_panel_by_drug_name:1
 msgid "FDA_get_principal_display_panel_by_drug_name"
-msgstr ""
+msgstr "FDA_根据药品名称获取主要显示面板"
 
 #: 2dd9b0b9807f4dfdb21951ff59586acb b641d3aa2e674c2abe1b78e28e5f5755 of
 #: tooluniverse.tools.FDA_get_principal_display_panel_by_drug_name:3

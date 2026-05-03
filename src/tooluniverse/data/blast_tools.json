@@ -1,0 +1,124 @@
+[
+  {
+    "type": "NCBIBlastTool",
+    "name": "BLAST_nucleotide_search",
+    "description": "Search nucleotide sequences using NCBI BLAST blastn against nucleotide databases. Requires Biopython (pip install biopython). IMPORTANT: This tool uses NCBI's remote BLAST service which is inherently SLOW - expect 5-30 minutes per query depending on server load. This is normal NCBI behavior, not a bug. For faster results, use smaller databases like 'refseq_select_rna' instead of 'nt'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {"type": "string", "description": "DNA sequence to search (minimum 10 nucleotides)"},
+        "database": {"type": "string", "default": "nt", "description": "Database to search. Options: 'nt' (comprehensive but slow), 'refseq_select_rna' (curated, faster), 'refseq_representative_genomes' (representative genomes)"},
+        "expect": {"type": "number", "default": 10.0, "description": "E-value threshold for reporting hits"},
+        "hitlist_size": {"type": "integer", "default": 50, "description": "Maximum number of hits to return"}
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query_id": {"type": ["string", "null"]},
+        "query_length": {"type": ["integer", "null"]},
+        "database": {"type": ["string", "null"]},
+        "algorithm": {"type": ["string", "null"]},
+        "alignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hit_id": {"type": "string"},
+              "hit_def": {"type": "string"},
+              "hit_length": {"type": "integer"},
+              "hsps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "score": {"type": "number"},
+                    "bits": {"type": "number"},
+                    "expect": {"type": "number"},
+                    "identities": {"type": "integer"},
+                    "positives": {"type": ["integer", "null"]},
+                    "gaps": {"type": "integer"},
+                    "align_length": {"type": "integer"},
+                    "query_start": {"type": "integer"},
+                    "query_end": {"type": "integer"},
+                    "hit_start": {"type": "integer"},
+                    "hit_end": {"type": "integer"},
+                    "query": {"type": "string"},
+                    "match": {"type": "string"},
+                    "sbjct": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"sequence": "ATGCGATCGATCGATCGATCGATCGATCGATCG", "database": "refseq_select_rna", "hitlist_size": 5}
+    ],
+    "test_timeout": 600
+  },
+  {
+    "type": "NCBIBlastTool",
+    "name": "BLAST_protein_search",
+    "description": "Search protein sequences using NCBI BLAST blastp against protein databases. Requires Biopython (pip install biopython). IMPORTANT: This tool uses NCBI's remote BLAST service which is inherently SLOW - expect 5-30 minutes per query depending on server load. This is normal NCBI behavior, not a bug. For faster results, use 'swissprot' or 'pdb' databases instead of 'nr'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {"type": "string", "description": "Protein sequence to search (minimum 10 amino acids)"},
+        "database": {"type": "string", "default": "nr", "description": "Database to search. Options: 'nr' (comprehensive but slow), 'swissprot' (curated, faster), 'pdb' (protein structures only)"},
+        "expect": {"type": "number", "default": 10.0, "description": "E-value threshold for reporting hits"},
+        "hitlist_size": {"type": "integer", "default": 50, "description": "Maximum number of hits to return"}
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "query_id": {"type": ["string", "null"]},
+        "query_length": {"type": ["integer", "null"]},
+        "database": {"type": ["string", "null"]},
+        "algorithm": {"type": ["string", "null"]},
+        "alignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "hit_id": {"type": "string"},
+              "hit_def": {"type": "string"},
+              "hit_length": {"type": "integer"},
+              "hsps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "score": {"type": "number"},
+                    "bits": {"type": "number"},
+                    "expect": {"type": "number"},
+                    "identities": {"type": "integer"},
+                    "positives": {"type": ["integer", "null"]},
+                    "gaps": {"type": "integer"},
+                    "align_length": {"type": "integer"},
+                    "query_start": {"type": "integer"},
+                    "query_end": {"type": "integer"},
+                    "hit_start": {"type": "integer"},
+                    "hit_end": {"type": "integer"},
+                    "query": {"type": "string"},
+                    "match": {"type": "string"},
+                    "sbjct": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {"sequence": "MKLLILTCLVAVALARPKHPIKHQGLPQEVLNENLLRFFVAPFPEVFGKEKVNEL", "database": "swissprot", "hitlist_size": 5}
+    ],
+    "test_timeout": 600
+  }
+]

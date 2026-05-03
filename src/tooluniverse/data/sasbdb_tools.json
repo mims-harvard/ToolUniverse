@@ -1,0 +1,311 @@
+[
+  {
+    "name": "SASBDB_search",
+    "description": "Search SASBDB small-angle scattering database by query term or UniProt accession. Accepts free-text queries (routes to all-entries listing with guidance) or UniProt IDs (returns matching entries directly). Use SASBDB_get_entry with a specific code for full details.",
+    "type": "SASBDBTextSearchTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query: UniProt accession (e.g., 'P02769' for BSA) or free-text term. Note: SASBDB has no full-text search API; UniProt accessions are resolved directly."
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {"type": "array"},
+            "note": {"type": "string"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "P02769"},
+      {"query": "BSA"}
+    ]
+  },
+  {
+    "name": "SASBDB_search_entries",
+    "description": "Search SASBDB for small-angle scattering entries by molecular type (protein, rna, dna, heterocomplex, other) or list all entries. Returns entry codes and publication status.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "molecular_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by molecule type: 'protein', 'rna', 'dna', 'heterocomplex', 'other'. Leave null to list all entries.",
+          "enum": [
+            "protein",
+            "rna",
+            "dna",
+            "heterocomplex",
+            "other",
+            null
+          ]
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.sasbdb.org/rest-api/entry/codes/{molecular_type}/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "type": "SASBDBSearchTool",
+    "test_examples": [
+      {
+        "molecular_type": "protein"
+      },
+      {
+        "molecular_type": "rna"
+      }
+    ]
+  },
+  {
+    "name": "SASBDB_get_entry",
+    "description": "Get detailed metadata for a SASBDB small-angle scattering entry by its accession code. Returns experimental conditions, publication info, data file URLs, and analysis results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sasbdb_id": {
+          "type": "string",
+          "description": "SASBDB accession code (e.g. SASDCZ9, SASDFZ9)"
+        }
+      },
+      "required": [
+        "sasbdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.sasbdb.org/rest-api/entry/summary/{sasbdb_id}/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "type_of_curve": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "angular_unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "project": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "experiment": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "intensities_data": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pddf_data": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "type": "SASBDBRESTTool",
+    "test_examples": [
+      {
+        "sasbdb_id": "SASDCZ9"
+      },
+      {
+        "sasbdb_id": "SASDFZ9"
+      }
+    ]
+  },
+  {
+    "name": "SASBDB_get_entries_by_uniprot",
+    "description": "Find SASBDB small-angle scattering entries associated with a UniProt protein accession. Returns list of matching SASBDB entry codes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession (e.g. P00698 for lysozyme, P68871 for hemoglobin)"
+        }
+      },
+      "required": [
+        "uniprot_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.sasbdb.org/rest-api/entry/codes/uniprot/{uniprot_id}/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "type": "SASBDBRESTTool",
+    "test_examples": [
+      {
+        "uniprot_id": "P00698"
+      },
+      {
+        "uniprot_id": "P68871"
+      }
+    ]
+  },
+  {
+    "name": "SASBDB_list_instruments",
+    "description": "List all beamlines and instruments in the SASBDB database used for small-angle scattering experiments.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.sasbdb.org/rest-api/instrument/all/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "city": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "country": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "beamline_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type_of_source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "type": "SASBDBRESTTool",
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "name": "SASBDB_get_entries_by_tag",
+    "description": "Find SASBDB small-angle scattering entries associated with a specific tag shortcode. See https://www.sasbdb.org/tags/ for valid tags.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Tag shortcode to search for (e.g. 'idp' for intrinsically disordered proteins, 'sans', 'waxs', 'benchmark', 'softmatter')"
+        }
+      },
+      "required": [
+        "tag"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.sasbdb.org/rest-api/entry/codes/tags/{tag}/",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "type": "SASBDBRESTTool",
+    "test_examples": [
+      {
+        "tag": "idp"
+      },
+      {
+        "tag": "benchmark"
+      }
+    ]
+  }
+]

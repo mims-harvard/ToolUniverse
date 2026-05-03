@@ -256,7 +256,7 @@ msgstr ""
 
 #: ../../old_files/I18N_GUIDE.md:212 d9bbcf789d4048a9af1fad074b0cab0c
 msgid "自定义域名语言路径"
-msgstr ""
+msgstr "Custom Domain Language Path"
 
 #: ../../old_files/I18N_GUIDE.md:214 657619b816be4fcfb5a1997e0cc25c66
 msgid "英文: `https://yourdomain.com/`"
@@ -268,7 +268,7 @@ msgstr ""
 
 #: ../../old_files/I18N_GUIDE.md:217 289f5742515d4e8ea1e35baba3917e3c
 msgid "📚 参考资源"
-msgstr ""
+msgstr "📚 参考资料"
 
 #: ../../old_files/I18N_GUIDE.md:219 5beb0bb850ab499a817ad1f6fcf79efb
 msgid ""
@@ -322,7 +322,7 @@ msgstr "Q: Can other languages be added?"
 
 #: ../../old_files/I18N_GUIDE.md:244 04242a83a67c411e90be25438c0a099c
 msgid "A:可以！修改 conf.py："
-msgstr ""
+msgstr "A: 可以！修改 conf.py："
 
 #: ../../old_files/I18N_GUIDE.md:253 42d5fdf65863406aa93dd8417c37be76
 msgid "然后运行："

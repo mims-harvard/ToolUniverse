@@ -189,7 +189,7 @@ class TestSMCPRealServer:
                 try:
                     # Try to run the tool
                     if hasattr(tool, 'run'):
-                        result = await tool.run()
+                        _ = await tool.run()
                         print(f"✅ Tool executed: {tool_name}")
                         print(f"✅ Hook processing should have occurred")
                     else:
@@ -224,7 +224,7 @@ class TestSMCPRealServer:
                 try:
                     # Try to run the tool
                     if hasattr(tool, 'run'):
-                        result = await tool.run()
+                        _ = await tool.run()
                         print(f"✅ Tool executed: {tool_name}")
                         print(f"✅ Hook processing should have occurred")
                     else:

@@ -1,0 +1,396 @@
+[
+  {
+    "name": "NDEx_search_networks",
+    "description": "Search the NDEx biological network repository for published networks by keyword. NDEx hosts thousands of curated protein-protein interaction (PPI) networks, signaling pathways, gene regulatory networks, and metabolic networks from research publications and databases like NCI-PID and SIGNOR. Returns network names, node/edge counts, DOIs, and UUIDs. Example: search 'BRCA1' finds interaction networks involving BRCA1; search 'p53 signaling' finds p53 pathway networks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for finding biological networks. Can include gene names, pathway names, diseases, or biological processes. Examples: 'BRCA1', 'p53 signaling', 'apoptosis', 'insulin pathway', 'MAPK cascade'."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 10, max: 100)."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "search"
+    },
+    "type": "NDExTool",
+    "test_examples": [
+      {
+        "query": "BRCA1"
+      },
+      {
+        "query": "p53 signaling",
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uuid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Network UUID (use with NDEx_get_network_summary or NDEx_get_network)"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Network name"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Network description (truncated)"
+                  },
+                  "owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Network owner/contributor"
+                  },
+                  "node_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of nodes in the network"
+                  },
+                  "edge_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of edges in the network"
+                  },
+                  "visibility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Network visibility (PUBLIC/PRIVATE)"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI if published"
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Network version"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NDEx_get_network_summary",
+    "description": "Get detailed summary information for a specific biological network in NDEx by its UUID. Returns the network name, description, node and edge counts, owner, DOI, version, creation/modification dates, and custom properties. Use NDEx_search_networks to find network UUIDs first. Example: UUID '34eec19d-ab5a-11ea-aaef-0ac135e8bacf' returns the BRCA1 interactome network with 82 nodes and 118 edges.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "NDEx network UUID. Get UUIDs from NDEx_search_networks results. Example: '34eec19d-ab5a-11ea-aaef-0ac135e8bacf' (BRCA1 interactome), '35e031eb-45d1-11ed-b7d0-0ac135e8bacf' (p53 pathway)."
+        }
+      },
+      "required": [
+        "uuid"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_summary"
+    },
+    "type": "NDExTool",
+    "test_examples": [
+      {
+        "uuid": "34eec19d-ab5a-11ea-aaef-0ac135e8bacf"
+      },
+      {
+        "uuid": "35e031eb-45d1-11ed-b7d0-0ac135e8bacf"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uuid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Network UUID"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Network name"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Full description"
+                },
+                "owner": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Owner username"
+                },
+                "node_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of nodes"
+                },
+                "edge_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of edges"
+                },
+                "visibility": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "PUBLIC or PRIVATE"
+                },
+                "doi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Digital Object Identifier"
+                },
+                "version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Network version"
+                },
+                "creation_time": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Creation timestamp (ms)"
+                },
+                "modification_time": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Last modification timestamp (ms)"
+                },
+                "properties": {
+                  "type": "object",
+                  "description": "Custom network properties (key-value pairs)"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NDEx_get_network",
+    "description": "Get the full content of a biological network from NDEx including all nodes (proteins/genes) and edges (interactions/relationships). Returns the network in a structured format with node names, edge source-target pairs, and interaction types. Large networks are truncated (max 200 nodes, 500 edges). Use NDEx_search_networks to find network UUIDs. Example: retrieves the BRCA1 interactome showing all protein interaction partners.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "NDEx network UUID. Example: '34eec19d-ab5a-11ea-aaef-0ac135e8bacf' (BRCA1 interactome)."
+        }
+      },
+      "required": [
+        "uuid"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_network"
+    },
+    "type": "NDExTool",
+    "test_examples": [
+      {
+        "uuid": "34eec19d-ab5a-11ea-aaef-0ac135e8bacf"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "network_name": {
+                  "type": "string",
+                  "description": "Network name"
+                },
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Network nodes (id, name, represents)"
+                },
+                "edges": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Network edges (source, target, interaction)"
+                },
+                "total_nodes": {
+                  "type": "integer",
+                  "description": "Total nodes in network"
+                },
+                "total_edges": {
+                  "type": "integer",
+                  "description": "Total edges in network"
+                },
+                "truncated_nodes": {
+                  "type": "boolean",
+                  "description": "Whether node list was truncated"
+                },
+                "truncated_edges": {
+                  "type": "boolean",
+                  "description": "Whether edge list was truncated"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "uuid": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

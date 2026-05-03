@@ -1732,7 +1732,7 @@ class ExpertInterface:
                             datetime.now() - datetime.fromisoformat(req["timestamp"])
                         ).total_seconds()
                         print(
-                            f"  • {req['id']}: {req['question'][:60]}{'...' if len(req['question']) > 60 else ''} ({round(age_seconds/60, 1)} min old)"
+                            f"  • {req['id']}: {req['question'][:60]}{'...' if len(req['question']) > 60 else ''} ({round(age_seconds / 60, 1)} min old)"
                         )
                 else:
                     print("✅ No pending requests")

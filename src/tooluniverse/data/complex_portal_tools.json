@@ -1,0 +1,115 @@
+[
+    {
+        "name": "ComplexPortal_search_complexes",
+        "description": "Search for curated protein complexes by gene/protein name from the EBI Complex Portal (includes CORUM mammalian complexes). Returns complex names, subunit compositions, and cross-references. Use to find which protein complexes a target participates in.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Gene symbol, protein name, or complex name to search (e.g., 'WDR7', 'RAVE complex', 'proteasome')"
+                },
+                "species": {
+                    "type": "string",
+                    "description": "NCBI taxonomy ID to filter by species (default: '9606' for human). Use '10090' for mouse, '10116' for rat, '' for all species.",
+                    "default": "9606"
+                },
+                "number": {
+                    "type": "integer",
+                    "description": "Maximum complexes to return (default: 25)",
+                    "default": 25,
+                    "minimum": 1,
+                    "maximum": 100
+                }
+            },
+            "required": ["query"]
+        },
+        "fields": {
+            "operation": "search_complexes"
+        },
+        "type": "ComplexPortalTool",
+        "test_examples": [
+            {"query": "TP53", "species": "9606", "number": 10},
+            {"query": "proteasome", "species": "9606"}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string"},
+                        "complexes": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "complex_id": {"type": "string"},
+                                    "name": {"type": "string"},
+                                    "species": {"type": "string"},
+                                    "subunits": {"type": "array"}
+                                }
+                            }
+                        },
+                        "count": {"type": "integer"},
+                        "total_found": {"type": "integer"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["Complex Portal", "CORUM", "PPI", "Protein Complex"],
+        "metadata": {
+            "tags": ["protein_complex", "subunit", "corum", "ppi", "complex_composition"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "ComplexPortal_get_complex",
+        "description": "Get detailed information for a specific protein complex by Complex Portal ID (e.g., CPX-1234). Returns full subunit composition with stoichiometry, function description, disease associations, GO annotations, and cross-references to PDB/Reactome.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "complex_id": {
+                    "type": "string",
+                    "description": "Complex Portal accession ID (e.g., 'CPX-1', 'CPX-6512')"
+                }
+            },
+            "required": ["complex_id"]
+        },
+        "fields": {
+            "operation": "get_complex"
+        },
+        "type": "ComplexPortalTool",
+        "test_examples": [
+            {"complex_id": "CPX-1"},
+            {"complex_id": "CPX-100"}
+        ],
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "enum": ["success", "error"]},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "complex_id": {"type": "string"},
+                        "name": {"type": "string"},
+                        "species": {"type": "string"},
+                        "description": {"type": "string"},
+                        "subunits": {"type": "array"},
+                        "diseases": {"type": "array"},
+                        "go_annotations": {"type": "array"},
+                        "cross_references": {"type": "array"}
+                    }
+                },
+                "error": {"type": "string"}
+            }
+        },
+        "label": ["Complex Portal", "CORUM", "Protein Complex"],
+        "metadata": {
+            "tags": ["protein_complex", "stoichiometry", "complex_detail"],
+            "estimated_execution_time": "< 3 seconds"
+        }
+    }
+]

@@ -32,7 +32,7 @@ msgstr ""
 #: 6dd7278bfc714d25ad7f9c9098bf6490 of
 #: tooluniverse.tools.FDA_get_drug_names_by_assembly_installation_info:1
 msgid "FDA_get_drug_names_by_assembly_installation_info"
-msgstr ""
+msgstr "FDA_根据组装安装信息获取药品名称"
 
 #: c7217fe170f4433094aebcdd8e0b9c17 c76eb277549f4f1996f21610eea4c57a of
 #: tooluniverse.tools.FDA_get_drug_names_by_assembly_installation_info:3

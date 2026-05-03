@@ -41,7 +41,7 @@ msgid ""
 "Claude Code integration enables powerful IDE- or terminal-based scientific "
 "research through the Model Context Protocol (MCP). This approach provides a "
 "developer-friendly interface for research while leveraging Claude's advanced"
-" reasoning and ToolUniverse's 600+ scientific tools."
+" reasoning and ToolUniverse's 1000+ scientific tools."
 msgstr ""
 "Claude Code 集成通过模型上下文协议（MCP）实现了强大的基于 IDE 或终端的科学研究。该方法为研究人员提供了友好的开发接口，同时充分利用了"
 " Claude 的先进推理能力和 ToolUniverse 超过 600 种科学工具。"
@@ -64,7 +64,7 @@ msgstr "**高级推理**：Claude 强大的多步骤推理能力"
 
 #: ../../guide/building_ai_scientists/claude_code.rst:33
 #: ee66d59a53554559a6be9fd88df612bb
-msgid "**Comprehensive Tools**: Access to 600+ ToolUniverse tools"
+msgid "**Comprehensive Tools**: Access to 1000+ ToolUniverse tools"
 msgstr "**全面工具**：可访问600多个ToolUniverse工具"
 
 #: ../../guide/building_ai_scientists/claude_code.rst:34

@@ -1,0 +1,60 @@
+[
+  {
+    "type": "DynamicPackageDiscovery",
+    "name": "dynamic_package_discovery",
+    "description": "Dynamically searches PyPI and evaluates packages based on requirements",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "requirements": {
+          "type": "string",
+          "description": "Description of what the package should do"
+        },
+        "functionality": {
+          "type": "string",
+          "description": "Specific functionality needed"
+        },
+        "constraints": {
+          "type": "object",
+          "description": "Constraints (python version, license, etc.)"
+        }
+      },
+      "required": ["requirements"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "version": {"type": "string"},
+              "quality_score": {"type": "number"},
+              "reasoning": {"type": "string"},
+              "description": {"type": "string"},
+              "has_docs": {"type": "boolean"},
+              "is_stable": {"type": "boolean"}
+            }
+          }
+        },
+        "recommendation": {"type": "object"},
+        "total_evaluated": {"type": "integer"}
+      },
+      "required": ["status", "candidates"]
+    },
+    "test_examples": [
+      {
+        "requirements": "data analysis and visualization",
+        "functionality": "create charts and graphs"
+      }
+    ],
+    "metadata": {
+      "tags": ["package-discovery", "pypi", "dynamic"],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "5-15 seconds"
+    }
+  }
+]

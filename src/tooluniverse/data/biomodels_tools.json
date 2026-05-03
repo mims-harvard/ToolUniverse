@@ -1,0 +1,299 @@
+[
+  {
+    "name": "biomodels_search",
+    "type": "BioModelsRESTTool",
+    "description": "Search for computational biological models in the EBI BioModels database by keyword. Returns models with identifiers, names, formats (typically SBML), and URLs. Use this to find systems biology models related to specific biological processes (e.g., 'glycolysis', 'apoptosis', 'cell cycle'), diseases, or pathways. Find model IDs to use with other BioModels tools for detailed information and downloads.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for biological models"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return",
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "BioModels API search response",
+      "properties": {
+        "models": {
+          "type": "array",
+          "description": "Array of biological model objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "description": "Model identifier (e.g., BIOMD0000000469)"},
+              "name": {"type": "string", "description": "Model name/title"},
+              "format": {"type": "string", "description": "Model format (usually SBML)"},
+              "publicationId": {"type": "string"},
+              "submissionId": {"type": "string"}
+            }
+          }
+        },
+        "matches": {"type": "integer", "description": "Total number of matching models"}
+      }
+    },
+    "test_examples": [
+      {
+        "query": "glycolysis",
+        "limit": 2
+      },
+      {
+        "query": "BIOMD",
+        "limit": 1
+      }
+    ],
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biomodels/search",
+      "method": "GET",
+      "params": {
+        "format": "json"
+      }
+    }
+  },
+  {
+    "type": "BioModelsRESTTool",
+    "name": "BioModels_get_model",
+    "description": "Get comprehensive metadata for a specific BioModels entry by its model identifier. Returns detailed information including model name, description, publication references, organism, biological processes, SBML level/version, creation/modification dates, and curator annotations. Use this to understand model details, citations, and biological context before downloading or using a model. Find model IDs using biomodels_search (e.g., 'BIOMD0000000469', 'MODEL1707110000').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "description": "BioModels identifier (e.g., 'BIOMD0000000469', 'MODEL1707110000'). Find IDs using biomodels_search. Optionally append '.N' for a specific revision (e.g., 'BIOMD0000000469.1')."
+        }
+      },
+      "required": [
+        "model_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biomodels/{model_id}",
+      "method": "GET",
+      "params": {
+        "format": "json"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "format": {
+          "type": ["object", "string"],
+          "description": "Model format - can be a string or object with name, identifier, and version"
+        },
+        "publication": {
+          "type": "object"
+        },
+        "submitter": {
+          "type": "object"
+        },
+        "created": {
+          "type": "string"
+        },
+        "modified": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "model_id": "BIOMD0000000469"
+      },
+      {
+        "model_id": "MODEL1707110000"
+      }
+    ]
+  },
+  {
+    "type": "BioModelsRESTTool",
+    "name": "BioModels_list_files",
+    "description": "Get detailed file listing for a specific BioModels entry including file names, types, sizes, and metadata. Returns information about all files associated with the model (SBML files, figures, supplementary data, COMBINE archives). Use this before downloading to see what files are available and their formats. Requires model ID from biomodels_search or BioModels_get_model.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "description": "BioModels identifier (e.g., 'BIOMD0000000469'). Find IDs using biomodels_search."
+        }
+      },
+      "required": [
+        "model_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biomodels/model/files/{model_id}",
+      "method": "GET",
+      "params": {
+        "format": "json"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "File listing with metadata containing 'main' and 'additional' file arrays",
+      "properties": {
+        "main": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "description": {"type": "string"},
+              "fileSize": {"type": "string"},
+              "mimeType": {"type": "string"}
+            }
+          }
+        },
+        "additional": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "description": {"type": "string"},
+              "fileSize": {"type": "string"},
+              "mimeType": {"type": "string"},
+              "md5sum": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "model_id": "BIOMD0000000469"
+      },
+      {
+        "model_id": "MODEL1707110000"
+      }
+    ]
+  },
+  {
+    "type": "BioModelsRESTTool",
+    "name": "BioModels_download_model",
+    "description": "Download a specific file from a BioModels entry or get the download URL for the entire model as a COMBINE archive. Returns download URL and file metadata. Use this to access model files for simulation software (COPASI, CellDesigner, etc.). Specify filename parameter to download a specific file, or omit to get the COMBINE archive containing all files. Find model IDs using biomodels_search.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "description": "BioModels identifier (e.g., 'BIOMD0000000469'). Find IDs using biomodels_search."
+        },
+        "filename": {
+          "type": "string",
+          "description": "Optional specific filename to download. If not provided, returns COMBINE archive with all files. Use BioModels_list_files to see available filenames."
+        }
+      },
+      "required": [
+        "model_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biomodels/model/download/{model_id}",
+      "method": "GET"
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "download_url": {
+          "type": "string",
+          "description": "URL to download the model file"
+        },
+        "filename": {
+          "type": "string",
+          "description": "Content-Disposition filename header"
+        },
+        "content_type": {
+          "type": "string",
+          "description": "MIME type of the download"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "model_id": "BIOMD0000000469"
+      },
+      {
+        "model_id": "MODEL1707110000"
+      }
+    ]
+  },
+  {
+    "type": "BioModelsRESTTool",
+    "name": "BioModels_search_parameters",
+    "description": "Search for specific parameters within BioModels entries. Find models containing parameters matching your query (e.g., reaction rates, initial concentrations, kinetic constants). Returns models with parameter names, values, and units. Essential for finding models with specific parameter values or discovering parameter ranges across multiple models. Use this for comparative analysis or parameter estimation studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for parameters (e.g., parameter name like 'k1', 'Km', or biological term). Search across parameter names, values, and annotations."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 10, max: 100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/biomodels/parameterSearch/search",
+      "method": "GET",
+      "params": {
+        "format": "json"
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Parameter search results with model IDs and parameter details",
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fields": {"type": "object", "additionalProperties": true}
+            }
+          }
+        },
+        "recordsFiltered": {"type": "integer"},
+        "recordsTotal": {"type": "integer"}
+      }
+    },
+    "test_examples": [
+      {
+        "query": "k1",
+        "limit": 5
+      },
+      {
+        "query": "Km"
+      }
+    ]
+  }
+]

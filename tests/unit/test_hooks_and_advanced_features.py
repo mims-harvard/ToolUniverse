@@ -35,55 +35,47 @@ class TestHooksAndAdvancedFeatures(unittest.TestCase):
         self.tu.all_tools = []
         self.tu.all_tool_dict = {}
     
-    def test_hook_toggle_functionality(self):
-        """Test that hook toggle actually works."""
-        # Test enabling hooks
-        self.tu.toggle_hooks(True)
-        # Note: We can't easily test the internal state without exposing it,
-        # but we can test that the method doesn't raise an exception
-        self.assertTrue(True)  # Method call succeeded
-        
-        # Test disabling hooks
-        self.tu.toggle_hooks(False)
-        self.assertTrue(True)  # Method call succeeded
+    def tearDown(self):
+        """Tear down test fixtures."""
+        if hasattr(self, 'tu'):
+            self.tu.close()
     
-    def test_streaming_tools_support_real(self):
-        """Test streaming tools support with real ToolUniverse calls."""
-        # Test that streaming callback parameter is accepted
+    def test_hook_toggle_functionality(self):
+        """Test that hook toggle actually changes the enabled state."""
+        self.tu.toggle_hooks(True)
+        self.assertTrue(self.tu.hooks_enabled, "Expected hooks_enabled=True after toggle_hooks(True)")
+
+        self.tu.toggle_hooks(False)
+        self.assertFalse(self.tu.hooks_enabled, "Expected hooks_enabled=False after toggle_hooks(False)")
+    
+    def test_streaming_callback_accepted(self):
+        """run() must accept a stream_callback kwarg without raising.
+
+        Uses a guaranteed-unknown tool name so we get an error dict immediately,
+        without any network call.
+        """
         callback_called = False
-        
+
         def test_callback(chunk):
             nonlocal callback_called
             callback_called = True
-        
-        # Test with a real tool call (may fail due to missing API keys, but that's OK)
-        try:
-            result = self.tu.run({
-                "name": "UniProt_get_entry_by_accession",
-                "arguments": {"accession": "P05067"}
-            }, stream_callback=test_callback)
-            # If successful, verify we got some result
-            self.assertIsNotNone(result)
-        except Exception:
-            # Expected if API keys not configured
-            pass
-    
-    def test_visualization_tools_real(self):
-        """Test visualization tools with real ToolUniverse calls."""
-        # Test that visualization tools can be called
-        try:
-            result = self.tu.run({
-                "name": "visualize_protein_structure_3d",
-                "arguments": {
-                    "pdb_id": "1CRN",
-                    "style": "cartoon"
-                }
-            })
-            # If successful, verify we got some result
-            self.assertIsNotNone(result)
-        except Exception:
-            # Expected if tool not available or API keys not configured
-            pass
+
+        result = self.tu.run(
+            {"name": "NonExistentTool_XYZ_12345", "arguments": {"x": "y"}},
+            stream_callback=test_callback,
+        )
+        # run() must return a dict with an error key for unknown tool
+        self.assertIsInstance(result, dict)
+        self.assertIn("error", result, "Expected error dict for unknown tool")
+
+    def test_unknown_tool_returns_error_dict(self):
+        """run() for an unknown tool must return an error dict, never raise."""
+        result = self.tu.run({
+            "name": "visualize_protein_structure_3d",
+            "arguments": {"pdb_id": "1CRN", "style": "cartoon"},
+        })
+        self.assertIsInstance(result, dict)
+        self.assertIn("error", result, "Expected error dict for unknown tool")
     
     def test_cache_functionality_real(self):
         """Test that caching actually works."""
@@ -163,8 +155,7 @@ class TestHooksAndAdvancedFeatures(unittest.TestCase):
     
     def test_export_functionality_real(self):
         """Test export functionality with real ToolUniverse."""
-        import tempfile
-        import os
+
         
         # Test exporting to file
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
@@ -186,8 +177,7 @@ class TestHooksAndAdvancedFeatures(unittest.TestCase):
     
     def test_env_template_generation_real(self):
         """Test environment template generation with real ToolUniverse."""
-        import tempfile
-        import os
+
         
         # Test with some missing keys
         missing_keys = ["API_KEY_1", "API_KEY_2"]

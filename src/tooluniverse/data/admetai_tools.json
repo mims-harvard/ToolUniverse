@@ -1,155 +1,1194 @@
 [
-    {
-        "name": "ADMETAI_predict_physicochemical_properties",
-        "description": "Predicts physicochemical properties (molecular weight, logP, hydrogen bond acceptors/donors, Lipinski, QED, stereo centers, TPSA) for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
+  {
+    "name": "ADMETAI_predict_physicochemical_properties",
+    "description": "Predicts physicochemical properties (molecular weight, logP, hydrogen bond acceptors/donors, Lipinski, QED, stereo centers, TPSA) for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
             },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["molecular_weight", "logP", "hydrogen_bond_acceptors", "hydrogen_bond_donors", "Lipinski", "QED", "stereo_centers", "tpsa"]
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
     },
-    {
-        "name": "ADMETAI_predict_CYP_interactions",
-        "description": "Predicts CYP enzyme interactions for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
-            },
-            "required": ["smiles"]
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "molecular_weight",
+      "logP",
+      "hydrogen_bond_acceptors",
+      "hydrogen_bond_donors",
+      "Lipinski",
+      "QED",
+      "stereo_centers",
+      "tpsa"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
         },
-        "type": "ADMETAITool",
-        "columns": ["CYP1A2_Veith", "CYP2C19_Veith", "CYP2C9_Substrate_CarbonMangels", "CYP2C9_Veith", "CYP2D6_Substrate_CarbonMangels", "CYP2D6_Veith", "CYP3A4_Substrate_CarbonMangels", "CYP3A4_Veith"]
-    },
-    {
-        "name": "ADMETAI_predict_BBB_penetrance",
-        "description": "Predicts blood-brain barrier (BBB) penetrance for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
             },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["BBB_Martins"]
-    },
-    {
-        "name": "ADMETAI_predict_toxicity",
-        "description": "Predicts toxicity endpoints (AMES, Carcinogens_Lagunin, ClinTox, DILI, LD50_Zhu, Skin_Reaction, hERG) for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
+            "message": {
+              "type": "string"
             },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["AMES", "Carcinogens_Lagunin", "ClinTox", "DILI", "LD50_Zhu", "Skin_Reaction", "hERG"]
-    },
-    {
-        "name": "ADMETAI_predict_bioavailability",
-        "description": "Predicts bioavailability endpoints (Bioavailability_Ma, HIA_Hou, PAMPA_NCATS, Caco2_Wang, Pgp_Broccatelli) for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
+            "retriable": {
+              "type": "boolean"
             },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["Bioavailability_Ma", "HIA_Hou", "PAMPA_NCATS", "Caco2_Wang", "Pgp_Broccatelli"]
-    },
-    {
-        "name": "ADMETAI_predict_clearance_distribution",
-        "description": "Predicts clearance and distribution endpoints (Clearance_Hepatocyte_AZ, Clearance_Microsome_AZ, Half_Life_Obach, VDss_Lombardo, PPBR_AZ) for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["Clearance_Hepatocyte_AZ", "Clearance_Microsome_AZ", "Half_Life_Obach", "VDss_Lombardo", "PPBR_AZ"]
-    },
-    {
-        "name": "ADMETAI_predict_nuclear_receptor_activity",
-        "description": "Predicts nuclear receptor activity endpoints (NR-AR-LBD, NR-AR, NR-AhR, NR-Aromatase, NR-ER-LBD, NR-ER, NR-PPAR-gamma) for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
                 }
-            },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["NR-AR-LBD", "NR-AR", "NR-AhR", "NR-Aromatase", "NR-ER-LBD", "NR-ER", "NR-PPAR-gamma"]
-    },
-    {
-        "name": "ADMETAI_predict_stress_response",
-        "description": "Predicts stress response endpoints (SR-ARE, SR-ATAD5, SR-HSE, SR-MMP, SR-p53) for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
-            },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["SR-ARE", "SR-ATAD5", "SR-HSE", "SR-MMP", "SR-p53"]
-    },
-    {
-        "name": "ADMETAI_predict_solubility_lipophilicity_hydration",
-        "description": "Predicts solubility, lipophilicity, and hydration endpoints (Solubility_AqSolDB, Lipophilicity_AstraZeneca, HydrationFreeEnergy_FreeSolv) for a given list of molecules in SMILES format.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "smiles": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The list of SMILES strings."
-                }
-            },
-            "required": ["smiles"]
-        },
-        "type": "ADMETAITool",
-        "columns": ["Solubility_AqSolDB", "Lipophilicity_AstraZeneca", "HydrationFreeEnergy_FreeSolv"]
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  {
+    "name": "ADMETAI_predict_CYP_interactions",
+    "description": "Predicts CYP enzyme interactions for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "CYP1A2_Veith",
+      "CYP2C19_Veith",
+      "CYP2C9_Substrate_CarbonMangels",
+      "CYP2C9_Veith",
+      "CYP2D6_Substrate_CarbonMangels",
+      "CYP2D6_Veith",
+      "CYP3A4_Substrate_CarbonMangels",
+      "CYP3A4_Veith"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ADMETAI_predict_BBB_penetrance",
+    "description": "Predicts blood-brain barrier (BBB) penetrance for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "BBB_Martins"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ADMETAI_predict_toxicity",
+    "description": "Predicts toxicity endpoints (AMES, Carcinogens_Lagunin, ClinTox, DILI, LD50_Zhu, Skin_Reaction, hERG) for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "AMES",
+      "Carcinogens_Lagunin",
+      "ClinTox",
+      "DILI",
+      "LD50_Zhu",
+      "Skin_Reaction",
+      "hERG"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ADMETAI_predict_bioavailability",
+    "description": "Predicts bioavailability endpoints (Bioavailability_Ma, HIA_Hou, PAMPA_NCATS, Caco2_Wang, Pgp_Broccatelli) for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "Bioavailability_Ma",
+      "HIA_Hou",
+      "PAMPA_NCATS",
+      "Caco2_Wang",
+      "Pgp_Broccatelli"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ADMETAI_predict_clearance_distribution",
+    "description": "Predicts clearance and distribution endpoints (Clearance_Hepatocyte_AZ, Clearance_Microsome_AZ, Half_Life_Obach, VDss_Lombardo, PPBR_AZ) for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "Clearance_Hepatocyte_AZ",
+      "Clearance_Microsome_AZ",
+      "Half_Life_Obach",
+      "VDss_Lombardo",
+      "PPBR_AZ"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ADMETAI_predict_nuclear_receptor_activity",
+    "description": "Predicts nuclear receptor activity endpoints (NR-AR-LBD, NR-AR, NR-AhR, NR-Aromatase, NR-ER-LBD, NR-ER, NR-PPAR-gamma) for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "NR-AR-LBD",
+      "NR-AR",
+      "NR-AhR",
+      "NR-Aromatase",
+      "NR-ER-LBD",
+      "NR-ER",
+      "NR-PPAR-gamma"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ADMETAI_predict_stress_response",
+    "description": "Predicts stress response endpoints (SR-ARE, SR-ATAD5, SR-HSE, SR-MMP, SR-p53) for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "SR-ARE",
+      "SR-ATAD5",
+      "SR-HSE",
+      "SR-MMP",
+      "SR-p53"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "ADMETAI_predict_solubility_lipophilicity_hydration",
+    "description": "Predicts solubility, lipophilicity, and hydration endpoints (Solubility_AqSolDB, Lipophilicity_AstraZeneca, HydrationFreeEnergy_FreeSolv) for a given list of molecules in SMILES format.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of SMILES strings."
+            },
+            {
+              "type": "string",
+              "description": "Single SMILES string (will be wrapped in a list)."
+            }
+          ],
+          "description": "SMILES string(s) for the molecule(s). Accepts a single string or list of strings."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "type": "ADMETAITool",
+    "required_packages": [
+      "admet_ai"
+    ],
+    "columns": [
+      "Solubility_AqSolDB",
+      "Lipophilicity_AstraZeneca",
+      "HydrationFreeEnergy_FreeSolv"
+    ],
+    "test_examples": [
+      {
+        "smiles": [
+          "CC(=O)OC1=CC=CC=C1C(=O)O"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "smiles": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 ]

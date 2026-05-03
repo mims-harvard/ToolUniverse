@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_publications\\_by\\_disease\\_efo
 #: 423db145536b4a5ab94bfce177ea6d36 of
 #: tooluniverse.tools.OpenTargets_get_publications_by_disease_efoId:1
 msgid "OpenTargets_get_publications_by_disease_efoId"
-msgstr ""
+msgstr "OpenTargets_根据疾病EFO ID获取文献"
 
 #: 2f08ede650694eb5995dad376a2117c7 a61be2c1c4ab4f9985e8acf1c225e9fd of
 #: tooluniverse.tools.OpenTargets_get_publications_by_disease_efoId:3

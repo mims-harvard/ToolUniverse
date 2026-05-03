@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.Ensembl\\_lookup\\_gene\\_by\\_symbol 模块"
 #: bce604c996c44f349fba9ea6c9c4e2ff of
 #: tooluniverse.tools.Ensembl_lookup_gene_by_symbol:1
 msgid "Ensembl_lookup_gene_by_symbol"
-msgstr ""
+msgstr "Ensembl_通过基因符号查询基因"
 
 #: beadf8c5ae03451bb1b10fe72080fb26 d27edf103948480dbf317fef9e0394a5 of
 #: tooluniverse.tools.Ensembl_lookup_gene_by_symbol:3

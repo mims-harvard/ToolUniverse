@@ -23,7 +23,63 @@
       ]
     },
     "query_schema": "\nquery associatedTargets($efoId: String!) {\n  disease(efoId: $efoId) {\n    id\n    name\n    associatedTargets {\n      count\n      rows {\n        target {\n          id\n          approvedSymbol\n        }\n        score\n      }\n    }\n  }\n}\n",
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "associatedTargets": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "target": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "approvedSymbol": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "score": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
@@ -49,11 +105,78 @@
       ]
     },
     "query_schema": "\nquery associatedDiseases($ensemblId: String!) {\n  target(ensemblId: $ensemblId) {\n    id\n    approvedSymbol\n    associatedDiseases {\n      count\n      rows {\n        disease {\n          id\n          name\n        }\n        datasourceScores {\n          id\n          score\n        }\n      }\n    }\n  }\n}\n",
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "associatedDiseases": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "disease": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "datasourceScores": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "score": {
+                                  "type": "number"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_target_disease_evidence",
-    "description": "Explore evidence that supports a specific target-disease association. Input is disease efoId and target ensemblID.",
+    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations — this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Accepts gene_symbol (e.g. 'TP53') and disease_name (e.g. 'Crohn disease') as alternatives to ensemblId/efoId — IDs are auto-resolved via OpenTargets search.",
     "label": [
       "Target",
       "Disease",
@@ -67,20 +190,175 @@
       "properties": {
         "efoId": {
           "type": "string",
-          "description": "The efoId of a disease or phenotype."
+          "description": "EFO/MONDO disease ID (e.g., EFO_0000384). Alternative to disease_name."
         },
         "ensemblId": {
           "type": "string",
-          "description": "The ensemblId of a target."
+          "description": "Ensembl gene ID (e.g., ENSG00000141510). Alternative to gene_symbol."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to ensemblId."
+        },
+        "disease_name": {
+          "type": "string",
+          "description": "Disease or phenotype name (e.g., 'Crohn disease', 'breast carcinoma'). Auto-resolved to efoId."
         }
       },
-      "required": [
-        "efoId",
-        "ensemblId"
-      ]
+      "required": []
     },
     "query_schema": "\nquery targetDiseaseEvidence($efoId: String!, $ensemblId: String!) {\n  disease(efoId: $efoId) {\n    id\n    name\n    evidences(datasourceIds: [\"intogen\"], ensemblIds: [$ensemblId]) {\n      count\n      rows {\n        disease {\n          id\n          name\n        }\n        diseaseFromSource\n        target {\n          id\n          approvedSymbol\n        }\n        mutatedSamples {\n          functionalConsequence {\n            id\n            label\n          }\n          numberSamplesTested\n          numberMutatedSamples\n        }\n        resourceScore\n        significantDriverMethods\n        cohortId\n        cohortShortName\n        cohortDescription\n      }\n    }\n  }\n}\n",
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384",
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "evidences": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "OpenTargets_get_evidence_by_datasource",
+    "description": "Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenTargets_target_disease_evidence (intogen-only), this tool accepts any datasourceIds. Valid sources include: ot_genetics_portal, eva, eva_somatic, gene_burden, genomics_england, intogen, cancer_gene_census, chembl, crispr, europepmc, expression_atlas, gene2phenotype, orphanet, uniprot_literature, uniprot_variants, clingen, phewas_catalog, reactome, progeny, slapenrich, sysbio. Returns evidence rows with scores, literature references, and source attribution.",
+    "label": [
+      "Target",
+      "Disease",
+      "Evidence",
+      "Association",
+      "OpenTarget",
+      "GraphQL"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "efoId": {
+          "type": "string",
+          "description": "Disease EFO ID (e.g., 'EFO_0000384' for Crohn's disease). Alternative to disease_name."
+        },
+        "ensemblId": {
+          "type": "string",
+          "description": "Target Ensembl gene ID (e.g., 'ENSG00000141510' for TP53). Alternative to gene_symbol."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1'). Auto-resolved to ensemblId."
+        },
+        "disease_name": {
+          "type": "string",
+          "description": "Disease or phenotype name (e.g., 'Crohn disease'). Auto-resolved to efoId."
+        },
+        "datasourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of datasource IDs to filter evidence. Examples: ['chembl', 'europepmc'], ['eva', 'clinvar'], ['intogen', 'cancer_gene_census']. Omit or pass empty array for all sources."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Maximum evidence rows to return (default: 50)",
+          "default": 50
+        }
+      },
+      "required": []
+    },
+    "query_schema": "\nquery getEvidenceByDatasource($efoId: String!, $ensemblId: String!, $datasourceIds: [String!], $size: Int) {\n  disease(efoId: $efoId) {\n    id\n    name\n    evidences(datasourceIds: $datasourceIds, ensemblIds: [$ensemblId], size: $size) {\n      count\n      rows {\n        datasourceId\n        datatypeId\n        disease {\n          id\n          name\n        }\n        diseaseFromSource\n        target {\n          id\n          approvedSymbol\n        }\n        score\n        resourceScore\n        literature\n        urls {\n          url\n          niceName\n        }\n      }\n    }\n  }\n}\n",
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384",
+        "ensemblId": "ENSG00000141510",
+        "datasourceIds": [
+          "europepmc"
+        ],
+        "size": 10
+      },
+      {
+        "efoId": "EFO_0000389",
+        "ensemblId": "ENSG00000157764",
+        "datasourceIds": [
+          "chembl"
+        ],
+        "size": 5
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "evidences": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "datasourceId": {
+                            "type": "string"
+                          },
+                          "datatypeId": {
+                            "type": "string"
+                          },
+                          "score": {
+                            "type": "number"
+                          },
+                          "literature": {
+                            "type": "array"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_warnings_by_chemblId",
@@ -109,7 +387,33 @@
       "Withdrawal",
       "Toxicity"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_mechanisms_of_action_by_chemblId",
@@ -136,7 +440,69 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "mechanismsOfAction": {
+                  "type": "object",
+                  "properties": {
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "mechanismOfAction": {
+                            "type": "string"
+                          },
+                          "actionType": {
+                            "type": "string"
+                          },
+                          "targetName": {
+                            "type": "string"
+                          },
+                          "targets": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "approvedSymbol": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_associated_drugs_by_disease_efoId",
@@ -147,18 +513,13 @@
         "efoId": {
           "type": "string",
           "description": "The EFO ID of the disease."
-        },
-        "size": {
-          "type": "integer",
-          "description": "Number of entries to fetch, recomanding a large number to avoid missing drugs."
         }
       },
       "required": [
-        "efoId",
-        "size"
+        "efoId"
       ]
     },
-    "query_schema": "\n  query diseaseKnownDrugs($efoId: String!, $size: Int!, $freeTextQuery: String) {\n    disease(efoId: $efoId) {\n      id\n      name\n      knownDrugs(size: $size, freeTextQuery: $freeTextQuery) {\n        count\n        rows {\n          drug {\n            id\n            name\n            tradeNames\n            maximumClinicalTrialPhase\n            isApproved\n            hasBeenWithdrawn\n          }\n          phase\n          status\n          mechanismOfAction\n          target {\n            id\n            approvedSymbol\n          }\n        }\n      }\n    }\n  }\n  ",
+    "query_schema": "\n  query diseaseKnownDrugs($efoId: String!) {\n    disease(efoId: $efoId) {\n      id\n      name\n      drugAndClinicalCandidates {\n        count\n        rows {\n          drug {\n            id\n            name\n            maximumClinicalStage\n          }\n          maxClinicalStage\n        }\n      }\n    }\n  }\n  ",
     "label": [
       "OpenTarget",
       "Disease",
@@ -166,7 +527,92 @@
       "Pagination",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "MONDO_0004975"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "drugAndClinicalCandidates": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "drug": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "tradeNames": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "maximumClinicalTrialPhase": {
+                                "type": "integer"
+                              },
+                              "isApproved": {
+                                "type": "boolean"
+                              },
+                              "hasBeenWithdrawn": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "maxClinicalStage": {
+                            "type": "integer"
+                          },
+                          "mechanismOfAction": {
+                            "type": "string"
+                          },
+                          "target": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "approvedSymbol": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_similar_entities_by_disease_efoId",
@@ -202,7 +648,63 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384",
+        "threshold": 1.0,
+        "size": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "similarEntities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "score": {
+                        "type": "integer"
+                      },
+                      "object": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_similar_entities_by_drug_chemblId",
@@ -238,7 +740,63 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25",
+        "threshold": 1.0,
+        "size": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "similarEntities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "score": {
+                        "type": "integer"
+                      },
+                      "object": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_similar_entities_by_target_ensemblID",
@@ -274,7 +832,63 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510",
+        "threshold": 1.0,
+        "size": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "similarEntities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "score": {
+                        "type": "number"
+                      },
+                      "object": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "approvedSymbol": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_associated_phenotypes_by_disease_efoId",
@@ -300,19 +914,72 @@
       "Symptoms",
       "Clinical signs"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "phenotypes": {
+                  "type": "object",
+                  "properties": {
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "phenotypeHPO": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    "name": "OpenTargets_get_drug_withdrawn_blackbox_status_by_chemblId",
+    "name": "OpenTargets_get_drug_blackbox_status_by_chembl_ID",
+    "aliases": [
+      "OpenTargets_get_drug_withdrawn_blackbox_status_by_chemblId"
+    ],
     "description": "Find withdrawn and black-box warning statuses for a specific drug by chemblId.",
     "parameter": {
       "type": "object",
       "properties": {
         "chemblId": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "type": "string",
           "description": "The chemblId of a drug."
         }
       },
@@ -320,7 +987,7 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n  query drugWithdrawnWarningData($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      name\n      id\n      hasBeenWithdrawn\n      blackBoxWarning\n    }\n  }\n  ",
+    "query_schema": "\n  query drugWithdrawnWarningData($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      name\n      id\n      blackBoxWarning\n    }\n  }\n  ",
     "label": [
       "Drug",
       "SafetyWarnings",
@@ -328,7 +995,98 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "chemblId": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_search_category_counts_by_query_string",
@@ -355,7 +1113,35 @@
       "Counts",
       "Categories"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "queryString": "machine learning optimization"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "aggregations": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_id_description_by_name",
@@ -382,7 +1168,44 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "diseaseName": "Diabetes Mellitus"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_id_description_by_name",
@@ -408,7 +1231,44 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpentargetToolDrugNameMatch"
+    "type": "OpentargetToolDrugNameMatch",
+    "test_examples": [
+      {
+        "drugName": "Aspirin"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_chembId_by_generic_name",
@@ -434,7 +1294,44 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpentargetToolDrugNameMatch"
+    "type": "OpentargetToolDrugNameMatch",
+    "test_examples": [
+      {
+        "drugName": "Aspirin"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_indications_by_chemblId",
@@ -451,7 +1348,7 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n    query drugIndications($chemblId: String!) {\n      drug(chemblId: $chemblId) {\n     id\n    name\n        indications {\n          rows {\n            disease {\n              id\n              name\n              }\n      maxPhaseForIndication\n     references {\n       source\n        }\n         }\n        }\n      }\n    }\n    ",
+    "query_schema": "\n  query drugIndications($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      indications {\n        count\n        rows {\n          disease { id name }\n        }\n      }\n    }\n  }\n  ",
     "label": [
       "Drug",
       "Indications",
@@ -460,7 +1357,71 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "indications": {
+                  "type": "object",
+                  "properties": {
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "disease": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "maxPhaseForIndication": {
+                            "type": "number"
+                          },
+                          "references": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_gene_ontology_by_ensemblID",
@@ -484,7 +1445,64 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "geneOntology": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "aspect": {
+                        "type": "string"
+                      },
+                      "evidence": {
+                        "type": "string"
+                      },
+                      "geneProduct": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "term": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_homologues_by_ensemblID",
@@ -508,7 +1526,65 @@
       "GraphQL",
       "Homologue"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "homologues": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "homologyType": {
+                        "type": "string"
+                      },
+                      "queryPercentageIdentity": {
+                        "type": "number"
+                      },
+                      "speciesId": {
+                        "type": "string"
+                      },
+                      "speciesName": {
+                        "type": "string"
+                      },
+                      "targetGeneId": {
+                        "type": "string"
+                      },
+                      "targetGeneSymbol": {
+                        "type": "string"
+                      },
+                      "targetPercentageIdentity": {
+                        "type": "number"
+                      },
+                      "isHighConfidence": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_safety_profile_by_ensemblID",
@@ -534,7 +1610,67 @@
       "Safety",
       "Liabilities"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "safetyLiabilities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "event": {
+                        "type": "string"
+                      },
+                      "eventId": {
+                        "type": "string"
+                      },
+                      "studies": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "datasource": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_biological_mouse_models_by_ensemblID",
@@ -558,7 +1694,55 @@
       "BiologicalModels",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "mousePhenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "biologicalModels": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "allelicComposition": {
+                              "type": "string"
+                            },
+                            "geneticBackground": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_genomic_location_by_ensemblID",
@@ -582,10 +1766,56 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "genomicLocation": {
+                  "type": "object",
+                  "properties": {
+                    "chromosome": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "integer"
+                    },
+                    "end": {
+                      "type": "integer"
+                    },
+                    "strand": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    "name": "OpenTargets_get_target_subcellular_locations_by_ensemblID",
+    "name": "OpenTargets_get_target_subcell_locations_by_ensembl_ID",
+    "aliases": [
+      "OpenTargets_get_target_subcellular_locations_by_ensemblID"
+    ],
     "description": "Retrieve information about subcellular locations for a specific target ensemblID.",
     "parameter": {
       "type": "object",
@@ -606,7 +1836,53 @@
       "GraphQL",
       "OpenTarget"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "subcellularLocations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "location": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "termSL": {
+                        "type": "string"
+                      },
+                      "labelSL": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_synonyms_by_ensemblID",
@@ -630,7 +1906,75 @@
       "GraphQL",
       "Target"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "symbolSynonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "nameSynonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_tractability_by_ensemblID",
@@ -655,7 +1999,50 @@
       "Target Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "tractability": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "modality": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_classes_by_ensemblID",
@@ -679,7 +2066,50 @@
       "GraphQL",
       "Target"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "targetClass": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "level": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_enabling_packages_by_ensemblID",
@@ -703,7 +2133,33 @@
       "GraphQL",
       "Target"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_interactions_by_ensemblID",
@@ -743,7 +2199,132 @@
       ]
     },
     "query_schema": "\n      query targetInteractions($ensemblId: String!, $page: Pagination) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          interactions(page: $page) {\n            count\n            rows {\n              intA\n              targetA {\n              id\n          approvedSymbol\n        }\n        intB\n        targetB {\n          id\n          approvedSymbol\n        }\n              score\n              sourceDatabase\n              evidences {\n                evidenceScore\n                pubmedId\n                interactionDetectionMethodShortName\n              }\n            }\n          }\n        }\n      }\n    ",
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510",
+        "page": {
+          "index": 0,
+          "size": 10
+        }
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "ensemblId": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "page": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "properties": {
+                              "type": "object",
+                              "properties": {
+                                "index": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "size": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_ancestors_parents_by_efoId",
@@ -767,7 +2348,53 @@
       "Disease Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "ancestors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "parents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_descendants_children_by_efoId",
@@ -791,7 +2418,53 @@
       "Disease Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "descendants": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "children": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_locations_by_efoId",
@@ -815,7 +2488,33 @@
       "Disease Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_synonyms_by_efoId",
@@ -839,7 +2538,50 @@
       "Disease Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "relation": {
+                        "type": "string"
+                      },
+                      "terms": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_description_by_efoId",
@@ -863,7 +2605,45 @@
       "Disease Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "dbXRefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isTherapeuticArea": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_disease_therapeutic_areas_by_efoId",
@@ -887,7 +2667,47 @@
       "TherapeuticArea",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "efoId": "EFO_0000384"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "disease": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "therapeuticAreas": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_adverse_events_by_chemblId",
@@ -929,7 +2749,132 @@
       "GraphQL",
       "AdverseEvents"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25",
+        "page": {
+          "index": 0,
+          "size": 10
+        }
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "chemblId": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "page": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "properties": {
+                              "type": "object",
+                              "properties": {
+                                "index": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "size": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_known_drugs_by_drug_chemblId",
@@ -946,17 +2891,157 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n      query retrieveMultipleDrugsInfo($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n        knownDrugs {\n            uniqueDrugs\n            uniqueDiseases\n            uniqueTargets\n            count\n            cursor\n            rows {\n              approvedSymbol\n              approvedName\n              label\n              prefName\n              drugType\n              targetId\n              diseaseId\n              drugId\n              phase\n              mechanismOfAction\n              status\n              targetClass\n              references {\n                source\n                ids\n                urls\n              }\n              ctIds\n              urls {\n                url\n                name\n              }\n              disease {\n                id\n                name\n              }\n              target {\n                id\n                approvedSymbol\n              }\n              drug {\n                id\n                name\n              }\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n  query drugKnownDrugs($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      maximumClinicalStage\n      drugType\n      drugWarnings {\n        toxicityClass\n        description\n      }\n    }\n  }\n  ",
     "label": [
       "OpenTarget",
       "Drug",
       "Drug Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "drugAndClinicalCandidates": {
+                  "type": "object",
+                  "properties": {
+                    "uniqueDrugs": {
+                      "type": "integer"
+                    },
+                    "uniqueDiseases": {
+                      "type": "integer"
+                    },
+                    "uniqueTargets": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "cursor": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "approvedSymbol": {
+                            "type": "string"
+                          },
+                          "approvedName": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "prefName": {
+                            "type": "string"
+                          },
+                          "drugType": {
+                            "type": "string"
+                          },
+                          "targetId": {
+                            "type": "string"
+                          },
+                          "diseaseId": {
+                            "type": "string"
+                          },
+                          "drugId": {
+                            "type": "string"
+                          },
+                          "maxClinicalStage": {
+                            "type": "integer"
+                          },
+                          "mechanismOfAction": {
+                            "type": "string"
+                          },
+                          "targetClass": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "urls": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "url": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "disease": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "target": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "approvedSymbol": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "drug": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
-    "name": "OpenTargets_get_parent_child_molecules_by_drug_chembl_ID",
+    "name": "OpenTargets_get_parent_child_molecules_by_chembl_ID",
+    "aliases": [
+      "OpenTargets_get_parent_child_molecules_by_drug_chembl_ID"
+    ],
     "description": "Get parent and child molecules of specified drug chemblId.",
     "parameter": {
       "type": "object",
@@ -977,7 +3062,47 @@
       "Drug Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "childMolecules": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_approved_indications_by_drug_chemblId",
@@ -1001,7 +3126,39 @@
       "Drug Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "approvedIndications": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_description_by_chemblId",
@@ -1018,14 +3175,66 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n      query retrieveMultipleDrugsInfo($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          yearOfFirstApproval\n          drugType\n          crossReferences {\n            source\n            reference\n          }\n          maximumClinicalTrialPhase\n        }\n      }\n    ",
+    "query_schema": "\n      query retrieveMultipleDrugsInfo($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          yearOfFirstApproval\n          drugType\n          crossReferences {\n            source\n            ids\n          }\n          maximumClinicalTrialPhase\n        }\n      }\n    ",
     "label": [
       "OpenTarget",
       "Drug",
       "Drug Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "yearOfFirstApproval": {
+                  "type": "integer"
+                },
+                "drugType": {
+                  "type": "string"
+                },
+                "crossReferences": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string"
+                      },
+                      "ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "maximumClinicalTrialPhase": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_synonyms_by_chemblId",
@@ -1049,7 +3258,39 @@
       "Drug",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_drug_trade_names_by_chemblId",
@@ -1073,6 +3314,113 @@
       "Drug Information",
       "GraphQL"
     ],
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "tradeNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "OpenTargets_get_drug_names_by_chemblId",
+    "description": "Get drug generic name and brand names (trade names) based on ChEMBL ID. Returns the drug name (typically generic name), trade names (brand names), and synonyms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chemblId": {
+          "type": "string",
+          "description": "The ChEMBL ID of the drug."
+        }
+      },
+      "required": [
+        "chemblId"
+      ]
+    },
+    "query_schema": "\n      query drugNames($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          tradeNames\n          synonyms\n        }\n      }\n    ",
+    "return_schema": {
+      "type": "object",
+      "description": "Drug name information including generic name, trade names, and synonyms",
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "GraphQL response data",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "description": "Drug information object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "ChEMBL ID of the drug"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Drug name, typically the generic name or preferred name"
+                },
+                "tradeNames": {
+                  "type": "array",
+                  "description": "List of trade names (brand names) for the drug",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "synonyms": {
+                  "type": "array",
+                  "description": "List of synonyms for the drug, which may include alternative generic names and other identifiers",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      },
+      {
+        "chemblId": "CHEMBL1201581"
+      }
+    ],
+    "label": [
+      "Drug",
+      "OpenTarget",
+      "Drug Information",
+      "Name",
+      "Generic Name",
+      "Brand Name",
+      "GraphQL"
+    ],
     "type": "OpenTarget"
   },
   {
@@ -1090,14 +3438,43 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n      query drugApprovalStatus($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          isApproved\n        }\n      }\n    ",
+    "query_schema": "\n  query drugApprovalStatus($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      maximumClinicalStage\n      drugType\n      drugWarnings {\n        toxicityClass\n        description\n      }\n    }\n  }\n  ",
     "label": [
       "Drug",
       "Drug Information",
       "GraphQL",
       "OpenTarget"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "isApproved": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_chemical_probes_by_target_ensemblID",
@@ -1121,7 +3498,87 @@
       "ChemicalProbe",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000157764"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "ensemblId": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_drug_pharmacogenomics_data",
@@ -1140,29 +3597,85 @@
       "properties": {
         "chemblId": {
           "type": "string",
-          "description": "The ChEMBL ID of the drug."
-        },
-        "page": {
-          "type": "object",
-          "description": "Pagination options.",
-          "properties": {
-            "index": {
-              "type": "integer",
-              "description": "Pagination index."
-            },
-            "size": {
-              "type": "integer",
-              "description": "Number of records to fetch per page."
-            }
-          }
+          "description": "The ChEMBL ID of the drug (e.g., 'CHEMBL25' for aspirin, 'CHEMBL1201583' for pembrolizumab)."
         }
       },
       "required": [
         "chemblId"
       ]
     },
-    "query_schema": "\n      query drugPharmacogenomicsData($chemblId: String!, $page: Pagination) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          pharmacogenomics(page: $page) {\n            datasourceId\n            datatypeId\n            genotype\n            evidenceLevel\n            genotypeAnnotationText\n            genotypeId\n            haplotypeFromSourceId\n            haplotypeId\n            literature\n            pgxCategory\n            phenotypeFromSourceId\n            phenotypeText\n            studyId\n            targetFromSourceId\n            variantFunctionalConsequenceId\n            variantRsId\n            isDirectTarget\n            variantFunctionalConsequence {\n              id\n              label\n            }\n            drugs {\n              drugId\n              drug {\n        name\n      }\n            }\n            target {\n              id\n              approvedSymbol\n            }\n          }\n        }\n      }\n    ",
-    "type": "OpenTarget"
+    "query_schema": "\n      query drugPharmacogenomicsData($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          pharmacogenomics {\n            datasourceId\n            datatypeId\n            genotype\n            evidenceLevel\n            genotypeAnnotationText\n            genotypeId\n            haplotypeFromSourceId\n            haplotypeId\n            literature\n            pgxCategory\n            phenotypeFromSourceId\n            phenotypeText\n            studyId\n            targetFromSourceId\n            variantFunctionalConsequenceId\n            variantRsId\n            isDirectTarget\n            variantFunctionalConsequence {\n              id\n              label\n            }\n            drugs {\n              drugId\n              drug {\n        name\n      }\n            }\n            target {\n              id\n              approvedSymbol\n            }\n          }\n        }\n      }\n    ",
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GraphQL response with drug pharmacogenomics data",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "drug": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "pharmacogenomics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "datasourceId": {
+                            "type": "string"
+                          },
+                          "evidenceLevel": {
+                            "type": "string"
+                          },
+                          "genotype": {
+                            "type": "string"
+                          },
+                          "genotypeAnnotationText": {
+                            "type": "string"
+                          },
+                          "pgxCategory": {
+                            "type": "string"
+                          },
+                          "phenotypeText": {
+                            "type": "string"
+                          },
+                          "variantRsId": {
+                            "type": "string"
+                          },
+                          "isDirectTarget": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "null",
+          "description": "Null returned when no data found or error occurred"
+        }
+      ]
+    }
   },
   {
     "name": "OpenTargets_get_associated_drugs_by_target_ensemblID",
@@ -1173,22 +3686,13 @@
         "ensemblId": {
           "type": "string",
           "description": "The Ensembl ID of the target."
-        },
-        "size": {
-          "type": "integer",
-          "description": "Number of entries to fetch."
-        },
-        "cursor": {
-          "type": "string",
-          "description": "Cursor for pagination."
         }
       },
       "required": [
-        "ensemblId",
-        "size"
+        "ensemblId"
       ]
     },
-    "query_schema": "\n      query targetKnownDrugs($ensemblId: String!, $size: Int!, $cursor: String) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          knownDrugs(size: $size, cursor: $cursor) {\n            count\n            rows {\n              drug {\n                id\n                name\n                tradeNames\n                maximumClinicalTrialPhase\n                isApproved\n                hasBeenWithdrawn\n              }\n              phase\n              status\n              mechanismOfAction\n              disease {\n                id\n                name\n              }\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n  query targetKnownDrugs($ensemblId: String!) {\n    target(ensemblId: $ensemblId) {\n      id\n      approvedSymbol\n      drugAndClinicalCandidates {\n        count\n        rows {\n          drug {\n            id\n            name\n            maximumClinicalStage\n          }\n          maxClinicalStage\n          diseases {\n            disease {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n  ",
     "label": [
       "Target",
       "Drug",
@@ -1197,7 +3701,86 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000121879"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "drugAndClinicalCandidates": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "drug": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "maximumClinicalTrialPhase": {
+                                "type": "integer"
+                              },
+                              "isApproved": {
+                                "type": "boolean"
+                              },
+                              "hasBeenWithdrawn": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "maxClinicalStage": {
+                            "type": "string"
+                          },
+                          "mechanismOfAction": {
+                            "type": "string"
+                          },
+                          "disease": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_associated_diseases_by_drug_chemblId",
@@ -1214,7 +3797,7 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n      query fetchLinkedDiseasesForDrug($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          linkedDiseases {\n            count\n            rows {\n              id\n              name\n              description\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n  query drugLinkedDiseases($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      indications {\n        count\n        rows {\n          disease { id name }\n        }\n      }\n    }\n  }\n  ",
     "label": [
       "Drug",
       "Disease",
@@ -1222,7 +3805,58 @@
       "Drug Information",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "linkedDiseases": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_associated_targets_by_drug_chemblId",
@@ -1239,7 +3873,7 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n      query fetchLinkedTargetsForDrug($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          linkedTargets {\n            count\n            rows {\n              id\n              approvedSymbol\n              approvedName\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n  query drugLinkedTargets($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      id\n      name\n      mechanismsOfAction {\n        rows {\n          actionType\n          targets {\n            id\n            approvedSymbol\n          }\n        }\n      }\n    }\n  }\n  ",
     "label": [
       "Drug",
       "Target",
@@ -1247,7 +3881,58 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drug": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "linkedTargets": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "approvedSymbol": {
+                            "type": "string"
+                          },
+                          "approvedName": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_multi_entity_search_by_query_string",
@@ -1293,7 +3978,152 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "queryString": "gene:TP53",
+        "entityNames": [],
+        "page": {
+          "index": 0,
+          "size": 10
+        }
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "queryString": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "entityNames": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "page": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "properties": {
+                              "type": "object",
+                              "properties": {
+                                "index": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "size": {
+                                  "type": "object",
+                                  "properties": {
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_gene_ontology_terms_by_goID",
@@ -1320,7 +4150,100 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "goIds": [
+          "GO:0005515"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "goIds": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_constraint_info_by_ensemblID",
@@ -1345,7 +4268,62 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                },
+                "geneticConstraint": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "constraintType": {
+                        "type": "string"
+                      },
+                      "exp": {
+                        "type": "number"
+                      },
+                      "obs": {
+                        "type": "integer"
+                      },
+                      "oe": {
+                        "type": "number"
+                      },
+                      "oeLower": {
+                        "type": "number"
+                      },
+                      "oeUpper": {
+                        "type": "number"
+                      },
+                      "score": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_publications_by_disease_efoId",
@@ -1385,14 +4363,164 @@
         "entityId"
       ]
     },
-    "query_schema": "\n      query entityPublications($entityId: String!, $additionalIds: [String!], $startYear: Int, $startMonth: Int, $endYear: Int, $endMonth: Int) {\n        disease(efoId: $entityId) {\n          id\n          name\n          literatureOcurrences(additionalIds: $additionalIds, startYear: $startYear, startMonth: $startMonth, endYear: $endYear, endMonth: $endMonth) {\n            count\n            filteredCount\n            earliestPubYear\n            rows {\n              pmid\n              pmcid\n              publicationDate\n              sentences {\n                section\n                matches {\n                  mappedId\n                  matchedLabel\n                  sectionStart\n                  sectionEnd\n                  startInSentence\n                  endInSentence\n                  matchedType\n                }\n              }\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n      query entityPublications($entityId: String!, $additionalIds: [String!], $startYear: Int, $startMonth: Int, $endYear: Int, $endMonth: Int) {\n        disease(efoId: $entityId) {\n          id\n          name\n          literatureOcurrences(additionalIds: $additionalIds, startYear: $startYear, startMonth: $startMonth, endYear: $endYear, endMonth: $endMonth) {\n            count\n            filteredCount\n            earliestPubYear\n            rows {\n              pmid\n              pmcid\n              publicationDate\n            }\n          }\n        }\n      }\n    ",
     "label": [
       "Publications",
       "Data Retrieval and Aggregation",
       "GraphQL",
       "OpenTarget"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "entityId": "EFO_0000384",
+        "startYear": 2023,
+        "startMonth": 0,
+        "endYear": 2023,
+        "endMonth": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "entityId": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "additionalIds": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "startYear": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "startMonth": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "endYear": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "endMonth": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_publications_by_target_ensemblID",
@@ -1432,14 +4560,164 @@
         "entityId"
       ]
     },
-    "query_schema": "\n      query entityPublications($entityId: String!, $additionalIds: [String!], $startYear: Int, $startMonth: Int, $endYear: Int, $endMonth: Int) {\n        target(ensemblId: $entityId) {\n          id\n          approvedSymbol\n          literatureOcurrences(additionalIds: $additionalIds, startYear: $startYear, startMonth: $startMonth, endYear: $endYear, endMonth: $endMonth) {\n            count\n            filteredCount\n            earliestPubYear\n            rows {\n              pmid\n              pmcid\n              publicationDate\n              sentences {\n                section\n                matches {\n                  mappedId\n                  matchedLabel\n                  sectionStart\n                  sectionEnd\n                  startInSentence\n                  endInSentence\n                  matchedType\n                }\n              }\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n      query entityPublications($entityId: String!, $additionalIds: [String!], $startYear: Int, $startMonth: Int, $endYear: Int, $endMonth: Int) {\n        target(ensemblId: $entityId) {\n          id\n          approvedSymbol\n          literatureOcurrences(additionalIds: $additionalIds, startYear: $startYear, startMonth: $startMonth, endYear: $endYear, endMonth: $endMonth) {\n            count\n            filteredCount\n            earliestPubYear\n            rows {\n              pmid\n              pmcid\n              publicationDate\n            }\n          }\n        }\n      }\n    ",
     "label": [
       "Publications",
       "Data Retrieval and Aggregation",
       "GraphQL",
       "OpenTarget"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "entityId": "ENSG00000141510",
+        "startYear": 2023,
+        "startMonth": 0,
+        "endYear": 2023,
+        "endMonth": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "entityId": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "additionalIds": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "startYear": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "startMonth": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "endYear": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "endMonth": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_publications_by_drug_chemblId",
@@ -1479,14 +4757,164 @@
         "entityId"
       ]
     },
-    "query_schema": "\n      query entityPublications($entityId: String!, $additionalIds: [String!], $startYear: Int, $startMonth: Int, $endYear: Int, $endMonth: Int) {\n        drug(chemblId: $entityId) {\n          id\n          name\n          literatureOcurrences(additionalIds: $additionalIds, startYear: $startYear, startMonth: $startMonth, endYear: $endYear, endMonth: $endMonth) {\n            count\n            filteredCount\n            earliestPubYear\n            rows {\n              pmid\n              pmcid\n              publicationDate\n              sentences {\n                section\n                matches {\n                  mappedId\n                  matchedLabel\n                  sectionStart\n                  sectionEnd\n                  startInSentence\n                  endInSentence\n                  matchedType\n                }\n              }\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n      query entityPublications($entityId: String!, $additionalIds: [String!], $startYear: Int, $startMonth: Int, $endYear: Int, $endMonth: Int) {\n        drug(chemblId: $entityId) {\n          id\n          name\n          literatureOcurrences(additionalIds: $additionalIds, startYear: $startYear, startMonth: $startMonth, endYear: $endYear, endMonth: $endMonth) {\n            count\n            filteredCount\n            earliestPubYear\n            rows {\n              pmid\n              pmcid\n              publicationDate\n            }\n          }\n        }\n      }\n    ",
     "label": [
       "Publications",
       "Data Retrieval and Aggregation",
       "GraphQL",
       "OpenTarget"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "entityId": "CHEMBL25",
+        "startYear": 2023,
+        "startMonth": 0,
+        "endYear": 2023,
+        "endMonth": 1
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "error_details": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "retriable": {
+              "type": "boolean"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "details": {
+              "type": "object",
+              "properties": {
+                "validation_error": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "entityId": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "additionalIds": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "startYear": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "startMonth": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "endYear": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "endMonth": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "parameter": {
+                  "type": "string"
+                },
+                "expected": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   },
   {
     "name": "OpenTargets_get_target_id_description_by_name",
@@ -1511,6 +4939,43 @@
       "OpenTarget",
       "GraphQL"
     ],
-    "type": "OpenTarget"
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "targetName": "BRAF"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "search": {
+              "type": "object",
+              "properties": {
+                "hits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 ]

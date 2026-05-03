@@ -1,0 +1,376 @@
+[
+  {
+    "name": "Rfam_get_family",
+    "type": "RfamTool",
+    "description": "Get comprehensive RNA family information from Rfam database. Returns family metadata including description, curation details, RNA type (snoRNA, miRNA, tRNA, etc.), number of sequences, species coverage, search parameters, and structure source. Rfam v15.1 contains 4,227 RNA families. Query by RF accession (e.g., RF00360) or family name (e.g., snoZ107_R87). Use for: RNA family discovery, understanding RNA function, checking curation quality, identifying RNA types. Available formats: json, xml.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_family"],
+          "description": "Operation type"
+        },
+        "family_id": {
+          "type": "string",
+          "description": "Required: Rfam accession (e.g., RF00360) or family name (e.g., snoZ107_R87)"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json",
+          "description": "Output format"
+        }
+      },
+      "required": ["operation", "family_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"},
+        "family_id": {"type": "string"},
+        "format": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_family",
+        "family_id": "RF00360",
+        "format": "json"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_get_alignment",
+    "type": "RfamTool",
+    "description": "Get RNA family seed alignment in multiple formats. Returns curated multiple sequence alignment used to build covariance model. Formats: stockholm (default, with structure annotation), pfam (stockholm single-line), fasta (gapped), fastau (ungapped). Optional gzip compression for large alignments. Use for: sequence analysis, structure prediction, phylogenetic studies, homology detection. Alignments show conserved positions and base pairing.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_alignment"],
+          "description": "Operation type"
+        },
+        "family_id": {
+          "type": "string",
+          "description": "Required: Rfam accession or family name"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["stockholm", "pfam", "fasta", "fastau"],
+          "default": "stockholm",
+          "description": "Alignment format: stockholm (structured), pfam (single-line), fasta (gapped), fastau (ungapped)"
+        },
+        "gzip": {
+          "type": "boolean",
+          "default": false,
+          "description": "Compress output with gzip"
+        }
+      },
+      "required": ["operation", "family_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "alignment": {"type": "string"},
+        "format": {"type": "string"},
+        "family_id": {"type": "string"},
+        "compressed": {"type": "boolean"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_alignment",
+        "family_id": "RF00360",
+        "format": "fasta"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_get_covariance_model",
+    "type": "RfamTool",
+    "description": "Get Infernal covariance model (CM) for RNA family. Returns CM file in Infernal format, which captures both sequence and structure conservation. Can be used with Infernal tools (cmsearch, cmalign, cmbuild) for RNA sequence analysis. Use for: homology searches, structural alignment, custom RNA annotation, sequence classification. CMs are more sensitive than profile HMMs for structured RNAs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_covariance_model"],
+          "description": "Operation type"
+        },
+        "family_id": {
+          "type": "string",
+          "description": "Required: Rfam accession or family name"
+        }
+      },
+      "required": ["operation", "family_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "covariance_model": {"type": "string"},
+        "family_id": {"type": "string"},
+        "format": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_covariance_model",
+        "family_id": "RF00360"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_search_sequence",
+    "type": "RfamTool",
+    "description": "Search RNA sequence against all Rfam families using Infernal cmscan. Submits sequence to batch search server, polls for completion, and returns hits with family matches, positions, scores, and E-values. Typically completes in 4-5 seconds for short sequences. Results available for 1 week. Use for: annotating novel RNA sequences, identifying RNA family membership, finding conserved elements, structural RNA discovery. Returns family IDs, alignment details, and significance scores.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_sequence"],
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Required: RNA sequence to search (can be multi-line, no FASTA header needed)"
+        },
+        "max_wait_seconds": {
+          "type": "integer",
+          "default": 120,
+          "minimum": 10,
+          "maximum": 600,
+          "description": "Maximum time to wait for results (default: 120s). Job continues running if timeout reached."
+        }
+      },
+      "required": ["operation", "sequence"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "job_id": {"type": "string"},
+        "results": {
+          "type": "object",
+          "properties": {
+            "numHits": {"type": "integer"},
+            "searchSequence": {"type": "string"},
+            "hits": {"type": "object"}
+          }
+        },
+        "elapsed_seconds": {"type": "integer"},
+        "result_url": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_sequence",
+        "sequence": "AGTTACGGCCATACCTCAGAGAATATACCGTATCCCGTTCGATCTGCGAAGTTAAGCTCTGAAGGGCGTCGTCAGTACTATAGTGGGTGACCATATGGGAATACGACGTGCTGTAGCTT"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_get_tree_data",
+    "type": "RfamTool",
+    "description": "Get phylogenetic tree for RNA family in NHX format (New Hampshire eXtended). Returns tree structure based on seed alignment showing evolutionary relationships. Tree includes species names and sequence information. Can be visualized with tree viewers (FigTree, iTOL, ETE). Use for: phylogenetic analysis, understanding RNA family evolution, species distribution analysis, taxonomic studies. NHX format includes extended annotations beyond standard Newick.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_tree_data"],
+          "description": "Operation type"
+        },
+        "family_id": {
+          "type": "string",
+          "description": "Required: Rfam accession or family name"
+        }
+      },
+      "required": ["operation", "family_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "tree_data": {"type": "string"},
+        "format": {"type": "string"},
+        "family_id": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_tree_data",
+        "family_id": "RF00360"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_get_sequence_regions",
+    "type": "RfamTool",
+    "description": "Get list of all genomic regions containing RNA family members. Returns tab-delimited data with sequence IDs, coordinates, scores, and species. Shows where family is found across genomes. Warning: Some large families return 403 error due to too many regions. Use for: genome annotation, identifying RNA locations, cross-species comparisons, coverage analysis. Available formats: text (tab-delimited), json, xml.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_sequence_regions"],
+          "description": "Operation type"
+        },
+        "family_id": {
+          "type": "string",
+          "description": "Required: Rfam accession or family name"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["text", "json", "xml"],
+          "default": "text",
+          "description": "Output format"
+        }
+      },
+      "required": ["operation", "family_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "regions": {"type": "string"},
+        "data": {"type": "object"},
+        "format": {"type": "string"},
+        "family_id": {"type": "string"},
+        "error": {"type": "string"},
+        "message": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_sequence_regions",
+        "family_id": "RF00360",
+        "format": "text"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_get_structure_mapping",
+    "type": "RfamTool",
+    "description": "Get mapping between Rfam family and 3D structures (PDB). Returns correspondence between RNA family, EMBL sequence regions, and PDB residues. Shows which structures are available for the family. Tab-delimited format includes PDB IDs, chains, residue ranges, and alignments. Use for: structure-function analysis, 3D visualization, structural annotation, integrating sequence and structure data. Links Rfam families to experimental structures.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_structure_mapping"],
+          "description": "Operation type"
+        },
+        "family_id": {
+          "type": "string",
+          "description": "Required: Rfam accession or family name"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml", "text"],
+          "default": "json",
+          "description": "Output format"
+        }
+      },
+      "required": ["operation", "family_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"},
+        "structures": {"type": "string"},
+        "format": {"type": "string"},
+        "family_id": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_structure_mapping",
+        "family_id": "RF00002",
+        "format": "json"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_accession_to_id",
+    "type": "RfamTool",
+    "description": "Convert Rfam accession to family ID/name. Takes RF accession (e.g., RF00360) and returns human-readable family name (e.g., snoZ107_R87). Simple ID conversion utility. Use for: displaying readable names, documentation, cross-referencing, data integration. Quick lookup with plain text response.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_family_id"],
+          "description": "Operation type"
+        },
+        "accession": {
+          "type": "string",
+          "description": "Required: Rfam accession (e.g., RF00360)"
+        }
+      },
+      "required": ["operation", "accession"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "family_id": {"type": "string"},
+        "accession": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_family_id",
+        "accession": "RF00360"
+      }
+    ]
+  },
+  {
+    "name": "Rfam_id_to_accession",
+    "type": "RfamTool",
+    "description": "Convert Rfam family ID/name to accession. Takes family name (e.g., snoZ107_R87) and returns RF accession (e.g., RF00360). Simple ID conversion utility. Use for: getting stable identifiers, cross-referencing, data integration, creating accession-based links. Accessions are stable across Rfam versions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_family_accession"],
+          "description": "Operation type"
+        },
+        "family_id": {
+          "type": "string",
+          "description": "Required: Family name (e.g., snoZ107_R87)"
+        }
+      },
+      "required": ["operation", "family_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "accession": {"type": "string"},
+        "family_id": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_family_accession",
+        "family_id": "snoZ107_R87"
+      }
+    ]
+  }
+]

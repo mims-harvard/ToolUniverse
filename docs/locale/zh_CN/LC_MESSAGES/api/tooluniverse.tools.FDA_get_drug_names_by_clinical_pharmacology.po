@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_clinical\\_pharmacolo
 #: 7ec8ebf79f2948af8d0640d3d484d008 of
 #: tooluniverse.tools.FDA_get_drug_names_by_clinical_pharmacology:1
 msgid "FDA_get_drug_names_by_clinical_pharmacology"
-msgstr ""
+msgstr "FDA_按临床药理学获取药物名称"
 
 #: 4abb532366454a90b96680bed86bdbb2 9917f8baac824a6d9c4f2e55ea170ef6 of
 #: tooluniverse.tools.FDA_get_drug_names_by_clinical_pharmacology:3

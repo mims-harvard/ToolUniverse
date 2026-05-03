@@ -32,7 +32,7 @@ msgstr ""
 #: fd341116dd174f99b02ea2e00d7d8199 of
 #: tooluniverse.tools.FDA_get_info_on_consulting_doctor_pharmacist_by_drug_name:1
 msgid "FDA_get_info_on_consulting_doctor_pharmacist_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取咨询医生或药剂师的信息"
 
 #: a179963ebd3049e98448234e5d968f0c e2d17fe555ac4afc896ef47678aea935 of
 #: tooluniverse.tools.FDA_get_info_on_consulting_doctor_pharmacist_by_drug_name:3
@@ -85,4 +85,4 @@ msgstr "返回类型"
 #: ee8f3b69d9d94160af6734fe1e75ed0c of
 #: tooluniverse.tools.FDA_get_info_on_consulting_doctor_pharmacist_by_drug_name.FDA_get_info_on_consulting_doctor_pharmacist_by_drug_name:16
 msgid ":py:class:`Any`"
-msgstr ""
+msgstr ":py:class:`任意`"

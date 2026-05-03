@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_scanpy\\_info 模块"
 
 #: 7a1ba85776df42ff87e0c405e0efd2e0 of tooluniverse.tools.get_scanpy_info:1
 msgid "get_scanpy_info"
-msgstr ""
+msgstr "获取_scanpy_信息"
 
 #: 3b383bfd4e1243e28fbe4ec5e83625ba 9e49cd8bd6284fbea03507c279c131f2 of
 #: tooluniverse.tools.get_scanpy_info:3

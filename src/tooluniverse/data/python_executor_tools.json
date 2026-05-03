@@ -1,0 +1,313 @@
+[
+  {
+    "type": "PythonCodeExecutor",
+    "name": "python_code_executor",
+    "description": "Execute Python code snippets safely in sandboxed environment with timeout and resource limits. Supports variable passing and result extraction.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Python code to execute. Can use variables from 'arguments' parameter. Use 'result = ...' to return values."
+        },
+        "arguments": {
+          "type": "object",
+          "description": "Variables to pass into execution environment as dictionary. Keys become variable names in the code.",
+          "additionalProperties": true
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Execution timeout in seconds",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 300
+        },
+        "return_variable": {
+          "type": "string",
+          "description": "Variable name to extract as result from the executed code",
+          "default": "result"
+        },
+        "allowed_imports": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Additional allowed modules beyond the default safe set (math, json, datetime, etc.)"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of Python packages that the code depends on. Will be checked and optionally installed before execution."
+        },
+        "auto_install_dependencies": {
+          "type": "boolean",
+          "description": "Whether to automatically install missing dependencies without user confirmation",
+          "default": false
+        },
+        "require_confirmation": {
+          "type": "boolean",
+          "description": "Whether to require user confirmation before installing packages",
+          "default": true
+        }
+      },
+      "required": ["code"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether execution succeeded"
+        },
+        "result": {
+          "description": "The result value from the executed code (from return_variable)"
+        },
+        "stdout": {
+          "type": "string",
+          "description": "Standard output from the execution"
+        },
+        "stderr": {
+          "type": "string",
+          "description": "Standard error output from the execution"
+        },
+        "execution_time_ms": {
+          "type": "integer",
+          "description": "Execution time in milliseconds"
+        },
+        "memory_used_mb": {
+          "type": "number",
+          "description": "Memory usage in MB (if available)"
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Error message if execution failed"
+        },
+        "error_type": {
+          "type": ["string", "null"],
+          "description": "Type of error if execution failed"
+        },
+        "traceback": {
+          "type": ["string", "null"],
+          "description": "Full traceback if execution failed"
+        },
+        "requires_confirmation": {
+          "type": "boolean",
+          "description": "Whether user confirmation is required for package installation"
+        },
+        "missing_packages": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of packages that are missing and need to be installed"
+        },
+        "install_command": {
+          "type": "string",
+          "description": "The pip install command that would be executed"
+        },
+        "installed_packages": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of packages that were successfully installed"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "code_lines": {
+              "type": "integer",
+              "description": "Number of lines in the executed code"
+            },
+            "ast_warnings": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "AST safety warnings"
+            },
+            "allowed_modules": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "List of allowed modules"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "code": "result = sum([1, 2, 3, 4, 5])"
+      },
+      {
+        "code": "result = x ** 2 + y ** 2",
+        "arguments": {"x": 3, "y": 4}
+      },
+      {
+        "code": "import math\nresult = math.sqrt(16)"
+      },
+      {
+        "code": "result = [i**2 for i in range(10)]"
+      }
+    ],
+    "metadata": {
+      "tags": [
+        "python",
+        "code-execution",
+        "sandbox",
+        "security",
+        "math",
+        "data-processing"
+      ],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 30 seconds"
+    },
+    "dependencies": []
+  },
+  {
+    "type": "PythonScriptRunner",
+    "name": "python_script_runner",
+    "description": "Run Python script files in isolated subprocess with resource limits and timeout. Supports command-line arguments and environment variables.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "script_path": {
+          "type": "string",
+          "description": "Path to Python script file (.py) to execute"
+        },
+        "script_args": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Command-line arguments to pass to the script"
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Execution timeout in seconds",
+          "default": 60,
+          "minimum": 1,
+          "maximum": 600
+        },
+        "working_directory": {
+          "type": "string",
+          "description": "Working directory for script execution (defaults to script directory)"
+        },
+        "env_vars": {
+          "type": "object",
+          "description": "Environment variables to set for script execution",
+          "additionalProperties": {"type": "string"}
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of Python packages that the script depends on. Will be checked and optionally installed before execution."
+        },
+        "auto_install_dependencies": {
+          "type": "boolean",
+          "description": "Whether to automatically install missing dependencies without user confirmation",
+          "default": false
+        },
+        "require_confirmation": {
+          "type": "boolean",
+          "description": "Whether to require user confirmation before installing packages",
+          "default": true
+        }
+      },
+      "required": ["script_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Whether script execution succeeded"
+        },
+        "result": {
+          "type": "string",
+          "description": "Execution result message"
+        },
+        "stdout": {
+          "type": "string",
+          "description": "Standard output from the script"
+        },
+        "stderr": {
+          "type": "string",
+          "description": "Standard error output from the script"
+        },
+        "execution_time_ms": {
+          "type": "integer",
+          "description": "Execution time in milliseconds"
+        },
+        "memory_used_mb": {
+          "type": "number",
+          "description": "Memory usage in MB (if available)"
+        },
+        "error": {
+          "type": ["string", "null"],
+          "description": "Error message if execution failed"
+        },
+        "error_type": {
+          "type": ["string", "null"],
+          "description": "Type of error if execution failed"
+        },
+        "traceback": {
+          "type": ["string", "null"],
+          "description": "Full traceback if execution failed"
+        },
+        "requires_confirmation": {
+          "type": "boolean",
+          "description": "Whether user confirmation is required for package installation"
+        },
+        "missing_packages": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of packages that are missing and need to be installed"
+        },
+        "install_command": {
+          "type": "string",
+          "description": "The pip install command that would be executed"
+        },
+        "installed_packages": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "List of packages that were successfully installed"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "code_lines": {
+              "type": "integer",
+              "description": "Number of lines in the script (if available)"
+            },
+            "ast_warnings": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "AST safety warnings"
+            },
+            "allowed_modules": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "List of allowed modules"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "script_path": "./examples/code_executor/hello_world.py"
+      },
+      {
+        "script_path": "./examples/code_executor/data_processor.py",
+        "script_args": ["--input", "data.csv", "--output", "result.csv"]
+      },
+      {
+        "script_path": "./examples/code_executor/configurable_script.py",
+        "env_vars": {"DEBUG": "true", "LOG_LEVEL": "info"}
+      }
+    ],
+    "metadata": {
+      "tags": [
+        "python",
+        "script-execution",
+        "subprocess",
+        "file-io",
+        "batch-processing"
+      ],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 60 seconds"
+    },
+    "dependencies": []
+  }
+]

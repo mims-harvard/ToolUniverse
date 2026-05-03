@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_polymer\\_entity\\_count\\_by\\_pdb\\_id 模块
 #: 496c68049d544f20aa3f1c721b4df709 of
 #: tooluniverse.tools.get_polymer_entity_count_by_pdb_id:1
 msgid "get_polymer_entity_count_by_pdb_id"
-msgstr ""
+msgstr "get_polymer_entity_count_by_pdb_id 获取聚合物实体数量（通过PDB ID）"
 
 #: 04af7ed3b87c4a4f8e5f3ab9a900c814 cd4f9fb4c9ce4cd69d66c39545cdda14 of
 #: tooluniverse.tools.get_polymer_entity_count_by_pdb_id:3

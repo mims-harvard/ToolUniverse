@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_subcellular\\_location 模块"
 #: 23d02558708c48b8b349b50bd2f3d013 of
 #: tooluniverse.tools.HPA_get_subcellular_location:1
 msgid "HPA_get_subcellular_location"
-msgstr ""
+msgstr "HPA_获取亚细胞定位"
 
 #: 11dc5e64f69c4bcca64ebe688038e6a1 fc4f3e806a774a7ba4c293a3e0eddce0 of
 #: tooluniverse.tools.HPA_get_subcellular_location:3

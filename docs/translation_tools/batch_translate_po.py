@@ -188,26 +188,35 @@ Provide only the Chinese translation without explanations:""",
             return False
     
     def batch_translate(self, directory_path: str, max_entries_per_file: Optional[int] = None,
-                       context: str = "Documentation") -> Dict[str, bool]:
+                       context: str = "Documentation", exclude_dirs: Optional[list] = None) -> Dict[str, bool]:
         """Translate all .po files in a directory."""
         results = {}
-        po_files = list(Path(directory_path).rglob("*.po"))
-        
+        exclude_dirs = set(exclude_dirs or [])
+        po_files = [
+            f for f in Path(directory_path).rglob("*.po")
+            if not any(part in exclude_dirs for part in f.relative_to(directory_path).parts)
+        ]
+
         if not po_files:
             print(f"❌ No .po files found in {directory_path}")
             return results
-        
+
         print(f"📁 Found {len(po_files)} .po files")
-        
-        for po_file in po_files:
+
+        for i, po_file in enumerate(po_files, 1):
+            print(f"\n[{i}/{len(po_files)}] {po_file.relative_to(directory_path)}")
             success = self.translate_po_file(str(po_file), max_entries_per_file, context)
             results[str(po_file)] = success
-        
+
         return results
-    
-    def show_status(self, directory_path: str):
+
+    def show_status(self, directory_path: str, exclude_dirs: Optional[list] = None):
         """Show translation status for all .po files in a directory."""
-        po_files = list(Path(directory_path).rglob("*.po"))
+        exclude_dirs = set(exclude_dirs or [])
+        po_files = [
+            f for f in Path(directory_path).rglob("*.po")
+            if not any(part in exclude_dirs for part in f.relative_to(directory_path).parts)
+        ]
         
         if not po_files:
             print(f"❌ No .po files found in {directory_path}")
@@ -247,10 +256,12 @@ def main():
     parser.add_argument("--file", "-f", help="Single .po file to translate")
     parser.add_argument("--status", "-s", action="store_true", help="Show translation status")
     parser.add_argument("--max-entries", "-m", type=int, help="Maximum entries to translate per file")
-    parser.add_argument("--model", default="gpt-4o-mini", help="OpenAI model to use")
+    parser.add_argument("--model", default="gpt-4.1-mini", help="OpenAI model to use")
     parser.add_argument("--temperature", type=float, default=0.3, help="Translation temperature")
     parser.add_argument("--context", default="Documentation", help="Translation context")
-    
+    parser.add_argument("--exclude", "-x", nargs="+", default=[], metavar="DIR",
+                        help="Subdirectory names to exclude (e.g. api old_files tutorials)")
+
     args = parser.parse_args()
     
     # Default to locale directory if no arguments provided
@@ -269,7 +280,7 @@ def main():
     if args.status:
         # Show status
         if args.directory:
-            translator.show_status(args.directory)
+            translator.show_status(args.directory, exclude_dirs=args.exclude)
         elif args.file:
             stats = translator.get_po_stats(args.file)
             print(f"📊 Status for {args.file}:")
@@ -287,7 +298,8 @@ def main():
                 print("❌ Translation failed!")
                 sys.exit(1)
         elif args.directory:
-            results = translator.batch_translate(args.directory, args.max_entries, args.context)
+            results = translator.batch_translate(args.directory, args.max_entries, args.context,
+                                                  exclude_dirs=args.exclude)
             successful = sum(1 for success in results.values() if success)
             print(f"\n📊 Summary: {successful}/{len(results)} files processed successfully")
             

@@ -1,0 +1,388 @@
+[
+  {
+    "name": "USGS_get_earthquake_feed",
+    "description": "Get recent USGS earthquake data feeds in GeoJSON format. Returns earthquakes based on magnitude threshold and time period. Data includes magnitude, location, depth, coordinates, and impact metrics. Feeds are updated in real-time. Use for monitoring seismic activity, disaster response planning, and geological research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "magnitude": {
+          "type": "string",
+          "description": "Minimum magnitude filter: 'significant' (felt widely), '4.5', '2.5', '1.0', 'all' (includes micro-earthquakes). Higher magnitude = fewer but larger events."
+        },
+        "period": {
+          "type": "string",
+          "description": "Time period: 'hour' (past 1 hour), 'day' (past 24 hours), 'week' (past 7 days), 'month' (past 30 days)"
+        }
+      },
+      "required": [
+        "magnitude",
+        "period"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/{magnitude}_{period}.geojson"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "magnitude": "significant",
+        "period": "month"
+      },
+      {
+        "magnitude": "4.5",
+        "period": "week"
+      },
+      {
+        "magnitude": "2.5",
+        "period": "day"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GeoJSON FeatureCollection of recent earthquakes",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "generated": {
+                  "type": "integer",
+                  "description": "Unix timestamp of feed generation"
+                },
+                "count": {
+                  "type": "integer",
+                  "description": "Number of events in feed"
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            },
+            "features": {
+              "type": "array",
+              "description": "List of earthquake events",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "USGS event ID"
+                  },
+                  "geometry": {
+                    "type": "object",
+                    "properties": {
+                      "coordinates": {
+                        "type": "array",
+                        "description": "[longitude, latitude, depth_km]",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "mag": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Magnitude"
+                      },
+                      "place": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Location description"
+                      },
+                      "time": {
+                        "type": "integer",
+                        "description": "Event time (milliseconds since epoch)"
+                      },
+                      "updated": {
+                        "type": "integer"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "USGS event page URL"
+                      },
+                      "alert": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PAGER alert level: green/yellow/orange/red"
+                      },
+                      "tsunami": {
+                        "type": "integer",
+                        "description": "1 if tsunami potential, 0 if not"
+                      },
+                      "sig": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Significance score 0-1000"
+                      },
+                      "magType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "felt": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Number of felt reports"
+                      },
+                      "cdi": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Maximum community intensity"
+                      },
+                      "mmi": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Instrumental intensity (Modified Mercalli)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "USGS_query_earthquakes",
+    "description": "Query the USGS FDSN earthquake database with custom parameters to search historical and recent seismic events. Filter by magnitude, time range, location (bounding box or radial search), and depth. Returns detailed GeoJSON for all matching earthquakes. Useful for historical seismicity analysis, regional earthquake studies, and risk assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "minmagnitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum earthquake magnitude (e.g., 5.0, 6.5, 7.0)"
+        },
+        "maxmagnitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Maximum earthquake magnitude"
+        },
+        "starttime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start time in ISO 8601 format (e.g., '2024-01-01', '2020-01-01T00:00:00')"
+        },
+        "endtime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "End time in ISO 8601 format (e.g., '2024-12-31'). Defaults to current time."
+        },
+        "minlatitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum latitude for bounding box search (-90 to 90)"
+        },
+        "maxlatitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Maximum latitude for bounding box search"
+        },
+        "minlongitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum longitude (-180 to 360)"
+        },
+        "maxlongitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Maximum longitude"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of events (default 20000, max 20000)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://earthquake.usgs.gov/fdsnws/event/1/query",
+      "params": {
+        "format": "geojson"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "minmagnitude": 7.0,
+        "starttime": "2020-01-01",
+        "endtime": "2024-12-31",
+        "limit": 10
+      },
+      {
+        "minmagnitude": 6.0,
+        "starttime": "2024-01-01",
+        "minlatitude": -60,
+        "maxlatitude": 60,
+        "limit": 5
+      },
+      {
+        "minmagnitude": 5.0,
+        "starttime": "2023-01-01",
+        "endtime": "2023-12-31",
+        "minlatitude": 30,
+        "maxlatitude": 45,
+        "minlongitude": 25,
+        "maxlongitude": 45,
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GeoJSON FeatureCollection of earthquake results",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "geometry": {
+                    "type": "object"
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "mag": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "place": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "time": {
+                        "type": "integer"
+                      },
+                      "updated": {
+                        "type": "integer"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "alert": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "tsunami": {
+                        "type": "integer"
+                      },
+                      "sig": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "magType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

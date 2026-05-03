@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.DailyMed\\_get\\_spl\\_by\\_setid 模块"
 #: 08165f45e5504ae9b8b75f3b9978eccb of
 #: tooluniverse.tools.DailyMed_get_spl_by_setid:1
 msgid "DailyMed_get_spl_by_setid"
-msgstr ""
+msgstr "DailyMed_按SetID获取SPL"
 
 #: 36c4525fe5b649cdaa017a7a5a7c086d d6d5e863c68a4bf18e0e6c44d41033dd of
 #: tooluniverse.tools.DailyMed_get_spl_by_setid:3

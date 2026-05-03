@@ -32,7 +32,7 @@ msgstr ""
 #: d7c56bb4b0224ea0b3d5cd1fb6dfe6eb of
 #: tooluniverse.tools.HPA_get_disease_expression_by_gene_tissue_disease:1
 msgid "HPA_get_disease_expression_by_gene_tissue_disease"
-msgstr ""
+msgstr "HPA_按基因_组织_疾病获取疾病表达情况"
 
 #: 6935f5f693e5423187376a1d0cfc0974 7734e2bc1a9c4a039d07b65195c10cad of
 #: tooluniverse.tools.HPA_get_disease_expression_by_gene_tissue_disease:3

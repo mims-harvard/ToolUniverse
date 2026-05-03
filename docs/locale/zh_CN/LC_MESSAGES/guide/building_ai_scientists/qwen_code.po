@@ -70,7 +70,7 @@ msgstr "**高级推理**：针对代码和工具优化的 Qwen Coder 模型"
 
 #: ../../guide/building_ai_scientists/qwen_code.rst:37
 #: 865a5ebc9c444ea09c86cd53e510d0e5
-msgid "**Comprehensive Tools**: Access 600+ scientific tools via ToolUniverse"
+msgid "**Comprehensive Tools**: Access 1000+ scientific tools via ToolUniverse"
 msgstr "**综合工具**：通过 ToolUniverse 访问 600 多种科学工具"
 
 #: ../../guide/building_ai_scientists/qwen_code.rst:38

@@ -1,0 +1,1521 @@
+[
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_lookup_gene",
+    "description": "Lookup gene information by Ensembl gene ID or symbol. Returns gene details including location, description, and external references. Supports both stable IDs (e.g., ENSG00000139618) and gene symbols (e.g., BRCA1). For gene symbols, species parameter is required.",
+    "endpoint": "/lookup/symbol/{species}/{gene_id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Ensembl gene ID or symbol (e.g., 'ENSG00000139618' or 'BRCA1'). If using a stable ID, the tool will automatically route to /lookup/id endpoint."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name required for gene symbols (default 'homo_sapiens'). Examples: 'homo_sapiens', 'mus_musculus', 'rattus_norvegicus'"
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Gene information object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ensembl gene ID"
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Gene symbol"
+        },
+        "description": {
+          "type": "string",
+          "description": "Gene description"
+        },
+        "biotype": {
+          "type": "string",
+          "description": "Gene biotype"
+        },
+        "start": {
+          "type": "integer",
+          "description": "Gene start position"
+        },
+        "end": {
+          "type": "integer",
+          "description": "Gene end position"
+        },
+        "strand": {
+          "type": "integer",
+          "description": "Gene strand (1 or -1)"
+        },
+        "seq_region_name": {
+          "type": "string",
+          "description": "Chromosome name"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_id": "ENSG00000012048",
+        "species": "homo_sapiens"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_sequence",
+    "description": "Get DNA or protein sequence for a gene, transcript, or genomic region. Returns sequence in JSON format with metadata. Supports multiple sequence types: genomic, CDS, cDNA, and peptide sequences.",
+    "endpoint": "/sequence/id/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ensembl gene/transcript ID (e.g., 'ENSG00000139618' or 'ENST00000380152')"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "genomic",
+            "cds",
+            "cdna",
+            "peptide"
+          ],
+          "default": "genomic",
+          "description": "Sequence type: 'genomic' (genomic DNA), 'cds' (coding sequence), 'cdna' (cDNA), 'peptide' (protein sequence)"
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name (optional, defaults to human)"
+        },
+        "multiple_sequences": {
+          "type": "boolean",
+          "default": true,
+          "description": "Return multiple sequences if available (e.g., all transcripts)"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "object"
+      ],
+      "description": "Array of sequence objects or single sequence object",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Sequence ID"
+          },
+          "seq": {
+            "type": "string",
+            "description": "DNA/protein sequence"
+          },
+          "desc": {
+            "type": "string",
+            "description": "Sequence description"
+          },
+          "molecule": {
+            "type": "string",
+            "description": "Molecule type (dna, rna, protein)"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "ENSG00000012048",
+        "type": "genomic"
+      }
+    ],
+    "aliases": ["Ensembl_get_sequence"]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_variants",
+    "description": "Get genetic variants (SNPs, indels) in a genomic region. Returns variant information including positions, alleles, and consequences. Use this to find variants overlapping a specific genomic region.",
+    "endpoint": "/overlap/region/{species}/{region}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chromosome:start-end' (e.g., '13:32315086-32400268' or '1:1000000-2000000')"
+        },
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (default 'human'). Examples: 'human', 'mouse', 'rat'"
+        },
+        "feature": {
+          "type": "string",
+          "default": "variation",
+          "description": "Feature type to retrieve (default 'variation')"
+        }
+      },
+      "required": [
+        "region"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of variant objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Variant ID (e.g., rs699)"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Variant start position"
+          },
+          "end": {
+            "type": "integer",
+            "description": "Variant end position"
+          },
+          "strand": {
+            "type": "integer",
+            "description": "Variant strand"
+          },
+          "allele_string": {
+            "type": "string",
+            "description": "Allele string (e.g., 'A/T')"
+          },
+          "consequence_type": {
+            "type": "string",
+            "description": "Variant consequence (e.g., 'missense_variant', 'synonymous_variant')"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "region": "13:32315086-32400268",
+        "species": "human"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_variation",
+    "aliases": ["Ensembl_get_variant_info"],
+    "description": "Get detailed information about a specific genetic variation by its ID (e.g., rs699). Returns variation details including alleles, frequencies, consequences, and evidence. Use ensembl_get_variants to find variant IDs in a region.",
+    "endpoint": "/variation/{species}/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Variation ID (e.g., 'rs699', 'rs1421085'). Use ensembl_get_variants to find variant IDs in a genomic region."
+        },
+        "variant_id": {
+          "type": "string",
+          "description": "Alias for id. dbSNP rsID or Ensembl variation ID (e.g., 'rs7903146', 'rs699')."
+        },
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (default 'human')"
+        },
+        "phenotypes": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include phenotype associations (0=no, 1=yes)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Variation information object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Variation ID"
+        },
+        "minor_allele": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Minor allele"
+        },
+        "var_class": {
+          "type": "string",
+          "description": "Variant class"
+        },
+        "mappings": {
+          "type": "array",
+          "description": "Genomic mappings"
+        },
+        "MAF": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Minor allele frequency"
+        },
+        "most_severe_consequence": {
+          "type": "string",
+          "description": "Most severe consequence"
+        },
+        "phenotypes": {
+          "type": "array",
+          "description": "Phenotype associations (if phenotypes=1)"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "rs699",
+        "species": "human",
+        "phenotypes": 1
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_variation_phenotypes",
+    "description": "Get phenotype associations for a specific genetic variation. Returns detailed phenotype information including traits, studies, and effect sizes. Use this to understand the phenotypic consequences of a variant.",
+    "endpoint": "/variation/{species}/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Variation ID (e.g., 'rs699'). Use ensembl_get_variants to find variant IDs in a genomic region."
+        },
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (default 'human')"
+        },
+        "phenotypes": {
+          "type": "integer",
+          "default": 1,
+          "description": "Include phenotype associations (must be 1 for this tool)"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Variation information with phenotypes",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Variation ID"
+        },
+        "phenotypes": {
+          "type": "array",
+          "description": "Array of phenotype associations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trait": {
+                "type": "string",
+                "description": "Phenotype trait"
+              },
+              "study": {
+                "type": "string",
+                "description": "Study name"
+              },
+              "association_type": {
+                "type": "string",
+                "description": "Type of association"
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "rs699",
+        "species": "human",
+        "phenotypes": 1
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_xrefs",
+    "description": "Get cross-references (external database IDs) for an Ensembl gene, transcript, or protein. Returns mappings to databases like UniProt, RefSeq, HGNC, MGI, and many others. Use this to convert between different database identifiers.",
+    "endpoint": "/xrefs/id/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ensembl ID (gene, transcript, or protein ID, e.g., 'ENSG00000139618', 'ENST00000380152', 'ENSP00000369497')"
+        },
+        "external_db": {
+          "type": "string",
+          "description": "Filter by external database name (optional, e.g., 'UniProt', 'RefSeq', 'HGNC')"
+        },
+        "object_type": {
+          "type": "string",
+          "description": "Object type filter (optional, e.g., 'gene', 'transcript', 'translation')"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of cross-reference objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbname": {
+            "type": "string",
+            "description": "Database name (e.g., 'UniProt', 'RefSeq', 'HGNC')"
+          },
+          "db_display_name": {
+            "type": "string",
+            "description": "Display name of database"
+          },
+          "primary_id": {
+            "type": "string",
+            "description": "Primary ID in external database"
+          },
+          "display_id": {
+            "type": "string",
+            "description": "Display ID"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Description"
+          },
+          "info_type": {
+            "type": "string",
+            "description": "Information type"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "ENSG00000139618"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_xrefs_by_name",
+    "description": "Get cross-references for an Ensembl object by its name/symbol. Returns mappings to external databases. Use this when you have a gene symbol or name instead of an Ensembl ID.",
+    "endpoint": "/xrefs/name/{species}/{name}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Gene symbol or name (e.g., 'BRCA1', 'TP53')"
+        },
+        "species": {
+          "type": "string",
+          "default": "homo_sapiens",
+          "description": "Species name (default 'homo_sapiens')"
+        },
+        "external_db": {
+          "type": "string",
+          "description": "Filter by external database name (optional)"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of cross-reference objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dbname": {
+            "type": "string",
+            "description": "Database name"
+          },
+          "primary_id": {
+            "type": "string",
+            "description": "Primary ID in external database"
+          },
+          "display_id": {
+            "type": "string",
+            "description": "Display ID"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "name": "BRCA1",
+        "species": "homo_sapiens"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_regulatory_features",
+    "description": "Get regulatory features (promoters, enhancers, transcription factor binding sites) in a genomic region. Returns regulatory annotations including feature types, positions, and evidence. Use this to identify regulatory elements that may control gene expression.",
+    "endpoint": "/overlap/region/{species}/{region}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chromosome:start-end' (e.g., '1:1000000-2000000')"
+        },
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (default 'human')"
+        },
+        "feature": {
+          "type": "string",
+          "description": "Feature type (must be 'regulatory' for this tool)"
+        }
+      },
+      "required": [
+        "region",
+        "feature"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of regulatory feature objects",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Regulatory feature ID"
+          },
+          "feature_type": {
+            "type": "string",
+            "description": "Feature type (e.g., 'Promoter', 'Enhancer', 'TF_binding_site')"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Feature start position"
+          },
+          "end": {
+            "type": "integer",
+            "description": "Feature end position"
+          },
+          "strand": {
+            "type": "integer",
+            "description": "Feature strand"
+          },
+          "seq_region_name": {
+            "type": "string",
+            "description": "Chromosome name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Feature description"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "region": "1:1000000-2000000",
+        "species": "human",
+        "feature": "regulatory"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_genetree",
+    "description": "Get gene tree (phylogenetic tree) for a gene. Returns evolutionary relationships showing orthologues and paralogues across species. Use this to study gene evolution and find related genes in other species. Gene tree IDs can be found in gene lookup responses or by querying the Compara database.",
+    "endpoint": "/genetree/id/{id}",
+    "timeout": 60,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Gene tree ID (e.g., 'ENSGT00390000003602'). Gene tree IDs can be found in gene lookup responses with expand=1, or by querying Ensembl Compara database."
+        },
+        "prune_species": {
+          "type": "string",
+          "description": "Prune tree to specific species (optional, e.g., 'homo_sapiens,mus_musculus')"
+        },
+        "prune_taxon": {
+          "type": "string",
+          "description": "Prune tree to specific taxon (optional)"
+        },
+        "aligned": {
+          "type": "boolean",
+          "default": false,
+          "description": "Return aligned sequences"
+        },
+        "sequence": {
+          "type": "string",
+          "enum": [
+            "cdna",
+            "protein",
+            "none"
+          ],
+          "default": "none",
+          "description": "Include sequences in tree (cdna, protein, or none)"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Gene tree object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Gene tree ID"
+        },
+        "type": {
+          "type": "string",
+          "description": "Tree type"
+        },
+        "rooted": {
+          "type": [
+            "boolean",
+            "integer"
+          ],
+          "description": "Whether tree is rooted (boolean or integer 0/1)"
+        },
+        "tree": {
+          "type": "object",
+          "description": "Tree structure with nodes and leaves"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "ENSGT00390000003602"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_homology",
+    "description": "Get homology (orthologues and paralogues) for a gene by symbol across species. Returns evolutionary relationships with gene IDs, protein IDs, chromosomal locations, and homology types (1-to-1, 1-to-many, etc). Essential for comparative genomics studies.",
+    "endpoint": "/homology/symbol/{species}/{symbol}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Source species (e.g., 'human', 'homo_sapiens')"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'BRCA2', 'TP53')"
+        },
+        "target_species": {
+          "type": "string",
+          "description": "Target species to find homologues in (optional, e.g., 'mouse', 'mus_musculus'). Leave empty to search all species."
+        },
+        "target_taxon": {
+          "type": "string",
+          "description": "Target taxonomic group (optional, e.g., 'Mammalia', 'Primates')"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "orthologues",
+            "paralogues",
+            "all"
+          ],
+          "default": "all",
+          "description": "Homology type: 'orthologues' (different species), 'paralogues' (same species), 'all' (both)"
+        },
+        "sequence": {
+          "type": "string",
+          "enum": [
+            "cdna",
+            "protein",
+            "none"
+          ],
+          "default": "none",
+          "description": "Include sequences in response"
+        },
+        "aligned": {
+          "type": "boolean",
+          "default": false,
+          "description": "Return aligned sequences"
+        }
+      },
+      "required": [
+        "species",
+        "symbol"
+      ]
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "object"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "homologies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Homology type"
+                },
+                "target": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "species": {
+                      "type": "string"
+                    },
+                    "protein_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "symbol": "BRCA2",
+        "target_species": "mouse",
+        "type": "orthologues"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_alignment",
+    "description": "Get genomic alignments between species for a genomic region. Returns multiple alignments showing conserved sequences across species groups. Supports EPO and PECAN alignment methods for predefined species groups (mammals, primates, fish, birds, sauropsids). Useful for studying sequence conservation.",
+    "endpoint": "/alignment/region/{species}/{region}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Source species (e.g., 'human', 'homo_sapiens')"
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chromosome:start-end' (e.g., '2:106000000-106100000')"
+        },
+        "species_set_group": {
+          "type": "string",
+          "default": "mammals",
+          "description": "Predefined species group for multiple alignment. Options: 'mammals', 'primates', 'fish', 'birds', 'sauropsids'. Required for EPO method."
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "EPO",
+            "EPO_EXTENDED",
+            "PECAN"
+          ],
+          "default": "EPO",
+          "description": "Alignment method: EPO (high quality multiple), EPO_EXTENDED (extended coverage), PECAN (low coverage)"
+        },
+        "compact": {
+          "type": "boolean",
+          "default": true,
+          "description": "Compact output format"
+        },
+        "display_species_set": {
+          "type": "string",
+          "description": "Comma-separated list to filter which species to display in results (optional, e.g., 'mouse,rat')"
+        }
+      },
+      "required": [
+        "species",
+        "region"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "alignments": {
+            "type": "array"
+          },
+          "tree": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "region": "2:106000000-106100000",
+        "species_set_group": "mammals",
+        "method": "EPO"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_taxonomy",
+    "description": "Get taxonomic classification for a species. Returns complete lineage from kingdom to species level with scientific names and taxonomy IDs. Useful for understanding species relationships and filtering by taxonomic groups.",
+    "endpoint": "/taxonomy/classification/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "NCBI Taxonomy ID (e.g., '9606' for human, '10090' for mouse) or species name (e.g., 'homo_sapiens')"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "scientific_name": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "9606"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_species",
+    "description": "Get information about a species or list all available species in Ensembl. Returns scientific name, common name, assembly details, and database version. Use without ID to list all species (200+ available).",
+    "endpoint": "/info/species",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "division": {
+          "type": "string",
+          "enum": [
+            "EnsemblVertebrates",
+            "EnsemblPlants",
+            "EnsemblFungi",
+            "EnsemblBacteria",
+            "EnsemblProtists",
+            "EnsemblMetazoa"
+          ],
+          "description": "Filter by Ensembl division (optional)"
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "common_name": {
+                "type": "string"
+              },
+              "assembly": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "division": "EnsemblVertebrates"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_archive",
+    "description": "Get historical (archived) gene information by stable ID. Returns gene location and status across all Ensembl releases. Use this to track gene ID changes, assembly updates, or retrieve information from older Ensembl versions.",
+    "endpoint": "/archive/id/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ensembl stable ID (gene, transcript, or protein, e.g., 'ENSG00000139618')"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "object"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer"
+          },
+          "release": {
+            "type": "integer"
+          },
+          "assembly": {
+            "type": "string"
+          },
+          "latest": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "ENSG00000139618"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_ontology_ancestors",
+    "description": "Get ancestor terms for a GO (Gene Ontology) term. Returns parent terms up the ontology hierarchy showing broader biological concepts. Use this to understand term relationships and perform hierarchical analysis.",
+    "endpoint": "/ontology/ancestors/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "GO term ID (e.g., 'GO:0005737' for cytoplasm)"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "GO:0005737"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_ontology_descendants",
+    "description": "Get descendant terms for a GO (Gene Ontology) term. Returns child terms down the ontology hierarchy showing more specific biological concepts. Use this to find related specific terms and expand queries.",
+    "endpoint": "/ontology/descendants/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "GO term ID (e.g., 'GO:0005737' for cytoplasm)"
+        },
+        "closest_term": {
+          "type": "boolean",
+          "default": false,
+          "description": "Return only immediate children"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "GO:0005737",
+        "closest_term": false
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_ontology_term",
+    "description": "Get detailed information about a specific ontology term (GO, SO, HPO). Returns term name, definition, synonyms, and relationships. Use this to understand biological concepts and validate term usage.",
+    "endpoint": "/ontology/id/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ontology term ID (e.g., 'GO:0005737', 'SO:0000704', 'HP:0001250')"
+        },
+        "relation": {
+          "type": "string",
+          "description": "Filter relationships (optional, e.g., 'is_a', 'part_of', 'regulates')"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string"
+        },
+        "synonyms": {
+          "type": "array"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "id": "GO:0005737"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_overlap_features",
+    "description": "Get genomic features (genes, transcripts, repeats) overlapping a region. Returns comprehensive annotations including coding genes, ncRNAs, pseudogenes, and structural features. Use this for genome annotation and feature discovery.",
+    "endpoint": "/overlap/region/{species}/{region}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species (e.g., 'human', 'homo_sapiens')"
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region (e.g., '7:140424943-140624564')"
+        },
+        "feature": {
+          "type": "string",
+          "enum": [
+            "gene",
+            "transcript",
+            "cds",
+            "exon",
+            "repeat",
+            "simple_feature",
+            "misc_feature",
+            "constrained_element"
+          ],
+          "default": "gene",
+          "description": "Feature type to retrieve"
+        },
+        "biotype": {
+          "type": "string",
+          "description": "Filter by biotype (optional, e.g., 'protein_coding', 'lincRNA', 'miRNA')"
+        }
+      },
+      "required": [
+        "species",
+        "region"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "external_name": {
+            "type": "string"
+          },
+          "biotype": {
+            "type": "string"
+          },
+          "start": {
+            "type": "integer"
+          },
+          "end": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "region": "7:140424943-140624564",
+        "feature": "gene"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_vep_region",
+    "description": "Variant Effect Predictor (VEP) for genomic variants. Predicts functional consequences of variants including impact on genes, transcripts, and proteins. Returns SIFT/PolyPhen scores, consequence types, and affected transcripts. Essential for variant interpretation.",
+    "endpoint": "/vep/{species}/region/{region}/{allele}",
+    "timeout": 60,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "description": "Species (e.g., 'human', 'homo_sapiens')"
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region with variant (e.g., '21:25891796-25891796')"
+        },
+        "allele": {
+          "type": "string",
+          "description": "Alternative allele (e.g., 'T', 'C')"
+        },
+        "AncestralAllele": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include ancestral allele information"
+        },
+        "Blosum62": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include BLOSUM62 protein conservation score"
+        },
+        "CADD": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include CADD scores"
+        },
+        "Conservation": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include conservation scores"
+        },
+        "DisGeNET": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include DisGeNET disease associations"
+        },
+        "GeneSplicer": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include GeneSplicer predictions"
+        },
+        "GO": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include Gene Ontology terms"
+        },
+        "LoF": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include Loss-of-Function predictions"
+        },
+        "MaxEntScan": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include MaxEntScan splice predictions"
+        },
+        "Phenotypes": {
+          "type": "integer",
+          "default": 0,
+          "description": "Include phenotype annotations"
+        },
+        "SIFT": {
+          "type": "string",
+          "enum": [
+            "p",
+            "s",
+            "b"
+          ],
+          "description": "SIFT prediction: p=prediction, s=score, b=both"
+        },
+        "PolyPhen": {
+          "type": "string",
+          "enum": [
+            "p",
+            "s",
+            "b"
+          ],
+          "description": "PolyPhen prediction: p=prediction, s=score, b=both"
+        }
+      },
+      "required": [
+        "species",
+        "region",
+        "allele"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "allele_string": {
+            "type": "string"
+          },
+          "consequence_terms": {
+            "type": "array"
+          },
+          "most_severe_consequence": {
+            "type": "string"
+          },
+          "transcript_consequences": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "region": "21:25891796-25891796",
+        "allele": "T"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_structural_variants",
+    "description": "Get structural variants overlapping a genomic region from Ensembl. Returns known SVs from DGVa (Database of Genomic Variants archive), ClinGen, and other sources. Each SV includes its ID (nsv/esv accession), coordinates, and feature type. Use ensembl_get_sv_detail to get clinical significance, variant class (CNV, deletion, duplication, inversion), and supporting evidence for specific variants. Region must be < 5Mb.",
+    "endpoint": "/overlap/region/{species}/{region}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (e.g., 'human', 'homo_sapiens')."
+        },
+        "region": {
+          "type": "string",
+          "description": "Genomic region in format 'chr:start-end' (e.g., '17:43044295-43125370'). Maximum 5Mb."
+        },
+        "feature": {
+          "type": "string",
+          "default": "structural_variation",
+          "description": "Feature type to retrieve. Fixed to 'structural_variation' for this tool."
+        }
+      },
+      "required": [
+        "species",
+        "region"
+      ]
+    },
+    "timeout": 45,
+    "return_schema": {
+      "type": "array",
+      "description": "Array of structural variants overlapping the region.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Structural variant accession (nsv or esv ID from DGVa/dbVar)"
+          },
+          "seq_region_name": {
+            "type": "string",
+            "description": "Chromosome number"
+          },
+          "start": {
+            "type": "integer",
+            "description": "Start coordinate (GRCh38)"
+          },
+          "end": {
+            "type": "integer",
+            "description": "End coordinate (GRCh38)"
+          },
+          "strand": {
+            "type": "integer",
+            "description": "Strand (1 or -1)"
+          },
+          "feature_type": {
+            "type": "string",
+            "description": "Always 'structural_variation'"
+          },
+          "assembly_name": {
+            "type": "string",
+            "description": "Genome assembly (e.g., GRCh38)"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "region": "22:27000000-27050000"
+      }
+    ],
+    "metadata": {
+      "tags": [
+        "structural variants",
+        "CNV",
+        "DGV",
+        "DGVa",
+        "Ensembl",
+        "clinical genomics",
+        "region query"
+      ],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 10 seconds"
+    }
+  },
+  {
+    "type": "EnsemblRESTTool",
+    "name": "ensembl_get_sv_detail",
+    "description": "Get detailed information for a specific structural variant from Ensembl by its accession (nsv/esv ID). Returns variant class (CNV, deletion, duplication, inversion, gain, loss), clinical significance (pathogenic, benign, etc.), source database, supporting evidence with individual sample observations, study information, and genomic mappings. Essential for CNV clinical interpretation.",
+    "endpoint": "/variation/{species}/{id}",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (e.g., 'human', 'homo_sapiens')."
+        },
+        "id": {
+          "type": "string",
+          "description": "Structural variant accession from Ensembl/DGVa (e.g., 'nsv2769779', 'esv3647486'). Use ensembl_get_structural_variants to find IDs."
+        }
+      },
+      "required": [
+        "species",
+        "id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Detailed structural variant information.",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Variant name/accession"
+        },
+        "var_class": {
+          "type": "string",
+          "description": "Variant class: CNV, deletion, duplication, inversion, insertion, gain, loss, tandem_duplication, complex_structural_alteration"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source database (e.g., 'Database of Genomic Variants Archive')"
+        },
+        "clinical_significance": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Clinical significance: pathogenic, likely pathogenic, benign, likely benign, uncertain significance"
+        },
+        "alias": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alternative name or alias"
+        },
+        "supporting_evidence": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Individual sample-level supporting evidence",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Supporting variant accession (nssv/essv)"
+              },
+              "var_class": {
+                "type": "string",
+                "description": "Observed variant class (gain, loss, deletion, etc.)"
+              },
+              "source": {
+                "type": "string"
+              },
+              "clinical_significance": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "copy_number": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "study": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Study accession (e.g., estd214, nstd37)"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              },
+              "mappings": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "location": {
+                      "type": "string"
+                    },
+                    "seq_region_name": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "integer"
+                    },
+                    "end": {
+                      "type": "integer"
+                    },
+                    "assembly_name": {
+                      "type": "string"
+                    },
+                    "genomic_size": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "species": "human",
+        "id": "esv3647486"
+      }
+    ],
+    "metadata": {
+      "tags": [
+        "structural variants",
+        "CNV",
+        "clinical significance",
+        "DGV",
+        "DGVa",
+        "pathogenicity",
+        "Ensembl"
+      ],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 5 seconds"
+    }
+  }
+]

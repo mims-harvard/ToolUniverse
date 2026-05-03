@@ -2,17 +2,17 @@
   {
     "type": "ChEMBLTool",
     "name": "ChEMBL_search_similar_molecules",
-    "description": "Search for molecules similar to a given SMILES, chembl_id, or compound or drug name, using the ChEMBL Web Services.",
+    "description": "Search for molecules similar to a given SMILES, chembl_id, or compound or drug name, using the ChEMBL Web Services. Note: This tool is designed for small molecule compounds only. Biologics (antibodies, proteins, oligonucleotides, etc.) do not have SMILES structures and cannot be used for similarity search. For biologics similarity search, use BLAST_protein_search (requires amino acid sequence) or UniProt_search. For small molecules, use PubChem_search_compounds_by_similarity (requires SMILES input).",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "SMILES string, chembl_id, or compound or drug name."
+          "description": "SMILES string, chembl_id, or compound or drug name. Note: Only small molecule compounds are supported. Biologics (antibodies, proteins, etc.) will return an error as they lack SMILES structures."
         },
         "similarity_threshold": {
           "type": "integer",
-          "description": "Similarity threshold (0–100).",
+          "description": "Similarity threshold (0\u2013100).",
           "default": 80
         },
         "max_results": {
@@ -26,6 +26,2051 @@
         "similarity_threshold",
         "max_results"
       ]
+    },
+    "test_examples": [
+      {
+        "query": "CC(=O)Oc1ccccc1C(=O)O",
+        "similarity_threshold": 70,
+        "max_results": 5
+      }
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "chembl_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ChEMBL molecule ID"
+          },
+          "pref_name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Preferred name"
+          },
+          "smiles": {
+            "type": "string",
+            "description": "SMILES string"
+          },
+          "similar_molecules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "chembl_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "pref_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "smiles": {
+                  "type": "string"
+                },
+                "similarity": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_molecule",
+    "description": "Get detailed information about a molecule by its ChEMBL ID. Returns molecule properties, structures, synonyms, and related data.",
+    "fields": {
+      "endpoint": "/molecule/{chembl_id}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chembl_id": {
+          "type": "string",
+          "description": "ChEMBL molecule ID, e.g., 'CHEMBL25'"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml",
+            "yaml"
+          ],
+          "default": "json",
+          "description": "Response format"
+        },
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Alias for chembl_id. ChEMBL molecule ID, e.g., CHEMBL1229517."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Request status"
+        },
+        "data": {
+          "type": "object",
+          "description": "Molecule data including structures, properties, synonyms"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "chembl_id": "CHEMBL25"
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_molecules",
+    "description": "Search molecules by name, ChEMBL ID, or other criteria. Supports filtering and pagination. Note: some text-based filters (especially `pref_name__contains`) may legitimately return zero results because `pref_name` coverage is incomplete and may not contain common drug names. For reliable retrieval, prefer ID-based filters like `molecule_chembl_id` or use `ChEMBL_get_molecule` when you already have a ChEMBL ID.",
+    "fields": {
+      "endpoint": "/molecule.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Filter by ChEMBL ID (exact match)"
+        },
+        "pref_name__contains": {
+          "type": "string",
+          "description": "Filter by preferred name (contains). Note: `pref_name` coverage is incomplete in ChEMBL, so this can legitimately return zero results even for common names; prefer `molecule_chembl_id` for reliable retrieval."
+        },
+        "query": {
+          "type": "string",
+          "description": "Molecule name to search for. Alias for pref_name__contains."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return. Alias for limit.",
+          "default": 20,
+          "maximum": 1000
+        },
+        "molecule_type": {
+          "type": "string",
+          "description": "Filter by molecule type (e.g., 'Small molecule', 'Antibody')"
+        },
+        "fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "molecule_chembl_id",
+              "pref_name",
+              "molecule_type",
+              "max_phase",
+              "first_approval",
+              "black_box_warning",
+              "withdrawn_flag",
+              "molecule_structures",
+              "molecule_properties"
+            ]
+          },
+          "description": "Optional list of ChEMBL molecule fields to include in each returned molecule object (projection). ToolUniverse maps this to ChEMBL's `only` query parameter (comma-separated). Supported fields: molecule_chembl_id, pref_name, molecule_type, max_phase, first_approval, black_box_warning, withdrawn_flag, molecule_structures, molecule_properties."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml",
+            "yaml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "molecules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Molecule objects returned by ChEMBL. When 'fields' is provided, each object will contain only the selected fields."
+              }
+            },
+            "page_meta": {
+              "type": "object"
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "molecule_chembl_id": "CHEMBL25",
+        "limit": 1
+      },
+      {
+        "molecule_chembl_id": "CHEMBL25",
+        "limit": 1,
+        "fields": [
+          "molecule_chembl_id",
+          "pref_name",
+          "max_phase"
+        ]
+      },
+      {
+        "molecule_chembl_id": "CHEMBL25",
+        "limit": 1,
+        "fields": [
+          "molecule_chembl_id"
+        ]
+      },
+      {
+        "molecule_chembl_id": "CHEMBL25",
+        "limit": 1,
+        "fields": [
+          "molecule_properties"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_molecule_targets",
+    "description": "Get all unique targets associated with a molecule by ChEMBL ID. Returns targets that have activity data for the specified molecule (deduplicated from activity records).",
+    "fields": {
+      "endpoint": "/activity.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "molecule_chembl_id__exact": {
+          "type": "string",
+          "description": "ChEMBL molecule ID (e.g., 'CHEMBL25' for aspirin). To find a molecule ID, use ChEMBL_search_molecules. Alias: molecule_chembl_id."
+        },
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Alias for molecule_chembl_id__exact. ChEMBL molecule ID."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 500,
+          "maximum": 1000,
+          "description": "Maximum number of activity records to fetch for target deduplication (default 500)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "molecule_chembl_id__exact": "CHEMBL6329",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_target",
+    "description": "Get detailed information about a target (protein, gene, etc.) by its ChEMBL target ID. To find a target ID, use ChEMBL_search_targets with a target name or gene symbol.",
+    "fields": {
+      "endpoint": "/target/{target_chembl_id}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_chembl_id": {
+          "type": "string",
+          "description": "ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search_targets with a target name or gene symbol."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml",
+            "yaml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "target_chembl_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Target information including name, organism, target type"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "target_chembl_id": "CHEMBL2074"
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_targets",
+    "description": "Search targets by name, organism, target type, or other criteria. Use this tool to find target ChEMBL IDs needed for other tools.",
+    "fields": {
+      "endpoint": "/target.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Filter by target ChEMBL ID"
+        },
+        "pref_name__contains": {
+          "type": "string",
+          "description": "Filter by target name (contains)"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Filter by organism (e.g., 'Homo sapiens')"
+        },
+        "target_type": {
+          "type": "string",
+          "description": "Filter by target type (e.g., 'SINGLE PROTEIN', 'PROTEIN COMPLEX')"
+        },
+        "fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "target_chembl_id",
+              "pref_name",
+              "organism",
+              "target_type",
+              "target_components"
+            ]
+          },
+          "description": "Optional list of ChEMBL target fields to include in each returned target object (projection). ToolUniverse maps this to ChEMBL's `only` query parameter (comma-separated). Supported fields: target_chembl_id, pref_name, organism, target_type, target_components."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Target objects returned by ChEMBL. When 'fields' is provided, each object will contain only the selected fields."
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pref_name__contains": "kinase",
+        "organism": "Homo sapiens",
+        "limit": 10
+      },
+      {
+        "pref_name__contains": "kinase",
+        "organism": "Homo sapiens",
+        "limit": 1,
+        "fields": [
+          "target_chembl_id",
+          "pref_name",
+          "target_type"
+        ]
+      },
+      {
+        "pref_name__contains": "kinase",
+        "organism": "Homo sapiens",
+        "limit": 1,
+        "fields": [
+          "target_chembl_id"
+        ]
+      },
+      {
+        "pref_name__contains": "kinase",
+        "organism": "Homo sapiens",
+        "limit": 1,
+        "fields": [
+          "pref_name"
+        ]
+      },
+      {
+        "pref_name__contains": "kinase",
+        "organism": "Homo sapiens",
+        "limit": 1,
+        "fields": [
+          "organism"
+        ]
+      },
+      {
+        "pref_name__contains": "kinase",
+        "organism": "Homo sapiens",
+        "limit": 1,
+        "fields": [
+          "target_type"
+        ]
+      },
+      {
+        "pref_name__contains": "kinase",
+        "organism": "Homo sapiens",
+        "limit": 1,
+        "fields": [
+          "target_components"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_target_assays",
+    "description": "Get all assays associated with a target by ChEMBL target ID. To find a target ID, use ChEMBL_search_targets with a target name or gene symbol.",
+    "fields": {
+      "endpoint": "/assay.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_chembl_id__exact": {
+          "type": "string",
+          "description": "ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search_targets with a target name or gene symbol."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "target_chembl_id__exact"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "assays": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 10
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "assay_chembl_id",
+          "assay_type",
+          "confidence_score"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "assay_chembl_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "description"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "assay_type"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "confidence_score"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "target_chembl_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "organism"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "bao_label"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_target_activities",
+    "description": "Get all activity data for a target by ChEMBL target ID. Returns bioactivity measurements (IC50, Ki, etc.) for molecules tested against this target. Note: activity values may be in different units (nM or uM) depending on the assay \u2014 check the 'standard_units' field in each result. To find a target ID, use ChEMBL_search_targets with a target name or gene symbol.",
+    "fields": {
+      "endpoint": "/activity.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_chembl_id__exact": {
+          "type": "string",
+          "description": "ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search_targets with a target name or gene symbol."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        },
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Alias for target_chembl_id__exact. ChEMBL target ID (e.g., CHEMBL213)."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "target_chembl_id__exact"
+          ]
+        },
+        {
+          "required": [
+            "target_chembl_id"
+          ]
+        }
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "activities": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_assay",
+    "description": "Get detailed information about an assay by its ChEMBL assay ID. To find an assay ID, use ChEMBL_search_assays or ChEMBL_get_target_assays.",
+    "fields": {
+      "endpoint": "/assay/{assay_chembl_id}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "assay_chembl_id": {
+          "type": "string",
+          "description": "ChEMBL assay ID, e.g., 'CHEMBL1217641'"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml",
+            "yaml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "assay_chembl_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Assay information including description, assay type, target"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "assay_chembl_id": "CHEMBL615117"
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_assays",
+    "description": "Search assays by various criteria including assay type, target, organism. Use this tool to find assay ChEMBL IDs needed for other tools.",
+    "fields": {
+      "endpoint": "/assay.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "assay_chembl_id": {
+          "type": "string",
+          "description": "Filter by assay ChEMBL ID"
+        },
+        "assay_type": {
+          "type": "string",
+          "description": "Filter by assay type (e.g., 'B', 'F', 'A')"
+        },
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Filter by target ChEMBL ID"
+        },
+        "fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "assay_chembl_id",
+              "description",
+              "assay_type",
+              "confidence_score",
+              "target_chembl_id",
+              "assay_organism",
+              "bao_label"
+            ]
+          },
+          "description": "Optional list of ChEMBL assay fields to include in each returned assay object (projection). ToolUniverse maps this to ChEMBL's `only` query parameter (comma-separated). Supported fields: assay_chembl_id, description, assay_type, confidence_score, target_chembl_id, assay_organism, bao_label."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "assays": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "Assay objects returned by ChEMBL. When 'fields' is provided, each object will contain only the selected fields."
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 10
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "assay_chembl_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "description"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "assay_type"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "confidence_score"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "target_chembl_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "assay_organism"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "bao_label"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_assay_activities",
+    "description": "Get all activity data for an assay by ChEMBL assay ID. Returns bioactivity measurements from the specified assay. To find an assay ID, use ChEMBL_search_assays or ChEMBL_get_target_assays.",
+    "fields": {
+      "endpoint": "/activity.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "assay_chembl_id__exact": {
+          "type": "string",
+          "description": "ChEMBL assay ID (e.g., 'CHEMBL615117'). To find an assay ID, use ChEMBL_search_assays or ChEMBL_get_target_assays."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "assay_chembl_id__exact"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "activities": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "assay_chembl_id__exact": "CHEMBL615117",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_activities",
+    "description": "Search activity data by molecule, target, assay, or activity values. Supports filtering by IC50, Ki, EC50, etc. Note: activity data is sparse and depends on curation; some specific filter combinations can legitimately return zero results. For reliable retrieval, prefer starting from a known target (`target_chembl_id__exact`) or assay (`assay_chembl_id__exact`). To find molecule or target IDs, use ChEMBL_search_molecules or ChEMBL_search_targets.",
+    "fields": {
+      "endpoint": "/activity.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Filter by molecule ChEMBL ID"
+        },
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Filter by target ChEMBL ID"
+        },
+        "assay_chembl_id": {
+          "type": "string",
+          "description": "Filter by assay ChEMBL ID"
+        },
+        "standard_type": {
+          "type": "string",
+          "description": "Filter by activity type (e.g., 'IC50', 'Ki', 'EC50')"
+        },
+        "standard_value__lte": {
+          "type": "number",
+          "description": "Filter by maximum activity value"
+        },
+        "standard_value__gte": {
+          "type": "number",
+          "description": "Filter by minimum activity value"
+        },
+        "fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "activity_id",
+              "molecule_chembl_id",
+              "target_chembl_id",
+              "assay_chembl_id",
+              "standard_type",
+              "standard_value",
+              "standard_units",
+              "pchembl_value",
+              "standard_relation",
+              "standard_flag"
+            ]
+          },
+          "description": "Optional list of ChEMBL activity fields to include in each returned activity object (projection). ToolUniverse maps this to ChEMBL's `only` query parameter (comma-separated). Supported fields: activity_id, molecule_chembl_id, target_chembl_id, assay_chembl_id, standard_type, standard_value, standard_units, pchembl_value, standard_relation, standard_flag."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "activities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "molecule_chembl_id": {
+                    "type": "string"
+                  },
+                  "target_chembl_id": {
+                    "type": "string"
+                  },
+                  "standard_value": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "standard_type": {
+                    "type": "string"
+                  },
+                  "standard_units": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 3
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "activity_id",
+          "molecule_chembl_id",
+          "pchembl_value"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "activity_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "molecule_chembl_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "target_chembl_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "assay_chembl_id"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "standard_type"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "standard_value"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "standard_units"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "pchembl_value"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "standard_relation"
+        ]
+      },
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 1,
+        "fields": [
+          "standard_flag"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_activity",
+    "description": "Get detailed information about a specific activity by its activity ID. Activity IDs are found in the results from ChEMBL_search_activities or ChEMBL_get_target_activities.",
+    "fields": {
+      "endpoint": "/activity/{activity_id}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "activity_id": {
+          "type": "string",
+          "description": "ChEMBL activity ID"
+        }
+      },
+      "required": [
+        "activity_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Activity data including molecule, target, assay, and activity values"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "activity_id": "31863"
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_drug",
+    "description": "Get detailed information about a drug by its ChEMBL drug ID. Includes approval status, indications, and mechanisms. To find a drug ID, use ChEMBL_search_drugs with a drug name.",
+    "fields": {
+      "endpoint": "/drug/{drug_chembl_id}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_chembl_id": {
+          "type": "string",
+          "description": "ChEMBL drug ID, e.g., 'CHEMBL1201581'"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "json",
+            "xml",
+            "yaml"
+          ],
+          "default": "json"
+        }
+      },
+      "required": [
+        "drug_chembl_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Drug information including approval status, indications, mechanisms"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "drug_chembl_id": "CHEMBL1201581"
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_drugs",
+    "description": "Search drugs by name, approval status, or other criteria. Use the `query` parameter to search by drug name (e.g., {\"query\": \"sotorasib\"}). Use `max_phase` to filter by development phase.",
+    "fields": {
+      "endpoint": "/drug.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Drug name to search for (partial match, case-insensitive). E.g., \"sotorasib\", \"olaparib\", \"imatinib\"."
+        },
+        "max_phase": {
+          "type": "integer",
+          "description": "Filter by maximum development phase (0-4)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        },
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Filter by ChEMBL molecule ID (e.g., \"CHEMBL1201581\" for adalimumab)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "drugs": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "max_phase": 4,
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_drug_mechanisms",
+    "description": "Get mechanisms of action for a drug by ChEMBL drug ID or drug name. Accepts drug_chembl_id (e.g., 'CHEMBL1201581') or drug_name (e.g., 'trastuzumab') \u2014 drug_name triggers automatic ChEMBL ID lookup.",
+    "fields": {
+      "endpoint": "/mechanism.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        },
+        "drug_chembl_id": {
+          "type": "string",
+          "description": "ChEMBL drug/molecule ID (e.g., \"CHEMBL1201581\" for adalimumab, \"CHEMBL4535757\" for sotorasib)."
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name for automatic ChEMBL ID lookup (e.g., \"trastuzumab\", \"lapatinib\", \"aspirin\"). Case-insensitive. Triggers internal ChEMBL molecule search \u2014 use drug_chembl_id if you already know the ID."
+        },
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Alias for drug_chembl_id. ChEMBL molecule ID (e.g., \"CHEMBL25\" for aspirin)."
+        },
+        "chembl_id": {
+          "type": "string",
+          "description": "Alias for drug_chembl_id. ChEMBL ID (e.g., \"CHEMBL3301622\")."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "mechanisms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mechanism_of_action": {
+                    "type": "string"
+                  },
+                  "target_chembl_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "drug_chembl_id": "CHEMBL1201581",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_mechanisms",
+    "description": "Search mechanisms of action by drug, target, or mechanism type. To find drug or target IDs, use ChEMBL_search_drugs or ChEMBL_search_targets.",
+    "fields": {
+      "endpoint": "/mechanism.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_chembl_id": {
+          "type": "string",
+          "description": "Filter by drug ChEMBL ID"
+        },
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Filter by target ChEMBL ID"
+        },
+        "mechanism_of_action__contains": {
+          "type": "string",
+          "description": "Filter by mechanism description (contains)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "mechanisms": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "drug_chembl_id": "CHEMBL1201581",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_binding_sites",
+    "description": "Search binding sites by target, site name, or other criteria.",
+    "fields": {
+      "endpoint": "/binding_site.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Filter by target ChEMBL ID"
+        },
+        "site_name__contains": {
+          "type": "string",
+          "description": "Filter by site name (contains)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "binding_sites": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_molecule_image",
+    "description": "Get molecular structure image (SVG or PNG format) for a molecule by ChEMBL ID. Returns the image URL and metadata.",
+    "fields": {
+      "endpoint": "/image/{chembl_id}"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chembl_id": {
+          "type": "string",
+          "description": "ChEMBL molecule ID (e.g., 'CHEMBL25'). To find a molecule ID, use ChEMBL_search_molecules with a molecule name."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "svg",
+            "png"
+          ],
+          "default": "svg",
+          "description": "Image format"
+        }
+      },
+      "required": [
+        "chembl_id"
+      ]
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "Description of image data availability and access information"
+    },
+    "test_examples": [
+      {
+        "chembl_id": "CHEMBL25",
+        "format": "svg"
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_substructure",
+    "description": "Search molecules by substructure using SMILES. Returns molecules containing the specified substructure.",
+    "fields": {
+      "endpoint": "/substructure/{smiles}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string representing the substructure to search for"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "molecules": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "smiles": "c1ccccc1",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_similarity",
+    "description": "Search molecules similar to a given SMILES string using Tanimoto similarity. Returns molecules with similarity above the threshold.",
+    "fields": {
+      "endpoint": "/similarity/{smiles}/{threshold}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string to search for similar molecules"
+        },
+        "threshold": {
+          "type": "integer",
+          "description": "Similarity threshold (0-100). Molecules with similarity >= threshold will be returned.",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 80
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        }
+      },
+      "required": [
+        "smiles",
+        "threshold"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "molecules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "molecule_chembl_id": {
+                    "type": "string"
+                  },
+                  "similarity": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+        "threshold": 70,
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_compound_record",
+    "description": "Get compound record information by ChEMBL compound record ID.",
+    "fields": {
+      "endpoint": "/compound_record/{compound_record_id}.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "compound_record_id": {
+          "type": "string",
+          "description": "ChEMBL compound record ID"
+        }
+      },
+      "required": [
+        "compound_record_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Compound record information"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "compound_record_id": "1"
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_get_compound_record_activities",
+    "description": "Get all activities for a compound record by compound record ID. Returns bioactivity measurements for the specified compound record.",
+    "fields": {
+      "endpoint": "/activity.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "compound_record_id__exact": {
+          "type": "string",
+          "description": "ChEMBL compound record ID. To find a compound record ID, use ChEMBL_get_compound_record or search activities."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "compound_record_id__exact"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "activities": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "compound_record_id__exact": "1",
+        "limit": 20
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_protein_classification",
+    "description": "Search protein classifications by target, classification type, or other criteria. To find a target ID, use ChEMBL_search_targets.",
+    "fields": {
+      "endpoint": "/protein_classification.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_chembl_id": {
+          "type": "string",
+          "description": "Filter by target ChEMBL ID"
+        },
+        "protein_class_id": {
+          "type": "string",
+          "description": "Filter by protein class ID"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "protein_classifications": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "target_chembl_id__exact": "CHEMBL2074",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_atc_classification",
+    "description": "Search ATC (Anatomical Therapeutic Chemical) classifications for drugs. To find a drug ID, use ChEMBL_search_drugs.",
+    "fields": {
+      "endpoint": "/atc_class.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "level4": {
+          "type": "string",
+          "description": "Filter by ATC level 4 code"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "atc_classes": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "level4": "L01AA",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_documents",
+    "description": "Search ChEMBL documents (publications) by various criteria.",
+    "fields": {
+      "endpoint": "/document.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "document_id": {
+          "type": "string",
+          "description": "Filter by document ID"
+        },
+        "title__contains": {
+          "type": "string",
+          "description": "Filter by document title (contains)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "documents": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "title__contains": "kinase",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_cell_lines",
+    "description": "Search cell lines used in ChEMBL assays.",
+    "fields": {
+      "endpoint": "/cell_line.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cell_chembl_id": {
+          "type": "string",
+          "description": "Filter by cell line ChEMBL ID"
+        },
+        "cell_name__contains": {
+          "type": "string",
+          "description": "Filter by cell line name (contains)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "cell_lines": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "cell_name__contains": "HeLa",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_tissue",
+    "description": "Search tissues used in ChEMBL assays.",
+    "fields": {
+      "endpoint": "/tissue.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tissue_chembl_id": {
+          "type": "string",
+          "description": "Filter by tissue ChEMBL ID"
+        },
+        "pref_name__contains": {
+          "type": "string",
+          "description": "Filter by tissue name (contains)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "tissues": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pref_name__contains": "liver",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "type": "ChEMBLRESTTool",
+    "name": "ChEMBL_search_compound_structural_alerts",
+    "description": "Search compound structural alerts (toxicity warnings) by molecule or alert type.",
+    "fields": {
+      "endpoint": "/compound_structural_alert.json"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "molecule_chembl_id": {
+          "type": "string",
+          "description": "Filter by molecule ChEMBL ID"
+        },
+        "alert_name__contains": {
+          "type": "string",
+          "description": "Filter by alert name (contains)"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "structural_alerts": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "molecule_chembl_id": "CHEMBL25"
+      }
+    ]
   }
 ]

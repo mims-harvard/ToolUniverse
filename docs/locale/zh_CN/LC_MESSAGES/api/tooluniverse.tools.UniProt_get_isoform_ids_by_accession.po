@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_isoform\\_ids\\_by\\_accession 模块
 #: 58500f3904b34923a1e46239ab04ed2a of
 #: tooluniverse.tools.UniProt_get_isoform_ids_by_accession:1
 msgid "UniProt_get_isoform_ids_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取同工型ID"
 
 #: cf58704cbfa34b3090d110eb6d8b8415 defc71bacfca40f5a92efca9bbeeedcb of
 #: tooluniverse.tools.UniProt_get_isoform_ids_by_accession:3

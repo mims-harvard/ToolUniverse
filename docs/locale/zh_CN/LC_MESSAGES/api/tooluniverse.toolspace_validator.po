@@ -7,146 +7,144 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse \n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-18 17:56-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.toolspace_validator.rst:2
 #: f2726c21c0b34b28aca2283fae332616
 msgid "tooluniverse.toolspace\\_validator module"
-msgstr ""
+msgstr "tooluniverse.toolspace\\_validator 模块"
 
 #: c54c411e53714f5ab2e897fcc7e7d7d9 of tooluniverse.toolspace_validator:1
 msgid "Space Configuration Validator"
-msgstr ""
+msgstr "空间配置验证器"
 
 #: f7f6f36b5ae84e76933c0dead2b9b936 of tooluniverse.toolspace_validator:3
 msgid ""
-"This module provides validation functionality for Space "
-"configurations, ensuring they conform to the expected schema and contain "
-"valid values."
-msgstr ""
+"This module provides validation functionality for Space configurations, "
+"ensuring they conform to the expected schema and contain valid values."
+msgstr "该模块提供空间配置的验证功能，确保其符合预期的架构并包含有效的值。"
 
 #: e9a247751ea24254afbd4562658ad50a of
 #: tooluniverse.toolspace_validator.ValidationError:1
 msgid "Bases: :py:class:`Exception`"
-msgstr ""
+msgstr "基础类：:py:class:`Exception`"
 
 #: 5665845cea504ca7973a82a6b9eb951a of
 #: tooluniverse.toolspace_validator.ValidationError:1
 msgid "Raised when configuration validation fails."
-msgstr ""
+msgstr "在配置验证失败时引发。"
 
 #: c51273a7877d474392b036a18198ba91 of
 #: tooluniverse.toolspace_validator.validate_toolspace_config:1
 msgid "Validate a Space configuration."
-msgstr ""
+msgstr "验证空间配置。"
 
 #: ../../api/tooluniverse.toolspace_validator.rst
 #: 110cdcd3b3d14ce5965f5d6f3ecef479 365d201d58a24d93ba512b9fe8163e0f
 #: 8822bea85225476686306d53064b3f78
 msgid "Parameters"
-msgstr ""
+msgstr "参数"
 
 #: 3ac31dde822d48e8a07186113d5e160c of
 #: tooluniverse.toolspace_validator.validate_toolspace_config:3
 msgid "Configuration dictionary or SpaceConfig object"
-msgstr ""
+msgstr "配置字典或 SpaceConfig 对象"
 
 #: ../../api/tooluniverse.toolspace_validator.rst
 #: 058f838398f2474b9d7263bca4d07603 1ac99373add14191bea4019de7c1c9b1
 #: dbb29d5a86d949c7a9030e13dac54b6a
 msgid "Returns"
-msgstr ""
+msgstr "退货"
 
 #: 0580bc120c484df593909863fdbf4c54 eae5a7965a7442cbbd60df0ccf976fe0 of
 #: tooluniverse.toolspace_validator.validate_file:5
 #: tooluniverse.toolspace_validator.validate_toolspace_config:5
 msgid "Tuple of (is_valid, list_of_errors)"
-msgstr ""
+msgstr "元组 (is_valid, list_of_errors)"
 
 #: ../../api/tooluniverse.toolspace_validator.rst
 #: 0fc5bac8d17b44b888ded5f0d1a19c0c df6b7fe00d7046598160bb261a323437
 #: f120c961f64b4a079fb864911247e1fb
 msgid "Return type"
-msgstr ""
+msgstr "返回类型"
 
 #: 6b231b758ba14d68a3ae9fb652443f81 of
 #: tooluniverse.toolspace_validator._validate_metadata:1
 msgid "Validate basic metadata fields."
-msgstr ""
+msgstr "验证基本元数据字段。"
 
 #: 7e5145778a8a49889135c14c1a7bdecf of
 #: tooluniverse.toolspace_validator._validate_tools_config:1
 msgid "Validate tools configuration."
-msgstr ""
+msgstr "验证工具配置。"
 
 #: 5ff55b07eb11405cb2d77e9939f9e86b of
 #: tooluniverse.toolspace_validator._validate_custom_tool:1
 msgid "Validate a custom tool configuration."
-msgstr ""
+msgstr "验证自定义工具配置。"
 
 #: a9d47710a8b5457385060eb90861290e of
 #: tooluniverse.toolspace_validator._validate_llm_config:1
 msgid "Validate LLM configuration."
-msgstr ""
+msgstr "验证LLM配置。"
 
 #: 6326f9d94f254111bf235dbac6cb6490 of
 #: tooluniverse.toolspace_validator._validate_hooks_config:1
 msgid "Validate hooks configuration."
-msgstr ""
+msgstr "验证钩子配置。"
 
 #: 040a56d104da4cf48b5733a2819a0ea4 of
 #: tooluniverse.toolspace_validator._validate_extends:1
 msgid "Validate extends references."
-msgstr ""
+msgstr "验证扩展引用。"
 
 #: 6be7347dcdd8451388eda5d9e77e182a of
 #: tooluniverse.toolspace_validator._validate_required_env:1
 msgid "Validate required environment variables."
-msgstr ""
+msgstr "验证所需的环境变量。"
 
 #: 20e714ec0d6a4cbfa44b82d3bf675b5b of
 #: tooluniverse.toolspace_validator._is_valid_version:1
 msgid "Check if version string follows semantic versioning."
-msgstr ""
+msgstr "检查版本字符串是否符合语义化版本规范。"
 
 #: 6eddcde569e24b889e8132c7a82a2487 of
 #: tooluniverse.toolspace_validator._is_valid_env_var_name:1
 msgid "Check if string is a valid environment variable name."
-msgstr ""
+msgstr "检查字符串是否为有效的环境变量名称。"
 
 #: f9d48d50b743479cb146b2786d63fc15 of
 #: tooluniverse.toolspace_validator.validate_file:1
 msgid "Validate a Space configuration file."
-msgstr ""
+msgstr "验证空间配置文件。"
 
 #: 949dc8604a2349b69683662dd49c45e7 of
 #: tooluniverse.toolspace_validator.validate_file:3
 msgid "Path to configuration file"
-msgstr ""
+msgstr "配置文件路径"
 
 #: 71d41f23173643da98ae4c80b7bab924 of
 #: tooluniverse.toolspace_validator.get_validation_summary:1
 msgid "Get a human-readable summary of validation errors."
-msgstr ""
+msgstr "获取验证错误的可读性摘要。"
 
 #: faff5072cc5f41fbb0b3084b4bb7cf7e of
 #: tooluniverse.toolspace_validator.get_validation_summary:3
 msgid "List of validation errors"
-msgstr ""
+msgstr "验证错误列表"
 
 #: 9421a57f1e3f455bb6079e4a35e50b77 of
 #: tooluniverse.toolspace_validator.get_validation_summary:5
 msgid "Formatted error summary"
-msgstr ""
-
+msgstr "格式化错误摘要"

@@ -28,7 +28,8 @@ def tooluni():
     """Initialize tool universe for all tests."""
     tu = ToolUniverse()
     tu.load_tools()
-    return tu
+    yield tu
+    tu.close()
 
 
 def test_nested_calls(tooluni):
@@ -90,20 +91,22 @@ def test_nested_calls(tooluni):
 
     # Initialize ToolUniverse engine
     engine = ToolUniverse()
+    try:
+        # Register tools to engine
+        # Need to add to both all_tools list and all_tool_dict dictionary
+        engine.all_tools.extend([text_tool, caller_tool])
+        engine.all_tool_dict["TextTool"] = text_tool
+        engine.all_tool_dict["CallerTool"] = caller_tool
 
-    # Register tools to engine
-    # Need to add to both all_tools list and all_tool_dict dictionary
-    engine.all_tools.extend([text_tool, caller_tool])
-    engine.all_tool_dict["TextTool"] = text_tool
-    engine.all_tool_dict["CallerTool"] = caller_tool
+        # Run test: call CallerTool, which will internally call TextTool
+        result = engine.run_one_function(
+            {"name": "CallerTool", "arguments": {"input": "hello world"}}
+        )
 
-    # Run test: call CallerTool, which will internally call TextTool
-    result = engine.run_one_function(
-        {"name": "CallerTool", "arguments": {"input": "hello world"}}
-    )
-
-    print("Nested calling result:")
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+        print("Nested calling result:")
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    finally:
+        engine.close()
 
 
 def test_simple_math(tooluni):
@@ -163,24 +166,27 @@ def test_simple_math(tooluni):
 
     # Initialize engine and register math tool
     engine = ToolUniverse()
-    engine.all_tools.append(math_tool)
-    engine.all_tool_dict["MathTool"] = math_tool
+    try:
+        engine.all_tools.append(math_tool)
+        engine.all_tool_dict["MathTool"] = math_tool
 
-    # Test sum functionality
-    print("Testing sum operation:")
-    result = engine.run_one_function(
-        {"name": "MathTool", "arguments": {"numbers": [1, 2, 3, 4], "op": "sum"}}
-    )
-    print("  Input: [1, 2, 3, 4], Operation: sum")
-    print(f"  Result: {result}")
+        # Test sum functionality
+        print("Testing sum operation:")
+        result = engine.run_one_function(
+            {"name": "MathTool", "arguments": {"numbers": [1, 2, 3, 4], "op": "sum"}}
+        )
+        print("  Input: [1, 2, 3, 4], Operation: sum")
+        print(f"  Result: {result}")
 
-    # Test multiply functionality
-    print("\nTesting multiply operation:")
-    result = engine.run_one_function(
-        {"name": "MathTool", "arguments": {"numbers": [2, 3, 4], "op": "multiply"}}
-    )
-    print("  Input: [2, 3, 4], Operation: multiply")
-    print(f"  Result: {result}")
+        # Test multiply functionality
+        print("\nTesting multiply operation:")
+        result = engine.run_one_function(
+            {"name": "MathTool", "arguments": {"numbers": [2, 3, 4], "op": "multiply"}}
+        )
+        print("  Input: [2, 3, 4], Operation: multiply")
+        print(f"  Result: {result}")
+    finally:
+        engine.close()
 
 
 def test_config_file_tools(tooluni):
@@ -199,49 +205,51 @@ def test_config_file_tools(tooluni):
 
     # Initialize ToolUniverse engine
     engine = ToolUniverse()
-
-    # Load compose type tools from configuration files
-    # This automatically loads tools defined in src/tooluniverse/data/compose_tools.json
-    engine.load_tools(tool_type=["compose"])
-
-    # Test DrugSafetyAnalyzer tool from configuration file
-    print("Running DrugSafetyAnalyzer tool from configuration file:")
     try:
-        result = engine.run_one_function(
-            {
-                "name": "DrugSafetyAnalyzer",
-                "arguments": {"drug_name": "aspirin", "serious_events_only": False},
-            }
-        )
+        # Load compose type tools from configuration files
+        # This automatically loads tools defined in src/tooluniverse/data/compose_tools.json
+        engine.load_tools(tool_type=["compose"])
 
-        print("DrugSafetyAnalyzer tool result:")
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    except Exception as e:
-        print(f"DrugSafetyAnalyzer test failed: {e}")
-        print("This is expected if the required atomic tools are not loaded.")
+        # Test DrugSafetyAnalyzer tool from configuration file
+        print("Running DrugSafetyAnalyzer tool from configuration file:")
+        try:
+            result = engine.run_one_function(
+                {
+                    "name": "DrugSafetyAnalyzer",
+                    "arguments": {"drug_name": "aspirin", "serious_events_only": False},
+                }
+            )
 
-    print(f"\nTotal tools loaded: {len(engine.callable_functions)}")
-    compose_tools = [
-        name
-        for name in engine.callable_functions.keys()
-        if any(
-            tool.get("name") == name and tool.get("type") == "ComposeTool"
-            for tool in engine.all_tools
-        )
-    ]
-    print(f"ComposeTool instances: {compose_tools}")
+            print("DrugSafetyAnalyzer tool result:")
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+        except Exception as e:
+            print(f"DrugSafetyAnalyzer test failed: {e}")
+            print("This is expected if the required atomic tools are not loaded.")
 
-    # Check available composite tools and test them
-    print(f"\nTotal tools loaded: {len(engine.all_tools)}")
-    compose_tools = [
-        name
-        for name in engine.callable_functions.keys()
-        if any(
-            tool.get("name") == name and tool.get("type") == "ComposeTool"
-            for tool in engine.all_tools
-        )
-    ]
-    print(f"ComposeTool instances available: {compose_tools}")
+        print(f"\nTotal tools loaded: {len(engine.callable_functions)}")
+        compose_tools = [
+            name
+            for name in engine.callable_functions.keys()
+            if any(
+                tool.get("name") == name and tool.get("type") == "ComposeTool"
+                for tool in engine.all_tools
+            )
+        ]
+        print(f"ComposeTool instances: {compose_tools}")
+
+        # Check available composite tools and test them
+        print(f"\nTotal tools loaded: {len(engine.all_tools)}")
+        compose_tools = [
+            name
+            for name in engine.callable_functions.keys()
+            if any(
+                tool.get("name") == name and tool.get("type") == "ComposeTool"
+                for tool in engine.all_tools
+            )
+        ]
+        print(f"ComposeTool instances available: {compose_tools}")
+    finally:
+        engine.close()
 
 
 def test_external_file_tools(tooluni):
@@ -258,66 +266,68 @@ def test_external_file_tools(tooluni):
 
     # Initialize ToolUniverse engine
     engine = ToolUniverse()
+    try:
+        # Load compose type tools from configuration files
+        engine.load_tools(tool_type=["compose"])
 
-    # Load compose type tools from configuration files
-    engine.load_tools(tool_type=["compose"])
+        # Only test tools that are actually loaded
+        compose_tools = [
+            tool for tool in engine.all_tools if tool.get("type") == "ComposeTool"
+        ]
+        print(f"Found {len(compose_tools)} composite tools:")
+        for tool in compose_tools:
+            print(f"  - {tool['name']}: {tool['description']}")
 
-    # Only test tools that are actually loaded
-    compose_tools = [
-        tool for tool in engine.all_tools if tool.get("type") == "ComposeTool"
-    ]
-    print(f"Found {len(compose_tools)} composite tools:")
-    for tool in compose_tools:
-        print(f"  - {tool['name']}: {tool['description']}")
+        # Test each available composite tool
+        for tool in compose_tools:
+            tool_name = tool["name"]
+            if tool_name in [
+                "DrugSafetyAnalyzer",
+                "SimpleExample",
+                "TestDependencyLoading",
+                "ToolDiscover",  # Skip ToolDiscover as it requires LLM calls and may timeout
+                "ToolDescriptionOptimizer",  # Skip ToolDescriptionOptimizer as it requires LLM calls and may timeout
+            ]:
+                # Skip these as they are tested in other functions or may timeout
+                continue
 
-    # Test each available composite tool
-    for tool in compose_tools:
-        tool_name = tool["name"]
-        if tool_name in [
-            "DrugSafetyAnalyzer",
-            "SimpleExample",
-            "TestDependencyLoading",
-            "ToolDiscover",  # Skip ToolDiscover as it requires LLM calls and may timeout
-            "ToolDescriptionOptimizer",  # Skip ToolDescriptionOptimizer as it requires LLM calls and may timeout
-        ]:
-            # Skip these as they are tested in other functions or may timeout
-            continue
-
-        print(f"\nTesting {tool_name}:")
-        try:
-            # Create generic test arguments based on tool requirements
-            test_args = {}
-            if "parameter" in tool and "properties" in tool["parameter"]:
-                for param_name, param_info in tool["parameter"]["properties"].items():
-                    if param_name == "tool_config":
-                        # Special handling for ToolDescriptionOptimizer
-                        test_args[param_name] = {
-                            "name": "test_tool",
-                            "description": "A test tool for optimization",
-                            "type": "RestfulTool",
-                            "parameter": {
-                                "type": "object",
-                                "properties": {
-                                    "query": {"type": "string", "description": "Search query"}
+            print(f"\nTesting {tool_name}:")
+            try:
+                # Create generic test arguments based on tool requirements
+                test_args = {}
+                if "parameter" in tool and "properties" in tool["parameter"]:
+                    for param_name, param_info in tool["parameter"]["properties"].items():
+                        if param_name == "tool_config":
+                            # Special handling for ToolDescriptionOptimizer
+                            test_args[param_name] = {
+                                "name": "test_tool",
+                                "description": "A test tool for optimization",
+                                "type": "RestfulTool",
+                                "parameter": {
+                                    "type": "object",
+                                    "properties": {
+                                        "query": {"type": "string", "description": "Search query"}
+                                    }
                                 }
                             }
-                        }
-                    elif param_info["type"] == "string":
-                        test_args[param_name] = "test_input"
-                    elif param_info["type"] == "number":
-                        test_args[param_name] = 1
-                    elif param_info["type"] == "boolean":
-                        test_args[param_name] = True
-                    # Add other types as needed
+                        elif param_info["type"] == "string":
+                            test_args[param_name] = "test_input"
+                        elif param_info["type"] == "number":
+                            test_args[param_name] = 1
+                        elif param_info["type"] == "boolean":
+                            test_args[param_name] = True
+                        # Add other types as needed
 
-            result = engine.run_one_function(
-                {"name": tool_name, "arguments": test_args}
-            )
-            print(f"{tool_name} result:")
-            print(json.dumps(result, indent=2, ensure_ascii=False))
-        except Exception as e:
-            print(f"{tool_name} test failed: {e}")
-            print("This is expected if the required atomic tools are not loaded.")
+                result = engine.run_one_function(
+                    {"name": tool_name, "arguments": test_args}
+                )
+                print(f"{tool_name} result:")
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+            except Exception as e:
+                print(f"{tool_name} test failed: {e}")
+                print("This is expected if the required atomic tools are not loaded.")
+    finally:
+        engine.close()
 
 
 def test_dependency_auto_loading(tooluni):
@@ -371,17 +381,20 @@ def test_dependency_auto_loading(tooluni):
 
     # Initialize engine without loading external tools initially
     engine = ToolUniverse()
-    engine.all_tools.append(dependent_tool)
-    engine.all_tool_dict["DependentTool"] = dependent_tool
+    try:
+        engine.all_tools.append(dependent_tool)
+        engine.all_tool_dict["DependentTool"] = dependent_tool
 
-    # Test the tool - it should attempt to auto-load dependencies
-    print("Testing tool with auto-loading enabled:")
-    result = engine.run_one_function(
-        {"name": "DependentTool", "arguments": {"query": "artificial intelligence"}}
-    )
+        # Test the tool - it should attempt to auto-load dependencies
+        print("Testing tool with auto-loading enabled:")
+        result = engine.run_one_function(
+            {"name": "DependentTool", "arguments": {"query": "artificial intelligence"}}
+        )
 
-    print("Dependency auto-loading test result:")
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+        print("Dependency auto-loading test result:")
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+    finally:
+        engine.close()
 
 
 def main():

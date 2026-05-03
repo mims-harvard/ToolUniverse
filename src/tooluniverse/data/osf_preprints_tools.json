@@ -23,9 +23,7 @@
         }
       },
       "required": [
-        "query",
-        "max_results",
-        "provider"
+        "query"
       ]
     },
     "return_schema": {
@@ -47,8 +45,8 @@
             "description": "Whether the preprint is published"
           },
           "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier"
+            "type": ["string", "null"],
+            "description": "Digital Object Identifier (may be null if not assigned)"
           },
           "url": {
             "type": "string",

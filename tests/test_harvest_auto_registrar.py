@@ -24,10 +24,18 @@ def test_compose_registers_and_runs_single_candidate():
             return {"ok": True, "test": {"status": 200}}
         if name == "VerifiedSourceRegisterTool":
             assert payload["tool_name"] == "my_registered_tool"
-            return {"registered": True, "name": payload["tool_name"], "config": {"endpoint": "https://example.com"}}
+            return {
+                "registered": True,
+                "name": payload["tool_name"],
+                "config": {"endpoint": "https://example.com"},
+            }
         raise AssertionError(f"Unexpected tool call: {name}")
 
-    candidate = {"name": "Example API", "host": "example.com", "endpoint": "https://example.com/api"}
+    candidate = {
+        "name": "Example API",
+        "host": "example.com",
+        "endpoint": "https://example.com/api",
+    }
 
     result = compose(
         {
@@ -63,8 +71,16 @@ def test_compose_generates_name_and_skips_failed_candidate():
             return {"ok": True, "candidates": []}
         raise AssertionError(f"Unexpected tool call: {name}")
 
-    first = {"name": "Bad API", "host": "bad.example.com", "endpoint": "https://bad.example.com"}
-    second = {"name": "Good API", "host": "second.example.com", "endpoint": "https://second.example.com"}
+    first = {
+        "name": "Bad API",
+        "host": "bad.example.com",
+        "endpoint": "https://bad.example.com",
+    }
+    second = {
+        "name": "Good API",
+        "host": "second.example.com",
+        "endpoint": "https://second.example.com",
+    }
 
     result = compose(
         {

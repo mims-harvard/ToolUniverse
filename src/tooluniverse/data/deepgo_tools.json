@@ -1,0 +1,97 @@
+[
+  {
+    "type": "DeepGOTool",
+    "name": "DeepGO_predict_function",
+    "description": "Predict protein function from amino acid sequence using deep learning. Returns Gene Ontology (GO) term predictions for Biological Process, Molecular Function, and Cellular Component with confidence scores. Uses DeepGOPlus method - 600x faster than sequence alignment approaches.",
+    "parameter": {
+      "type": "object",
+      "required": ["sequence"],
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence (10-5000 amino acids, standard 20 AAs)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional name for the protein",
+          "default": "query"
+        },
+        "threshold": {
+          "type": "number",
+          "description": "Confidence threshold 0.1-1.0 (default: 0.3)",
+          "default": 0.3,
+          "minimum": 0.1,
+          "maximum": 1.0
+        }
+      }
+    },
+    "fields": {
+      "operation": "predict_function"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["success", "error"]},
+        "data": {
+          "type": "object",
+          "properties": {
+            "sequence_name": {"type": "string"},
+            "sequence_length": {"type": "integer"},
+            "threshold": {"type": "number"},
+            "predictions": {
+              "type": "object",
+              "properties": {
+                "Biological Process": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "go_id": {"type": "string"},
+                      "name": {"type": "string"},
+                      "score": {"type": "number"}
+                    }
+                  }
+                },
+                "Molecular Function": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "go_id": {"type": "string"},
+                      "name": {"type": "string"},
+                      "score": {"type": "number"}
+                    }
+                  }
+                },
+                "Cellular Component": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "go_id": {"type": "string"},
+                      "name": {"type": "string"},
+                      "score": {"type": "number"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "uuid": {"type": "string"},
+        "error": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {
+        "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVVHSLAKWKRQQIAAALEHHHHHH",
+        "threshold": 0.3
+      },
+      {
+        "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH",
+        "name": "hemoglobin_alpha",
+        "threshold": 0.5
+      }
+    ]
+  }
+]

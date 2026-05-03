@@ -16,7 +16,7 @@ def HPA_get_rna_expression_by_source(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get RNA expression level (nTPM) for a gene in a specific biological source using optimized column...
 
@@ -37,18 +37,24 @@ def HPA_get_rna_expression_by_source(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "gene_name": gene_name,
+            "source_type": source_type,
+            "source_name": source_name,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "HPA_get_rna_expression_by_source",
-            "arguments": {
-                "gene_name": gene_name,
-                "source_type": source_type,
-                "source_name": source_name,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

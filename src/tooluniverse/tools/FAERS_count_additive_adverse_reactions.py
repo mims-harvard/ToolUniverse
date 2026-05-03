@@ -1,7 +1,7 @@
 """
 FAERS_count_additive_adverse_reactions
 
-Additive multi-drug data: Aggregate adverse reaction counts across specified medicinal products, ...
+Aggregate adverse reaction counts across specified medicinal products. Only medicinalproducts is ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,34 +9,34 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_count_additive_adverse_reactions(
-    medicinalproducts: list[Any],
-    patientsex: str,
-    patientagegroup: str,
-    occurcountry: str,
-    serious: str,
-    seriousnessdeath: str,
+    medicinalproducts: list[str],
+    patientsex: Optional[str] = None,
+    patientagegroup: Optional[str] = None,
+    occurcountry: Optional[str] = None,
+    serious: Optional[str] = None,
+    seriousnessdeath: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Additive multi-drug data: Aggregate adverse reaction counts across specified medicinal products, ...
+    Aggregate adverse reaction counts across specified medicinal products. Only medicinalproducts is ...
 
     Parameters
     ----------
-    medicinalproducts : list[Any]
+    medicinalproducts : list[str]
         Array of medicinal product names.
     patientsex : str
-        Filter by patient sex.
+        Optional: Filter by patient sex. Omit this parameter if you don't want to fil...
     patientagegroup : str
-        Filter by patient age group.
+        Optional: Filter by patient age group. Omit this parameter if you don't want ...
     occurcountry : str
-        Filter by ISO2 country code of occurrence.
+        Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'...
     serious : str
-        Filter by seriousness classification.
+        Optional: Filter by event seriousness. Omit this parameter if you don't want ...
     seriousnessdeath : str
-        Filter for fatal outcomes.
+        Optional: Pass 'Yes' to filter for reports where death was an outcome. Omit t...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -50,17 +50,23 @@ def FAERS_count_additive_adverse_reactions(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "medicinalproducts": medicinalproducts,
+            "patientsex": patientsex,
+            "patientagegroup": patientagegroup,
+            "occurcountry": occurcountry,
+            "serious": serious,
+            "seriousnessdeath": seriousnessdeath,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "FAERS_count_additive_adverse_reactions",
-            "arguments": {
-                "medicinalproducts": medicinalproducts,
-                "patientsex": patientsex,
-                "patientagegroup": patientagegroup,
-                "occurcountry": occurcountry,
-                "serious": serious,
-                "seriousnessdeath": seriousnessdeath,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

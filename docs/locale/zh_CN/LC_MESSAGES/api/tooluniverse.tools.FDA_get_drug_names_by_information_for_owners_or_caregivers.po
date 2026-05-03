@@ -32,7 +32,7 @@ msgstr ""
 #: 3cae444ad0ee4a62bdc088188c6b6cd7 of
 #: tooluniverse.tools.FDA_get_drug_names_by_information_for_owners_or_caregivers:1
 msgid "FDA_get_drug_names_by_information_for_owners_or_caregivers"
-msgstr ""
+msgstr "FDA_根据业主或护理人员信息获取药物名称"
 
 #: 1bfc34870cbd481c9bdf3fd6b18028f3 81ef999678e24916949c02a461269e9e of
 #: tooluniverse.tools.FDA_get_drug_names_by_information_for_owners_or_caregivers:3

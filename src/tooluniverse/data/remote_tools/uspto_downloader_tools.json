@@ -26,6 +26,16 @@
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/uspto_downloader",
       "api_endpoint": "patent/applications/{applicationNumberText}/documents",
       "document": "ABST"
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "The quick brown fox jumps over the lazy dog."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -55,6 +65,16 @@
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/uspto_downloader",
       "api_endpoint": "patent/applications/{applicationNumberText}/documents",
       "document": "CLM"
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "The quick brown fox jumps over the lazy dog."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
@@ -84,6 +104,16 @@
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/uspto_downloader",
       "api_endpoint": "patent/applications/{applicationNumberText}/documents",
       "document": "APP.TEXT"
+    },
+    "test_examples": [
+      {
+        "applicationNumberText": "The quick brown fox jumps over the lazy dog."
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   }
 ]

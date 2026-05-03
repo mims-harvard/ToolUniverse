@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_target\\_homologues\\_by\\_ensemb
 #: 9e8460c1a69d4d238a430c6fc5c7a84a of
 #: tooluniverse.tools.OpenTargets_get_target_homologues_by_ensemblID:1
 msgid "OpenTargets_get_target_homologues_by_ensemblID"
-msgstr ""
+msgstr "OpenTargets_通过Ensembl ID获取靶点同源物"
 
 #: 2f64789314d8405491132ec795ccb29e 712d62a03c9c4acdb06cb17dc547250e of
 #: tooluniverse.tools.OpenTargets_get_target_homologues_by_ensemblID:3

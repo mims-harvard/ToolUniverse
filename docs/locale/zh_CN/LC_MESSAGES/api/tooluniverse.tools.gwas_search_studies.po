@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.gwas\\_search\\_studies 模块"
 #: 406d98a849e54697b6ee476eebf902d9 of
 #: tooluniverse.tools.gwas_search_studies:1
 msgid "gwas_search_studies"
-msgstr ""
+msgstr "gwas_search_studies（GWAS研究搜索）"
 
 #: 5bf89f6ca75a47aab405928653b87cf7 97f67f4fa99d457f91819582e2ab85f7 of
 #: tooluniverse.tools.gwas_search_studies:3

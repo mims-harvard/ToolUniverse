@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.OpenTargets_get_similar_entities_by_target_ensemblID:1
 msgid "OpenTargets_get_similar_entities_by_target_ensemblID"
 msgstr ""
+"OpenTargets_get_similar_entities_by_target_ensemblID  \n"
+"获取基于目标Ensembl ID的相似实体"
 
 #: 1415091341e14cc6a7a5780658f4f76f fbbde7ff9b94422c8700a179372c2c84 of
 #: tooluniverse.tools.OpenTargets_get_similar_entities_by_target_ensemblID:3

@@ -878,12 +878,12 @@ msgstr "开始年份"
 #: ../../tutorials/literature_search_tools_tutorial.rst:678
 #: c473f811009144268f355bc534154728
 msgid "2020"
-msgstr ""
+msgstr "2020年"
 
 #: ../../tutorials/literature_search_tools_tutorial.rst:680
 #: f6eba586713a43bda09455b222c07d6d
 msgid "year_to"
-msgstr ""
+msgstr "year_to 年份至"
 
 #: ../../tutorials/literature_search_tools_tutorial.rst:680
 #: 72c2b9fcc6224da08af3a1ec821f6fd2
@@ -893,7 +893,7 @@ msgstr "结束年份"
 #: ../../tutorials/literature_search_tools_tutorial.rst:680
 #: 4993e8070b5c457ca42d7b38d0d45e04
 msgid "2024"
-msgstr ""
+msgstr "2024年"
 
 #: ../../tutorials/literature_search_tools_tutorial.rst:682
 #: 82c84198f7a14e6b839e546cbce025c6
@@ -1083,7 +1083,7 @@ msgstr "# BioRxiv（生物学）result = tu.run({"
 msgid ""
 "\"name\": \"BioRxiv_search_preprints\", \"arguments\": { \"query\": "
 "\"CRISPR\", \"max_results\": 5 }"
-msgstr ""
+msgstr "\"name\": \"BioRxiv_搜索预印本\", \"arguments\": { \"query\": \"CRISPR\", \"max_results\": 5 }"
 
 #: ../../tutorials/literature_search_tools_tutorial.rst:764
 #: ff7677dbce784d6c97f1dc87271bd00e
@@ -1498,7 +1498,7 @@ msgid "analyze_data_quality(result)"
 msgstr "分析数据质量(result)"
 
 #~ msgid "\"name\": \"ArXiv_search_papers\", \"arguments\": {"
-#~ msgstr ""
+#~ msgstr "\"name\": \"ArXiv_搜索论文\", \"arguments\": {"
 
 #~ msgid "}"
 #~ msgstr "请提供需要翻译的具体英文文本，我将为您提供准确且专业的中文翻译。"
@@ -1507,7 +1507,7 @@ msgstr "分析数据质量(result)"
 #~ msgstr ""
 
 #~ msgid "\"name\": \"PubMed_search_articles\", \"arguments\": {"
-#~ msgstr ""
+#~ msgstr "\"name\": \"PubMed_搜索文章\", \"arguments\": {"
 
 #~ msgid "\"query\": \"cancer research\", \"limit\": 5"
 #~ msgstr "\"query\": \"癌症研究\", \"limit\": 5"
@@ -1519,16 +1519,16 @@ msgstr "分析数据质量(result)"
 #~ msgstr "\"query\": \"深度学习\", \"limit\": 5"
 
 #~ msgid "\"name\": \"openalex_literature_search\", \"arguments\": {"
-#~ msgstr ""
+#~ msgstr "\"name\": \"openalex_文献检索\", \"arguments\": {"
 
 #~ msgid "\"name\": \"BioRxiv_search_preprints\", \"arguments\": {"
-#~ msgstr ""
+#~ msgstr "\"name\": \"BioRxiv_搜索_预印本\", \"arguments\": {"
 
 #~ msgid "\"query\": \"CRISPR\", \"max_results\": 5"
 #~ msgstr ""
 
 #~ msgid "\"name\": \"MedRxiv_search_preprints\", \"arguments\": {"
-#~ msgstr ""
+#~ msgstr "\"name\": \"MedRxiv_搜索_预印本\", \"arguments\": {"
 
 #~ msgid "\"query\": \"COVID-19\", \"max_results\": 5"
 #~ msgstr ""
@@ -1554,6 +1554,8 @@ msgstr "分析数据质量(result)"
 #~ "'has_abstract': 0, 'has_authors': 0, 'has_doi': 0, 'has_citations': 0, "
 #~ "'has_keywords': 0"
 #~ msgstr ""
+#~ "'has_abstract': 0，'has_authors': 0，'has_doi': 0，'has_citations': "
+#~ "0，'has_keywords': 0"
 
 #~ msgid "for paper in results:"
 #~ msgstr "对于结果中的论文："

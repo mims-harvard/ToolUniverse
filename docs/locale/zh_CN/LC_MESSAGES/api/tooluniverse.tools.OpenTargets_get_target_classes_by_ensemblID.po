@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_target\\_classes\\_by\\_ensemblID
 #: cc5088bc31b54c488c1d063fa2f75c17 of
 #: tooluniverse.tools.OpenTargets_get_target_classes_by_ensemblID:1
 msgid "OpenTargets_get_target_classes_by_ensemblID"
-msgstr ""
+msgstr "OpenTargets_通过Ensembl ID获取靶点类别"
 
 #: 2923168e46384b8da84996488705de17 9c1862b722cb44779951523143314348 of
 #: tooluniverse.tools.OpenTargets_get_target_classes_by_ensemblID:3

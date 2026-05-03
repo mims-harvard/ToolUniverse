@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def odphp_itemlist(
     lang: str,
-    type: str,
+    type_: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def odphp_itemlist(
     ----------
     lang : str
         Language code (en or es)
-    type : str
+    type_ : str
         topic or category
     stream_callback : Callable, optional
         Callback for streaming output
@@ -38,8 +38,13 @@ def odphp_itemlist(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"lang": lang, "type": type_}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "odphp_itemlist", "arguments": {"lang": lang, "type": type}},
+        {
+            "name": "odphp_itemlist",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

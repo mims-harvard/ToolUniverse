@@ -1,0 +1,122 @@
+[
+  {
+    "name": "health_disparities_get_svi_info",
+    "description": "Get information about CDC Social Vulnerability Index (SVI) data. SVI data is typically available as downloadable CSV files from the CDC ATSDR website. This tool provides information about available SVI datasets and download links. Note: Actual data retrieval may require downloading CSV files.",
+    "type": "HealthDisparitiesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "integer",
+          "description": "Optional year to filter SVI data (e.g., 2020, 2018, 2016). SVI is released every 2 years."
+        },
+        "geography": {
+          "type": "string",
+          "enum": [
+            "county",
+            "tract",
+            "state"
+          ],
+          "description": "Geographic level: 'county' for county-level, 'tract' for census tract, 'state' for state-level"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "svi",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": "integer"
+              },
+              "geography": {
+                "type": "string"
+              },
+              "download_url": {
+                "type": "string",
+                "description": "URL to download the SVI dataset"
+              },
+              "documentation_url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "Information about data format and access"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "year": 1,
+        "geography": "county"
+      }
+    ]
+  },
+  {
+    "name": "health_disparities_get_county_rankings_info",
+    "description": "Get information about County Health Rankings data. County Health Rankings provides county-level health data. This tool provides information about available datasets and access methods. Note: Data may be available as downloadable files or through their website.",
+    "type": "HealthDisparitiesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "year": {
+          "type": "integer",
+          "description": "Optional year for County Health Rankings data"
+        },
+        "state": {
+          "type": "string",
+          "description": "Optional state abbreviation (e.g., 'CA', 'NY') to filter by state"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "county_rankings",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data_sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "year": {
+                "type": "integer"
+              },
+              "state": {
+                "type": "string"
+              },
+              "access_url": {
+                "type": "string",
+                "description": "URL to access County Health Rankings data"
+              }
+            }
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "Information about data access"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "year": 2023,
+        "state": "California"
+      }
+    ]
+  }
+]

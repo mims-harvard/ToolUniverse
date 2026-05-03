@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_assembly\\_info\\_by\\_pdb\\_id 模块"
 #: 09f88caf624245b08d520358159ccdd7 of
 #: tooluniverse.tools.get_assembly_info_by_pdb_id:1
 msgid "get_assembly_info_by_pdb_id"
-msgstr ""
+msgstr "get_assembly_info_by_pdb_id 获取通过PDB ID的装配信息"
 
 #: b3e94e5401c94454879f00728fcd1ddb b739e1aaaa3242f3bbe88901d9e51d90 of
 #: tooluniverse.tools.get_assembly_info_by_pdb_id:3

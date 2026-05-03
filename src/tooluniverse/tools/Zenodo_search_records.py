@@ -10,13 +10,13 @@ from ._shared_client import get_shared_client
 
 def Zenodo_search_records(
     query: str,
-    max_results: int,
+    limit: Optional[int] = 10,
     community: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
     Search Zenodo for research data, publications, and datasets. Zenodo is an open-access repository ...
 
@@ -24,7 +24,7 @@ def Zenodo_search_records(
     ----------
     query : str
         Free text search query for Zenodo records. Use keywords to search across titl...
-    max_results : int
+    limit : int
         Maximum number of results to return. Must be between 1 and 200.
     community : str
         Optional community slug to filter results by specific research community (e.g...
@@ -37,18 +37,20 @@ def Zenodo_search_records(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "community": community}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Zenodo_search_records",
-            "arguments": {
-                "query": query,
-                "max_results": max_results,
-                "community": community,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

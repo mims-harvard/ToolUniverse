@@ -50,6 +50,10 @@ Quick Start
 .. code-block:: python
 
    hook_config = {
+       "exclude_tools": [
+           "Tool_RAG",
+           "ToolFinderEmbedding"
+       ],
        "hooks": [{
            "name": "protein_summarization",
            "type": "SummarizationHook",
@@ -85,6 +89,23 @@ Configuration Options
 **Maximum Summary Length**
 - Limits the length of the final summary
 - Default: 3000 characters
+
+**Excluding Tools**
+
+Use `exclude_tools` to prevent specific tools from being summarized:
+
+.. code-block:: python
+
+   hook_config = {
+       "exclude_tools": [
+           "Tool_RAG",           # Exact match
+           "ToolFinderEmbedding", # Exact match
+           "CustomTool_*"         # Wildcard pattern
+       ],
+       "hooks": [...]
+   }
+
+This is particularly useful for excluding tool discovery tools that shouldn't be processed by hooks.
 
 **Focus Areas Options**
 
@@ -253,14 +274,9 @@ Verify hook configuration:
 Next Steps
 ----------
 
-**Learn More**
+.. seealso::
 
-- **FileSaveHook** → :doc:`file_save_hook` - File-based output processing
-- **Configuration** → :doc:`hook_configuration` - Advanced configuration options
-- **Hooks Overview** → :doc:`index` - Complete hooks system Tutorial
-
-**Related Topics**
-
-- **Tool Composition** → :doc:`../tool_composition` - Chain tools into workflows
-- **Best Practices** → :doc:`../best_practices` - Performance optimization tips
-- **Examples** → :doc:`../examples` - More usage examples
+   - :doc:`file_save_hook` - File-based output processing
+   - :doc:`hook_configuration` - Advanced configuration options
+   - :doc:`index` - Complete hooks system overview
+   - :doc:`../tool_composition` - Chain tools into workflows

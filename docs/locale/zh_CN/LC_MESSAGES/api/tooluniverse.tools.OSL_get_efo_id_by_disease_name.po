@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OSL\\_get\\_efo\\_id\\_by\\_disease\\_name 模块"
 #: b340caaf955d4ad2864b1da95715cf4a of
 #: tooluniverse.tools.OSL_get_efo_id_by_disease_name:1
 msgid "OSL_get_efo_id_by_disease_name"
-msgstr ""
+msgstr "OSL_get_efo_id_by_disease_name（通过疾病名称获取EFO ID）"
 
 #: 3b88701778a34b2b88c57c8da3453b65 69ff2cbf214b4857922f49f888dd732b of
 #: tooluniverse.tools.OSL_get_efo_id_by_disease_name:3

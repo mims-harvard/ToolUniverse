@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_brand\\_name\\_generic\\_name 模块"
 #: d8209752bad44f90826109c5471ec1c3 of
 #: tooluniverse.tools.FDA_get_brand_name_generic_name:1
 msgid "FDA_get_brand_name_generic_name"
-msgstr ""
+msgstr "FDA_获取品牌名与通用名"
 
 #: 0649c128cc47495c8244d64fe3abcd18 6fd82e80487b4deeb40eedbb57d39054 of
 #: tooluniverse.tools.FDA_get_brand_name_generic_name:3

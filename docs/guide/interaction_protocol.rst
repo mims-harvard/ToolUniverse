@@ -1,12 +1,12 @@
 AI-Tool Interaction Protocol
 ============================
 
-**The foundation that makes ToolUniverse's 600+ tools universally accessible to any AI system**
+**The foundation that makes ToolUniverse's 1000+ tools universally accessible to any AI system**
 
 Overview
 --------
 
-Just as HTTP standardizes client-server communication across the web, ToolUniverse implements an **AI-Tool Interaction Protocol** that standardizes how AI models interact with scientific tools. This protocol abstracts away the complexity of 600+ heterogeneous tools (machine learning models, databases, APIs, robotics systems) behind a unified interface.
+Just as HTTP standardizes client-server communication across the web, ToolUniverse implements an **AI-Tool Interaction Protocol** that standardizes how AI models interact with scientific tools. This protocol abstracts away the complexity of 1000+ heterogeneous tools (machine learning models, databases, APIs, robotics systems) behind a unified interface.
 
 .. code-block:: text
 
@@ -23,7 +23,7 @@ Just as HTTP standardizes client-server communication across the web, ToolUniver
    └─────────┬───────┘
              │
    ┌─────────▼───────┐
-   │  600+ Tools     │ ← ML Models, APIs, Databases, etc.
+   │  1000+ Tools     │ ← ML Models, APIs, Databases, etc.
    │ (Heterogeneous  │
    │   Backends)     │
    └─────────────────┘
@@ -371,7 +371,7 @@ Protocol Benefits
 -----------------
 
 **For AI Developers:**
-- Single interface for 600+ diverse tools
+- Single interface for 1000+ diverse tools
 - No tool-specific integration work required
 - Automatic error handling and validation
 - Consistent response formats

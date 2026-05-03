@@ -10,7 +10,6 @@ from ._shared_client import get_shared_client
 
 def OpenTargets_drug_pharmacogenomics_data(
     chemblId: str,
-    page: Optional[dict[str, Any]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,9 +21,7 @@ def OpenTargets_drug_pharmacogenomics_data(
     Parameters
     ----------
     chemblId : str
-        The ChEMBL ID of the drug.
-    page : dict[str, Any]
-        Pagination options.
+        The ChEMBL ID of the drug (e.g., 'CHEMBL25' for aspirin, 'CHEMBL1201583' for ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -38,10 +35,12 @@ def OpenTargets_drug_pharmacogenomics_data(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"chemblId": chemblId}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_drug_pharmacogenomics_data",
-            "arguments": {"chemblId": chemblId, "page": page},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

@@ -131,7 +131,7 @@ class ProteinStructure3DTool(VisualizationTool):
                 "show_surface": show_surface,
             }
 
-            return self.create_visualization_response(
+            viz_response = self.create_visualization_response(
                 html_content=html_content,
                 viz_type="protein_structure_3d",
                 data={
@@ -141,17 +141,20 @@ class ProteinStructure3DTool(VisualizationTool):
                 },
                 metadata=metadata,
             )
+            # Wrap in data field for test compatibility
+            return {"status": "success", "data": viz_response}
 
         except ImportError:
-            return self.create_error_response(
-                "py3Dmol is not installed. Please install it with: "
-                "pip install py3Dmol",
+            error_response = self.create_error_response(
+                "py3Dmol is not installed. Please install it with: pip install py3Dmol",
                 "MissingDependency",
             )
+            return {"status": "error", "data": error_response}
         except Exception as e:
-            return self.create_error_response(
+            error_response = self.create_error_response(
                 f"Failed to create protein visualization: {str(e)}"
             )
+            return {"status": "error", "data": error_response}
 
     def _fetch_pdb_content(self, pdb_id: str) -> str:
         """Fetch PDB content from RCSB PDB database."""
@@ -170,21 +173,21 @@ class ProteinStructure3DTool(VisualizationTool):
             <div class="control-group">
                 <label class="control-label">Style</label>
                 <select class="control-select" id="styleSelect" onchange="changeStyle()">
-                    <option value="cartoon" {'selected' if current_style == 'cartoon' else ''}>Cartoon</option>
-                    <option value="stick" {'selected' if current_style == 'stick' else ''}>Stick</option>
-                    <option value="sphere" {'selected' if current_style == 'sphere' else ''}>Sphere</option>
-                    <option value="line" {'selected' if current_style == 'line' else ''}>Line</option>
-                    <option value="surface" {'selected' if current_style == 'surface' else ''}>Surface</option>
+                    <option value="cartoon" {"selected" if current_style == "cartoon" else ""}>Cartoon</option>
+                    <option value="stick" {"selected" if current_style == "stick" else ""}>Stick</option>
+                    <option value="sphere" {"selected" if current_style == "sphere" else ""}>Sphere</option>
+                    <option value="line" {"selected" if current_style == "line" else ""}>Line</option>
+                    <option value="surface" {"selected" if current_style == "surface" else ""}>Surface</option>
                 </select>
             </div>
             <div class="control-group">
                 <label class="control-label">Color Scheme</label>
                 <select class="control-select" id="colorSelect" onchange="changeColor()">
-                    <option value="spectrum" {'selected' if current_color == 'spectrum' else ''}>Spectrum</option>
-                    <option value="rainbow" {'selected' if current_color == 'rainbow' else ''}>Rainbow</option>
-                    <option value="ss" {'selected' if current_color == 'ss' else ''}>Secondary Structure</option>
-                    <option value="chain" {'selected' if current_color == 'chain' else ''}>Chain</option>
-                    <option value="elem" {'selected' if current_color == 'elem' else ''}>Element</option>
+                    <option value="spectrum" {"selected" if current_color == "spectrum" else ""}>Spectrum</option>
+                    <option value="rainbow" {"selected" if current_color == "rainbow" else ""}>Rainbow</option>
+                    <option value="ss" {"selected" if current_color == "ss" else ""}>Secondary Structure</option>
+                    <option value="chain" {"selected" if current_color == "chain" else ""}>Chain</option>
+                    <option value="elem" {"selected" if current_color == "elem" else ""}>Element</option>
                 </select>
             </div>
             <div class="control-group">
@@ -249,15 +252,15 @@ class ProteinStructure3DTool(VisualizationTool):
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">PDB ID</span>
-                    <span class="info-value">{pdb_id or 'Custom'}</span>
+                    <span class="info-value">{pdb_id or "Custom"}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Title</span>
-                    <span class="info-value">{title[:30]}{'...' if len(title) > 30 else ''}</span>
+                    <span class="info-value">{title[:30]}{"..." if len(title) > 30 else ""}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Organism</span>
-                    <span class="info-value">{organism[:20]}{'...' if len(organism) > 20 else ''}</span>
+                    <span class="info-value">{organism[:20]}{"..." if len(organism) > 20 else ""}</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">Method</span>

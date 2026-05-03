@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_chem\\_comp\\_audit\\_info 模块"
 #: a9ff3a68f72345eaa04c3a56c9776f92 of
 #: tooluniverse.tools.get_chem_comp_audit_info:1
 msgid "get_chem_comp_audit_info"
-msgstr ""
+msgstr "get_chem_comp_audit_info（获取化学组分审计信息）"
 
 #: 3c262d3073ba46cfb43225801bd8b8a5 693b43cfaae64d90a578fbc6c81fa645 of
 #: tooluniverse.tools.get_chem_comp_audit_info:3

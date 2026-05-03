@@ -1,0 +1,101 @@
+[
+  {
+    "name": "DynaMut2_predict_stability",
+    "type": "DynaMut2Tool",
+    "description": "Predict the effect of a single-point amino acid mutation on protein stability and dynamics using DynaMut2. Provide a PDB ID (4-character code from RCSB PDB), chain identifier, and mutation in the format WtPosNew (e.g., V1A means Valine at position 1 mutated to Alanine). Returns the predicted change in Gibbs free energy (ddG in kcal/mol): positive = stabilizing, negative = destabilizing. The tool downloads the PDB structure from RCSB and submits it to DynaMut2 for analysis. Computation typically takes 15-30 seconds. Based on Normal Mode Analysis and graph-based signatures.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["predict_stability"],
+          "description": "Operation type"
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "4-character PDB accession code from RCSB PDB (e.g., '4HHB' for hemoglobin, '1U46' for ACK1 kinase). The structure will be downloaded automatically."
+        },
+        "chain": {
+          "type": "string",
+          "description": "Chain identifier in the PDB structure (e.g., 'A'). Must be a valid chain in the specified PDB entry."
+        },
+        "mutation": {
+          "type": "string",
+          "description": "Single-point mutation in the format WtPosNew where Wt is the wild-type amino acid (1-letter code), Pos is the residue number, and New is the mutant amino acid (1-letter code). Examples: 'V1A' (Val1Ala), 'E346K' (Glu346Lys), 'G12D' (Gly12Asp)."
+        }
+      },
+      "required": ["operation", "pdb_id", "chain", "mutation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {"type": "string", "description": "PDB accession code used"},
+        "chain": {"type": "string", "description": "Chain identifier"},
+        "mutation": {"type": "string", "description": "Mutation in WtPosNew format"},
+        "wild_type": {"type": "string", "description": "Wild-type residue (3-letter code)"},
+        "mutant": {"type": "string", "description": "Mutant residue (3-letter code)"},
+        "position": {"type": "string", "description": "Residue position number"},
+        "ddg_prediction": {"type": "number", "description": "Predicted change in Gibbs free energy (ddG, kcal/mol). Positive = stabilizing, negative = destabilizing."},
+        "effect": {"type": "string", "description": "Predicted effect: 'stabilizing' or 'destabilizing'"},
+        "job_id": {"type": "string", "description": "DynaMut2 job identifier for retrieving results later"},
+        "results_page": {"type": "string", "description": "URL to the full DynaMut2 results page with visualizations"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "predict_stability",
+        "pdb_id": "4HHB",
+        "chain": "A",
+        "mutation": "V1A"
+      }
+    ]
+  },
+  {
+    "name": "DynaMut2_get_job",
+    "type": "DynaMut2Tool",
+    "description": "Retrieve results for a previously submitted DynaMut2 stability prediction job. If the job is still running, returns the current status. If complete, returns the full prediction result including ddG value and effect classification. Use this to check on long-running predictions or to retrieve results you submitted earlier.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_job"],
+          "description": "Operation type"
+        },
+        "job_id": {
+          "type": "string",
+          "description": "DynaMut2 job identifier returned from a previous predict_stability call."
+        },
+        "endpoint": {
+          "type": ["string", "null"],
+          "default": "prediction_single",
+          "description": "API endpoint for the job type. Default: 'prediction_single'. Other options: 'prediction_list', 'prediction_mm'."
+        }
+      },
+      "required": ["operation", "job_id"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {"type": "string", "description": "PDB accession code (empty for get_job since it may not be stored)"},
+        "chain": {"type": "string", "description": "Chain identifier"},
+        "mutation": {"type": "string", "description": "Mutation in WtPosNew format"},
+        "wild_type": {"type": "string", "description": "Wild-type residue (3-letter code)"},
+        "mutant": {"type": "string", "description": "Mutant residue (3-letter code)"},
+        "position": {"type": "string", "description": "Residue position number"},
+        "ddg_prediction": {"type": "number", "description": "Predicted ddG (kcal/mol). Positive = stabilizing, negative = destabilizing."},
+        "effect": {"type": "string", "description": "Predicted effect: 'stabilizing' or 'destabilizing'"},
+        "job_id": {"type": "string", "description": "DynaMut2 job identifier"},
+        "results_page": {"type": "string", "description": "URL to DynaMut2 results page"},
+        "job_status": {"type": ["string", "null"], "description": "Job status if still running (e.g., 'RUNNING')"},
+        "message": {"type": ["string", "null"], "description": "Status message if job is still running"}
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_job",
+        "job_id": "177213420956"
+      }
+    ]
+  }
+]

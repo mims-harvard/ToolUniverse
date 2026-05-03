@@ -10,13 +10,13 @@ from ._shared_client import get_shared_client
 
 def OpenTargets_multi_entity_search_by_query_string(
     queryString: str,
-    entityNames: Optional[list[Any]] = None,
+    entityNames: Optional[list[str]] = None,
     page: Optional[dict[str, Any]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform a multi-entity search based on a query string, filtering by entity names and pagination s...
 
@@ -24,7 +24,7 @@ def OpenTargets_multi_entity_search_by_query_string(
     ----------
     queryString : str
         The search string for querying information.
-    entityNames : list[Any]
+    entityNames : list[str]
         List of entity names to search for (e.g., target, disease, drug).
     page : dict[str, Any]
         Pagination settings with index and size.
@@ -37,18 +37,24 @@ def OpenTargets_multi_entity_search_by_query_string(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "queryString": queryString,
+            "entityNames": entityNames,
+            "page": page,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_multi_entity_search_by_query_string",
-            "arguments": {
-                "queryString": queryString,
-                "entityNames": entityNames,
-                "page": page,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

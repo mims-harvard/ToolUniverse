@@ -162,7 +162,7 @@ msgstr "下拉选项"
 #: ../../expand_tooluniverse/local_tool_registration.rst:142
 #: 60a7b3eb66b944d7ae378f28c696d6d2
 msgid "``\"type\": \"string\", \"enum\": [...]``"
-msgstr ""
+msgstr "\"type\": \"string\", \"enum\": [...]"
 
 #: ../../expand_tooluniverse/local_tool_registration.rst:143
 #: 4bbf53f4553b43588fcc030c1256702c

@@ -31,6 +31,7 @@ from tooluniverse import ToolUniverse
 
 @register_tool('DataProcessorTool', config={
     "name": "data_processor_tool",
+    "type": "DataProcessorTool",
     "description": "Process and analyze data with validation and error handling",
     "parameter": {
         "type": "object",
@@ -145,6 +146,7 @@ class DataProcessorTool(BaseTool):
 
 @register_tool('TextAnalyzerTool', config={
     "name": "text_analyzer_tool",
+    "type": "TextAnalyzerTool",
     "description": "Analyze text content with various metrics",
     "parameter": {
         "type": "object",
@@ -234,6 +236,7 @@ class TextAnalyzerTool(BaseTool):
 
 @register_tool('FileProcessorTool', config={
     "name": "file_processor_tool",
+    "type": "FileProcessorTool",
     "description": "Process files with various operations",
     "parameter": {
         "type": "object",
@@ -343,7 +346,7 @@ class FileProcessorTool(BaseTool):
 # TESTING FUNCTIONS
 # =============================================================================
 
-def test_advanced_tools(tu):
+def run_test_advanced_tools(tu):
     """Test advanced tool functionality."""
     
     print("🧪 Testing Advanced Tools")
@@ -464,7 +467,7 @@ def test_advanced_tools(tu):
     except Exception as e:
         print(f"   ❌ FileProcessorTool error: {e}")
 
-def test_direct_access(tu):
+def run_test_direct_access(tu):
     """Test direct tool access."""
     
     print("\n🔧 Testing Direct Access")
@@ -523,8 +526,8 @@ def main():
                 print(f"❌ {tool_name} not found")
         
         # Run tests
-        test_advanced_tools(tu)
-        test_direct_access(tu)
+        run_test_advanced_tools(tu)
+        run_test_direct_access(tu)
         
         print("\n🎉 Advanced local tools example completed!")
         
@@ -532,6 +535,10 @@ def main():
         print(f"❌ Error: {e}")
         import traceback
         traceback.print_exc()
+    finally:
+        # Clean up
+        if 'tu' in locals():
+            tu.close()
 
 if __name__ == "__main__":
     main()

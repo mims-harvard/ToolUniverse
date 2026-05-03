@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_neo\\_info 模块"
 
 #: 2fd393e87f4c490e835651d80e03856b of tooluniverse.tools.get_neo_info:1
 msgid "get_neo_info"
-msgstr ""
+msgstr "获取_neo_信息"
 
 #: 37dff14bb8d54c349c358685a801945f e0123f8ba0814057b0819cabb1fd3dcc of
 #: tooluniverse.tools.get_neo_info:3

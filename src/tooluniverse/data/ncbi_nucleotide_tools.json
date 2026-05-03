@@ -1,0 +1,312 @@
+[
+  {
+    "type": "NCBINucleotideSearchTool",
+    "name": "NCBI_search_nucleotide",
+    "description": "Search NCBI Nucleotide database (GenBank/EMBL/RefSeq) by organism, gene name, or keywords. Returns GenBank UIDs which can be used to fetch accession numbers. Supports filtering by organism, gene, strain, sequence type (complete genome, mRNA, RefSeq). Use this to discover DNA/RNA sequences for specific organisms or genes. Returns both EMBL/GenBank accessions (U00096, M15390) and RefSeq accessions (NC_*, NM_*). Follow up with NCBI_fetch_accessions to get actual accession numbers.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "operation": {
+          "const": "search",
+          "description": "Operation type (fixed: search)"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name to search (e.g., 'Escherichia coli', 'Homo sapiens'). Searches in [Organism] field."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene name to search (e.g., 'BRCA1', 'TP53'). Searches in [Gene] field."
+        },
+        "strain": {
+          "type": "string",
+          "description": "Strain name to filter (e.g., 'K-12', 'MG1655'). Searches in [Strain] field."
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Keywords to search in titles (e.g., 'complete genome', 'mitochondrial'). Searches in [Title] field."
+        },
+        "seq_type": {
+          "type": "string",
+          "enum": [
+            "complete_genome",
+            "mrna",
+            "refseq"
+          ],
+          "description": "Sequence type filter: 'complete_genome' for complete genomes, 'mrna' for mRNA sequences, 'refseq' for RefSeq curated sequences"
+        },
+        "query": {
+          "type": "string",
+          "description": "Free-form search query if not using structured filters. Use NCBI query syntax (e.g., '(Escherichia coli[Organism]) AND (K-12[Strain])')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20, max: 100)",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "pub_date",
+            "title"
+          ],
+          "description": "Sort order for results (default: relevance)",
+          "default": "relevance"
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "uids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of GenBank UIDs (internal IDs)"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching results"
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of UIDs returned (limited by limit parameter)"
+            },
+            "search_term": {
+              "type": "string",
+              "description": "Generated NCBI search term used"
+            }
+          }
+        },
+        "total_count": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "uids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of GenBank UIDs (internal IDs)"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Total number of matching results"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of UIDs returned"
+        },
+        "search_term": {
+          "type": "string",
+          "description": "Generated NCBI search term used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "organism": "Escherichia coli",
+        "strain": "K-12",
+        "keywords": "complete genome",
+        "limit": 5
+      },
+      {
+        "organism": "Homo sapiens",
+        "gene": "BRCA1",
+        "limit": 10
+      },
+      {
+        "organism": "SARS-CoV-2",
+        "seq_type": "complete_genome",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "NCBINucleotideSearchTool",
+    "name": "NCBI_fetch_accessions",
+    "description": "Convert GenBank UIDs to accession numbers (U00096, NC_045512, etc.). Takes UIDs from NCBI_search_nucleotide and returns actual accession numbers that can be used with database tools. Returns both EMBL/GenBank accessions (U*, M*, AJ*) that work with ENA Browser tools, and RefSeq accessions (NC_*, NM_*) for NCBI tools. Use this as second step after NCBI_search_nucleotide to get usable accession numbers.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "uids"
+      ],
+      "properties": {
+        "operation": {
+          "const": "fetch_accession",
+          "description": "Operation type (fixed: fetch_accession)"
+        },
+        "uids": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "GenBank UID(s) from NCBI_search_nucleotide. Can be single UID or array of UIDs."
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of accession numbers (e.g., ['U00096', 'NC_000913'])"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of accessions returned"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of accession numbers"
+    },
+    "test_examples": [
+      {
+        "uids": [
+          "545778205"
+        ]
+      },
+      {
+        "uids": [
+          "545778205",
+          "545778204"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "NCBINucleotideSearchTool",
+    "name": "NCBI_get_sequence",
+    "description": "Retrieve DNA/RNA sequence data from NCBI by accession number. Returns sequences in specified format (fasta, gb, embl). Works with both EMBL/GenBank accessions (U00096, M15390) and RefSeq accessions (NC_045512, NM_000546). Use this to get actual sequence data after finding accessions with NCBI_search_nucleotide. Returns full sequence with annotations depending on format.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "accession"
+      ],
+      "properties": {
+        "operation": {
+          "const": "fetch_sequence",
+          "description": "Operation type (fixed: fetch_sequence)"
+        },
+        "accession": {
+          "type": "string",
+          "description": "NCBI accession number (e.g., 'U00096', 'NC_045512', 'NM_000546'). Works with GenBank, EMBL, and RefSeq accessions."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "fasta",
+            "gb",
+            "embl",
+            "gp"
+          ],
+          "description": "Sequence format: 'fasta' for FASTA, 'gb' for GenBank, 'embl' for EMBL, 'gp' for GenPept protein. Default: fasta",
+          "default": "fasta"
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "string",
+          "description": "Sequence data in requested format"
+        },
+        "accession": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "length": {
+          "type": "integer",
+          "description": "Length of returned data in characters"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "return_schema": {
+      "type": "string",
+      "description": "Sequence data in requested format (FASTA, GenBank, EMBL, or GenPept)"
+    },
+    "test_examples": [
+      {
+        "accession": "U00096",
+        "format": "fasta"
+      },
+      {
+        "accession": "NC_045512",
+        "format": "gb"
+      },
+      {
+        "accession": "NM_000546",
+        "format": "fasta"
+      }
+    ]
+  }
+]

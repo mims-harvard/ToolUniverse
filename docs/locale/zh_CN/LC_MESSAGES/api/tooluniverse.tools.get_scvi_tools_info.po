@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_scvi\\_tools\\_info 模块"
 #: c475010ea1c64fddab5cf9fea0a4a914 of
 #: tooluniverse.tools.get_scvi_tools_info:1
 msgid "get_scvi_tools_info"
-msgstr ""
+msgstr "获取_scvi_tools_信息"
 
 #: 4472967479dd431d93c5c9032ce682a0 b0a906339b2b4249b4c35edf224bdcd0 of
 #: tooluniverse.tools.get_scvi_tools_info:3

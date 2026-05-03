@@ -49,7 +49,9 @@ def _generate_tool_name(base: Optional[str], suffix: str | None = None) -> str:
     return f"{slug}_{suffix}"
 
 
-def _select_candidates(arguments: Dict[str, Any]) -> Tuple[Optional[str], Dict[str, Any]]:
+def _select_candidates(
+    arguments: Dict[str, Any],
+) -> Tuple[Optional[str], Dict[str, Any]]:
     # Backwards compatibility: allow top-level query/limit keys
     harvest_overrides = dict(arguments.get("harvest", {}) or {})
     query = (arguments.get("query") or harvest_overrides.get("query") or "").strip()
@@ -120,7 +122,10 @@ def compose(
     tool_arguments = args.get("tool_arguments") or {}
 
     for index, candidate in enumerate(candidates):
-        attempt_record: Dict[str, Any] = {"candidate_index": index, "candidate": candidate}
+        attempt_record: Dict[str, Any] = {
+            "candidate_index": index,
+            "candidate": candidate,
+        }
         tester_result = {"skipped": skip_tests}
 
         if not skip_tests:
@@ -141,7 +146,7 @@ def compose(
         tool_name = register_payload.get("tool_name") or desired_tool_name
         if not tool_name:
             host = (candidate.get("host") or candidate.get("name") or "").strip()
-            tool_name = _generate_tool_name(host, suffix=f"cand{index+1}")
+            tool_name = _generate_tool_name(host, suffix=f"cand{index + 1}")
         register_payload["tool_name"] = tool_name
 
         register_response = call_tool("VerifiedSourceRegisterTool", register_payload)
@@ -166,7 +171,9 @@ def compose(
             try:
                 run_payload = {
                     "name": registered_name,
-                    "arguments": tool_arguments if isinstance(tool_arguments, dict) else {},
+                    "arguments": tool_arguments
+                    if isinstance(tool_arguments, dict)
+                    else {},
                 }
                 run_result = tooluniverse.run_one_function(run_payload)
                 results["run_result"] = run_result

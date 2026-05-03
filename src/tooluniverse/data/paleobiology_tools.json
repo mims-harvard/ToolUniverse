@@ -1,0 +1,91 @@
+[
+  {
+    "type": "PaleobiologyRESTTool",
+    "name": "Paleobiology_get_fossils",
+    "description": "Get fossil records from Paleobiology Database",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon": {"type": "string", "description": "Taxon name"},
+        "limit": {"type": "integer", "default": 20, "description": "Number of results"}
+      },
+      "required": ["taxon"]
+    },
+    "fields": {
+      "endpoint": "https://paleobiodb.org/data1.2/occs/list.json?taxon_name={taxon}&limit={limit}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "occurrence_no": {"type": "string"},
+              "record_type": {"type": "string"},
+              "reid_no": {"type": "string"},
+              "flags": {"type": "string"},
+              "collection_no": {"type": "string"},
+              "identified_name": {"type": "string"},
+              "identified_rank": {"type": "string"},
+              "identified_no": {"type": "string"},
+              "accepted_name": {"type": "string"},
+              "accepted_rank": {"type": "string"},
+              "accepted_no": {"type": "string"},
+              "early_interval": {"type": "string"},
+              "late_interval": {"type": "string"},
+              "early_age": {"type": "number"},
+              "late_age": {"type": "number"},
+              "reference_no": {"type": "string"},
+              "is_representative": {"type": "string"},
+              "formation": {"type": "string"},
+              "member": {"type": "string"},
+              "lithology": {"type": "string"},
+              "lithology1": {"type": "string"},
+              "lithology2": {"type": "string"},
+              "environment": {"type": "string"},
+              "taphonomy": {"type": "string"},
+              "preservation": {"type": "string"},
+              "lithadj1": {"type": "string"},
+              "lithadj2": {"type": "string"},
+              "geogscale": {"type": "string"},
+              "geogname": {"type": "string"},
+              "state": {"type": "string"},
+              "county": {"type": "string"},
+              "lat": {"type": "number"},
+              "lng": {"type": "number"},
+              "geogcomments": {"type": "string"},
+              "collection_name": {"type": "string"},
+              "collection_aka": {"type": "string"},
+              "collection_type": {"type": "string"},
+              "collection_comments": {"type": "string"},
+              "stratscale": {"type": "string"},
+              "stratcomments": {"type": "string"},
+              "lithadjcomments": {"type": "string"},
+              "geogcomments": {"type": "string"},
+              "taxonomy": {
+                "type": "object",
+                "properties": {
+                  "phylum": {"type": "string"},
+                  "class": {"type": "string"},
+                  "order": {"type": "string"},
+                  "family": {"type": "string"},
+                  "genus": {"type": "string"},
+                  "species": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "count": {"type": "integer"},
+        "status": {"type": "string"}
+      }
+    },
+    "test_examples": [
+      {"taxon": "Tyrannosaurus", "limit": 5},
+      {"taxon": "Trilobita", "limit": 10}
+    ]
+  }
+]

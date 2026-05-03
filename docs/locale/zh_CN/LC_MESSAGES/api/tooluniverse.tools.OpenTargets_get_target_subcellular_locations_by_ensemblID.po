@@ -32,7 +32,7 @@ msgstr ""
 #: 5252617adf0047a4952fe5e820b5fd63 of
 #: tooluniverse.tools.OpenTargets_get_target_subcellular_locations_by_ensemblID:1
 msgid "OpenTargets_get_target_subcellular_locations_by_ensemblID"
-msgstr ""
+msgstr "OpenTargets_通过Ensembl ID获取靶点亚细胞定位"
 
 #: 6aa63fa129004f9fbec259b69825140b f77d0d34c76d40718dec7c45f1dd84e3 of
 #: tooluniverse.tools.OpenTargets_get_target_subcellular_locations_by_ensemblID:3

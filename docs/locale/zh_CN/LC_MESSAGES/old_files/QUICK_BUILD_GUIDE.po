@@ -194,11 +194,11 @@ msgstr ""
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:168 808b527c83ad4beb9324a5de821bc394
 msgid "✅ 深色/浅色模式切换"
-msgstr ""
+msgstr "✅ 深色模式/浅色模式切换"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:169 565c1238a5dd43b099771edf7a81b0e7
 msgid "✅ 移动端响应式"
-msgstr ""
+msgstr "✅ 移动端响应式设计"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:170 f843395d23c24071afcf05de63f4c3db
 msgid "✅ 内置搜索功能"
@@ -210,7 +210,7 @@ msgstr ""
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:174 153ef3e5bc244837996da3ee796a3a78
 msgid "🌍 多语言索引页（优雅的语言选择界面）"
-msgstr ""
+msgstr "🌍 多语言索引页（简洁优雅的语言选择界面）"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:175 6236d2b7fbdb47f0897bb5c1f45634fc
 msgid "🔄 各语言版本独立完整"
@@ -218,7 +218,7 @@ msgstr "各语言版本独立完整"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:176 94ad7f3817ef4670bf343205eca63f03
 msgid "📱 所有设备完美适配"
-msgstr ""
+msgstr "📱 兼容所有设备，完美适配"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:178 800dc7c4f2744aea8a51f69ad84a8be5
 msgid "🚀 快速开始"
@@ -246,7 +246,7 @@ msgstr "选择您想要的语言"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:191 c53f6db1565e44dfaa8a3217b5320594
 msgid "享受阅读！📖"
-msgstr ""
+msgstr "祝您阅读愉快！📖"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:193 311df92696d046c1ac8cba74209e1355
 msgid "💡 Tips"
@@ -327,7 +327,7 @@ msgstr "请提供具体的英文文本，我将为您翻译成符合要求的中
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:249 542ae8c1780e4351a0da6a557aec92a6
 msgid "跳过 Remote Tools：`DOC_SKIP_REMOTE=1`"
-msgstr ""
+msgstr "跳过远程工具：`DOC_SKIP_REMOTE=1`"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:250 cd2dbf4277f8418aa57a50decff03b16
 msgid "只构建一种语言：`DOC_LANGUAGES=en`"
@@ -335,7 +335,7 @@ msgstr "仅构建一种语言：`DOC_LANGUAGES=en`"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:252 7630ce957bd24fb89dd7d6f2d5caf94b
 msgid "Q: 如何部署到服务器？"
-msgstr ""
+msgstr "问：如何部署到服务器？"
 
 #: ../../old_files/QUICK_BUILD_GUIDE.md:263 227951afaab54c94afc2446f5960e270
 msgid "🎉 开始使用"

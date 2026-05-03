@@ -35,10 +35,14 @@ def gwas_get_association_by_id(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v for k, v in {"association_id": association_id}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "gwas_get_association_by_id",
-            "arguments": {"association_id": association_id},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

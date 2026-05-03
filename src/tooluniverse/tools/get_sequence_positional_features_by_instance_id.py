@@ -14,7 +14,7 @@ def get_sequence_positional_features_by_instance_id(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve sequence positional features (e.g., binding sites, motifs) for a polymer entity instance.
 
@@ -31,14 +31,16 @@ def get_sequence_positional_features_by_instance_id(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"instance_id": instance_id}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "get_sequence_positional_features_by_instance_id",
-            "arguments": {"instance_id": instance_id},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

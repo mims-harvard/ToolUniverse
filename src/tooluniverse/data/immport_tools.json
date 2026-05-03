@@ -1,0 +1,72 @@
+[
+  {
+    "name": "ImmPort_search_studies",
+    "description": "Search the ImmPort immunology database for studies by keyword, disease condition, assay method, or research focus. ImmPort is a NIAID-funded repository with 900+ open studies covering vaccine trials, flow cytometry, ELISPOT, RNA-seq, and clinical immunology data. Assay methods include: Flow Cytometry, ELISPOT, ELISA, RNA sequencing, Transcription profiling by array, Hemagglutination Inhibition, Luminex xMAP, Q-PCR, CyTOF, and more. Research focuses include: Vaccine Response, Infection Response, Immune Response, Transplantation, Autoimmune, Allergy, Preterm Birth. The species filter is applied server-side; condition_or_disease, assay_method, and research_focus filters are applied client-side.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords (e.g., 'influenza vaccine', 'COVID-19', 'T cell response', 'malaria')"
+        },
+        "condition_or_disease": {
+          "type": "string",
+          "description": "Filter by disease/condition (e.g., 'influenza', 'malaria', 'HIV', 'dengue', 'tuberculosis'). Client-side substring match."
+        },
+        "assay_method": {
+          "type": "string",
+          "description": "Filter by assay method (e.g., 'Flow Cytometry', 'ELISPOT', 'RNA sequencing', 'ELISA', 'CyTOF', 'Luminex xMAP'). Client-side substring match."
+        },
+        "research_focus": {
+          "type": "string",
+          "description": "Filter by research focus (e.g., 'Vaccine Response', 'Infection Response', 'Immune Response', 'Transplantation', 'Autoimmune'). Client-side substring match."
+        },
+        "species": {
+          "type": "string",
+          "description": "Filter by species (e.g., 'Homo sapiens', 'Mus musculus'). Applied server-side."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of studies to return (1-100, default 10)",
+          "default": 10
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "operation": "search_studies"
+    },
+    "type": "ImmPortTool",
+    "test_examples": [
+      {"query": "influenza vaccine", "species": "Homo sapiens", "limit": 3},
+      {"query": "malaria", "assay_method": "Flow Cytometry", "limit": 3},
+      {"query": "COVID-19", "limit": 3}
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "study_accession": {"type": ["string", "null"]},
+          "title": {"type": ["string", "null"]},
+          "brief_description": {"type": ["string", "null"]},
+          "condition_or_disease": {"type": ["array", "null"]},
+          "research_focus": {"type": ["array", "null"]},
+          "species": {"type": ["array", "null"]},
+          "assay_methods": {"type": ["array", "null"]},
+          "assay_method_counts": {"type": ["array", "null"]},
+          "biosample_types": {"type": ["array", "null"]},
+          "actual_enrollment": {"type": ["integer", "null"]},
+          "age_range": {"type": ["string", "null"]},
+          "gender_included": {"type": ["string", "null"]},
+          "pubmed_ids": {"type": ["array", "null"]},
+          "doi": {"type": ["string", "null"]},
+          "program_name": {"type": ["array", "null"]},
+          "study_pi": {"type": ["array", "null"]},
+          "clinical_trial": {"type": ["string", "null"]},
+          "latest_data_release_date": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+]

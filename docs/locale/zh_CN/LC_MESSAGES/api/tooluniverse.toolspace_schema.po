@@ -7,33 +7,33 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ToolUniverse \n"
+"Project-Id-Version: ToolUniverse\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-18 17:56-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh_CN\n"
 "Language-Team: zh_CN <LL@li.org>\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: ../../api/tooluniverse.toolspace_schema.rst:2
 #: fa7b4b0d7a7a430fbaee5010805853de
 msgid "tooluniverse.toolspace\\_schema module"
-msgstr ""
+msgstr "tooluniverse.toolspace\\_schema 模块"
 
 #: 11178640f74747ceb6224fef50e609d8 of tooluniverse.toolspace_schema:1
 msgid "Space Configuration Schema and Validation"
-msgstr ""
+msgstr "空间配置架构与验证"
 
 #: 77bfe6db6e5c4ff99f11b9896be3b446 of tooluniverse.toolspace_schema:3
 msgid ""
 "This module defines the schema for Space configurations, including "
 "validation rules and data structures for both presets and workspaces."
-msgstr ""
+msgstr "此模块定义了空间配置的架构，包括预设和工作区的验证规则及数据结构。"
 
 #: 98e019c29c924b28954614ed51a003cc a8c252be3ead4cfd86b7fe4a93eefb12
 #: dc3a42e231274c5886491f245ec9d6b8 e439945003af48cfae2f8454b778d2e0 of
@@ -42,65 +42,64 @@ msgstr ""
 #: tooluniverse.toolspace_schema.ToolConfig:1
 #: tooluniverse.toolspace_schema.SpaceConfig:1
 msgid "Bases: :py:class:`object`"
-msgstr ""
+msgstr "基类：:py:class:`object`"
 
 #: 7a6da4a24d05409b844ea68fe52b5c7c of
 #: tooluniverse.toolspace_schema.ToolConfig:1
 msgid "Configuration for tools within a Space."
-msgstr ""
+msgstr "空间内工具的配置"
 
 #: f73925688f64425da5b4b38b82f4ede6 of
 #: tooluniverse.toolspace_schema.LLMConfig:1
 msgid "LLM configuration for workspaces."
-msgstr ""
+msgstr "工作区的LLM配置"
 
 #: 4580444c825c4408835e2d9d2e0380f8 of
 #: tooluniverse.toolspace_schema.HookConfig:1
 msgid "Hook configuration for workspaces."
-msgstr ""
+msgstr "工作区的钩子配置"
 
 #: cf5976791d8e42728f2a235456eab8fa of
 #: tooluniverse.toolspace_schema.SpaceConfig:1
 msgid "Main Space configuration structure."
-msgstr ""
+msgstr "主空间配置结构。"
 
 #: 48a2e2dc0ef1497a90fc2b0a5e26513b of
 #: tooluniverse.toolspace_schema.SpaceConfig.to_dict:1
 msgid "Convert to dictionary for serialization."
-msgstr ""
+msgstr "转换为字典以进行序列化。"
 
 #: acf731b666b9419abc956821be4b930b of
 #: tooluniverse.toolspace_schema.SpaceConfig.from_dict:1
 msgid "Create from dictionary."
-msgstr ""
+msgstr "从字典创建。"
 
 #: c76a5c9a0a064d29a54aef0ce0e21849 of
 #: tooluniverse.toolspace_schema.SpaceConfig.save:1
 msgid "Save configuration to file."
-msgstr ""
+msgstr "将配置保存到文件。"
 
 #: dfeba043a52247a2bc94226141afe5c6 of
 #: tooluniverse.toolspace_schema.SpaceConfig.load:1
 msgid "Load configuration from file."
-msgstr ""
+msgstr "从文件加载配置。"
 
 #: a7b6b3c126c24554acf89925b419aebf of
 #: tooluniverse.toolspace_schema.get_official_alias:1
 msgid "Get official alias mapping for a toolspace name."
-msgstr ""
+msgstr "获取工具空间名称的官方别名映射。"
 
 #: a8d91368db9c4186a3777e191d0d6b75 of
 #: tooluniverse.toolspace_schema.list_official_aliases:1
 msgid "List all available official aliases."
-msgstr ""
+msgstr "列出所有可用的官方别名。"
 
 #: a221a5cad23444488ff1838a89bd6241 of
 #: tooluniverse.toolspace_schema.create_preset_template:1
 msgid "Create a basic preset template."
-msgstr ""
+msgstr "创建一个基本预设模板。"
 
 #: 71351026a98b4da6b3cbea6602d63843 of
 #: tooluniverse.toolspace_schema.create_workspace_template:1
 msgid "Create a workspace template with full configuration options."
-msgstr ""
-
+msgstr "创建一个具有完整配置选项的工作区模板。"

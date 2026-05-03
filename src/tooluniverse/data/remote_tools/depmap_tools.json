@@ -21,8 +21,7 @@
       },
       "required": [
         "gene_a",
-        "gene_b",
-        "data_dir"
+        "gene_b"
       ]
     },
     "return_schema": {
@@ -92,6 +91,12 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/depmap_24q2.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/depmap_24q2",
       "mcp_tool_name": "compute_depmap24q2_gene_correlations"
-    }
+    },
+    "test_examples": [
+      {
+        "gene_a": "BRAF",
+        "gene_b": "MAPK1"
+      }
+    ]
   }
 ]

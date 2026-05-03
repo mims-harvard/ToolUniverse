@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_crystallization\\_ph\\_by\\_pdb\\_id 模块"
 #: 877bce0e08b6452193d1226eb9106a4a of
 #: tooluniverse.tools.get_crystallization_ph_by_pdb_id:1
 msgid "get_crystallization_ph_by_pdb_id"
-msgstr ""
+msgstr "get_crystallization_ph_by_pdb_id 获取晶体化pH值（通过PDB ID）"
 
 #: 046aaa1e3e2341108a70efa366fdf64c cedbb3a388174bfeb955df82dc97d975 of
 #: tooluniverse.tools.get_crystallization_ph_by_pdb_id:3

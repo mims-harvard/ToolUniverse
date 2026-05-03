@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_publications\\_by\\_drug\\_chembl
 #: 1f52d4d487a046ebab9a95fd09ab404a of
 #: tooluniverse.tools.OpenTargets_get_publications_by_drug_chemblId:1
 msgid "OpenTargets_get_publications_by_drug_chemblId"
-msgstr ""
+msgstr "OpenTargets_根据药物ChemblId获取文献"
 
 #: ca346d8873c74823a2223c379617a86c d8712df1cf254885a06459213c5c1a7c of
 #: tooluniverse.tools.OpenTargets_get_publications_by_drug_chemblId:3

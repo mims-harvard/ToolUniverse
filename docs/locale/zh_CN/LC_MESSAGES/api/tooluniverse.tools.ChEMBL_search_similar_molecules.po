@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ChEMBL\\_search\\_similar\\_molecules 模块"
 #: 7cead526133b4527a7ad3c8813b76cb9 of
 #: tooluniverse.tools.ChEMBL_search_similar_molecules:1
 msgid "ChEMBL_search_similar_molecules"
-msgstr ""
+msgstr "ChEMBL_搜索相似分子"
 
 #: 384f2eaba7124da1a2faa5f60873eba7 4d1e6bf76dd94b9bb401331622e35ba7 of
 #: tooluniverse.tools.ChEMBL_search_similar_molecules:3

@@ -1,0 +1,549 @@
+[
+  {
+    "name": "iNaturalist_search_taxa",
+    "description": "Search for species and taxa in the iNaturalist taxonomy. Returns matching organisms with their scientific and common names, taxonomic rank, observation count, and conservation status. iNaturalist aggregates citizen science biodiversity observations worldwide. Example: searching 'Panthera tigris' returns the tiger with 22000+ observations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query for taxon name (scientific or common). Examples: 'Panthera tigris', 'monarch butterfly', 'redwood', 'Homo sapiens', 'blue whale'."
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return (1-200, default 10)."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "search_taxa"
+    },
+    "type": "INaturalistTool",
+    "test_examples": [
+      {
+        "query": "Panthera tigris"
+      },
+      {
+        "query": "monarch butterfly",
+        "per_page": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "iNaturalist taxon ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Scientific name"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Preferred common name"
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic rank (species, genus, family, etc.)"
+                  },
+                  "observations_count": {
+                    "type": "integer",
+                    "description": "Total research-grade observations"
+                  },
+                  "is_active": {
+                    "type": "boolean",
+                    "description": "Whether taxon is currently accepted"
+                  },
+                  "conservation_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "IUCN conservation status if available"
+                  },
+                  "wikipedia_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Link to Wikipedia article"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "iNaturalist_get_taxon",
+    "description": "Get detailed taxonomy information for a species by its iNaturalist taxon ID. Returns scientific name, common names, full taxonomic lineage (kingdom through species), observation count, conservation status, and Wikipedia link. Use iNaturalist_search_taxa first to find taxon IDs. Example: taxon 41482 returns Tursiops truncatus (bottlenose dolphin) with 19000+ observations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_id": {
+          "type": "integer",
+          "description": "iNaturalist taxon ID. Examples: 41482 (bottlenose dolphin), 43584 (Homo sapiens), 41944 (Panthera tigris), 48662 (monarch butterfly), 47126 (Sequoia sempervirens)."
+        }
+      },
+      "required": [
+        "taxon_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_taxon"
+    },
+    "type": "INaturalistTool",
+    "test_examples": [
+      {
+        "taxon_id": 41482
+      },
+      {
+        "taxon_id": 43584
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "iNaturalist taxon ID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Scientific name"
+                },
+                "common_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Preferred common name"
+                },
+                "rank": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxonomic rank"
+                },
+                "observations_count": {
+                  "type": "integer",
+                  "description": "Total observations"
+                },
+                "is_active": {
+                  "type": "boolean",
+                  "description": "Currently accepted taxon"
+                },
+                "conservation_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "IUCN status"
+                },
+                "wikipedia_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Wikipedia article URL"
+                },
+                "ancestry": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "rank": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "id": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "description": "Taxonomic lineage from kingdom to species"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "iNaturalist_search_observations",
+    "description": "Search for georeferenced species observations from iNaturalist citizen scientists. Filter by taxon, location, date, and quality grade. Returns observation details including species, location, observer, date, and photo URLs. Useful for biodiversity surveys, species distribution mapping, and ecological research. Example: research-grade observations of bottlenose dolphins (taxon 41482) returns recent sightings with GPS coordinates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "iNaturalist taxon ID to filter by. Examples: 41482 (bottlenose dolphin), 41944 (tiger), 48662 (monarch butterfly)."
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Text search for species name. Alternative to taxon_id."
+        },
+        "quality_grade": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Observation quality: 'research' (community-verified), 'needs_id' (unverified), or 'casual'. Default: 'research'."
+        },
+        "place_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "iNaturalist place ID to filter by location. Example: 10211 (Yellowstone National Park)."
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results (1-200, default 10)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "search_observations"
+    },
+    "type": "INaturalistTool",
+    "test_examples": [
+      {
+        "taxon_id": 41482,
+        "quality_grade": "research",
+        "per_page": 5
+      },
+      {
+        "query": "Panthera tigris",
+        "per_page": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Observation ID"
+                  },
+                  "species_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Scientific name of observed species"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common name"
+                  },
+                  "observed_on": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Date of observation (YYYY-MM-DD)"
+                  },
+                  "place_guess": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Location description"
+                  },
+                  "latitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "GPS latitude"
+                  },
+                  "longitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "GPS longitude"
+                  },
+                  "quality_grade": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Observation quality grade"
+                  },
+                  "user": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Observer username"
+                  },
+                  "photo_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of observation photo"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_results": {
+                  "type": "integer"
+                },
+                "per_page": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "iNaturalist_get_species_counts",
+    "description": "Get species observation counts from iNaturalist for a given taxon group or location. Returns a ranked list of species by number of observations, showing which species are most frequently observed. Useful for biodiversity assessments, understanding species abundance, and identifying common species in an area. Example: species counts for Delphinidae (taxon 41479) returns bottlenose dolphin, common dolphin, etc. ranked by observations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Parent taxon ID to get species counts within. Examples: 41479 (Delphinidae - dolphins), 41944 (Panthera - big cats), 47126 (Sequoioideae - redwoods)."
+        },
+        "place_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Place ID to filter by location. Example: 10211 (Yellowstone)."
+        },
+        "quality_grade": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Quality filter: 'research', 'needs_id', or 'casual'. Default: 'research'."
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of species to return (1-500, default 20)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "species_counts"
+    },
+    "type": "INaturalistTool",
+    "test_examples": [
+      {
+        "taxon_id": 41479,
+        "quality_grade": "research",
+        "per_page": 10
+      },
+      {
+        "taxon_id": 41944,
+        "per_page": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "taxon_id": {
+                    "type": "integer",
+                    "description": "iNaturalist taxon ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Scientific name"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common name"
+                  },
+                  "rank": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic rank"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "description": "Number of observations"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_species": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

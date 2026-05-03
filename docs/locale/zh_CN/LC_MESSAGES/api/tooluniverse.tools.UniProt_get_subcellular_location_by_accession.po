@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.UniProt\\_get\\_subcellular\\_location\\_by\\_accessi
 #: 43aec24fa0f54eeca4f2b022da9166a0 of
 #: tooluniverse.tools.UniProt_get_subcellular_location_by_accession:1
 msgid "UniProt_get_subcellular_location_by_accession"
-msgstr ""
+msgstr "UniProt_通过登录号获取亚细胞定位"
 
 #: b7d0f61333b241f2b8e121e439c4f5a0 e958bb8695a940cc867545f103bacc93 of
 #: tooluniverse.tools.UniProt_get_subcellular_location_by_accession:3

@@ -14,7 +14,7 @@ def EthicalComplianceReviewer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Checks adherence to ethical standards and disclosure practices.
 
@@ -31,14 +31,18 @@ def EthicalComplianceReviewer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v for k, v in {"ethics_section": ethics_section}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "EthicalComplianceReviewer",
-            "arguments": {"ethics_section": ethics_section},
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

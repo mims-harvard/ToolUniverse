@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_biopython\\_info 模块"
 
 #: 426e6ba2e9834bc3a8b98ce9f678280a of tooluniverse.tools.get_biopython_info:1
 msgid "get_biopython_info"
-msgstr ""
+msgstr "get_biopython_info 获取Biopython信息"
 
 #: 987371caaabb419288d806008783cec1 f1419ccbcbd440de8a6195e09a75a818 of
 #: tooluniverse.tools.get_biopython_info:3

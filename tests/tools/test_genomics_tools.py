@@ -8,28 +8,32 @@ import unittest
 import sys
 import os
 import json
+from pathlib import Path
 import pytest
 
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
 
 from tooluniverse import ToolUniverse
+import tooluniverse as _tu_pkg
 
 
 @pytest.mark.network
 class TestGenomicsToolsIntegration(unittest.TestCase):
     """Test genomics tools integration with ToolUniverse."""
-    
+
     @classmethod
     def setUpClass(cls):
         """Set up test class with ToolUniverse instance."""
         cls.tu = ToolUniverse()
-        
+
         # Load original GWAS tools
         cls.tu.load_tools(tool_type=["gwas"])
-        
+
         # Load and register new genomics tools
-        config_path = '/Users/shgao/logs/25.05.28tooluniverse/ToolUniverse/src/tooluniverse/data/genomics_tools.json'
+        config_path = Path(_tu_pkg.__file__).parent / "data" / "genomics_tools.json"
+        if not config_path.exists():
+            raise unittest.SkipTest(f"genomics_tools.json not found at {config_path}")
         with open(config_path, 'r') as f:
             genomics_configs = json.load(f)
         
@@ -53,6 +57,12 @@ class TestGenomicsToolsIntegration(unittest.TestCase):
             config = next((c for c in genomics_configs if c["type"] == tool_type), None)
             if config:
                 cls.tu.register_custom_tool(tool_class, tool_config=config)
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up test class."""
+        if hasattr(cls, 'tu') and cls.tu:
+            cls.tu.close()
     
     def test_original_gwas_tools_loaded(self):
         """Test that original GWAS tools are loaded."""

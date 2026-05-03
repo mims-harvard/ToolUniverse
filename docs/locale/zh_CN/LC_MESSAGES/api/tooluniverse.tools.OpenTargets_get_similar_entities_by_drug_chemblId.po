@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.OpenTargets_get_similar_entities_by_drug_chemblId:1
 msgid "OpenTargets_get_similar_entities_by_drug_chemblId"
 msgstr ""
+"OpenTargets_get_similar_entities_by_drug_chemblId  \n"
+"获取药物ChemblId的相似实体"
 
 #: 2b959eb144b94aa69c94b8bd54b749f3 789763095c7f44f18fcf8686cf702869 of
 #: tooluniverse.tools.OpenTargets_get_similar_entities_by_drug_chemblId:3

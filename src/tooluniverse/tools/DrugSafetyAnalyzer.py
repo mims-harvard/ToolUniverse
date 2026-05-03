@@ -16,7 +16,7 @@ def DrugSafetyAnalyzer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Comprehensive drug safety analysis combining adverse event data, literature review, and molecular...
 
@@ -37,18 +37,24 @@ def DrugSafetyAnalyzer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "drug_name": drug_name,
+            "patient_sex": patient_sex,
+            "serious_events_only": serious_events_only,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DrugSafetyAnalyzer",
-            "arguments": {
-                "drug_name": drug_name,
-                "patient_sex": patient_sex,
-                "serious_events_only": serious_events_only,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

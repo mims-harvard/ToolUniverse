@@ -34020,55 +34020,6 @@
     ]
   },
   {
-    "id": "07864019-c414-4420-af6c-6f652037cc95",
-    "name": "get_hyperopt_info",
-    "description": "Retrieve detailed information about Hyperopt, a distributed hyperparameter optimization library.",
-    "detailed_description": "Get comprehensive information about Hyperopt — distributed hyperparameter optimization",
-    "toolType": "Scientific Software Package",
-    "tags": [
-      "Hardware & Infrastructure",
-      "Machine Learning",
-      "performance-analysis"
-    ],
-    "category": "PackageTool",
-    "lab": "Zitnik Lab",
-    "source": "Hyperopt",
-    "version": "v1.0.0",
-    "reviewed": true,
-    "isValidated": true,
-    "usageStats": "100+ uses",
-    "capabilities": [
-      "Retrieve Hyperopt package information",
-      "Optionally include usage examples and quick start guide"
-    ],
-    "limitations": "None for now",
-    "parameter": {
-      "include_examples": {
-        "type": "boolean",
-        "description": "Whether to include usage examples and quick start guide"
-      }
-    },
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "include_examples": {
-          "type": "boolean",
-          "description": "Whether to include usage examples and quick start guide",
-          "default": true
-        }
-      }
-    },
-    "exampleInput": {
-      "include_examples": true
-    },
-    "apiEndpoints": [
-      {
-        "method": "MCP",
-        "url": "https://tooluniversemcpserver.onrender.com/mcp/"
-      }
-    ]
-  },
-  {
     "id": "3e7c1857-8f55-4c36-8167-cd284ef96a8e",
     "name": "get_igraph_info",
     "description": "Provides detailed information on the igraph package for network analysis and visualization",

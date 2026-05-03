@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_drug\\_names\\_by\\_warnings\\_and\\_caut
 #: 56b6a0e1c281490fbcf55c944a881c2f of
 #: tooluniverse.tools.FDA_get_drug_names_by_warnings_and_cautions:1
 msgid "FDA_get_drug_names_by_warnings_and_cautions"
-msgstr ""
+msgstr "FDA_根据警告和注意事项获取药品名称"
 
 #: 53435fa30e6348bba4749c26d2154084 e0c4ed23993543f68d8523cb9ff31321 of
 #: tooluniverse.tools.FDA_get_drug_names_by_warnings_and_cautions:3

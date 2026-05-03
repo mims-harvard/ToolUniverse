@@ -1,0 +1,154 @@
+[
+  {
+    "name": "Enrichr_list_libraries",
+    "description": "List all available Enrichr gene set libraries with statistics. Enrichr has 225+ libraries covering pathways (KEGG, Reactome, WikiPathways), gene ontology (GO), transcription factors, diseases, drugs, and more. Optionally filter by keyword in library name.",
+    "type": "EnrichrExtTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "list_libraries",
+          "description": "Operation type (fixed: list_libraries)"
+        },
+        "category": {
+          "type": "string",
+          "description": "Optional keyword to filter libraries (e.g., 'GO', 'KEGG', 'Reactome', 'disease', 'drug')"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array"
+    },
+    "test_examples": [
+      {
+        "category": "KEGG"
+      },
+      {
+        "category": "GO"
+      }
+    ]
+  },
+  {
+    "name": "Enrichr_enrich",
+    "description": "Perform gene set enrichment analysis using Enrichr. Submit a list of genes and get enriched terms from a specific library. Returns ranked terms with p-values, z-scores, combined scores, and overlapping genes. No authentication required.",
+    "type": "EnrichrExtTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "enrich",
+          "description": "Operation type (fixed: enrich)"
+        },
+        "gene_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene symbols (e.g., ['TP53', 'BRCA1', 'EGFR']). Minimum 1 gene."
+        },
+        "library": {
+          "type": "string",
+          "description": "Enrichr library name (default: GO_Biological_Process_2023). Common: GO_Biological_Process_2023, KEGG_2021_Human, Reactome_2022, WikiPathways_2024_Human, MSigDB_Hallmark_2020",
+          "default": "GO_Biological_Process_2023"
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "Number of top enriched terms to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": [
+        "gene_list"
+      ]
+    },
+    "return_schema": {
+      "type": "object"
+    },
+    "test_examples": [
+      {
+        "gene_list": [
+          "TP53",
+          "BRCA1",
+          "EGFR",
+          "KRAS",
+          "MYC",
+          "BRAF",
+          "PTEN"
+        ],
+        "library": "GO_Biological_Process_2023",
+        "top_n": 5
+      },
+      {
+        "gene_list": [
+          "SOD1",
+          "SOD2",
+          "CAT",
+          "GPX1",
+          "PRDX1"
+        ],
+        "library": "KEGG_2021_Human",
+        "top_n": 5
+      }
+    ]
+  },
+  {
+    "name": "Enrichr_get_top_enriched",
+    "description": "Get top enriched terms across multiple libraries simultaneously. Submit a gene list and get the most significant pathways, processes, and functions from GO, KEGG, Reactome, and WikiPathways in one call. Ideal for quick functional annotation overview.",
+    "type": "EnrichrExtTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_top_enriched",
+          "description": "Operation type (fixed: get_top_enriched)"
+        },
+        "gene_list": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene symbols (e.g., ['TP53', 'BRCA1', 'EGFR'])"
+        },
+        "libraries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Libraries to query (default: GO_Biological_Process_2023, KEGG_2021_Human, Reactome_2022, WikiPathways_2024_Human)"
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "Number of top terms per library (default: 5)",
+          "default": 5
+        }
+      },
+      "required": [
+        "gene_list"
+      ]
+    },
+    "return_schema": {
+      "type": "object"
+    },
+    "test_examples": [
+      {
+        "gene_list": [
+          "TP53",
+          "BRCA1",
+          "EGFR",
+          "KRAS",
+          "MYC",
+          "BRAF",
+          "PTEN",
+          "RB1",
+          "APC",
+          "VHL"
+        ],
+        "top_n": 3
+      }
+    ]
+  }
+]

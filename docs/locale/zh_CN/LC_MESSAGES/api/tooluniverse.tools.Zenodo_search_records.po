@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.Zenodo\\_search\\_records 模块"
 #: 606192f674a648349309c47cbf5ffeae of
 #: tooluniverse.tools.Zenodo_search_records:1
 msgid "Zenodo_search_records"
-msgstr ""
+msgstr "Zenodo_搜索记录"
 
 #: 636483e3568445d28bbf9dd59b8fca1f 7e65f712184f4f0582f820cb2d6a3cd8 of
 #: tooluniverse.tools.Zenodo_search_records:3

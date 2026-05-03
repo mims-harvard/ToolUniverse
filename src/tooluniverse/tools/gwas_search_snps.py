@@ -1,7 +1,7 @@
 """
 gwas_search_snps
 
-Search for GWAS single nucleotide polymorphisms (SNPs) by rs ID or mapped gene.
+Search the GWAS Catalog for single nucleotide polymorphisms (SNPs) by rs ID (e.g., 'rs7903146') o...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def gwas_search_snps(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for GWAS single nucleotide polymorphisms (SNPs) by rs ID or mapped gene.
+    Search the GWAS Catalog for single nucleotide polymorphisms (SNPs) by rs ID (e.g., 'rs7903146') o...
 
     Parameters
     ----------
@@ -44,15 +44,21 @@ def gwas_search_snps(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "rs_id": rs_id,
+            "mapped_gene": mapped_gene,
+            "size": size,
+            "page": page,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "gwas_search_snps",
-            "arguments": {
-                "rs_id": rs_id,
-                "mapped_gene": mapped_gene,
-                "size": size,
-                "page": page,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

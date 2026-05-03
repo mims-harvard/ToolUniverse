@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.GO\\_get\\_annotations\\_for\\_gene 模块"
 #: 28fe3d43f1eb41359109ba63c3bba2de of
 #: tooluniverse.tools.GO_get_annotations_for_gene:1
 msgid "GO_get_annotations_for_gene"
-msgstr ""
+msgstr "GO_get_annotations_for_gene 获取基因的GO注释"
 
 #: 11c10a4045844b3fbd045571f0b19718 88bae45951cb47e28c2b67d9f5825dbf of
 #: tooluniverse.tools.GO_get_annotations_for_gene:3

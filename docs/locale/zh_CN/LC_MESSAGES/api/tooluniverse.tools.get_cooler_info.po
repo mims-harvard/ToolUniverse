@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_cooler\\_info 模块"
 
 #: 6e7f1128b04e44f6a067ee597b581439 of tooluniverse.tools.get_cooler_info:1
 msgid "get_cooler_info"
-msgstr ""
+msgstr "获取冷却器信息"
 
 #: d217edcd803f4e339548991e01b7b3ad f6bad4c51b8c430eaacae87a96f70d0b of
 #: tooluniverse.tools.get_cooler_info:3

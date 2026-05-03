@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_get\\_disease\\_locations\\_by\\_efoId 
 #: 839f8657563c4e899d11dfd1a421bf1e of
 #: tooluniverse.tools.OpenTargets_get_disease_locations_by_efoId:1
 msgid "OpenTargets_get_disease_locations_by_efoId"
-msgstr ""
+msgstr "OpenTargets_根据EFO ID获取疾病位置"
 
 #: 1f3d4e87e24f4bfa900a7714f86b61e0 ddaa6d69037e40ed976871571ccbbccd of
 #: tooluniverse.tools.OpenTargets_get_disease_locations_by_efoId:3

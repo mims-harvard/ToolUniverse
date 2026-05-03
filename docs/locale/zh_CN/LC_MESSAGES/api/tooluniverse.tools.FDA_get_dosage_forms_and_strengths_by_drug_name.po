@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_dosage\\_forms\\_and\\_strengths\\_by\\_d
 #: 21756e1cb62148ada5fe6b199c859977 of
 #: tooluniverse.tools.FDA_get_dosage_forms_and_strengths_by_drug_name:1
 msgid "FDA_get_dosage_forms_and_strengths_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取剂型和规格"
 
 #: 897ff242497e4e62b516b69b76884cee e71500bcc6be45aa96b69879fa5cd2d1 of
 #: tooluniverse.tools.FDA_get_dosage_forms_and_strengths_by_drug_name:3

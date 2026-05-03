@@ -32,7 +32,7 @@ msgstr ""
 #: 0f57017da7c24fec987a727617c1bd33 of
 #: tooluniverse.tools.FDA_get_dear_health_care_provider_letter_info_by_drug_name:1
 msgid "FDA_get_dear_health_care_provider_letter_info_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取致医疗保健提供者信函信息"
 
 #: 1102329a275f4ae7931c2752b408e709 1490cfa660214a788c92adf7352b53ce of
 #: tooluniverse.tools.FDA_get_dear_health_care_provider_letter_info_by_drug_name:3

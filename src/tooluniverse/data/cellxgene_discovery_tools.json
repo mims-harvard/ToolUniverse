@@ -1,0 +1,242 @@
+[
+    {
+        "name": "CxGDisc_list_collections",
+        "description": "List curated single-cell RNA-seq collections from CZI CellxGene Discovery. Each collection is a published dataset group with DOI, typically corresponding to a paper. The platform hosts 350+ public collections spanning diverse tissues, diseases, and organisms with cell-type annotations. Returns collection name, DOI, dataset count, total cell count, and curator info.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of collections to return (1-100). Default: 20."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "list_collections"
+        },
+        "type": "CellxGeneDiscoveryTool",
+        "test_examples": [
+            {
+                "limit": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total_collections": {
+                                    "type": "integer",
+                                    "description": "Total number of public collections"
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number returned in this response"
+                                },
+                                "collections": {
+                                    "type": "array",
+                                    "description": "Collection summaries with name, DOI, dataset count, cell count",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "collection_id": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "doi": {"type": ["string", "null"]},
+                                            "dataset_count": {"type": "integer"},
+                                            "total_cells": {"type": "integer"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "CxGDisc_get_collection",
+        "description": "Get detailed information about a specific CellxGene Discovery collection, including all datasets with tissue, disease, organism, cell type, and assay details. Example: collection '48259aa8-f168-4bf5-b797-af8e88da6637' is the Human Breast Cell Atlas with 5 datasets (stroma, epithelial, integrated) totaling 2.8M cells. Each dataset includes cell count, tissue labels, disease status, and available assay types.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "collection_id": {
+                    "type": "string",
+                    "description": "Collection UUID from CellxGene Discovery (e.g., '48259aa8-f168-4bf5-b797-af8e88da6637' for Human Breast Cell Atlas)."
+                }
+            },
+            "required": ["collection_id"]
+        },
+        "fields": {
+            "endpoint": "get_collection"
+        },
+        "type": "CellxGeneDiscoveryTool",
+        "test_examples": [
+            {
+                "collection_id": "48259aa8-f168-4bf5-b797-af8e88da6637"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "collection_id": {"type": "string"},
+                                "name": {"type": "string"},
+                                "description": {"type": ["string", "null"]},
+                                "doi": {"type": ["string", "null"]},
+                                "dataset_count": {"type": "integer"},
+                                "datasets": {
+                                    "type": "array",
+                                    "description": "Datasets with cell count, tissues, diseases, organisms, cell types",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "dataset_id": {"type": "string"},
+                                            "name": {"type": ["string", "null"]},
+                                            "cell_count": {"type": "integer"},
+                                            "tissues": {"type": "array", "items": {"type": "string"}},
+                                            "diseases": {"type": "array", "items": {"type": "string"}},
+                                            "organisms": {"type": "array", "items": {"type": "string"}},
+                                            "cell_types": {"type": "array", "items": {"type": "string"}},
+                                            "assays": {"type": "array", "items": {"type": "string"}}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "CxGDisc_search_datasets",
+        "description": "Search CellxGene Discovery single-cell RNA-seq datasets by tissue, disease, organism, or cell type. The platform hosts 2,000+ datasets with detailed cell-type annotations. Supports flexible text-based filtering: 'lung' returns 134 lung datasets, 'brain' returns 144, 'T cell' returns 667, 'cancer' returns 193. Results sorted by cell count (largest first).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "tissue": {
+                    "type": "string",
+                    "description": "Filter by tissue name (e.g., 'lung', 'brain', 'heart', 'kidney', 'liver'). Case-insensitive partial match."
+                },
+                "disease": {
+                    "type": "string",
+                    "description": "Filter by disease (e.g., 'cancer', 'COVID', 'Alzheimer', 'normal'). Case-insensitive partial match."
+                },
+                "organism": {
+                    "type": "string",
+                    "description": "Filter by organism (e.g., 'Homo sapiens', 'Mus musculus'). Case-insensitive partial match."
+                },
+                "cell_type": {
+                    "type": "string",
+                    "description": "Filter by cell type (e.g., 'T cell', 'neuron', 'macrophage', 'epithelial'). Case-insensitive partial match."
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum datasets to return (1-100). Default: 20."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "search_datasets"
+        },
+        "type": "CellxGeneDiscoveryTool",
+        "test_examples": [
+            {
+                "tissue": "lung",
+                "organism": "Homo sapiens",
+                "limit": 5
+            },
+            {
+                "disease": "cancer",
+                "limit": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "total_matching": {
+                                    "type": "integer",
+                                    "description": "Total datasets matching filters"
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number returned in this response"
+                                },
+                                "datasets": {
+                                    "type": "array",
+                                    "description": "Matching datasets sorted by cell count",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "dataset_id": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "cell_count": {"type": "integer"},
+                                            "tissues": {"type": "array", "items": {"type": "string"}},
+                                            "diseases": {"type": "array", "items": {"type": "string"}},
+                                            "organisms": {"type": "array", "items": {"type": "string"}},
+                                            "explorer_url": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

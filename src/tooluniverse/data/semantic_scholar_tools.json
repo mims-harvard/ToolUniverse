@@ -2,7 +2,10 @@
   {
     "type": "SemanticScholarTool",
     "name": "SemanticScholar_search_papers",
-    "description": "Search for papers on Semantic Scholar including abstracts. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, publication year, journal (venue), and URL.",
+    "description": "Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, TLDR summary, fields of study, publication year, journal (venue), and URL. Rate limits: 1 req/sec without API key, 100 req/sec with SEMANTIC_SCHOLAR_API_KEY environment variable set.",
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ],
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,44 +18,269 @@
           "description": "Maximum number of papers to return from Semantic Scholar.",
           "default": 5
         },
-        "api_key": {
+        "year": {
           "type": "string",
-          "description": "Optional API key for Semantic Scholar to obtain a higher quota."
+          "description": "Filter results by publication year. Use a single year (e.g., '2024') or a range (e.g., '2020-2024')."
+        },
+        "sort": {
+          "type": "string",
+          "description": "Sort results. Options: 'citationCount:desc', 'citationCount:asc', 'publicationDate:desc', 'publicationDate:asc'."
+        },
+        "include_abstract": {
+          "type": "boolean",
+          "description": "If true, best-effort fetches missing abstracts via the paper detail endpoint (only when abstract is missing in search results).",
+          "default": false
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of papers from Semantic Scholar matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the paper"
-          },
-          "abstract": {
-            "type": "string",
-            "description": "Abstract of the paper"
-          },
-          "journal": {
-            "type": "string",
-            "description": "Journal or venue name"
-          },
-          "year": {
-            "type": "integer",
-            "description": "Publication year"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the paper on Semantic Scholar"
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of papers from Semantic Scholar matching the search query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the paper"
+              },
+              "abstract": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Abstract of the paper"
+              },
+              "tldr": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "AI-generated one-sentence TLDR summary of the paper"
+              },
+              "journal": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Journal or venue name"
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Publication year"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL to the paper on Semantic Scholar"
+              },
+              "paper_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Semantic Scholar paperId"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI (if available in externalIds)"
+              },
+              "doi_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI resolver URL"
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of author names"
+              },
+              "fields_of_study": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Fields of study (e.g., Biology, Medicine, Computer Science)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "citation_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Citation count (if provided)"
+              },
+              "reference_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reference count (if provided)"
+              },
+              "open_access": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Open access flag (if provided)"
+              },
+              "open_access_pdf_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Open access PDF URL (if provided)"
+              }
+            }
+          }
+        },
+        {
+          "type": "array",
+          "description": "Error response (single-element array with error details)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Always \"Error\" for error responses"
+              },
+              "error": {
+                "type": "string",
+                "description": "Error message"
+              },
+              "retryable": {
+                "type": "boolean",
+                "description": "Whether the request can be retried"
+              },
+              "suggestion": {
+                "type": "string",
+                "description": "Suggested next step"
+              }
+            },
+            "required": [
+              "error"
+            ]
           }
         }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "limit": 1
       }
-    }
+    ]
+  },
+  {
+    "type": "SemanticScholarPDFSnippetsTool",
+    "name": "SemanticScholar_get_pdf_snippets",
+    "description": "Fetch a paper's open-access PDF from Semantic Scholar and return bounded text snippets around provided terms. Uses markitdown to convert PDF to markdown. Useful when key details (methods, experimental parameters) are in the full text rather than abstract.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "paper_id": {
+          "type": "string",
+          "description": "Semantic Scholar paper ID (e.g., from SemanticScholar_search_papers). The tool will fetch the PDF URL if available."
+        },
+        "open_access_pdf_url": {
+          "type": "string",
+          "description": "Direct open access PDF URL (recommended when you already have it from SemanticScholar_search_papers)."
+        },
+        "terms": {
+          "type": "array",
+          "description": "Terms to search for in the extracted full text (case-insensitive).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "window_chars": {
+          "type": "integer",
+          "description": "Context window size (characters) before and after each match.",
+          "default": 220,
+          "minimum": 20,
+          "maximum": 2000
+        },
+        "max_snippets_per_term": {
+          "type": "integer",
+          "description": "Maximum number of snippets returned per term.",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "max_total_chars": {
+          "type": "integer",
+          "description": "Hard cap on total characters returned across all snippets.",
+          "default": 8000,
+          "minimum": 1000,
+          "maximum": 50000
+        }
+      },
+      "required": [
+        "terms"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "success or error"
+        },
+        "pdf_url": {
+          "type": "string",
+          "description": "The PDF URL that was processed"
+        },
+        "snippets": {
+          "type": "array",
+          "description": "Extracted text snippets",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": {
+                "type": "string",
+                "description": "The search term that was matched"
+              },
+              "snippet": {
+                "type": "string",
+                "description": "Text snippet with context around the matched term"
+              }
+            }
+          }
+        },
+        "snippets_count": {
+          "type": "integer",
+          "description": "Number of snippets extracted"
+        },
+        "truncated": {
+          "type": "boolean",
+          "description": "Whether output was truncated due to max_total_chars limit"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message (only present if status is error)"
+        }
+      }
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
   }
 ]

@@ -164,7 +164,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Analgesic",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 10
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -331,7 +339,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "cancer",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 50
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -500,7 +516,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "cancer",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 50
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -667,11 +691,22 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "D012345",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 50
+      }
+    ]
   },
   {
     "type": "XMLTool",
-    "name": "drugbank_get_drug_basic_info_by_drug_name_or_drugbank_id",
+    "name": "drugbank_get_drug_basic_info_by_drug_name_or_id",
+    "aliases": [
+      "drugbank_get_drug_basic_info_by_drug_name_or_drugbank_id"
+    ],
     "description": "Get basic drug information including name, description, CAS number, and approval status by drug name or DrugBank ID.",
     "settings": {
       "hf_dataset_path": {
@@ -849,7 +884,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -1025,7 +1068,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -1165,7 +1216,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "hypertension",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -1347,11 +1406,22 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
-    "name": "drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action",
+    "name": "drugbank_get_drug_desc_pharmacology_by_moa",
+    "aliases": [
+      "drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action"
+    ],
     "description": "Get drug name, ID, description, pharmacodynamics, mechanism of action, and pharmacokinetics by drug mechanism of action.",
     "settings": {
       "hf_dataset_path": {
@@ -1527,11 +1597,22 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 1
+      }
+    ]
   },
   {
     "type": "XMLTool",
-    "name": "drugbank_get_drug_interactions_by_drug_name_or_drugbank_id",
+    "name": "drugbank_get_drug_interactions_by_drug_name_or_id",
+    "aliases": [
+      "drugbank_get_drug_interactions_by_drug_name_or_drugbank_id"
+    ],
     "description": "Get drug interactions and contraindications by drug name or DrugBank ID.",
     "settings": {
       "hf_dataset_path": {
@@ -1692,7 +1773,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -1965,7 +2054,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -2123,7 +2220,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "EGFR",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -2358,7 +2463,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -2510,7 +2623,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Aspirin",
+        "case_sensitive": false,
+        "exact_match": true,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -2712,11 +2833,22 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
-    "name": "drugbank_get_drug_references_by_drug_name_or_drugbank_id",
+    "name": "drugbank_get_drug_references_by_drug_name_or_id",
+    "aliases": [
+      "drugbank_get_drug_references_by_drug_name_or_drugbank_id"
+    ],
     "description": "Get drug literature references, patents, and external links by drug name or DrugBank ID.",
     "settings": {
       "hf_dataset_path": {
@@ -2917,11 +3049,22 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "aspirin",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
-    "name": "drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id",
+    "name": "drugbank_get_pathways_reactions_by_drug_or_id",
+    "aliases": [
+      "drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id"
+    ],
     "description": "Get drug pathways and metabolic reactions by drug name or DrugBank ID.",
     "settings": {
       "hf_dataset_path": {
@@ -3112,7 +3255,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 1
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -3300,7 +3451,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "query": "Glycolysis",
+        "case_sensitive": false,
+        "exact_match": false,
+        "limit": 5
+      }
+    ]
   },
   {
     "type": "XMLTool",
@@ -3431,6 +3590,13 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "condition": "ends_with",
+        "value": "cillin",
+        "limit": 10
+      }
+    ]
   }
 ]

@@ -9,7 +9,7 @@ What are Remote Tools?
 Remote tools are Python classes decorated with `@register_mcp_tool` that run on separate servers and are accessed via MCP (Model Context Protocol). They provide:
 
 - **Scalability**: Offload heavy computation to dedicated servers
-- **Integration**: Connect with existing systems and services  
+- **Integration**: Connect with existing systems and services 
 - **Flexibility**: Use tools in different programming languages
 - **Isolation**: Keep sensitive operations separate
 - **Auto-Discovery**: Automatic loading via configuration files
@@ -118,11 +118,14 @@ Create a configuration file to automatically load your remote tool:
 .. code-block:: python
 
    # Direct tool access (if tool is loaded)
-   result = tu.tools.remote_text_processor(
-       text="Hello World",
-       operation="uppercase"
-   )
-   print(result)
+   try:
+       result = tu.tools.remote_text_processor(
+           text="Hello World",
+           operation="uppercase"
+       )
+       print(result)
+   except AttributeError:
+       print("remote_text_processor not loaded — configure remote_tools_config.json first")
 
 **Load the configuration in ToolUniverse:**
 
@@ -321,10 +324,10 @@ python use_remote_tool.py     # In another terminal
 Next Steps
 ----------
 
-* 🔧 **MCP Integration**: :doc:`mcp_integration` - Detailed MCP integration guide
-* 🏠 **Local Tools**: :doc:`../local_tools/tutorial` - Learn about local tool development
-* 🚀 **Contributing**: :doc:`../contributing/remote_tools` - Submit remote tools to ToolUniverse
-* 🔍 **Architecture**: :doc:`../reference/architecture` - Understand ToolUniverse internals
+* **MCP Integration**: :doc:`mcp_integration` - Detailed MCP integration guide
+* **Local Tools**: :doc:`../local_tools/local_tools_tutorial` - Learn about local tool development
+* **Contributing**: :doc:`../contributing/remote_tools` - Submit remote tools to ToolUniverse
+* **Architecture**: :doc:`../reference/architecture` - Understand ToolUniverse internals
 
 .. tip::
-   **Integration tip**: Start with simple MCP servers and gradually add complexity. The ToolUniverse ecosystem supports over 600 tools including machine learning models, datasets, and APIs!
+   **Integration tip**: Start with simple MCP servers and gradually add complexity. The ToolUniverse ecosystem supports over 1000 tools including machine learning models, datasets, and APIs!

@@ -32,7 +32,7 @@ msgstr ""
 #: df38458ad16f468794954a952f5aae4f of
 #: tooluniverse.tools.drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id:1
 msgid "drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id"
-msgstr ""
+msgstr "drugbank_通过药物名称或DrugBank ID获取药物通路及反应"
 
 #: 6873899e2064436aba8e2c51e603380e e29e686313d248e0aab56f4adbdb93af of
 #: tooluniverse.tools.drugbank_get_drug_pathways_and_reactions_by_drug_name_or_drugbank_id:3

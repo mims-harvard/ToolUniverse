@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ADMETAI\\_predict\\_bioavailability 模块"
 #: 3d9e464ee60e4c778f8561eb7cee0236 of
 #: tooluniverse.tools.ADMETAI_predict_bioavailability:1
 msgid "ADMETAI_predict_bioavailability"
-msgstr ""
+msgstr "ADMETAI_预测生物利用度"
 
 #: 34ecd08468314c1d83b1ee92e334bd76 37125f2666284793a79d478b76945ef3 of
 #: tooluniverse.tools.ADMETAI_predict_bioavailability:3

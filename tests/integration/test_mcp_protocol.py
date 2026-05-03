@@ -31,6 +31,8 @@ class TestMCPProtocol:
         self.tu.load_tools()
         self.server = None
         self.client = None
+        yield
+        self.tu.close()
 
     def test_smcp_server_initialization(self):
         """Test SMCP server can be initialized with tools"""

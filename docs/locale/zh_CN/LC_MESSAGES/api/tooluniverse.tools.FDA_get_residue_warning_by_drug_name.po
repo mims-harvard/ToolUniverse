@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_residue\\_warning\\_by\\_drug\\_name 模�
 #: b8beecc7921b4dce8d59b0e24490f1ef of
 #: tooluniverse.tools.FDA_get_residue_warning_by_drug_name:1
 msgid "FDA_get_residue_warning_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取残留警告"
 
 #: 6ca54c443e124a6cb49d1593b9e5b4d1 f242889e29a2494b970c568c4db303d4 of
 #: tooluniverse.tools.FDA_get_residue_warning_by_drug_name:3

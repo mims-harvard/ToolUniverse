@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.ADMETAI\\_predict\\_toxicity 模块"
 #: 02b545eb11d8467ca8b11eaa66e97a9c of
 #: tooluniverse.tools.ADMETAI_predict_toxicity:1
 msgid "ADMETAI_predict_toxicity"
-msgstr ""
+msgstr "ADMETAI_预测毒性"
 
 #: bc59112ca2eb40d2a5c1b1c65171523e f4529fea257e4398bc2687f2515aa0c8 of
 #: tooluniverse.tools.ADMETAI_predict_toxicity:3

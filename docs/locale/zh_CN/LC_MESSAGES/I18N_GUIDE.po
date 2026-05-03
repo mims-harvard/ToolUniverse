@@ -46,11 +46,11 @@ msgstr "这将自动完成："
 
 #: ../../I18N_GUIDE.md:17 8f4fbcff132e43388e84274cbd8f309a
 msgid "生成英文文档"
-msgstr ""
+msgstr "Generate English Documentation"
 
 #: ../../I18N_GUIDE.md:18 9fb3b827cc9b4f968ecf42964d207a70
 msgid "生成中文文档（基于翻译）"
-msgstr ""
+msgstr "Generate Chinese documentation (based on translation)"
 
 #: ../../I18N_GUIDE.md:19 2b5314e29cca43a1a06d9c403f6c1cec
 msgid "创建语言切换器页面"
@@ -162,7 +162,7 @@ msgstr "Vim：`:%s/msgstr \"\"/msgstr \"翻译\"/g`"
 
 #: ../../I18N_GUIDE.md:146 454191c990554ac8bc2de9943b056bb4
 msgid "2. 保持格式"
-msgstr ""
+msgstr "2. Maintain Formatting"
 
 #: ../../I18N_GUIDE.md:148 48b43dbcba8e4bb0b8560b6ac6193ddd
 msgid "翻译时保持："
@@ -237,7 +237,7 @@ msgstr "未翻译的内容将显示英文原文。"
 
 #: ../../I18N_GUIDE.md:172 db861170e68744799e1542ace2978741
 msgid "🔧 配置详解"
-msgstr ""
+msgstr "🔧 Configuration Details"
 
 #: ../../I18N_GUIDE.md:174 d2454da3881746d58e05a855dec42a73
 msgid "conf.py 国际化配置"
@@ -249,11 +249,11 @@ msgstr ""
 
 #: ../../I18N_GUIDE.md:196 8a1bdeafea6b47668a37a1de888eee14
 msgid "GitHub Pages"
-msgstr ""
+msgstr "GitHub 页面"
 
 #: ../../I18N_GUIDE.md:212 0690a14ef8214f968770c6d5e1314abf
 msgid "自定义域名语言路径"
-msgstr ""
+msgstr "Custom Domain Language Path"
 
 #: ../../I18N_GUIDE.md:214 ea1bcdbb9b7c40f6b14cdfb16069afd5
 msgid "英文: `https://yourdomain.com/`"
@@ -265,7 +265,7 @@ msgstr ""
 
 #: ../../I18N_GUIDE.md:217 5f19142c6d794d1a830be4365a472fbf
 msgid "📚 参考资源"
-msgstr ""
+msgstr "📚 参考资料"
 
 #: ../../I18N_GUIDE.md:219 2cda0ad6b8cb46d0979a5a578a31572a
 msgid ""
@@ -319,7 +319,7 @@ msgstr "Q: Can I add other languages?"
 
 #: ../../I18N_GUIDE.md:244 51ce48f1cc3c4442b36744e81dbc5fc6
 msgid "A:可以！修改 conf.py："
-msgstr ""
+msgstr "A: 可以！修改 conf.py："
 
 #: ../../I18N_GUIDE.md:253 5f4b4e24dc034c34b1a77b747deea1c3
 msgid "然后运行："

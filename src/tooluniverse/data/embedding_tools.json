@@ -2,18 +2,17 @@
   {
     "type": "EmbeddingDatabase",
     "name": "embedding_database_create",
-    "description": "Create a new embedding database from a collection of documents. Generates embeddings using OpenAI or Azure OpenAI models and stores them in a searchable database with FAISS vector index and SQLite metadata storage.",
+    "description": "Create a per-collection datastore: <name>.db (SQLite) + <name>.faiss (FAISS). Embeds documents using the chosen provider (openai/azure/huggingface/local). Vectors are L2-normalized; FAISS index uses IndexFlatIP (cosine).",
     "parameter": {
       "type": "object",
       "properties": {
         "action": {
           "type": "string",
-          "const": "create_from_docs",
-          "description": "Action to create database from documents"
+          "const": "create_from_docs"
         },
         "database_name": {
           "type": "string",
-          "description": "Name for the new database (must be unique)"
+          "description": "Collection/database name (produces <name>.db and <name>.faiss)"
         },
         "documents": {
           "type": "array",
@@ -26,77 +25,80 @@
         },
         "metadata": {
           "type": "array",
-          "description": "Optional metadata for each document (same length as documents)",
+          "description": "Optional metadata for each document (must match length of documents if provided)",
           "items": {
             "type": "object"
           },
           "default": []
         },
+        "provider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "azure",
+            "huggingface",
+            "local"
+          ],
+          "description": "Embedding backend. Defaults: EMBED_PROVIDER, else by available creds (azure>openai>huggingface>local)."
+        },
         "model": {
           "type": "string",
-          "description": "OpenAI/Azure OpenAI embedding model to use",
-          "enum": [
-            "text-embedding-3-small",
-            "text-embedding-3-large",
-            "text-embedding-ada-002"
-          ],
-          "default": "text-embedding-3-small"
+          "description": "Embedding model/deployment id. Defaults: EMBED_MODEL, else provider-specific sensible default."
         },
         "description": {
           "type": "string",
-          "description": "Optional description for the database",
+          "description": "Optional human-readable description for the collection",
           "default": ""
         }
       },
       "required": [
-        "action",
         "database_name",
-        "documents",
-        "metadata",
-        "model",
-        "description"
+        "documents"
       ]
     },
     "required_api_keys": [],
     "optional_api_keys": [
       "OPENAI_API_KEY",
-      "AZURE_OPENAI_API_KEY"
+      "AZURE_OPENAI_API_KEY",
+      "HF_TOKEN"
     ],
     "configs": {
-      "openai_config": {
-        "api_key": "${OPENAI_API_KEY}",
-        "base_url": "${OPENAI_BASE_URL:https://api.openai.com/v1}",
-        "timeout": 60,
-        "max_retries": 3
-      },
-      "azure_openai_config": {
-        "api_key": "${AZURE_OPENAI_API_KEY}",
-        "azure_endpoint": "${AZURE_OPENAI_ENDPOINT}",
-        "api_version": "${AZURE_OPENAI_API_VERSION:2024-02-01}",
-        "timeout": 120,
-        "max_retries": 5
-      },
       "storage_config": {
         "data_dir": "./data/embeddings",
         "faiss_index_type": "IndexFlatIP"
       }
+    },
+    "test_examples": [
+      {
+        "action": "create_from_docs",
+        "database_name": "biomedical_tools",
+        "documents": ["Sample document for testing embeddings"],
+        "metadata": [],
+        "provider": "openai",
+        "model": "all-MiniLM-L6-v2",
+        "description": "Find tools for analyzing gene expression data"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
     "type": "EmbeddingDatabase",
     "name": "embedding_database_add",
-    "description": "Add new documents to an existing embedding database. Generates embeddings for new documents using the same model as the original database and appends them to the existing FAISS index.",
+    "description": "Append documents to an existing per-collection datastore (<name>.db + <name>.faiss). Uses the same L2-normalized cosine setup. Enforces model/dimension consistency with the collection.",
     "parameter": {
       "type": "object",
       "properties": {
         "action": {
           "type": "string",
-          "const": "add_docs",
-          "description": "Action to add documents to existing database"
+          "const": "add_docs"
         },
         "database_name": {
           "type": "string",
-          "description": "Name of the existing database to add documents to"
+          "description": "Existing collection/database name"
         },
         "documents": {
           "type": "array",
@@ -109,64 +111,78 @@
         },
         "metadata": {
           "type": "array",
-          "description": "Optional metadata for each new document (same length as documents)",
+          "description": "Optional metadata per document (must match length of documents if provided)",
           "items": {
             "type": "object"
           },
           "default": []
+        },
+        "provider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "azure",
+            "huggingface",
+            "local"
+          ],
+          "description": "Embedding backend override. If omitted, falls back to collection/env."
+        },
+        "model": {
+          "type": "string",
+          "description": "Embedding model/deployment id override. If omitted, uses collection model or env default."
         }
       },
       "required": [
-        "action",
         "database_name",
-        "documents",
-        "metadata"
+        "documents"
       ]
     },
     "required_api_keys": [],
     "optional_api_keys": [
       "OPENAI_API_KEY",
-      "AZURE_OPENAI_API_KEY"
+      "AZURE_OPENAI_API_KEY",
+      "HF_TOKEN"
     ],
     "configs": {
-      "openai_config": {
-        "api_key": "${OPENAI_API_KEY}",
-        "base_url": "${OPENAI_BASE_URL:https://api.openai.com/v1}",
-        "timeout": 60,
-        "max_retries": 3
-      },
-      "azure_openai_config": {
-        "api_key": "${AZURE_OPENAI_API_KEY}",
-        "azure_endpoint": "${AZURE_OPENAI_ENDPOINT}",
-        "api_version": "${AZURE_OPENAI_API_VERSION:2024-02-01}",
-        "timeout": 120,
-        "max_retries": 5
-      },
       "storage_config": {
         "data_dir": "./data/embeddings",
         "faiss_index_type": "IndexFlatIP"
       }
+    },
+    "test_examples": [
+      {
+        "action": "add_docs",
+        "database_name": "biomedical_tools",
+        "documents": ["Sample document to add"],
+        "metadata": [],
+        "provider": "openai",
+        "model": "all-MiniLM-L6-v2"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
     "type": "EmbeddingDatabase",
     "name": "embedding_database_search",
-    "description": "Search for semantically similar documents in an embedding database. Uses OpenAI embeddings to convert query text to vectors and performs similarity search using FAISS with optional metadata filtering.",
+    "description": "Semantic search over a per-collection datastore using FAISS (cosine via L2-normalized vectors). Supports optional metadata filtering.",
     "parameter": {
       "type": "object",
       "properties": {
         "action": {
           "type": "string",
-          "const": "search",
-          "description": "Action to search the database"
+          "const": "search"
         },
         "database_name": {
           "type": "string",
-          "description": "Name of the database to search in"
+          "description": "Collection/database name to search"
         },
         "query": {
           "type": "string",
-          "description": "Query text to find similar documents for"
+          "description": "Query text to embed and search with"
         },
         "top_k": {
           "type": "integer",
@@ -177,145 +193,97 @@
         },
         "filters": {
           "type": "object",
-          "description": "Optional metadata filters to apply to search results",
+          "description": "Optional metadata filters ('$gte', '$lte', '$in', '$contains', exact match)",
           "additionalProperties": true,
           "default": {}
+        },
+        "provider": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "azure",
+            "huggingface",
+            "local"
+          ],
+          "description": "Embedding backend for the query vector. Defaults to collection/env."
+        },
+        "model": {
+          "type": "string",
+          "description": "Embedding model/deployment id for the query vector. Defaults to collection/env."
         }
       },
       "required": [
-        "action",
         "database_name",
-        "query",
-        "top_k",
-        "filters"
+        "query"
       ]
     },
     "required_api_keys": [],
     "optional_api_keys": [
       "OPENAI_API_KEY",
-      "AZURE_OPENAI_API_KEY"
+      "AZURE_OPENAI_API_KEY",
+      "HF_TOKEN"
     ],
     "configs": {
-      "openai_config": {
-        "api_key": "${OPENAI_API_KEY}",
-        "base_url": "${OPENAI_BASE_URL:https://api.openai.com/v1}",
-        "timeout": 60,
-        "max_retries": 3
-      },
-      "azure_openai_config": {
-        "api_key": "${AZURE_OPENAI_API_KEY}",
-        "azure_endpoint": "${AZURE_OPENAI_ENDPOINT}",
-        "api_version": "${AZURE_OPENAI_API_VERSION:2024-02-01}",
-        "timeout": 120,
-        "max_retries": 5
-      },
       "storage_config": {
         "data_dir": "./data/embeddings",
         "faiss_index_type": "IndexFlatIP"
       }
-    }
-  },
-  {
-    "type": "EmbeddingDatabase",
-    "name": "embedding_database_load",
-    "description": "Load an existing embedding database from a local path or external source. Allows importing databases created elsewhere or backed up databases into the current ToolUniverse instance.",
-    "parameter": {
+    },
+    "test_examples": [
+      {
+        "action": "search",
+        "database_name": "biomedical_tools",
+        "query": "machine learning optimization",
+        "top_k": 5,
+        "filters": {},
+        "provider": "openai",
+        "model": "all-MiniLM-L6-v2"
+      }
+    ],
+    "return_schema": {
       "type": "object",
-      "properties": {
-        "action": {
-          "type": "string",
-          "const": "load_database",
-          "description": "Action to load database from external source"
-        },
-        "database_path": {
-          "type": "string",
-          "description": "Path to the existing database directory or file"
-        },
-        "database_name": {
-          "type": "string",
-          "description": "Local name to assign to the loaded database"
-        },
-        "overwrite": {
-          "type": "boolean",
-          "description": "Whether to overwrite existing database with same name",
-          "default": false
-        }
-      },
-      "required": [
-        "action",
-        "database_path",
-        "database_name",
-        "overwrite"
-      ]
-    },
-    "required_api_keys": [],
-    "optional_api_keys": [
-      "OPENAI_API_KEY",
-      "AZURE_OPENAI_API_KEY"
-    ],
-    "configs": {
-      "openai_config": {
-        "api_key": "${OPENAI_API_KEY}",
-        "base_url": "${OPENAI_BASE_URL:https://api.openai.com/v1}",
-        "timeout": 60,
-        "max_retries": 3
-      },
-      "azure_openai_config": {
-        "api_key": "${AZURE_OPENAI_API_KEY}",
-        "azure_endpoint": "${AZURE_OPENAI_ENDPOINT}",
-        "api_version": "${AZURE_OPENAI_API_VERSION:2024-02-01}",
-        "timeout": 120,
-        "max_retries": 5
-      },
-      "storage_config": {
-        "data_dir": "./data/embeddings",
-        "faiss_index_type": "IndexFlatIP"
-      }
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
     "type": "EmbeddingSync",
     "name": "embedding_sync_upload",
-    "description": "Upload a local embedding database to HuggingFace Hub for sharing and collaboration. Creates a dataset repository with the database files and metadata.",
+    "description": "Upload a per-collection datastore to Hugging Face Hub: <name>.db and <name>.faiss, plus metadata files.",
     "parameter": {
       "type": "object",
       "properties": {
         "action": {
           "type": "string",
-          "const": "upload",
-          "description": "Action to upload database to HuggingFace"
+          "const": "upload"
         },
         "database_name": {
           "type": "string",
-          "description": "Name of the local database to upload"
+          "description": "Collection/database name to upload (expects <name>.db and <name>.faiss under data_dir)"
         },
         "repository": {
           "type": "string",
-          "description": "HuggingFace repository name (format: username/repo-name)"
+          "description": "HF dataset repo (e.g., 'user/repo')"
         },
         "description": {
           "type": "string",
-          "description": "Description for the HuggingFace dataset",
+          "description": "Optional dataset description in the HF README",
           "default": ""
         },
         "private": {
           "type": "boolean",
-          "description": "Whether to create a private repository",
+          "description": "Create/use a private HF repo",
           "default": false
         },
         "commit_message": {
           "type": "string",
           "description": "Commit message for the upload",
-          "default": "Upload embedding database"
+          "default": "Upload datastore"
         }
       },
       "required": [
-        "action",
         "database_name",
-        "repository",
-        "description",
-        "private",
-        "commit_message"
+        "repository"
       ]
     },
     "required_api_keys": [
@@ -330,39 +298,50 @@
         "data_dir": "./data/embeddings",
         "export_dir": "./exports"
       }
+    },
+    "test_examples": [
+      {
+        "action": "upload",
+        "database_name": "biomedical_tools",
+        "repository": "username/biomedical-embeddings",
+        "description": "Find tools for analyzing gene expression data",
+        "private": false,
+        "commit_message": "Update embeddings"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   },
   {
     "type": "EmbeddingSync",
     "name": "embedding_sync_download",
-    "description": "Download an embedding database from HuggingFace Hub to local storage. Allows accessing databases shared by others or your own backups.",
+    "description": "Download a per-collection datastore from Hugging Face Hub into ./data/embeddings as <name>.db and <name>.faiss.",
     "parameter": {
       "type": "object",
       "properties": {
         "action": {
           "type": "string",
-          "const": "download",
-          "description": "Action to download database from HuggingFace"
+          "const": "download"
         },
         "repository": {
           "type": "string",
-          "description": "HuggingFace repository to download from (format: username/repo-name)"
+          "description": "HF dataset repo to download from (e.g., 'user/repo')"
         },
         "local_name": {
           "type": "string",
-          "description": "Local name for the downloaded database (optional, defaults to repo name)"
+          "description": "Local collection name to save as (defaults to repo basename)"
         },
         "overwrite": {
           "type": "boolean",
-          "description": "Whether to overwrite existing local database with same name",
+          "description": "Whether to overwrite existing local files",
           "default": false
         }
       },
       "required": [
-        "action",
-        "repository",
-        "local_name",
-        "overwrite"
+        "repository"
       ]
     },
     "required_api_keys": [
@@ -377,6 +356,19 @@
         "data_dir": "./data/embeddings",
         "export_dir": "./exports"
       }
+    },
+    "test_examples": [
+      {
+        "action": "download",
+        "repository": "username/biomedical-embeddings",
+        "local_name": "biomedical_tools",
+        "overwrite": false
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
     }
   }
 ]

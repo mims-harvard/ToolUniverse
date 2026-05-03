@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_chem\\_comp\\_charge\\_and\\_ambiguity 模块"
 #: 2050ed84f91f423786fafc9e3560f2f3 of
 #: tooluniverse.tools.get_chem_comp_charge_and_ambiguity:1
 msgid "get_chem_comp_charge_and_ambiguity"
-msgstr ""
+msgstr "get_chem_comp_charge_and_ambiguity 获取化学组分电荷及其不确定性"
 
 #: 04a0b86be7b04da689e79459e48d7541 d4850dab70a6422fad29feca289c7458 of
 #: tooluniverse.tools.get_chem_comp_charge_and_ambiguity:3

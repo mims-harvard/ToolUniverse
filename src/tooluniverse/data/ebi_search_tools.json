@@ -1,0 +1,395 @@
+[
+  {
+    "type": "EBISearchRESTTool",
+    "name": "ebi_search_domain",
+    "description": "Search across a specific EBI domain (e.g., ensembl, uniprot, interpro) using the unified EBI Search API. Returns search results with metadata. Use this to search across 160+ EBI data resources.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "EBI domain to search (e.g., 'ensembl', 'uniprot', 'interpro', 'chembl', 'arrayexpress', 'metabolights'). See ebi_list_domains for available domains."
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query string. Supports field-specific queries like 'name:BRCA1' or 'description:cancer'."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return per page (default: 10, max: 100)",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "start": {
+          "type": "integer",
+          "description": "Starting position for pagination (default: 0)",
+          "default": 0,
+          "minimum": 0
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated list of fields to return (e.g., 'id,name,description'). If not specified, returns all fields."
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json",
+          "description": "Response format: 'json' or 'xml'"
+        }
+      },
+      "required": ["domain", "query"]
+    },
+    "fields": {
+      "endpoint": "",
+      "extract_path": "entries",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of search result entries",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Entry ID"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source database"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "domain": "ensembl",
+        "query": "BRCA1",
+        "size": 5
+      },
+      {
+        "domain": "uniprot",
+        "query": "name:P53",
+        "size": 10
+      },
+      {
+        "domain": "interpro",
+        "query": "kinase",
+        "size": 20
+      }
+    ]
+  },
+  {
+    "type": "EBISearchRESTTool",
+    "name": "ebi_search_with_facets",
+    "description": "Search EBI domain with faceted filtering and returns facet information. Use facetcount to request facets (returned automatically). To filter results BY facet values, use the 'facets' parameter with format 'FACET_NAME:value' (e.g., 'TAXONOMY:9606' for human). First run ebi_search_domain to see available facet IDs in the response, or use ebi_get_domain_info. Returns search results with facet categories for advanced filtering.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "EBI domain to search (e.g., 'ensembl', 'uniprot', 'interpro')"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query string"
+        },
+        "facets": {
+          "type": "string",
+          "description": "Optional filter for results using facet values in format 'FACET_NAME:value' (e.g., 'TAXONOMY:9606' for human, 'keyword_id:KW-0418' for kinase). Multiple filters can be comma-separated. IMPORTANT: This is for FILTERING results, not selecting which facets to return. Facets are returned automatically when facetcount > 0."
+        },
+        "facetcount": {
+          "type": "integer",
+          "description": "Number of facet values to return per facet category (default: 10). Set to 0 to disable facet return.",
+          "default": 10
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return (default: 10)",
+          "default": 10
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json"
+        }
+      },
+      "required": ["domain", "query"]
+    },
+    "fields": {
+      "endpoint": "",
+      "extract_path": "",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "description": "Search result entries"
+            },
+            "facets": {
+              "type": "object",
+              "description": "Facet information for filtering"
+            },
+            "hitCount": {
+              "type": "integer",
+              "description": "Total number of results"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "domain": "uniprot",
+        "query": "kinase",
+        "facets": "TAXONOMY:9606",
+        "facetcount": 5,
+        "size": 10
+      }
+    ]
+  },
+  {
+    "type": "EBISearchRESTTool",
+    "name": "ebi_get_entry",
+    "description": "Get detailed information about a specific entry from an EBI domain by its ID. IMPORTANT: EBI Search requires specific entry ID formats (e.g., 'P53_HUMAN' not 'P04637'). If entry_id doesn't work, the tool automatically searches for the entry and returns it. For best results, first use ebi_search_domain to find entries, then use the 'id' field from search results as entry_id. Returns complete entry data with all available fields.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "EBI domain (e.g., 'ensembl', 'uniprot', 'interpro')"
+        },
+        "entry_id": {
+          "type": "string",
+          "description": "Entry ID in the domain (e.g., Ensembl gene ID, UniProt accession, InterPro accession)"
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated list of specific fields to return. If not specified, returns all fields."
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json"
+        }
+      },
+      "required": ["domain", "entry_id"]
+    },
+    "fields": {
+      "endpoint": "",
+      "extract_path": "",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Complete entry data"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "domain": "ensembl",
+        "entry_id": "ENSG00000012048"
+      },
+      {
+        "domain": "uniprot",
+        "entry_id": "P04637"
+      }
+    ]
+  },
+  {
+    "type": "EBISearchRESTTool",
+    "name": "ebi_list_domains",
+    "description": "List all available EBI Search domains. Returns metadata about all searchable domains including domain names, descriptions, and field information.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json",
+          "description": "Response format"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/ebisearch/ws/rest",
+      "extract_path": "",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "List of available domains with metadata"
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ]
+  },
+  {
+    "type": "EBISearchRESTTool",
+    "name": "ebi_get_domain_info",
+    "description": "Get metadata and field information for a specific EBI domain. Returns domain description, available fields, and search capabilities.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "EBI domain name (e.g., 'ensembl', 'uniprot', 'interpro')"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json"
+        }
+      },
+      "required": ["domain"]
+    },
+    "fields": {
+      "endpoint": "",
+      "extract_path": "domain",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "description": "Domain metadata including fields, description, and capabilities"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "domain": "ensembl"
+      },
+      {
+        "domain": "uniprot"
+      }
+    ]
+  },
+  {
+    "type": "EBISearchRESTTool",
+    "name": "ebi_get_domain_fields",
+    "description": "Get list of available searchable fields for a specific EBI domain. Useful for understanding what fields can be used in queries and field-specific searches.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "EBI domain name"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json"
+        }
+      },
+      "required": ["domain"]
+    },
+    "fields": {
+      "endpoint": "",
+      "extract_path": "fields",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of available fields with metadata",
+      "items": {
+        "type": "object"
+      }
+    },
+    "test_examples": [
+      {
+        "domain": "ensembl"
+      },
+      {
+        "domain": "uniprot"
+      }
+    ]
+  },
+  {
+    "type": "EBISearchRESTTool",
+    "name": "ebi_cross_reference_search",
+    "description": "Search for cross-references between EBI domains. Find entries in one domain that reference entries in another domain (e.g., find UniProt entries referenced by Ensembl genes).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string",
+          "description": "Source EBI domain to search"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query. Can include cross-reference filters like 'xref_uniprot:P04637'"
+        },
+        "size": {
+          "type": "integer",
+          "default": 10,
+          "description": "Number of results to return"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "xml"],
+          "default": "json"
+        }
+      },
+      "required": ["domain", "query"]
+    },
+    "fields": {
+      "endpoint": "",
+      "extract_path": "entries",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Entries with cross-reference information",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Entry ID"
+          },
+          "source": {
+            "type": "string",
+            "description": "Source database"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "domain": "ensembl",
+        "query": "xref_uniprot:P04637",
+        "size": 10
+      }
+    ]
+  }
+]

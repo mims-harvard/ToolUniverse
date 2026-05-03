@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.Crossref\\_search\\_works 模块"
 #: 61f774e7830b40aa9e6ceaa119098bcc of
 #: tooluniverse.tools.Crossref_search_works:1
 msgid "Crossref_search_works"
-msgstr ""
+msgstr "Crossref_搜索作品"
 
 #: 1153fde79e2747958479468e731c8045 aab7ba6d6cce46b6b5f8d4ca017a2985 of
 #: tooluniverse.tools.Crossref_search_works:3

@@ -36,111 +36,93 @@ class TestCriticalErrorHandling(unittest.TestCase):
         self.tu.load_tools()
     
     def test_invalid_tool_name_handling(self):
-        """Test that invalid tool names are handled gracefully."""
-        # Test with completely invalid tool name
+        """Test that invalid tool names return an error dict."""
         result = self.tu.run({
             "name": "NonExistentTool",
             "arguments": {"test": "value"}
         })
-        
+
         self.assertIsInstance(result, dict)
-        # Should either return error or handle gracefully
-        if "error" in result:
-            self.assertIn("tool", str(result["error"]).lower())
+        self.assertIn("error", result, "Expected error dict for unknown tool name")
     
     def test_invalid_arguments_handling(self):
-        """Test that invalid arguments are handled gracefully."""
-        # Test with invalid arguments for a real tool
+        """Invalid params (missing required 'accession') must return an error dict."""
         result = self.tu.run({
             "name": "UniProt_get_entry_by_accession",
             "arguments": {"invalid_param": "value"}
         })
-        
+
         self.assertIsInstance(result, dict)
-        # Should either return error or handle gracefully
-        if "error" in result:
-            self.assertIn("parameter", str(result["error"]).lower())
-    
+        self.assertIn("error", result, "Expected validation error for invalid params")
+
     def test_empty_arguments_handling(self):
-        """Test handling of empty arguments."""
-        # Test with empty arguments
+        """Empty arguments dict (missing required 'accession') must return an error dict."""
         result = self.tu.run({
             "name": "UniProt_get_entry_by_accession",
             "arguments": {}
         })
-        
+
         self.assertIsInstance(result, dict)
-        # Should either return error or handle gracefully
-        if "error" in result:
-            self.assertIn("required", str(result["error"]).lower())
-    
+        self.assertIn("error", result, "Expected validation error for empty arguments")
+
     def test_none_arguments_handling(self):
-        """Test handling of None arguments."""
-        # Test with None arguments
+        """None arguments must return an error dict, not crash."""
         result = self.tu.run({
             "name": "UniProt_get_entry_by_accession",
             "arguments": None
         })
-        
+
         self.assertIsInstance(result, dict)
-        # Should handle None arguments gracefully
+        self.assertIn("error", result, "Expected error dict for None arguments")
     
     def test_malformed_query_handling(self):
-        """Test handling of malformed queries."""
+        """Malformed queries must return error dicts, not raise exceptions."""
         malformed_queries = [
-            {"name": "UniProt_get_entry_by_accession"},  # Missing arguments
-            {"arguments": {"accession": "P05067"}},  # Missing name
+            {"name": "UniProt_get_entry_by_accession"},  # Missing arguments key
+            {"arguments": {"accession": "P05067"}},      # Missing name key
             {"name": "", "arguments": {"accession": "P05067"}},  # Empty name
-            {"name": "UniProt_get_entry_by_accession", "arguments": ""},  # String arguments
-            {"name": "UniProt_get_entry_by_accession", "arguments": []},  # List arguments
+            {"name": "UniProt_get_entry_by_accession", "arguments": ""},   # String args
+            {"name": "UniProt_get_entry_by_accession", "arguments": []},   # List args
         ]
-        
+
         for query in malformed_queries:
             result = self.tu.run(query)
-            self.assertIsInstance(result, dict)
-            # Should handle malformed queries gracefully
+            self.assertIsInstance(result, dict, f"Expected dict for query {query!r}")
+            self.assertIn("error", result, f"Expected error dict for malformed query {query!r}")
     
+    @pytest.mark.network
     def test_large_argument_handling(self):
-        """Test handling of very large arguments."""
-        # Test with very large argument values
+        """Large extra arguments are stripped by validation; accession still works."""
         large_args = {
             "accession": "P05067",
-            "large_string": "A" * 100000,  # 100KB string
-            "large_array": ["item"] * 10000,  # Large array
+            "large_string": "A" * 100000,
+            "large_array": ["item"] * 10000,
         }
-        
         result = self.tu.run({
             "name": "UniProt_get_entry_by_accession",
             "arguments": large_args
         })
-        
         self.assertIsInstance(result, dict)
-        # Should handle large arguments gracefully
-    
+
+    @pytest.mark.network
     def test_concurrent_tool_access(self):
-        """Test concurrent access to tools."""
+        """Concurrent tool calls must all return dicts (no crashes or deadlocks)."""
         results = []
-        
+
         def make_call(call_id):
             result = self.tu.run({
                 "name": "UniProt_get_entry_by_accession",
                 "arguments": {"accession": f"P{call_id:05d}"}
             })
             results.append(result)
-        
-        # Create multiple threads
-        threads = []
-        for i in range(5):
-            thread = threading.Thread(target=make_call, args=(i,))
-            threads.append(thread)
-            thread.start()
-        
-        # Wait for all threads
-        for thread in threads:
-            thread.join()
-        
-        # Verify all calls completed
-        self.assertEqual(len(results), 5)
+
+        threads = [threading.Thread(target=make_call, args=(i,)) for i in range(5)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=30)
+
+        self.assertEqual(len(results), 5, "All 5 threads must complete")
         for result in results:
             self.assertIsInstance(result, dict)
     
@@ -164,31 +146,26 @@ class TestCriticalErrorHandling(unittest.TestCase):
         self.assertIsInstance(result, dict)
         self.assertIn("error", result)
     
+    @pytest.mark.network
     def test_memory_pressure_handling(self):
-        """Test handling under memory pressure."""
-        # Simulate memory pressure by creating large objects
+        """run() must succeed (or return error dict) even under memory pressure."""
         large_objects = []
-        
         try:
-            # Create some large objects to simulate memory pressure
             for i in range(100):
                 large_objects.append(["data"] * 10000)
-            
+
             result = self.tu.run({
                 "name": "UniProt_get_entry_by_accession",
                 "arguments": {"accession": "P05067"}
             })
-            
             self.assertIsInstance(result, dict)
-            
         finally:
-            # Clean up large objects
             del large_objects
     
     def test_resource_cleanup(self):
         """Test proper resource cleanup."""
         # Test that resources are properly cleaned up
-        initial_tools = len(self.tu.all_tools)
+        _ = len(self.tu.all_tools)
         
         # Add some tools
         test_tool = {
@@ -209,33 +186,30 @@ class TestCriticalErrorHandling(unittest.TestCase):
         self.assertEqual(len(self.tu.all_tool_dict), 0)
     
     def test_error_propagation(self):
-        """Test proper error propagation."""
-        # Test with various error conditions
+        """All error conditions must return error dicts, not raise exceptions."""
         error_cases = [
             {"name": "NonExistentTool", "arguments": {}},
             {"name": "UniProt_get_entry_by_accession", "arguments": {"invalid": "param"}},
             {"name": "", "arguments": {}},
             {"name": "UniProt_get_entry_by_accession", "arguments": None},
         ]
-        
+
         for query in error_cases:
             result = self.tu.run(query)
-            self.assertIsInstance(result, dict)
-            # Should handle errors gracefully
-    
+            self.assertIsInstance(result, dict, f"Expected dict for {query!r}")
+            self.assertIn("error", result, f"Expected error key for {query!r}")
+
+    @pytest.mark.network
     def test_partial_failure_recovery(self):
-        """Test recovery from partial failures."""
-        # Test multiple tool calls to ensure system remains stable
+        """System must remain stable across multiple sequential network calls."""
         results = []
-        
         for i in range(5):
             result = self.tu.run({
                 "name": "UniProt_get_entry_by_accession",
                 "arguments": {"accession": f"P{i:05d}"}
             })
             results.append(result)
-        
-        # Verify mixed results
+
         self.assertEqual(len(results), 5)
         for result in results:
             self.assertIsInstance(result, dict)
@@ -259,15 +233,14 @@ class TestCriticalErrorHandling(unittest.TestCase):
             self.assertIn("error", result)
     
     def test_graceful_degradation(self):
-        """Test graceful degradation when services are unavailable."""
-        # Test with tool that might not be available
+        """Unknown tool must return an error dict, not raise."""
         result = self.tu.run({
             "name": "NonExistentService",
             "arguments": {"query": "test"}
         })
-        
+
         self.assertIsInstance(result, dict)
-        # Should handle service unavailable gracefully
+        self.assertIn("error", result, "Expected error dict for unknown tool")
     
     def test_data_corruption_handling(self):
         """Test handling of corrupted data."""

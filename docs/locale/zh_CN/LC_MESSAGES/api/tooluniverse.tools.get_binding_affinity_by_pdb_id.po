@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_binding\\_affinity\\_by\\_pdb\\_id 模块"
 #: 643d03de083041abbbd2db08368d7f65 of
 #: tooluniverse.tools.get_binding_affinity_by_pdb_id:1
 msgid "get_binding_affinity_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取结合亲和力"
 
 #: d05f929735f144718ff3be2bca99814b ea7682c6f5e34789aec355977978fcfd of
 #: tooluniverse.tools.get_binding_affinity_by_pdb_id:3

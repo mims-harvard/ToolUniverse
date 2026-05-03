@@ -16,7 +16,7 @@ def ToolCompatibilityAnalyzer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Analyzes two tool specifications to determine if one tool's output can be used as input for anoth...
 
@@ -37,18 +37,24 @@ def ToolCompatibilityAnalyzer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "source_tool": source_tool,
+            "target_tool": target_tool,
+            "analysis_depth": analysis_depth,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ToolCompatibilityAnalyzer",
-            "arguments": {
-                "source_tool": source_tool,
-                "target_tool": target_tool,
-                "analysis_depth": analysis_depth,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

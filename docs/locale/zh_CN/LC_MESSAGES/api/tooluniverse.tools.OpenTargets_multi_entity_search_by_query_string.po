@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.OpenTargets\\_multi\\_entity\\_search\\_by\\_query\\_
 #: df4d8ca159ba490ea958d05ef6e9c29a of
 #: tooluniverse.tools.OpenTargets_multi_entity_search_by_query_string:1
 msgid "OpenTargets_multi_entity_search_by_query_string"
-msgstr ""
+msgstr "OpenTargets_通过查询字符串进行多实体搜索"
 
 #: 95c7e88201ba4aac8ab6b551822bcfdf cb32efa33fdd4843a80ed5d8d9589684 of
 #: tooluniverse.tools.OpenTargets_multi_entity_search_by_query_string:3

@@ -1,0 +1,141 @@
+[
+  {
+    "type": "PyPIPackageInspector",
+    "name": "PyPIPackageInspector",
+    "description": "Extracts comprehensive package information from PyPI and GitHub for quality evaluation. Provides detailed metrics on popularity (downloads, stars, forks), maintenance (release frequency, recent activity), documentation quality, Python version compatibility, and security indicators. Returns an overall quality score (0-100) with breakdown by category.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the Python package to inspect on PyPI (e.g., 'requests', 'numpy', 'pandas')"
+        },
+        "include_github": {
+          "type": "boolean",
+          "description": "Whether to fetch GitHub repository statistics (stars, forks, issues, last push). Requires package to have GitHub URL in metadata.",
+          "default": true
+        },
+        "include_downloads": {
+          "type": "boolean",
+          "description": "Whether to fetch download statistics from pypistats.org (downloads per day/week/month)",
+          "default": true
+        }
+      },
+      "required": ["package_name"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the inspected package"
+        },
+        "pypi_metadata": {
+          "type": "object",
+          "description": "Complete PyPI metadata including version, author, license, dependencies, release history",
+          "properties": {
+            "name": {"type": ["string", "null"]},
+            "version": {"type": ["string", "null"]},
+            "summary": {"type": ["string", "null"]},
+            "author": {"type": ["string", "null"]},
+            "license": {"type": ["string", "null"]},
+            "requires_python": {"type": ["string", "null"]},
+            "github_url": {"type": ["string", "null"]},
+            "total_releases": {"type": ["integer", "null"]},
+            "days_since_last_release": {"type": ["integer", "null"]},
+            "releases_last_year": {"type": ["integer", "null"]}
+          }
+        },
+        "download_stats": {
+          "type": "object",
+          "description": "Download statistics from pypistats.org",
+          "properties": {
+            "downloads_last_day": {"type": ["integer", "null"]},
+            "downloads_last_week": {"type": ["integer", "null"]},
+            "downloads_last_month": {"type": ["integer", "null"]}
+          }
+        },
+        "github_stats": {
+          "type": "object",
+          "description": "GitHub repository statistics",
+          "properties": {
+            "stars": {"type": ["integer", "null"]},
+            "forks": {"type": ["integer", "null"]},
+            "open_issues": {"type": ["integer", "null"]},
+            "days_since_last_push": {"type": ["integer", "null"]},
+            "archived": {"type": ["boolean", "null"]},
+            "topics": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "quality_scores": {
+          "type": "object",
+          "description": "Comprehensive quality scores (0-100 scale)",
+          "properties": {
+            "overall_score": {
+              "type": "integer",
+              "description": "Weighted overall quality score combining all dimensions"
+            },
+            "popularity_score": {
+              "type": "integer",
+              "description": "Based on downloads, stars, forks, and release count"
+            },
+            "maintenance_score": {
+              "type": "integer",
+              "description": "Based on recent releases, GitHub activity, and update frequency"
+            },
+            "documentation_score": {
+              "type": "integer",
+              "description": "Based on docs URL, description length, and classifiers"
+            },
+            "compatibility_score": {
+              "type": "integer",
+              "description": "Based on wheel availability, Python version support"
+            },
+            "security_score": {
+              "type": "integer",
+              "description": "Based on license, maintenance status, and issue management"
+            }
+          }
+        },
+        "recommendation": {
+          "type": "string",
+          "description": "Human-readable recommendation with reasoning"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if inspection failed"
+        }
+      },
+      "required": ["package_name"]
+    },
+    "test_examples": [
+      {
+        "package_name": "requests",
+        "include_github": true,
+        "include_downloads": true
+      },
+      {
+        "package_name": "numpy"
+      },
+      {
+        "package_name": "pandas",
+        "include_github": false,
+        "include_downloads": false
+      }
+    ],
+    "metadata": {
+      "tags": ["package-inspection", "pypi", "quality-metrics", "package-evaluation"],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "3-10 seconds",
+      "api_dependencies": ["PyPI", "pypistats.org", "GitHub API"],
+      "version": "1.0.0",
+      "author": "ToolUniverse Team",
+      "use_cases": [
+        "Evaluate package quality before adding as dependency",
+        "Compare alternative packages for similar functionality",
+        "Monitor package health and maintenance status",
+        "Generate package quality reports for documentation"
+      ]
+    }
+  }
+]

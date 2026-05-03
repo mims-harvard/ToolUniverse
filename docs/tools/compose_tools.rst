@@ -3,7 +3,7 @@ Compose Tools
 
 **Configuration File**: ``compose_tools.json``
 **Tool Type**: Local
-**Tools Count**: 8
+**Tools Count**: 6
 
 This page contains all tools defined in the ``compose_tools.json`` configuration file.
 
@@ -141,96 +141,6 @@ Comprehensive literature search and summary tool that searches multiple database
           "name": "LiteratureSearchTool",
           "arguments": {
               "research_topic": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**ToolDescriptionOptimizer** (Type: ComposeTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Optimizes a tool's description and parameter descriptions by generating test cases, executing the...
-
-.. dropdown:: ToolDescriptionOptimizer tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``ToolDescriptionOptimizer``
-   * **Type**: ``ComposeTool``
-   * **Description**: Optimizes a tool's description and parameter descriptions by generating test cases, executing them, analyzing the results, and suggesting improved descriptions for both the tool and its arguments. Optionally saves a comprehensive optimization report to a file without overwriting the original.
-
-   **Parameters:**
-
-   * ``tool_config`` (object) (required)
-     The full configuration of the tool to optimize.
-
-   * ``save_to_file`` (boolean) (required)
-     If true, save the optimized description to a file (do not overwrite the original).
-
-   * ``output_file`` (string) (required)
-     Optional file path to save the optimized description. If not provided, use '<tool_name>_optimized_description.txt'.
-
-   * ``max_iterations`` (integer) (required)
-     Maximum number of optimization rounds to perform.
-
-   * ``satisfaction_threshold`` (number) (required)
-     Quality score threshold (1-10) to consider optimization satisfactory.
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "ToolDescriptionOptimizer",
-          "arguments": {
-              "tool_config": "example_value",
-              "save_to_file": true,
-              "output_file": "example_value",
-              "max_iterations": 10,
-              "satisfaction_threshold": "example_value"
-          }
-      }
-      result = tu.run(query)
-
-
-**ToolDiscover** (Type: ComposeTool)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Generates new ToolUniverse-compliant tools based on short descriptions through an intelligent dis...
-
-.. dropdown:: ToolDiscover tool specification
-
-   **Tool Information:**
-
-   * **Name**: ``ToolDiscover``
-   * **Type**: ``ComposeTool``
-   * **Description**: Generates new ToolUniverse-compliant tools based on short descriptions through an intelligent discovery and refinement process. Automatically determines the optimal tool type and category, discovers similar existing tools, generates initial specifications, and iteratively refines the tool configuration using agentic optimization tools until it meets quality standards.
-
-   **Parameters:**
-
-   * ``tool_description`` (string) (required)
-     Short description of the desired tool functionality and purpose. Tool Discover will automatically analyze this to determine the optimal tool type (PackageTool, RESTTool, XMLTool, or AgenticTool) and appropriate category.
-
-   * ``max_iterations`` (integer) (required)
-     Maximum number of refinement iterations to perform.
-
-   * ``save_to_file`` (boolean) (required)
-     Whether to save the generated tool configuration and report to a file.
-
-   * ``output_file`` (string) (required)
-     Optional file path to save the generated tool. If not provided, uses auto-generated filename.
-
-   **Example Usage:**
-
-   .. code-block:: python
-
-      query = {
-          "name": "ToolDiscover",
-          "arguments": {
-              "tool_description": "example_value",
-              "max_iterations": 10,
-              "save_to_file": true,
-              "output_file": "example_value"
           }
       }
       result = tu.run(query)

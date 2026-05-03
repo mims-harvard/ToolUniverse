@@ -1,0 +1,199 @@
+[
+    {
+        "name": "ThreeDBeacons_get_structure_summary",
+        "description": "Get a summary of all available 3D structure models for a protein from the 3D Beacons Hub. Aggregates data from multiple providers: PDBe (experimental), AlphaFold DB (AI-predicted), SWISS-MODEL (homology), PED (conformational ensembles), AlphaFill, and isoform.io. Returns total structure count broken down by provider and model category (experimentally determined, template-based, ab-initio, conformational ensemble). Example: P04637 (TP53) returns 327 structures from 6 providers: 299 PDBe experimental, 20 PED ensembles, 4 SWISS-MODEL homology models, plus AlphaFold and AlphaFill predictions.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt protein accession. Examples: 'P04637' (TP53, 327 structures), 'P00533' (EGFR, 407 structures), 'P01308' (Insulin), 'P38398' (BRCA1)."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "summary"
+        },
+        "type": "ThreeDBeaconsTool",
+        "test_examples": [
+            {
+                "accession": "P04637"
+            },
+            {
+                "accession": "P00533"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": "string",
+                                    "description": "UniProt accession queried"
+                                },
+                                "sequence_length": {
+                                    "type": ["integer", "null"],
+                                    "description": "Full protein sequence length"
+                                },
+                                "total_structures": {
+                                    "type": "integer",
+                                    "description": "Total number of 3D structures/models available"
+                                },
+                                "by_provider": {
+                                    "type": "object",
+                                    "description": "Structure counts by data provider (PDBe, AlphaFold DB, SWISS-MODEL, PED, AlphaFill, isoform.io)"
+                                },
+                                "by_category": {
+                                    "type": "object",
+                                    "description": "Structure counts by model category (EXPERIMENTALLY DETERMINED, TEMPLATE-BASED, AB-INITIO, CONFORMATIONAL ENSEMBLE)"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "ThreeDBeacons_get_structures",
+        "description": "Get detailed list of 3D structure models for a protein from the 3D Beacons Hub. Returns individual structure entries with model identifier, provider, category, coverage, resolution (experimental), confidence score (predicted), and download URL. Supports filtering by category (e.g., 'EXPERIMENTALLY DETERMINED') or provider (e.g., 'AlphaFold DB'). Example: P04637 filtered to 'TEMPLATE-BASED' returns 5 structures from SWISS-MODEL and AlphaFill with coverage and sequence range.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt protein accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P01308' (Insulin)."
+                },
+                "category": {
+                    "type": "string",
+                    "description": "Filter by model category. Options: 'EXPERIMENTALLY DETERMINED', 'TEMPLATE-BASED', 'AB-INITIO', 'CONFORMATIONAL ENSEMBLE'. Case-insensitive partial match."
+                },
+                "provider": {
+                    "type": "string",
+                    "description": "Filter by data provider. Options: 'PDBe', 'AlphaFold DB', 'SWISS-MODEL', 'PED', 'AlphaFill', 'isoform.io'. Case-insensitive partial match."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum structures to return (default 20, max 100).",
+                    "default": 20
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "structures"
+        },
+        "type": "ThreeDBeaconsTool",
+        "test_examples": [
+            {
+                "accession": "P04637",
+                "category": "TEMPLATE-BASED"
+            },
+            {
+                "accession": "P00533",
+                "max_results": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": "string",
+                                    "description": "UniProt accession queried"
+                                },
+                                "sequence_length": {
+                                    "type": ["integer", "null"],
+                                    "description": "Full protein sequence length"
+                                },
+                                "total_matched": {
+                                    "type": "integer",
+                                    "description": "Total structures matching filters"
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number of structures returned"
+                                },
+                                "structures": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "model_identifier": {
+                                                "type": ["string", "null"],
+                                                "description": "Structure/model identifier (PDB ID or model ID)"
+                                            },
+                                            "model_category": {
+                                                "type": ["string", "null"],
+                                                "description": "Model category"
+                                            },
+                                            "provider": {
+                                                "type": ["string", "null"],
+                                                "description": "Data provider name"
+                                            },
+                                            "coverage": {
+                                                "type": ["number", "null"],
+                                                "description": "Fraction of protein covered (0-1)"
+                                            },
+                                            "resolution": {
+                                                "type": ["number", "null"],
+                                                "description": "Resolution in Angstroms (experimental only)"
+                                            },
+                                            "experimental_method": {
+                                                "type": ["string", "null"],
+                                                "description": "Experimental method (e.g., X-ray diffraction)"
+                                            },
+                                            "model_url": {
+                                                "type": ["string", "null"],
+                                                "description": "URL to download the model"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

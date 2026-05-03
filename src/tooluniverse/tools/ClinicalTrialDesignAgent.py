@@ -17,7 +17,7 @@ def ClinicalTrialDesignAgent(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     AI agent that designs clinical trial protocols based on preclinical data and regulatory requirements
 
@@ -40,19 +40,25 @@ def ClinicalTrialDesignAgent(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "drug_name": drug_name,
+            "indication": indication,
+            "preclinical_data": preclinical_data,
+            "target_population": target_population,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ClinicalTrialDesignAgent",
-            "arguments": {
-                "drug_name": drug_name,
-                "indication": indication,
-                "preclinical_data": preclinical_data,
-                "target_population": target_population,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

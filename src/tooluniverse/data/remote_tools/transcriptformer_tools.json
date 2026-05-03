@@ -1,66 +1,79 @@
 [
-    {
-        "type": "RemoteTool",
-        "name": "run_transcriptformer_embedding_retrieval",
-        "description": "Retrieves contextualized gene embeddings from Transcriptformer models. This tool provides access to pre-computed Transcriptformer embeddings that capture gene expression patterns learned from single-cell RNA sequencing data. The embeddings are contextualized for specific combinations of disease states and cell types, enabling precise analysis of gene behavior in relevant biological contexts.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "state": {
-                    "type": "string",
-                    "description": "Disease state context for embedding retrieval. Examples: 'control': Healthy/normal condition; 'disease': Disease-affected state; 'treated': Post-treatment condition; 'untreated': Pre-treatment condition. Must match available states in the disease-specific store."
-                },
-                "cell_type": {
-                    "type": "string",
-                    "description": "Cell type context for embeddings. Examples: 'b_cell': B lymphocytes; 't_cell': T lymphocytes; 'macrophage': Tissue macrophages; 'epithelial_cell': Epithelial cells; 'fibroblast': Connective tissue fibroblasts. Must match available cell types in the disease store."
-                },
-                "gene_names": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Gene identifiers for embedding retrieval: Gene symbols: ['TP53', 'BRCA1', 'EGFR', 'MYC']; Ensembl IDs: ['ENSG00000141510', 'ENSG00000139618']; Mixed formats supported; Empty list retrieves all available genes."
-                },
-                "disease": {
-                    "type": "string",
-                    "description": "Disease/dataset identifier. Examples: 'breast_cancer': Breast cancer scRNA-seq data; 'lung_cancer': Lung cancer contexts; 'diabetes': Diabetes-related datasets; 'alzheimer': Alzheimer's disease contexts. Must match available disease stores."
-                }
-            },
-            "required": ["state", "cell_type", "gene_names", "disease"]
+  {
+    "type": "RemoteTool",
+    "name": "run_transcriptformer_embedding_retrieval",
+    "description": "Retrieves contextualized gene embeddings from Transcriptformer models. This tool provides access to pre-computed Transcriptformer embeddings that capture gene expression patterns learned from single-cell RNA sequencing data. The embeddings are contextualized for specific combinations of disease states and cell types, enabling precise analysis of gene behavior in relevant biological contexts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "Disease state context for embedding retrieval. Examples: 'control': Healthy/normal condition; 'disease': Disease-affected state; 'treated': Post-treatment condition; 'untreated': Pre-treatment condition. Must match available states in the disease-specific store."
         },
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "embeddings": {
-                    "type": "object",
-                    "description": "Gene-to-embedding mapping where keys are gene identifiers (symbols or Ensembl IDs as provided) and values are embedding vectors as lists of float32 values",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "number"
-                        }
-                    }
-                },
-                "context_info": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Detailed retrieval information including validation results and parameter processing, number of genes processed and embedding dimensions, warnings about invalid gene identifiers, and context combination availability"
-                },
-                "error": {
-                    "type": "string",
-                    "description": "Error description if retrieval failed"
-                }
-            }
+        "cell_type": {
+          "type": "string",
+          "description": "Cell type context for embeddings. Examples: 'b_cell': B lymphocytes; 't_cell': T lymphocytes; 'macrophage': Tissue macrophages; 'epithelial_cell': Epithelial cells; 'fibroblast': Connective tissue fibroblasts. Must match available cell types in the disease store."
         },
-        "remote_info": {
-            "server_type": "SMCP",
-            "transport": "http",
-            "original_type": "TranscriptformerEmbeddingTool",
-            "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/transcriptformer.html",
-            "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/transcriptformer",
-            "mcp_tool_name": "run_transcriptformer_embedding_retrieval"
+        "gene_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene identifiers for embedding retrieval: Gene symbols: ['TP53', 'BRCA1', 'EGFR', 'MYC']; Ensembl IDs: ['ENSG00000141510', 'ENSG00000139618']; Mixed formats supported; Empty list retrieves all available genes."
+        },
+        "disease": {
+          "type": "string",
+          "description": "Disease/dataset identifier. Examples: 'breast_cancer': Breast cancer scRNA-seq data; 'lung_cancer': Lung cancer contexts; 'diabetes': Diabetes-related datasets; 'alzheimer': Alzheimer's disease contexts. Must match available disease stores."
         }
-    }
+      },
+      "required": [
+        "state",
+        "cell_type",
+        "gene_names",
+        "disease"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "embeddings": {
+          "type": "object",
+          "description": "Gene-to-embedding mapping where keys are gene identifiers (symbols or Ensembl IDs as provided) and values are embedding vectors as lists of float32 values",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "context_info": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Detailed retrieval information including validation results and parameter processing, number of genes processed and embedding dimensions, warnings about invalid gene identifiers, and context combination availability"
+        },
+        "error": {
+          "type": "string",
+          "description": "Error description if retrieval failed"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "TranscriptformerEmbeddingTool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/transcriptformer.html",
+      "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/transcriptformer",
+      "mcp_tool_name": "run_transcriptformer_embedding_retrieval"
+    },
+    "test_examples": [
+      {
+        "state": "example_string",
+        "cell_type": "example_string",
+        "gene_names": "TP53",
+        "disease": "Diabetes Mellitus"
+      }
+    ]
+  }
 ]

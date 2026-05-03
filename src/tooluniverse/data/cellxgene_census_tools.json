@@ -1,0 +1,583 @@
+[
+  {
+    "name": "CELLxGENE_get_census_versions",
+    "type": "CELLxGENECensusTool",
+    "required_packages": [
+      "cellxgene_census",
+      "tiledbsoma"
+    ],
+    "description": "Get list of available CELLxGENE Census versions with release dates and descriptions. The Census contains single-cell RNA-seq data from 50M+ cells (human, mouse, non-human primates). Latest LTS release: 2025-11-08. Prerequisites: Requires 'cellxgene-census' package (install: pip install tooluniverse[singlecell]). Use for: checking available data versions, selecting stable vs latest builds, understanding data updates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "get_census_versions"
+          ],
+          "default": "get_census_versions"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "versions": {
+              "type": "array",
+              "description": "List of available Census versions with metadata"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true,
+          "required": [
+            "status",
+            "error"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_census_versions"
+      }
+    ]
+  },
+  {
+    "name": "CELLxGENE_get_cell_metadata",
+    "type": "CELLxGENECensusTool",
+    "required_packages": [
+      "cellxgene_census",
+      "tiledbsoma"
+    ],
+    "description": "Query cell metadata from CELLxGENE Census (50M+ human/mouse single cells). CRITICAL: obs_value_filter is REQUIRED - unfiltered queries will timeout. Common filters: tissue_general (brain, heart, lung, liver, blood, kidney, skin, eye, intestine), cell_type (T cell, B cell, neuron, macrophage, fibroblast), disease (normal, COVID-19, Alzheimer disease, cancer). Start with: obs_value_filter='tissue_general == \"lung\" and disease == \"normal\"'. Returns cell type, tissue, disease, donor info. Use for: finding cells by criteria, cohort selection, exploring cell populations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "get_obs_metadata"
+          ],
+          "default": "get_obs_metadata"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name",
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
+          "default": "Homo sapiens"
+        },
+        "obs_value_filter": {
+          "type": "string",
+          "description": "REQUIRED - filter cells using SQL-like syntax. Unfiltered queries timeout (50M+ cells). Format: 'field == \"value\"'. Operators: ==, !=, in, <, >, <=, >=. Combine with 'and'/'or'. Common fields and values: tissue_general (brain, heart, lung, liver, blood, kidney, skin, eye, intestine, pancreas, bone marrow), cell_type (T cell, B cell, neuron, macrophage, fibroblast, epithelial cell, endothelial cell), disease (normal, COVID-19, Alzheimer disease, lung adenocarcinoma), assay (10x 3' v3, Smart-seq2), sex (male, female). Examples: 'tissue_general == \"lung\"', 'disease == \"COVID-19\" and tissue_general == \"blood\"', 'cell_type in [\"T cell\", \"B cell\"] and disease == \"normal\"'."
+        },
+        "column_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific columns to return (default: all columns)"
+        },
+        "census_version": {
+          "type": "string",
+          "description": "Census version to query. 'stable' (recommended, Long-Term Support release), 'latest' (newest data, may change), or specific date 'YYYY-MM-DD' (for reproducibility). Default 'stable' is best for production analyses.",
+          "default": "stable"
+        }
+      },
+      "required": [
+        "operation",
+        "obs_value_filter"
+      ]
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "cell_type": {
+            "type": "string"
+          },
+          "tissue_general": {
+            "type": "string"
+          },
+          "disease": {
+            "type": "string"
+          },
+          "assay": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "donor_id": {
+            "type": "string"
+          },
+          "dataset_id": {
+            "type": "string"
+          },
+          "soma_joinid": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_obs_metadata",
+        "organism": "Homo sapiens",
+        "obs_value_filter": "tissue_general == 'brain' and disease == 'normal'",
+        "census_version": "stable"
+      }
+    ]
+  },
+  {
+    "name": "CELLxGENE_get_gene_metadata",
+    "type": "CELLxGENECensusTool",
+    "required_packages": [
+      "cellxgene_census",
+      "tiledbsoma"
+    ],
+    "description": "Query gene (variable) metadata from CELLxGENE Census. Returns gene symbols, Ensembl IDs, feature types, and summary statistics. Filter by gene name, feature type, or expression characteristics. Use for: finding genes of interest, validating gene symbols, exploring feature presence across datasets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "get_var_metadata"
+          ],
+          "default": "get_var_metadata"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name",
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
+          "default": "Homo sapiens"
+        },
+        "var_value_filter": {
+          "type": "string",
+          "description": "Filter genes using SQL-like syntax. Format: 'field == \"value\"'. Common fields: feature_name (gene symbol), feature_id (Ensembl ID), feature_biotype. Examples: 'feature_name == \"TP53\"', 'feature_name in [\"CD4\", \"CD8A\"]', 'feature_biotype == \"protein_coding\"'."
+        },
+        "column_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific columns to return (default: all columns)"
+        },
+        "census_version": {
+          "type": "string",
+          "description": "Census version to query. 'stable' (recommended, Long-Term Support release), 'latest' (newest data, may change), or specific date 'YYYY-MM-DD' (for reproducibility). Default 'stable' is best for production analyses.",
+          "default": "stable"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "properties": {
+          "feature_id": {
+            "type": "string",
+            "description": "Ensembl gene ID"
+          },
+          "feature_name": {
+            "type": "string",
+            "description": "Gene symbol"
+          },
+          "feature_length": {
+            "type": "integer"
+          },
+          "feature_biotype": {
+            "type": "string"
+          },
+          "soma_joinid": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_var_metadata",
+        "organism": "Homo sapiens",
+        "var_value_filter": "feature_name == 'TP53'",
+        "census_version": "stable"
+      }
+    ]
+  },
+  {
+    "name": "CELLxGENE_get_expression_data",
+    "type": "CELLxGENECensusTool",
+    "required_packages": [
+      "cellxgene_census",
+      "tiledbsoma"
+    ],
+    "description": "Query gene expression data from CELLxGENE Census (50M+ cells, 60K+ genes). CRITICAL: At least one filter REQUIRED - unfiltered queries timeout. Start with: obs_value_filter='tissue_general == \"lung\" and disease == \"normal\"' AND var_value_filter='feature_name in [\"TP53\", \"EGFR\"]'. Returns AnnData summary (dimensions, metadata). For full matrix data, use Python API with sufficient memory.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "get_anndata"
+          ],
+          "default": "get_anndata"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name",
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
+          "default": "Homo sapiens"
+        },
+        "obs_value_filter": {
+          "type": "string",
+          "description": "REQUIRED (or use var_value_filter) - Cell filter. Common values: tissue_general (brain, lung, heart, blood, liver), cell_type (T cell, B cell, neuron, macrophage), disease (normal, COVID-19, Alzheimer disease). Example: 'tissue_general == \"lung\" and disease == \"normal\"'"
+        },
+        "var_value_filter": {
+          "type": "string",
+          "description": "REQUIRED (or use obs_value_filter) - Gene filter by symbol or Ensembl ID. Examples: 'feature_name in [\"TP53\", \"BRCA1\", \"EGFR\"]', 'feature_name == \"CD4\"'. Common genes: TP53, EGFR, BRCA1, CD4, CD8A, IL6, TNF, GAPDH."
+        },
+        "obs_column_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Cell metadata columns to include"
+        },
+        "var_column_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene metadata columns to include"
+        },
+        "census_version": {
+          "type": "string",
+          "description": "Census version to query. 'stable' (recommended, Long-Term Support release), 'latest' (newest data, may change), or specific date 'YYYY-MM-DD' (for reproducibility). Default 'stable' is best for production analyses.",
+          "default": "stable"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "n_obs": {
+          "type": "integer"
+        },
+        "n_vars": {
+          "type": "integer"
+        },
+        "obs_columns": {
+          "type": "array"
+        },
+        "var_columns": {
+          "type": "array"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "operation": "get_anndata",
+        "organism": "Homo sapiens",
+        "obs_value_filter": "tissue_general == 'brain' and disease == 'normal'",
+        "var_value_filter": "feature_name in ['SOX2', 'GFAP', 'OLIG2']",
+        "census_version": "stable"
+      }
+    ]
+  },
+  {
+    "name": "CELLxGENE_get_presence_matrix",
+    "type": "CELLxGENECensusTool",
+    "required_packages": [
+      "cellxgene_census",
+      "tiledbsoma"
+    ],
+    "description": "Get feature presence matrix showing which genes are measured in which datasets. Returns sparse matrix dimensions and density. Useful for understanding data completeness and selecting datasets with genes of interest. Use for: checking gene coverage, dataset selection, quality assessment.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "get_presence_matrix"
+          ],
+          "default": "get_presence_matrix"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name",
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
+          "default": "Homo sapiens"
+        },
+        "census_version": {
+          "type": "string",
+          "description": "Census version to query. 'stable' (recommended, Long-Term Support release), 'latest' (newest data, may change), or specific date 'YYYY-MM-DD' (for reproducibility). Default 'stable' is best for production analyses.",
+          "default": "stable"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "organism": {
+              "type": "string"
+            },
+            "shape": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "nnz": {
+              "type": "integer",
+              "description": "Number of non-zero entries"
+            },
+            "density": {
+              "type": "number"
+            },
+            "message": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true,
+          "required": [
+            "status",
+            "error"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_presence_matrix",
+        "organism": "Homo sapiens",
+        "census_version": "stable"
+      }
+    ]
+  },
+  {
+    "name": "CELLxGENE_get_embeddings",
+    "type": "CELLxGENECensusTool",
+    "required_packages": [
+      "cellxgene_census",
+      "tiledbsoma"
+    ],
+    "description": "Access pre-calculated cell embeddings (scVI, Geneformer) from CELLxGENE Census. Returns available embedding names or specific embedding data. Embeddings enable rapid visualization and analysis without recomputation. Use for: UMAP/t-SNE visualization, cell similarity analysis, transfer learning.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "get_embeddings"
+          ],
+          "default": "get_embeddings"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Organism name",
+          "enum": [
+            "Homo sapiens",
+            "Mus musculus"
+          ],
+          "default": "Homo sapiens"
+        },
+        "embedding_name": {
+          "type": "string",
+          "description": "Name of specific embedding to retrieve (omit to list available embeddings)"
+        },
+        "census_version": {
+          "type": "string",
+          "description": "Census version to query. 'stable' (recommended, Long-Term Support release), 'latest' (newest data, may change), or specific date 'YYYY-MM-DD' (for reproducibility). Default 'stable' is best for production analyses.",
+          "default": "stable"
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "embedding_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "available": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "shape": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "available_embeddings": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "operation": "get_embeddings",
+        "organism": "Homo sapiens",
+        "census_version": "stable"
+      }
+    ]
+  },
+  {
+    "name": "CELLxGENE_download_h5ad",
+    "type": "CELLxGENECensusTool",
+    "required_packages": [
+      "cellxgene_census",
+      "tiledbsoma"
+    ],
+    "description": "Download original H5AD (HDF5-based AnnData) files from CELLxGENE datasets or get their URIs. Access unprocessed data from individual studies with complete metadata and analysis results. Requires dataset_id from CELLxGENE Discover. Note: Files can be large (GBs). Use for: accessing raw data, reproducibility, offline analysis, custom processing pipelines.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "download_h5ad"
+          ],
+          "default": "download_h5ad"
+        },
+        "dataset_id": {
+          "type": "string",
+          "description": "CELLxGENE dataset identifier (required)"
+        },
+        "output_path": {
+          "type": "string",
+          "description": "Local path to save H5AD file (omit to get URI only)"
+        },
+        "census_version": {
+          "type": "string",
+          "description": "Census version to query. 'stable' (recommended, Long-Term Support release), 'latest' (newest data, may change), or specific date 'YYYY-MM-DD' (for reproducibility). Default 'stable' is best for production analyses.",
+          "default": "stable"
+        }
+      },
+      "required": [
+        "operation",
+        "dataset_id"
+      ]
+    },
+    "return_schema": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "dataset_id": {
+          "type": "string"
+        },
+        "output_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "uri": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "operation": "download_h5ad",
+        "dataset_id": "4eb29386-de81-452f-b3c0-e00844e8c7fd",
+        "census_version": "stable"
+      }
+    ]
+  }
+]

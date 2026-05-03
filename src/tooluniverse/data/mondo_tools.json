@@ -1,0 +1,294 @@
+[
+  {
+    "name": "Mondo_search_disease",
+    "description": "Search the Mondo Disease Ontology for diseases by name or keyword. Mondo unifies disease identifiers across OMIM, Orphanet, DOID, MeSH, ICD-10, NCIT, and other ontologies into a single MONDO ID. Returns matching disease entries with their Mondo IDs, descriptions, and cross-references. Use this to find the Mondo ID for a disease before querying Mondo_get_disease or Mondo_get_disease_phenotypes. Examples: 'Alzheimer' returns MONDO:0004975, 'breast cancer' returns MONDO:0007254, 'diabetes' returns MONDO:0005015.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Disease name or keyword to search. Examples: 'Alzheimer', 'breast cancer', 'type 2 diabetes', 'Parkinson', 'cystic fibrosis', 'sickle cell'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 10, max: 50)."
+        }
+      },
+      "required": ["query"]
+    },
+    "fields": {
+      "endpoint": "mondo_search"
+    },
+    "type": "MonarchV3Tool",
+    "test_examples": [
+      {"query": "Alzheimer disease", "limit": 5},
+      {"query": "breast cancer", "limit": 5},
+      {"query": "type 2 diabetes"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": ["string", "null"],
+                    "description": "Mondo disease identifier (e.g., MONDO:0004975)"
+                  },
+                  "name": {
+                    "type": ["string", "null"],
+                    "description": "Disease name"
+                  },
+                  "category": {
+                    "type": ["string", "null"],
+                    "description": "Biolink category (biolink:Disease)"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "description": "Disease description"
+                  },
+                  "xref": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Cross-references to other ontologies (OMIM, Orphanet, DOID, MeSH, etc.)"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "query": {"type": "string"},
+                "total_results": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Mondo_get_disease",
+    "description": "Get detailed information about a disease from the Mondo Disease Ontology by its MONDO ID. Returns the disease name, description, synonyms, cross-references (OMIM, Orphanet, DOID, MeSH, ICD-10, NCIT, UMLS, SNOMED-CT), hierarchy (parent diseases), subtypes count, causal genes, inheritance pattern, and association counts (phenotypes, correlated genes, etc.). Essential for understanding disease classification and finding equivalent IDs across ontologies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease_id": {
+          "type": "string",
+          "description": "Mondo disease identifier. Examples: 'MONDO:0004975' (Alzheimer disease), 'MONDO:0005148' (type 2 diabetes mellitus), 'MONDO:0007254' (breast cancer), 'MONDO:0018076' (Huntington disease), 'MONDO:0009061' (cystic fibrosis)."
+        }
+      },
+      "required": ["disease_id"]
+    },
+    "fields": {
+      "endpoint": "mondo_disease"
+    },
+    "type": "MonarchV3Tool",
+    "test_examples": [
+      {"disease_id": "MONDO:0004975"},
+      {"disease_id": "MONDO:0005148"},
+      {"disease_id": "MONDO:0009061"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": ["string", "null"],
+                  "description": "Mondo disease identifier"
+                },
+                "name": {
+                  "type": ["string", "null"],
+                  "description": "Disease name"
+                },
+                "description": {
+                  "type": ["string", "null"],
+                  "description": "Disease description"
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Known disease synonyms"
+                },
+                "xrefs": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Cross-references (OMIM, Orphanet, DOID, MeSH, ICD-10, NCIT, UMLS, etc.)"
+                },
+                "mappings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": ["string", "null"]},
+                      "url": {"type": ["string", "null"]}
+                    }
+                  },
+                  "description": "Mappings to external ontologies with URLs"
+                },
+                "parent_diseases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": ["string", "null"]},
+                      "name": {"type": ["string", "null"]}
+                    }
+                  },
+                  "description": "Parent disease categories in Mondo hierarchy"
+                },
+                "subtypes_count": {
+                  "type": ["integer", "null"],
+                  "description": "Number of disease subtypes (descendants)"
+                },
+                "causal_genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": ["string", "null"], "description": "Gene CURIE (e.g., HGNC:1884)"},
+                      "name": {"type": ["string", "null"], "description": "Gene name"}
+                    }
+                  },
+                  "description": "Known causal genes"
+                },
+                "inheritance": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "id": {"type": ["string", "null"], "description": "HPO inheritance ID (e.g., HP:0000006)"},
+                    "name": {"type": ["string", "null"], "description": "Inheritance pattern name (e.g., Autosomal dominant)"}
+                  },
+                  "description": "Inheritance pattern if known"
+                },
+                "association_counts": {
+                  "type": "object",
+                  "description": "Counts of different association types (phenotypes, genes, etc.)"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "disease_id": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Mondo_get_disease_phenotypes",
+    "description": "Get HPO (Human Phenotype Ontology) phenotypes associated with a Mondo disease. Returns the phenotype IDs (HP:xxxxxxx), names, and the specific disease subtype contributing each phenotype. Data comes from OMIM, Orphanet, and clinical annotations. Use this to understand clinical presentations and symptoms of a disease. First find the Mondo ID using Mondo_search_disease, then query phenotypes here.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease_id": {
+          "type": "string",
+          "description": "Mondo disease identifier. Examples: 'MONDO:0004975' (Alzheimer disease, 95 phenotypes), 'MONDO:0005148' (type 2 diabetes, 50+ phenotypes), 'MONDO:0009061' (cystic fibrosis, 100+ phenotypes)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of phenotypes to return (default: 20, max: 200)."
+        }
+      },
+      "required": ["disease_id"]
+    },
+    "fields": {
+      "endpoint": "mondo_phenotypes"
+    },
+    "type": "MonarchV3Tool",
+    "test_examples": [
+      {"disease_id": "MONDO:0004975", "limit": 10},
+      {"disease_id": "MONDO:0005148", "limit": 10},
+      {"disease_id": "MONDO:0009061", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenotype_id": {
+                    "type": ["string", "null"],
+                    "description": "HPO phenotype identifier (e.g., HP:0000726)"
+                  },
+                  "phenotype_name": {
+                    "type": ["string", "null"],
+                    "description": "Phenotype name (e.g., 'Dementia')"
+                  },
+                  "disease_subtype": {
+                    "type": ["string", "null"],
+                    "description": "Specific disease subtype contributing this phenotype"
+                  },
+                  "disease_subtype_id": {
+                    "type": ["string", "null"],
+                    "description": "MONDO ID of the contributing disease subtype"
+                  },
+                  "predicate": {
+                    "type": ["string", "null"],
+                    "description": "Relationship predicate"
+                  },
+                  "negated": {
+                    "type": ["boolean", "null"],
+                    "description": "Whether the phenotype association is negated"
+                  },
+                  "primary_knowledge_source": {
+                    "type": ["string", "null"],
+                    "description": "Primary data source for this association"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "disease_id": {"type": "string"},
+                "total_phenotypes": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

@@ -2,7 +2,7 @@
   {
     "type": "PackageTool",
     "name": "get_matplotlib_info",
-    "description": "Get comprehensive information about Matplotlib – comprehensive library for creating visualizations in Python",
+    "description": "Get comprehensive information about Matplotlib \u2013 comprehensive library for creating visualizations in Python",
     "parameter": {
       "type": "object",
       "properties": {
@@ -44,12 +44,107 @@
         "Customize: plt.xlabel(), plt.title(), plt.legend()",
         "Show: plt.show()"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_seaborn_info",
-    "description": "Get comprehensive information about Seaborn – statistical data visualization",
+    "description": "Get comprehensive information about Seaborn \u2013 statistical data visualization",
     "parameter": {
       "type": "object",
       "properties": {
@@ -91,12 +186,107 @@
         "Statistical: sns.boxplot(), sns.violinplot()",
         "Matrix: sns.heatmap(), sns.clustermap()"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_opencv_info",
-    "description": "Get comprehensive information about OpenCV-Python – computer vision library",
+    "description": "Get comprehensive information about OpenCV-Python \u2013 computer vision library",
     "parameter": {
       "type": "object",
       "properties": {
@@ -138,12 +328,107 @@
         "Process: gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)",
         "Display: cv2.imshow('Image', img); cv2.waitKey(0)"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_scikit_image_info",
-    "description": "Get comprehensive information about scikit-image – image processing in Python",
+    "description": "Get comprehensive information about scikit-image \u2013 image processing in Python",
     "parameter": {
       "type": "object",
       "properties": {
@@ -190,12 +475,107 @@
         "Process: filtered = filters.gaussian(image)",
         "Analyze: Use segmentation, morphology, measure modules"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_cellpose_info",
-    "description": "Get comprehensive information about Cellpose – cell segmentation algorithm",
+    "description": "Get comprehensive information about Cellpose \u2013 cell segmentation algorithm",
     "parameter": {
       "type": "object",
       "properties": {
@@ -237,12 +617,107 @@
         "Segment: masks, flows, styles, diams = model.eval(img)",
         "Save: io.masks_flows_to_seg(img, masks, flows, diams)"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_igraph_info",
-    "description": "Get comprehensive information about igraph – network analysis and visualization",
+    "description": "Get comprehensive information about igraph \u2013 network analysis and visualization",
     "parameter": {
       "type": "object",
       "properties": {
@@ -284,12 +759,107 @@
         "4. Analyze: g.density(), g.community_louvain()",
         "5. Visualize: ig.plot(g)"
       ]
+    },
+    "test_examples": [
+      {
+        "include_examples": true
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
     "type": "PackageTool",
     "name": "get_plantcv_info",
-    "description": "Get comprehensive information about PlantCV – plant phenotyping with image analysis",
+    "description": "Get comprehensive information about PlantCV \u2013 plant phenotyping with image analysis",
     "parameter": {
       "type": "object",
       "properties": {
@@ -328,7 +898,7 @@
         "pip": "pip install plantcv",
         "conda": "conda install -c conda-forge plantcv"
       },
-      "usage_example": "import plantcv as pcv\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.patches import Rectangle\nimport tempfile\nimport os\n\nprint('PlantCV - Plant Phenotyping with Image Analysis')\nprint('=' * 50)\n\n# Set PlantCV parameters\npcv.params.debug = None  # Set to 'print' for debug mode\npcv.params.device = 0\n\n# Create synthetic plant-like image for demonstration\nprint('Creating synthetic plant image for analysis...')\n\n# Create a synthetic plant image\nimg_height, img_width = 400, 300\nimg = np.zeros((img_height, img_width, 3), dtype=np.uint8)\n\n# Background (soil-like)\nimg[:, :] = [139, 69, 19]  # Brown background\n\n# Add some noise to background\nnoise = np.random.randint(-20, 20, (img_height, img_width, 3))\nimg = np.clip(img.astype(int) + noise, 0, 255).astype(np.uint8)\n\n# Create plant leaves (green regions)\nleaves = [\n    {'center': (150, 100), 'size': (80, 40), 'angle': 30},\n    {'center': (200, 120), 'size': (70, 35), 'angle': -15},\n    {'center': (180, 160), 'size': (60, 30), 'angle': 45},\n    {'center': (140, 180), 'size': (65, 32), 'angle': -30}\n]\n\n# Draw elliptical leaves\nfrom matplotlib.patches import Ellipse\nfrom PIL import Image, ImageDraw\n\n# Convert to PIL for easier drawing\npil_img = Image.fromarray(img)\ndraw = ImageDraw.Draw(pil_img)\n\nfor leaf in leaves:\n    center_x, center_y = leaf['center']\n    width, height = leaf['size']\n    \n    # Calculate ellipse bounds\n    left = center_x - width // 2\n    top = center_y - height // 2\n    right = center_x + width // 2\n    bottom = center_y + height // 2\n    \n    # Draw leaf with green color variations\n    green_color = (34 + np.random.randint(-10, 10), \n                   139 + np.random.randint(-20, 20), \n                   34 + np.random.randint(-10, 10))\n    \n    draw.ellipse([left, top, right, bottom], fill=green_color)\n\n# Convert back to numpy\nimg = np.array(pil_img)\n\nprint(f'Created synthetic plant image: {img.shape}')\nprint(f'Image dimensions: {img_width} × {img_height} pixels')\n\n# Basic PlantCV analysis workflow\nprint('\\n=== PlantCV Analysis Workflow ===')\n\n# 1. Color space conversion\nprint('\\n1. Color Space Analysis:')\n\n# Convert to different color spaces\nimg_hsv = pcv.rgb2gray_hsv(rgb_img=img, channel='s')\nimg_lab = pcv.rgb2gray_lab(rgb_img=img, channel='a')\n\nprint(f'RGB to HSV (S channel): shape {img_hsv.shape}')\nprint(f'RGB to LAB (A channel): shape {img_lab.shape}')\n\n# 2. Thresholding to segment plant material\nprint('\\n2. Plant Segmentation:')\n\n# Threshold in HSV color space to isolate green plant material\n# Create a simple threshold for green regions\nimg_gray = pcv.rgb2gray(rgb_img=img)\n\n# Manual thresholding for green detection\n# In real applications, you'd use pcv.threshold functions\ngreen_channel = img[:, :, 1]  # Green channel\nred_channel = img[:, :, 0]    # Red channel\nblue_channel = img[:, :, 2]   # Blue channel\n\n# Simple green detection: green > red and green > blue\ngreen_mask = (green_channel > red_channel + 20) & (green_channel > blue_channel + 20)\ngreen_mask = green_mask.astype(np.uint8) * 255\n\nprint(f'Green segmentation mask created: {np.sum(green_mask > 0)} green pixels')\nprint(f'Plant coverage: {np.sum(green_mask > 0) / (img_width * img_height) * 100:.1f}%')\n\n# 3. Morphological operations\nprint('\\n3. Morphological Operations:')\n\n# Clean up mask with morphological operations\nkernel = np.ones((3, 3), np.uint8)\n\n# Simulated morphological operations (PlantCV has built-in functions)\nimport scipy.ndimage as ndimage\n\n# Remove small objects\nopened_mask = ndimage.binary_opening(green_mask > 0, structure=kernel)\nopened_mask = (opened_mask * 255).astype(np.uint8)\n\n# Fill small holes\nclosed_mask = ndimage.binary_closing(opened_mask > 0, structure=kernel)\nclosed_mask = (closed_mask * 255).astype(np.uint8)\n\nprint(f'After morphological operations: {np.sum(closed_mask > 0)} pixels')\n\n# 4. Object analysis\nprint('\\n4. Plant Object Analysis:')\n\n# Find connected components (individual leaves/objects)\nlabeled_objects, num_objects = ndimage.label(closed_mask > 0)\nprint(f'Number of plant objects detected: {num_objects}')\n\n# Analyze each object\nobject_stats = []\nfor obj_id in range(1, num_objects + 1):\n    obj_mask = (labeled_objects == obj_id)\n    obj_area = np.sum(obj_mask)\n    \n    # Find bounding box\n    obj_coords = np.where(obj_mask)\n    if len(obj_coords[0]) > 0:\n        min_y, max_y = np.min(obj_coords[0]), np.max(obj_coords[0])\n        min_x, max_x = np.min(obj_coords[1]), np.max(obj_coords[1])\n        \n        obj_stats.append({\n            'object_id': obj_id,\n            'area': obj_area,\n            'bbox': (min_x, min_y, max_x, max_y),\n            'width': max_x - min_x + 1,\n            'height': max_y - min_y + 1\n        })\n\nprint('Object statistics:')\nfor stat in object_stats:\n    print(f'  Object {stat[\"object_id\"]}: area={stat[\"area\"]} pixels, '\n          f'size={stat[\"width\"]}×{stat[\"height\"]}px')\n\n# 5. Phenotypic measurements\nprint('\\n5. Phenotypic Measurements:')\n\n# Calculate total plant area\ntotal_plant_area = np.sum(closed_mask > 0)\nprint(f'Total plant area: {total_plant_area} pixels')\n\n# Calculate convex hull area (approximated)\nfrom scipy.spatial import ConvexHull\n\nplant_coords = np.where(closed_mask > 0)\nif len(plant_coords[0]) > 3:\n    points = np.column_stack((plant_coords[1], plant_coords[0]))\n    # Sample points to avoid memory issues\n    if len(points) > 1000:\n        indices = np.random.choice(len(points), 1000, replace=False)\n        points = points[indices]\n    \n    try:\n        hull = ConvexHull(points)\n        convex_hull_area = hull.volume  # In 2D, volume is area\n        compactness = total_plant_area / convex_hull_area\n        print(f'Convex hull area: {convex_hull_area:.0f} pixels')\n        print(f'Compactness ratio: {compactness:.3f}')\n    except:\n        print('Could not calculate convex hull')\n\n# Color analysis\nprint('\\n6. Color Analysis:')\n\n# Extract color statistics from plant regions\nplant_pixels = img[closed_mask > 0]\nif len(plant_pixels) > 0:\n    mean_rgb = np.mean(plant_pixels, axis=0)\n    std_rgb = np.std(plant_pixels, axis=0)\n    \n    print(f'Mean RGB values: R={mean_rgb[0]:.1f}, G={mean_rgb[1]:.1f}, B={mean_rgb[2]:.1f}')\n    print(f'RGB standard deviation: R={std_rgb[0]:.1f}, G={std_rgb[1]:.1f}, B={std_rgb[2]:.1f}')\n    \n    # Calculate greenness index\n    greenness = mean_rgb[1] / (mean_rgb[0] + mean_rgb[1] + mean_rgb[2])\n    print(f'Greenness index: {greenness:.3f}')\n\n# 7. Shape analysis\nprint('\\n7. Shape Analysis:')\n\n# Calculate aspect ratio and other shape metrics\nif object_stats:\n    largest_object = max(object_stats, key=lambda x: x['area'])\n    aspect_ratio = largest_object['width'] / largest_object['height']\n    print(f'Largest object aspect ratio: {aspect_ratio:.2f}')\n    print(f'Largest object dimensions: {largest_object[\"width\"]}×{largest_object[\"height\"]} pixels')\n\n# Create visualization\nprint('\\n8. Visualization:')\n\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\n# Original image\naxes[0, 0].imshow(img)\naxes[0, 0].set_title('Original Image')\naxes[0, 0].axis('off')\n\n# Segmentation mask\naxes[0, 1].imshow(green_mask, cmap='gray')\naxes[0, 1].set_title('Green Segmentation')\naxes[0, 1].axis('off')\n\n# Cleaned mask\naxes[1, 0].imshow(closed_mask, cmap='gray')\naxes[1, 0].set_title('Morphologically Cleaned')\naxes[1, 0].axis('off')\n\n# Labeled objects\naxes[1, 1].imshow(labeled_objects, cmap='tab10')\naxes[1, 1].set_title(f'Detected Objects ({num_objects})')\naxes[1, 1].axis('off')\n\n# Add bounding boxes to original image\nax_bbox = fig.add_subplot(2, 2, 1)\nax_bbox.imshow(img)\nfor stat in object_stats:\n    bbox = stat['bbox']\n    rect = Rectangle((bbox[0], bbox[1]), stat['width'], stat['height'],\n                    linewidth=2, edgecolor='red', facecolor='none')\n    ax_bbox.add_patch(rect)\n    ax_bbox.text(bbox[0], bbox[1]-5, f'Obj{stat[\"object_id\"]}', \n                color='red', fontsize=8, weight='bold')\n\nplt.tight_layout()\n\n# Save visualization\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    viz_file = tmp.name\n\nplt.close()\nprint(f'Analysis visualization saved to: {viz_file}')\n\n# Summary report\nprint('\\n' + '=' * 50)\nprint('PLANT PHENOTYPING SUMMARY REPORT')\nprint('=' * 50)\nprint(f'Image dimensions: {img_width} × {img_height} pixels')\nprint(f'Total plant area: {total_plant_area} pixels ({total_plant_area/(img_width*img_height)*100:.1f}% of image)')\nprint(f'Number of plant objects: {num_objects}')\nif plant_pixels is not None and len(plant_pixels) > 0:\n    print(f'Average plant color (RGB): ({mean_rgb[0]:.0f}, {mean_rgb[1]:.0f}, {mean_rgb[2]:.0f})')\n    print(f'Greenness index: {greenness:.3f}')\nif object_stats:\n    areas = [obj['area'] for obj in object_stats]\n    print(f'Object size range: {min(areas)} - {max(areas)} pixels')\n\n# Cleanup\nos.unlink(viz_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nPlantCV provides:')\nprint('• Automated plant image analysis')\nprint('• Color space transformations')\nprint('• Plant segmentation algorithms')\nprint('• Morphological measurements')\nprint('• Shape and size analysis')\nprint('• Color analysis and health indicators')\nprint('• Multi-plant and time-series analysis')\nprint('• Integration with high-throughput phenotyping')",
+      "usage_example": "import plantcv as pcv\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib.patches import Rectangle\nimport tempfile\nimport os\n\nprint('PlantCV - Plant Phenotyping with Image Analysis')\nprint('=' * 50)\n\n# Set PlantCV parameters\npcv.params.debug = None  # Set to 'print' for debug mode\npcv.params.device = 0\n\n# Create synthetic plant-like image for demonstration\nprint('Creating synthetic plant image for analysis...')\n\n# Create a synthetic plant image\nimg_height, img_width = 400, 300\nimg = np.zeros((img_height, img_width, 3), dtype=np.uint8)\n\n# Background (soil-like)\nimg[:, :] = [139, 69, 19]  # Brown background\n\n# Add some noise to background\nnoise = np.random.randint(-20, 20, (img_height, img_width, 3))\nimg = np.clip(img.astype(int) + noise, 0, 255).astype(np.uint8)\n\n# Create plant leaves (green regions)\nleaves = [\n    {'center': (150, 100), 'size': (80, 40), 'angle': 30},\n    {'center': (200, 120), 'size': (70, 35), 'angle': -15},\n    {'center': (180, 160), 'size': (60, 30), 'angle': 45},\n    {'center': (140, 180), 'size': (65, 32), 'angle': -30}\n]\n\n# Draw elliptical leaves\nfrom matplotlib.patches import Ellipse\nfrom PIL import Image, ImageDraw\n\n# Convert to PIL for easier drawing\npil_img = Image.fromarray(img)\ndraw = ImageDraw.Draw(pil_img)\n\nfor leaf in leaves:\n    center_x, center_y = leaf['center']\n    width, height = leaf['size']\n    \n    # Calculate ellipse bounds\n    left = center_x - width // 2\n    top = center_y - height // 2\n    right = center_x + width // 2\n    bottom = center_y + height // 2\n    \n    # Draw leaf with green color variations\n    green_color = (34 + np.random.randint(-10, 10), \n                   139 + np.random.randint(-20, 20), \n                   34 + np.random.randint(-10, 10))\n    \n    draw.ellipse([left, top, right, bottom], fill=green_color)\n\n# Convert back to numpy\nimg = np.array(pil_img)\n\nprint(f'Created synthetic plant image: {img.shape}')\nprint(f'Image dimensions: {img_width} \u00d7 {img_height} pixels')\n\n# Basic PlantCV analysis workflow\nprint('\\n=== PlantCV Analysis Workflow ===')\n\n# 1. Color space conversion\nprint('\\n1. Color Space Analysis:')\n\n# Convert to different color spaces\nimg_hsv = pcv.rgb2gray_hsv(rgb_img=img, channel='s')\nimg_lab = pcv.rgb2gray_lab(rgb_img=img, channel='a')\n\nprint(f'RGB to HSV (S channel): shape {img_hsv.shape}')\nprint(f'RGB to LAB (A channel): shape {img_lab.shape}')\n\n# 2. Thresholding to segment plant material\nprint('\\n2. Plant Segmentation:')\n\n# Threshold in HSV color space to isolate green plant material\n# Create a simple threshold for green regions\nimg_gray = pcv.rgb2gray(rgb_img=img)\n\n# Manual thresholding for green detection\n# In real applications, you'd use pcv.threshold functions\ngreen_channel = img[:, :, 1]  # Green channel\nred_channel = img[:, :, 0]    # Red channel\nblue_channel = img[:, :, 2]   # Blue channel\n\n# Simple green detection: green > red and green > blue\ngreen_mask = (green_channel > red_channel + 20) & (green_channel > blue_channel + 20)\ngreen_mask = green_mask.astype(np.uint8) * 255\n\nprint(f'Green segmentation mask created: {np.sum(green_mask > 0)} green pixels')\nprint(f'Plant coverage: {np.sum(green_mask > 0) / (img_width * img_height) * 100:.1f}%')\n\n# 3. Morphological operations\nprint('\\n3. Morphological Operations:')\n\n# Clean up mask with morphological operations\nkernel = np.ones((3, 3), np.uint8)\n\n# Simulated morphological operations (PlantCV has built-in functions)\nimport scipy.ndimage as ndimage\n\n# Remove small objects\nopened_mask = ndimage.binary_opening(green_mask > 0, structure=kernel)\nopened_mask = (opened_mask * 255).astype(np.uint8)\n\n# Fill small holes\nclosed_mask = ndimage.binary_closing(opened_mask > 0, structure=kernel)\nclosed_mask = (closed_mask * 255).astype(np.uint8)\n\nprint(f'After morphological operations: {np.sum(closed_mask > 0)} pixels')\n\n# 4. Object analysis\nprint('\\n4. Plant Object Analysis:')\n\n# Find connected components (individual leaves/objects)\nlabeled_objects, num_objects = ndimage.label(closed_mask > 0)\nprint(f'Number of plant objects detected: {num_objects}')\n\n# Analyze each object\nobject_stats = []\nfor obj_id in range(1, num_objects + 1):\n    obj_mask = (labeled_objects == obj_id)\n    obj_area = np.sum(obj_mask)\n    \n    # Find bounding box\n    obj_coords = np.where(obj_mask)\n    if len(obj_coords[0]) > 0:\n        min_y, max_y = np.min(obj_coords[0]), np.max(obj_coords[0])\n        min_x, max_x = np.min(obj_coords[1]), np.max(obj_coords[1])\n        \n        obj_stats.append({\n            'object_id': obj_id,\n            'area': obj_area,\n            'bbox': (min_x, min_y, max_x, max_y),\n            'width': max_x - min_x + 1,\n            'height': max_y - min_y + 1\n        })\n\nprint('Object statistics:')\nfor stat in object_stats:\n    print(f'  Object {stat[\"object_id\"]}: area={stat[\"area\"]} pixels, '\n          f'size={stat[\"width\"]}\u00d7{stat[\"height\"]}px')\n\n# 5. Phenotypic measurements\nprint('\\n5. Phenotypic Measurements:')\n\n# Calculate total plant area\ntotal_plant_area = np.sum(closed_mask > 0)\nprint(f'Total plant area: {total_plant_area} pixels')\n\n# Calculate convex hull area (approximated)\nfrom scipy.spatial import ConvexHull\n\nplant_coords = np.where(closed_mask > 0)\nif len(plant_coords[0]) > 3:\n    points = np.column_stack((plant_coords[1], plant_coords[0]))\n    # Sample points to avoid memory issues\n    if len(points) > 1000:\n        indices = np.random.choice(len(points), 1000, replace=False)\n        points = points[indices]\n    \n    try:\n        hull = ConvexHull(points)\n        convex_hull_area = hull.volume  # In 2D, volume is area\n        compactness = total_plant_area / convex_hull_area\n        print(f'Convex hull area: {convex_hull_area:.0f} pixels')\n        print(f'Compactness ratio: {compactness:.3f}')\n    except:\n        print('Could not calculate convex hull')\n\n# Color analysis\nprint('\\n6. Color Analysis:')\n\n# Extract color statistics from plant regions\nplant_pixels = img[closed_mask > 0]\nif len(plant_pixels) > 0:\n    mean_rgb = np.mean(plant_pixels, axis=0)\n    std_rgb = np.std(plant_pixels, axis=0)\n    \n    print(f'Mean RGB values: R={mean_rgb[0]:.1f}, G={mean_rgb[1]:.1f}, B={mean_rgb[2]:.1f}')\n    print(f'RGB standard deviation: R={std_rgb[0]:.1f}, G={std_rgb[1]:.1f}, B={std_rgb[2]:.1f}')\n    \n    # Calculate greenness index\n    greenness = mean_rgb[1] / (mean_rgb[0] + mean_rgb[1] + mean_rgb[2])\n    print(f'Greenness index: {greenness:.3f}')\n\n# 7. Shape analysis\nprint('\\n7. Shape Analysis:')\n\n# Calculate aspect ratio and other shape metrics\nif object_stats:\n    largest_object = max(object_stats, key=lambda x: x['area'])\n    aspect_ratio = largest_object['width'] / largest_object['height']\n    print(f'Largest object aspect ratio: {aspect_ratio:.2f}')\n    print(f'Largest object dimensions: {largest_object[\"width\"]}\u00d7{largest_object[\"height\"]} pixels')\n\n# Create visualization\nprint('\\n8. Visualization:')\n\nfig, axes = plt.subplots(2, 2, figsize=(12, 10))\n\n# Original image\naxes[0, 0].imshow(img)\naxes[0, 0].set_title('Original Image')\naxes[0, 0].axis('off')\n\n# Segmentation mask\naxes[0, 1].imshow(green_mask, cmap='gray')\naxes[0, 1].set_title('Green Segmentation')\naxes[0, 1].axis('off')\n\n# Cleaned mask\naxes[1, 0].imshow(closed_mask, cmap='gray')\naxes[1, 0].set_title('Morphologically Cleaned')\naxes[1, 0].axis('off')\n\n# Labeled objects\naxes[1, 1].imshow(labeled_objects, cmap='tab10')\naxes[1, 1].set_title(f'Detected Objects ({num_objects})')\naxes[1, 1].axis('off')\n\n# Add bounding boxes to original image\nax_bbox = fig.add_subplot(2, 2, 1)\nax_bbox.imshow(img)\nfor stat in object_stats:\n    bbox = stat['bbox']\n    rect = Rectangle((bbox[0], bbox[1]), stat['width'], stat['height'],\n                    linewidth=2, edgecolor='red', facecolor='none')\n    ax_bbox.add_patch(rect)\n    ax_bbox.text(bbox[0], bbox[1]-5, f'Obj{stat[\"object_id\"]}', \n                color='red', fontsize=8, weight='bold')\n\nplt.tight_layout()\n\n# Save visualization\nwith tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:\n    plt.savefig(tmp.name, dpi=150, bbox_inches='tight')\n    viz_file = tmp.name\n\nplt.close()\nprint(f'Analysis visualization saved to: {viz_file}')\n\n# Summary report\nprint('\\n' + '=' * 50)\nprint('PLANT PHENOTYPING SUMMARY REPORT')\nprint('=' * 50)\nprint(f'Image dimensions: {img_width} \u00d7 {img_height} pixels')\nprint(f'Total plant area: {total_plant_area} pixels ({total_plant_area/(img_width*img_height)*100:.1f}% of image)')\nprint(f'Number of plant objects: {num_objects}')\nif plant_pixels is not None and len(plant_pixels) > 0:\n    print(f'Average plant color (RGB): ({mean_rgb[0]:.0f}, {mean_rgb[1]:.0f}, {mean_rgb[2]:.0f})')\n    print(f'Greenness index: {greenness:.3f}')\nif object_stats:\n    areas = [obj['area'] for obj in object_stats]\n    print(f'Object size range: {min(areas)} - {max(areas)} pixels')\n\n# Cleanup\nos.unlink(viz_file)\nprint('\\nDemo complete - temporary files cleaned up')\n\nprint('\\nPlantCV provides:')\nprint('\u2022 Automated plant image analysis')\nprint('\u2022 Color space transformations')\nprint('\u2022 Plant segmentation algorithms')\nprint('\u2022 Morphological measurements')\nprint('\u2022 Shape and size analysis')\nprint('\u2022 Color analysis and health indicators')\nprint('\u2022 Multi-plant and time-series analysis')\nprint('\u2022 Integration with high-throughput phenotyping')",
       "quick_start": [
         "Install: pip install plantcv",
         "Load image: img = pcv.readimage(filename)",
@@ -337,6 +907,101 @@
         "Analyze objects: pcv.analyze_object(img, mask)",
         "Generate report: pcv.print_results(filename)"
       ]
+    },
+    "test_examples": [
+      {
+        "info_type": "overview"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
     }
   },
   {
@@ -349,7 +1014,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -361,7 +1119,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -373,7 +1224,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -385,7 +1329,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -397,7 +1434,100 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   },
   {
     "type": "PackageTool",
@@ -409,6 +1539,99 @@
       "properties": {},
       "required": []
     },
-    "required": []
+    "required": [],
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Name of the package"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief summary of the package"
+        },
+        "version": {
+          "type": "string",
+          "description": "Latest version number"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Author or maintainer"
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "License type"
+        },
+        "home_page": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Home page URL"
+        },
+        "documentation": {
+          "type": "string",
+          "description": "Documentation URL"
+        },
+        "repository": {
+          "type": "string",
+          "description": "Source code repository"
+        },
+        "python_versions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Supported Python versions (classifiers)"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords associated with the package"
+        },
+        "installation": {
+          "type": "object",
+          "properties": {
+            "pip": {
+              "type": "string"
+            },
+            "conda": {
+              "type": "string"
+            },
+            "pip_upgrade": {
+              "type": "string"
+            }
+          },
+          "description": "Installation commands"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of information (pypi or local)"
+        },
+        "usage_example": {
+          "type": "string",
+          "description": "Code snippet demonstrating basic usage"
+        },
+        "quick_start": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step-by-step guide to get started"
+        }
+      }
+    }
   }
 ]

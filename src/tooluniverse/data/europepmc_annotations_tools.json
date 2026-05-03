@@ -1,0 +1,222 @@
+[
+  {
+    "name": "EuroPMCAnnot_get_article_annotations",
+    "description": "Get text-mined annotations from a scientific article using the Europe PMC Annotations API. Returns entities extracted from the article text including chemicals, organisms, gene ontology terms, diseases, and gene/protein mentions, with their exact text, surrounding context, ontology URIs, and section locations. Powered by Europe PMC's SciLite text mining pipeline. Use this to extract structured biological entities from published literature without reading the full text. Example: PMC4353746 returns 19 chemical annotations and 12 GO annotations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "article_id": {
+          "type": "string",
+          "description": "Article identifier in format 'PMC:PMCXXXXXXX' or 'MED:PMID'. Examples: 'PMC:PMC4353746', 'PMC:PMC3531190', 'MED:25780448'."
+        },
+        "annotation_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by annotation type: 'Chemicals', 'Organisms', 'Gene Ontology', 'Diseases', 'Genes & Proteins', 'Accession Numbers'. Default: all types."
+        }
+      },
+      "required": [
+        "article_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "by_article"
+    },
+    "type": "EuroPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "article_id": "PMC:PMC4353746",
+        "annotation_type": "Chemicals"
+      },
+      {
+        "article_id": "PMC:PMC3531190",
+        "annotation_type": "Organisms"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_id": {"type": "string"},
+            "pmcid": {"type": ["string", "null"]},
+            "source": {"type": ["string", "null"]},
+            "annotation_count": {"type": "integer"},
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "exact": {"type": "string"},
+                  "prefix": {"type": ["string", "null"]},
+                  "postfix": {"type": ["string", "null"]},
+                  "type": {"type": "string"},
+                  "section": {"type": ["string", "null"]},
+                  "provider": {"type": ["string", "null"]},
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {"type": "string"},
+                        "uri": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["article_id", "annotations"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EuroPMCAnnot_get_annotations_by_type",
+    "description": "Get all annotations of a specific type from multiple articles using the Europe PMC Annotations API. Useful for batch extraction of entities from a set of articles - e.g., extract all chemicals mentioned across a set of related papers, or all organism mentions from a research group's publications. Supports up to 200 article IDs per request.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "article_ids": {
+          "type": "string",
+          "description": "Comma-separated article identifiers. Format: 'PMC:PMCXXXXXXX' or 'MED:PMID'. Examples: 'PMC:PMC4353746,PMC:PMC3531190', 'MED:25780448,MED:23256780'. Max 200 articles."
+        },
+        "annotation_type": {
+          "type": "string",
+          "description": "Annotation type to retrieve. One of: 'Chemicals', 'Organisms', 'Gene Ontology', 'Diseases', 'Genes & Proteins', 'Accession Numbers'."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page. Default: 25. Max: 1000."
+        }
+      },
+      "required": [
+        "article_ids",
+        "annotation_type"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "batch_by_type"
+    },
+    "type": "EuroPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "article_ids": "PMC:PMC4353746,PMC:PMC3531190",
+        "annotation_type": "Chemicals"
+      },
+      {
+        "article_ids": "PMC:PMC3531190",
+        "annotation_type": "Organisms"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_count": {"type": "integer"},
+            "annotation_type": {"type": "string"},
+            "total_annotations": {"type": "integer"},
+            "articles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "article_id": {"type": "string"},
+                  "pmcid": {"type": ["string", "null"]},
+                  "annotation_count": {"type": "integer"},
+                  "annotations": {"type": "array"}
+                }
+              }
+            }
+          },
+          "required": ["articles"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EuroPMCAnnot_get_chemicals_from_article",
+    "description": "Extract chemical/compound mentions from a scientific article using Europe PMC text mining. Returns chemicals identified in the article with their ChEBI ontology URIs, exact text matches, and surrounding context. Specialized shortcut for the most common annotation use case in drug discovery and pharmacology research. Example: PMC4353746 (resistin study) returns 19 chemical annotations including peptide, resistin, and specific compounds.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "article_id": {
+          "type": "string",
+          "description": "PMC article identifier. Format: 'PMC:PMCXXXXXXX'. Examples: 'PMC:PMC4353746', 'PMC:PMC3531190'."
+        }
+      },
+      "required": [
+        "article_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "chemicals_shortcut"
+    },
+    "type": "EuroPMCAnnotationsTool",
+    "test_examples": [
+      {
+        "article_id": "PMC:PMC4353746"
+      },
+      {
+        "article_id": "PMC:PMC3531190"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "article_id": {"type": "string"},
+            "chemical_count": {"type": "integer"},
+            "chemicals": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "chebi_uri": {"type": ["string", "null"]},
+                  "chebi_name": {"type": ["string", "null"]},
+                  "context": {"type": ["string", "null"]},
+                  "section": {"type": ["string", "null"]}
+                }
+              }
+            }
+          },
+          "required": ["article_id", "chemicals"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

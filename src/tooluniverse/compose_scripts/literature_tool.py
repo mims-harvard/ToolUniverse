@@ -16,7 +16,7 @@ def compose(arguments, tooluniverse, call_tool):
         "openalex_literature_search", {"search_keywords": topic, "max_results": 5}
     )
     literature["pubtator"] = call_tool(
-        "PubTator3_LiteratureSearch", {"text": topic, "page_size": 5}
+        "PubTator3_LiteratureSearch", {"query": topic, "page_size": 5}
     )
 
     summary = call_tool(

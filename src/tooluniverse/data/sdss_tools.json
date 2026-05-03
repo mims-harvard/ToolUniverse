@@ -1,0 +1,70 @@
+[
+  {
+    "name": "SDSS_sql_search",
+    "description": "Query the Sloan Digital Sky Survey (SDSS) Data Release 18 database using SQL. SDSS is one of the most comprehensive astronomical surveys, imaging 1/3 of the sky with data on 500 million objects. Key tables: PhotoObjAll (photometric objects: galaxies, stars, quasars), SpecObj (spectroscopic objects with redshifts and classifications), PhotoPrimary (unique photometric sources). Key columns: ra, dec (coordinates), objid (unique ID), z (redshift for SpecObj), class (STAR/GALAXY/QSO), u/g/r/i/z (magnitudes in 5 photometric bands). Use SQL TOP N for limiting results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cmd": {
+          "type": "string",
+          "description": "SQL query against the SDSS DR18 database. Examples: 'SELECT TOP 10 objid,ra,dec,r FROM PhotoObjAll WHERE ra BETWEEN 180 AND 181 AND dec BETWEEN 0 AND 1', 'SELECT TOP 5 specObjID,ra,dec,z,class FROM SpecObj WHERE class=\\'GALAXY\\' AND z BETWEEN 0.1 AND 0.2', 'SELECT TOP 5 objid,ra,dec,g,r,i FROM PhotoPrimary WHERE g < 18 ORDER BY g'"
+        }
+      },
+      "required": [
+        "cmd"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "cmd": "SELECT TOP 5 objid,ra,dec,r,g FROM PhotoPrimary WHERE ra BETWEEN 180 AND 181 AND dec BETWEEN 0 AND 1"
+      },
+      {
+        "cmd": "SELECT TOP 5 specObjID,ra,dec,z,class FROM SpecObj WHERE class='GALAXY' AND z BETWEEN 0.05 AND 0.1"
+      },
+      {
+        "cmd": "SELECT TOP 5 specObjID,ra,dec,z FROM SpecObj WHERE class='QSO' AND z BETWEEN 2.0 AND 3.0 ORDER BY z"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Query result tables. Each element has TableName (string) and Rows (array of result row objects). Access results via data[0]['Rows'].",
+          "items": {
+            "type": "object",
+            "properties": {
+              "TableName": {
+                "type": "string"
+              },
+              "Rows": {
+                "type": "array",
+                "description": "Result rows as objects with column names as keys (e.g., ra, dec, objid, z, class, r, g, i)",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

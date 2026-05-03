@@ -1,7 +1,7 @@
 Tool Listing Tutorial
 ===========================
 
-ToolUniverse provides powerful methods for discovering and exploring the available tools in the system. This Tutorial covers the various ways you can list, filter, and understand the tools available in your ToolUniverse instance.
+ToolUniverse provides powerful methods for discovering and exploring the available tools in the system.
 
 Overview
 --------
@@ -12,7 +12,7 @@ API Reference
 ~~~~~~~~~~~~~
 
 .. note::
-   **For complete Python API documentation**, see :doc:`api_quick_reference` for commonly used classes and methods, or :doc:`api_comprehensive` for full API reference.
+   **For complete Python API documentation**, see :doc:`../api/modules` for commonly used classes and methods, or :doc:`../api/modules` for full API reference.
 
 .. autofunction:: tooluniverse.execute_function.ToolUniverse.list_built_in_tools
    :noindex:
@@ -341,14 +341,3 @@ One key advantage of ``list_built_in_tools()`` is that it works **before** calli
    # Only then load tools if needed
    tu.load_tools()
 
-Summary
--------
-
-The ``list_built_in_tools()`` method provides flexible tool discovery with four modes:
-
-- **list_name**: Simple list of tool names
-- **list_spec**: Complete tool specifications
-- **config**: Organized by configuration categories
-- **type**: Organized by implementation types
-
-All modes support the ``scan_all`` parameter for comprehensive tool discovery. This makes it easy to explore, validate, and work with tools in ToolUniverse without needing to load them first.

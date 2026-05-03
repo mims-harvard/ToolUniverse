@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_umap\\_learn\\_info 模块"
 #: 3e20d65105f240e98002936cc5319020 of
 #: tooluniverse.tools.get_umap_learn_info:1
 msgid "get_umap_learn_info"
-msgstr ""
+msgstr "get_umap_learn_info 获取 UMAP 学习信息"
 
 #: 85ebfc810ae54c29a8ef181fd162bf04 ef61b8836f4c4c4ea01a8db5caf91ae6 of
 #: tooluniverse.tools.get_umap_learn_info:3

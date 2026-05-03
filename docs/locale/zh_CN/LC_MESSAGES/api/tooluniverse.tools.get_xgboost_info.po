@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_xgboost\\_info 模块"
 
 #: 58026250c198441a896cbe51e498028e of tooluniverse.tools.get_xgboost_info:1
 msgid "get_xgboost_info"
-msgstr ""
+msgstr "get_xgboost_info 获取XGBoost信息"
 
 #: 78d7e5c2d45e4fd7a3039687330dd3c2 f6acee8650454602a8127d906cf80f65 of
 #: tooluniverse.tools.get_xgboost_info:3

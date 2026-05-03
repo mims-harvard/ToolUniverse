@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pdbfixer\\_info 模块"
 
 #: bf4de40f526e40af8ab619d75684985f of tooluniverse.tools.get_pdbfixer_info:1
 msgid "get_pdbfixer_info"
-msgstr ""
+msgstr "get_pdbfixer_信息"
 
 #: 1947b384b79b4a2881b4f6fb7d84c831 992ddae1af0d45f995470f29dfdc4ffb of
 #: tooluniverse.tools.get_pdbfixer_info:3

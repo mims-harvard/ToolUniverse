@@ -1,0 +1,466 @@
+[
+  {
+    "name": "ReactomeAnalysis_pathway_enrichment",
+    "description": "Perform pathway overrepresentation (enrichment) analysis using the Reactome Analysis Service. Submit a list of gene symbols, UniProt IDs, or Ensembl IDs and identify which Reactome pathways are statistically enriched. Returns pathways ranked by p-value with FDR correction, entity counts, and reaction coverage. Supports projection to human pathways for cross-species analysis. Example: submitting TP53, BRCA1, CDH1, EGFR, KRAS returns 394 enriched pathways including 'Developmental Lineage of Mammary Gland Myoepithelial Cells' (p=3.94e-08) and 'Signaling by ERBB2 KD Mutants'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "string",
+          "description": "Newline-separated list of gene/protein identifiers. Supports gene symbols (TP53, BRCA1), UniProt IDs (P04637, P38398), or Ensembl IDs. Example: 'TP53\\nBRCA1\\nCDH1\\nEGFR\\nKRAS'."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of pathways to return (default 20, max 50)."
+        },
+        "include_disease": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Include disease pathways in results (default true)."
+        },
+        "projection": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Project identifiers to human Reactome pathways for cross-species analysis (default true)."
+        }
+      },
+      "required": [
+        "identifiers"
+      ]
+    },
+    "fields": {
+      "endpoint": "pathway_enrichment"
+    },
+    "type": "ReactomeAnalysisTool",
+    "test_examples": [
+      {
+        "identifiers": "TP53\nBRCA1\nCDH1\nEGFR\nKRAS"
+      },
+      {
+        "identifiers": "P04637\nP38398\nO15350\nP00533\nP01116",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Analysis token for retrieving results later"
+                },
+                "analysis_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "OVERREPRESENTATION or EXPRESSION"
+                },
+                "projection": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether projection was applied"
+                },
+                "identifiers_not_found": {
+                  "type": "integer",
+                  "description": "Count of unmatched identifiers"
+                },
+                "pathways_found": {
+                  "type": "integer",
+                  "description": "Total enriched pathways"
+                },
+                "pathways": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pathway_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "is_disease": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "is_lowest_level": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "entities_found": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "entities_total": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "entities_ratio": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "p_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "fdr": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "reactions_found": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reactions_total": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_pathways": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ReactomeAnalysis_species_comparison",
+    "description": "Perform Reactome pathway analysis with cross-species projection. Submit protein/gene identifiers from any supported species and Reactome will project them to human pathways, enabling comparison of pathway enrichment across species. This uses the same overrepresentation analysis but ensures identifiers are mapped via orthology to human pathways. Example: submitting mouse protein IDs returns enriched human Reactome pathways with mapping statistics.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifiers": {
+          "type": "string",
+          "description": "Newline-separated list of gene/protein identifiers from any species. Supports UniProt, Ensembl, or gene symbols. Example: 'Trp53\\nBrca1\\nCdh1' (mouse gene symbols)."
+        },
+        "species": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "NCBI taxonomy ID of the source species (default 9606 for human). Examples: 10090 (mouse), 7955 (zebrafish), 7227 (fly)."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of pathways to return (default 20, max 50)."
+        }
+      },
+      "required": [
+        "identifiers"
+      ]
+    },
+    "fields": {
+      "endpoint": "species_comparison"
+    },
+    "type": "ReactomeAnalysisTool",
+    "test_examples": [
+      {
+        "identifiers": "TP53\nBRCA1\nEGFR\nMYC\nPIK3CA"
+      },
+      {
+        "identifiers": "P04637\nP38398",
+        "page_size": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "analysis_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "projection": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "identifiers_not_found": {
+                  "type": "integer"
+                },
+                "pathways_found": {
+                  "type": "integer"
+                },
+                "pathways": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pathway_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "is_disease": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "entities_found": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "entities_total": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "p_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "fdr": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "reactions_found": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reactions_total": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_pathways": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ReactomeAnalysis_token_result",
+    "description": "Retrieve previously computed Reactome pathway analysis results using an analysis token. Tokens are returned from pathway_enrichment or species_comparison analyses and can be used to access results without rerunning the analysis. Useful for paginating through large result sets or sharing analysis results. The token contains the full analysis result and is valid for a limited time.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Analysis token from a previous ReactomeAnalysis_pathway_enrichment or ReactomeAnalysis_species_comparison call."
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of pathways per page (default 20, max 50)."
+        }
+      },
+      "required": [
+        "token"
+      ]
+    },
+    "fields": {
+      "endpoint": "token_result"
+    },
+    "type": "ReactomeAnalysisTool",
+    "test_examples": [],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "analysis_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "projection": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "identifiers_not_found": {
+                  "type": "integer"
+                },
+                "pathways_found": {
+                  "type": "integer"
+                },
+                "pathways": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

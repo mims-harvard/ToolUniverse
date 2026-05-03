@@ -2,13 +2,29 @@
   {
     "type": "GWASAssociationSearch",
     "name": "gwas_search_associations",
-    "description": "Search for GWAS associations by various criteria including EFO trait, rs ID, accession ID, with sorting and pagination support.",
+    "description": "Search the GWAS Catalog for genome-wide association study results by keyword. Accepts free-text disease/trait names (e.g., 'melanoma', 'diabetes', 'breast cancer'), SNP rs IDs, EFO ontology IDs, or study accession IDs. This is the primary tool for discovering GWAS associations when you do NOT already have a specific association ID. Returns SNPs, p-values, odds ratios, mapped genes, and study metadata with pagination support.",
     "parameter": {
       "type": "object",
       "properties": {
+        "disease_trait": {
+          "type": "string",
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name — passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for disease_trait. Disease or trait name (e.g., 'type 2 diabetes'). NOTE: gene symbols and drug names are not valid GWAS trait queries."
+        },
+        "efo_uri": {
+          "type": "string",
+          "description": "Full EFO ontology URI (e.g., 'http://www.ebi.ac.uk/efo/EFO_0001645')"
+        },
+        "efo_id": {
+          "type": "string",
+          "description": "EFO/OBA term ID (e.g., 'EFO_0001645', 'OBA_2050062'). Recommended for reliable trait filtering."
+        },
         "efo_trait": {
           "type": "string",
-          "description": "EFO trait identifier or name"
+          "description": "Exact EFO trait label (e.g., 'serum alanine aminotransferase amount'). Use when you know the canonical trait string."
         },
         "rs_id": {
           "type": "string",
@@ -17,6 +33,14 @@
         "accession_id": {
           "type": "string",
           "description": "Study accession identifier"
+        },
+        "p_value": {
+          "type": "number",
+          "description": "Maximum p-value threshold for filtering (e.g., 5e-8 for genome-wide significance). Applied client-side after retrieval."
+        },
+        "p_value_threshold": {
+          "type": "number",
+          "description": "Alias for p_value: maximum p-value threshold."
         },
         "sort": {
           "type": "string",
@@ -90,8 +114,11 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": "string",
-                "description": "PubMed reference"
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {
                 "type": "string",
@@ -180,22 +207,36 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "disease_trait": "coronary artery disease",
+        "size": 5
+      }
+    ]
   },
   {
     "type": "GWASStudySearch",
     "name": "gwas_search_studies",
-    "description": "Search for GWAS studies by various criteria including EFO trait, disease trait, cohort, GxE interactions, and summary statistics availability.",
+    "description": "Search for GWAS studies by various criteria including disease trait, cohort, GxE interactions, and summary statistics availability.",
     "parameter": {
       "type": "object",
       "properties": {
-        "efo_trait": {
-          "type": "string",
-          "description": "EFO trait identifier or name"
-        },
         "disease_trait": {
           "type": "string",
-          "description": "Disease trait name"
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'breast cancer')"
+        },
+        "efo_uri": {
+          "type": "string",
+          "description": "Full EFO ontology URI (e.g., 'http://www.ebi.ac.uk/efo/EFO_0001645')"
+        },
+        "efo_id": {
+          "type": "string",
+          "description": "EFO/OBA term ID (e.g., 'EFO_0001645', 'OBA_2050062'). Recommended for reliable trait filtering."
+        },
+        "efo_trait": {
+          "type": "string",
+          "description": "Exact EFO trait label. Use when you know the canonical trait string."
         },
         "cohort": {
           "type": "string",
@@ -323,8 +364,11 @@
                 "description": "URL to full summary statistics"
               },
               "pubmed_id": {
-                "type": "string",
-                "description": "PubMed reference"
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "description": "PubMed reference (can be string or integer)"
               },
               "terms_of_license": {
                 "type": "string",
@@ -371,12 +415,18 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "disease_trait": "diabetes",
+        "size": 5
+      }
+    ]
   },
   {
     "type": "GWASSNPSearch",
     "name": "gwas_search_snps",
-    "description": "Search for GWAS single nucleotide polymorphisms (SNPs) by rs ID or mapped gene.",
+    "description": "Search the GWAS Catalog for single nucleotide polymorphisms (SNPs) by rs ID (e.g., 'rs7903146') or mapped gene name (e.g., 'TCF7L2'). Returns SNP details including chromosomal location, mapped genes, and functional class. Use this to look up specific variants or find all GWAS-catalogued SNPs for a gene.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -510,7 +560,13 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "mapped_gene": "BRCA1",
+        "size": 5
+      }
+    ]
   },
   {
     "type": "GWASAssociationByID",
@@ -574,8 +630,11 @@
           "description": "Study accession ID"
         },
         "pubmed_id": {
-          "type": "string",
-          "description": "PubMed reference"
+          "type": [
+            "string",
+            "integer"
+          ],
+          "description": "PubMed reference (can be string or integer)"
         },
         "first_author": {
           "type": "string",
@@ -634,7 +693,12 @@
           "description": "API links"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "association_id": "216200848"
+      }
+    ]
   },
   {
     "type": "GWASStudyByID",
@@ -748,8 +812,11 @@
           "description": "URL to full summary statistics"
         },
         "pubmed_id": {
-          "type": "string",
-          "description": "PubMed reference"
+          "type": [
+            "string",
+            "integer"
+          ],
+          "description": "PubMed reference (can be string or integer)"
         },
         "terms_of_license": {
           "type": "string",
@@ -766,7 +833,12 @@
           "description": "API links"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "study_id": "GCST000392"
+      }
+    ]
   },
   {
     "type": "GWASSNPByID",
@@ -858,30 +930,79 @@
           "description": "API links"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "rs_id": "rs429358"
+      }
+    ]
   },
   {
     "type": "GWASVariantsForTrait",
     "name": "gwas_get_variants_for_trait",
-    "description": "Get all variants associated with a specific trait with pagination support.",
+    "description": "Search the GWAS Catalog for all genetic variants (SNPs) linked to a specific disease or trait. Accepts free-text disease/trait names (e.g., 'diabetes', 'breast cancer'), EFO ontology IDs, or EFO trait labels. Returns variant details including rsIDs, p-values, mapped genes, and genomic locations. This is the best tool for finding all GWAS variants for a disease when you do NOT already have a specific variant ID.",
     "parameter": {
       "type": "object",
       "properties": {
+        "disease_trait": {
+          "type": "string",
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'breast cancer')"
+        },
+        "trait": {
+          "type": "string",
+          "description": "Alias for disease_trait. Disease or trait name (e.g., 'type 2 diabetes', 'breast cancer')"
+        },
+        "efo_uri": {
+          "type": "string",
+          "description": "Full EFO ontology URI (e.g., 'http://www.ebi.ac.uk/efo/EFO_0001645')"
+        },
+        "efo_id": {
+          "type": "string",
+          "description": "EFO/OBA term ID (e.g., 'EFO_0001645', 'OBA_2050062'). Recommended for reliable trait filtering."
+        },
         "efo_trait": {
           "type": "string",
-          "description": "EFO trait identifier or name"
+          "description": "Exact EFO trait label. Use when you know the canonical trait string."
         },
         "size": {
           "type": "integer",
           "description": "Number of results to return per page"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Alias for size. Number of results to return per page"
         },
         "page": {
           "type": "integer",
           "description": "Page number for pagination"
         }
       },
-      "required": [
-        "efo_trait"
+      "oneOf": [
+        {
+          "required": [
+            "disease_trait"
+          ]
+        },
+        {
+          "required": [
+            "trait"
+          ]
+        },
+        {
+          "required": [
+            "efo_uri"
+          ]
+        },
+        {
+          "required": [
+            "efo_id"
+          ]
+        },
+        {
+          "required": [
+            "efo_trait"
+          ]
+        }
       ]
     },
     "label": [
@@ -900,6 +1021,28 @@
           "items": {
             "type": "object",
             "properties": {
+              "association_id": {
+                "type": "integer"
+              },
+              "risk_frequency": {
+                "type": "string"
+              },
+              "pvalue_description": {
+                "type": "string"
+              },
+              "range": {
+                "type": "string"
+              },
+              "locations": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "object",
+                    "string"
+                  ]
+                },
+                "description": "Array of location objects or location strings"
+              },
               "rs_id": {
                 "type": "string",
                 "description": "dbSNP rs identifier"
@@ -915,28 +1058,6 @@
               "last_update_date": {
                 "type": "string",
                 "description": "Last update timestamp"
-              },
-              "locations": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "chromosome_name": {
-                      "type": "string"
-                    },
-                    "chromosome_position": {
-                      "type": "integer"
-                    },
-                    "region": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
               },
               "alleles": {
                 "type": "string",
@@ -995,7 +1116,13 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "disease_trait": "breast cancer",
+        "size": 20
+      }
+    ]
   },
   {
     "type": "GWASAssociationsForTrait",
@@ -1004,9 +1131,21 @@
     "parameter": {
       "type": "object",
       "properties": {
+        "disease_trait": {
+          "type": "string",
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'hypertension')"
+        },
+        "efo_uri": {
+          "type": "string",
+          "description": "Full EFO ontology URI (e.g., 'http://www.ebi.ac.uk/efo/EFO_0001645')"
+        },
+        "efo_id": {
+          "type": "string",
+          "description": "EFO/OBA term ID (e.g., 'EFO_0001645', 'OBA_2050062'). Recommended for reliable trait filtering."
+        },
         "efo_trait": {
           "type": "string",
-          "description": "EFO trait identifier or name"
+          "description": "Exact EFO trait label. Use when you know the canonical trait string."
         },
         "size": {
           "type": "integer",
@@ -1017,8 +1156,27 @@
           "description": "Page number for pagination"
         }
       },
-      "required": [
-        "efo_trait"
+      "oneOf": [
+        {
+          "required": [
+            "disease_trait"
+          ]
+        },
+        {
+          "required": [
+            "efo_uri"
+          ]
+        },
+        {
+          "required": [
+            "efo_id"
+          ]
+        },
+        {
+          "required": [
+            "efo_trait"
+          ]
+        }
       ]
     },
     "label": [
@@ -1074,8 +1232,11 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": "string",
-                "description": "PubMed reference"
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {
                 "type": "string",
@@ -1164,7 +1325,13 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "disease_trait": "type 2 diabetes",
+        "size": 10
+      }
+    ]
   },
   {
     "type": "GWASAssociationsForSNP",
@@ -1251,8 +1418,11 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": "string",
-                "description": "PubMed reference"
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {
                 "type": "string",
@@ -1341,7 +1511,15 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "rs_id": "rs7903146",
+        "sort": "p_value",
+        "direction": "asc",
+        "size": 5
+      }
+    ]
   },
   {
     "type": "GWASStudiesForTrait",
@@ -1350,13 +1528,21 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "efo_trait": {
-          "type": "string",
-          "description": "EFO trait identifier or name"
-        },
         "disease_trait": {
           "type": "string",
-          "description": "Disease trait name"
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'alzheimer disease')"
+        },
+        "efo_uri": {
+          "type": "string",
+          "description": "Full EFO ontology URI (e.g., 'http://www.ebi.ac.uk/efo/EFO_0001645')"
+        },
+        "efo_id": {
+          "type": "string",
+          "description": "EFO/OBA term ID (e.g., 'EFO_0001645', 'OBA_2050062'). Recommended for reliable trait filtering."
+        },
+        "efo_trait": {
+          "type": "string",
+          "description": "Exact EFO trait label. Use when you know the canonical trait string."
         },
         "cohort": {
           "type": "string",
@@ -1379,7 +1565,28 @@
           "description": "Page number for pagination"
         }
       },
-      "required": []
+      "oneOf": [
+        {
+          "required": [
+            "disease_trait"
+          ]
+        },
+        {
+          "required": [
+            "efo_uri"
+          ]
+        },
+        {
+          "required": [
+            "efo_id"
+          ]
+        },
+        {
+          "required": [
+            "efo_trait"
+          ]
+        }
+      ]
     },
     "label": [
       "GWAS",
@@ -1484,8 +1691,11 @@
                 "description": "URL to full summary statistics"
               },
               "pubmed_id": {
-                "type": "string",
-                "description": "PubMed reference"
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "description": "PubMed reference (can be string or integer)"
               },
               "terms_of_license": {
                 "type": "string",
@@ -1532,19 +1742,21 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "disease_trait": "hypertension",
+        "size": 5
+      }
+    ]
   },
   {
     "type": "GWASSNPsForGene",
     "name": "gwas_get_snps_for_gene",
-    "description": "Get all SNPs mapped to a specific gene.",
+    "description": "Get all GWAS Catalog SNPs mapped to a specific gene by gene name (e.g., 'BRCA1', 'TP53'). Returns variant details including rs IDs, chromosomal positions, and functional annotations. Use this when you want to find all catalogued variants within or near a specific gene.",
     "parameter": {
       "type": "object",
       "properties": {
-        "mapped_gene": {
-          "type": "string",
-          "description": "Gene name or symbol"
-        },
         "size": {
           "type": "integer",
           "description": "Number of results to return per page"
@@ -1552,11 +1764,21 @@
         "page": {
           "type": "integer",
           "description": "Page number for pagination"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene name or symbol (e.g., 'BRCA1', 'TP53', 'GBA')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for gene_symbol"
+        },
+        "mapped_gene": {
+          "type": "string",
+          "description": "Alias for gene_symbol"
         }
       },
-      "required": [
-        "mapped_gene"
-      ]
+      "required": []
     },
     "label": [
       "GWAS",
@@ -1669,7 +1891,14 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "mapped_gene": "BRCA1",
+        "size": 10,
+        "page": 1
+      }
+    ]
   },
   {
     "type": "GWASAssociationsForStudy",
@@ -1748,8 +1977,11 @@
                 "description": "Study accession ID"
               },
               "pubmed_id": {
-                "type": "string",
-                "description": "PubMed reference"
+                "type": [
+                  "string",
+                  "integer"
+                ],
+                "description": "PubMed reference (can be string or integer)"
               },
               "first_author": {
                 "type": "string",
@@ -1838,6 +2070,61 @@
           }
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "accession_id": "GCST000392",
+        "size": 10
+      }
+    ]
+  },
+  {
+    "type": "GWASGeneSearch",
+    "name": "GWAS_search_associations_by_gene",
+    "description": "Search GWAS Catalog associations by gene name (returns strongest risk allele and p-value fields).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol (e.g., BRCA1)."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Max associations to return.",
+          "default": 5
+        }
+      },
+      "required": [
+        "gene_name"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "gene_name": {
+          "type": "string"
+        },
+        "association_count": {
+          "type": "integer"
+        },
+        "associations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Raw GWAS Catalog association objects (v2 API). Each may include fields such as association_id, beta, standard_error, range, p_value, p_value_exponent, p_value_mantissa, efo_traits, mapped_genes, strongest_risk_alleles, study_accession, risk_allele_frequency."
+        },
+        "total_found": {
+          "type": "integer"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_name": "TP53",
+        "size": 5
+      }
+    ]
   }
 ]

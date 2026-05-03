@@ -1,0 +1,56 @@
+[
+  {
+    "type": "RxNormTool",
+    "name": "RxNorm_get_drug_names",
+    "description": "Get RXCUI (RxNorm Concept Unique Identifier) and all associated names (generic names, brand names, synonyms, etc.) for a drug by its name. This tool uses the RxNorm API from the U.S. National Library of Medicine (NLM) to standardize drug names.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "The name of the drug to search for (e.g., 'ibuprofen', 'aspirin', 'acetaminophen'). Can be a generic name, brand name, or any drug name variant."
+        }
+      },
+      "required": [
+        "drug_name"
+      ]
+    },
+    "label": [
+      "drug",
+      "medication",
+      "pharmaceutical",
+      "RxNorm",
+      "NLM",
+      "standardization",
+      "rxcui"
+    ],
+    "test_examples": [
+      {
+        "drug_name": "Aspirin"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "rxcui": {
+          "type": "string"
+        },
+        "drug_name": {
+          "type": "string"
+        },
+        "names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "all_rxcuis": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+]

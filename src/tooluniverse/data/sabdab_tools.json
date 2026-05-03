@@ -1,0 +1,114 @@
+[
+  {
+    "name": "SAbDab_search_structures",
+    "description": "Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody structures \u2014 SAbDab's search endpoint does not expose a JSON API, so use SAbDab_get_structure with a known PDB ID for structured data. Tip: retrieve the full SAbDab summary TSV from https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/summary/?all=true for bulk filtering.",
+    "type": "SAbDabTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "search_structures"
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query - antigen name, species, or keywords (e.g., 'HER2', 'anti-CD20')"
+        },
+        "antigen": {
+          "type": "string",
+          "description": "Alias for query. Antigen name to search (e.g., 'EGFR', 'HER2')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum results (default: 50)",
+          "default": 50
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "anti-CD20"
+      }
+    ]
+  },
+  {
+    "name": "SAbDab_get_structure",
+    "description": "Get antibody structure details from SAbDab by PDB ID. Returns CDR annotations, chain information, and antigen binding data. Useful for structural analysis of antibody-antigen complexes.",
+    "type": "SAbDabTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_structure"
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "4-character PDB ID (e.g., 1IGT, 6W41). Alias: pdb_code."
+        },
+        "pdb_code": {
+          "type": "string",
+          "description": "Alias for pdb_id. 4-character PDB ID (e.g., 1IGT, 6W41)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1AHW"
+      }
+    ]
+  },
+  {
+    "name": "SAbDab_get_summary",
+    "description": "Get SAbDab database summary and statistics. Returns information about database content, features, and access URLs. Good starting point for exploring antibody structural data.",
+    "type": "SAbDabTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_summary"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ]
+  }
+]

@@ -1,9 +1,5 @@
-.. |logo| image:: _static/logo.png
-   :height: 32
-   :alt: ToolUniverse Logo
-
-|logo| ToolUniverse Documentation
-=================================
+ToolUniverse Documentation
+==========================
 
 .. raw:: html
 
@@ -29,141 +25,234 @@
 
    </div>
 
-.. raw:: html
-
-   <div align="center">
-   
-   <a href="https://aiscientist.tools">
-   <img src="https://img.shields.io/badge/Visit_Website-AIScientist.Tools-4285F4?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Visit Website">
-   </a>
-   
-   <br><br>
-   
-   <a href="https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ">
-   <img src="https://img.shields.io/badge/Join_Slack_Community-Get_Help_&_Connect-FF6B6B?style=for-the-badge&logo=slack&logoColor=white" alt="Join Slack Community">
-   </a>
-   <a href="wechat_community.html">
-   <img src="https://img.shields.io/badge/Join_WeChat_Group-Community_&_Discussion-07C160?style=for-the-badge&logo=wechat&logoColor=white" alt="Join WeChat Group">
-   </a>
-   
-   <br><br>
-   
-   <a href="https://www.linkedin.com/in/tooluniverse-at-harvard-b9aa88385/">
-   <img src="https://img.shields.io/badge/Follow_on_LinkedIn-Professional_Updates-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Follow on LinkedIn">
-   </a>
-   <a href="https://x.com/ScientistTools">
-   <img src="https://img.shields.io/badge/Follow_on_X-Latest_Updates-000000?style=for-the-badge&logo=x&logoColor=white" alt="Follow on X">
-   </a>
-   
-   </div>
-
 Democratizing AI Scientists for Science
----------------------------
+---------------------------------------
 
-
-
-ToolUniverse is a unified ecosystem that transforms any large language model (LLM)—open or closed—into a powerful AI scientist. By standardizing how LLMs identify and call tools, it integrates over 600 scientific resources, including machine learning models, datasets, APIs, and analysis packages.
+ToolUniverse is a unified ecosystem that transforms any large language model (LLM)—open or closed—into a powerful AI scientist. By standardizing how LLMs identify and call tools, it integrates over **1000 scientific resources**, including machine learning models, datasets, APIs, and analysis packages.
 
 With its **AI-Tool Interaction Protocol**, ToolUniverse provides a common interface for seamless communication between LLMs and tools, ensuring compatibility across platforms such as GPT, Claude, Gemini, and open-source models.
 
+Get Started
+-----------
 
-Building your AI Scientists
----------------------------
+**Choose your path:**
 
-Transform any LLM/Reasoning Model/Agent into a powerful research scientist with ToolUniverse's comprehensive integration guides:
+.. grid:: 1 1 3 3
+   :gutter: 4
+   :class-container: hero-grid
 
-📖 **Complete Tutorial**: `Building AI Scientists Overview <guide/building_ai_scientists/index.html>`_
+   .. grid-item-card:: Using AI chat?
+      :link: guide/building_ai_scientists/index
+      :link-type: doc
+      :class-card: choice-card agent-card
+      :shadow: lg
 
+      **Choose AI Agent User**
 
-- **Claude Desktop**: `Claude Desktop Integration <guide/building_ai_scientists/claude_desktop.html>`_
-- **Claude Code**: `Claude Code Integration <guide/building_ai_scientists/claude_code.html>`_
-- **Gemini CLI**: `Gemini CLI Integration <guide/building_ai_scientists/gemini_cli.html>`_
-- **Qwen Code**: `Qwen Code Integration <guide/building_ai_scientists/qwen_code.html>`_
-- **Codex CLI**: `Codex CLI Integration <guide/building_ai_scientists/codex_cli.html>`_
-- **ChatGPT API**: `ChatGPT API Integration <guide/building_ai_scientists/chatgpt_api.html>`_
+      Integrate ToolUniverse with Claude, ChatGPT, Gemini, or other AI agents for interactive research.
 
-🌍 Ecosystem & Community
-------------------------
-**Open Science**
+   .. grid-item-card:: Using the terminal?
+      :link: guide/tu_cli
+      :link-type: doc
+      :class-card: choice-card cli-card
+      :shadow: lg
 
-- Open-source ecosystem encouraging community contributions
-- Standardized tool specifications for agentic AI
-- Integration with heterogeneous scientific workflows
+      **Choose CLI**
 
-**Join the Community**
+      Discover, inspect, run, and test 1000+ tools directly from your shell with the ``tu`` command.
 
-- **Web Service**: `aiscientist.tools <https://aiscientist.tools>`_
-- **GitHub Repository**: `mims-harvard/ToolUniverse <https://github.com/mims-harvard/ToolUniverse>`_
-- **Report Issues**: `GitHub Issues <https://github.com/mims-harvard/ToolUniverse/issues>`_
-- **Discussions**: `Join our Slack community <https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ>`_
+   .. grid-item-card:: Writing code?
+      :link: guide/python_guide
+      :link-type: doc
+      :class-card: choice-card python-card
+      :shadow: lg
 
-📚 Documentation Structure
--------------------------
+      **Choose Python Developer**
 
-.. toctree::
-   :maxdepth: 1
-   :caption: 🚀 Getting Started
+      Use ToolUniverse's Python API directly in your code, Jupyter notebooks, or custom applications.
 
-   quickstart
-   installation
-   getting_started
+What Can You Do?
+----------------
+
+**AI Agent Skills** - Specialized workflows combining 1000+ scientific tools:
+
+.. grid:: 1 1 2 2
+   :gutter: 3
+
+   .. grid-item-card:: Research Skills
+      :link: guide/skills_showcase
+      :link-type: doc
+      :shadow: md
+      :class-card: hover-lift
+      
+      Drug discovery, target analysis, disease research, literature reviews, protein design, binder discovery, precision oncology, and more
+      
+      +++
+      
+      :bdg-info:`15 skills available`
+
+   .. grid-item-card:: Development Skills
+      :link: guide/skills_showcase
+      :link-type: doc
+      :shadow: md
+      :class-card: hover-lift
+      
+      Create new tools, fix failing tools, optimize descriptions, improve documentation quality, and enhance skill workflows
+      
+      +++
+      
+      :bdg-info:`6 skills available`
+
+   .. grid-item-card:: Setup & Configuration
+      :link: guide/skills_showcase
+      :link-type: doc
+      :shadow: md
+      :class-card: hover-lift
+      
+      Install and configure ToolUniverse with MCP integration for any AI coding client (Cursor, Claude, Gemini, VS Code, etc.)
+      
+      +++
+      
+      :bdg-info:`1 skill available`
+
+   .. grid-item-card:: General Purpose
+      :link: guide/skills_showcase
+      :link-type: doc
+      :shadow: md
+      :class-card: hover-lift
+      
+      General strategies for using ToolUniverse effectively: tool discovery, multi-hop queries, comprehensive research workflows
+      
+      +++
+      
+      :bdg-info:`1 skill available`
+
+.. button-ref:: guide/skills_showcase
+   :color: primary
+   :shadow:
+   :expand:
+
+   View All Skills: Browse complete catalog with detailed descriptions and usage guides
+
+Explore More
+------------
+
+.. grid:: 1 1 2 2
+   :gutter: 3
+
+   .. grid-item-card:: Browse 1000+ Tools
+      :link: tools/tools_config_index
+      :link-type: doc
+      :shadow: md
+      :class-card: hover-lift
+      
+      Complete tool catalog with examples
+
+   .. grid-item-card:: Expand ToolUniverse
+      :link: expand_tooluniverse/index
+      :link-type: doc
+      :shadow: md
+      :class-card: hover-lift
+      
+      Add custom tools and APIs
+
+   .. grid-item-card:: Troubleshooting
+      :link: help/troubleshooting
+      :link-type: doc
+      :shadow: md
+      :class-card: hover-lift
+      
+      Fix common issues
+
+Community & Support
+-------------------
+
+.. grid:: 1 1 3 3
+   :gutter: 3
+
+   .. grid-item-card:: Join Slack
+      :link: https://join.slack.com/t/tooluniversehq/shared_invite/zt-3dic3eoio-5xxoJch7TLNibNQn5_AREQ
+      :class-card: hover-lift
+      :shadow: md
+      
+      Get help and connect with community
+
+   .. grid-item-card:: Report Issues
+      :link: https://github.com/mims-harvard/ToolUniverse/issues
+      :class-card: hover-lift
+      :shadow: md
+      
+      Bug reports and feature requests
+
+   .. grid-item-card:: Visit Website
+      :link: https://aiscientist.tools
+      :class-card: hover-lift
+      :shadow: md
+      
+      Try tools directly in browser
+
+.. button-ref:: sitemap
+   :color: info
+   :outline:
+   :expand:
+
+   Browse All Documentation - Complete sitemap
 
 .. toctree::
    :maxdepth: 3
-   :caption: 🤖 Building AI Scientists
+   :hidden:
+   :caption: Get Started
 
+   guide/python_guide
    guide/building_ai_scientists/index
-
-.. toctree::
-   :maxdepth: 1
-   :caption: 💡 Use ToolUniverse
-
-   guide/index
-   guide/interaction_protocol
-   guide/loading_tools
-   guide/listing_tools
-   tutorials/finding_tools
-   guide/tool_caller
-   guide/mcp_support
-   guide/coding_api
-   tutorials/tooluniverse_case_study
-   tutorials/agentic_tools_tutorial
-   tutorials/literature_search_tools_tutorial
-   tutorials/literature_search_web_ui_tutorial
-   guide/clinical_guidelines_tools
-   guide/tool_composition
-   guide/scientific_workflows
-   tutorials/expert_feedback
-   guide/hooks/index
+   guide/tu_cli
+   guide/skills_showcase
+   guide/api_keys
 
 .. toctree::
    :maxdepth: 3
-   :caption: 🔨 Add Tools to ToolUniverse
+   :hidden:
+   :caption: Tutorials
 
-   expand_tooluniverse/index
-   expand_tooluniverse/quick_start
-   expand_tooluniverse/local_tools/index
-   expand_tooluniverse/remote_tools/index
-   expand_tooluniverse/contributing/index
-   expand_tooluniverse/architecture
-   deployment
+   guide/agentic_tools_tutorial
+   guide/literature_search_tools_tutorial
+   guide/clinical_guidelines_tools
+   guide/scientific_workflows
+   guide/make_your_data_agent_searchable
+   guide/hooks/index
+   guide/cache_system
+   guide/tools
 
 .. toctree::
-   :maxdepth: 1
-   :caption: 🔧 Tools
+   :maxdepth: 3
+   :hidden:
+   :caption: Tools Catalog
 
    tools/tools_config_index
    tools/remote_tools
 
+.. toctree::
+   :maxdepth: 3
+   :hidden:
+   :caption: Expand ToolUniverse
+
+   expand_tooluniverse/index
 
 .. toctree::
-   :maxdepth: 1
-   :caption: 🔌 API
+   :maxdepth: 3
+   :hidden:
+   :caption: Help & Reference
 
    api/modules
-
-.. toctree::
-   :maxdepth: 1
-   :caption: ❓ Reference
-
+   reference/cli_tools
+   reference/environment_variables
+   reference/glossary
    reference/data_sources
+   help/index
+   about/index
+
+
+
+---
+
+*Democratizing AI agents for science with ToolUniverse.*

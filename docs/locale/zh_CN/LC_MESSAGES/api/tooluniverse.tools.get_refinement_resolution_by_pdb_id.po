@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.get\\_refinement\\_resolution\\_by\\_pdb\\_id 模块"
 #: 8f3236f75bf9475388d4da6c0b7ed713 of
 #: tooluniverse.tools.get_refinement_resolution_by_pdb_id:1
 msgid "get_refinement_resolution_by_pdb_id"
-msgstr ""
+msgstr "通过PDB ID获取精修分辨率"
 
 #: a53a9d6691924c5898b1fc672bae8f5b fe1563e1365a4bf19e15bd8a5a3fc2be of
 #: tooluniverse.tools.get_refinement_resolution_by_pdb_id:3

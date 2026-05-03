@@ -19,8 +19,7 @@ from fastmcp import FastMCP
 import os
 import asyncio
 import uuid
-import torch
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Any
 
 
 # Initialize MCP Server for PINNACLE PPI embedding retrieval
@@ -73,6 +72,15 @@ class PinnaclePPITool:
                 f"PINNACLE embeddings file not found at {self.embed_path}. Please check your PINNACLE_DATA_PATH."
             )
 
+        # Lazy import torch for loading embeddings
+        try:
+            import torch
+        except ImportError:
+            raise ImportError(
+                "PINNACLE tool requires 'torch' package. "
+                "Install it with: pip install torch"
+            ) from None
+
         # Load PINNACLE PPI embeddings from PyTorch checkpoint
         print(f"Initializing PINNACLE PPI tool from embeddings: {self.embed_path}...")
         self.ppi_dict = torch.load(self.embed_path, weights_only=False)
@@ -88,7 +96,7 @@ class PinnaclePPITool:
             else f"Available cell types: {available_cell_types}"
         )
 
-    def get_ppi_embeddings(self, cell_type: str) -> Tuple[Dict[str, torch.Tensor], str]:
+    def get_ppi_embeddings(self, cell_type: str) -> Tuple[Dict[str, Any], str]:
         """
         Retrieve cell-type-specific protein-protein interaction embeddings.
 

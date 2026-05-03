@@ -19,7 +19,6 @@ from tooluniverse import ToolUniverse
 warnings.filterwarnings("ignore", category=RuntimeWarning, module="importlib._bootstrap")
 warnings.filterwarnings("ignore", message=".*RDKit.*")
 warnings.filterwarnings("ignore", message=".*pkg_resources.*")
-warnings.filterwarnings("ignore", category=UserWarning, module="hyperopt")
 
 # =============================================================================
 # Schema Loading

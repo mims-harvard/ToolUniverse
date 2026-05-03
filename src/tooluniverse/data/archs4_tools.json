@@ -1,0 +1,160 @@
+[
+  {
+    "name": "ARCHS4_get_gene_expression",
+    "type": "ARCHS4Tool",
+    "description": "Get gene expression levels across human or mouse tissues and cell lines from ARCHS4 (All RNA-seq and ChIP-seq Sample and Signature Search). Returns box-plot statistics (min, Q1, median, Q3, max) in log2(TPM+1) units for each tissue/cell line, computed from 300K+ uniformly processed RNA-seq samples. Choose type='tissue' for organ/tissue expression or type='cellline' for cell line expression. Results are sorted by median expression (highest first).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., TP53, BRCA1, EGFR, MYC)"
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "human",
+            "mouse",
+            null
+          ],
+          "default": "human",
+          "description": "Species: human or mouse (default: human)"
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "tissue",
+            "cellline",
+            null
+          ],
+          "default": "tissue",
+          "description": "Expression type: tissue (organs/tissues) or cellline (cell lines). Default: tissue"
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tissue": {
+            "type": "string",
+            "description": "Tissue or cell line name (hierarchical: System.Organ.CellType)"
+          },
+          "min": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Minimum expression in log2(TPM+1)"
+          },
+          "q1": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "First quartile (25th percentile)"
+          },
+          "median": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Median expression"
+          },
+          "q3": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Third quartile (75th percentile)"
+          },
+          "max": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Maximum expression"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene_expression",
+        "gene": "TP53",
+        "species": "human",
+        "type": "tissue"
+      }
+    ],
+    "fields": {
+      "operation": "get_gene_expression"
+    }
+  },
+  {
+    "name": "ARCHS4_get_gene_correlations",
+    "type": "ARCHS4Tool",
+    "description": "Get genes most co-expressed with a query gene from ARCHS4, based on Pearson correlation computed across 300K+ uniformly processed RNA-seq samples. Returns the top N most correlated genes with their Pearson correlation coefficients. Useful for identifying functionally related genes, predicting gene function, and building co-expression networks.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol (e.g., TP53, BRCA1, EGFR, MYC)"
+        },
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 2,
+          "maximum": 200,
+          "default": 20,
+          "description": "Number of top correlated genes to return (default: 20, max: 200)"
+        }
+      },
+      "required": [
+        "gene"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gene": {
+            "type": "string",
+            "description": "Correlated gene symbol"
+          },
+          "pearson_correlation": {
+            "type": "number",
+            "description": "Pearson correlation coefficient"
+          },
+          "rank": {
+            "type": "integer",
+            "description": "Rank by correlation strength"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene_correlations",
+        "gene": "TP53",
+        "count": 10
+      }
+    ],
+    "fields": {
+      "operation": "get_gene_correlations"
+    }
+  }
+]

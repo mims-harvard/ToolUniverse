@@ -1,0 +1,358 @@
+[
+  {
+    "name": "umls_search_concepts",
+    "description": "Search for concepts in UMLS (Unified Medical Language System) using concept names or terms. UMLS provides access to multiple medical terminologies including SNOMED CT, ICD-10, ICD-11, LOINC, RxNorm, and more. Requires free UMLS API key (register at https://uts.nlm.nih.gov/uts/). Set UMLS_API_KEY environment variable.",
+    "type": "UMLSRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (concept name or term)"
+        },
+        "sabs": {
+          "type": "string",
+          "description": "Source abbreviation(s) to filter by (e.g., 'SNOMEDCT_US', 'ICD10CM', 'LOINC', 'RXNORM'). Comma-separated for multiple sources. Optional, searches all sources if not specified."
+        },
+        "pageNumber": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1)",
+          "default": 1
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 25, max: 25)",
+          "default": 25
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "required_api_keys": [
+        "UMLS_API_KEY"
+      ]
+    },
+    "fields": {
+      "endpoint": "/search/current",
+      "return_format": "JSON",
+      "base_url": "https://uts-ws.nlm.nih.gov/rest"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ui": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "rootSource": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "sabs": "SNOMEDCT_US",
+        "pageNumber": 1,
+        "pageSize": 25
+      }
+    ]
+  },
+  {
+    "name": "umls_get_concept_details",
+    "description": "Get detailed information about a UMLS concept by its CUI (Concept Unique Identifier). Returns concept details, atoms, definitions, relations, and mappings to other terminologies. Requires free UMLS API key (register at https://uts.nlm.nih.gov/uts/). Set UMLS_API_KEY environment variable.",
+    "type": "UMLSRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "cui": {
+          "type": "string",
+          "description": "UMLS Concept Unique Identifier (CUI, e.g., 'C0004096')"
+        },
+        "pageNumber": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1)",
+          "default": 1
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 25)",
+          "default": 25
+        }
+      },
+      "required": [
+        "cui"
+      ],
+      "required_api_keys": [
+        "UMLS_API_KEY"
+      ]
+    },
+    "fields": {
+      "endpoint": "/content/current/CUI/{cui}",
+      "return_format": "JSON",
+      "base_url": "https://uts-ws.nlm.nih.gov/rest"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "object",
+          "properties": {
+            "ui": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "cui": "C0011849",
+        "pageNumber": 1,
+        "pageSize": 25
+      }
+    ]
+  },
+  {
+    "name": "icd_search_codes",
+    "description": "Search for ICD-10 or ICD-11 codes using UMLS. Returns matching codes with descriptions. Requires free UMLS API key (register at https://uts.nlm.nih.gov/uts/). Set UMLS_API_KEY environment variable.",
+    "type": "UMLSRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (disease name, condition, or ICD code)"
+        },
+        "version": {
+          "type": "string",
+          "enum": [
+            "ICD10CM",
+            "ICD10",
+            "ICD11"
+          ],
+          "description": "ICD version to search (ICD10CM for US clinical modification, ICD10 for international, ICD11 for ICD-11)",
+          "default": "ICD10CM"
+        },
+        "pageNumber": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1)",
+          "default": 1
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 25, max: 25)",
+          "default": 25
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "required_api_keys": [
+        "UMLS_API_KEY"
+      ]
+    },
+    "fields": {
+      "endpoint": "/search/current",
+      "return_format": "JSON",
+      "base_url": "https://uts-ws.nlm.nih.gov/rest",
+      "sabs": "ICD10CM"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ui": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "rootSource": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "version": "ICD10CM",
+        "pageNumber": 1,
+        "pageSize": 25
+      }
+    ]
+  },
+  {
+    "name": "snomed_search_concepts",
+    "description": "Search for SNOMED CT concepts using UMLS. Returns matching concepts with descriptions. Requires free UMLS API key (register at https://uts.nlm.nih.gov/uts/). Set UMLS_API_KEY environment variable.",
+    "type": "UMLSRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (concept name or SNOMED CT code)"
+        },
+        "pageNumber": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1)",
+          "default": 1
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 25, max: 25)",
+          "default": 25
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "required_api_keys": [
+        "UMLS_API_KEY"
+      ]
+    },
+    "fields": {
+      "endpoint": "/search/current",
+      "return_format": "JSON",
+      "base_url": "https://uts-ws.nlm.nih.gov/rest",
+      "sabs": "SNOMEDCT_US"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ui": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "rootSource": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "pageNumber": 1,
+        "pageSize": 25
+      }
+    ]
+  },
+  {
+    "name": "loinc_search_codes",
+    "description": "Search for LOINC (Logical Observation Identifiers Names and Codes) codes using UMLS. Returns matching codes with descriptions. Requires free UMLS API key (register at https://uts.nlm.nih.gov/uts/). Set UMLS_API_KEY environment variable.",
+    "type": "UMLSRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (test name, component, or LOINC code)"
+        },
+        "pageNumber": {
+          "type": "integer",
+          "description": "Page number for pagination (default: 1)",
+          "default": 1
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Number of results per page (default: 25, max: 25)",
+          "default": 25
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "required_api_keys": [
+        "UMLS_API_KEY"
+      ]
+    },
+    "fields": {
+      "endpoint": "/search/current",
+      "return_format": "JSON",
+      "base_url": "https://uts-ws.nlm.nih.gov/rest",
+      "sabs": "LOINC"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ui": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "rootSource": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "pageNumber": 1,
+        "pageSize": 25
+      }
+    ]
+  }
+]

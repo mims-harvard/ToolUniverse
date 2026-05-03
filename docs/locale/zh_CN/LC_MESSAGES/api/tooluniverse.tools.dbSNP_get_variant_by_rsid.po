@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.dbSNP\\_get\\_variant\\_by\\_rsid 模块"
 #: 948f52574d964f61833c09f380926f27 of
 #: tooluniverse.tools.dbSNP_get_variant_by_rsid:1
 msgid "dbSNP_get_variant_by_rsid"
-msgstr ""
+msgstr "dbSNP_通过rsid获取变异信息"
 
 #: 10f399684c0d41df8213d21817b8b273 b9292e49fb6b4f58a013640cfbdbd2a6 of
 #: tooluniverse.tools.dbSNP_get_variant_by_rsid:3

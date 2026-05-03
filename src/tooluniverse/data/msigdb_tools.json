@@ -1,0 +1,174 @@
+[
+  {
+    "name": "MSigDB_get_geneset",
+    "description": "Retrieve a specific gene set from MSigDB (Molecular Signatures Database) by its exact name. MSigDB is the definitive database for gene sets used in Gene Set Enrichment Analysis (GSEA), containing 33,000+ gene sets organized into 9 major collections: H (hallmark), C1 (positional), C2 (curated pathways from KEGG/Reactome/BioCarta/WikiPathways), C3 (regulatory motifs), C4 (computational cancer), C5 (Gene Ontology), C6 (oncogenic signatures), C7 (immunologic signatures), C8 (cell type signatures). Returns the gene symbols in the set, systematic name, PMID, collection, and URLs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "geneSetName": {
+          "type": "string",
+          "description": "Exact MSigDB gene set name (case-sensitive). Examples: 'HALLMARK_APOPTOSIS', 'KEGG_P53_SIGNALING_PATHWAY', 'GOBP_APOPTOTIC_PROCESS', 'HALLMARK_HYPOXIA', 'KRAS.LUNG_UP.V1_UP'. Find names at https://www.gsea-msigdb.org/gsea/msigdb/"
+        }
+      },
+      "required": [
+        "geneSetName"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.gsea-msigdb.org/gsea/msigdb/human/download_geneset.jsp?geneSetName={geneSetName}&fileType=json"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "geneSetName": "HALLMARK_APOPTOSIS"
+      },
+      {
+        "geneSetName": "KEGG_P53_SIGNALING_PATHWAY"
+      },
+      {
+        "geneSetName": "HALLMARK_HYPOXIA"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Gene set data keyed by gene set name. The key is the gene set name and the value contains gene list and metadata.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "systematicName": {
+                "type": "string",
+                "description": "MSigDB systematic identifier (e.g., M5902)"
+              },
+              "pmid": {
+                "type": "string",
+                "description": "PubMed ID of the source publication"
+              },
+              "exactSource": {
+                "type": "string",
+                "description": "Exact source identifier"
+              },
+              "geneSymbols": {
+                "type": "array",
+                "description": "List of HGNC gene symbols in this gene set",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "msigdbURL": {
+                "type": "string",
+                "description": "URL to the gene set page on MSigDB website"
+              },
+              "externalDetailsURL": {
+                "type": [
+                  "array",
+                  "string"
+                ],
+                "description": "External reference URL(s)"
+              },
+              "collection": {
+                "type": "string",
+                "description": "MSigDB collection code: H, C1-C8"
+              },
+              "filteredBySimilarity": {
+                "type": ["boolean", "array", "null"]
+              },
+              "externalNamesForSimilarTerms": {
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MSigDB_get_hallmark_geneset",
+    "description": "Retrieve a Hallmark gene set from MSigDB. The Hallmark collection (H) contains 50 gene sets representing well-defined biological states and processes with coherent expression, distilled from multiple founder sets. These are the most commonly used gene sets for pathway analysis and GSEA. Hallmark gene set names are prefixed with 'HALLMARK_' followed by the pathway name in uppercase with underscores (e.g., HALLMARK_APOPTOSIS, HALLMARK_HYPOXIA, HALLMARK_P53_PATHWAY, HALLMARK_INFLAMMATORY_RESPONSE, HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pathway_name": {
+          "type": "string",
+          "description": "Hallmark pathway name without the 'HALLMARK_' prefix (will be auto-prepended). Examples: 'APOPTOSIS', 'P53_PATHWAY', 'HYPOXIA', 'DNA_REPAIR', 'INFLAMMATORY_RESPONSE', 'EPITHELIAL_MESENCHYMAL_TRANSITION', 'TNFA_SIGNALING_VIA_NFKB', 'KRAS_SIGNALING_UP', 'OXIDATIVE_PHOSPHORYLATION', 'GLYCOLYSIS', 'MYC_TARGETS_V1'"
+        }
+      },
+      "required": [
+        "pathway_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.gsea-msigdb.org/gsea/msigdb/human/download_geneset.jsp?geneSetName=HALLMARK_{pathway_name}&fileType=json"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "pathway_name": "APOPTOSIS"
+      },
+      {
+        "pathway_name": "P53_PATHWAY"
+      },
+      {
+        "pathway_name": "HYPOXIA"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Hallmark gene set data",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "systematicName": {
+                "type": "string",
+                "description": "MSigDB systematic ID"
+              },
+              "pmid": {
+                "type": "string",
+                "description": "PubMed ID (26771021 for Hallmark paper)"
+              },
+              "geneSymbols": {
+                "type": "array",
+                "description": "List of gene symbols in the hallmark set",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "msigdbURL": {
+                "type": "string"
+              },
+              "collection": {
+                "type": "string",
+                "description": "Always 'H' for Hallmark gene sets"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

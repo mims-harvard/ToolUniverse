@@ -1,0 +1,518 @@
+[
+  {
+    "name": "CTD_get_chemical_gene_interactions",
+    "description": "Get curated chemical-gene interactions from CTD (Comparative Toxicogenomics Database). Given a chemical name, returns genes it interacts with, including organism, PubMed references, and interaction types. Example: 'bisphenol A' returns thousands of gene interactions across species.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_terms": {
+          "type": "string",
+          "description": "Chemical name, MeSH name, synonym, CAS RN, or MeSH ID. Examples: 'bisphenol A', 'acetaminophen', 'D000082' (MeSH ID for acetaminophen)."
+        }
+      },
+      "required": [
+        "input_terms"
+      ]
+    },
+    "fields": {
+      "input_type": "chem",
+      "report_type": "genes_curated"
+    },
+    "type": "CTDTool",
+    "test_examples": [
+      {
+        "input_terms": "bisphenol A"
+      },
+      {
+        "input_terms": "acetaminophen"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ChemicalName": {
+                    "type": "string",
+                    "description": "Name of the chemical"
+                  },
+                  "ChemicalId": {
+                    "type": "string",
+                    "description": "CTD chemical identifier"
+                  },
+                  "CasRN": {
+                    "type": "string",
+                    "description": "CAS Registry Number"
+                  },
+                  "GeneSymbol": {
+                    "type": "string",
+                    "description": "Gene symbol"
+                  },
+                  "GeneId": {
+                    "type": "string",
+                    "description": "NCBI Gene ID"
+                  },
+                  "Organism": {
+                    "type": "string",
+                    "description": "Species name"
+                  },
+                  "OrganismId": {
+                    "type": "string",
+                    "description": "NCBI Taxonomy ID"
+                  },
+                  "PubMedIds": {
+                    "type": "string",
+                    "description": "Pipe-delimited PubMed IDs"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "input_type": {
+                  "type": "string"
+                },
+                "report_type": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CTD_get_chemical_diseases",
+    "description": "Get curated chemical-disease associations from CTD. Given a chemical name, returns diseases it is associated with, including direct evidence type (therapeutic, marker/mechanism) and disease categories. Example: 'bisphenol A' returns associations with cancer, reproductive disorders, etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_terms": {
+          "type": "string",
+          "description": "Chemical name, MeSH name, synonym, CAS RN, or MeSH ID. Examples: 'arsenic', 'bisphenol A', 'C006780'."
+        }
+      },
+      "required": [
+        "input_terms"
+      ]
+    },
+    "fields": {
+      "input_type": "chem",
+      "report_type": "diseases_curated"
+    },
+    "type": "CTDTool",
+    "test_examples": [
+      {
+        "input_terms": "bisphenol A"
+      },
+      {
+        "input_terms": "arsenic"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ChemicalName": {
+                    "type": "string"
+                  },
+                  "ChemicalID": {
+                    "type": "string"
+                  },
+                  "CasRN": {
+                    "type": "string"
+                  },
+                  "DiseaseName": {
+                    "type": "string"
+                  },
+                  "DiseaseID": {
+                    "type": "string",
+                    "description": "MeSH or OMIM disease ID"
+                  },
+                  "DirectEvidence": {
+                    "type": "string",
+                    "description": "Evidence type: therapeutic, marker/mechanism"
+                  },
+                  "DiseaseCategories": {
+                    "type": "string",
+                    "description": "Pipe-delimited disease categories"
+                  },
+                  "PubMedIDs": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "input_type": {
+                  "type": "string"
+                },
+                "report_type": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CTD_get_gene_diseases",
+    "description": "Get curated gene-disease associations from CTD. Given a gene symbol, returns diseases associated with the gene, including direct evidence and disease categories. Example: 'TP53' returns associations with various cancers and other diseases.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_terms": {
+          "type": "string",
+          "description": "Gene symbol or NCBI Gene ID. Examples: 'TP53', 'BRCA1', 'CYP1A1', '7157' (Gene ID for TP53)."
+        },
+        "query": {
+          "type": "string",
+          "description": "Gene symbol or name to search (alias for input_terms, e.g. TP53)"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (alias for input_terms, e.g. TP53)"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "input_type": "gene",
+      "report_type": "diseases_curated"
+    },
+    "type": "CTDTool",
+    "test_examples": [
+      {
+        "input_terms": "CYP1A1"
+      },
+      {
+        "input_terms": "TP53"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "GeneSymbol": {
+                    "type": "string"
+                  },
+                  "GeneID": {
+                    "type": "string"
+                  },
+                  "DiseaseName": {
+                    "type": "string"
+                  },
+                  "DiseaseID": {
+                    "type": "string"
+                  },
+                  "DirectEvidence": {
+                    "type": "string"
+                  },
+                  "DiseaseCategories": {
+                    "type": "string"
+                  },
+                  "PubMedIDs": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "input_type": {
+                  "type": "string"
+                },
+                "report_type": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CTD_get_gene_chemicals",
+    "description": "Get curated gene-chemical interactions from CTD. Given a gene symbol, returns chemicals that interact with the gene product, with PubMed evidence. Example: 'TP53' returns over 2000 chemical interactions including drugs, environmental toxicants.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_terms": {
+          "type": "string",
+          "description": "Gene symbol or NCBI Gene ID. Examples: 'CYP1A1', 'TP53', 'ESR1'."
+        }
+      },
+      "required": [
+        "input_terms"
+      ]
+    },
+    "fields": {
+      "input_type": "gene",
+      "report_type": "chems_curated"
+    },
+    "type": "CTDTool",
+    "test_examples": [
+      {
+        "input_terms": "CYP1A1"
+      },
+      {
+        "input_terms": "ESR1"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ChemicalName": {
+                    "type": "string"
+                  },
+                  "ChemicalId": {
+                    "type": "string"
+                  },
+                  "CasRN": {
+                    "type": "string"
+                  },
+                  "GeneSymbol": {
+                    "type": "string"
+                  },
+                  "GeneId": {
+                    "type": "string"
+                  },
+                  "Organism": {
+                    "type": "string"
+                  },
+                  "OrganismId": {
+                    "type": "string"
+                  },
+                  "PubMedIds": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "input_type": {
+                  "type": "string"
+                },
+                "report_type": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "CTD_get_disease_chemicals",
+    "description": "Get curated disease-chemical associations from CTD. Given a disease name, returns chemicals associated with it, including evidence type. Example: 'Breast Neoplasms' returns chemicals linked to breast cancer including both therapeutic agents and toxicants.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_terms": {
+          "type": "string",
+          "description": "Disease name, MeSH name, synonym, or MeSH/OMIM ID. Examples: 'Breast Neoplasms', 'asthma', 'MESH:D001249'."
+        }
+      },
+      "required": [
+        "input_terms"
+      ]
+    },
+    "fields": {
+      "input_type": "disease",
+      "report_type": "chems_curated"
+    },
+    "type": "CTDTool",
+    "test_examples": [
+      {
+        "input_terms": "asthma"
+      },
+      {
+        "input_terms": "Liver Neoplasms"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ChemicalName": {
+                    "type": "string"
+                  },
+                  "ChemicalID": {
+                    "type": "string"
+                  },
+                  "CasRN": {
+                    "type": "string"
+                  },
+                  "DiseaseName": {
+                    "type": "string"
+                  },
+                  "DiseaseID": {
+                    "type": "string"
+                  },
+                  "DirectEvidence": {
+                    "type": "string"
+                  },
+                  "PubMedIDs": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "input_type": {
+                  "type": "string"
+                },
+                "report_type": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

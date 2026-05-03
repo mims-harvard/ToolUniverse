@@ -1,0 +1,381 @@
+[
+  {
+    "name": "GBIF_get_species",
+    "description": "Get detailed species information from the Global Biodiversity Information Facility (GBIF) by its taxon key. Returns the full taxonomic record including scientific name, authorship, rank, full classification (kingdom through species), taxonomic status, basionym, vernacular name, and number of descendant taxa. Use GBIF_search_species first to find taxon keys. Example: key 2435099 returns Puma concolor (puma) with full classification from Animalia to Puma concolor.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "speciesKey": {
+          "type": "integer",
+          "description": "GBIF species/taxon key. Examples: 2435099 (Puma concolor / puma), 2878688 (Quercus robur / English oak), 5219404 (Canis lupus / wolf), 2480528 (Homo sapiens), 2495662 (Aquila chrysaetos / golden eagle). Use GBIF_search_species to find keys."
+        }
+      },
+      "required": [
+        "speciesKey"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.gbif.org/v1/species/{speciesKey}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "speciesKey": 2435099
+      },
+      {
+        "speciesKey": 2878688
+      },
+      {
+        "speciesKey": 5219404
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GBIF species record",
+          "properties": {
+            "key": {
+              "type": "integer",
+              "description": "GBIF taxon key"
+            },
+            "scientificName": {
+              "type": "string",
+              "description": "Full scientific name with authority"
+            },
+            "canonicalName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Scientific name without authority"
+            },
+            "vernacularName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Common name"
+            },
+            "authorship": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic authority"
+            },
+            "rank": {
+              "type": "string",
+              "description": "Taxonomic rank (KINGDOM, PHYLUM, CLASS, ORDER, FAMILY, GENUS, SPECIES)"
+            },
+            "taxonomicStatus": {
+              "type": "string",
+              "description": "Status: ACCEPTED, SYNONYM, DOUBTFUL, etc."
+            },
+            "kingdom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Kingdom name"
+            },
+            "phylum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Phylum name"
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Class name"
+            },
+            "order": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Order name"
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Family name"
+            },
+            "genus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Genus name"
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species binomial"
+            },
+            "kingdomKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Kingdom taxon key"
+            },
+            "phylumKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Phylum taxon key"
+            },
+            "classKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Class taxon key"
+            },
+            "orderKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Order taxon key"
+            },
+            "familyKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Family taxon key"
+            },
+            "genusKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Genus taxon key"
+            },
+            "speciesKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Species taxon key"
+            },
+            "parent": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Parent taxon name"
+            },
+            "parentKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Parent taxon key"
+            },
+            "basionym": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Original name (basionym)"
+            },
+            "numDescendants": {
+              "type": "integer",
+              "description": "Number of descendant taxa"
+            },
+            "origin": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Data origin (SOURCE, DENORMED_CLASSIFICATION)"
+            },
+            "publishedIn": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Publication reference"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GBIF_suggest_species",
+    "description": "Autocomplete species names using the GBIF species suggestion endpoint. Returns quick matches as you type, with basic taxonomic info (key, name, rank, classification). Faster and lighter than full search -- designed for type-ahead interfaces and quick name resolution. Returns up to 20 suggestions. Example: 'Quer' matches Quercus (oaks), Quercus robur (English oak), etc.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Partial or full species/taxon name to autocomplete. Examples: 'Homo sap', 'Quercus', 'Pan trog', 'Escherichia', 'Drosoph'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of suggestions to return (1-20, default 10)."
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.gbif.org/v1/species/suggest"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "Quercus robur"
+      },
+      {
+        "q": "Homo sap",
+        "limit": 5
+      },
+      {
+        "q": "Drosophila melano"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of matching species suggestions",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "integer",
+                "description": "GBIF taxon key"
+              },
+              "scientificName": {
+                "type": "string",
+                "description": "Full scientific name with authority"
+              },
+              "canonicalName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Scientific name without authority"
+              },
+              "rank": {
+                "type": "string",
+                "description": "Taxonomic rank"
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ACCEPTED or SYNONYM"
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Kingdom"
+              },
+              "phylum": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Phylum"
+              },
+              "class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Class"
+              },
+              "order": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Order"
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Family"
+              },
+              "genus": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Genus"
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Species binomial"
+              },
+              "speciesKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Species taxon key"
+              },
+              "synonym": {
+                "type": "boolean",
+                "description": "Whether this name is a synonym"
+              },
+              "higherClassificationMap": {
+                "type": "object",
+                "description": "Map of taxon keys to names in classification hierarchy"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

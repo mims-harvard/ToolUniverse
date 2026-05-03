@@ -1,73 +1,45 @@
 import requests
+from typing import Any, Dict
 from .base_tool import BaseTool
+from .base_rest_tool import BaseRESTTool
 from .tool_registry import register_tool
 
 
-@register_tool("ZenodoTool")
-class ZenodoTool(BaseTool):
-    """
-    Search Zenodo records with optional community filter.
+@register_tool("ZenodoRESTTool")
+class ZenodoRESTTool(BaseRESTTool):
+    """Generic REST tool for Zenodo API endpoints."""
 
-    Parameters (arguments):
-        query (str): Free text query
-        max_results (int): Max results (default 10, max 200)
-        community (str): Optional community slug to filter
-    """
-
-    def __init__(self, tool_config):
-        super().__init__(tool_config)
-        self.base_url = "https://zenodo.org/api/records"
-
-    def run(self, arguments=None):
-        arguments = arguments or {}
-        query = arguments.get("query")
-        max_results = int(arguments.get("max_results", 10))
-        community = arguments.get("community")
-
-        if not query:
-            return {"error": "`query` parameter is required."}
-
-        params = {
-            "q": query,
-            "size": max(1, min(max_results, 200)),
-            "all_versions": 1,
+    def _get_param_mapping(self) -> Dict[str, str]:
+        """Map Zenodo-specific parameter names."""
+        return {
+            "query": "q",  # query -> q
+            "limit": "size",  # limit -> size
+            "community": "communities",  # community -> communities
         }
-        # Only add communities filter if community is provided and not empty
-        if community and community.strip():
-            params["communities"] = community
 
-        try:
-            resp = requests.get(self.base_url, params=params, timeout=20)
-            resp.raise_for_status()
-            data = resp.json()
-        except requests.RequestException as e:
-            return {
-                "error": "Network/API error calling Zenodo",
-                "reason": str(e),
-            }
-        except ValueError:
-            return {"error": "Failed to decode Zenodo response as JSON"}
+    def _process_response(
+        self, response: requests.Response, url: str
+    ) -> Dict[str, Any]:
+        """Process Zenodo API response with search result handling."""
+        data = response.json()
 
-        hits = data.get("hits", {}).get("hits", [])
-        results = []
-        for h in hits:
-            md = h.get("metadata", {})
-            title = md.get("title")
-            creators = [c.get("name") for c in md.get("creators", []) if c.get("name")]
-            publication_date = md.get("publication_date")
-            doi = md.get("doi") or h.get("doi")
-            url = h.get("links", {}).get("html")
-            files = h.get("files", []) or h.get("links", {}).get("latest")
-            results.append(
-                {
-                    "title": title,
-                    "authors": creators,
-                    "date": publication_date,
-                    "doi": doi,
-                    "url": url,
-                    "files": files,
-                    "source": "Zenodo",
-                }
-            )
+        # Handle extract_path for nested data (e.g., files from record)
+        extract_path = self.tool_config.get("fields", {}).get("extract_path")
+        if extract_path and isinstance(data, dict):
+            data = data.get(extract_path, data)
 
-        return results
+        # Build result
+        result = {
+            "status": "success",
+            "data": data,
+            "url": url,
+        }
+
+        # Add count - handle both list and search results
+        if isinstance(data, list):
+            result["count"] = len(data)
+        elif isinstance(data, dict) and "hits" in data:
+            # For search results
+            result["count"] = len(data.get("hits", {}).get("hits", []))
+
+        return result

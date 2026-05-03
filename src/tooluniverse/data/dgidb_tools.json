@@ -1,0 +1,325 @@
+[
+  {
+    "name": "DGIdb_get_drug_gene_interactions",
+    "description": "Get drug-gene interactions for a list of genes from DGIdb. Returns drugs targeting each gene, interaction types, and evidence sources.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene symbols (e.g., ['EGFR', 'BRAF']). Also accepts a single gene as string. Aliases: gene_name, gene."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        },
+        "interaction_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional filter by data sources (e.g., ['DrugBank', 'ChEMBL'])."
+        },
+        "interaction_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional filter by interaction types (e.g., ['inhibitor', 'antagonist'])."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "interactions"
+    },
+    "type": "DGIdbTool",
+    "test_examples": [
+      {
+        "genes": [
+          "EGFR"
+        ]
+      },
+      {
+        "genes": [
+          "BRAF",
+          "KRAS"
+        ],
+        "interaction_types": [
+          "inhibitor"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "genes": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "longName": {
+                        "type": "string"
+                      },
+                      "interactions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "drug": {
+                              "type": "object"
+                            },
+                            "interactionTypes": {
+                              "type": "array"
+                            },
+                            "sources": {
+                              "type": "array"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "DGIdb_get_gene_druggability",
+    "description": "Get druggability information for genes. Returns gene categories indicating if a gene is druggable (kinase, GPCR, ion channel, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene symbols to check druggability. Aliases: gene_name, gene."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "categories"
+    },
+    "type": "DGIdbTool",
+    "test_examples": [
+      {
+        "genes": [
+          "EGFR",
+          "TP53",
+          "BRCA1"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "genes": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "geneCategories": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "DGIdb_get_gene_info",
+    "description": "Get detailed gene information from DGIdb including aliases, categories, and interaction counts.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of gene symbols. Aliases: gene_name, gene."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for genes. Single gene symbol (e.g., 'EGFR')."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "genes"
+    },
+    "type": "DGIdbTool",
+    "test_examples": [
+      {
+        "genes": [
+          "EGFR"
+        ]
+      },
+      {
+        "genes": [
+          "BRAF",
+          "ERBB2"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "genes": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "longName": {
+                        "type": "string"
+                      },
+                      "geneCategories": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "name": "DGIdb_get_drug_info",
+    "description": "Get basic drug metadata from DGIdb by drug name. Returns drug name, concept ID, and approval status. To get drug-gene interactions, use DGIdb_get_drug_gene_interactions instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drugs": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Single drug name (e.g., \"imatinib\")."
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of drug names (e.g., [\"imatinib\", \"erlotinib\"])."
+            }
+          ],
+          "description": "Drug name(s) to look up. Accepts a single name or a list."
+        }
+      },
+      "required": [
+        "drugs"
+      ]
+    },
+    "fields": {
+      "operation": "drugs"
+    },
+    "type": "DGIdbTool",
+    "test_examples": [
+      {
+        "drugs": [
+          "imatinib"
+        ]
+      },
+      {
+        "drugs": [
+          "erlotinib",
+          "gefitinib"
+        ]
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "drugs": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "conceptId": {
+                        "type": "string"
+                      },
+                      "approved": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

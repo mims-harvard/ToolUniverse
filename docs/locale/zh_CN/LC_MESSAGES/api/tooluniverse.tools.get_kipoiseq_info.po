@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_kipoiseq\\_info 模块"
 
 #: 9d60b3a083b4430ab5251a6d04354e01 of tooluniverse.tools.get_kipoiseq_info:1
 msgid "get_kipoiseq_info"
-msgstr ""
+msgstr "get_kipoiseq_info 获取_kipoiseq_信息"
 
 #: 3bb7d4c44f9a41fcabbcc9c60dff1a62 e4f722e4d2a64f97ac279784db4c06c4 of
 #: tooluniverse.tools.get_kipoiseq_info:3

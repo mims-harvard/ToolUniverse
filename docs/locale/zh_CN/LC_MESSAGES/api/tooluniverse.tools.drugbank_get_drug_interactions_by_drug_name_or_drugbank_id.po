@@ -33,6 +33,8 @@ msgstr ""
 #: tooluniverse.tools.drugbank_get_drug_interactions_by_drug_name_or_drugbank_id:1
 msgid "drugbank_get_drug_interactions_by_drug_name_or_drugbank_id"
 msgstr ""
+"drugbank_get_drug_interactions_by_drug_name_or_drugbank_id  \n"
+"通过药物名称或DrugBank ID获取药物相互作用"
 
 #: 47b902e19ca1475ba58faa980158a2aa 50ac395eef4348ee9143f1fdfd93b272 of
 #: tooluniverse.tools.drugbank_get_drug_interactions_by_drug_name_or_drugbank_id:3

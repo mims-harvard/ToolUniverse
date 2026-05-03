@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.FDA\\_get\\_info\\_for\\_patients\\_by\\_drug\\_name 
 #: f565e45465a54b4391b4a1fe02bfa0be of
 #: tooluniverse.tools.FDA_get_info_for_patients_by_drug_name:1
 msgid "FDA_get_info_for_patients_by_drug_name"
-msgstr ""
+msgstr "FDA_按药品名称获取患者信息"
 
 #: e237345b0306408eafc0dc579e998ae5 fb2a436ff38f443b8e3613bd33b724e4 of
 #: tooluniverse.tools.FDA_get_info_for_patients_by_drug_name:3

@@ -30,7 +30,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_contextual\\_biological\\_process\\_analy
 #: 7996eb0dcc8e445e8aec65ed5be6b72b of
 #: tooluniverse.tools.HPA_get_contextual_biological_process_analysis:1
 msgid "HPA_get_contextual_biological_process_analysis"
-msgstr ""
+msgstr "HPA_获取上下文生物过程分析"
 
 #: 474fca47e4ea497a9acce816430ef413 5c2e84403dc0476d8c5d15e1ccbaa034 of
 #: tooluniverse.tools.HPA_get_contextual_biological_process_analysis:3

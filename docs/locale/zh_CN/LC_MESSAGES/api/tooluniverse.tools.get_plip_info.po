@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_plip\\_info 模块"
 
 #: d6b3ab6f97d14d69ae57c31b73b18242 of tooluniverse.tools.get_plip_info:1
 msgid "get_plip_info"
-msgstr ""
+msgstr "get_plip_info 获取PLIP信息"
 
 #: bf5f9c6aa774477fab9e3df540f5efd5 d2adf324cf5146e68540934801bc47a9 of
 #: tooluniverse.tools.get_plip_info:3

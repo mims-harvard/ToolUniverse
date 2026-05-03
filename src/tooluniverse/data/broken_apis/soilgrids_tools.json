@@ -1,0 +1,214 @@
+[
+  {
+    "name": "SoilGrids_get_properties",
+    "description": "Get soil properties for any location on Earth using the ISRIC SoilGrids API. Returns quantitative soil data including pH, organic carbon (SOC), clay/sand/silt content, bulk density, cation exchange capacity, and more at multiple soil depth intervals (0-5cm, 5-15cm, 15-30cm, 30-60cm, 60-100cm, 100-200cm). Predictions are based on global machine learning models trained on 240K+ soil profiles. Essential for soil science, agriculture, climate modeling, and ecosystem research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "lon": {
+          "type": "number",
+          "description": "Longitude in decimal degrees (-180 to 180). Examples: 5.1 (Netherlands), -122.4 (California), 139.7 (Tokyo), 18.4 (South Africa)"
+        },
+        "lat": {
+          "type": "number",
+          "description": "Latitude in decimal degrees (-90 to 90). Examples: 52.1 (Netherlands), 37.8 (California), 35.7 (Tokyo), -33.9 (South Africa)"
+        },
+        "property": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Soil property to retrieve. Multiple allowed (repeat param). Properties: 'bdod' (bulk density), 'cec' (cation exchange capacity), 'cfvo' (coarse fragments), 'clay', 'sand', 'silt', 'nitrogen', 'phh2o' (pH in water), 'soc' (soil organic carbon), 'ocd' (organic carbon density), 'ocs' (organic carbon stocks). Default: all properties"
+        },
+        "depth": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Soil depth interval. Values: '0-5cm', '5-15cm', '15-30cm', '30-60cm', '60-100cm', '100-200cm'. Default: all depths"
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Statistical value to return. Values: 'mean' (default), 'Q0.05' (5th percentile), 'Q0.50' (median), 'Q0.95' (95th percentile), 'uncertainty'"
+        }
+      },
+      "required": [
+        "lon",
+        "lat"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://rest.isric.org/soilgrids/v2.0/properties/query",
+      "params": {
+        "value": "mean"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "lon": 5.1,
+        "lat": 52.1,
+        "property": "phh2o",
+        "depth": "0-5cm"
+      },
+      {
+        "lon": -122.4,
+        "lat": 37.8,
+        "property": "soc",
+        "depth": "0-30cm"
+      },
+      {
+        "lon": 18.4,
+        "lat": -33.9,
+        "property": "clay"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Soil property data for the queried location",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "geometry": {
+              "type": "object",
+              "description": "Point coordinates",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "coordinates": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "query_time_s": {
+              "type": "number",
+              "description": "Query execution time"
+            },
+            "properties": {
+              "type": "object",
+              "description": "Soil layer data",
+              "properties": {
+                "layers": {
+                  "type": "array",
+                  "description": "Soil properties data layers",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Property name (e.g., 'clay', 'phh2o', 'soc')"
+                      },
+                      "unit_measure": {
+                        "type": "object",
+                        "properties": {
+                          "d_factor": {
+                            "type": "number",
+                            "description": "Division factor for converting to actual units"
+                          },
+                          "mapped_units": {
+                            "type": "string"
+                          },
+                          "target_units": {
+                            "type": "string"
+                          },
+                          "uncertainty_unit": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "depths": {
+                        "type": "array",
+                        "description": "Values at different soil depths",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "description": "Depth label (e.g., '0-5cm')"
+                            },
+                            "range": {
+                              "type": "object",
+                              "properties": {
+                                "bottom_depth": {
+                                  "type": "integer"
+                                },
+                                "top_depth": {
+                                  "type": "integer"
+                                },
+                                "unit_depth": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "values": {
+                              "type": "object",
+                              "description": "Statistical values",
+                              "properties": {
+                                "mean": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ],
+                                  "description": "Mean value"
+                                },
+                                "Q0.05": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "Q0.50": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "Q0.95": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "uncertainty": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

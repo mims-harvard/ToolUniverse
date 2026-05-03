@@ -1,0 +1,178 @@
+[
+  {
+    "name": "DiseaseSH_get_covid_historical",
+    "description": "Get historical COVID-19 timeline data (cases, deaths, recoveries) for a country or globally using the Disease.sh API. Returns day-by-day counts for the specified time period. No authentication required. Useful for pandemic trend analysis and epidemiological research.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Country name or ISO code. Use 'all' for global data. Examples: 'usa', 'china', 'india', 'uk', 'germany', 'all'"
+        },
+        "lastdays": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of past days to include. Use 'all' for full history. Default: 30. Examples: 7, 30, 90, 365"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://disease.sh/v3/covid-19/historical/{country}",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "country": "usa",
+        "lastdays": 30
+      },
+      {
+        "country": "all",
+        "lastdays": 14
+      },
+      {
+        "country": "germany",
+        "lastdays": 90
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Historical COVID-19 timeline data",
+          "properties": {
+            "country": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "provinces": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "timeline": {
+              "type": "object",
+              "properties": {
+                "cases": {
+                  "type": "object",
+                  "description": "Cases by date (date: count)",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                },
+                "deaths": {
+                  "type": "object",
+                  "description": "Deaths by date",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                },
+                "recovered": {
+                  "type": "object",
+                  "description": "Recoveries by date",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "DiseaseSH_get_vaccine_coverage",
+    "description": "Get COVID-19 vaccine coverage data for a country or globally using the Disease.sh API. Returns timeline of total vaccination doses administered and percentage of population vaccinated. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Country name or 'all' for global. Examples: 'usa', 'uk', 'germany', 'india', 'all'"
+        },
+        "lastdays": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of past days to include. Default: 30. Examples: 7, 30, 90"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://disease.sh/v3/covid-19/vaccine/coverage/countries/{country}",
+      "params": {}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "country": "usa",
+        "lastdays": 30
+      },
+      {
+        "country": "germany",
+        "lastdays": 30
+      },
+      {
+        "country": "india",
+        "lastdays": 14
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Vaccine coverage timeline data",
+          "properties": {
+            "country": {
+              "type": "string"
+            },
+            "timeline": {
+              "type": "object",
+              "description": "Date-keyed vaccination counts",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

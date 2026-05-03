@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def odphp_outlink_fetch(
-    urls: list[Any],
+    urls: list[str],
     max_chars: int,
     return_html: bool,
     *,
@@ -22,7 +22,7 @@ def odphp_outlink_fetch(
 
     Parameters
     ----------
-    urls : list[Any]
+    urls : list[str]
         1–3 absolute URLs from AccessibleVersion or RelatedItems.Url
     max_chars : int
         Optional hard cap on extracted text length (e.g., 5000)
@@ -41,14 +41,20 @@ def odphp_outlink_fetch(
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "urls": urls,
+            "max_chars": max_chars,
+            "return_html": return_html,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "odphp_outlink_fetch",
-            "arguments": {
-                "urls": urls,
-                "max_chars": max_chars,
-                "return_html": return_html,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

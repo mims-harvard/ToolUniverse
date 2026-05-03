@@ -2,7 +2,7 @@
   {
     "type": "FatcatScholarTool",
     "name": "Fatcat_search_scholar",
-    "description": "Search Internet Archive Scholar via Fatcat releases search. Fatcat is the underlying database powering Internet Archive Scholar, providing access to millions of research papers and academic publications.",
+    "description": "Search Internet Archive Scholar via Fatcat releases search and retrieve detailed metadata including authors, publication year, DOI, journal, publisher, abstract, and PDF links. Fatcat is the underlying database powering Internet Archive Scholar, providing access to 140+ million research papers and academic publications.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,7 +25,7 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "List of Fatcat releases matching the search query",
+      "description": "List of Fatcat releases matching the search query with detailed metadata",
       "items": {
         "type": "object",
         "properties": {
@@ -41,16 +41,32 @@
             "description": "List of author names"
           },
           "year": {
-            "type": "integer",
+            "type": ["integer", "null"],
             "description": "Publication year"
           },
           "doi": {
-            "type": "string",
-            "description": "Digital Object Identifier"
+            "type": ["string", "null"],
+            "description": "Digital Object Identifier (DOI)"
+          },
+          "journal": {
+            "type": ["string", "null"],
+            "description": "Journal or publication venue name"
+          },
+          "publisher": {
+            "type": ["string", "null"],
+            "description": "Publisher name"
+          },
+          "abstract": {
+            "type": ["string", "null"],
+            "description": "Paper abstract or summary"
+          },
+          "pdf_url": {
+            "type": ["string", "null"],
+            "description": "URL to PDF version if available"
           },
           "url": {
             "type": "string",
-            "description": "URL to the paper on Fatcat"
+            "description": "URL to the paper on scholar.archive.org/fatcat"
           },
           "source": {
             "type": "string",

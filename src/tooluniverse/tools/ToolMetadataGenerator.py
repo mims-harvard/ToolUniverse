@@ -15,7 +15,7 @@ def ToolMetadataGenerator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Generates a JSON structure with the metadata of a tool in ToolUniverse, given the JSON configurat...
 
@@ -34,17 +34,23 @@ def ToolMetadataGenerator(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "tool_config": tool_config,
+            "tool_type_mappings": tool_type_mappings,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ToolMetadataGenerator",
-            "arguments": {
-                "tool_config": tool_config,
-                "tool_type_mappings": tool_type_mappings,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

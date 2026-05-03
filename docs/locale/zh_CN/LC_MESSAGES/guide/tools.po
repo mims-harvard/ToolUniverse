@@ -32,9 +32,10 @@ msgstr "**ToolUniverse所有科学工具及其功能的完整参考。**"
 
 #: ../../guide/tools.rst:6 2b7b825826844602b669c41d7a9ac355
 msgid ""
-"ToolUniverse provides 600+ tools across eight major categories, each serving"
-" specific computational and analytical requirements in scientific research."
-msgstr "ToolUniverse提供600+工具，涵盖八个主要类别，每个类别都服务于科学研究中的特定计算和分析需求。"
+"ToolUniverse provides 1000+ tools across eight major categories, each "
+"serving specific computational and analytical requirements in scientific "
+"research."
+msgstr "ToolUniverse提供1000+工具，涵盖八个主要类别，每个类别都服务于科学研究中的特定计算和分析需求。"
 
 #: ../../guide/tools.rst:9 27a9fd99d43b4754bb0a361932240daf
 msgid "Tool Ecosystem Overview"

@@ -1,7 +1,7 @@
 """
 embedding_sync_upload
 
-Upload a local embedding database to HuggingFace Hub for sharing and collaboration. Creates a dat...
+Upload a per-collection datastore to Hugging Face Hub: <name>.db and <name>.faiss, plus metadata ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,32 +9,32 @@ from ._shared_client import get_shared_client
 
 
 def embedding_sync_upload(
-    action: str,
     database_name: str,
     repository: str,
-    description: str,
-    private: bool,
-    commit_message: str,
+    action: Optional[str] = None,
+    description: Optional[str] = "",
+    private: Optional[bool] = False,
+    commit_message: Optional[str] = "Upload datastore",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
-    Upload a local embedding database to HuggingFace Hub for sharing and collaboration. Creates a dat...
+    Upload a per-collection datastore to Hugging Face Hub: <name>.db and <name>.faiss, plus metadata ...
 
     Parameters
     ----------
     action : str
-        Action to upload database to HuggingFace
+
     database_name : str
-        Name of the local database to upload
+        Collection/database name to upload (expects <name>.db and <name>.faiss under ...
     repository : str
-        HuggingFace repository name (format: username/repo-name)
+        HF dataset repo (e.g., 'user/repo')
     description : str
-        Description for the HuggingFace dataset
+        Optional dataset description in the HF README
     private : bool
-        Whether to create a private repository
+        Create/use a private HF repo
     commit_message : str
         Commit message for the upload
     stream_callback : Callable, optional
@@ -46,21 +46,27 @@ def embedding_sync_upload(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "action": action,
+            "database_name": database_name,
+            "repository": repository,
+            "description": description,
+            "private": private,
+            "commit_message": commit_message,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "embedding_sync_upload",
-            "arguments": {
-                "action": action,
-                "database_name": database_name,
-                "repository": repository,
-                "description": description,
-                "private": private,
-                "commit_message": commit_message,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

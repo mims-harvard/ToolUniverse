@@ -1,0 +1,336 @@
+[
+  {
+    "name": "Bioconductor_search_packages",
+    "description": "Search Bioconductor bioinformatics R packages by keyword, topic, or analysis type. Bioconductor provides 2200+ open-source R packages for bioinformatics and computational biology covering RNA-seq, single-cell, proteomics, epigenomics, metabolomics, flow cytometry, imaging, and more. Returns matching packages with title, description, usage count, and relevance score. Powered by R-universe search index. Use this to find packages for specific bioinformatics workflows, then use Bioconductor_get_package for full details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query for Bioconductor packages. Can be a keyword, analysis type, or topic. Examples: 'differential expression', 'single cell RNA', 'proteomics', 'ChIP-seq', 'methylation', 'variant calling', 'gene set enrichment', 'phylogenetics', 'metabolomics', 'flow cytometry'"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (default: 10, max: 100)"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://bioc.r-universe.dev/api/search"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "differential expression",
+        "limit": 5
+      },
+      {
+        "q": "single cell RNA",
+        "limit": 5
+      },
+      {
+        "q": "proteomics mass spectrometry",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Search results from Bioconductor R-universe",
+          "properties": {
+            "results": {
+              "type": "array",
+              "description": "Matching Bioconductor packages",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Package": {
+                    "type": "string",
+                    "description": "Package name (use with Bioconductor_get_package for details)"
+                  },
+                  "Title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Short package title"
+                  },
+                  "Description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Package description"
+                  },
+                  "_usedby": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of other packages that depend on this one (popularity indicator)"
+                  },
+                  "_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Search relevance score"
+                  },
+                  "maintainer": {
+                    "type": [
+                      "object",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Package maintainer name or object"
+                  },
+                  "updated": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Last update timestamp (string or Unix epoch integer)"
+                  },
+                  "topics": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Package topics/tags"
+                  }
+                }
+              }
+            },
+            "total": {
+              "type": "integer",
+              "description": "Total number of matching packages"
+            },
+            "query": {
+              "description": "Search query used",
+              "oneOf": [
+                {"type": "string"},
+                {"type": "object"},
+                {"type": "null"}
+              ]
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Results limit applied"
+            },
+            "skip": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Results offset"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Bioconductor_get_package",
+    "description": "Get detailed metadata for a specific Bioconductor R package by name. Returns comprehensive information including version, description, dependencies, biocViews categories, author/maintainer, license, download statistics, GitHub stars, reverse dependencies (packages that use it), and git repository URL. Useful for evaluating packages before installation or for understanding the Bioconductor ecosystem. Use Bioconductor_search_packages first to find package names.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "package_name": {
+          "type": "string",
+          "description": "Exact Bioconductor package name (case-sensitive). Examples: 'DESeq2', 'edgeR', 'limma', 'Seurat', 'SingleCellExperiment', 'GenomicRanges', 'BiocGenerics', 'clusterProfiler', 'Rsamtools'"
+        }
+      },
+      "required": [
+        "package_name"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://bioc.r-universe.dev/api/packages/{package_name}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "package_name": "DESeq2"
+      },
+      {
+        "package_name": "edgeR"
+      },
+      {
+        "package_name": "limma"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Bioconductor package metadata",
+          "properties": {
+            "Package": {
+              "type": "string",
+              "description": "Package name"
+            },
+            "Title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Short package title"
+            },
+            "Version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Current version"
+            },
+            "Description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Detailed package description"
+            },
+            "License": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Software license"
+            },
+            "Author": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Package authors"
+            },
+            "Maintainer": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Current maintainer with email"
+            },
+            "URL": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Package homepage/repository URL"
+            },
+            "biocViews": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Bioconductor category tags (e.g., 'RNASeq, DifferentialExpression, Normalization')"
+            },
+            "Depends": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Package dependencies"
+            },
+            "Imports": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Imported packages"
+            },
+            "Suggests": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Suggested packages"
+            },
+            "_stars": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "GitHub stars count"
+            },
+            "_downloads": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Download statistics with count and source URL"
+            },
+            "_usedby": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of reverse dependencies (packages using this one)"
+            },
+            "_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Package relevance/popularity score"
+            },
+            "_dependencies": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "List of dependency objects with package name, version, and role (Depends/Imports/Suggests)"
+            },
+            "RemoteUrl": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Source code repository URL"
+            },
+            "NeedsCompilation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether package needs compilation (yes/no)"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

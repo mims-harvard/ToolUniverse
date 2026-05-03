@@ -32,7 +32,7 @@ msgstr ""
 #: 133719d364454414baa878abcb05daf4 of
 #: tooluniverse.tools.OpenTargets_get_target_constraint_info_by_ensemblID:1
 msgid "OpenTargets_get_target_constraint_info_by_ensemblID"
-msgstr ""
+msgstr "OpenTargets_通过Ensembl ID获取靶点约束信息"
 
 #: 580dec66a8f14586a781a3b3d254ad1a da4b136ea3144783bf14c8fe6d1b6187 of
 #: tooluniverse.tools.OpenTargets_get_target_constraint_info_by_ensemblID:3

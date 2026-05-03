@@ -1,0 +1,231 @@
+[
+  {
+    "type": "PRIDERESTTool",
+    "name": "PRIDE_search_proteomics",
+    "description": "Search the PRIDE Archive for proteomics experiments and mass spectrometry datasets. Returns project metadata including accession IDs (PXD...), species, tissue types, instruments, publication dates, and file counts. Use this to discover protein expression data, PTM studies, and downloadable raw files for reanalysis. Example queries: 'breast cancer', 'phosphorylation', 'COVID-19 proteome'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search keywords for proteomics experiments. Examples: 'cancer', 'phosphorylation', 'liver proteome', 'COVID-19'. Searches across project titles, descriptions, species, and tissues."
+        },
+        "page_size": {
+          "type": "integer",
+          "default": 20,
+          "description": "Number of projects to return per page (default: 20, max: 100)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pride/ws/archive/v2/projects?query={query}",
+      "params": {"pageSize": "20"},
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Array of PRIDE project search results.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "accession": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "projectDescription": {
+            "type": "string"
+          },
+          "organisms": {
+            "type": "array"
+          },
+          "organismParts": {
+            "type": "array"
+          },
+          "diseases": {
+            "type": "array"
+          },
+          "instruments": {
+            "type": "array"
+          },
+          "submissionDate": {
+            "type": "string"
+          },
+          "publicationDate": {
+            "type": "string"
+          },
+          "submitters": {
+            "type": "array"
+          },
+          "keywords": {
+            "type": "array"
+          },
+          "projectTags": {
+            "type": "array"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "cancer",
+        "page_size": 5
+      },
+      {
+        "query": "COVID-19",
+        "page_size": 10
+      }
+    ]
+  },
+  {
+    "type": "PRIDERESTTool",
+    "name": "PRIDE_get_project",
+    "description": "Get comprehensive details for a specific PRIDE Archive project by its accession ID. Returns complete project metadata including experimental design, sample information, instruments used, data processing methods, publication links, protein identifications, quantification data, and file download URLs. Use accession IDs from PRIDE_search_proteomics (format: PXD######).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "PRIDE project accession identifier in format PXD###### (e.g., 'PXD000001', 'PXD012345'). Find accessions using PRIDE_search_proteomics."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pride/ws/archive/v2/projects/{accession}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Comprehensive PRIDE project metadata.",
+      "additionalProperties": true,
+      "properties": {
+        "accession": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "projectDescription": {
+          "type": "string"
+        },
+        "sampleProcessingProtocol": {
+          "type": "string"
+        },
+        "dataProcessingProtocol": {
+          "type": "string"
+        },
+        "organisms": {
+          "type": "array"
+        },
+        "organismParts": {
+          "type": "array"
+        },
+        "instruments": {
+          "type": "array"
+        },
+        "submissionDate": {
+          "type": "string"
+        },
+        "publicationDate": {
+          "type": "string"
+        },
+        "submitters": {
+          "type": "array"
+        },
+        "labPIs": {
+          "type": "array"
+        },
+        "keywords": {
+          "type": "array"
+        },
+        "doi": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "PXD000001"
+      },
+      {
+        "accession": "PXD012345"
+      }
+    ]
+  },
+  {
+    "type": "PRIDERESTTool",
+    "name": "PRIDE_get_project_files",
+    "description": "Get the complete list of data files for a PRIDE Archive project including raw mass spectrometry files, search results, FASTA databases, and supplementary data. Returns file metadata with names, types, sizes, FTP/Aspera download URLs, and checksums. Essential for downloading proteomics datasets for reanalysis or integration. Use accession from PRIDE_search_proteomics.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "PRIDE project accession identifier (format: PXD######, e.g., 'PXD000001'). Find accessions using PRIDE_search_proteomics."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pride/ws/archive/v2/projects/{accession}/files",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "List of project files with download URLs and metadata.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "projectAccessions": {
+            "type": "array"
+          },
+          "accession": {
+            "type": "string"
+          },
+          "fileCategory": {
+            "type": "object"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "fileSize": {
+            "type": "object"
+          },
+          "publicFileLocations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "accession": "PXD000001"
+      },
+      {
+        "accession": "PXD012345"
+      }
+    ]
+  }
+]

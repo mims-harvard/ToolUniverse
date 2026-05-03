@@ -28,35 +28,37 @@ class TestToolUniverseCoreMethods(unittest.TestCase):
         self.tu.load_tools()
     
     def test_get_tool_by_name(self):
-        """Test get_tool_by_name method."""
+        """Test get_tool_specification_by_names (replacement for deprecated get_tool_by_name)."""
         # Test getting existing tools
-        tool_info = self.tu.get_tool_by_name(["UniProt_get_entry_by_accession"])
+        tool_info = self.tu.get_tool_specification_by_names(["UniProt_get_entry_by_accession"])
         self.assertIsInstance(tool_info, list)
         self.assertGreater(len(tool_info), 0)
         self.assertIn("name", tool_info[0])
         self.assertEqual(tool_info[0]["name"], "UniProt_get_entry_by_accession")
-        
+
         # Test getting multiple tools
-        tool_info_multi = self.tu.get_tool_by_name(["UniProt_get_entry_by_accession", "ArXiv_search_papers"])
+        tool_info_multi = self.tu.get_tool_specification_by_names(
+            ["UniProt_get_entry_by_accession", "ArXiv_search_papers"]
+        )
         self.assertIsInstance(tool_info_multi, list)
         self.assertGreaterEqual(len(tool_info_multi), 1)
-        
+
         # Test getting non-existent tools
-        tool_info_empty = self.tu.get_tool_by_name(["NonExistentTool"])
+        tool_info_empty = self.tu.get_tool_specification_by_names(["NonExistentTool"])
         self.assertIsInstance(tool_info_empty, list)
         self.assertEqual(len(tool_info_empty), 0)
     
     def test_get_tool_description(self):
-        """Test get_tool_description method."""
-        # Test getting description for existing tool
-        description = self.tu.get_tool_description("UniProt_get_entry_by_accession")
+        """Test tool_specification (replacement for deprecated get_tool_description)."""
+        # Test getting specification for existing tool
+        description = self.tu.tool_specification("UniProt_get_entry_by_accession")
         self.assertIsInstance(description, dict)
         self.assertIn("description", description)
         self.assertIsInstance(description["description"], str)
         self.assertGreater(len(description["description"]), 0)
-        
-        # Test getting description for non-existent tool
-        description_none = self.tu.get_tool_description("NonExistentTool")
+
+        # Test getting specification for non-existent tool
+        description_none = self.tu.tool_specification("NonExistentTool")
         self.assertIsNone(description_none)
     
     def test_get_tool_type_by_name(self):
@@ -82,6 +84,134 @@ class TestToolUniverseCoreMethods(unittest.TestCase):
         self.assertIsInstance(spec_with_prompt, dict)
         self.assertIn("name", spec_with_prompt)
         self.assertIn("description", spec_with_prompt)
+
+    def test_tool_specification_openai_format(self):
+        """Test tool_specification with format='openai' produces valid OpenAI schemas.
+
+        Regression test for the bug where legacy required:True/False boolean flags
+        embedded on individual property schemas (old JSON format) were not cleaned up
+        recursively, causing OpenAI to reject the schema with:
+          "True is not of type 'array'"
+        """
+        # Every tool should return a dict with name/description/parameters keys
+        spec = self.tu.tool_specification("UniProt_get_entry_by_accession", format="openai")
+        self.assertIsInstance(spec, dict)
+        self.assertIn("name", spec)
+        self.assertIn("description", spec)
+        self.assertIn("parameters", spec)
+
+        params = spec["parameters"]
+        self.assertIsInstance(params, dict)
+        # top-level 'required' must be a list (not a boolean)
+        if "required" in params:
+            self.assertIsInstance(params["required"], list)
+
+    def _find_openai_violations(self, obj, path=""):
+        """Recursively find required:bool or additionalProperties:True in a schema."""
+        issues = []
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k == "required" and isinstance(v, bool):
+                    issues.append(f"required={v} at {path}.{k}")
+                if k == "additionalProperties" and v is True:
+                    issues.append(f"additionalProperties=True at {path}.{k}")
+                issues.extend(self._find_openai_violations(v, f"{path}.{k}"))
+        elif isinstance(obj, list):
+            for i, v in enumerate(obj):
+                issues.extend(self._find_openai_violations(v, f"{path}[{i}]"))
+        return issues
+
+    def test_sanitize_schema_for_openai_legacy_required(self):
+        """_sanitize_schema_for_openai converts legacy required:bool flags to required arrays."""
+        legacy_schema = {
+            "type": "object",
+            "properties": {
+                "chemblId": {"type": "string", "description": "ID", "required": True},
+                "page": {
+                    "type": "object",
+                    "properties": {
+                        "index": {"type": "integer", "required": True},
+                        "size": {"type": "integer", "required": True},
+                    },
+                    "required": False,
+                },
+            },
+        }
+        result = self.tu._sanitize_schema_for_openai(legacy_schema)
+
+        # No boolean required flags anywhere
+        violations = self._find_openai_violations(result)
+        self.assertEqual(violations, [], f"Violations found: {violations}")
+
+        # Top-level required array is correctly reconstructed
+        self.assertEqual(result.get("required"), ["chemblId"])
+
+        # chemblId has no property-level required
+        self.assertNotIn("required", result["properties"]["chemblId"])
+
+        # page (optional) is not in the top-level required array
+        self.assertNotIn("page", result.get("required", []))
+
+        # nested index and size are required within page
+        page_required = result["properties"]["page"].get("required", [])
+        self.assertIn("index", page_required)
+        self.assertIn("size", page_required)
+
+    def test_sanitize_schema_for_openai_additional_properties(self):
+        """_sanitize_schema_for_openai removes additionalProperties:True recursively."""
+        schema = {
+            "type": "object",
+            "properties": {
+                "arguments": {
+                    "oneOf": [
+                        {"type": "object", "additionalProperties": True},
+                        {"type": "string"},
+                    ]
+                }
+            },
+        }
+        result = self.tu._sanitize_schema_for_openai(schema)
+        violations = self._find_openai_violations(result)
+        self.assertEqual(violations, [], f"Violations found: {violations}")
+        # additionalProperties:True removed from the oneOf branch
+        self.assertNotIn("additionalProperties", result["properties"]["arguments"]["oneOf"][0])
+
+    def test_sanitize_schema_for_openai_items(self):
+        """_sanitize_schema_for_openai handles required:True inside array items schemas."""
+        schema = {"type": "array", "items": {"type": "string", "required": True}}
+        result = self.tu._sanitize_schema_for_openai(schema)
+        violations = self._find_openai_violations(result)
+        self.assertEqual(violations, [], f"Violations found: {violations}")
+        self.assertNotIn("required", result["items"])
+
+    def test_sanitize_schema_for_openai_new_format_unchanged(self):
+        """_sanitize_schema_for_openai leaves already-correct schemas unchanged."""
+        new_format = {
+            "type": "object",
+            "properties": {
+                "accession": {"type": "string", "description": "UniProt ID"},
+            },
+            "required": ["accession"],
+        }
+        result = self.tu._sanitize_schema_for_openai(new_format)
+        self.assertEqual(result["required"], ["accession"])
+        self.assertNotIn("required", result["properties"]["accession"])
+
+    def test_tool_specification_openai_no_required_bool_any_tool(self):
+        """All loaded tools produce OpenAI-compatible schemas with no required:bool."""
+        tool_names = list(self.tu.all_tool_dict.keys())
+        violations_found = []
+        for name in tool_names:
+            spec = self.tu.tool_specification(name, format="openai")
+            if spec and "parameters" in spec:
+                issues = self._find_openai_violations(spec["parameters"], name)
+                violations_found.extend(issues)
+        self.assertEqual(
+            violations_found,
+            [],
+            f"OpenAI schema violations found in {len(violations_found)} tools: "
+            f"{violations_found[:5]}",
+        )
     
     def test_list_built_in_tools(self):
         """Test list_built_in_tools method."""
@@ -121,30 +251,37 @@ class TestToolUniverseCoreMethods(unittest.TestCase):
         self.assertIsInstance(tools_filtered, list)
     
     def test_select_tools(self):
-        """Test select_tools method."""
-        # Test selecting tools by names
-        tool_names = ["UniProt_get_entry_by_accession", "ArXiv_search_papers"]
-        selected = self.tu.select_tools(tool_names)
+        """Test filter_tools (replacement for deprecated select_tools)."""
+        # Test filtering tools by names
+        tool_names = {"UniProt_get_entry_by_accession", "ArXiv_search_papers"}
+        selected = self.tu.filter_tools(include_tools=tool_names)
         self.assertIsInstance(selected, list)
         self.assertLessEqual(len(selected), len(tool_names))
-        
-        # Test with empty list
-        empty_selected = self.tu.select_tools([])
-        self.assertIsInstance(empty_selected, list)
-        self.assertEqual(len(empty_selected), 0)
+
+        # Test excluding a name — result must not contain the excluded tool
+        all_count = len(self.tu.all_tools)
+        no_uniprot = self.tu.filter_tools(exclude_tools={"UniProt_get_entry_by_accession"})
+        self.assertIsInstance(no_uniprot, list)
+        self.assertEqual(len(no_uniprot), all_count - 1)
     
     def test_filter_tool_lists(self):
-        """Test filter_tool_lists method."""
-        # Test filtering by category
+        """Test filter_tools + manual filtering (replacement for deprecated filter_tool_lists)."""
         all_tools = self.tu.get_available_tools(name_only=False)
         if all_tools:
-            # Get tool names and descriptions
-            tool_names = [tool.get('name', '') for tool in all_tools if isinstance(tool, dict)]
-            tool_descriptions = [tool.get('description', '') for tool in all_tools if isinstance(tool, dict)]
-            
-            filtered_names, filtered_descriptions = self.tu.filter_tool_lists(
-                tool_names, tool_descriptions, include_categories=["literature"]
-            )
+            tool_names = [t.get("name", "") for t in all_tools if isinstance(t, dict)]
+            tool_descriptions = [t.get("description", "") for t in all_tools if isinstance(t, dict)]
+
+            # Filter by category using filter_tools + category field
+            lit_names = {
+                t["name"]
+                for t in self.tu.all_tools
+                if t.get("category") == "literature"
+            }
+            filtered_names = [n for n in tool_names if n in lit_names]
+            filtered_descriptions = [
+                d for n, d in zip(tool_names, tool_descriptions) if n in lit_names
+            ]
+
             self.assertIsInstance(filtered_names, list)
             self.assertIsInstance(filtered_descriptions, list)
             self.assertEqual(len(filtered_names), len(filtered_descriptions))
@@ -276,12 +413,11 @@ class TestToolUniverseCoreMethods(unittest.TestCase):
                 os.unlink(temp_file)
     
     def test_load_tools_from_names_list(self):
-        """Test load_tools_from_names_list method."""
-        # Test loading specific tools
-        tool_names = ["UniProt_get_entry_by_accession"]
-        self.tu.load_tools_from_names_list(tool_names, clear_existing=False)
-        
-        # Verify tools are loaded
+        """Test load_tools(include_tools=...) (replacement for deprecated load_tools_from_names_list)."""
+        # load_tools with include_tools merges into existing tools (merge mode)
+        self.tu.load_tools(include_tools=["UniProt_get_entry_by_accession"])
+
+        # Verify the tool is in the registry
         available_tools = self.tu.get_available_tools()
         self.assertIn("UniProt_get_entry_by_accession", available_tools)
     

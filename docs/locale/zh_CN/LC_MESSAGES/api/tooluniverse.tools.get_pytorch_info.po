@@ -27,7 +27,7 @@ msgstr "tooluniverse.tools.get\\_pytorch\\_info 模块"
 
 #: 99e011ed02a442ccae9aecdef37e128d of tooluniverse.tools.get_pytorch_info:1
 msgid "get_pytorch_info"
-msgstr ""
+msgstr "get_pytorch_信息"
 
 #: 8b23450a68ed4d9dbc83b6bdb824d88f 96d341ca15ba4aa4bd77a73cb4639812 of
 #: tooluniverse.tools.get_pytorch_info:3

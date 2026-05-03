@@ -1,0 +1,542 @@
+[
+  {
+    "name": "SYNERGxDB_search_combos",
+    "type": "SYNERGxDBTool",
+    "description": "Search drug combination synergy scores in SYNERGxDB. Returns synergy metrics (Bliss, Loewe, HSA, ZIP) for drug pairs across cancer cell lines. Filter by drug IDs, cell line/tissue, and dataset. The database integrates 22,507 unique drug combinations from 9 major studies (NCI-ALMANAC, MERCK, MIT-MELANOMA, VISAGE, DECREASE, YALE-TNBC, YALE-PDAC, STANFORD, CLOUD). Positive ZIP scores indicate synergy. Use list_drugs first to find drug IDs. NOTE: SYNERGxDB covers pairwise in vitro cytotoxicity screening; standard-of-care clinical regimens (FOLFOX, FOLFIRI, CAPOX, R-CHOP) and most targeted therapies/biologics (BRAF/MEK/KRAS inhibitors, immune checkpoint inhibitors, monoclonal antibodies) are not represented.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "search_combos"
+          ],
+          "description": "Operation type"
+        },
+        "drug_id_1": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "SYNERGxDB drug ID for drug A. Use SYNERGxDB_list_drugs to find IDs. Examples: 11 (Bortezomib), 48 (Imatinib), 52 (Lapatinib). Alternatively, use drug_name_1 for automatic ID lookup."
+        },
+        "drug_name_1": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Drug name for drug A \u2014 triggers automatic SYNERGxDB ID lookup (e.g., 'gemcitabine', 'imatinib', 'paclitaxel'). Aliases: drug1. Use instead of drug_id_1 when you don't know the integer ID."
+        },
+        "drug_id_2": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "SYNERGxDB drug ID for drug B. Examples: 97 (Topotecan), 34 (Erlotinib), 24 (Dasatinib). Alternatively, use drug_name_2 for automatic ID lookup."
+        },
+        "drug_name_2": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Drug name for drug B \u2014 triggers automatic SYNERGxDB ID lookup (e.g., 'erlotinib', 'topotecan', 'oxaliplatin'). Aliases: drug2. Use instead of drug_id_2 when you don't know the integer ID."
+        },
+        "sample": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Cell line ID (integer as string) or tissue name. Valid tissue names: 'colorectal' (NOT 'colon'), 'blood', 'breast', 'lung', 'ovary', 'skin', 'CNS', 'prostate', 'kidney', 'pancreas', 'gastric', 'melanoma'. Use SYNERGxDB_list_cell_lines to find valid values. Aliases: tissue_name, tissue. Common alias 'colon' is auto-mapped to 'colorectal'."
+        },
+        "dataset": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ],
+          "description": "Dataset source ID (integer) or name (string). Examples: 2 or 'NCI-ALMANAC', 1 or 'MERCK', 10 or 'VISAGE', 7 or 'MIT-MELANOMA'. Use SYNERGxDB_list_datasets to see all available datasets and their IDs."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Page number for paginated results (default: 1)"
+        },
+        "per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 20,
+          "description": "Results per page (default: 20, max: 500)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "comboId": {
+            "type": "integer",
+            "description": "Combination design ID"
+          },
+          "drugNameA": {
+            "type": "string"
+          },
+          "drugNameB": {
+            "type": "string"
+          },
+          "sampleName": {
+            "type": "string",
+            "description": "Cell line name"
+          },
+          "tissue": {
+            "type": "string"
+          },
+          "sourceName": {
+            "type": "string",
+            "description": "Dataset name"
+          },
+          "bliss": {
+            "type": "number",
+            "description": "Bliss independence synergy score"
+          },
+          "loewe": {
+            "type": "number",
+            "description": "Loewe additivity synergy score"
+          },
+          "hsa": {
+            "type": "number",
+            "description": "Highest Single Agent synergy score"
+          },
+          "zip": {
+            "type": "number",
+            "description": "Zero Interaction Potency synergy score"
+          },
+          "comboscore": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Composite combination score"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "search_combos",
+        "drug_id_1": 11,
+        "drug_id_2": 97,
+        "page": 1,
+        "per_page": 5
+      }
+    ]
+  },
+  {
+    "name": "SYNERGxDB_get_combo_matrix",
+    "type": "SYNERGxDBTool",
+    "description": "Get the dose-response matrix data for a specific drug combination experiment in SYNERGxDB. Returns concentration pairs and raw viability plus synergy matrices (Bliss, Loewe, HSA, ZIP). The combo_id and source_id can be obtained from SYNERGxDB_search_combos results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_combo_matrix"
+          ],
+          "description": "Operation type"
+        },
+        "combo_id": {
+          "type": "integer",
+          "description": "Combination design ID from search_combos results (comboId field)"
+        },
+        "source_id": {
+          "type": "integer",
+          "description": "Dataset source ID (idSource field from search_combos or list_datasets)"
+        }
+      },
+      "required": [
+        "combo_id",
+        "source_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "concA": {
+            "type": "number",
+            "description": "Concentration of drug A (Molar)"
+          },
+          "concB": {
+            "type": "number",
+            "description": "Concentration of drug B (Molar)"
+          },
+          "raw_matrix": {
+            "type": "number",
+            "description": "Raw viability (0-1)"
+          },
+          "bliss_matrix": {
+            "type": "number",
+            "description": "Bliss synergy matrix value"
+          },
+          "loewe_matrix": {
+            "type": "number",
+            "description": "Loewe synergy matrix value"
+          },
+          "hsa_matrix": {
+            "type": "number",
+            "description": "HSA synergy matrix value"
+          },
+          "zip_matrix": {
+            "type": "number",
+            "description": "ZIP synergy matrix value"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_combo_matrix",
+        "combo_id": 138775,
+        "source_id": 2
+      }
+    ]
+  },
+  {
+    "name": "SYNERGxDB_list_drugs",
+    "type": "SYNERGxDBTool",
+    "description": "List drugs in the SYNERGxDB database with their identifiers. Returns drug names, IDs, PubChem CIDs, DrugBank IDs, SMILES, InChIKey, and associated datasets. Contains 1977 unique compounds. Use 'query' or 'name' to filter by drug name (e.g., 'imatinib'). Use drug IDs from this list in SYNERGxDB_search_combos queries.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "list_drugs"
+          ],
+          "description": "Operation type"
+        },
+        "query": {
+          "type": "string",
+          "description": "Filter by drug name (case-insensitive substring match, e.g., 'imatinib', 'taxol'). Alias: name."
+        },
+        "name": {
+          "type": "string",
+          "description": "Alias for query. Filter by drug name."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "atcCode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idDrugBank": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idPubChem": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idDrug": {
+            "type": "integer"
+          },
+          "smiles": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "inchikey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dataset_names": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "imatinib"
+      }
+    ]
+  },
+  {
+    "name": "SYNERGxDB_get_drug",
+    "type": "SYNERGxDBTool",
+    "description": "Get detailed information about a specific drug in SYNERGxDB by its database ID. Returns drug name, ATC code, PubChem ID, and DrugBank ID. Known drug IDs: 11 (Bortezomib), 24 (Dasatinib), 34 (Erlotinib), 41 (Fluorouracil), 48 (Imatinib), 52 (Lapatinib), 97 (Topotecan), 106 (Vorinostat).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_drug"
+          ],
+          "description": "Operation type"
+        },
+        "drug_id": {
+          "type": "integer",
+          "description": "SYNERGxDB drug ID (e.g., 11 for Bortezomib)"
+        }
+      },
+      "required": [
+        "drug_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "idDrug": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "atcCode": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "idPubChem": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "idDrugBank": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_drug",
+        "drug_id": 11
+      }
+    ]
+  },
+  {
+    "name": "SYNERGxDB_list_cell_lines",
+    "type": "SYNERGxDBTool",
+    "description": "List all cancer cell lines in the SYNERGxDB database. Returns cell line names, tissue types, disease annotations, Cellosaurus IDs, and demographic data. Contains 151 cancer cell lines. Tissue types include blood, breast, lung, colon, CNS, ovary, prostate, kidney, skin.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "list_cell_lines"
+          ],
+          "description": "Operation type"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "idSample": {
+            "type": "integer",
+            "description": "Cell line ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Cell line name"
+          },
+          "tissue": {
+            "type": "string",
+            "description": "Tissue type"
+          },
+          "disease": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Cancer disease type"
+          },
+          "idCellosaurus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Cellosaurus accession"
+          },
+          "sex": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "age": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "origin": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_cell_lines"
+      }
+    ]
+  },
+  {
+    "name": "SYNERGxDB_list_datasets",
+    "type": "SYNERGxDBTool",
+    "description": "List all drug combination screening datasets integrated in SYNERGxDB. Returns dataset names, number of drugs, cell lines, and publication references. Key datasets: NCI-ALMANAC (101 drugs, 60 cell lines), MERCK (38 drugs, 39 cell lines), STANFORD, YALE-PDAC, YALE-TNBC, MIT-MELANOMA, CLOUD, ASTRAZENECA.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "list_datasets"
+          ],
+          "description": "Operation type"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "idSource": {
+            "type": "integer",
+            "description": "Dataset ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Dataset name"
+          },
+          "no_drugs": {
+            "type": "integer",
+            "description": "Number of drugs"
+          },
+          "no_samples": {
+            "type": "integer",
+            "description": "Number of cell lines"
+          },
+          "pmID": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "PubMed ID"
+          },
+          "author": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "First author et al."
+          },
+          "combo": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Combination matrix design"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "list_datasets"
+      }
+    ]
+  },
+  {
+    "name": "SYNERGxDB_get_combo_stats",
+    "type": "SYNERGxDBTool",
+    "description": "Get per-dataset combination statistics from SYNERGxDB. Returns the number of unique drug combinations, total experiments, and data points for each screening study. Useful for understanding the scale and coverage of each integrated dataset.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_combo_stats"
+          ],
+          "description": "Operation type"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "idSource": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string",
+            "description": "Dataset name"
+          },
+          "nCombos": {
+            "type": "integer",
+            "description": "Number of unique drug combinations"
+          },
+          "nExperiments": {
+            "type": "integer",
+            "description": "Total experiments"
+          },
+          "nDatapoints": {
+            "type": "integer",
+            "description": "Total data points"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_combo_stats"
+      }
+    ]
+  }
+]

@@ -28,7 +28,7 @@ msgstr "tooluniverse.tools.HPA\\_get\\_rna\\_expression\\_in\\_specific\\_tissue
 #: 24f702d795384bcdbcbfd7f8ff16889b of
 #: tooluniverse.tools.HPA_get_rna_expression_in_specific_tissues:1
 msgid "HPA_get_rna_expression_in_specific_tissues"
-msgstr ""
+msgstr "HPA_获取特定组织中的RNA表达量"
 
 #: 8af46a4ee2b84f6da615057d9e4b5c7d faed30b20f8a450795b36f52da492dce of
 #: tooluniverse.tools.HPA_get_rna_expression_in_specific_tissues:3
