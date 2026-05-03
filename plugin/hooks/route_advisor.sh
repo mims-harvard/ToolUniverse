@@ -34,11 +34,6 @@ path_template='[Dd]ata files? (are )?located at|[Dd]ata folder:|capsule.{1,30}fo
 
 if echo "$prompt" | grep -qiE "$file_signal|$domain_signal|$path_template"; then
     cat <<'EOF'
-For research / data-analysis / biology / chemistry / medicine questions, run BOTH of these tool calls before ANY Bash/Read/Grep on the data:
-
-  Skill(skill="tooluniverse")                                  # load routing table
-  Skill(skill="tooluniverse-<picked-from-routing-table>")      # load sub-skill body
-
-Why both: the sub-skill body contains RULE ZERO (read the executed notebook, do NOT reimplement), exact column names, R-vs-Python tool choices, and outlier-sample exclusions. Skipping the sub-skill = wrong answer. After Step 2 completes, then run data tools.
+For this research / data-analysis / biology / chemistry / medicine question, FIRST invoke Skill(skill="tooluniverse") to load the routing table and RULE ZERO. RULE ZERO says: check for published results in the data folder (executed notebook outputs, pre-computed result CSVs from the original analysis) and read them FIRST — re-running analysis from raw data produces different numbers and is much slower. After loading the router, decide whether reading existing results is enough OR whether to also load a specific tooluniverse-<topic> sub-skill for re-analysis details.
 EOF
 fi
