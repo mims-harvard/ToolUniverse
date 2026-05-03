@@ -18,10 +18,7 @@ import traceback
 from pprint import pprint
 
 import os
-import sys
-import traceback
 from pathlib import Path
-from pprint import pprint
 
 # Ensure the repository's src directory is importable when running as a script
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

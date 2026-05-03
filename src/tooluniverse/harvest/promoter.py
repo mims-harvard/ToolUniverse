@@ -1,5 +1,8 @@
 from __future__ import annotations
-import os, json, tempfile, shutil
+import os
+import json
+import tempfile
+import shutil
 from typing import Dict, Any, List
 
 # Where we persist generated tool configs so DynamicREST (or your server boot)
@@ -7,8 +10,10 @@ from typing import Dict, Any, List
 VSD_DIR = os.path.join(os.path.expanduser("~"), ".tooluniverse", "vsd")
 VSD_PATH = os.path.join(VSD_DIR, "generated_tools.json")
 
+
 def _ensure_dir():
     os.makedirs(VSD_DIR, exist_ok=True)
+
 
 def _read_json(path: str) -> Any:
     if not os.path.exists(path):
@@ -19,6 +24,7 @@ def _read_json(path: str) -> Any:
     except Exception:
         return {}
 
+
 def _atomic_write(path: str, data: Any):
     tmp_fd, tmp_path = tempfile.mkstemp(prefix="vsd_", suffix=".json")
     os.close(tmp_fd)
@@ -26,8 +32,10 @@ def _atomic_write(path: str, data: Any):
         json.dump(data, f, indent=2, ensure_ascii=False)
     shutil.move(tmp_path, path)
 
+
 def _slug(host: str) -> str:
     return (host or "unknown").lower().replace(".", "_").replace("-", "_")
+
 
 def build_candidate_tool_json(c: Dict[str, Any]) -> Dict[str, Any]:
     # Minimal, UI-friendly payload for listing/debug
@@ -44,6 +52,7 @@ def build_candidate_tool_json(c: Dict[str, Any]) -> Dict[str, Any]:
         "source": c.get("source"),
         "_rank_score": c.get("_rank_score"),
     }
+
 
 def _dynamicrest_tool_config(c: Dict[str, Any]) -> Dict[str, Any]:
     """Produce a DynamicREST-style tool definition.
@@ -74,16 +83,22 @@ def _dynamicrest_tool_config(c: Dict[str, Any]) -> Dict[str, Any]:
         # Trim to a handful of GET endpoints
         routes: List[Dict[str, Any]] = []
         for ep in endpoints[:5]:
-            routes.append({
-                "method": ep.get("method") or "GET",
-                "path": ep.get("path") or "/",
-                "name": (ep.get("summary") or ep.get("path") or "endpoint").strip("/").replace("/", "_")[:64] or "endpoint",
-            })
+            routes.append(
+                {
+                    "method": ep.get("method") or "GET",
+                    "path": ep.get("path") or "/",
+                    "name": (ep.get("summary") or ep.get("path") or "endpoint")
+                    .strip("/")
+                    .replace("/", "_")[:64]
+                    or "endpoint",
+                }
+            )
         cfg["routes"] = routes
     else:
         # Last resort: allow a generic GET on '/'
         cfg["routes"] = [{"method": "GET", "path": "/"}]
     return cfg
+
 
 def promote_to_dynamicrest(c: Dict[str, Any]) -> str:
     """Append/Update the generated tool config file so your server can load it.
