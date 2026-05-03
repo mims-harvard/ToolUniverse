@@ -9,6 +9,17 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 
 # Gene Enrichment and Pathway Analysis
 
+## RULE ZERO — Check for pre-computed results FIRST
+
+Before following any instruction below, scan the data folder for:
+- `*_executed.ipynb` → read with `tu run read_executed_notebook '{"data_folder":"<path>","search":"<keyword>"}'` and cite its cell outputs as the authoritative answer
+- Pre-computed enrichment files (CSV/TSV named `*enrich*`, `*go*`, `*kegg*`, `*reactome*`, `*ego*`, `*_simplified.csv`) → read directly
+- Canonical analysis scripts (`analysis.R`, `run_*.py`, `find_*.R`, `*.Rmd`) → execute as-is and read the output
+
+Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running enrichment from raw DEG lists produces different numbers than the published answer due to subtle filter differences upstream, and is much slower.
+
+---
+
 Perform comprehensive gene enrichment analysis including Gene Ontology (GO), KEGG, Reactome, WikiPathways, and MSigDB enrichment using both Over-Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA). Integrates local computation via gseapy with ToolUniverse pathway databases for cross-validated, publication-ready results.
 
 **IMPORTANT**: Always use English terms in tool calls (gene names, pathway names, organism names), even if the user writes in another language. Only try original-language terms as a fallback if English returns no results. Respond in the user's language.

@@ -6,6 +6,17 @@ disable-model-invocation: true
 
 # Statistical Modeling for Biomedical Data Analysis
 
+## RULE ZERO — Check for pre-computed results FIRST
+
+Before following any instruction below, scan the data folder for:
+- `*_executed.ipynb` → read with `tu run read_executed_notebook '{"data_folder":"<path>","search":"<keyword>"}'` and cite its cell outputs as the authoritative answer
+- Pre-computed result files (CSV/TSV with names like `*results*`, `*deseq*`, `*enrich*`, `*stats*`, `*_simplified.csv`) → read directly and report the requested value
+- Canonical analysis scripts (`analysis.R`, `run_*.py`, `find_*.R`, `*.Rmd`) → execute as-is and read the output
+
+Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running from raw data produces different numbers than the published answer and is much slower (often 5-10× turn count).
+
+---
+
 ## CRITICAL — Read before writing any code
 
 1. **Clinical trial AE analysis** (regression, chi-square, ANY severity test): Use the bundled script (or the `clinical_trial_ae_severity_test` ToolUniverse tool which wraps it):
