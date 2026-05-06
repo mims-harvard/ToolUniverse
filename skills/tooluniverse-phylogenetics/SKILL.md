@@ -9,11 +9,50 @@ disable-model-invocation: true
 ## RULE ZERO — Check for pre-computed results FIRST
 
 Before following any instruction below, scan the data folder for:
+- **`scogs_fungi.zip` / `scogs_animals.zip`** (BUSCO single-copy ortholog phylogenetics) → these contain the pre-computed alignments (`*.faa.mafft.clipkit`) and trees (`*.faa.mafft.clipkit.treefile`) from the original analysis. **Use these directly with PhyKIT** (see "BUSCO scogs questions" below). Re-running BUSCO → MAFFT → IQ-TREE from `*.busco.zip` files takes 1–6 hours AND produces slightly different numbers due to seed/version drift.
 - `*_executed.ipynb` → read with `tu run read_executed_notebook '{"data_folder":"<path>","search":"<keyword>"}'` and cite its cell outputs as the authoritative answer
-- Pre-computed result files (CSV/TSV with names like `*results*`, `*deseq*`, `*enrich*`, `*stats*`, `*_simplified.csv`) → read directly and report the requested value
+- Pre-computed result files (CSV/TSV with names like `*results*`, `*tree*`, `*phykit*`, `*saturation*`, `*treeness*`) → read directly and report the requested value
 - Canonical analysis scripts (`analysis.R`, `run_*.py`, `find_*.R`, `*.Rmd`) → execute as-is and read the output
 
-Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running from raw data produces different numbers than the published answer and is much slower (often 5-10× turn count).
+Only follow this skill's re-analysis recipe below if **none** of the above exist. Re-running from raw data produces different numbers than the published answer and is much slower (often 5–10× turn count).
+
+---
+
+## BUSCO scogs questions (multi-species phylogenomics)
+
+Capsules with `scogs_fungi.zip` and/or `scogs_animals.zip` ship the
+pre-computed alignment+tree per single-copy ortholog. The question
+typically asks for a metric (treeness, RCV, saturation, long branch
+score, evolutionary rate, parsimony informative %, tree length,
+patristic distance, DVMC) per group, or a comparison between groups
+(median / Mann-Whitney U / percentage above threshold).
+
+**Workflow:**
+
+```bash
+# Run PhyKIT on every fungal ortholog's pre-built alignment+tree:
+python skills/tooluniverse-phylogenetics/scripts/scogs_phykit_pipeline.py \
+    --capsule "$DATA_PATH" --group fungi --metric treeness --out /tmp/fungi_treeness.tsv
+# (groups: fungi, animals;  metrics: treeness, dvmc, long_branch_score,
+#  total_tree_length, evolutionary_rate, patristic_distances, rcv,
+#  parsimony_informative, treeness_over_rcv, saturation)
+
+# Then aggregate (median/mean/Mann-Whitney) in Python:
+python -c "
+import pandas as pd
+fungi = pd.read_csv('/tmp/fungi_treeness.tsv', sep='\t')
+print(fungi['treeness'].astype(float).median())
+"
+```
+
+For metrics PhyKIT outputs as multi-column lines (e.g.
+`long_branch_score`: mean ± std), pass `--extra '-v'` to get verbose
+output that includes the per-tip values. The script captures whatever
+`phykit <metric>` prints to stdout.
+
+**Anti-pattern:** running `phykit` on the raw `*.busco.zip` extracted
+ortholog FASTAs and then aligning/tree-building yourself. The
+pre-computed files in `scogs_*.zip` are the canonical inputs.
 
 ---
 
