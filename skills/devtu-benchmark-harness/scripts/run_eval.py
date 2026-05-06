@@ -11,17 +11,24 @@ Usage:
 """
 
 import argparse
+import contextlib
+import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PLUGIN_DIR = str(REPO_ROOT / "dist" / "tooluniverse-plugin")
 EVALS_DIR = REPO_ROOT / "skills" / "evals"
+CLEAN_DATA_DIR = REPO_ROOT / "temp_docs_and_tests" / "bixbench_clean" / "data"
+CHECKSUMS_FILE = REPO_ROOT / "temp_docs_and_tests" / "bixbench_clean" / "checksums.json"
 BIXBENCH_DATA_DIRS = [
+    CLEAN_DATA_DIR,
     REPO_ROOT / "temp_docs_and_tests" / "bixbench" / "data",
     REPO_ROOT / "temp_docs_and_tests" / "bixbench" / "bixbench" / "data",
 ]
@@ -29,6 +36,57 @@ BIXBENCH_DATA_DIRS = [
 # Import grading from sibling script
 sys.path.insert(0, str(Path(__file__).parent))
 from grade_answers import grade_answer
+
+
+def _file_sha256(p: Path) -> str:
+    h = hashlib.sha256()
+    with p.open("rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def verify_capsule_checksums(capsule: Path, expected: dict) -> list[str]:
+    """Return a list of mismatch messages (empty = capsule is clean)."""
+    mismatches = []
+    actual_files = {
+        str(f.relative_to(capsule)): f
+        for f in capsule.rglob("*") if f.is_file()
+    }
+    # Files present in canonical but missing in capsule
+    for rel, exp_hash in expected.items():
+        if rel not in actual_files:
+            mismatches.append(f"missing: {rel}")
+            continue
+        got = _file_sha256(actual_files[rel])
+        if got != exp_hash:
+            mismatches.append(f"hash mismatch: {rel}")
+    # Files in capsule but not in canonical (= contamination)
+    for rel in actual_files:
+        if rel not in expected:
+            mismatches.append(f"unexpected: {rel}")
+    return mismatches
+
+
+@contextlib.contextmanager
+def isolated_capsule(capsule: Path):
+    """Yield a fresh writable copy of the capsule in a tmpdir.
+
+    The agent operates only on the copy; the canonical capsule stays
+    untouched. The tmpdir is auto-deleted after the question.
+    """
+    with tempfile.TemporaryDirectory(prefix=f"{capsule.name}_") as tmp:
+        workspace = Path(tmp) / capsule.name
+        # Canonical capsule is read-only (a-w); copytree preserves perms,
+        # so we restore write permissions on the copy after copying.
+        shutil.copytree(capsule, workspace, symlinks=False)
+        workspace.chmod(0o755)
+        for p in workspace.rglob("*"):
+            if p.is_file():
+                p.chmod(0o644)
+            elif p.is_dir():
+                p.chmod(0o755)
+        yield workspace
 
 
 def load_guidance(guidance_path: str = None) -> str:
@@ -57,15 +115,19 @@ def find_capsule(data_folder: str) -> Path | None:
 
 
 def prepare_prompt(
-    question: dict, benchmark: str, guidance: str, with_plugin: bool
+    question: dict, benchmark: str, guidance: str, with_plugin: bool,
+    capsule_path: Path | None = None,
 ) -> str:
-    """Prepare the full prompt for a benchmark question."""
+    """Prepare the full prompt for a benchmark question.
+
+    `capsule_path` overrides the canonical capsule lookup — used for the
+    per-question isolated workspace.
+    """
     question_text = question.get("question", question.get("prompt", ""))
 
-    # BixBench: prepend data file paths
     data_folder = question.get("data_folder", "")
-    if data_folder and benchmark == "bixbench":
-        capsule = find_capsule(data_folder)
+    if data_folder and benchmark in ("bixbench", "custom"):
+        capsule = capsule_path if capsule_path else find_capsule(data_folder)
         if capsule:
             data_files = [f.name for f in capsule.iterdir() if f.is_file()]
             question_text = (
@@ -102,7 +164,9 @@ def run_claude(
         cmd.extend(["--allowedTools", "Bash,Read,Write"])
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        # timeout <= 0 means "no time limit" — let the agent run to completion
+        run_timeout = timeout if timeout and timeout > 0 else None
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=run_timeout)
         if result.returncode == 0:
             try:
                 data = json.loads(result.stdout)
@@ -133,9 +197,19 @@ def run_benchmark(
     timeout: int,
     category_filter: str = "",
     resume_results: list = None,
+    isolate: bool = True,
+    verify_checksums: bool = True,
+    incremental_save: str | None = None,
 ) -> list:
-    """Run benchmark and return results."""
-    # Filter by category if specified
+    """Run benchmark and return results.
+
+    isolate=True (default): each BixBench question runs in a temp copy of
+    the canonical capsule; the canonical dir stays untouched.
+
+    verify_checksums=True (default): before each question, verify the
+    canonical capsule matches checksums.json. Aborts the run if the clean
+    data has been modified.
+    """
     if category_filter:
         questions = [
             q for q in questions
@@ -146,13 +220,17 @@ def run_benchmark(
     subset = questions[:n]
     config_name = "with_plugin" if with_plugin else "baseline"
 
-    # Build set of already-answered IDs for resume
     answered_ids = set()
     if resume_results:
         answered_ids = {r["id"] for r in resume_results if r.get("id")}
 
+    expected_checksums = {}
+    if verify_checksums and CHECKSUMS_FILE.exists():
+        expected_checksums = json.loads(CHECKSUMS_FILE.read_text())
+
     print(f"\n{'='*60}", flush=True)
     print(f"Running {benchmark} ({config_name}): {len(subset)} questions", flush=True)
+    print(f"  isolate={isolate}  verify_checksums={verify_checksums}", flush=True)
     print(f"{'='*60}", flush=True)
 
     results = list(resume_results or [])
@@ -162,7 +240,6 @@ def run_benchmark(
         if q_id in answered_ids:
             continue
 
-        # Get ground truth
         raw_answer = q.get("answer", "")
         ideal = q.get("ideal", "")
         if isinstance(raw_answer, bool) or str(raw_answer) in ("True", "False"):
@@ -171,12 +248,38 @@ def run_benchmark(
             ground_truth = str(raw_answer) if raw_answer else str(ideal)
 
         eval_mode = q.get("eval_mode", "")
-        prompt = prepare_prompt(q, benchmark, guidance, with_plugin)
+
+        # Resolve canonical capsule for this question
+        data_folder = q.get("data_folder", "")
+        canonical_capsule = find_capsule(data_folder) if data_folder else None
+
+        # Verify canonical capsule integrity (if applicable + enabled)
+        if (canonical_capsule and verify_checksums and
+                canonical_capsule.parent == CLEAN_DATA_DIR):
+            cap_expected = expected_checksums.get(canonical_capsule.name, {})
+            if cap_expected:
+                mismatches = verify_capsule_checksums(canonical_capsule, cap_expected)
+                if mismatches:
+                    print(f"\nABORT: canonical capsule {canonical_capsule.name} "
+                          f"has {len(mismatches)} mismatches.", flush=True)
+                    for m in mismatches[:5]:
+                        print(f"  {m}", flush=True)
+                    print("Restore from HuggingFace before re-running.", flush=True)
+                    sys.exit(2)
 
         print(f"\n[{i+1}/{len(subset)}] Q{q_id}: {q.get('question', '')[:80]}...", flush=True)
 
+        # Run inside an isolated workspace if applicable
+        if isolate and canonical_capsule and canonical_capsule.parent == CLEAN_DATA_DIR:
+            ctx = isolated_capsule(canonical_capsule)
+        else:
+            ctx = contextlib.nullcontext(canonical_capsule)
+
         start = time.time()
-        response = run_claude(prompt, with_plugin, max_turns, timeout)
+        with ctx as workspace:
+            prompt = prepare_prompt(q, benchmark, guidance, with_plugin,
+                                    capsule_path=workspace)
+            response = run_claude(prompt, with_plugin, max_turns, timeout)
         elapsed = time.time() - start
 
         answer = response["text"]
@@ -197,6 +300,12 @@ def run_benchmark(
 
         status = "CORRECT" if grade["correct"] else "WRONG"
         print(f"  {status} ({elapsed:.1f}s) | GT: {ground_truth[:50]}", flush=True)
+
+        if incremental_save:
+            try:
+                Path(incremental_save).write_text(json.dumps(results, indent=2))
+            except Exception as e:
+                print(f"  WARN: incremental save failed: {e}", flush=True)
 
     # Summary
     correct = sum(1 for r in results if r["correct"])
@@ -225,6 +334,19 @@ def main():
     parser.add_argument("--guidance", help="Custom guidance file path")
     parser.add_argument("--category", default="", help="Filter by category")
     parser.add_argument("--resume", help="Resume from existing results file")
+    parser.add_argument(
+        "--no-isolate", action="store_true",
+        help="Disable per-question workspace isolation (DANGER: agent writes "
+             "directly to canonical capsule).",
+    )
+    parser.add_argument(
+        "--no-verify-checksums", action="store_true",
+        help="Skip canonical-capsule integrity check before each question.",
+    )
+    parser.add_argument(
+        "--save-incremental",
+        help="Path to write results to after every question (for safe resume).",
+    )
     args = parser.parse_args()
 
     # Load questions
@@ -259,6 +381,9 @@ def main():
         results = run_benchmark(
             args.benchmark, questions, args.n, True, guidance,
             args.max_turns, args.timeout, args.category, resume_results,
+            isolate=not args.no_isolate,
+            verify_checksums=not args.no_verify_checksums,
+            incremental_save=args.save_incremental,
         )
         all_results["with_plugin"] = results
 
@@ -266,6 +391,9 @@ def main():
         results = run_benchmark(
             args.benchmark, questions, args.n, False, "",
             args.max_turns, args.timeout, args.category,
+            isolate=not args.no_isolate,
+            verify_checksums=not args.no_verify_checksums,
+            incremental_save=args.save_incremental,
         )
         all_results["baseline"] = results
 
