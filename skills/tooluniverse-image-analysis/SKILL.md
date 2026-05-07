@@ -17,6 +17,20 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
 
 ---
 
+## CRITICAL — "Relative proportion of A to B" defaults to PERCENTAGE
+
+When the question asks "What is the relative proportion of A to B" or "What percentage of A relative to B", report the value as a **percentage** (e.g., `29` for ratio 0.29), NOT a decimal ratio. Biology assay GTs use whole-number percentage ranges like `(25,30)`, not `(0.25,0.30)`. Multiply your computed ratio by 100 before reporting:
+
+```python
+ratio = mean_A / mean_B           # e.g., 0.29
+percentage = ratio * 100          # e.g., 29
+print(f"{percentage:.1f}%")       # "29.0%"  ← THIS is the answer
+```
+
+Only report as decimal/fraction if the question explicitly says "as a decimal", "between 0 and 1", or "as a fraction". Common error: reporting `0.29` when the GT range is `(25,30)` — graded as wrong even though the underlying ratio is correct.
+
+---
+
 Production-ready skill for analyzing microscopy-derived measurement data using pandas, numpy, scipy, statsmodels, and scikit-image.
 
 ## LOOK UP, DON'T GUESS
