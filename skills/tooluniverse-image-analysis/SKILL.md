@@ -137,6 +137,17 @@ See **references/segmentation.md**, **references/cell_counting.md**, **reference
 - Sample sizes: integer (ceiling)
 - Ratios: string "5:1"
 
+### "Relative proportion of A to B" — default to PERCENTAGE
+
+Question phrases like "relative proportion of A to B", "percentage of mean A relative to B", or "A as a fraction of B" are ambiguous: the answer could be the decimal ratio (`0.29`) or the percentage (`29`). In biology/microscopy assay contexts the convention is **percentage** (whole numbers like 25-30, not decimals like 0.25-0.30). When in doubt:
+
+- Compute the decimal ratio first: `r = mean(A) / mean(B)`.
+- Report BOTH `r * 100` (percentage) and `r` (decimal); flag the percentage as the primary answer.
+- If the question specifies "as a decimal" or "between 0 and 1", report decimal only.
+- If the question specifies "as a percentage" or "%", report percentage only.
+
+Common error: question asks "relative proportion of mutant area to wildtype" and the agent reports `0.29` when the GT range is `(25, 30)`. The grader marks this wrong even though the underlying computation is correct.
+
 ---
 
 ## Evidence Grading

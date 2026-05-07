@@ -26,6 +26,11 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
    ```
    Denominator is **coding variants only** (synonymous, missense, stop_gained, frameshift, etc.), NOT all variants. The script handles this automatically.
 2. **Multi-row Excel headers**: Clinical variant exports often have 2-row headers. Use `pd.read_excel(path, header=[0,1])` and address columns as tuples.
+3. **"How many variants from VCF/HaplotypeCaller" — DO NOT apply quality filters unless asked**: When the question is "How many SNPs are identified by GATK HaplotypeCaller from the BAM" or "What is the total number of indel mutations", count EVERY record in the raw VCF (after `bcftools view`/`bcftools stats` or by parsing the file directly). Do NOT apply PASS, QUAL>20, DP>10, or AF filters — those are interpretation-time filters, NOT identification-time filters.
+   - Wrong: `bcftools view -f PASS variants.vcf | grep -v '^#' | awk '$5~/[ACGT]/' | wc -l` → returns ~10% of true SNP count.
+   - Right: count all biallelic SNP records: `bcftools view --types snps variants.vcf | grep -v '^#' | wc -l`. For all SNPs (incl. multi-allelic): split first with `bcftools norm -m -` then count.
+   - Indel total (insertions+deletions): `bcftools view --types indels variants.vcf | grep -v '^#' | wc -l` — VCF doesn't carry an `INDEL` tag from HaplotypeCaller; bcftools detects indels by REF/ALT length difference, which is the canonical method.
+   - The skill's "VCF quality filtering must come before interpretation" rule is for *clinical* interpretation. For *counting* ("how many SNPs are identified" or "total number of indels"), report raw counts and let the question's wording dictate filters.
 
 ---
 
