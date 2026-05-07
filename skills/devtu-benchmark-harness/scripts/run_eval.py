@@ -104,6 +104,60 @@ def load_guidance(guidance_path: str = None) -> str:
     return text.strip()
 
 
+# Keyword → skill routing (mirrors the router skill's table). When
+# full_skill_injection is enabled, we use this to pick the matching
+# sub-skill and pre-load its full SKILL.md body into the system prompt
+# via --append-system-prompt. This guarantees the conventions reach
+# inference even in `-p` mode where plugin auto-routing is unreliable.
+def categorize_for_skill(question_text: str) -> str | None:
+    """Route question to a sub-skill. Order: most-specific first.
+
+    Domain-keywords (cpg/colony/treeness/...) are checked BEFORE generic
+    statistical method keywords (anova/chi-square/...) so domain-specific
+    skills win when both could match.
+    """
+    q = question_text.lower()
+    # Domain-specific (highest priority)
+    if "phylo" in q or "treeness" in q or "parsimony" in q or "phykit" in q or "saturation" in q or "dvmc" in q or "tree length" in q or "long branch" in q or "ortholog" in q or ("alignment" in q and ("gap" in q or "mafft" in q)):
+        return "tooluniverse-phylogenetics"
+    if "methylation" in q or "cpg " in q or " cpg" in q or "5mc" in q or "chip-seq" in q or "atac" in q or "m6a" in q or "chromatin" in q:
+        return "tooluniverse-epigenomics"
+    if "colony" in q or "circularity" in q or "swarming" in q or "cell area" in q or "morphometry" in q or "fluorescence" in q or "imagej" in q or "cellprofiler" in q or ("mean" in q and "area" in q):
+        return "tooluniverse-image-analysis"
+    if "variant" in q or "vcf" in q or "vaf" in q or " snp " in q or "haplotypecaller" in q or "indel" in q or "mutation" in q:
+        return "tooluniverse-variant-analysis"
+    if "crispr" in q or "mageck" in q or "sgrna" in q:
+        return "tooluniverse-crispr-screen-analysis"
+    if "scanpy" in q or "single-cell" in q or "h5ad" in q:
+        return "tooluniverse-single-cell"
+    if "fastq" in q or "bwa" in q or "samtools" in q or "trimmomatic" in q or "alignment quality" in q:
+        return "tooluniverse-sequence-analysis"
+    if "mass spec" in q or "tmt" in q or "proteomics" in q:
+        return "tooluniverse-proteomics-analysis"
+    # Pipeline-specific
+    if "deseq2" in q or "differential expression" in q or "differentially expressed" in q or "fold change" in q or " log2" in q or "deg " in q:
+        return "tooluniverse-rnaseq-deseq2"
+    if "enrichgo" in q or "enrichment" in q or " go " in q or "kegg" in q or "gseapy" in q or "reactome" in q or "wikipathways" in q:
+        return "tooluniverse-gene-enrichment"
+    # Generic statistics (lowest priority — domain-specific wins above)
+    if "anova" in q or "regression" in q or "chi-square" in q or "spline" in q or "cohen" in q or "f-statistic" in q or "odds ratio" in q:
+        return "tooluniverse-statistical-modeling"
+    return None
+
+
+def load_full_skill_body(skill_name: str) -> str:
+    """Load full SKILL.md content (without frontmatter) for the matched skill."""
+    skill_md = Path(PLUGIN_DIR) / "skills" / skill_name / "SKILL.md"
+    if not skill_md.exists():
+        return ""
+    text = skill_md.read_text()
+    if text.startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) >= 3:
+            text = parts[2]
+    return text.strip()
+
+
 def find_capsule(data_folder: str) -> Path | None:
     """Find a BixBench capsule data directory."""
     capsule_name = data_folder.replace(".zip", "")
@@ -144,9 +198,15 @@ def prepare_prompt(
 
 
 def run_claude(
-    prompt: str, with_plugin: bool, max_turns: int = 20, timeout: int = 300
+    prompt: str, with_plugin: bool, max_turns: int = 20, timeout: int = 300,
+    skill_body: str = "",
 ) -> dict:
-    """Run a prompt through Claude Code."""
+    """Run a prompt through Claude Code.
+
+    `skill_body` (optional): full SKILL.md body of the routed sub-skill.
+    Injected via --append-system-prompt so the conventions reach inference
+    even in `-p` mode where plugin auto-routing is unreliable.
+    """
     cmd = [
         "claude", "-p", prompt,
         "--max-turns", str(max_turns),
@@ -160,6 +220,8 @@ def run_claude(
             "mcp__tooluniverse__list_tools,mcp__tooluniverse__get_tool_info,"
             "mcp__tooluniverse__grep_tools,Bash,Read,Write",
         ])
+        if skill_body:
+            cmd.extend(["--append-system-prompt", skill_body])
     else:
         cmd.extend(["--allowedTools", "Bash,Read,Write"])
 
@@ -200,6 +262,7 @@ def run_benchmark(
     isolate: bool = True,
     verify_checksums: bool = True,
     incremental_save: str | None = None,
+    full_skill_injection: bool = False,
 ) -> list:
     """Run benchmark and return results.
 
@@ -275,11 +338,23 @@ def run_benchmark(
         else:
             ctx = contextlib.nullcontext(canonical_capsule)
 
+        # If full_skill_injection enabled, route the question to a skill
+        # and load that skill's full SKILL.md body for --append-system-prompt.
+        skill_body = ""
+        routed_skill = None
+        if full_skill_injection and with_plugin:
+            routed_skill = categorize_for_skill(q.get("question", ""))
+            if routed_skill:
+                skill_body = load_full_skill_body(routed_skill)
+                if skill_body:
+                    print(f"  [full-skill-injection] routed to {routed_skill}", flush=True)
+
         start = time.time()
         with ctx as workspace:
             prompt = prepare_prompt(q, benchmark, guidance, with_plugin,
                                     capsule_path=workspace)
-            response = run_claude(prompt, with_plugin, max_turns, timeout)
+            response = run_claude(prompt, with_plugin, max_turns, timeout,
+                                  skill_body=skill_body)
         elapsed = time.time() - start
 
         answer = response["text"]
@@ -347,6 +422,13 @@ def main():
         "--save-incremental",
         help="Path to write results to after every question (for safe resume).",
     )
+    parser.add_argument(
+        "--full-skill-injection", action="store_true",
+        help="Route the question to a sub-skill via keyword match and inject "
+             "that skill's full SKILL.md body into --append-system-prompt. "
+             "Recommended in `-p` mode where plugin auto-routing is unreliable. "
+             "Without this flag, SKILL conventions often don't reach inference.",
+    )
     args = parser.parse_args()
 
     # Load questions
@@ -384,6 +466,7 @@ def main():
             isolate=not args.no_isolate,
             verify_checksums=not args.no_verify_checksums,
             incremental_save=args.save_incremental,
+            full_skill_injection=args.full_skill_injection,
         )
         all_results["with_plugin"] = results
 
