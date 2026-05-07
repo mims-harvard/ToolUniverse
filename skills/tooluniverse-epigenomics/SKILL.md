@@ -44,10 +44,11 @@ CpG methylation CSVs typically have ONE ROW PER (sample × CpG site) — so `len
 
 | Question phrasing | Axis | Operation |
 |-------------------|------|-----------|
-| "how many sites are removed when filtering" | sample-rows | filter then count rows; do NOT dedupe by `Pos` |
+| "how many sites are removed when filtering" | sample-rows | filter then count rows; do NOT dedupe by `Pos`. The CSV is in long format; "sites" here is row-shaped. Subtract `len(df_filtered)` from `len(df)`. |
 | "how many unique CpG sites pass filter" | unique positions | dedupe by position (or `Pos` column), then filter |
-| "density per bp" / "chromosome density" | unique positions | dedupe by position, divide by chromosome/genome length |
-| "chi-square for uniform distribution across chromosomes" | unique positions per chromosome | dedupe by position, then count per chromosome |
+| **"genome-wide average chromosomal density"** | per-chromosome density | MEAN of per-chromosome densities: `(n_unique_per_chr / chr_length).mean()`. NOT `total_unique / total_genome` — that gives a different answer (typically ≈ ½ of the per-chr mean for unevenly distributed CpGs). |
+| **"density on chromosome X"** | single chromosome | unique positions on X / length(X). Be careful which species — check the question text for "Zebra Finch" vs "Jackdaw". |
+| "chi-square for uniform distribution across chromosomes" | unique positions per chromosome | filter rows first, then dedupe by `(Chromosome, Pos)`, then count per-chromosome unique positions for chi-square against expected = `chr_length / total_length × n_unique_filtered` |
 
 **Sanity check**: if your filtered count is two orders of magnitude smaller than the GT range, you likely deduped when the question wanted row-level counts (or vice versa). Re-run with the other axis and compare.
 
