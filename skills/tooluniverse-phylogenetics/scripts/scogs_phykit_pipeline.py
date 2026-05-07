@@ -8,7 +8,7 @@ Usage:
         --metric long_branch_score --group fungi --extra "-v"
 
 Why this exists (RULE ZERO for BUSCO-orthology phylogenetics questions):
-    Many BixBench phylogenetics capsules ship with `scogs_fungi.zip` and
+    Some phylogenetics capsules ship with `scogs_fungi.zip` and
     `scogs_animals.zip`, which contain the pre-computed alignments
     (`*.faa.mafft.clipkit`) AND trees (`*.faa.mafft.clipkit.treefile`)
     from the original analysis. The reference answers come from running
