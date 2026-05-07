@@ -38,6 +38,23 @@ Methylation data, ChIP-seq peaks, ATAC-seq, multi-omics integration, genome-wide
 4. **Statistical rigor** - FDR correction, effect size filtering
 5. **CpG identification** - Parse Illumina probe IDs, genomic coordinates
 
+## Distinguish "rows" vs "unique sites" — methylation CSVs are usually long-format
+
+CpG methylation CSVs typically have ONE ROW PER (sample × CpG site) — so `len(df) >> n_unique_sites`. Before computing anything, decide which axis the question is asking about:
+
+| Question phrasing | Axis | Operation |
+|-------------------|------|-----------|
+| "how many sites are removed when filtering" | sample-rows | filter then count rows; do NOT dedupe by `Pos` |
+| "how many unique CpG sites pass filter" | unique positions | dedupe by position (or `Pos` column), then filter |
+| "density per bp" / "chromosome density" | unique positions | dedupe by position, divide by chromosome/genome length |
+| "chi-square for uniform distribution across chromosomes" | unique positions per chromosome | dedupe by position, then count per chromosome |
+
+**Sanity check**: if your filtered count is two orders of magnitude smaller than the GT range, you likely deduped when the question wanted row-level counts (or vice versa). Re-run with the other axis and compare.
+
+For the chi-square uniformity test: expected counts = `chromosome_length / total_genome_length × n_unique_sites`. The chi-square statistic depends on the **count granularity** (rows vs unique sites) — a row-level chi-square gives a much higher chi-square than a unique-position chi-square because `n` is larger.
+
+**Precedence**: when an `*_executed.ipynb` exists, read its filtering code verbatim — `df[(df.MethylationPercentage > 90) | (df.MethylationPercentage < 10)]` (no dedup) and `df.drop_duplicates('Pos')` (with dedup) yield wildly different counts on the same dataset.
+
 ---
 
 ## Workflow
