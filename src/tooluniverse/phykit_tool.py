@@ -15,9 +15,19 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
+# Some user-facing metric names don't match phykit's CLI subcommand names.
+# `parsimony_informative` is the canonical scientific name but phykit exposes
+# it as `parsimony_informative_sites` (alias `pis`). Calling the wrong name
+# returns the help banner with non-zero exit, silently producing zero values.
+PHYKIT_CLI_ALIAS = {
+    "parsimony_informative": "parsimony_informative_sites",
+}
+
+
 def _run_phykit(function: str, filepath: str, extra_args: list = None) -> str | None:
     """Run a single phykit command."""
-    cmd = ["phykit", function, filepath]
+    cli = PHYKIT_CLI_ALIAS.get(function, function)
+    cmd = ["phykit", cli, filepath]
     if extra_args:
         cmd.extend(extra_args)
     try:
@@ -155,6 +165,11 @@ class PhyKITTool(BaseTool):
                     # Saturation outputs slope<TAB>1-slope; use 1-slope (col 1)
                     if function == "saturation" and len(parts) >= 2:
                         val = float(parts[1])
+                    elif function == "parsimony_informative" and len(parts) >= 3:
+                        # phykit pis output: n_pi <TAB> n_total <TAB> percent.
+                        # The "%PIS" column (col 3) is what scientific
+                        # questions ask for, not the raw count.
+                        val = float(parts[2])
                     else:
                         val = float(parts[0])
                     values.append(val)

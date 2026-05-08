@@ -4,6 +4,39 @@ Fast reference for common phylogenetic analysis tasks.
 
 ---
 
+## scogs animal-vs-fungi questions — START HERE
+
+When the data folder has `scogs_animals.zip` and/or `scogs_fungi.zip`,
+use the bundled paired-comparison script. It computes the metric per
+ortholog for BOTH groups, plus Mann-Whitney U + p-value, paired
+ratios, group-median ratios, and lowest-non-zero ratios — all in one
+shot. Avoids the timeouts that come from re-running per-group batches.
+
+```bash
+# parsimony_informative %, RCV, gap_percentage: ~2s for 500 alignments
+# (Biopython, no subprocess fork-per-file)
+python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
+    --capsule "$DATA_PATH" --metric parsimony_informative
+
+# Long branch score / patristic distances: choose per-tree summary
+python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
+    --capsule "$DATA_PATH" --metric long_branch_score --per-tree-stat mean
+python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
+    --capsule "$DATA_PATH" --metric long_branch_score --per-tree-stat median
+```
+
+The output emits both `MWU animals_vs_fungi` AND `MWU fungi_vs_animals`
+because U is asymmetric. Grep the line whose ordering matches the
+question wording, e.g. "comparing animals and fungi" → use
+`MWU animals_vs_fungi`, "comparing fungi vs animals" → use the other.
+
+For "ratio" questions: GROUP_MEDIAN_RATIO uses all orthologs (median /
+median), PAIRED_RATIO uses common-ortholog ratios then median. The
+script prints both — read the question for "matched" / "paired" /
+"per-ortholog" cues; default to GROUP_MEDIAN_RATIO otherwise.
+
+---
+
 ## Installation
 
 ```bash

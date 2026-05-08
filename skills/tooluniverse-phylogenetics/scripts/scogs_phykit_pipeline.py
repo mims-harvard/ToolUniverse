@@ -92,30 +92,63 @@ def ensure_extracted(capsule: Path, group: str) -> Path:
 def find_orthologs(extracted: Path) -> list[tuple[str, Path | None, Path | None]]:
     """Return (gene_id, alignment_path, tree_path) tuples for each ortholog.
 
-    Alignment: *.faa.mafft.clipkit
-    Tree:      *.faa.mafft.clipkit.treefile
+    Alignment preference order (best -> fallback):
+      .faa.mafft.clipkit   (trimmed, canonical for tree-paired metrics)
+      .faa.mafft           (untrimmed MAFFT — used when capsule lacks clipkit)
+      .faa                 (raw, last-resort)
+    Tree preference:
+      .faa.mafft.clipkit.treefile
+      .treefile
+
+    Some capsules ship only `.faa` + `.faa.mafft` (no clipkit, no trees);
+    others ship the full chain with trees. The fallback is critical for
+    alignment-only metrics (parsimony_informative, rcv) where the answer
+    must come from the canonical alignment, NOT a fresh MAFFT/CLIPKIT
+    re-run that would diverge from the reference.
     """
-    # Group by gene_id stem
-    genes = {}
+    genes: dict[str, dict[str, Path | None]] = {}
     for p in extracted.rglob("*"):
-        name = p.name
-        if not name.startswith(tuple("0123456789")):
+        if p.is_dir():
             continue
-        # stem like "1032689at2759"
+        name = p.name
+        if not name[:1].isdigit():
+            continue
         stem = name.split(".")[0]
         if stem not in genes:
-            genes[stem] = {"aln": None, "tree": None}
-        if name.endswith(".faa.mafft.clipkit") and not p.is_dir():
-            genes[stem]["aln"] = p
-        elif name.endswith(".faa.mafft.clipkit.treefile"):
+            genes[stem] = {"raw": None, "mafft": None, "clipkit": None, "tree": None}
+        if name.endswith(".faa.mafft.clipkit.treefile"):
             genes[stem]["tree"] = p
+        elif name.endswith(".treefile") and genes[stem].get("tree") is None:
+            genes[stem]["tree"] = p
+        elif name.endswith(".faa.mafft.clipkit"):
+            genes[stem]["clipkit"] = p
+        elif name.endswith(".faa.mafft"):
+            genes[stem]["mafft"] = p
+        elif name.endswith(".faa"):
+            genes[stem]["raw"] = p
 
-    return [(g, v["aln"], v["tree"]) for g, v in sorted(genes.items())]
+    out = []
+    for g, slots in sorted(genes.items()):
+        aln = slots["clipkit"] or slots["mafft"] or slots["raw"]
+        out.append((g, aln, slots["tree"]))
+    return out
+
+
+# Some metrics in this script's vocabulary do NOT map 1-to-1 to phykit
+# CLI subcommands. `parsimony_informative` is the canonical name in the
+# scientific literature and skill text, but phykit's CLI exposes it as
+# `parsimony_informative_sites` (alias `pis`). The literal `parsimony_informative`
+# command returns the help banner with exit code != 0 — silently giving zero
+# computed values. Translate at the boundary.
+PHYKIT_CLI_ALIAS = {
+    "parsimony_informative": "parsimony_informative_sites",
+}
 
 
 def run_phykit(metric: str, aln: Path | None, tree: Path | None,
                extra: list[str]) -> str | None:
-    cmd = ["phykit", metric]
+    cli = PHYKIT_CLI_ALIAS.get(metric, metric)
+    cmd = ["phykit", cli]
     if metric in METRIC_TREE_ONLY:
         if not tree:
             return None

@@ -2035,6 +2035,91 @@ def test_85_end_to_end_dvmc():
         gene4_fungi if gene4_fungi else 0)
 
 
+def test_86_scogs_paired_compare_script():
+    """Smoke-test scogs_paired_compare.py against a synthetic two-group capsule.
+
+    Build minimal scogs_animals.zip and scogs_fungi.zip with 3 ortholog
+    alignments each, run --metric parsimony_informative, and verify the
+    SUMMARY / MWU / GROUP_MEDIAN_RATIO lines appear with the right shape.
+    """
+    import subprocess
+    import zipfile
+    capsule = tempfile.mkdtemp(prefix="scogs_paired_test_")
+    try:
+        for grp, seqs_per_gene in [
+            ("animals", {
+                "g1": {"sp1": "AAAA", "sp2": "AAAA", "sp3": "AAAA"},
+                "g2": {"sp1": "AACC", "sp2": "AACG", "sp3": "AACT"},
+                "g3": {"sp1": "ATCG", "sp2": "ATCG", "sp3": "ATCG"},
+            }),
+            ("fungi", {
+                "g1": {"sp1": "ATAT", "sp2": "ATCG", "sp3": "ATGC"},
+                "g2": {"sp1": "AAAA", "sp2": "AACC", "sp3": "ACCT"},
+                "g3": {"sp1": "GGGG", "sp2": "AGGG", "sp3": "ATGG"},
+            }),
+        ]:
+            zip_path = os.path.join(capsule, f"scogs_{grp}.zip")
+            with zipfile.ZipFile(zip_path, "w") as zf:
+                for gene, seqs in seqs_per_gene.items():
+                    fasta = "\n".join(f">{n}\n{s}" for n, s in seqs.items())
+                    # Real BUSCO ortholog IDs start with a digit (e.g. 1003258at2759).
+                    # The discovery code uses leading-digit as a filter to skip
+                    # log/iqtree/etc. files. Use numeric-prefixed gene IDs here.
+                    zf.writestr(f"100{gene[-1]}at2759.faa.mafft", fasta)
+
+        script = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "scripts", "scogs_paired_compare.py",
+        )
+        r = subprocess.run(
+            [sys.executable, script, "--capsule", capsule,
+             "--metric", "parsimony_informative"],
+            capture_output=True, text=True, timeout=60,
+        )
+        assert r.returncode == 0, f"script failed: {r.stderr}"
+        out = r.stdout
+        assert "# SUMMARY group=animals:" in out
+        assert "# SUMMARY group=fungi:" in out
+        assert "# MWU animals_vs_fungi:" in out
+        assert "# MWU fungi_vs_animals:" in out
+        # Both U values should sum to n_a*n_b (3 * 3 = 9)
+        import re
+        u_ab = float(re.search(r"# MWU animals_vs_fungi: U=(\S+)", out).group(1))
+        u_ba = float(re.search(r"# MWU fungi_vs_animals: U=(\S+)", out).group(1))
+        assert abs(u_ab + u_ba - 9.0) < 0.01, f"U values don't sum to n_a*n_b: {u_ab} + {u_ba}"
+        return f"paired_compare: U_ab={u_ab}, U_ba={u_ba}, sum={u_ab + u_ba}"
+    finally:
+        shutil.rmtree(capsule)
+
+
+def test_87_phykit_parsimony_informative_alias():
+    """Tool config maps user-facing 'parsimony_informative' to the actual
+    phykit CLI subcommand 'parsimony_informative_sites'. Validate the
+    alias map has both directions covered."""
+    sys.path.insert(0, os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "scripts",
+    ))
+    try:
+        # The new paired script and the existing pipeline both translate
+        # the user-facing name. Validate via the pipeline's alias map.
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "scogs_pipeline",
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "scripts", "scogs_phykit_pipeline.py",
+            ),
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        assert hasattr(mod, "PHYKIT_CLI_ALIAS"), "missing alias map"
+        assert mod.PHYKIT_CLI_ALIAS["parsimony_informative"] == "parsimony_informative_sites"
+        return "alias map: parsimony_informative -> parsimony_informative_sites"
+    finally:
+        if sys.path[0].endswith("scripts"):
+            sys.path.pop(0)
+
+
 # ===========================================================================
 # TEST RUNNER
 # ===========================================================================

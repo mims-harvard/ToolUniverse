@@ -20,39 +20,123 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
 
 ## BUSCO scogs questions (multi-species phylogenomics)
 
-Capsules with `scogs_fungi.zip` and/or `scogs_animals.zip` ship the
-pre-computed alignment+tree per single-copy ortholog. The question
-typically asks for a metric (treeness, RCV, saturation, long branch
-score, evolutionary rate, parsimony informative %, tree length,
-patristic distance, DVMC) per group, or a comparison between groups
-(median / Mann-Whitney U / percentage above threshold).
+Capsules with `scogs_fungi.zip` and/or `scogs_animals.zip` ship
+pre-computed per-ortholog alignments (and sometimes trees). The
+question asks for a metric per group, or a Mann-Whitney U / median /
+ratio comparison between groups.
 
-**Workflow:**
+### PRIMARY SCRIPT — both groups in one pass (use this FIRST)
+
+When the question compares animals vs fungi (Mann-Whitney U, ratio,
+fold-change, paired difference), the bundled paired-comparison script
+extracts both zips, computes the metric per ortholog for each group,
+and emits ALL of: per-group summary, two-tailed Mann-Whitney U +
+p-value (in both orderings since U is asymmetric), paired-ortholog
+median diff, paired-ortholog median ratio, group-median ratio, and
+lowest-non-zero ratios — in one run, no aggregation step needed:
 
 ```bash
-# Run PhyKIT on every fungal ortholog's pre-built alignment+tree:
-python skills/tooluniverse-phylogenetics/scripts/scogs_phykit_pipeline.py \
-    --capsule "$DATA_PATH" --group fungi --metric treeness --out /tmp/fungi_treeness.tsv
-# (groups: fungi, animals;  metrics: treeness, dvmc, long_branch_score,
-#  total_tree_length, evolutionary_rate, patristic_distances, rcv,
-#  parsimony_informative, treeness_over_rcv, saturation)
-
-# Then aggregate (median/mean/Mann-Whitney) in Python:
-python -c "
-import pandas as pd
-fungi = pd.read_csv('/tmp/fungi_treeness.tsv', sep='\t')
-print(fungi['treeness'].astype(float).median())
-"
+python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
+    --capsule "$DATA_PATH" --metric parsimony_informative
+# Metrics: parsimony_informative, rcv, gap_percentage (alignment-only,
+# Biopython-fast: ~2s for 500 alignments);
+# treeness, dvmc, total_tree_length, evolutionary_rate, long_branch_score,
+# patristic_distances (tree); treeness_over_rcv, saturation (both).
 ```
 
-For metrics PhyKIT outputs as multi-column lines (e.g.
-`long_branch_score`: mean ± std), pass `--extra '-v'` to get verbose
-output that includes the per-tip values. The script captures whatever
-`phykit <metric>` prints to stdout.
+Output blocks (parse in Python or grep):
+
+```
+# SUMMARY group=animals: n=... mean=... median=... min=... max=... p25=... p75=... lowest_nonzero=... n_nonzero=...
+# SUMMARY group=fungi:   n=... mean=... median=... min=... max=... p25=... p75=... lowest_nonzero=... n_nonzero=...
+# MWU animals_vs_fungi: U=... p=...
+# MWU fungi_vs_animals: U=... p=...        <-- U(a,b) + U(b,a) = n_a*n_b
+# PAIRED n_common=N: median_diff(animals-fungi)=...  median_diff(fungi-animals)=...
+# PAIRED RATIO median(animals/fungi)=... (n=...)    <-- for each common ortholog: a_val/b_val, then median
+# PAIRED RATIO median(fungi/animals)=... (n=...)
+# GROUP_MEDIAN_RATIO animals/fungi=...               <-- median(group_a) / median(group_b)
+# GROUP_MEDIAN_RATIO fungi/animals=...
+# GROUP_MEDIAN_DIFF animals-fungi=...
+# LOWEST_NONZERO animals=... fungi=...
+# LOWEST_NONZERO_RATIO animals/fungi=...
+# LOWEST_NONZERO_RATIO fungi/animals=...
+```
+
+For `long_branch_score` and `patristic_distances` (multi-value-per-tree
+metrics), pass `--per-tree-stat mean` or `--per-tree-stat median` to
+choose the per-tree summary BEFORE the cross-tree MWU. The question
+wording "comparing **median** long branch scores" means per-tree
+summary = median; "comparing **mean** long branch scores" means
+per-tree summary = mean. Run TWICE (once with each) if uncertain.
+
+### Single-group script (when only one group is asked about)
+
+```bash
+python skills/tooluniverse-phylogenetics/scripts/scogs_phykit_pipeline.py \
+    --capsule "$DATA_PATH" --group fungi --metric treeness --out /tmp/f.tsv
+# Auto-falls-back to .faa.mafft when .faa.mafft.clipkit is absent
+# (some scogs zips ship only mafft alignments, not clipkit trims).
+```
+
+### `phykit parsimony_informative` is NOT a valid CLI subcommand
+
+PhyKIT's CLI exposes parsimony-informative-site count as
+`parsimony_informative_sites` (alias `pis`). Calling
+`phykit parsimony_informative <file>` returns the help banner with
+non-zero exit and silently produces zero values. The bundled scripts
+translate `parsimony_informative` → `parsimony_informative_sites`
+automatically. The output is `<n_pi>\t<n_total>\t<percent>` — column
+THREE is the percentage that questions usually ask for.
+
+### Group-median ratio vs paired ratio (read this carefully)
+
+When a question phrases tree-length / RCV / DVMC comparisons as
+"ratio of fungal to animal X across orthologs", there are TWO distinct
+quantities:
+
+1. **GROUP_MEDIAN_RATIO** = `median(values_fungi) / median(values_animals)`.
+   Use ALL orthologs in each group independently. This is what
+   group-comparison published numbers usually report (n_fungi can
+   differ from n_animals, and "across" is a population statement, not
+   a paired one).
+
+2. **PAIRED RATIO median** = for each ortholog present in BOTH groups,
+   compute `value_fungi / value_animals`, then take the median across
+   common orthologs. Smaller denominator (intersection only) and a
+   different number when the groups have different size.
+
+Default to GROUP_MEDIAN_RATIO unless the question explicitly says
+"matched ortholog", "paired ortholog", "per-ortholog ratio", or "for
+each ortholog". If the answer phrasing is ambiguous, BOTH numbers are
+in the script's output — pick the one matching the question's
+"across" / "paired" / "ratio of medians" phrasing.
+
+### Lowest-non-zero ratios
+
+For metrics that can legitimately equal 0 for highly conserved or
+very short alignments (parsimony informative %, RCV on near-identical
+seqs), "lowest" in a question typically means "lowest non-zero". The
+paired script emits `LOWEST_NONZERO_RATIO` for both orderings — use
+that line when the raw min in a group is 0.
+
+### File-layout fallback (alignment naming)
+
+scogs zips ship in two shapes:
+- **Full**: `<gene>.faa`, `<gene>.faa.mafft`, `<gene>.faa.mafft.clipkit`,
+  `<gene>.faa.mafft.clipkit.treefile`, plus iqtree/bionj/log/mldist.
+  Use clipkit alignment + treefile for tree-paired metrics.
+- **Alignment-only**: just `<gene>.faa` + `<gene>.faa.mafft`. No
+  trees, no clipkit. Used for parsimony, RCV, gap-percentage
+  questions. Use the `.faa.mafft` (NOT raw `.faa`) — the published
+  metric was computed on the MAFFT-aligned file.
+
+Both bundled scripts auto-detect the layout and use the best available
+alignment per ortholog. Do NOT re-run MAFFT or ClipKit yourself; the
+shipped files are canonical.
 
 **Anti-pattern:** running `phykit` on the raw `*.busco.zip` extracted
-ortholog FASTAs and then aligning/tree-building yourself. The
-pre-computed files in `scogs_*.zip` are the canonical inputs.
+ortholog FASTAs and aligning/tree-building yourself. The pre-computed
+files in `scogs_*.zip` are the canonical inputs.
 
 ---
 
@@ -220,22 +304,44 @@ Sanity targets for biological scogs trees: median saturation ~0.4–0.7, median 
 
 ### Bundled script: BUSCO target_orthologs intersection
 
-When the capsule has `*.busco.zip` files + `target_orthologs.txt`, use the bundled script to compute per-ortholog and aggregate AA counts deterministically:
+When the capsule has `*.busco.zip` files + `target_orthologs.txt`, use the bundled script — do NOT enumerate `single_copy_busco_sequences/*.faa` across all zips manually:
 
 ```bash
-# All species (default)
 python skills/tooluniverse-phylogenetics/scripts/busco_target_orthologs.py \
   --capsule /path/to/capsule
-# Species-group restricted (animals or fungi only)
-python skills/tooluniverse-phylogenetics/scripts/busco_target_orthologs.py \
-  --capsule /path/to/capsule --species-group animals
 ```
 
-Output reports two SUMMARY lines:
-- `intersected total_aa` — sum of AA across orthologs that are single-copy in EVERY species (strict intersection)
-- `sum_all total_aa` — sum of every per-species single-copy entry across the target list (no intersection requirement)
+The default run prints FIVE summary lines covering every common
+interpretation of "total amino acids":
 
-When the original analysis was per-group (animal-only OR fungal-only — common for scogs phylogenomics setups), use `--species-group` to restrict. The "all single-copy ortholog sequences" total in published answers usually refers to `sum_all` within the analysis group, not the intersection across both groups.
+```
+# SUMMARY: n_targets=K, n_intersected=N (single-copy in ALL S species), intersected_total_aa=A, sum_all_aa=B
+# SUMMARY group=all: intersected n=N total_aa=A, sum_all total_aa=B
+# SUMMARY group=animals: sum_all total_aa=X        <-- per-group sum (animal species only)
+# SUMMARY group=fungi:   sum_all total_aa=Y        <-- per-group sum (fungal species only)
+```
+
+### Picking the right SUMMARY line (read carefully)
+
+Match the question phrasing to the summary line:
+
+| Question phrasing | Pick this line | Why |
+|---|---|---|
+| "total AA in all single-copy ortholog sequences" with **only animal species in capsule OR question mentions only one organism group** | `# SUMMARY group=animals: sum_all total_aa=...` (or `group=fungi`) | scogs phylogenomics analyses are run PER GROUP; "all" refers to all orthologs WITHIN that group, not the union across groups |
+| "total AA across orthologs single-copy in **every** / **all** species" | `intersected_total_aa` | strict intersection rule |
+| "total AA across all per-species copies" | `sum_all_aa` (group=all) | only when the question says "all species" or the capsule has just one organism group |
+
+**Default rule when the capsule contains BOTH animal AND fungal busco
+zips**: published "total amino acids" answers almost always refer to
+ONE group (the analysis group), NOT the cross-group union. Use
+`group=animals: sum_all` or `group=fungi: sum_all`. Do NOT pick the
+union number (`sum_all_aa`) unless the question explicitly says
+"across all 8 species" or "fungi and animals combined".
+
+The script emits the per-group sums BEFORE the union sum on stdout for
+this exact reason — read the output line by line and stop at the
+`group=animals` / `group=fungi` line that matches the analysis group
+implied by the question.
 
 ### Single-copy orthologs across species — comparison set + intersection
 
@@ -272,13 +378,30 @@ Computing the metric across all genes and then taking max returns the global max
 
 ### Animals vs fungi — long branch score aggregation
 
-When a question asks "absolute difference in average mean long branch scores between animals and fungi", the canonical recipe is:
-1. Per-tree: run `phykit long_branch_score -v` (verbose) → list of per-taxon scores.
-2. Per-tree summary: take the **mean** of those per-taxon scores → one number per tree.
-3. Per-group summary: take the **mean** (not the simple species-level mean) of all per-tree mean LB scores in the group.
-4. Final: `|mean(animals) - mean(fungi)|`.
+PhyKIT's `long_branch_score -v` outputs per-taxon LB scores (one row
+per leaf in the tree). For per-tree summaries:
+1. Per-tree: run `phykit long_branch_score -v <tree>` → list of
+   per-taxon scores.
+2. Per-tree summary: collapse to ONE number per tree using either
+   the **mean** or the **median** of those per-taxon scores.
+3. Per-group summary: aggregate per-tree numbers (median/mean/MWU U +
+   p-value).
 
-Common error: averaging the four animal species and four fungal species directly without going through the per-tree step — this conflates species LB and ortholog LB and yields the wrong delta.
+**Match the per-tree summary to the question phrasing:**
+
+| Question says... | Use `--per-tree-stat ...` |
+|---|---|
+| "mean long branch scores" | `mean` |
+| "median long branch scores" | `median` |
+| "average long branch score" (ambiguous) | run BOTH and pick the one matching numbers/units |
+
+The bundled `scogs_paired_compare.py --metric long_branch_score
+--per-tree-stat {mean,median}` does steps 1+2 for both groups in one
+pass and emits the cross-group MWU U + p-value directly.
+
+Common error: averaging the four animal species and four fungal
+species directly without going through the per-tree step — this
+conflates species LB and ortholog LB and yields the wrong delta.
 
 ### Treeness/RCV: use the right input file
 
