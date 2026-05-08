@@ -141,6 +141,34 @@ def run_phykit(metric: str, aln: Path | None, tree: Path | None,
         return None
 
 
+def alignment_gap_percentage(aln_path: Path) -> float | None:
+    """Return % of gap characters in this alignment (FASTA), or None on failure.
+
+    Uses Biopython if available, else parses FASTA manually. Counts gap
+    characters '-' over total alignment characters (including gaps).
+    """
+    try:
+        from Bio import AlignIO
+        aln = AlignIO.read(str(aln_path), "fasta")
+        total = sum(len(rec.seq) for rec in aln)
+        gaps = sum(str(rec.seq).count("-") for rec in aln)
+        return (100.0 * gaps / total) if total else None
+    except Exception:
+        try:
+            total = 0
+            gaps = 0
+            with open(aln_path) as f:
+                for line in f:
+                    if line.startswith(">"):
+                        continue
+                    s = line.strip()
+                    total += len(s)
+                    gaps += s.count("-")
+            return (100.0 * gaps / total) if total else None
+        except Exception:
+            return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--capsule", required=True, type=Path,
@@ -150,13 +178,46 @@ def main():
     ap.add_argument("--extra", default="",
                     help="Extra args to pass to phykit (e.g. '-v').")
     ap.add_argument("--out", help="Output TSV path. Default: stdout.")
+    ap.add_argument(
+        "--min-gap-pct", type=float, default=None,
+        help="Only include orthologs whose alignment has gap%% >= this value. "
+             "Use to compute metrics on the high-gap subset (e.g., "
+             "'max treeness/RCV in genes with >70%% alignment gaps' → "
+             "--min-gap-pct 70).",
+    )
+    ap.add_argument(
+        "--max-gap-pct", type=float, default=None,
+        help="Only include orthologs whose alignment has gap%% <= this value.",
+    )
     args = ap.parse_args()
 
     extra_args = args.extra.split() if args.extra else []
     extracted = ensure_extracted(args.capsule, args.group)
     orthologs = find_orthologs(extracted)
 
-    print(f"# {len(orthologs)} {args.group} orthologs found", file=sys.stderr)
+    # Optional gap-percentage filter: keep only orthologs whose alignment
+    # gap% falls in [min, max]. Critical for "max X in genes with >Y% gaps"
+    # questions — apply filter BEFORE the aggregation.
+    if args.min_gap_pct is not None or args.max_gap_pct is not None:
+        before = len(orthologs)
+        kept = []
+        for gene, aln, tree in orthologs:
+            if aln is None:
+                continue
+            gp = alignment_gap_percentage(aln)
+            if gp is None:
+                continue
+            if args.min_gap_pct is not None and gp < args.min_gap_pct:
+                continue
+            if args.max_gap_pct is not None and gp > args.max_gap_pct:
+                continue
+            kept.append((gene, aln, tree))
+        print(f"# gap filter: kept {len(kept)}/{before} orthologs "
+              f"(min={args.min_gap_pct} max={args.max_gap_pct})",
+              file=sys.stderr)
+        orthologs = kept
+
+    print(f"# {len(orthologs)} {args.group} orthologs", file=sys.stderr)
     print(f"# metric: {args.metric}", file=sys.stderr)
     t0 = time.time()
 

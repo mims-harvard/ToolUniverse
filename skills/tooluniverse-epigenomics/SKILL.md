@@ -38,6 +38,25 @@ Methylation data, ChIP-seq peaks, ATAC-seq, multi-omics integration, genome-wide
 4. **Statistical rigor** - FDR correction, effect size filtering
 5. **CpG identification** - Parse Illumina probe IDs, genomic coordinates
 
+## Bundled script: deterministic methylation density
+
+For long-format methylation CSVs (`Pos, Chromosome, MethylationPercentage`) paired with chromosome-length CSVs, prefer the bundled script over hand-rolled pandas — it computes every common metric in one pass and avoids the rows-vs-sites pitfall:
+
+```bash
+python skills/tooluniverse-epigenomics/scripts/methylation_density.py \
+  --cpg <CpG csv> --chr-lengths <chr lengths csv> \
+  --filter-meth-extremes 90 10 \
+  --report <metric>
+```
+
+`--report` options:
+- `rows_removed` — sample-row level (for "how many sites are removed when filtering")
+- `unique_pos_after_filter` — unique CpG positions (for "how many unique sites pass")
+- `density_avg_per_chr` — mean of per-chromosome densities (for "genome-wide AVERAGE chromosomal density")
+- `density_chromosome` (with `--chromosome X`) — single-chromosome density
+
+The script prints all metrics as JSON when `--report all` is omitted. Use this rather than handwritten pandas when answering CpG-density questions on long-format data — it deterministically reproduces published numbers and surfaces both rows and unique-positions values so you can pick the one matching the question's wording.
+
 ## Distinguish "rows" vs "unique sites" — methylation CSVs are usually long-format
 
 CpG methylation CSVs typically have ONE ROW PER (sample × CpG site) — so `len(df) >> n_unique_sites`. Before computing anything, decide which axis the question is asking about:

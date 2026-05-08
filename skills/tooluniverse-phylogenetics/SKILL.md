@@ -218,6 +218,25 @@ tu run phykit_batch_analysis '{"operation":"batch","function":"treeness_over_rcv
 
 Sanity targets for biological scogs trees: median saturation ~0.4–0.7, median treeness/RCV ~0.2–0.4, median treeness ~0.05–0.15. Values an order of magnitude off these mean wrong column.
 
+### Bundled script: BUSCO target_orthologs intersection
+
+When the capsule has `*.busco.zip` files + `target_orthologs.txt`, use the bundled script to compute per-ortholog and aggregate AA counts deterministically:
+
+```bash
+# All species (default)
+python skills/tooluniverse-phylogenetics/scripts/busco_target_orthologs.py \
+  --capsule /path/to/capsule
+# Species-group restricted (animals or fungi only)
+python skills/tooluniverse-phylogenetics/scripts/busco_target_orthologs.py \
+  --capsule /path/to/capsule --species-group animals
+```
+
+Output reports two SUMMARY lines:
+- `intersected total_aa` — sum of AA across orthologs that are single-copy in EVERY species (strict intersection)
+- `sum_all total_aa` — sum of every per-species single-copy entry across the target list (no intersection requirement)
+
+When the original analysis was per-group (animal-only OR fungal-only — common for scogs phylogenomics setups), use `--species-group` to restrict. The "all single-copy ortholog sequences" total in published answers usually refers to `sum_all` within the analysis group, not the intersection across both groups.
+
 ### Single-copy orthologs across species — comparison set + intersection
 
 Two-step rule when counting across BUSCO `single_copy_busco_sequences/` data:
