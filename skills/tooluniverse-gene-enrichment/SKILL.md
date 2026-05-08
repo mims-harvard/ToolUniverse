@@ -20,6 +20,110 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
 
 ---
 
+## PRIMARY SCRIPTS — use these FIRST
+
+Three deterministic CLI scripts cover the bulk of enrichment questions.
+Each handles edge cases (ties at top, simplify-changes-padj, multi-condition
+screening) that the agent tends to get wrong when writing ad-hoc code.
+**Always write outputs to `/tmp/...` — never into the data folder.**
+
+### 1. `scripts/gseapy_enrichment_runner.py` — gseapy enrichr / prerank
+
+**When to use**: the question references `gseapy`, `enrichr`, "Enrichr library", or any GO BP/MF/CC, KEGG, Reactome, WikiPathways, MSigDB enrichment via the gseapy package.
+
+```bash
+python skills/tooluniverse-gene-enrichment/scripts/gseapy_enrichment_runner.py \
+    --gene-list /tmp/sig_symbols.txt \
+    --library GO_Biological_Process_2021,Reactome_2022 \
+    --organism Human \
+    --top 5 \
+    --candidate "negative regulation of epithelial cell proliferation" \
+    --workdir /tmp/gseapy_run
+```
+
+What it reports (parseable lines):
+- `# TOP_BY_ADJ_PVALUE: <term>` — what `df.sort_values('Adjusted P-value').iloc[0]` returns (this is what published notebooks usually print)
+- `# TIES_AT_TOP: n=K` — number of terms tied at the lowest Adjusted P-value
+- `# TOP_TIE_BROKEN: <term>` — deterministic tie-break (adj_p, raw_p, overlap desc, alphabetic)
+- `# TOPN_BY_ADJ_PVALUE:` — full top N listing
+- `# CANDIDATE_RANK '<term>': rank=R adj_p=...` — for any `--candidate` substring you pass
+- `# SUBSTRING_COUNT_TOPN '<sub>': K` — for `--count-substring` queries (e.g., "how many top-20 terms contain 'Oxidative'")
+
+Pass `--mode prerank --ranked-list /tmp/lfc.tsv` for GSEA preranked.
+
+### 2. `scripts/enrichgo_runner.py` — clusterProfiler::enrichGO + simplify
+
+**When to use**: the question references `enrichGO`, `clusterProfiler`, `simplify`, `simplify(cutoff=0.7)`, or the data folder contains an `analysis.R` / `find_*.R` that uses these. This is the canonical R workflow — gseapy does NOT reproduce it faithfully because `simplify` changes the multiple-testing denominator and thus the p.adjust values for surviving terms.
+
+```bash
+python skills/tooluniverse-gene-enrichment/scripts/enrichgo_runner.py \
+    --gene-list /tmp/sig_ensembl.txt \
+    --background /tmp/bg_ensembl.txt \
+    --keytype ENSEMBL \
+    --ontology BP \
+    --simplify-cutoff 0.7 \
+    --candidate "regulation of T cell activation" \
+    --candidate "potassium ion transmembrane transport" \
+    --workdir /tmp/enrichgo_run
+```
+
+What it reports:
+- `# TOP10_RAW:` — top 10 from `as.data.frame(ego)` (BEFORE simplify; raw p.adjust)
+- `# TOP10_SIMPLIFIED:` — top 10 from `as.data.frame(simplify(ego, cutoff=0.7))` (AFTER simplify; p.adjust differs)
+- `# CANDIDATE '<term>': raw_rank=R raw_padj=... simp_rank=R simp_padj=...` — both pre- and post-simplify ranks for each candidate. `simp_rank=NA (collapsed by simplify)` means the term was redundant with a more-significant parent/sibling and was dropped.
+
+When a question says "in the simplified results" or "after simplify", read **simp_padj**. When it just says "the most enriched" without mentioning simplify, default to the simplified frame anyway IF the canonical `analysis.R` calls `simplify`.
+
+Requires R packages `clusterProfiler`, `org.Hs.eg.db` (or `org.Mm.eg.db` for mouse). Install via `Rscript skills/evals/install_r_packages.R` if missing.
+
+### 3. `scripts/condition_enrichment_screen.py` — per-condition enrichment
+
+**When to use**: the question asks "what fraction/percentage of conditions/screens/timepoints/groups had significant enrichment of <category>", or you have an N-by-many gene table and need per-condition enrichment.
+
+```bash
+# Per-condition gene-list files:
+python skills/tooluniverse-gene-enrichment/scripts/condition_enrichment_screen.py \
+    --condition-genes acute=/tmp/acute_sig.txt \
+    --condition-genes round1=/tmp/r1_sig.txt \
+    --condition-genes round2=/tmp/r2_sig.txt \
+    --condition-genes round3=/tmp/r3_sig.txt \
+    --library /path/to/local_pathways.gmt \
+    --background /tmp/expressed.txt \
+    --keyword immune --keyword cytokine --keyword interferon \
+    --workdir /tmp/cond_screen
+```
+
+Or pass a single 2-col TSV (`condition<TAB>gene`) via `--conditions-tsv`.
+
+What it reports:
+- Per condition: `n_genes`, `sig_terms` (Adj P < cutoff), `sig_terms_keyword` (sig terms whose Term contains any --keyword)
+- `# n_with_any_sig=N pct_with_any_sig=N%` — the fraction with any significant term
+- `# n_with_keyword_sig=N pct_with_keyword_sig=N%` — the fraction whose sig terms include a category keyword
+
+Notes:
+- The `--library` can be either an Enrichr library name (online) or a path to a local `.gmt` file. **Prefer the local GMT if the data folder ships one** (avoids rate-limits and exactly reproduces published results).
+- Use `--exclude-condition <label>` for "control" / "baseline" conditions that the question wants excluded from the denominator.
+- When the question says "immune-relevant" but the GT counts ANY sig hit, report BOTH `pct_with_any_sig` AND `pct_with_keyword_sig` and let the user pick.
+
+### Why these scripts exist (debugging notes)
+
+Enrichment top-hits depend critically on three things:
+1. **Upstream DEG filter** (padj only? padj+|LFC|>0.5? +baseMean>10? lfc-shrunk?). The "right" filter is whatever the canonical notebook used. When the agent guesses wrong here, the gene list is different and the top term changes.
+2. **Library snapshot** — Enrichr libraries get republished. `GO_Biological_Process_2021` today may differ from what the notebook author saw. There is NO good fix; report the candidate's rank and let the user judge.
+3. **Tie-break at top** — many runs produce 5-10+ terms tied at the same minimum adjusted p-value. `df.sort_values(...).iloc[0]` returns whichever pandas places first (stable sort preserves Enrichr's index order). Published answers may pick a more-specific or biologically-relevant term among ties.
+
+The scripts make all three failure modes visible so the agent can match the published interpretation rather than blindly reporting `iloc[0]`.
+
+### When `# TIES_AT_TOP: n=N` is large (warning sign)
+
+If `gseapy_enrichment_runner.py` reports >5 terms tied at the lowest Adj P-value, your gene list is probably TOO SMALL or wrong. Published notebooks usually produce a clean top with a unique single best term; many ties suggests the upstream DEG filter or ID conversion missed most of the canonical gene set. Re-check:
+- Did you apply the SAME filter the notebook used? (padj only vs padj+|LFC|>thr vs +baseMean>10)
+- Is your gene-ID space the same? (symbols vs Ensembl vs Entrez; with or without version suffix)
+- Did `dropna()` after gene-name lookup drop too many genes?
+Re-run after fixing and the ties at top should drop sharply.
+
+---
+
 Perform comprehensive gene enrichment analysis including Gene Ontology (GO), KEGG, Reactome, WikiPathways, and MSigDB enrichment using both Over-Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA). Integrates local computation via gseapy with ToolUniverse pathway databases for cross-validated, publication-ready results.
 
 **IMPORTANT**: Always use English terms in tool calls (gene names, pathway names, organism names), even if the user writes in another language. Only try original-language terms as a fallback if English returns no results. Respond in the user's language.
@@ -271,24 +375,20 @@ All detailed examples, code blocks, and advanced topics have been moved to `refe
 - **references/multiple_testing.md** - Correction methods (BH, Bonferroni, BY)
 - **references/report_template.md** - Standard report format
 
-Helper scripts:
-- **scripts/format_enrichment_output.py** - Format results for reports
-- **scripts/compare_enrichment_sources.py** - Cross-validation analysis
-- **scripts/filter_by_gene_set_size.py** - Filter terms by size
+Helper scripts (PRIMARY — see top of file for full usage):
+- **scripts/gseapy_enrichment_runner.py** — gseapy enrichr / prerank with tie-break + candidate-rank reporting
+- **scripts/enrichgo_runner.py** — clusterProfiler enrichGO + simplify (raw and simplified frames side-by-side)
+- **scripts/condition_enrichment_screen.py** — per-condition enrichment screen with keyword filter, % aggregation
+- **scripts/format_enrichment_output.py** — markdown formatter for ORA/GSEA results
 
 ---
 
 ## Analysis conventions
 
 ### Tool choice: R clusterProfiler vs gseapy
-- **Prefer R clusterProfiler** (via `Rscript -e 'library(clusterProfiler); ...'`) when the dataset folder contains an `analysis.R` / `find_*.R` script — match whatever the authoritative script uses.
-- `gseapy` is a fine fallback for pure-Python workflows, but `enrichGO + clusterProfiler::simplify(cutoff=0.7)` is not faithfully reproduced by gseapy alone.
-
-**Preferred: use the `run_deseq2_analysis` tool with `operation=enrichgo`**:
-```bash
-tu run run_deseq2_analysis '{"operation":"enrichgo","gene_list_file":"sig_ensembl.txt","background_file":"bg_ensembl.txt","simplify_cutoff":0.7,"ontology":"BP"}'
-```
-This runs R clusterProfiler + simplify directly. Falls back to manual Rscript if the tool is unavailable.
+- **Prefer R clusterProfiler** when the dataset folder contains an `analysis.R` / `find_*.R` script that uses `enrichGO`/`simplify`. Use **`scripts/enrichgo_runner.py`** (see top of file).
+- `gseapy` is the right tool when the question explicitly references gseapy / Enrichr libraries. Use **`scripts/gseapy_enrichment_runner.py`**.
+- enrichGO + `simplify(cutoff=0.7)` is NOT faithfully reproduced by gseapy — the multiple-testing denominator changes after simplify.
 
 Required R packages: `clusterProfiler`, `org.Hs.eg.db`, `enrichplot`, `DESeq2`. Install via:
 ```bash
