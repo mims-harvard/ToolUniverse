@@ -155,9 +155,41 @@ def main():
           f"intersected_total_aa={intersected_total}, "
           f"sum_all_aa={sum_all_aa} (sum of every per-species single-copy entry across targets)",
           file=sys.stderr)
-    # Two SUMMARY lines to stdout for easy parsing
-    print(f"# SUMMARY intersected: n={n_intersected}, total_aa={intersected_total}")
-    print(f"# SUMMARY sum_all: total_aa={sum_all_aa}")
+    # Multiple SUMMARY lines to stdout for easy parsing.
+    # The "right" total depends on context (group-restricted analyses are
+    # common). Print all three so the agent doesn't have to re-run with
+    # different --species-group flags.
+    n_animals = sum(1 for sp in species if any(z.name.lower().startswith("animals_") and species_name(z) == sp
+                    for z in busco_zips))
+    n_fungi = sum(1 for sp in species if any(z.name.lower().startswith("fungi_") and species_name(z) == sp
+                    for z in busco_zips))
+    print(f"# SUMMARY group={args.species_group}: "
+          f"intersected n={n_intersected} total_aa={intersected_total}, "
+          f"sum_all total_aa={sum_all_aa}")
+    if args.species_group == "all" and n_animals and n_fungi:
+        # Re-tally split totals by group prefix
+        animal_species = {species_name(z) for z in busco_zips if z.name.lower().startswith("animals_")}
+        fungi_species = {species_name(z) for z in busco_zips if z.name.lower().startswith("fungi_")}
+        animals_total = 0
+        fungi_total = 0
+        for gene in targets:
+            for sp in species:
+                scd = species_to_dir[sp]
+                if scd is None:
+                    continue
+                faa = scd / f"{gene}.faa"
+                if faa.exists():
+                    n = aa_count(faa)
+                    if sp in animal_species:
+                        animals_total += n
+                    elif sp in fungi_species:
+                        fungi_total += n
+        print(f"# SUMMARY group=animals: sum_all total_aa={animals_total}")
+        print(f"# SUMMARY group=fungi: sum_all total_aa={fungi_total}")
+        print(f"# NOTE: scogs phylogenomics analyses are usually run PER GROUP "
+              f"(animals only OR fungi only). Published 'total amino acids in all "
+              f"single-copy ortholog sequences' typically refers to a single group, "
+              f"not the union. Pick the value matching the analysis context.")
 
 
 if __name__ == "__main__":
