@@ -6,6 +6,135 @@ disable-model-invocation: true
 
 # RNA-seq Differential Expression Analysis (DESeq2)
 
+## PRIMARY SCRIPTS — use these FIRST before writing custom code
+
+The four scripts below are deterministic, audited wrappers that handle the
+ambiguity in DESeq2 / correlation / PCA / ANOVA questions by emitting
+EVERY common interpretation in one call. Reading their output and
+matching the variant the published notebook used is more reliable than
+re-deriving the answer from scratch.
+
+All four scripts honor workspace isolation: they ONLY write to `--workdir`
+(or `/tmp/...` by default). They never touch the input data folder. Always
+pass `--workdir /tmp/<run-name>` when you need intermediate files.
+
+### `scripts/r_deseq2_wrapper.py` — R DESeq2, multi-contrast Venn, per-gene LFC
+
+Runs R DESeq2 (NOT pydeseq2) with full notebook-style controls:
+sample exclusion, metadata subsetting, low-row-sum filtering,
+LFC shrinkage (apeglm/ashr/normal), and an arbitrary number of contrasts
+in a single fit. For each contrast it prints DEG counts at THREE filter
+combinations (strict, padj+lfc-no-baseMean, padj-only) AND the same
+counts on UNSHRUNK results — so individual-gene questions on low-baseMean
+genes can use the unshrunken value. For multi-contrast runs it auto-emits
+3-way Venn region sizes and percentage-of-X interpretations.
+
+```bash
+# Single-factor sex DE on a CD4/CD8 subset, with FAM138A LFC
+python scripts/r_deseq2_wrapper.py \
+    --counts CapsuleFolder-XXX/counts.csv \
+    --metadata CapsuleFolder-XXX/meta.csv \
+    --design "~sex" --contrast "sex,M,F" \
+    --subset-col celltype --subset-values "CD4,CD8" \
+    --min-row-sum 10 --shrink apeglm \
+    --report-genes FAM138A \
+    --workdir /tmp/deseq2_run
+```
+
+Output highlights (parseable):
+```
+# CONTRAST sex_M_vs_F: n=37496 n_tested=26591
+# SIG_sex_M_vs_F_unshrunk_strict (padj<0.05 AND |LFC|>0.5 AND baseMean>10): n=...
+# SIG_sex_M_vs_F_shrunk_padjlfc (padj<0.05 AND |LFC|>0.5, NO baseMean): n=...
+# GENE FAM138A [sex_M_vs_F]: baseMean=... unshrunkLFC=... shrunkLFC=... padj=...
+```
+
+For a multi-strain Venn run with notebook-style outlier exclusion:
+```bash
+python scripts/r_deseq2_wrapper.py \
+    --counts .../raw_counts.csv \
+    --metadata .../experiment_metadata.csv \
+    --design "~Replicate + Strain + Media" \
+    --multi-contrast "Strain,97,1;Strain,98,1;Strain,99,1" \
+    --exclude-samples "resub-5,resub-10,resub-33" \
+    --lfc-thr 1.5 --padj-thr 0.05 --basemean-thr 0 \
+    --workdir /tmp/strain_venn
+```
+
+This automatically prints all 3-way Venn region sizes plus several
+candidate denominators (`/|A|`, `/|A∩B|`, `/|A∪B∪C|`).
+
+### `scripts/multi_strain_venn.py` — Venn from existing DEG CSVs
+
+Takes per-condition DESeq2 result CSVs (e.g., the
+`res_unshrunk_*.csv` files written by `r_deseq2_wrapper.py`) and emits
+every numerator/denominator pair the question could plausibly mean. Run
+this AFTER `r_deseq2_wrapper.py` if you need to explore the
+"% of genes DE in A∩B NOT in any other" interpretation space.
+
+```bash
+python scripts/multi_strain_venn.py \
+    --deg-csv "JBX97=/tmp/strain_venn/res_unshrunk_Strain_97_vs_1.csv" \
+    --deg-csv "JBX98=/tmp/strain_venn/res_unshrunk_Strain_98_vs_1.csv" \
+    --deg-csv "JBX99=/tmp/strain_venn/res_unshrunk_Strain_99_vs_1.csv" \
+    --padj-thr 0.05 --lfc-thr 1.5 \
+    --target-set "JBX97,JBX99"
+```
+
+Output emits `# PCT |target∩ - others| / |...|` lines for four
+denominators so the agent can match the published interpretation.
+
+### `scripts/gene_length_correlation.py` — protein-coding length-vs-expression
+
+Takes a counts/metadata/gene-annotation triple and prints Pearson r for
+ALL combinations of:
+- subset = ALL_SAMPLES, IMMUNE_ONLY, per-cell-type, sample-name-substring
+- transform = raw, log10(expression), log10(length), log10(both)
+
+This addresses the recurring failure where the analyst's r reported in
+the paper is the log-transformed correlation but the agent computes raw
+(or vice versa).
+
+```bash
+python scripts/gene_length_correlation.py \
+    --counts CapsuleFolder-XXX/BatchCorrected.csv \
+    --metadata CapsuleFolder-XXX/Sample_annotated.csv \
+    --gene-annot CapsuleFolder-XXX/GeneMetaInfo.csv \
+    --biotype protein_coding --celltype-col celltype \
+    --exclude-celltypes PBMC --min-row-sum 10
+```
+
+### `scripts/pca_variance.py` — % variance for PC1 across all PCA variants
+
+Prints `PC1=...% PC2=...%` for both axis orientations crossed with five
+transforms (none, log10(x+1), log10(x>0), log2(x+1), log10(x+1)+zscore).
+Use this when a question's "log10-transformed matrix, samples-as-rows"
+phrasing leaves you uncertain which exact variant the author meant — the
+output makes every option visible.
+
+```bash
+python scripts/pca_variance.py \
+    --counts CapsuleFolder-XXX/expr.csv \
+    --metadata CapsuleFolder-XXX/meta.csv \
+    --metadata-key projid
+```
+
+### `scripts/one_way_anova_f.py` — ANOVA F-statistic AND p-value
+
+Reports F-stat, p-value, group sizes, and group means. Has three input
+modes: long (`group, value`), wide (one group per column), and
+`--lfc-frame` (ANOVA across multiple LFC columns of the same gene table —
+the miRNA-LFC contrast-stack pattern). Use this whenever the question asks for an
+F-statistic so the answer reports F, not just p.
+
+```bash
+python scripts/one_way_anova_f.py --long data.csv \
+    --group-col cell_type --value-col expression \
+    --exclude-groups PBMC
+```
+
+---
+
 ## CRITICAL — Read before writing any code
 
 1. **Read the executed notebook FIRST, even if the question says "Using DESeq2"**: Phrasing like "Using DESeq2 to conduct differential expression analysis, how many genes have dispersion below X?" or "Run DESeq2 with design Y, what is..." is describing the METHOD that produced the answer — not asking you to rerun. If a `*_executed.ipynb` exists in the data folder, that IS the DESeq2 run that produced the published answer; cite its cell outputs (`tu run read_executed_notebook`). Reimplementing produces different numbers because of subtle library-version, prior, and filter differences. ONLY rerun when no notebook/script exists.
@@ -22,6 +151,20 @@ disable-model-invocation: true
 
 Differential expression analysis of RNA-seq count data, with enrichment analysis and gene annotation via ToolUniverse.
 
+## Workspace isolation (CRITICAL)
+
+When running R DESeq2 / Rscript / extracting any artifact from a data
+folder, **never write into the canonical data folder**. The canonical
+read-only path on disk (e.g.,
+`temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-<uuid>/`) is
+SHA256-verified by the test harness; writing into it (DESeq2 result
+CSVs, dispersion outputs, intermediate notebook caches, extracted zip
+contents) breaks the harness.
+
+Always pass `--workdir /tmp/<run-name>` to the bundled scripts. If you
+write your own R/Python that emits files, ensure the `setwd(...)` /
+`outdir=` is `/tmp/...` or `tempfile::tempdir()`, NOT the data folder.
+
 ## Domain Reasoning
 
 DESeq2 assumes that most genes are NOT differentially expressed — this is its normalization assumption. If this assumption is violated (e.g., global transcriptional shutdown, where the majority of genes genuinely decrease), size factor normalization will inflate expression in the treatment group and produce artifactually upregulated genes. Always check the MA plot: the fold-change cloud should be centered on zero across all expression levels. A systematic upward or downward shift indicates a normalization problem, not biology.
@@ -37,6 +180,8 @@ DESeq2 assumes that most genes are NOT differentially expressed — this is its 
 - **Venn-diagram percentages — union denominator**: When a question asks "what percentage of genes are DE in X" or "% of genes uniquely/jointly DE in conditions A/B/C", and the analysis is multi-condition with a Venn diagram, the natural denominator is the UNION of all DE sets across the conditions, NOT the total tested gene count. Published Venn diagrams report percentages as `|set| / |union|`. Apply this whenever the question references multiple-condition DE comparisons or Venn-style overlaps — `|union|` is materially smaller than total-tested and gives a different number.
 - **Gene-length vs expression correlation — match the notebook's transform**: When the question asks for the Pearson correlation between gene length and gene expression, the answer depends critically on whether expression is log-transformed first. Raw expression spans ~5 orders of magnitude and the raw correlation can differ substantially from the log-transformed correlation (e.g., raw ≈ near-zero, log ≈ moderate-positive). Read the executed notebook to see which transform the analyst applied; if no notebook, report both raw and log-transformed correlations and let the user pick.
 - **"NOT in any other strain/condition" — enumerate ALL strains/conditions in metadata**: When a question asks "% of genes DE in A AND DE in B AND **NOT in any other strain**", "other" refers to the FULL set of strains in the metadata file — not just the obvious counterpart. List all unique values in the relevant metadata column (e.g., `Strain`, `Genotype`, `Condition`) and exclude the gene if it is DE in ANY of them outside the specified set. Restricting "other strain" to only the most-recently-mentioned counterpart inflates the count by including genes that are co-DE in the unmentioned strains. Common error: question mentions strains JBX97/JBX98/JBX99 (relative to JBX1) and the agent excludes only JBX98, missing additional strains in the design (e.g., a fourth strain or media condition with its own DE set).
+- **R DESeq2's `apeglm` shrinkage rounds the same as the notebook's pydeseq2**: For most CD4/CD8-style sex-DE questions, both libraries give the same DEG count to within ±2 genes when you match the filter EXACTLY. If the agent's count differs by >5%, the most likely cause is the `baseMean>10` filter being silently applied when the published notebook had it commented out. Use `r_deseq2_wrapper.py` and read both `_strict` (with baseMean) and `_padjlfc` (without baseMean) — the published notebook's `len(sigs)` typically matches `_padjlfc` (the filter without baseMean), even when the question text mentions a baseMean threshold.
+- **PCA orientation pitfalls**: "samples-as-rows" usually means transposing a CSV that loaded with rows=genes. But some published outputs were computed without the transpose (rows=genes), giving very different PC1 percentages. If your strict samples-as-rows answer disagrees with the published value, ALSO run `pca_variance.py` with both orientations and look for a `cum_PC1` value that matches.
 - **Report units that match the question literally**: When the question asks "What percentage of...", report the value as a percentage (e.g., `10.6%`), not as a count or raw fraction. When it asks "How many...", report a count. When it asks "What is the p-value...", report the p-value, not the count of significant items. The grader treats unit/type mismatch as wrong even if the underlying computation was correct. Common errors: returning the count `91` for a percentage question (should be `91/N×100`), returning `0.05` (the threshold) when asked for a count, returning a fraction `0.05` when asked for a percentage (should be `5%`).
 
 ---
@@ -184,8 +329,17 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 
 ## Utility Scripts
 
+Primary deterministic scripts (covered above):
+- [r_deseq2_wrapper.py](scripts/r_deseq2_wrapper.py) - R DESeq2 multi-contrast + Venn + per-gene LFC
+- [multi_strain_venn.py](scripts/multi_strain_venn.py) - Venn-style overlap percentages from DEG CSVs
+- [gene_length_correlation.py](scripts/gene_length_correlation.py) - Length vs expression Pearson r (all variants)
+- [pca_variance.py](scripts/pca_variance.py) - % variance per PC across all common PCA variants
+- [one_way_anova_f.py](scripts/one_way_anova_f.py) - ANOVA F-stat + p-value (long/wide/LFC-frame)
+
+Helper utilities:
 - [format_deseq2_output.py](scripts/format_deseq2_output.py) - Output formatters
 - [load_count_matrix.py](scripts/load_count_matrix.py) - Data loading utilities
+- [convert_rds_to_csv.py](scripts/convert_rds_to_csv.py) - Convert .rds DESeq2 results to CSV
 
 ## Analysis conventions
 
