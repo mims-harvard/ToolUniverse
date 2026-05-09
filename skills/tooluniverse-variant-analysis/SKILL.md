@@ -17,6 +17,97 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
 
 ---
 
+## PRIMARY SCRIPTS — use these FIRST
+
+These bundled scripts encode the question-specific gotchas (denominator
+choices, ploidy defaults, multi-allelic split, multi-row Excel headers,
+non-coding allowlist). They emit labelled `KEY=VALUE` lines that are
+easier to parse than ad-hoc pandas/awk output. Prefer them over writing
+new code.
+
+| Script | When to use it |
+|--------|----------------|
+| `gatk_haplotypecaller_pipeline.py` | Any "how many SNPs / indels were called by HaplotypeCaller from the BAM" question. Handles BWA index → align → sort → index → HaplotypeCaller, OR can start from an existing BAM (skip alignment), OR only count an existing VCF. Default `--ploidy 1` for prokaryotes. Multi-allelic split + bcftools-style SNP/indel detection is built in. |
+| `coding_variant_filter.py` | "Average number of CHIP / coding variants per sample after filtering out intronic, intergenic, and UTR variants." Two-stage canonical filter: (1) drop `Zygosity == Reference` rows (when present — these inflate counts ~10×), (2) drop intronic/intergenic/UTR/upstream/downstream SO terms. Handles 2-row VarSeq Excel headers and per-sample folders or combined CSVs. |
+| `variant_fraction.py` | "Fraction of variants with VAF < X annotated as Y" — denominator is the CODING subset only (synonymous/missense/splice_region/stop_gained/lost/start_lost/frameshift/inframe indel), NOT all records. |
+
+### Workspace isolation (CRITICAL)
+
+`gatk_haplotypecaller_pipeline.py` and `coding_variant_filter.py` REFUSE
+to write inside any `CapsuleFolder-*` directory — those are read-only by
+convention. Always pass `--workdir /tmp/<run_dir>` (or any writable path
+outside the capsule) for HaplotypeCaller intermediate BAM/VCF and any
+script-internal scratch files.
+
+The reference FASTA, FASTQ, and pre-existing BAM/VCF files inside the
+capsule are read-only. The script will copy a capsule BAM into the
+workdir if it needs to add a `.bai` index.
+
+### Concrete invocations
+
+Count SNPs from a pre-existing HaplotypeCaller VCF (fastest path; do this
+first if the capsule already shipped a `*_variants.vcf`):
+
+```bash
+python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
+  --vcf <capsule>/SAMPLE_variants.vcf
+```
+
+Re-run HaplotypeCaller on a sample's existing sorted BAM (use this when
+the shipped VCF was generated with a different ploidy than the question
+implies — e.g., default ploidy 2 for an E. coli sample needs ploidy 1):
+
+```bash
+python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
+  --reference <capsule>/REF.fna \
+  --bam <capsule>/SAMPLE_sorted.bam \
+  --workdir /tmp/hc_run --sample-name SAMPLE --ploidy 1
+```
+
+Full pipeline from FASTQ (BWA + sort + HaplotypeCaller; ~5-10 min):
+
+```bash
+python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
+  --reference <capsule>/REF.fna \
+  --fastq-r1 <capsule>/SAMPLE_1.fastq.gz --fastq-r2 <capsule>/SAMPLE_2.fastq.gz \
+  --workdir /tmp/hc_run --sample-name SAMPLE --ploidy 1
+```
+
+Average CHIP variants per sample after intronic/intergenic/UTR filter
+(folder of per-sample 2-row-header VarSeq Excels):
+
+```bash
+python skills/tooluniverse-variant-analysis/scripts/coding_variant_filter.py \
+  --dir <capsule>/CHIP_DP10_GQ20_PASS --pattern '*.xlsx' --header-rows 2
+```
+
+Same filter on a single combined CSV:
+
+```bash
+python skills/tooluniverse-variant-analysis/scripts/coding_variant_filter.py \
+  --file all_samples.csv --sample-col sample --header-rows 1
+```
+
+### Output keys to grep
+
+`gatk_haplotypecaller_pipeline.py`: `SNP_COUNT_ALLELES`, `INDEL_COUNT_ALLELES`,
+`TOTAL_RECORDS`, `PLOIDY`, `VCF_PATH`.
+
+`coding_variant_filter.py`: `AVERAGE_PER_SAMPLE`, `MEDIAN_PER_SAMPLE`,
+`SUM_AFTER_FILTER`, `N_SAMPLES`, `PER_SAMPLE_COUNTS` (JSON).
+
+### Ploidy gotcha
+
+GATK HaplotypeCaller defaults to `--sample-ploidy 2`. For prokaryotes
+(E. coli, S. aureus, M. tuberculosis), you MUST pass `--ploidy 1` or
+the script's default — otherwise indels are mis-genotyped as
+heterozygous and the indel count drops by ~30%. If the shipped VCF
+contains `--sample-ploidy 2` in its `GATKCommandLine` header but the
+question is about a haploid organism, re-run from the BAM with ploidy
+1 (the script auto-detects ploidy from the VCF header and reports it).
+
+---
+
 ## CRITICAL — Read before writing any code
 
 1. **"Fraction of variants annotated as X"**: Use the bundled script:
@@ -325,7 +416,11 @@ df = variants_to_dataframe(passing, sample="TUMOR")
 
 ## Additional Resources
 
-- Scripts: `scripts/parse_vcf.py`, `scripts/filter_variants.py`, `scripts/annotate_variants.py`
+- **Primary scripts** (use these FIRST — see top of this file):
+  - `scripts/gatk_haplotypecaller_pipeline.py` — BWA + HaplotypeCaller + SNP/indel counter
+  - `scripts/coding_variant_filter.py` — per-sample exome variant counter with intronic/UTR exclusion
+  - `scripts/variant_fraction.py` — VAF + coding-denominator fraction calculator
+- General-purpose scripts: `scripts/parse_vcf.py`, `scripts/filter_variants.py`, `scripts/annotate_variants.py`
 - Quick start recipes and MCP examples: `QUICK_START.md`
 
 ---
