@@ -266,6 +266,16 @@ def main() -> int:
     workdir.mkdir(parents=True, exist_ok=True)
     sys.stderr.write(f"[workdir] {workdir}\n")
 
+    # Stage reference into workdir if it lives inside a canonical capsule —
+    # bwa/samtools/gatk write .amb/.ann/.bwt/.pac/.sa/.fai/.dict next to the
+    # FASTA, which would contaminate the capsule and trip checksum guards.
+    if any(part.startswith("CapsuleFolder-") for part in reference.parts):
+        staged_ref = workdir / reference.name
+        if not staged_ref.exists():
+            sys.stderr.write(f"[stage] copying capsule reference into workdir\n")
+            shutil.copy2(reference, staged_ref)
+        reference = staged_ref
+
     # Mode 2: pipeline starting from BAM
     if args.bam:
         bam_path = Path(args.bam).resolve()

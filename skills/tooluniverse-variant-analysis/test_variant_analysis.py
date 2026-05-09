@@ -856,6 +856,41 @@ def test_variant_fraction_help():
     assert "VAF" in proc.stdout or "vaf" in proc.stdout.lower()
 
 
+def test_gatk_pipeline_stages_capsule_reference():
+    """Reference inside a CapsuleFolder must be staged into workdir before
+    indexing — otherwise samtools/gatk write .fai/.dict/bwa-index files into
+    the canonical capsule and trip the harness checksum guard.
+    """
+    import tempfile
+    from pathlib import Path
+    with tempfile.TemporaryDirectory(prefix="capsule_stage_") as td:
+        td = Path(td)
+        capsule = td / "CapsuleFolder-deadbeef-0000-0000-0000-000000000000"
+        capsule.mkdir()
+        ref = capsule / "tiny.fna"
+        ref.write_text(">chr1\n" + "ACGT" * 25 + "\n")
+        # nonexistent BAM forces early abort AFTER the staging branch but
+        # BEFORE samtools index runs — this lets us verify the staging copy
+        # without needing a real bam/index.
+        bam = td / "no_such.bam"
+        workdir = td / "wd"
+        proc = _run_script(
+            "gatk_haplotypecaller_pipeline.py",
+            "--reference", str(ref),
+            "--bam", str(bam),
+            "--workdir", str(workdir),
+        )
+        # Either the script fails on missing BAM (rc=1) or finishes — either
+        # way, no .fai/.dict should land in the capsule itself.
+        for ext in (".fai", ".dict"):
+            assert not (capsule / f"tiny.fna{ext}").exists(), (
+                f"capsule contaminated with tiny.fna{ext} — workspace isolation broken"
+            )
+        # And the staged copy in the workdir should exist.
+        assert (workdir / "tiny.fna").exists(), \
+            f"expected staged reference in workdir; rc={proc.returncode} stderr={proc.stderr[:300]}"
+
+
 def test_gatk_pipeline_count_only():
     """End-to-end count on a tiny VCF written into /tmp."""
     import tempfile
