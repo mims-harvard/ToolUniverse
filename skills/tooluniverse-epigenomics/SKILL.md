@@ -38,24 +38,38 @@ Methylation data, ChIP-seq peaks, ATAC-seq, multi-omics integration, genome-wide
 4. **Statistical rigor** - FDR correction, effect size filtering
 5. **CpG identification** - Parse Illumina probe IDs, genomic coordinates
 
-## Bundled script: deterministic methylation density
+## PRIMARY SCRIPT — methylation_density.py (use FIRST for CpG-density questions)
 
-For long-format methylation CSVs (`Pos, Chromosome, MethylationPercentage`) paired with chromosome-length CSVs, prefer the bundled script over hand-rolled pandas — it computes every common metric in one pass and avoids the rows-vs-sites pitfall:
+For long-format methylation CSVs (`Pos, Chromosome, MethylationPercentage`)
+paired with chromosome-length CSVs, ALWAYS run the bundled script before
+hand-rolling pandas. It deterministically computes every common metric in one
+pass and avoids the rows-vs-sites pitfall that produces silently-wrong answers.
 
 ```bash
 python skills/tooluniverse-epigenomics/scripts/methylation_density.py \
   --cpg <CpG csv> --chr-lengths <chr lengths csv> \
-  --filter-meth-extremes 90 10 \
-  --report <metric>
+  --filter-meth-extremes 90 10
 ```
 
-`--report` options:
-- `rows_removed` — sample-row level (for "how many sites are removed when filtering")
-- `unique_pos_after_filter` — unique CpG positions (for "how many unique sites pass")
-- `density_avg_per_chr` — mean of per-chromosome densities (for "genome-wide AVERAGE chromosomal density")
-- `density_chromosome` (with `--chromosome X`) — single-chromosome density
+The full JSON output contains every metric. Pick the one that matches the
+question's wording (NOT a similar-looking one):
 
-The script prints all metrics as JSON when `--report all` is omitted. Use this rather than handwritten pandas when answering CpG-density questions on long-format data — it deterministically reproduces published numbers and surfaces both rows and unique-positions values so you can pick the one matching the question's wording.
+| Question phrasing                                              | Script field              |
+|----------------------------------------------------------------|---------------------------|
+| "how many sites are removed when filtering …"                  | `rows_removed`            |
+| "how many unique CpG sites pass filter"                        | `unique_pos_after_filter` |
+| "genome-wide AVERAGE chromosomal density"                      | `density_avg_per_chr`     |
+| "density on chromosome X"                                      | `density_chromosome` (pass `--chromosome X`) |
+| "total density across the genome"                              | `density_total_over_genome` |
+
+The two density numbers (`density_avg_per_chr` vs `density_total_over_genome`)
+typically differ by ~2× because CpGs are not uniformly distributed across
+chromosomes; reporting one when the question asks for the other is the most
+common failure mode here.
+
+For "sites removed" questions, the long-format CSV has multiple rows per CpG
+position (one per sample), so `rows_removed` is in the tens of thousands while
+`unique_pos_removed` is in the hundreds. Match the granularity to the question.
 
 ## Distinguish "rows" vs "unique sites" — methylation CSVs are usually long-format
 
