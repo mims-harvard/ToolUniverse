@@ -27,7 +27,7 @@ new code.
 
 | Script | When to use it |
 |--------|----------------|
-| `gatk_haplotypecaller_pipeline.py` | Any "how many SNPs / indels were called by HaplotypeCaller from the BAM" question. Handles BWA index → align → sort → index → HaplotypeCaller, OR can start from an existing BAM (skip alignment), OR only count an existing VCF. Default `--ploidy 1` for prokaryotes. Multi-allelic split + bcftools-style SNP/indel detection is built in. |
+| `gatk_haplotypecaller_pipeline.py` | Any "how many SNPs / indels were called by HaplotypeCaller from the BAM" question. Handles BWA index → align → sort → index → HaplotypeCaller, OR can start from an existing BAM (skip alignment), OR only count an existing VCF. Default `--ploidy 2` (matches GATK's own default — most "called by HaplotypeCaller" GTs were generated with this). Pass `--ploidy 1` for explicit haploid prokaryote calling. Multi-allelic split + bcftools-style SNP/indel detection is built in. |
 | `coding_variant_filter.py` | "Average number of CHIP / coding variants per sample after filtering out intronic, intergenic, and UTR variants." Two-stage canonical filter: (1) drop `Zygosity == Reference` rows (when present — these inflate counts ~10×), (2) drop intronic/intergenic/UTR/upstream/downstream SO terms. Handles 2-row VarSeq Excel headers and per-sample folders or combined CSVs. |
 | `variant_fraction.py` | "Fraction of variants with VAF < X annotated as Y" — denominator is the CODING subset only (synonymous/missense/splice_region/stop_gained/lost/start_lost/frameshift/inframe indel), NOT all records. |
 
@@ -45,23 +45,17 @@ workdir if it needs to add a `.bai` index.
 
 ### Concrete invocations
 
-Count SNPs from a pre-existing HaplotypeCaller VCF (fastest path; do this
-first if the capsule already shipped a `*_variants.vcf`):
-
-```bash
-python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
-  --vcf <capsule>/SAMPLE_variants.vcf
-```
-
-Re-run HaplotypeCaller on a sample's existing sorted BAM (use this when
-the shipped VCF was generated with a different ploidy than the question
-implies — e.g., default ploidy 2 for an E. coli sample needs ploidy 1):
+Re-run HaplotypeCaller on a sample's sorted BAM (this is the canonical
+path for "how many SNPs / indels did HaplotypeCaller identify in the
+BAM"; preferred over counting any pre-shipped `*_raw_variants.vcf`,
+which may have been generated with non-default flags or post-filtering
+that does not match the question):
 
 ```bash
 python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
   --reference <capsule>/REF.fna \
   --bam <capsule>/SAMPLE_sorted.bam \
-  --workdir /tmp/hc_run --sample-name SAMPLE --ploidy 1
+  --workdir /tmp/hc_run --sample-name SAMPLE
 ```
 
 Full pipeline from FASTQ (BWA + sort + HaplotypeCaller; ~5-10 min):
@@ -70,7 +64,17 @@ Full pipeline from FASTQ (BWA + sort + HaplotypeCaller; ~5-10 min):
 python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
   --reference <capsule>/REF.fna \
   --fastq-r1 <capsule>/SAMPLE_1.fastq.gz --fastq-r2 <capsule>/SAMPLE_2.fastq.gz \
-  --workdir /tmp/hc_run --sample-name SAMPLE --ploidy 1
+  --workdir /tmp/hc_run --sample-name SAMPLE
+```
+
+Count-only an existing VCF (only when the question explicitly asks about
+that file — e.g., "how many records are in `variants.vcf`"; do NOT use
+this for "how many SNPs did HaplotypeCaller identify", because the
+shipped file's ploidy / filtering may not match the question):
+
+```bash
+python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
+  --vcf <capsule>/SAMPLE_variants.vcf
 ```
 
 Average CHIP variants per sample after intronic/intergenic/UTR filter
@@ -96,15 +100,25 @@ python skills/tooluniverse-variant-analysis/scripts/coding_variant_filter.py \
 `coding_variant_filter.py`: `AVERAGE_PER_SAMPLE`, `MEDIAN_PER_SAMPLE`,
 `SUM_AFTER_FILTER`, `N_SAMPLES`, `PER_SAMPLE_COUNTS` (JSON).
 
-### Ploidy gotcha
+When the question is "average per sample", report `AVERAGE_PER_SAMPLE`
+(NOT `SUM_AFTER_FILTER`). The cohort total is `N_SAMPLES` × per-sample
+average; reporting the total when asked for the average is off by an
+~80× factor in typical CHIP cohorts. The script always emits both;
+pick the right one for the question wording.
 
-GATK HaplotypeCaller defaults to `--sample-ploidy 2`. For prokaryotes
-(E. coli, S. aureus, M. tuberculosis), you MUST pass `--ploidy 1` or
-the script's default — otherwise indels are mis-genotyped as
-heterozygous and the indel count drops by ~30%. If the shipped VCF
-contains `--sample-ploidy 2` in its `GATKCommandLine` header but the
-question is about a haploid organism, re-run from the BAM with ploidy
-1 (the script auto-detects ploidy from the VCF header and reports it).
+### Ploidy: match the question's pipeline, not the organism
+
+GATK HaplotypeCaller's default is `--sample-ploidy 2`. Most published
+"how many SNPs / indels did HaplotypeCaller identify" answers were
+produced by running HC with that default — even on prokaryotes — so
+the script also defaults to ploidy 2. Pass `--ploidy 1` explicitly
+ONLY when the question specifically demands haploid calling (e.g.,
+"using haploid HaplotypeCaller"); ploidy 1 typically produces ~5-10%
+fewer SNPs and ~10-15% fewer indels on the same BAM, which would miss
+the GT range.
+
+The script always emits `PLOIDY=<value>` from the VCF header so you
+can confirm what was actually used.
 
 ---
 

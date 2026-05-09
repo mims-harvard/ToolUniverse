@@ -7,7 +7,9 @@ Pipeline stages (each can be skipped if the upstream artifact already exists):
   2. ``samtools faidx`` + ``gatk CreateSequenceDictionary`` - builds .fai/.dict
   3. ``bwa mem | samtools sort`` - produces sorted BAM
   4. ``samtools index`` - produces .bai
-  5. ``gatk HaplotypeCaller`` - produces raw VCF (default ``--sample-ploidy 1``)
+  5. ``gatk HaplotypeCaller`` - produces raw VCF (default ``--sample-ploidy 2``,
+     matching GATK's own default; pass ``--ploidy 1`` for prokaryote pipelines
+     that explicitly request haploid calling).
   6. Count SNPs and indels from the raw VCF using bcftools-style semantics:
      - SNP: REF length 1 AND ALT length 1 AND both in {A,C,G,T}.
        Multi-allelic records are split (each ALT allele counts independently).
@@ -33,16 +35,14 @@ The two common scenarios:
       python gatk_haplotypecaller_pipeline.py \
           --reference REF.fna \
           --fastq-r1 SAMPLE_1.fastq[.gz] --fastq-r2 SAMPLE_2.fastq[.gz] \
-          --workdir /tmp/hc_run \
-          --ploidy 1
+          --workdir /tmp/hc_run
 
   (b) capsule already has a sorted BAM (skip alignment):
 
       python gatk_haplotypecaller_pipeline.py \
           --reference REF.fna \
           --bam SAMPLE_sorted.bam \
-          --workdir /tmp/hc_run \
-          --ploidy 1
+          --workdir /tmp/hc_run
 
   (c) capsule already has a HaplotypeCaller VCF (only count):
 
@@ -62,7 +62,10 @@ important ones for canonical SNP/indel counting questions are:
     PLOIDY                    <int, the --sample-ploidy used or detected>
     VCF_PATH                  <absolute path to the VCF that was counted>
 
-Use ``--ploidy 1`` for prokaryotes (E. coli, S. aureus). Default is 1.
+Default is ``--ploidy 2`` to match GATK HaplotypeCaller's own default — most
+benchmark questions phrased as "using HaplotypeCaller, how many SNPs ..." are
+graded against numbers produced with GATK defaults. Pass ``--ploidy 1``
+explicitly when the question demands haploid prokaryote calling.
 """
 
 from __future__ import annotations
@@ -133,7 +136,7 @@ def align_to_bam(reference: Path, r1: Path, r2: Path, out_bam: Path, threads: in
     run(["samtools", "index", str(out_bam)])
 
 
-def call_variants(reference: Path, bam: Path, out_vcf: Path, ploidy: int = 1) -> None:
+def call_variants(reference: Path, bam: Path, out_vcf: Path, ploidy: int = 2) -> None:
     out_vcf.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
         "gatk", "HaplotypeCaller",
@@ -228,7 +231,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--workdir", help="scratch directory for intermediate BAM/VCF (must be outside capsule). "
                                      "Defaults to /tmp/gatk_hc_<timestamp>.")
     p.add_argument("--sample-name", default="sample", help="basename for intermediate files (default: sample)")
-    p.add_argument("--ploidy", type=int, default=1, help="--sample-ploidy for HaplotypeCaller (default: 1)")
+    p.add_argument("--ploidy", type=int, default=2,
+                   help="--sample-ploidy for HaplotypeCaller. Default 2 matches "
+                        "GATK's own default; pass --ploidy 1 for explicit haploid prokaryote calling.")
     p.add_argument("--threads", type=int, default=4, help="threads for bwa / samtools (default 4)")
     return p.parse_args()
 
