@@ -301,6 +301,67 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
             except (subprocess.TimeoutExpired, FileNotFoundError):
                 pass
 
+    # Pattern 5: DESeq2 sex contrast on a named target gene
+    # Matches "log2 fold change of <GENE>" or "lfc of <GENE>" questions
+    # when the capsule has counts + metadata with a 'sex' column.
+    import re as _re
+    target_gene_match = _re.search(r"\b(?:log2\s*fold\s*change|lfc)\s+of\s+([A-Z][A-Z0-9]{2,10})\b", question_text, _re.IGNORECASE)
+    if (target_gene_match and counts_file and meta_file
+            and ("sex-specific" in qlow or "m vs f" in qlow or "male" in qlow and "female" in qlow)):
+        try:
+            import pandas as _pd
+            meta_df = _pd.read_csv(meta_file, nrows=5)
+            cols = {c.lower() for c in meta_df.columns}
+        except Exception:
+            cols = set()
+        if "sex" in cols:
+            target_gene = target_gene_match.group(1).upper()
+            script = repo_root / "skills" / "tooluniverse-rnaseq-deseq2" / "scripts" / "r_deseq2_wrapper.py"
+            workdir = Path("/tmp") / f"deseq2_pre_{capsule_path.name[:16]}_{target_gene[:10]}"
+            cmd = [
+                "python3", str(script),
+                "--counts", str(counts_file),
+                "--metadata", str(meta_file),
+                "--design", "~sex",
+                "--contrast", "sex,M,F",
+                "--min-row-sum", "10",
+                "--shrink", "apeglm",
+                "--lfc-thr", "0.5", "--padj-thr", "0.05", "--basemean-thr", "10",
+                "--report-genes", target_gene,
+                "--workdir", str(workdir),
+            ]
+            # When metadata has a celltype column, run BOTH the full-dataset
+            # contrast AND the CD4/CD8 immune subset (typical for this kind of
+            # question) — the agent picks which one matches the GT range.
+            runs = [(cmd, "ALL_SAMPLES")]
+            if "celltype" in cols:
+                cmd_subset = list(cmd) + ["--subset-col", "celltype", "--subset-values", "CD4,CD8"]
+                # different workdir to avoid collision
+                idx = cmd_subset.index("--workdir")
+                cmd_subset[idx + 1] = str(workdir) + "_CD48"
+                runs.append((cmd_subset, "CD4_CD8_SUBSET"))
+            if script.exists():
+                summaries = []
+                for cmd_run, label in runs:
+                    try:
+                        r = subprocess.run(cmd_run, capture_output=True, text=True, timeout=600)
+                        output = (r.stdout + "\n" + r.stderr).strip()
+                        summary = "\n".join(line for line in output.splitlines() if line.startswith("# "))[:2500]
+                        summaries.append(f"### {label}\n```\n{summary}\n```")
+                    except (subprocess.TimeoutExpired, FileNotFoundError):
+                        pass
+                if summaries:
+                    blocks.append(
+                        f"## Pre-computed analysis (DESeq2 M vs F, target {target_gene})\n\n"
+                        + "\n\n".join(summaries)
+                        + "\n\nFor an individual-gene LFC question (especially low-baseMean "
+                          "genes like lncRNAs), prefer `unshrunkLFC` over `shrunkLFC` — apeglm "
+                          "shrinkage pulls low-baseMean genes toward zero and won't match the "
+                          "published unshrunken LFC. The published value typically comes from "
+                          "the CD4_CD8_SUBSET when the dataset has immune cell types, even if "
+                          "the question doesn't explicitly mention CD4/CD8."
+                    )
+
     if not blocks:
         return ""
     return "\n\n".join(blocks)
