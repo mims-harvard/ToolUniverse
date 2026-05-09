@@ -1349,6 +1349,42 @@ def run_tests():
     return n_fail == 0
 
 
+def run_bundled_script_smoke_tests():
+    """Verify the bundled CLI scripts exist and respond to --help."""
+    import subprocess
+    from pathlib import Path
+
+    print("\n--- Section 16: Bundled Script Smoke Tests ---")
+    scripts_dir = Path(__file__).parent / "scripts"
+    expected = [
+        "r_natural_spline_regression.py",
+        "spline_model_compare.py",
+        "logistic_regression_or.py",
+        "power_analysis.py",
+        "expression_anova.py",
+        "prepare_ae_cohort.py",
+        "stat_tests.py",
+    ]
+    for name in expected:
+        path = scripts_dir / name
+        if not path.exists():
+            record_result(f"16: script {name} present", False, f"missing at {path}")
+            continue
+        try:
+            r = subprocess.run(
+                [sys.executable, str(path), "--help"],
+                capture_output=True, text=True, timeout=20,
+            )
+            ok = r.returncode == 0 and ("usage" in r.stdout.lower() or "usage" in r.stderr.lower())
+            record_result(f"16: {name} --help", ok,
+                          "non-zero exit" if r.returncode != 0 else "no usage block")
+        except Exception as exc:
+            record_result(f"16: {name} --help", False, str(exc))
+
+
 if __name__ == '__main__':
     success = run_tests()
-    sys.exit(0 if success else 1)
+    run_bundled_script_smoke_tests()
+    # Recompute pass/fail after smoke tests
+    n_fail = sum(1 for r in test_results if not r['passed'])
+    sys.exit(0 if n_fail == 0 else 1)

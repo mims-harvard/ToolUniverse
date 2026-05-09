@@ -17,6 +17,84 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
 
 ---
 
+## PRIMARY SCRIPTS — use these FIRST
+
+These scripts encode the question-specific gotchas in `scripts/` and emit
+labelled, parseable output. Prefer them over ad-hoc statsmodels / scipy code.
+
+| Script | When to use it |
+|--------|----------------|
+| `r_natural_spline_regression.py` | ANY question that mentions R syntax `lm(y ~ ns(x, df = K))`, "natural spline", or asks for spline R²/F/peak prediction CIs. Always shells out to Rscript so `splines::ns()` matches. |
+| `spline_model_compare.py` | "Best-fitting model among quadratic, cubic and natural spline" / "max colony area at the optimal x". Fits all three in R, ranks by adj-R²/AIC/BIC, and reports the BEST model's peak (x*, y*) with 95% CI. |
+| `logistic_regression_or.py` | Binary or ordinal logistic regression where the answer is an OR (or OR + 95% CI). Handles label encoding, explicit Placebo=0/BCG=1 maps, AND interaction terms (`--interaction A:B` -> creates `A_B = A*B`). Prints OR + CI for every coefficient and a SCALARS block for the requested `--coef-name`. |
+| `power_analysis.py` | "Minimum sample size per group", "TTestIndPower", "given Cohen's d, what N for power=0.8". Computes pooled-SD Cohen's d from a CSV (or accepts `--effect-size`), then `TTestIndPower.solve_power`. |
+| `expression_anova.py` | Per-gene ANOVA / median LFC across cell types or sample groups (NOT pooled across genes — see warnings below). |
+| `prepare_ae_cohort.py` | Clinical-trial AE severity tests (chi-square / ordinal) on SDTM DM/AE files (`encoding='latin1'`, `max(AESEV)` per subject across ALL AEs — no AEPT filter). |
+| `stat_tests.py` | Stdlib-only chi-square goodness-of-fit, Fisher's exact, simple OLS. Use when scipy/statsmodels aren't available. |
+
+### Concrete invocations
+
+Natural-spline regression (R^2, overall F-test p, peak Y + 95% CI):
+
+```bash
+python skills/tooluniverse-statistical-modeling/scripts/r_natural_spline_regression.py \
+  --csv data.csv --y-col Area \
+  --ratio-col Ratio --new-x-col Frequency_strain \
+  --filter "StrainNumber not in ['1', '98']" \
+  --df 4 --workdir /tmp/spline_run
+```
+
+Quadratic vs cubic vs natural-spline comparison + best-model peak:
+
+```bash
+python skills/tooluniverse-statistical-modeling/scripts/spline_model_compare.py \
+  --csv data.csv --y-col Area \
+  --ratio-col Ratio --new-x-col Frequency_strain \
+  --filter "StrainNumber not in ['1', '98']" \
+  --ns-df 4 --workdir /tmp/spline_cmp
+```
+
+Ordinal logistic regression with interaction term (e.g. trial AE severity):
+
+```bash
+python skills/tooluniverse-statistical-modeling/scripts/logistic_regression_or.py \
+  --csv merged.csv --outcome AESEV --outcome-type ordinal --outcome-order "1,2,3,4" \
+  --predictors TRTGRP,expect_interact,patients_seen,MHONGO \
+  --encode TRTGRP,expect_interact,patients_seen \
+  --encode-map "TRTGRP:Placebo=0,BCG=1" \
+  --interaction MHONGO:TRTGRP_cat \
+  --coef-name TRTGRP_cat
+```
+
+Two-sample power analysis from a pilot CSV:
+
+```bash
+python skills/tooluniverse-statistical-modeling/scripts/power_analysis.py \
+  --csv pilot.csv --value-col MeasuredValue --group-col Group \
+  --group-a Treatment --group-b Control \
+  --power 0.8 --alpha 0.05
+```
+
+---
+
+## Workspace isolation (CRITICAL)
+
+The data folder for any analysis is **read-only**. Scripts that write
+intermediate files (R drivers, prepared CSVs, comparison tables) must write
+to `/tmp/` or to a `--workdir` you pass in. NEVER write inside the data
+folder. Both R-based scripts in this skill refuse to run if `--workdir`
+points inside a directory whose name starts with `CapsuleFolder-`.
+
+```bash
+# OK
+--workdir /tmp/spline_run
+
+# Refused:
+--workdir <path-containing-CapsuleFolder->/...
+```
+
+---
+
 ## CRITICAL — Read before writing any code
 
 1. **Clinical trial AE analysis** (regression, chi-square, ANY severity test): Use the bundled script (or the `clinical_trial_ae_severity_test` ToolUniverse tool which wraps it):
@@ -47,7 +125,14 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
 
    Use the bundled script: `python skills/tooluniverse-statistical-modeling/scripts/expression_anova.py` (or the `expression_anova_per_gene` ToolUniverse tool).
 
-3. **Spline models**: Use R `ns()` via Rscript, not Python `patsy.cr()` — they give different fits. For "frequency of strain X" models, include pure focal strain (freq=1) but exclude non-focal pure strain (freq=0).
+3. **Spline models** — R `splines::ns(x, df=K)` ≠ Python `patsy.dmatrix("cr(x, df=K)")`. They produce different design matrices because of internal-knot placement, boundary-knot placement, and basis orthogonalization. For ANY question that references R syntax like `lm(y ~ ns(x, df = 4))`, run R via `Rscript`. Use the bundled wrapper:
+
+   ```bash
+   python skills/tooluniverse-statistical-modeling/scripts/r_natural_spline_regression.py \
+     --csv data.csv --y-col Y --x-col X --df 4 --workdir /tmp/spline_run
+   ```
+
+   For "frequency of strain X" co-culture models, include pure focal strain (freq=1) but exclude non-focal pure strain (freq=0).
 
 4. **CSV encoding**: Clinical trial CSVs often need `encoding='latin1'`.
 
@@ -296,7 +381,39 @@ Before finalizing any statistical analysis:
 ## Bundled Scripts
 
 These ready-to-run scripts live in `skills/tooluniverse-statistical-modeling/scripts/`.
-Use them via the Bash tool for quick calculations that do not require a full dataset.
+Use them via the Bash tool — they are the deterministic answer for the recurring
+question patterns documented above.
+
+### `r_natural_spline_regression.py` — Natural spline regression in R
+
+Shells out to `Rscript` to fit `lm(y ~ ns(x, df=K))` with `splines::ns()`.
+Emits R², adj R², F-stat with df1/df2, overall F-test p-value, residual SE,
+coefficient table (estimate, SE, t, p), and the prediction-grid peak with
+95% CI from `predict.lm(..., interval='confidence')`. Supports a
+`--ratio-col` shortcut to convert "a:b" string ratios into a frequency
+fraction `a/(a+b)`. Refuses to write inside `CapsuleFolder-*`.
+
+### `spline_model_compare.py` — Quadratic vs cubic vs natural spline
+
+Fits all three models on the same x,y in R, ranks by adjusted R², AIC, and
+BIC, and emits the best model's peak (x*, y*) with 95% CI. Use for
+"best-fitting model" questions and "maximum predicted y at optimal x".
+
+### `logistic_regression_or.py` — Binary or ordinal logistic regression with ORs
+
+Fits `sm.Logit` (binary) or `OrderedModel` (ordinal proportional-odds) and
+emits ORs (`exp(coef)`) plus 95% CIs and p-values for every coefficient.
+Handles label encoding (`--encode A,B,C`), explicit value maps
+(`--encode-map TRTGRP:Placebo=0,BCG=1`), and interaction columns
+(`--interaction A:B` -> creates `A_B = A*B`). With `--coef-name <NAME>`
+also prints a SCALARS block tagged for the requested coefficient.
+
+### `power_analysis.py` — Two-sample required-N for a t-test
+
+Computes Cohen's d (pooled SD) from a CSV given `--value-col`, `--group-col`,
+`--group-a`, `--group-b`, then `TTestIndPower.solve_power` with `--alpha`,
+`--power`, `--alternative`. Use for "minimum sample size per group" power
+questions. Returns both the raw and the ceil-ed N.
 
 ### `stat_tests.py` — Basic statistical tests (pure stdlib, no scipy)
 
@@ -360,9 +477,15 @@ tooluniverse-statistical-modeling/
 |   +-- common_patterns.md            # 15+ question patterns
 |   +-- troubleshooting.md            # Diagnostic issues
 +-- scripts/
-    +-- stat_tests.py                 # Chi-square, Fisher's exact, linear regression (stdlib)
-    +-- format_statistical_output.py  # Format results for reporting
-    +-- model_diagnostics.py          # Automated diagnostics
+    +-- r_natural_spline_regression.py # lm(y ~ ns(x, df=K)) via Rscript
+    +-- spline_model_compare.py        # quadratic vs cubic vs natural-spline (Rscript)
+    +-- logistic_regression_or.py      # binary / ordinal logistic + ORs + interactions
+    +-- power_analysis.py              # TTestIndPower required-N from CSV
+    +-- expression_anova.py            # per-gene ANOVA / log2FC summary
+    +-- prepare_ae_cohort.py           # SDTM AE/DM cohort prep
+    +-- stat_tests.py                  # Chi-square, Fisher's exact, OLS (stdlib)
+    +-- format_statistical_output.py   # Format results for reporting
+    +-- model_diagnostics.py           # Automated diagnostics
 ```
 
 ## ToolUniverse Integration
@@ -464,16 +587,25 @@ When fitting models on strain co-culture frequency data:
    - **Cubic/polynomial models**: Fit on co-culture rows ONLY (exclude pure strains). The cubic model captures the mixed-population response curve; pure strains are fundamentally different biological regimes and including them typically lowers R².
    - **Natural spline models (`ns(freq, df=4)`)**: Include the pure-strain endpoint for the **focal strain** (the one whose frequency the model predicts) but exclude the non-focal pure strain. For example, when modeling "frequency of ΔrhlI to total population", include pure ΔrhlI (freq=1.0) but exclude pure ΔlasI (freq=0.0). This anchors the spline at the high end where the focal strain dominates.
 
-3. **R vs Python splines**: R's `ns()` (from the `splines` package) and Python's `patsy.cr()` or `scipy BSpline` produce DIFFERENT knot placements and boundary conditions. If the question references R's `lm(y ~ ns(x, df=4))`, use `Rscript` directly:
-   ```r
-   library(splines)
-   fit <- lm(Area ~ ns(Frequency_rhlI, df=4), data=df)
-   summary(fit)  # R², F, p-value
-   pred <- predict(fit, newdata=data.frame(Frequency_rhlI=seq(0,1,len=1000)), interval="confidence")
+3. **R vs Python splines**: R's `ns()` (from the `splines` package) and Python's `patsy.cr()` or `scipy BSpline` produce DIFFERENT knot placements and boundary conditions. If the question references R's `lm(y ~ ns(x, df=4))`, use the bundled wrapper which runs R via Rscript:
+   ```bash
+   python skills/tooluniverse-statistical-modeling/scripts/r_natural_spline_regression.py \
+     --csv data.csv --y-col Area --x-col Frequency \
+     --df 4 --workdir /tmp/spline_run
    ```
-   Do NOT substitute Python's `patsy dmatrix("cr(x, df=4)")` — it will give different R², F-statistics, and predictions.
+   That emits R², adjusted R², overall F-test p-value, the coefficient table, and the prediction grid with peak (x*, y*) and 95% confidence interval at the peak.
 
-4. **Prediction at peak**: After fitting, predict on a fine grid (1000 points), find `which.max(pred[,"fit"])`, and report the CI from `interval="confidence"` at that index.
+   Do NOT substitute Python's `patsy.dmatrix("cr(x, df=4)")` — it will give different R², F-statistics, and predictions.
+
+4. **Prediction at peak**: The bundled R wrapper already predicts on a fine 1000-point grid and reports `which.max(pred[,"fit"])` plus its CI from `interval="confidence"`. If you must do this by hand, follow the same recipe; do not use a coarse grid.
+
+5. **Best of {quadratic, cubic, natural-spline}**: When the question asks for the "best fitting model among quadratic, cubic and natural spline" or the "maximum colony area at the optimal frequency", use the comparison wrapper which fits all three in R and ranks them:
+   ```bash
+   python skills/tooluniverse-statistical-modeling/scripts/spline_model_compare.py \
+     --csv data.csv --y-col Area --x-col Frequency \
+     --ns-df 4 --workdir /tmp/spline_cmp
+   ```
+   The output's `BEST_BY_ADJ_R2` row tells you which model wins, and `BEST_PEAK_Y` is the peak y to report.
 
 ## Support
 
