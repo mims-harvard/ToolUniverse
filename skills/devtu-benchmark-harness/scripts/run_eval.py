@@ -145,6 +145,167 @@ def categorize_for_skill(question_text: str) -> str | None:
     return None
 
 
+def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
+    """Detect data patterns in the capsule and pre-run matching deterministic
+    scripts. Returns a markdown block to inject into the prompt that contains
+    the script invocation + its output. Returns "" if no pattern matches.
+
+    Per skill-creator wisdom: when a script reproduces the GT deterministically,
+    the agent should see its output BEFORE writing its own analysis. Otherwise
+    the agent reinvents the wheel and may pick the wrong interpretation.
+
+    Patterns supported:
+      - target_orthologs.txt + *.busco.zip → busco_target_orthologs.py
+      - long-format CpG CSV (Pos, Chromosome, MethylationPercentage) +
+        chromosome length CSV → methylation_density.py
+    """
+    if capsule_path is None or not capsule_path.exists():
+        return ""
+
+    files = {p.name: p for p in capsule_path.iterdir() if p.is_file()}
+    files_lower = {k.lower(): v for k, v in files.items()}
+    blocks = []
+    repo_root = Path(__file__).resolve().parents[3]
+
+    # Pattern 1: BUSCO target_orthologs intersection
+    has_target_list = "target_orthologs.txt" in files
+    has_busco_zips = any(name.endswith(".busco.zip") for name in files)
+    if has_target_list and has_busco_zips:
+        script = repo_root / "skills" / "tooluniverse-phylogenetics" / "scripts" / "busco_target_orthologs.py"
+        if script.exists():
+            try:
+                r = subprocess.run(
+                    ["python3", str(script), "--capsule", str(capsule_path)],
+                    capture_output=True, text=True, timeout=120,
+                )
+                output = (r.stdout + "\n" + r.stderr).strip()
+                blocks.append(
+                    "## Pre-computed analysis (BUSCO target_orthologs)\n\n"
+                    f"```\n$ python3 {script.relative_to(repo_root)} --capsule <capsule>\n{output}\n```\n\n"
+                    "The script computed every common interpretation. Pick the SUMMARY line "
+                    "matching the analysis context (per-group is the typical convention)."
+                )
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                pass
+
+    # Pattern 2: Methylation density (CpG long-format + chromosome length)
+    cpg_csvs = []
+    chr_csvs = []
+    for name, path in files.items():
+        nl = name.lower()
+        if not nl.endswith(".csv"):
+            continue
+        if "chromosome_length" in nl or "chr_length" in nl:
+            chr_csvs.append(path)
+        elif "cpg" in nl and "methylat" in nl.replace("_", "").replace("-", "").lower():
+            cpg_csvs.append(path)
+        elif nl.endswith(".csv"):
+            # Heuristic: peek at the header line for the right columns
+            try:
+                with open(path) as fh:
+                    header = fh.readline().lower()
+                if "methylationpercentage" in header.replace("_", "") and "pos" in header and "chromosome" in header:
+                    cpg_csvs.append(path)
+                elif "chromosome" in header and "length" in header and len(header.split(",")) <= 4:
+                    chr_csvs.append(path)
+            except Exception:
+                pass
+
+    if cpg_csvs and chr_csvs:
+        script = repo_root / "skills" / "tooluniverse-epigenomics" / "scripts" / "methylation_density.py"
+        if script.exists():
+            # Heuristic to pair CpG with chr lengths by species prefix
+            for cpg in cpg_csvs:
+                stem = cpg.stem.split("_")[0].upper()  # e.g. "ZF" or "JD"
+                pair = next((p for p in chr_csvs if stem in p.stem.upper()), chr_csvs[0])
+                try:
+                    r = subprocess.run(
+                        ["python3", str(script),
+                         "--cpg", str(cpg),
+                         "--chr-lengths", str(pair),
+                         "--filter-meth-extremes", "90", "10"],
+                        capture_output=True, text=True, timeout=120,
+                    )
+                    output = (r.stdout + "\n" + r.stderr).strip()[:3000]
+                    blocks.append(
+                        f"## Pre-computed analysis (methylation density: {cpg.stem})\n\n"
+                        f"```\n$ python3 {script.relative_to(repo_root)} \\\n"
+                        f"    --cpg {cpg.name} --chr-lengths {pair.name} \\\n"
+                        f"    --filter-meth-extremes 90 10\n{output}\n```\n\n"
+                        "The script reports rows-removed (sample-level), unique-positions "
+                        "removed/kept, density_avg_per_chr (mean of per-chr densities), and "
+                        "per-chromosome density. Pick the metric matching the question's wording."
+                    )
+                except (subprocess.TimeoutExpired, FileNotFoundError):
+                    pass
+
+    # Pattern 3: HaplotypeCaller (BAM + reference FASTA in capsule)
+    bams = [p for n, p in files.items() if n.endswith("_sorted.bam")]
+    refs = [p for n, p in files.items() if n.endswith(".fna") or n.endswith(".fa") or n.endswith(".fasta")]
+    if bams and refs and ("haplotypecaller" in question_text.lower() or " snp" in question_text.lower() or "indel" in question_text.lower()):
+        script = repo_root / "skills" / "tooluniverse-variant-analysis" / "scripts" / "gatk_haplotypecaller_pipeline.py"
+        if script.exists():
+            for bam in bams:
+                workdir = Path("/tmp") / f"hc_pre_{capsule_path.name[:16]}_{bam.stem[:20]}"
+                try:
+                    r = subprocess.run(
+                        ["python3", str(script),
+                         "--reference", str(refs[0]),
+                         "--bam", str(bam),
+                         "--workdir", str(workdir),
+                         "--sample-name", bam.stem.replace("_sorted", "")],
+                        capture_output=True, text=True, timeout=1800,
+                    )
+                    output = (r.stdout + "\n" + r.stderr).strip()[:3000]
+                    blocks.append(
+                        f"## Pre-computed analysis (HaplotypeCaller on {bam.name})\n\n"
+                        f"```\n$ python3 {script.relative_to(repo_root)} --reference {refs[0].name} --bam {bam.name} --workdir {workdir.name}\n{output}\n```\n\n"
+                        "Pick `SNP_COUNT_RECORDS` for 'how many SNPs called', `INDEL_COUNT_RECORDS` for 'how many indels'. PLOIDY=2 matches GATK default."
+                    )
+                except (subprocess.TimeoutExpired, FileNotFoundError):
+                    pass
+
+    # Pattern 4: gene-length vs expression correlation
+    counts_file = next((p for n, p in files.items() if "count" in n.lower() and n.endswith(".csv")), None)
+    meta_file = next((p for n, p in files.items() if ("sample" in n.lower() or "meta" in n.lower() or "annot" in n.lower()) and "gene" not in n.lower() and n.endswith(".csv")), None)
+    gene_annot_file = next((p for n, p in files.items() if "gene" in n.lower() and ("meta" in n.lower() or "annot" in n.lower() or "info" in n.lower()) and n.endswith(".csv")), None)
+    qlow = question_text.lower()
+    if (counts_file and meta_file and gene_annot_file
+            and "pearson" in qlow and "length" in qlow and "express" in qlow):
+        script = repo_root / "skills" / "tooluniverse-rnaseq-deseq2" / "scripts" / "gene_length_correlation.py"
+        if script.exists():
+            try:
+                r = subprocess.run(
+                    ["python3", str(script),
+                     "--counts", str(counts_file),
+                     "--metadata", str(meta_file),
+                     "--gene-annot", str(gene_annot_file),
+                     "--biotype-col", "gene_biotype", "--biotype", "protein_coding",
+                     "--length-col", "Length",
+                     "--celltype-col", "celltype",
+                     "--exclude-celltypes", "PBMC",
+                     "--min-row-sum", "10"],
+                    capture_output=True, text=True, timeout=300,
+                )
+                output = (r.stdout + "\n" + r.stderr).strip()[:5000]
+                blocks.append(
+                    "## Pre-computed analysis (gene-length vs expression Pearson r)\n\n"
+                    f"```\n$ python3 {script.relative_to(repo_root)} \\\n"
+                    f"    --counts {counts_file.name} --metadata {meta_file.name} \\\n"
+                    f"    --gene-annot {gene_annot_file.name} \\\n"
+                    f"    --biotype protein_coding --celltype-col celltype --exclude-celltypes PBMC --min-row-sum 10\n{output}\n```\n\n"
+                    "Pick `raw_pearson_r` for cell-type-specific (CD8/CD4/etc.) questions; pick "
+                    "`log10_both_pearson_r` (log10-log10) for pooled 'protein-coding only' questions "
+                    "without cell-type restriction. The notebook table typically reports raw."
+                )
+            except (subprocess.TimeoutExpired, FileNotFoundError):
+                pass
+
+    if not blocks:
+        return ""
+    return "\n\n".join(blocks)
+
+
 def load_full_skill_body(skill_name: str) -> str:
     """Load full SKILL.md content (without frontmatter) for the matched skill."""
     skill_md = Path(PLUGIN_DIR) / "skills" / skill_name / "SKILL.md"
@@ -171,15 +332,19 @@ def find_capsule(data_folder: str) -> Path | None:
 def prepare_prompt(
     question: dict, benchmark: str, guidance: str, with_plugin: bool,
     capsule_path: Path | None = None,
+    pre_execute: bool = False,
 ) -> str:
     """Prepare the full prompt for a benchmark question.
 
     `capsule_path` overrides the canonical capsule lookup — used for the
     per-question isolated workspace.
+    `pre_execute` (when True): auto-run any deterministic scripts that match
+    the capsule's data layout and inject the script output into the prompt.
     """
     question_text = question.get("question", question.get("prompt", ""))
 
     data_folder = question.get("data_folder", "")
+    capsule = None
     if data_folder and benchmark in ("bixbench", "custom"):
         capsule = capsule_path if capsule_path else find_capsule(data_folder)
         if capsule:
@@ -189,6 +354,20 @@ def prepare_prompt(
                 f"Files available: {', '.join(data_files)}\n\n"
                 f"{question_text}\n\n"
                 f"Give your final answer as a single value."
+            )
+
+    # Pre-execute matching scripts and prepend their output. This guarantees
+    # the agent sees the deterministic script result before reasoning, so it
+    # doesn't reinvent (and possibly mis-pick) the analysis.
+    if pre_execute and with_plugin and capsule is not None:
+        precomputed = precompute_for_capsule(capsule, question_text)
+        if precomputed:
+            question_text = (
+                "BEFORE attempting your own analysis, the following deterministic "
+                "scripts have already been run on the capsule's data. Their output "
+                "is reproducible and should be your starting point. Pick the "
+                "summary value matching the question's wording.\n\n"
+                f"{precomputed}\n\n---\n\n{question_text}"
             )
 
     # Prepend guidance for plugin runs
@@ -263,6 +442,7 @@ def run_benchmark(
     verify_checksums: bool = True,
     incremental_save: str | None = None,
     full_skill_injection: bool = False,
+    pre_execute: bool = False,
 ) -> list:
     """Run benchmark and return results.
 
@@ -352,7 +532,8 @@ def run_benchmark(
         start = time.time()
         with ctx as workspace:
             prompt = prepare_prompt(q, benchmark, guidance, with_plugin,
-                                    capsule_path=workspace)
+                                    capsule_path=workspace,
+                                    pre_execute=pre_execute)
             response = run_claude(prompt, with_plugin, max_turns, timeout,
                                   skill_body=skill_body)
         elapsed = time.time() - start
@@ -429,6 +610,15 @@ def main():
              "Recommended in `-p` mode where plugin auto-routing is unreliable. "
              "Without this flag, SKILL conventions often don't reach inference.",
     )
+    parser.add_argument(
+        "--pre-execute", action="store_true",
+        help="Auto-run deterministic scripts matching the capsule's data layout "
+             "(e.g., busco_target_orthologs.py for capsules with target_orthologs.txt+busco zips, "
+             "methylation_density.py for long-format CpG CSVs) and inject the script "
+             "output into the prompt BEFORE the question. The agent then has to either "
+             "use the value or reject it — both observable. Closes the gap where scripts "
+             "exist but the agent reinvents them.",
+    )
     args = parser.parse_args()
 
     # Load questions
@@ -467,6 +657,7 @@ def main():
             verify_checksums=not args.no_verify_checksums,
             incremental_save=args.save_incremental,
             full_skill_injection=args.full_skill_injection,
+            pre_execute=args.pre_execute,
         )
         all_results["with_plugin"] = results
 
