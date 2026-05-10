@@ -103,15 +103,22 @@ PHYKIT_CMD = {
 
 # ---------- ZIP extraction ----------
 
-def ensure_extracted(capsule: Path, group: str) -> Path:
-    """Extract scogs_<group>.zip into <capsule>/scogs_<group>_extracted/.
+def ensure_extracted(capsule: Path, group: str, workspace: Path | None = None) -> Path:
+    """Extract scogs_<group>.zip into <workspace>/scogs_<group>_extracted/.
+
+    `workspace` defaults to /tmp/scogs_<capsule_name>/ to keep the canonical
+    capsule directory unmodified — important when the capsule is read-only or
+    its checksums are verified by the harness.
 
     Returns the directory containing per-ortholog files.
     """
     zip_path = capsule / f"scogs_{group}.zip"
     if not zip_path.exists():
         sys.exit(f"ERROR: scogs_{group}.zip not found in {capsule}")
-    out_dir = capsule / f"scogs_{group}_extracted"
+    if workspace is None:
+        workspace = Path("/tmp") / f"scogs_{capsule.name}"
+    workspace.mkdir(parents=True, exist_ok=True)
+    out_dir = workspace / f"scogs_{group}_extracted"
     if out_dir.exists() and any(out_dir.iterdir()):
         return out_dir
     out_dir.mkdir(exist_ok=True)
@@ -319,12 +326,13 @@ def _parse_per_tree(metric: str, output: str, per_tree_stat: str) -> float | Non
 # ---------- Per-group computation ----------
 
 def compute_group(metric: str, capsule: Path, group: str,
-                  per_tree_stat: str, only_with_trees: bool) -> dict:
+                  per_tree_stat: str, only_with_trees: bool,
+                  workspace: Path | None = None) -> dict:
     """Compute per-ortholog values for one group.
 
     Returns: {gene_id -> value, ...} plus metadata.
     """
-    extracted = ensure_extracted(capsule, group)
+    extracted = ensure_extracted(capsule, group, workspace=workspace)
     orthologs = find_orthologs(extracted)
     print(f"# {group}: {len(orthologs)} orthologs found", file=sys.stderr)
     n_with_aln = sum(1 for _, a, _ in orthologs if a is not None)
@@ -420,6 +428,9 @@ def main():
                     help="Drop orthologs that do NOT have a tree file. Important "
                          "when comparing tree metrics; also affects denominators.")
     ap.add_argument("--out-json", help="Optional path to write per-ortholog JSON.")
+    ap.add_argument("--workspace", type=Path, default=None,
+                    help="Where to extract zip contents. Default /tmp/scogs_<capsule>. "
+                         "Pass an explicit path when the canonical capsule is read-only.")
     args = ap.parse_args()
 
     groups = [g.strip() for g in args.groups.split(",") if g.strip()]
@@ -433,6 +444,7 @@ def main():
     for grp in groups:
         per_group[grp] = compute_group(
             args.metric, args.capsule, grp, args.per_tree_stat, only_with_trees,
+            workspace=args.workspace,
         )
         _emit_summary(grp, per_group[grp])
 

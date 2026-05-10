@@ -392,11 +392,13 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
         if script.exists():
             for metric in requested_metrics[:4]:  # cap at 4 to limit runtime
                 try:
+                    workspace = Path("/tmp") / f"scogs_pre_{capsule_path.name[:16]}"
                     r = subprocess.run(
                         ["python3", str(script),
                          "--capsule", str(capsule_path),
                          "--metric", metric,
-                         "--only-with-trees"],
+                         "--only-with-trees",
+                         "--workspace", str(workspace)],
                         capture_output=True, text=True, timeout=600,
                     )
                     output = (r.stdout + "\n" + r.stderr).strip()
