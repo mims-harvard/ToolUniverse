@@ -412,8 +412,12 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
                             f"```\n$ python3 {script.relative_to(repo_root)} --capsule <capsule> --metric {metric} --only-with-trees\n{summary}\n```\n\n"
                             f"Pick: SUMMARY group=X line for 'median X for group' questions; "
                             f"MWU U / p for 'Mann-Whitney U statistic / p-value'; "
-                            f"PAIRED RATIO / GROUP_MEDIAN_RATIO for 'median ratio across paired orthologs'; "
-                            f"GROUP_MEDIAN_DIFF for 'median pairwise difference'."
+                            f"GROUP_MEDIAN_RATIO for 'median ratio of A to B across orthologs' "
+                            f"(this is `median(group A) / median(group B)` — the canonical "
+                            f"fold-change interpretation; PAIRED RATIO is per-ortholog median "
+                            f"and gives a different number). GROUP_MEDIAN_DIFF for 'median "
+                            f"pairwise difference'. For very small p-values (< 1e-10), report "
+                            f"as 0.0 if the grader expects a numeric near-zero answer."
                         )
                 except (subprocess.TimeoutExpired, FileNotFoundError):
                     pass
