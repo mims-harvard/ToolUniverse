@@ -392,13 +392,25 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
         if script.exists():
             for metric in requested_metrics[:4]:  # cap at 4 to limit runtime
                 try:
-                    workspace = Path("/tmp") / f"scogs_pre_{capsule_path.name[:16]}"
+                    workspace = Path("/tmp") / f"scogs_pre_{capsule_path.name[:16]}_{metric}"
+                    cmd_scogs = [
+                        "python3", str(script),
+                        "--capsule", str(capsule_path),
+                        "--metric", metric,
+                        "--only-with-trees",
+                        "--workspace", str(workspace),
+                    ]
+                    # For metrics with multiple values per tree (long_branch_score,
+                    # patristic_distances), the question wording usually
+                    # specifies "average of median ..." or "average of mean ..."
+                    # — pass --per-tree-stat accordingly.
+                    if metric in ("long_branch_score", "patristic_distances"):
+                        if "median" in qlow and "branch" in qlow:
+                            cmd_scogs += ["--per-tree-stat", "median"]
+                        elif "median" in qlow and "patristic" in qlow:
+                            cmd_scogs += ["--per-tree-stat", "median"]
                     r = subprocess.run(
-                        ["python3", str(script),
-                         "--capsule", str(capsule_path),
-                         "--metric", metric,
-                         "--only-with-trees",
-                         "--workspace", str(workspace)],
+                        cmd_scogs,
                         capture_output=True, text=True, timeout=600,
                     )
                     output = (r.stdout + "\n" + r.stderr).strip()
