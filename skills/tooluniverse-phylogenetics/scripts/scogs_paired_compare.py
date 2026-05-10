@@ -270,7 +270,7 @@ def _run_phykit(metric: str, aln: Path | None, tree: Path | None) -> str | None:
     elif metric == "saturation":
         if not (aln and tree):
             return None
-        cmd.extend([str(aln), "-t", str(tree)])
+        cmd.extend(["-a", str(aln), "-t", str(tree)])
     elif metric == "treeness_over_rcv":
         if not (aln and tree):
             return None
