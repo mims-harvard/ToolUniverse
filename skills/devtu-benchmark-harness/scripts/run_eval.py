@@ -362,6 +362,60 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
                           "the question doesn't explicitly mention CD4/CD8."
                     )
 
+    # Pattern 6: scogs paired comparison (animals vs fungi) on phylogenetics
+    # capsules. Triggered when the capsule contains scogs_animals.zip /
+    # scogs_fungi.zip / *.busco.zip files and the question mentions a
+    # supported per-ortholog metric.
+    has_scogs = any(
+        n.lower().startswith("scogs_") or n.lower().endswith(".busco.zip")
+        for n in files
+    )
+    METRIC_KEYWORDS = {
+        "treeness": ["treeness"],
+        "dvmc": ["dvmc"],
+        "rcv": [" rcv", "rcv ", "rcv,", "rcv.", "rcv)"],
+        "parsimony_informative": ["parsimony"],
+        "saturation": ["saturation"],
+        "long_branch_score": ["long branch", "long_branch"],
+        "patristic_distances": ["patristic"],
+        "total_tree_length": ["tree length", "total tree"],
+        "evolutionary_rate": ["evolutionary rate"],
+        "treeness_over_rcv": ["treeness/rcv", "treeness_over_rcv", "treeness over rcv"],
+        "gap_percentage": ["alignment gap", "gap percent"],
+    }
+    requested_metrics = []
+    for metric, keys in METRIC_KEYWORDS.items():
+        if any(k in qlow for k in keys):
+            requested_metrics.append(metric)
+    if has_scogs and requested_metrics:
+        script = repo_root / "skills" / "tooluniverse-phylogenetics" / "scripts" / "scogs_paired_compare.py"
+        if script.exists():
+            for metric in requested_metrics[:4]:  # cap at 4 to limit runtime
+                try:
+                    r = subprocess.run(
+                        ["python3", str(script),
+                         "--capsule", str(capsule_path),
+                         "--metric", metric,
+                         "--only-with-trees"],
+                        capture_output=True, text=True, timeout=600,
+                    )
+                    output = (r.stdout + "\n" + r.stderr).strip()
+                    summary = "\n".join(
+                        line for line in output.splitlines()
+                        if line.startswith("#") and any(tag in line for tag in ("SUMMARY", "MWU", "PAIRED", "GROUP_MEDIAN", "LOWEST_NONZERO", "metric="))
+                    )[:3000]
+                    if summary:
+                        blocks.append(
+                            f"## Pre-computed analysis (scogs {metric})\n\n"
+                            f"```\n$ python3 {script.relative_to(repo_root)} --capsule <capsule> --metric {metric} --only-with-trees\n{summary}\n```\n\n"
+                            f"Pick: SUMMARY group=X line for 'median X for group' questions; "
+                            f"MWU U / p for 'Mann-Whitney U statistic / p-value'; "
+                            f"PAIRED RATIO / GROUP_MEDIAN_RATIO for 'median ratio across paired orthologs'; "
+                            f"GROUP_MEDIAN_DIFF for 'median pairwise difference'."
+                        )
+                except (subprocess.TimeoutExpired, FileNotFoundError):
+                    pass
+
     if not blocks:
         return ""
     return "\n\n".join(blocks)
