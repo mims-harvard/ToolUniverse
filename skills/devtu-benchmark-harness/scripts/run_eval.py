@@ -719,7 +719,11 @@ def main():
         choices=["plugin-only", "baseline-only", "comparison"],
     )
     parser.add_argument("--max-turns", type=int, default=20)
-    parser.add_argument("--timeout", type=int, default=300)
+    parser.add_argument("--timeout", type=int, default=600,
+                        help="Per-question Claude CLI timeout in seconds. "
+                             "Default 600 (10 min) — needed when --pre-execute "
+                             "injects verbose script output the agent must parse. "
+                             "Drop to 300 for cheaper baseline-style runs.")
     parser.add_argument("--data-file", help="Custom questions JSON")
     parser.add_argument("--guidance", help="Custom guidance file path")
     parser.add_argument("--category", default="", help="Filter by category")
