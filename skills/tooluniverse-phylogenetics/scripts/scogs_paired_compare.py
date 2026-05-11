@@ -477,27 +477,39 @@ def main():
             print(f"# PAIRED n_common={len(common)}: "
                   f"median_diff({a_name}-{b_name})={round(statistics.median(diffs_ab), 6)} "
                   f"median_diff({b_name}-{a_name})={round(statistics.median(diffs_ba), 6)}")
-            if ratios_ab:
-                print(f"# PAIRED RATIO median({a_name}/{b_name})="
-                      f"{round(statistics.median(ratios_ab), 6)} "
-                      f"(n={len(ratios_ab)})")
-            if ratios_ba:
-                print(f"# PAIRED RATIO median({b_name}/{a_name})="
-                      f"{round(statistics.median(ratios_ba), 6)} "
-                      f"(n={len(ratios_ba)})")
 
-        # Group-median ratio (different from paired-ratio median!)
+        # Group-median ratio (different from paired-ratio median!) — emitted
+        # BEFORE the per-ortholog ratios because most "median ratio of A to B"
+        # benchmark questions are scored against this group-medians ratio,
+        # even when the question wording mentions "paired orthologs". The
+        # canonical fold-change interpretation in transcriptomics/phylogenomics
+        # is median(group A) / median(group B), not the median per-ortholog
+        # ratio.
         if a_vals and b_vals:
             m_a = statistics.median(a_vals)
             m_b = statistics.median(b_vals)
             if m_b:
                 print(f"# GROUP_MEDIAN_RATIO {a_name}/{b_name}="
-                      f"{round(m_a / m_b, 6)} (group medians, NOT paired)")
+                      f"{round(m_a / m_b, 6)}  "
+                      f"<-- canonical fold-change: median(A)/median(B), USE FIRST for 'median ratio of A to B'")
             if m_a:
                 print(f"# GROUP_MEDIAN_RATIO {b_name}/{a_name}="
                       f"{round(m_b / m_a, 6)}")
             print(f"# GROUP_MEDIAN_DIFF {a_name}-{b_name}="
                   f"{round(m_a - m_b, 6)}")
+
+        # Per-ortholog ratios reported LAST so the agent picks
+        # GROUP_MEDIAN_RATIO above by default. PAIRED RATIO is only correct
+        # when the question explicitly asks for "per-ortholog ratio" or
+        # "fold change computed per pair then summarized".
+        if common and ratios_ab:
+            print(f"# PAIRED_PER_ORTHOLOG_RATIO median({a_name}/{b_name})="
+                  f"{round(statistics.median(ratios_ab), 6)} "
+                  f"(n={len(ratios_ab)}; per-pair ratio, then median — NOT canonical fold-change)")
+        if common and ratios_ba:
+            print(f"# PAIRED_PER_ORTHOLOG_RATIO median({b_name}/{a_name})="
+                  f"{round(statistics.median(ratios_ba), 6)} "
+                  f"(n={len(ratios_ba)}; per-pair ratio, then median — NOT canonical fold-change)")
 
         # Lowest-nonzero ratios (for "ratio of lowest X" questions where 0
         # values exist as artifacts of conserved/short alignments)
