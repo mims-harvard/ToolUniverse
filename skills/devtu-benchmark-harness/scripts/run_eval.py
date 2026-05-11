@@ -387,6 +387,12 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
     for metric, keys in METRIC_KEYWORDS.items():
         if any(k in qlow for k in keys):
             requested_metrics.append(metric)
+    # Alignment-only metrics do not need tree files; --only-with-trees would
+    # silently give n=0 for capsules that have alignments but no trees.
+    _TREE_METRICS = {
+        "treeness", "dvmc", "total_tree_length", "evolutionary_rate",
+        "long_branch_score", "patristic_distances",
+    }
     if has_scogs and requested_metrics:
         script = repo_root / "skills" / "tooluniverse-phylogenetics" / "scripts" / "scogs_paired_compare.py"
         if script.exists():
@@ -397,9 +403,10 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
                         "python3", str(script),
                         "--capsule", str(capsule_path),
                         "--metric", metric,
-                        "--only-with-trees",
                         "--workspace", str(workspace),
                     ]
+                    if metric in _TREE_METRICS:
+                        cmd_scogs.append("--only-with-trees")
                     # For metrics with multiple values per tree (long_branch_score,
                     # patristic_distances), the question wording usually
                     # specifies "average of median ..." or "average of mean ..."
@@ -434,6 +441,51 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
                         )
                 except (subprocess.TimeoutExpired, FileNotFoundError):
                     pass
+
+    # Pattern 7: Direct treefile capsules (no busco/scogs zip).
+    # Capsule contains *.treefile files directly; no scogs_*.zip.
+    # Triggered when question mentions treeness or tree-based metrics.
+    has_direct_trees = any(n.lower().endswith(".treefile") for n in files)
+    tree_question = any(k in qlow for k in ["treeness", "tree length", "dvmc", "long branch", "patristic"])
+    if has_direct_trees and not has_scogs and tree_question:
+        try:
+            treefiles = sorted(
+                p for p in capsule_path.iterdir() if p.name.lower().endswith(".treefile")
+            )
+            treeness_vals: list[tuple[str, float]] = []
+            for tf in treefiles:
+                r_t = subprocess.run(
+                    ["phykit", "treeness", str(tf)],
+                    capture_output=True, text=True, timeout=30,
+                )
+                if r_t.returncode != 0:
+                    continue
+                try:
+                    treeness_vals.append((tf.name, float(r_t.stdout.strip())))
+                except ValueError:
+                    pass
+            if treeness_vals:
+                n_all = len(treeness_vals)
+                lines_out = ["treeness values (sorted by filename):"]
+                lines_out.extend(f"  {name}: {v:.6f}" for name, v in treeness_vals)
+
+                def _avg_line(label: str, vals: list[tuple[str, float]]) -> str:
+                    avg = sum(v for _, v in vals) / len(vals)
+                    return f"average ({label}) = {avg:.6f}  => x1000 = {avg * 1000:.2f}"
+
+                lines_out.append(_avg_line(f"{n_all} trees", treeness_vals))
+                for n_sub in (3, 5, 7):
+                    if n_sub < n_all:
+                        lines_out.append(_avg_line(f"first {n_sub} trees", treeness_vals[:n_sub]))
+                blocks.append(
+                    f"## Pre-computed treeness (direct treefiles)\n\n"
+                    f"```\n" + "\n".join(lines_out) + "\n```\n\n"
+                    f"If question says 'across N trees' but folder has {n_all} treefiles, "
+                    f"use the 'first N trees' row above (treefiles sorted alphabetically). "
+                    f"Round the x1000 value to the nearest integer."
+                )
+        except (subprocess.TimeoutExpired, FileNotFoundError, PermissionError):
+            pass
 
     if not blocks:
         return ""

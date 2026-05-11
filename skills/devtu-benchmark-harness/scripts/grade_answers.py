@@ -212,7 +212,9 @@ def grade_answer(
             gt_num = float(gt_num_match.group(1).replace(",", ""))
             for pred_num in _extract_numbers(predicted_normalized):
                 if gt_num == 0:
-                    if pred_num == 0:
+                    # Accept exact 0 or any value so small that it represents
+                    # a scipy p-value underflow (< 1e-10).
+                    if abs(pred_num) < 1e-10:
                         numeric_match = True
                         break
                 elif abs(pred_num - gt_num) / abs(gt_num) < numeric_tolerance:
