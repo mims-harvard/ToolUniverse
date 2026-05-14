@@ -39,6 +39,8 @@ LLM Providers
 * **vLLM Support** → :doc:`vllm_support` - Use self-hosted LLM models with vLLM for high-performance inference
 * **OpenRouter Support** → :doc:`openrouter_support` - Access multiple LLM providers through OpenRouter API
 
+* **AWS Bedrock Support** -> :doc:`bedrock_support` - Run agentic tools with Bedrock model IDs and inference profiles
+
 Advanced Features
 -----------------
 

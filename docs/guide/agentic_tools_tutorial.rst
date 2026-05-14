@@ -72,7 +72,13 @@ ToolUniverse supports these AI providers:
  - Run models on your own infrastructure
  - Models: Any model supported by vLLM (Llama, Mistral, Qwen, etc.)
  - Configuration: Set ``VLLM_SERVER_URL``
- - See :doc:`../guide/openrouter_support` for LLM provider configuration
+ - See :doc:`../guide/vllm_support` for LLM provider configuration
+
+**AWS Bedrock**
+ - Run Bedrock model IDs and inference profiles
+ - Models: Claude, Amazon Nova, Llama, Mistral, and other Bedrock-hosted models
+ - Configuration: Set AWS credentials and ``AWS_REGION`` or ``BEDROCK_REGION``
+ - See :doc:`../guide/bedrock_support` for details
 
 
 Step 3: Create Your First Tool
@@ -185,10 +191,11 @@ Set up AI model settings:
 
 **Configuration Options**:
 
-- ``api_type``: "CHATGPT", "GEMINI", "OPENROUTER", or "VLLM"
+- ``api_type``: "CHATGPT", "GEMINI", "OPENROUTER", "VLLM", or "BEDROCK"
 - ``model_id``: Choose your model (see Step 2)
  - For vLLM: Must match the model name loaded on your vLLM server
  - Set ``VLLM_SERVER_URL`` environment variable when using vLLM
+ - For Bedrock: Use a Bedrock model ID or inference profile ID
 - ``temperature``: 0.0-2.0 (higher = more creative)
 - ``return_json``: true for structured data, false for text
 
