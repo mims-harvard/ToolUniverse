@@ -1,0 +1,90 @@
+[
+  {
+    "type": "RFDiffusion2Tool",
+    "name": "rfdiffusion2_design",
+    "description": "Run RFdiffusion2 backbone design through a configured server-side command.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "contig_map": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}, "minItems": 1}
+          ],
+          "description": "RFdiffusion contig specification, for example '150-150' or ['A1-100/0 50-100']."
+        },
+        "input_pdb": {
+          "type": "string",
+          "description": "Optional input PDB path available on the RFdiffusion2 server."
+        },
+        "output_prefix": {
+          "type": "string",
+          "description": "Optional output prefix for generated designs."
+        },
+        "num_designs": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Number of designs to generate."
+        },
+        "inference_steps": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Optional diffusion step count passed as diffuser.T."
+        },
+        "hotspot_residues": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}, "minItems": 1}
+          ],
+          "description": "Optional hotspot residues for binder design, for example ['A30', 'A33']."
+        },
+        "extra_args": {
+          "type": "array",
+          "items": {"type": "string"},
+          "default": [],
+          "description": "Additional RFdiffusion2/Hydra arguments appended verbatim."
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3600,
+          "description": "Maximum command runtime in seconds."
+        },
+        "dry_run": {
+          "type": "boolean",
+          "default": false,
+          "description": "Return the command that would be executed without running RFdiffusion2."
+        }
+      },
+      "required": ["contig_map"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string", "enum": ["success", "error"]},
+        "data": {
+          "type": "object",
+          "description": "Command, working directory, stdout/stderr, return code, and output prefix."
+        },
+        "error": {"type": "string"}
+      }
+    },
+    "required_api_keys": ["RFDIFFUSION2_COMMAND"],
+    "test_examples": [
+      {
+        "contig_map": "150-150",
+        "num_designs": 1,
+        "output_prefix": "outputs/design",
+        "dry_run": true
+      },
+      {
+        "contig_map": ["A1-100/0 50-100"],
+        "input_pdb": "inputs/target.pdb",
+        "hotspot_residues": ["A30", "A33"],
+        "dry_run": true
+      }
+    ],
+    "label": ["protein-design", "structure-generation", "rfdiffusion", "remote"]
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "rfdiffusion2_design",
+    "description": "Run RFdiffusion2 backbone design through a ToolUniverse MCP server.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "contig_map": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}, "minItems": 1}
+          ],
+          "description": "RFdiffusion contig specification."
+        },
+        "input_pdb": {"type": "string"},
+        "output_prefix": {"type": "string"},
+        "num_designs": {"type": "integer", "minimum": 1, "default": 1},
+        "inference_steps": {"type": "integer", "minimum": 1},
+        "hotspot_residues": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}, "minItems": 1}
+          ]
+        },
+        "extra_args": {"type": "array", "items": {"type": "string"}, "default": []},
+        "timeout_seconds": {"type": "integer", "minimum": 1, "default": 3600},
+        "dry_run": {"type": "boolean", "default": false}
+      },
+      "required": ["contig_map"]
+    },
+    "required_api_keys": ["RFDIFFUSION2_COMMAND"],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "RFDiffusion2Tool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/rfdiffusion2.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/rfdiffusion2"
+    },
+    "test_examples": [
+      {
+        "contig_map": "150-150",
+        "num_designs": 1,
+        "output_prefix": "outputs/design",
+        "dry_run": true
+      }
+    ]
+  }
+]

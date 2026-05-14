@@ -203,6 +203,9 @@ default_tool_files = {
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
     ),
+    "mcp_auto_loader_rfdiffusion2": os.path.join(
+        current_dir, "data", "rfdiffusion2_mcp_loader_tools.json"
+    ),
     "mcp_auto_loader_esm": os.path.join(
         current_dir, "data", "mcp_auto_loader_esm.json"
     ),
@@ -319,6 +322,8 @@ default_tool_files = {
     "biogrid": os.path.join(current_dir, "data", "biogrid_tools.json"),
     # NVIDIA NIM Healthcare APIs - Structure prediction, molecular docking, genomics
     "nvidia_nim": os.path.join(current_dir, "data", "nvidia_nim_tools.json"),
+    # RFdiffusion2 command-backed protein design
+    "rfdiffusion2": os.path.join(current_dir, "data", "rfdiffusion2_tools.json"),
     # COSMIC - Catalogue of Somatic Mutations in Cancer
     "cosmic": os.path.join(current_dir, "data", "cosmic_tools.json"),
     # OncoKB - Precision Oncology Knowledge Base

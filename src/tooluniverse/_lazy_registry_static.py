@@ -474,6 +474,7 @@ STATIC_LAZY_REGISTRY = {
     "RCSBTool": "rcsb_pdb_tool",
     "RDKitCheminfoTool": "rdkit_cheminfo_tool",
     "RESTfulTool": "restful_tool",
+    "RFDiffusion2Tool": "rfdiffusion2_tool",
     "RGDTool": "rgd_tool",
     "RNAcentralGetTool": "rnacentral_tool",
     "RNAcentralSearchTool": "rnacentral_tool",

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "RFDiffusion2Tool",
+    "name": "rfdiffusion2_design",
+    "description": "Run RFdiffusion2 backbone design through a configured server-side command.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "contig_map": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}, "minItems": 1}
+          ],
+          "description": "RFdiffusion contig specification."
+        },
+        "input_pdb": {"type": "string"},
+        "output_prefix": {"type": "string"},
+        "num_designs": {"type": "integer", "minimum": 1, "default": 1},
+        "inference_steps": {"type": "integer", "minimum": 1},
+        "hotspot_residues": {
+          "oneOf": [
+            {"type": "string"},
+            {"type": "array", "items": {"type": "string"}, "minItems": 1}
+          ]
+        },
+        "extra_args": {"type": "array", "items": {"type": "string"}, "default": []},
+        "timeout_seconds": {"type": "integer", "minimum": 1, "default": 3600},
+        "dry_run": {"type": "boolean", "default": false}
+      },
+      "required": ["contig_map"]
+    },
+    "required_api_keys": ["RFDIFFUSION2_COMMAND"],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {"type": "string"},
+        "data": {"type": "object"},
+        "error": {"type": "string"}
+      }
+    }
+  }
+]

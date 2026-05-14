@@ -1,0 +1,15 @@
+[
+  {
+    "name": "mcp_auto_loader_rfdiffusion2",
+    "description": "Discover RFdiffusion2 protein design tools exposed by a ToolUniverse MCP server",
+    "type": "MCPAutoLoaderTool",
+    "server_url": "http://${RFDIFFUSION2_MCP_SERVER_HOST}:8080/mcp",
+    "required_api_keys": ["RFDIFFUSION2_MCP_SERVER_HOST"],
+    "test_examples": [{}],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool discovery operation.",
+      "properties": {}
+    }
+  }
+]
