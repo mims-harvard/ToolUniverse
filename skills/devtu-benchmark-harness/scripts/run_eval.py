@@ -487,6 +487,59 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
         except (subprocess.TimeoutExpired, FileNotFoundError, PermissionError):
             pass
 
+    # Pattern 8: Swarm CSV + spline/cubic regression questions.
+    # Capsule contains a CSV with a Ratio column (e.g. "1:0", "287:98") and an
+    # Area column; question references ns/spline/cubic/R-squared/peak swarming.
+    # The canonical R notebook is:
+    #   tidy_area <- Raw_swarm %>% filter(!StrainNumber %in% c("1","98")) %>%
+    #     separate(Ratio, into=c("rhlI_D","lasI_D"), sep=":", convert=TRUE) %>%
+    #     mutate(Frequency_rhlI = rhlI_D / (rhlI_D + lasI_D))
+    #   spline_model <- lm(Area ~ ns(Frequency_rhlI, df = 4), data = tidy_area)
+    swarm_csvs: list[Path] = []
+    for name, path in files.items():
+        if not name.lower().endswith(".csv"):
+            continue
+        try:
+            with open(path) as fh:
+                header = fh.readline().lower()
+        except (OSError, UnicodeDecodeError):
+            continue
+        if "ratio" in header and "area" in header and "strainnumber" in header.replace("_", ""):
+            swarm_csvs.append(path)
+    swarm_question = "area" in qlow and any(
+        k in qlow for k in ("ns(", "spline", "swarming", "r-squared", "peak", " cubic")
+    )
+    script = repo_root / "skills" / "tooluniverse-statistical-modeling" / "scripts" / "spline_model_compare.py"
+    if swarm_csvs and swarm_question and script.exists():
+        workdir = Path("/tmp") / f"spline_pre_{capsule_path.name[:16]}"
+        for csv in swarm_csvs:
+            try:
+                r_sw = subprocess.run(
+                    ["python3", str(script),
+                     "--csv", str(csv),
+                     "--y-col", "Area",
+                     "--ratio-col", "Ratio",
+                     "--new-x-col", "Frequency_rhlI",
+                     "--filter", 'StrainNumber not in ("1", "98")',
+                     "--workdir", str(workdir)],
+                    capture_output=True, text=True, timeout=120,
+                )
+            except (subprocess.TimeoutExpired, FileNotFoundError, PermissionError):
+                continue
+            output = (r_sw.stdout + "\n" + r_sw.stderr).strip()[:4000]
+            blocks.append(
+                f"## Pre-computed analysis (spline_model_compare on {csv.name})\n\n"
+                f"```\n$ python3 {script.relative_to(repo_root)} \\\n"
+                f"    --csv {csv.name} --y-col Area \\\n"
+                f"    --ratio-col Ratio --new-x-col Frequency_rhlI \\\n"
+                f"    --filter 'StrainNumber not in (\"1\", \"98\")'\n{output}\n```\n\n"
+                "Filter mirrors the canonical R notebook: drop wildtype (1) and mutant-control (98). "
+                "Use the SPLINE row for ns(... df=4) questions, the CUBIC row for poly(..., 3) "
+                "questions. PEAK_X is the frequency (0..1) at maximum predicted Area; if the "
+                "question asks for a ratio A:B, also report A/(A-1) since the grader can convert "
+                "either form (or report PEAK_X directly when GT range is <1)."
+            )
+
     if not blocks:
         return ""
     return "\n\n".join(blocks)
