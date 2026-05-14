@@ -1,0 +1,92 @@
+{
+  "with_plugin": [
+    {
+      "id": "e3c36fa1-6a80-40ba-82ab-620eb695f8f8",
+      "question": "What is the p-value from the Mann-Whitney U test comparing treeness values between animals and fungi?",
+      "ground_truth": "",
+      "predicted": "ERROR: ",
+      "correct": true,
+      "elapsed_seconds": 263.3,
+      "config": "with_plugin",
+      "eval_mode": "llm_verifier",
+      "turns": "?"
+    },
+    {
+      "id": "1162e770-63fa-4625-9724-b038339edc61",
+      "question": "What is the median percentage of parsimony informative sites across fungal gene alignments?",
+      "ground_truth": "",
+      "predicted": "ERROR: Timeout after 600s",
+      "correct": true,
+      "elapsed_seconds": 600.0,
+      "config": "with_plugin",
+      "eval_mode": "llm_verifier",
+      "turns": "?"
+    },
+    {
+      "id": "e8d1cc21-58c7-4a90-9f8b-e8b02fb345a2",
+      "question": "What is the fold-change in median tree length between fungi and animals after calculating tree lengths with PhyKIT?",
+      "ground_truth": "",
+      "predicted": "ERROR: ",
+      "correct": true,
+      "elapsed_seconds": 362.4,
+      "config": "with_plugin",
+      "eval_mode": "llm_verifier",
+      "turns": "?"
+    },
+    {
+      "id": "1042dcb4-24b5-4a1d-9bf3-cd7434004fb8",
+      "question": "What is the median ratio of fungal to animal tree lengths across paired orthologs?",
+      "ground_truth": "",
+      "predicted": "**Median ratio of fungal to animal tree lengths = 2.178**\n\nComputed from the paired SCO data in `CapsuleFolder-975f3e91...`:\n- median(fungi total_tree_length) = 3.0962 (n=249)\n- median(animals total_tree_length) = 1.4219 (n=100)\n- Ratio fungi/animals = 3.0962 / 1.4219 \u2248 **2.178**\n\nThe script also reports the alternative per-pair median (compute ratio per shared ortholog, then take median) at 1.904 over n=96 common genes, but the canonical \"median ratio of A to B\" is median(A)/median(B) = 2.178. Mann-Whitney U confirms the groups differ (p \u2248 1.7e-31), with fungi consistently showing longer trees.",
+      "correct": true,
+      "elapsed_seconds": 513.2,
+      "config": "with_plugin",
+      "eval_mode": "llm_verifier",
+      "turns": 9
+    },
+    {
+      "id": "44e8d6a1-1d3e-4a68-89dd-10d725ef93af",
+      "question": "What is the median RCV score for fungal orthologs using PhyKIT's rcv function?",
+      "ground_truth": "",
+      "predicted": "The earlier search already gave me what I needed \u2014 the RCV computation is complete.\n\n**Median RCV score for fungal orthersologs = 0.1972** (PhyKIT `rcv` across 255 orthologs in `scogs_fungi.zip`).",
+      "correct": true,
+      "elapsed_seconds": 191.3,
+      "config": "with_plugin",
+      "eval_mode": "llm_verifier",
+      "turns": 1
+    },
+    {
+      "id": "11c4a66d-c0dc-4979-9950-97414c95e212",
+      "question": "Use a chi-square test to evaluate if the distribution of filtered age-related CpG sites (>90% or <10% methylation) is uniform across the Zebra Finch genome. What is the chi-square statisti?",
+      "ground_truth": "",
+      "predicted": "ERROR: Timeout after 600s",
+      "correct": true,
+      "elapsed_seconds": 600.0,
+      "config": "with_plugin",
+      "eval_mode": "range_verifier",
+      "turns": "?"
+    },
+    {
+      "id": "77983bec-2aa7-4b92-ac5c-a17b1ef39ae3",
+      "question": "What is the average treeness value across all 5 trees using PhyKIT's treeness function, multiplied by 1000 and rounded to the nearest integer?",
+      "ground_truth": "",
+      "predicted": "ERROR: ",
+      "correct": true,
+      "elapsed_seconds": 111.1,
+      "config": "with_plugin",
+      "eval_mode": "llm_verifier",
+      "turns": "?"
+    },
+    {
+      "id": "b386668c-9d43-4e1b-8fa1-4706c01fb696",
+      "question": "What is the total number of indel mutations (insertions + deletions) in the MDR sample (SRR35233585)?",
+      "ground_truth": "",
+      "predicted": "ERROR: ",
+      "correct": true,
+      "elapsed_seconds": 158.5,
+      "config": "with_plugin",
+      "eval_mode": "llm_verifier",
+      "turns": "?"
+    }
+  ]
+}
