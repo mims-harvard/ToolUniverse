@@ -155,9 +155,18 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
     the agent reinvents the wheel and may pick the wrong interpretation.
 
     Patterns supported:
-      - target_orthologs.txt + *.busco.zip → busco_target_orthologs.py
-      - long-format CpG CSV (Pos, Chromosome, MethylationPercentage) +
-        chromosome length CSV → methylation_density.py
+      1. target_orthologs.txt + *.busco.zip → busco_target_orthologs.py
+      2. long-format CpG CSV (Pos, Chromosome, MethylationPercentage) +
+         chromosome length CSV → methylation_density.py
+      3. HaplotypeCaller: BAM + reference FASTA → gatk_haplotypecaller_pipeline.py
+      4. variant questions with VCF + question keywords → variant skill computations
+      5. RNA-seq Pearson r vs length: counts CSV + metadata → custom analysis
+      6. scogs zip phylogenetics: scogs_*.zip → scogs_paired_compare.py
+         (--only-with-trees gated by _TREE_METRICS so alignment-only metrics work)
+      7. Direct treefile capsules: *.treefile (no scogs zip) → phykit treeness
+         with per-tree values and per-N averages
+      8. Swarm CSV (Ratio + Area + StrainNumber) → spline_model_compare.py
+         with canonical R notebook filter (drops strains "1" and "98")
     """
     if capsule_path is None or not capsule_path.exists():
         return ""
