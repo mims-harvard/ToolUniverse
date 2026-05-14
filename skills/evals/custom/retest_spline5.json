@@ -1,0 +1,42 @@
+[
+  {
+    "id": "c3769eff-035b-4b65-8d5e-7b9e5b7f469e",
+    "question": "What is the R-squared value for a cubic model fitted to predict swarming area with frequency of \u0394rhlI to total population?",
+    "ground_truth": "(0.58,0.59)",
+    "capsule_path": "temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-9e52daf6-ca58-43e8-e732-fbac3459d295",
+    "category": "",
+    "eval_mode": "range_verifier"
+  },
+  {
+    "id": "c99cd769-e4ee-4c9a-9de9-44e2b147852c",
+    "question": "What is the lower bound of the 95% confidence interval for the peak swarming area when predicted with frequency of \u0394rhlI to total population using a natural spline model?",
+    "ground_truth": "(157500,158000)",
+    "capsule_path": "temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-9e52daf6-ca58-43e8-e732-fbac3459d295",
+    "category": "",
+    "eval_mode": "range_verifier"
+  },
+  {
+    "id": "20452965-606b-400f-9e5c-fc3f43336d2e",
+    "question": "For the natural spline regression model lm(Area ~ ns(Frequency_rhlI, df = 4)) used to predict P. aeruginosa swarming colony area from \u0394rhlI strain proportions in \u0394rhlI:\u0394lasI co-cultures , what is the p-value of the F-statistic testing overall model significance?",
+    "ground_truth": "(1.13e-10,1.13e-12)",
+    "capsule_path": "temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-9e52daf6-ca58-43e8-e732-fbac3459d295",
+    "category": "",
+    "eval_mode": "range_verifier"
+  },
+  {
+    "id": "1fa2af7f-3704-4958-9583-a25fb98eabff",
+    "question": "At what frequency ratio of \u0394rhlI:\u0394lasI does the bacterial colony achieve its maximum area when predicted with a natural spline model?",
+    "ground_truth": "(0.90,0.99)",
+    "capsule_path": "temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-9e52daf6-ca58-43e8-e732-fbac3459d295",
+    "category": "",
+    "eval_mode": "range_verifier"
+  },
+  {
+    "id": "e1436b59-074f-4ae6-a2e9-f592bdcee928",
+    "question": "What is the R-squared value for a natural spline model fitted to predict swarming area with frequency of \u0394rhlI to total population?",
+    "ground_truth": "(0.80,0.81)",
+    "capsule_path": "temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-9e52daf6-ca58-43e8-e732-fbac3459d295",
+    "category": "",
+    "eval_mode": "range_verifier"
+  }
+]
