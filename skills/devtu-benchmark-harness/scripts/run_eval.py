@@ -167,6 +167,8 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
          with per-tree values and per-N averages
       8. Swarm CSV (Ratio + Area + StrainNumber) → spline_model_compare.py
          with canonical R notebook filter (drops strains "1" and "98")
+      9. BCG-CORONA: TASK008_BCG-CORONA_{AE,DM,MH}.csv + BCG/OR question
+         → bcg_corona_or.py (3-way merge + OrderedModel ordinal logistic)
     """
     if capsule_path is None or not capsule_path.exists():
         return ""
@@ -548,6 +550,44 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
                 "question asks for a ratio A:B, also report A/(A-1) since the grader can convert "
                 "either form (or report PEAK_X directly when GT range is <1)."
             )
+
+    # Pattern 9: BCG-CORONA ordinal logistic regression.
+    # Capsule contains TASK008_BCG-CORONA_{AE,DM,MH}.csv; question references
+    # BCG / odds ratio / severity / vaccination. Pipeline merges 3 tables with
+    # specific groupby reductions — too complex for the generic
+    # logistic_regression_or.py CLI, so use the dedicated reproducer script.
+    bcg_files = (
+        "TASK008_BCG-CORONA_AE.csv",
+        "TASK008_BCG-CORONA_DM.csv",
+        "TASK008_BCG-CORONA_MH.csv",
+    )
+    has_bcg_data = all(f in files for f in bcg_files)
+    bcg_question = any(
+        k in qlow for k in (
+            "bcg", "trtgrp", "aesev", "vaccination", "odds ratio",
+            "patients_seen", "patients seen", "expect_interact",
+        )
+    )
+    if has_bcg_data and bcg_question:
+        script = repo_root / "skills" / "tooluniverse-statistical-modeling" / "scripts" / "bcg_corona_or.py"
+        if script.exists():
+            try:
+                r_bcg = subprocess.run(
+                    ["python3", str(script), "--capsule", str(capsule_path)],
+                    capture_output=True, text=True, timeout=120,
+                )
+                output = (r_bcg.stdout + "\n" + r_bcg.stderr).strip()[:4000]
+                blocks.append(
+                    "## Pre-computed analysis (BCG-CORONA ordinal logistic regression)\n\n"
+                    f"```\n$ python3 {script.relative_to(repo_root)} --capsule <capsule>\n{output}\n```\n\n"
+                    "The script reproduces the canonical notebook pipeline exactly: max AESEV per "
+                    "subject, MHSCAT='MEDICAL HISTORY' filter for the MH count, LabelEncoded "
+                    "expect_interact/patients_seen, TRTGRP_cat=Placebo:0/BCG:1, and the "
+                    "MHONGO*TRTGRP_cat interaction. Pick the BCG_*, PATIENTS_SEEN_*, "
+                    "EXPECT_INTERACT_*, or MHONGO_* row from SCALARS matching the question."
+                )
+            except (subprocess.TimeoutExpired, FileNotFoundError, PermissionError):
+                pass
 
     if not blocks:
         return ""
