@@ -88,9 +88,12 @@ def main():
     unique_pos_removed = (unique_pos_total - unique_pos_after_filter
                           if unique_pos_total is not None else None)
 
-    # Per-chromosome unique positions (after filter)
+    # Per-chromosome unique positions (after filter) AND raw row counts
     by_chr = (kept.groupby("Chromosome")["Pos"].nunique()
               .reset_index().rename(columns={"Pos": "n_cpgs"}))
+    by_chr_rows = (kept.groupby("Chromosome").size()
+                   .reset_index(name="n_rows"))
+    by_chr = by_chr.merge(by_chr_rows, on="Chromosome", how="left")
     by_chr = by_chr.merge(chr_lens, on="Chromosome", how="left").dropna(subset=["Length"])
     by_chr["density"] = by_chr["n_cpgs"] / by_chr["Length"]
 
@@ -102,16 +105,31 @@ def main():
     density_avg_per_chr = float(by_chr["density"].mean()) if len(by_chr) else None
 
     density_chromosome = None
+    density_chromosome_over_genome_rows = None
+    density_chromosome_over_genome_unique = None
     if args.chromosome:
         target = str(args.chromosome).upper()
         sub = by_chr[by_chr["Chromosome"].str.upper() == target]
         if not sub.empty:
             density_chromosome = float(sub["density"].iloc[0])
+            # Alternative interpretation: per-chromosome filtered count
+            # divided by TOTAL genome length (e.g. "density of chrZ CpGs in
+            # the Zebra Finch genome" — when 'in the X genome' implies a
+            # genome-wide denominator instead of per-chromosome).
+            density_chromosome_over_genome_rows = float(
+                sub["n_rows"].iloc[0] / total_genome_length
+            )
+            density_chromosome_over_genome_unique = float(
+                sub["n_cpgs"].iloc[0] / total_genome_length
+            )
 
     per_chr = {row["Chromosome"]: {
         "n_cpgs": int(row["n_cpgs"]),
+        "n_rows": int(row["n_rows"]),
         "length": int(row["Length"]),
         "density": float(row["density"]),
+        "density_over_genome_rows": float(row["n_rows"] / total_genome_length),
+        "density_over_genome_unique": float(row["n_cpgs"] / total_genome_length),
     } for _, row in by_chr.iterrows()}
 
     result = {
@@ -125,6 +143,8 @@ def main():
         "density_total_over_genome": density_total_over_genome,
         "density_avg_per_chr": density_avg_per_chr,
         "density_chromosome": density_chromosome,
+        "density_chromosome_over_genome_rows": density_chromosome_over_genome_rows,
+        "density_chromosome_over_genome_unique": density_chromosome_over_genome_unique,
         "per_chr": per_chr,
     }
 

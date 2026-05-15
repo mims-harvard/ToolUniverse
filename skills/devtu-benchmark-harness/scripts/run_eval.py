@@ -224,28 +224,44 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
 
     if cpg_csvs and chr_csvs:
         script = repo_root / "skills" / "tooluniverse-epigenomics" / "scripts" / "methylation_density.py"
+        # Try to extract a chromosome reference from the question text
+        # (e.g. "on chromosome Z", "on chr 7", "chromosome 1"). Pattern is
+        # case-insensitive and accepts Z, W, X, Y, MT or integer labels.
+        import re as _re_chr
+        chrom_match = _re_chr.search(
+            r"chromosome\s+(z|w|x|y|mt|\d{1,2})\b", question_text.lower()
+        )
+        target_chr = chrom_match.group(1).upper() if chrom_match else None
+
         if script.exists():
             # Heuristic to pair CpG with chr lengths by species prefix
             for cpg in cpg_csvs:
                 stem = cpg.stem.split("_")[0].upper()  # e.g. "ZF" or "JD"
                 pair = next((p for p in chr_csvs if stem in p.stem.upper()), chr_csvs[0])
+                cmd = [
+                    "python3", str(script),
+                    "--cpg", str(cpg),
+                    "--chr-lengths", str(pair),
+                    "--filter-meth-extremes", "90", "10",
+                ]
+                if target_chr:
+                    cmd.extend(["--chromosome", target_chr])
                 try:
-                    r = subprocess.run(
-                        ["python3", str(script),
-                         "--cpg", str(cpg),
-                         "--chr-lengths", str(pair),
-                         "--filter-meth-extremes", "90", "10"],
-                        capture_output=True, text=True, timeout=120,
-                    )
+                    r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
                     output = (r.stdout + "\n" + r.stderr).strip()[:3000]
+                    chr_flag_doc = f" --chromosome {target_chr}" if target_chr else ""
                     blocks.append(
                         f"## Pre-computed analysis (methylation density: {cpg.stem})\n\n"
                         f"```\n$ python3 {script.relative_to(repo_root)} \\\n"
                         f"    --cpg {cpg.name} --chr-lengths {pair.name} \\\n"
-                        f"    --filter-meth-extremes 90 10\n{output}\n```\n\n"
-                        "The script reports rows-removed (sample-level), unique-positions "
-                        "removed/kept, density_avg_per_chr (mean of per-chr densities), and "
-                        "per-chromosome density. Pick the metric matching the question's wording."
+                        f"    --filter-meth-extremes 90 10{chr_flag_doc}\n{output}\n```\n\n"
+                        "Reads rows-removed (sample-level), unique-positions removed/kept, "
+                        "density_avg_per_chr (mean of per-chr densities), and per-chromosome "
+                        "density. When the question phrases it as 'density of chr X CpGs in "
+                        "the <species> genome', use density_chromosome_over_genome_rows "
+                        "(filtered ROW count divided by TOTAL genome length) — the 'in the "
+                        "genome' framing implies a genome-wide denominator. When it asks for "
+                        "'density on chromosome X', use density_chromosome (per-chr-length)."
                     )
                 except (subprocess.TimeoutExpired, FileNotFoundError):
                     pass
