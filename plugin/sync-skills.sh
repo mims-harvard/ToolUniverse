@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
-# Rebuild plugin/skills/ as symlinks into ../skills/ — user-facing skills only.
+# Rebuild plugin/skills/ as FILTERED COPIES of ../skills/ — user-facing skills only.
 #
 # Includes: tooluniverse, tooluniverse-*, setup-tooluniverse
-# Excludes: devtu-*, evals/, create-tooluniverse-skill, README.md, any other dev-only entry
+# Excludes (per-skill): test_*.py, *_test.py, __pycache__/, *.pyc, .pytest_cache/,
+#                      .coverage*, coverage.xml, htmlcov/, .mypy_cache/, .ruff_cache/,
+#                      .DS_Store
 #
-# Run after adding/removing a skill in ../skills/. Idempotent.
+# WHY copies instead of symlinks: the public marketplace.json points users to
+# `./plugin` and Claude Code clones the repo. With symlinks, users got the
+# dev-time skills/* tree including test files (some of which referenced our
+# internal benchmark by name). Materializing filtered copies makes
+# plugin/skills/ a self-contained, clean deliverable.
+#
+# Run after adding/removing/editing skills in ../skills/. Idempotent.
 
 set -euo pipefail
 
@@ -13,13 +21,26 @@ cd "$(dirname "$0")"
 # Recreate skills/ from scratch
 rm -rf skills
 mkdir skills
-cd skills
 
 count=0
-for dir in ../../skills/tooluniverse ../../skills/tooluniverse-* ../../skills/setup-tooluniverse; do
+for dir in ../skills/tooluniverse ../skills/tooluniverse-* ../skills/setup-tooluniverse; do
   [ -d "$dir" ] || continue
-  ln -s "$dir" "$(basename "$dir")"
+  name=$(basename "$dir")
+  rsync -a \
+    --exclude='test_*.py' \
+    --exclude='*_test.py' \
+    --exclude='__pycache__/' \
+    --exclude='*.pyc' \
+    --exclude='.pytest_cache/' \
+    --exclude='.coverage' \
+    --exclude='.coverage.*' \
+    --exclude='coverage.xml' \
+    --exclude='htmlcov/' \
+    --exclude='.mypy_cache/' \
+    --exclude='.ruff_cache/' \
+    --exclude='.DS_Store' \
+    "$dir"/ "skills/$name/"
   count=$((count + 1))
 done
 
-echo "Linked $count user-facing skills into plugin/skills/"
+echo "Copied $count user-facing skills (filtered) into plugin/skills/"
