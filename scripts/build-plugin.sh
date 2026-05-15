@@ -14,9 +14,13 @@ echo "Building ToolUniverse Claude Code plugin..."
 rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR"
 
-# 1. Copy plugin manifest
-cp -r "$PLUGIN_SRC/.claude-plugin" "$DIST_DIR/"
-echo "  [+] Plugin manifest"
+# 1. Copy plugin manifest (plugin.json only — marketplace.json is for
+# local-dev marketplace at plugin source; it should NOT ship inside the
+# distributed plugin. Per official guidance, .claude-plugin/ at a plugin
+# root holds only plugin.json.)
+mkdir -p "$DIST_DIR/.claude-plugin"
+cp "$PLUGIN_SRC/.claude-plugin/plugin.json" "$DIST_DIR/.claude-plugin/"
+echo "  [+] Plugin manifest (plugin.json only)"
 
 # 2. Copy MCP config
 cp "$PLUGIN_SRC/.mcp.json" "$DIST_DIR/"
@@ -40,8 +44,12 @@ if [ -d "$PLUGIN_SRC/hooks" ]; then
     echo "  [+] Hooks (SessionStart cleanup)"
 fi
 
-# 7. Copy README
+# 7. Copy README and CHANGELOG
 cp "$PLUGIN_SRC/README.md" "$DIST_DIR/"
+if [ -f "$PLUGIN_SRC/CHANGELOG.md" ]; then
+    cp "$PLUGIN_SRC/CHANGELOG.md" "$DIST_DIR/"
+    echo "  [+] README + CHANGELOG"
+fi
 
 # 7. Copy ALL tooluniverse skills
 # The router is the only auto-matchable skill (visible description).
