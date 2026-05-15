@@ -44,12 +44,17 @@ if [ -d "$PLUGIN_SRC/hooks" ]; then
     echo "  [+] Hooks (SessionStart cleanup)"
 fi
 
-# 7. Copy README and CHANGELOG
+# 7. Copy README, CHANGELOG, and LICENSE
 cp "$PLUGIN_SRC/README.md" "$DIST_DIR/"
 if [ -f "$PLUGIN_SRC/CHANGELOG.md" ]; then
     cp "$PLUGIN_SRC/CHANGELOG.md" "$DIST_DIR/"
-    echo "  [+] README + CHANGELOG"
 fi
+# Apache-2.0 compliance: ship the LICENSE file with the distributed plugin.
+# Source from the repo root since the plugin inherits the parent license.
+if [ -f "$REPO_ROOT/LICENSE" ]; then
+    cp "$REPO_ROOT/LICENSE" "$DIST_DIR/"
+fi
+echo "  [+] README + CHANGELOG + LICENSE"
 
 # 7. Copy ALL tooluniverse skills
 # The router is the only auto-matchable skill (visible description).
@@ -73,6 +78,12 @@ for skill_dir in "$REPO_ROOT/skills"/*/; do
             --exclude='__pycache__/' \
             --exclude='*.pyc' \
             --exclude='.pytest_cache/' \
+            --exclude='.coverage' \
+            --exclude='.coverage.*' \
+            --exclude='coverage.xml' \
+            --exclude='htmlcov/' \
+            --exclude='.mypy_cache/' \
+            --exclude='.ruff_cache/' \
             --exclude='.DS_Store' \
             "$skill_dir" "$DIST_DIR/skills/$dir_name/"
         skill_count=$((skill_count + 1))
