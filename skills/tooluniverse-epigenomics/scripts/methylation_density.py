@@ -27,6 +27,9 @@ What it computes (printed in JSON to stdout):
   density_avg_per_chr           # mean of (unique_pos_after_filter[c] / chr_length[c]) over chromosomes
   per_chr                       # dict of chromosome → {n_cpgs, length, density}
   density_chromosome            # if --chromosome X given: unique_pos_after_filter[X] / chr_length[X]
+  chisquare_uniform             # chi-square test that per-chromosome CpG counts
+                                # match a length-proportional ("uniform density")
+                                # expectation: {statistic, df, p_value, n_chr}
 
 Question-to-metric mapping (general):
   "How many sites are removed when filtering ..."   → rows_removed (sample-row level)
@@ -34,6 +37,11 @@ Question-to-metric mapping (general):
   "Genome-wide AVERAGE chromosomal density"         → density_avg_per_chr  (mean of per-chr)
   "Density on chromosome X"                         → density_chromosome (single-chr)
   "Total density across genome"                     → density_total_over_genome
+  "Chi-square stat for uniform distribution"        → chisquare_uniform.statistic
+
+The chi-square uniformity test mirrors the canonical R idiom
+`chisq.test(n_cpgs, p = expected/sum(expected))` where expected counts are
+length-proportional (chromosomes with no length match are dropped first).
 
 The "average chromosomal density" metric is the per-chromosome mean,
 not total/total — these differ when CpGs are unevenly distributed.
@@ -132,6 +140,29 @@ def main():
         "density_over_genome_unique": float(row["n_cpgs"] / total_genome_length),
     } for _, row in by_chr.iterrows()}
 
+    # Chi-square test: do per-chromosome CpG counts match a length-proportional
+    # ("uniform density") expectation? Mirrors the canonical R idiom
+    # chisq.test(n_cpgs, p = expected/sum(expected)).
+    chisquare_uniform = None
+    if len(by_chr) >= 2:
+        try:
+            from scipy.stats import chisquare as _chisquare
+
+            observed = by_chr["n_cpgs"].astype(float)
+            total_cpgs = float(observed.sum())
+            total_len = float(by_chr["Length"].sum())
+            expected = by_chr["Length"].astype(float) * (total_cpgs / total_len)
+            expected = expected / expected.sum() * total_cpgs
+            stat, pval = _chisquare(observed.values, expected.values)
+            chisquare_uniform = {
+                "statistic": float(stat),
+                "df": int(len(by_chr) - 1),
+                "p_value": float(pval),
+                "n_chr": int(len(by_chr)),
+            }
+        except ImportError:
+            chisquare_uniform = {"error": "scipy required for chi-square test"}
+
     result = {
         "rows_total": rows_total,
         "rows_after_filter": rows_after_filter,
@@ -145,6 +176,7 @@ def main():
         "density_chromosome": density_chromosome,
         "density_chromosome_over_genome_rows": density_chromosome_over_genome_rows,
         "density_chromosome_over_genome_unique": density_chromosome_over_genome_unique,
+        "chisquare_uniform": chisquare_uniform,
         "per_chr": per_chr,
     }
 
