@@ -1,0 +1,10 @@
+[
+  {
+    "id": "4495aefb-4be8-4090-bc85-8ccbb477f01d",
+    "question": "What is the density of filtered (>90% or <10% methylation) age-related CpG sites (>90% or <10% methylation) on chromosome Z in the Zebra Finch genome?",
+    "ground_truth": "(0.9e-7,1.1e-7)",
+    "capsule_path": "temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-4dceea58-7d66-4576-bfc6-88c026d5b7a9",
+    "category": "bixbench",
+    "eval_mode": ""
+  }
+]
