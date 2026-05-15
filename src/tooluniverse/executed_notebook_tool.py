@@ -36,6 +36,37 @@ def _cell_text(cell: dict) -> str:
     return src
 
 
+# Phrases that signal a sample/row exclusion or filtering step. Reference
+# answers often depend on these (e.g. dropping PCA outlier samples before
+# DESeq2), yet the question text rarely mentions them — so an agent that
+# reimplements the analysis without reading the notebook gets a different
+# number. Surfacing these cells prevents that silent divergence.
+_PREPROCESS_SIGNALS = (
+    "outlier",
+    "exclude",
+    "excluding",
+    "drop",
+    "remove sample",
+    "removed sample",
+    "filter out",
+    "filtered out",
+    "discard",
+    "low quality",
+    "low-quality",
+    "poor quality",
+    "do not correlate",
+    "don't correlate",
+    "doesn't cluster",
+    "do not cluster",
+)
+
+
+def _is_preprocessing_cell(src: str) -> bool:
+    """True if a cell source looks like a sample-exclusion / filtering step."""
+    low = src.lower()
+    return any(sig in low for sig in _PREPROCESS_SIGNALS)
+
+
 def _cell_outputs_text(cell: dict) -> str:
     parts: List[str] = []
     for out in cell.get("outputs", []):
@@ -109,6 +140,7 @@ class ExecutedNotebookTool(BaseTool):
 
         cells_out = []
         matching = []
+        preprocessing = []
         for i, cell in enumerate(nb.get("cells", [])):
             src = _cell_text(cell)
             outs = _cell_outputs_text(cell)
@@ -122,6 +154,17 @@ class ExecutedNotebookTool(BaseTool):
             if include_source:
                 entry["source"] = src[:max_chars]
             cells_out.append(entry)
+
+            # Always surface sample-exclusion / filtering cells — these change
+            # the reference answer but are usually absent from the question.
+            if cell.get("cell_type", "code") == "code" and _is_preprocessing_cell(src):
+                preprocessing.append(
+                    {
+                        "idx": i,
+                        "source": src[:max_chars],
+                        "output": outs[:max_chars],
+                    }
+                )
 
             if search:
                 haystack = src + "\n" + outs
@@ -145,6 +188,14 @@ class ExecutedNotebookTool(BaseTool):
             "total_cells": len(nb.get("cells", [])),
             "cells": cells_out,
         }
+        if preprocessing:
+            data["preprocessing_cells"] = preprocessing
+            data["n_preprocessing_cells"] = len(preprocessing)
+            data["preprocessing_note"] = (
+                "These cells perform sample-exclusion or filtering that affects "
+                "the reference answer. Apply the SAME exclusions before computing "
+                "your result — the question text usually omits them."
+            )
         if search:
             data["search"] = search
             data["matching_cells"] = matching
