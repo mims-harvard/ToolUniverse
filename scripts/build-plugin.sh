@@ -48,12 +48,25 @@ cp "$PLUGIN_SRC/README.md" "$DIST_DIR/"
 # All sub-skills have disable-model-invocation: true — their descriptions
 # don't appear in context, so having 114 skills doesn't affect routing.
 # They're available when the router dispatches via Skill('name').
+#
+# Exclude development artifacts that should NOT ship:
+#   test_*.py / *_test.py — internal skill tests (some reference internal
+#                           benchmark names that would leak to end users)
+#   __pycache__/, *.pyc, .pytest_cache/ — Python build/cache artifacts
+#   .DS_Store — macOS folder metadata
 mkdir -p "$DIST_DIR/skills"
 skill_count=0
 for skill_dir in "$REPO_ROOT/skills"/*/; do
     dir_name=$(basename "$skill_dir")
     if [ -f "$skill_dir/SKILL.md" ] && [[ "$dir_name" == tooluniverse* ]]; then
-        cp -r "$skill_dir" "$DIST_DIR/skills/$dir_name"
+        rsync -a \
+            --exclude='test_*.py' \
+            --exclude='*_test.py' \
+            --exclude='__pycache__/' \
+            --exclude='*.pyc' \
+            --exclude='.pytest_cache/' \
+            --exclude='.DS_Store' \
+            "$skill_dir" "$DIST_DIR/skills/$dir_name/"
         skill_count=$((skill_count + 1))
     fi
 done

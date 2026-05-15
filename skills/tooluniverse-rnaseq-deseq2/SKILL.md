@@ -154,12 +154,11 @@ Differential expression analysis of RNA-seq count data, with enrichment analysis
 ## Workspace isolation (CRITICAL)
 
 When running R DESeq2 / Rscript / extracting any artifact from a data
-folder, **never write into the canonical data folder**. The canonical
-read-only path on disk (e.g.,
-`temp_docs_and_tests/bixbench_clean/data/CapsuleFolder-<uuid>/`) is
-SHA256-verified by the test harness; writing into it (DESeq2 result
-CSVs, dispersion outputs, intermediate notebook caches, extracted zip
-contents) breaks the harness.
+folder, **never write into the user's data folder**. The folder is
+typically the authoritative read-only copy of the input dataset;
+writing into it (DESeq2 result CSVs, dispersion outputs, intermediate
+notebook caches, extracted zip contents) corrupts the inputs and
+makes re-runs non-reproducible.
 
 Always pass `--workdir /tmp/<run-name>` to the bundled scripts. If you
 write your own R/Python that emits files, ensure the `setwd(...)` /

@@ -58,9 +58,8 @@ parsing.
 WORKSPACE ISOLATION
 -------------------
 This script ONLY writes to --workdir (default: $TMPDIR/r_deseq2_<pid>).
-It NEVER writes into the directory containing the input counts/metadata.
-Read-only canonical capsules (e.g., bixbench_clean/data/CapsuleFolder-*)
-are guaranteed safe.
+It NEVER writes into the directory containing the input counts/metadata,
+so read-only input folders are guaranteed safe.
 """
 
 from __future__ import annotations
