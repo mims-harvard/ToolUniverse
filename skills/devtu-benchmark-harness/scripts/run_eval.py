@@ -261,7 +261,9 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
                         "the <species> genome', use density_chromosome_over_genome_rows "
                         "(filtered ROW count divided by TOTAL genome length) — the 'in the "
                         "genome' framing implies a genome-wide denominator. When it asks for "
-                        "'density on chromosome X', use density_chromosome (per-chr-length)."
+                        "'density on chromosome X', use density_chromosome (per-chr-length). "
+                        "For 'chi-square test of uniform distribution across chromosomes', "
+                        "use chisquare_uniform.statistic (length-proportional expectation)."
                     )
                 except (subprocess.TimeoutExpired, FileNotFoundError):
                     pass
