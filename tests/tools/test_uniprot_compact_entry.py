@@ -6,6 +6,13 @@ from tooluniverse.uniprot_tool import UniProtRESTTool
 def _tool():
     return UniProtRESTTool(
         {
+            "parameter": {
+                "properties": {
+                    "compact": {
+                        "default": True,
+                    }
+                }
+            },
             "fields": {
                 "endpoint": "https://rest.uniprot.org/uniprotkb/{accession}.json",
             }
@@ -56,12 +63,30 @@ def test_compact_entry_returns_bounded_summary():
     assert result["metadata"]["total_features"] == 105
 
 
-def test_full_entry_remains_default_behavior():
-    payload = {"primaryAccession": "P05067", "large": {"nested": True}}
+def test_compact_entry_is_default_behavior():
+    payload = {
+        "primaryAccession": "P05067",
+        "proteinDescription": {
+            "recommendedName": {"fullName": {"value": "Amyloid-beta precursor protein"}}
+        },
+    }
 
     with patch(
         "tooluniverse.uniprot_tool.requests.get", return_value=_response(payload)
     ):
         result = _tool().run({"accession": "P05067"})
+
+    assert result["status"] == "success"
+    assert result["metadata"]["compact"] is True
+    assert result["data"]["primaryAccession"] == "P05067"
+
+
+def test_full_entry_remains_available_with_compact_false():
+    payload = {"primaryAccession": "P05067", "large": {"nested": True}}
+
+    with patch(
+        "tooluniverse.uniprot_tool.requests.get", return_value=_response(payload)
+    ):
+        result = _tool().run({"accession": "P05067", "compact": False})
 
     assert result == payload

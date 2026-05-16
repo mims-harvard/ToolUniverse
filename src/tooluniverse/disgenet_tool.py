@@ -4,8 +4,8 @@ DisGeNET API tool for ToolUniverse.
 DisGeNET is one of the largest public collections of genes and variants
 associated with human diseases, aggregating data from multiple sources.
 
-API Documentation: https://www.disgenet.org/api/
-Requires API key: Register at https://www.disgenet.org/
+API Documentation: https://api.disgenet.com/
+Requires API key: Register at https://www.disgenet.com/
 """
 
 import os
@@ -30,7 +30,7 @@ class DisGeNETTool(BaseTool):
     - Aggregated evidence scores
 
     Requires API key via DISGENET_API_KEY environment variable.
-    Register for free at https://www.disgenet.org/
+    Register for free at https://www.disgenet.com/
     """
 
     def __init__(self, tool_config: Dict[str, Any]):
@@ -54,7 +54,7 @@ class DisGeNETTool(BaseTool):
         if not self.api_key:
             return {
                 "status": "error",
-                "error": "DisGeNET API key required. Set DISGENET_API_KEY environment variable. Register at https://www.disgenet.org/",
+                "error": "DisGeNET API key required. Set DISGENET_API_KEY environment variable. Register at https://www.disgenet.com/",
             }
 
         operation = arguments.get("operation", "")
@@ -102,22 +102,28 @@ class DisGeNETTool(BaseTool):
             )
             response.raise_for_status()
             data = response.json()
+            associations = data if isinstance(data, list) else data.get("results", [])
+            count = len(data) if isinstance(data, list) else data.get("count", 0)
+            metadata = {
+                "source": "DisGeNET",
+                "gene": gene,
+                "api_url": DISGENET_API_URL,
+            }
+            if count == 0:
+                metadata["diagnostic"] = (
+                    "No DisGeNET associations were returned. Verify the gene "
+                    "identifier accepted by the current DisGeNET API and that "
+                    "the configured API plan has access to this endpoint/source."
+                )
 
             return {
                 "status": "success",
                 "data": {
                     "gene": gene,
-                    "associations": data
-                    if isinstance(data, list)
-                    else data.get("results", []),
-                    "count": len(data)
-                    if isinstance(data, list)
-                    else data.get("count", 0),
+                    "associations": associations,
+                    "count": count,
                 },
-                "metadata": {
-                    "source": "DisGeNET",
-                    "gene": gene,
-                },
+                "metadata": metadata,
             }
 
         except requests.exceptions.HTTPError as e:
@@ -165,22 +171,28 @@ class DisGeNETTool(BaseTool):
             )
             response.raise_for_status()
             data = response.json()
+            associations = data if isinstance(data, list) else data.get("results", [])
+            count = len(data) if isinstance(data, list) else data.get("count", 0)
+            metadata = {
+                "source": "DisGeNET",
+                "disease": disease,
+                "api_url": DISGENET_API_URL,
+            }
+            if count == 0:
+                metadata["diagnostic"] = (
+                    "No DisGeNET associations were returned. Verify the disease "
+                    "identifier accepted by the current DisGeNET API and that "
+                    "the configured API plan has access to this endpoint/source."
+                )
 
             return {
                 "status": "success",
                 "data": {
                     "disease": disease,
-                    "associations": data
-                    if isinstance(data, list)
-                    else data.get("results", []),
-                    "count": len(data)
-                    if isinstance(data, list)
-                    else data.get("count", 0),
+                    "associations": associations,
+                    "count": count,
                 },
-                "metadata": {
-                    "source": "DisGeNET",
-                    "disease": disease,
-                },
+                "metadata": metadata,
             }
 
         except requests.exceptions.HTTPError as e:

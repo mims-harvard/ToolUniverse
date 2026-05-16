@@ -130,23 +130,44 @@ class CTDTool(BaseTool):
             data = response.json()
         except ValueError:
             snippet = raw_text[:200]
+            lower_text = raw_text.lower()
             is_html = "text/html" in content_type or raw_text.lstrip().startswith("<")
+            is_human_verification = any(
+                phrase in lower_text
+                for phrase in (
+                    "verify you are a human",
+                    "human verification",
+                    "captcha",
+                    "checking your browser",
+                )
+            )
             return {
                 "status": "error",
-                "error": "CTD API returned non-JSON response",
+                "error": (
+                    "CTD API blocked programmatic access with human verification"
+                    if is_human_verification
+                    else "CTD API returned non-JSON response"
+                ),
                 "status_code": response.status_code,
                 "content_type": content_type,
                 "request_url": response.url,
                 "response_snippet": snippet,
                 "metadata": metadata,
-                "retryable": is_html,
+                "retryable": is_html and not is_human_verification,
                 "suggestion": (
-                    "CTD may be under maintenance or rate-limiting. "
-                    "Check https://ctdbase.org for status and retry. "
-                    "If this persists, include request_url and response_snippet "
-                    "when reporting the issue."
-                    if is_html
-                    else "Response was truncated or malformed. Retry the request."
+                    "CTD returned a CAPTCHA or human-verification page instead of JSON. "
+                    "This cannot be resolved by retrying from ToolUniverse. Use CTD's "
+                    "website directly, or consider OpenTargets for gene-disease "
+                    "associations and FAERS/OpenFDA tools for chemical safety questions."
+                    if is_human_verification
+                    else (
+                        "CTD may be under maintenance or rate-limiting. "
+                        "Check https://ctdbase.org for status and retry. "
+                        "If this persists, include request_url and response_snippet "
+                        "when reporting the issue."
+                        if is_html
+                        else "Response was truncated or malformed. Retry the request."
+                    )
                 ),
             }
 

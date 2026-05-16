@@ -187,10 +187,7 @@ class OLSTool(BaseTool):
 
         handler = getattr(self, handler_name)
         try:
-            result = handler(arguments)
-            if isinstance(result, dict) and "status" not in result:
-                return {"status": "success", **result}
-            return result
+            return handler(arguments)
         except requests.RequestException as exc:
             return {"status": "error", "error": str(exc)}
         except ValidationError as exc:
@@ -433,7 +430,26 @@ class OLSTool(BaseTool):
             term_data = self._get_json(
                 f"/api/v2/ontologies/{ontology}/classes/{encoded}"
             )
+            if isinstance(term_data, dict) and not term_data.get("label"):
+                legacy_terms = self._format_term_collection(term_data, size)
+                if "terms" in legacy_terms:
+                    legacy_terms["term_iri"] = term_iri
+                    legacy_terms["ontology"] = ontology
+                    legacy_terms["note"] = (
+                        "Returned terms from an OLS collection response; "
+                        "source term label was not available."
+                    )
+                    return legacy_terms
             label = term_data.get("label", "")
+            if isinstance(label, list):
+                label = next(
+                    (
+                        value
+                        for value in label
+                        if isinstance(value, str) and value.strip()
+                    ),
+                    "",
+                )
         except Exception:
             pass
 

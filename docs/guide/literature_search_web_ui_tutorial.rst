@@ -1,6 +1,16 @@
 Wide Research Web UI Tutorial
 ==============================
 
+.. warning::
+
+   The Wide Research Web UI is not currently packaged in ToolUniverse. The
+   ``tooluniverse-wide-research`` console command is not installed by the
+   current ``pyproject.toml``, and the
+   ``tooluniverse.web_tools.literature_search_ui`` package is not present in
+   the source tree. Treat this page as legacy design documentation until the UI
+   package is restored. For packaged literature workflows, use the literature
+   tools through the CLI, Python API, or MCP server instead.
+
 This tutorial demonstrates how to use the ToolUniverse Wide Research Web UI, a powerful web-based interface that provides intelligent literature search and analysis capabilities across multiple academic databases.
 
 Overview
@@ -34,13 +44,17 @@ Quick Start
 Starting the Web UI
 ~~~~~~~~~~~~~~~~~~~
 
-The easiest way to start the Wide Research Web UI is using the command-line tool:
+When the UI package is restored, the intended command-line entry point is:
 
 .. code-block:: bash
 
     tooluniverse-wide-research
 
-This will start the web server and display:
+In current releases this command is not installed. If you need this workflow
+today, use ToolUniverse's packaged literature-search tools through ``tu run``,
+the Python API, or MCP.
+
+The restored command is expected to start the web server and display:
 
 .. code-block:: text
 

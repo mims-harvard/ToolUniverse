@@ -606,7 +606,13 @@ class UniProtRESTTool(BaseTool):
 
             return result
 
-        if arguments.get("compact") is True:
+        compact_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("compact", {})
+            .get("default", False)
+        )
+        if arguments.get("compact", compact_default) is True:
             return self._compact_entry(data)
 
         return data

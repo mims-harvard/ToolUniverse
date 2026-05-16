@@ -68,6 +68,28 @@ def test_ctd_non_json_response_includes_diagnostics(mock_get):
 
 @pytest.mark.unit
 @patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_human_verification_response_is_non_retryable(mock_get):
+    """CAPTCHA pages should be reported as a blocked access state."""
+
+    mock_get.return_value = make_response(
+        "<html><title>Verify you are a human</title><body>captcha</body></html>",
+        content_type="text/html;charset=UTF-8",
+    )
+    tool = make_ctd_tool()
+
+    result = tool.run({"input_terms": "TP53"})
+
+    assert result["status"] == "error"
+    assert result["error"] == (
+        "CTD API blocked programmatic access with human verification"
+    )
+    assert result["retryable"] is False
+    assert "OpenTargets" in result["suggestion"]
+    assert "FAERS" in result["suggestion"]
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.get")
 def test_ctd_request_asks_for_json(mock_get):
     """CTD requests should ask the API for JSON explicitly."""
 

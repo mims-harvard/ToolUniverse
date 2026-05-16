@@ -32,4 +32,18 @@ To use the ToolUniverse MCPB:
 1.  Download the latest release from our `GitHub Releases <https://github.com/mims-harvard/ToolUniverse/releases/tag/mcpb>`_.
 2.  Follow the instructions in the `official Claude Desktop Guide <https://www.anthropic.com/engineering/desktop-extensions>`_ to configure it with your client.
 
+Client compatibility note
+-------------------------
+
+MCPB support depends on the client. For Claude Desktop, use the MCPB release
+flow above. For Claude Code, add ToolUniverse directly as a stdio MCP server
+instead of installing the MCPB bundle:
+
+.. code-block:: bash
+
+   claude mcp add --transport stdio tooluniverse -- tooluniverse
+
+This keeps Claude Code on the regular ToolUniverse command path while MCPB
+clients can continue using the bundled release.
+
 For advanced users who wish to build the bundle from source or understand the protocol details, please refer to the :doc:`MCP Support <mcp_support>` documentation.

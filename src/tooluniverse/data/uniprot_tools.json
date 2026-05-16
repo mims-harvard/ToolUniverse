@@ -11,8 +11,8 @@
         },
         "compact": {
           "type": "boolean",
-          "description": "Return a bounded summary instead of the complete UniProtKB JSON entry. Use this when calling from an LLM context to avoid oversized outputs.",
-          "default": false
+          "description": "Return a bounded summary instead of the complete UniProtKB JSON entry. Defaults to true to avoid oversized LLM outputs. Set compact=false only when you explicitly need the raw UniProtKB JSON.",
+          "default": true
         }
       },
       "required": [
@@ -22,7 +22,7 @@
     "fields": {
       "endpoint": "https://rest.uniprot.org/uniprotkb/{accession}.json",
       "input_description": "Input UniProtKB accession, e.g., P05067.",
-      "output_description": "Returns the complete UniProtKB entry JSON for that accession. WARNING: Output can be extremely large (40,000+ lines) and may exceed LLM context limits. Consider using specific extraction tools instead."
+      "output_description": "Returns a compact bounded summary for that accession by default. Set compact=false to return the complete UniProtKB entry JSON. WARNING: raw output can be extremely large (40,000+ lines) and may exceed LLM context limits."
     },
     "type": "UniProtRESTTool",
     "test_examples": [

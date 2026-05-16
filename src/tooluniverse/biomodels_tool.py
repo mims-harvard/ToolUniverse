@@ -40,7 +40,24 @@ class BioModelsRESTTool(BaseRESTTool):
         self, response: requests.Response, url: str
     ) -> Dict[str, Any]:
         """Process BioModels API response."""
-        data = response.json()
+        try:
+            data = response.json()
+        except ValueError:
+            text = response.text or ""
+            content_type = response.headers.get("Content-Type", "")
+            retryable = "text/html" in content_type.lower() or text.lstrip().startswith("<")
+            return {
+                "status": "error",
+                "error": "BioModels returned a non-JSON response",
+                "url": url,
+                "content_type": content_type,
+                "response_snippet": text[:200],
+                "retryable": retryable,
+                "suggestion": (
+                    "BioModels may have returned an HTML maintenance or redirect page. "
+                    "Check the endpoint URL, request parameters, and service availability."
+                ),
+            }
 
         # Build result
         result = {
