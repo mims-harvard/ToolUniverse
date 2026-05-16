@@ -191,6 +191,21 @@ skills/evals/
 # (e.g. ddi_working_example.py). Outputs should go to /tmp or an explicit
 # --output-dir, never beside the example source.
 **/DDI_report_*.md
+**/*_metabolomics_report*.md
+
+# Superseded skill source — when SKILL.md is rewritten, keep the prior
+# version in git history (git log / git show) instead of beside the new
+# one as SKILL_OLD.md, where it ships to users and causes confusion.
+**/SKILL_OLD.md
+**/SKILL_v[0-9]*.md
+
+# Dev iteration notes that lived inside skill source: comparison
+# write-ups, test feedback diaries, "fixed" twin implementations.
+# Belong in git history or PR descriptions, not the shipped skill tree.
+**/COMPARISON_*.md
+**/*_FEEDBACK.md
+**/*_implementation_fixed.py
+**/*_implementation_v[0-9]*.py
 
 # Per-user auto-memory / private session notes (never push)
 memory/
