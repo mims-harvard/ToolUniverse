@@ -175,13 +175,10 @@ DEVTU_*.md
 .claude/
 .tooluniverse/
 
-# Benchmark outputs (large, machine-generated, no history value)
-skills/evals/bixbench/results_*.json
-skills/evals/lab-bench/results_*.json
-skills/evals/bixbench/retest_*.json
-skills/evals/*.log
-skills/evals/*/BENCHMARK_REPORT.md
-skills/evals/*/BIXBENCH_FULL_REPORT.md
+# Benchmark harness — dev-only, kept locally but never tracked.
+# Plugin build doesn't include skills/evals/ in dist, and .gitattributes
+# already excludes it from `git archive` release tarballs.
+skills/evals/
 
 # Per-user auto-memory / private session notes (never push)
 memory/
