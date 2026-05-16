@@ -29,8 +29,8 @@ If `--coef-name <NAME>` is given, also print:
 Workspace isolation
 -------------------
 This script does NOT write any output files. It only reads --csv (and
---meta if given) and prints to stdout. Reading inside a CapsuleFolder-* is
-fine; the script will refuse to *write* anywhere with --workdir.
+--meta if given) and prints to stdout — safe to run with any input
+directory layout.
 """
 
 from __future__ import annotations

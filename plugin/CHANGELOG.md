@@ -5,39 +5,41 @@ All notable changes to the ToolUniverse Claude Code plugin.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.2.0] — 2026-05-15
+## [1.2.0] — 2026-05-16
 
 ### Added
-- `read_executed_notebook` tool now surfaces a `preprocessing_cells` field
-  that flags code cells performing sample-exclusion or filtering. Reference
-  analyses often depend on outlier removals that the question prompt never
-  mentions; surfacing those cells prevents the agent from silently diverging.
-- `methylation_density.py` now emits a chi-square test of CpG uniformity
-  across chromosomes (`chisquare_uniform`) and an alternative
-  per-chromosome-over-total-genome density
-  (`density_chromosome_over_genome_rows`) for the "density of chr X CpGs
-  in the species genome" phrasing.
-- New `bcg_corona_or.py` script reproduces the canonical ordinal logistic
-  regression on TASK008_BCG-CORONA: 3-way AE/DM/MH merge with the
-  MEDICAL HISTORY filter, label-encoded categoricals, and the
-  treatment-by-medical-history interaction.
+- `read_executed_notebook` surfaces a new `preprocessing_cells` field that
+  flags code cells performing sample exclusions or filtering, so the agent
+  matches the published pipeline rather than silently diverging.
+- New deterministic analysis scripts for common clinical-trial and
+  regression workflows (SDTM ordinal logistic, natural-spline model
+  comparison) accessible to the agent through their owning skills.
 
 ### Changed
-- `scogs_paired_compare.py` `--only-with-trees` flag now gated by metric
-  type so alignment-only metrics (RCV, parsimony_informative, gap
-  percentage) are no longer silently filtered to n=0 on capsules that
-  ship alignments without trees.
-- `grade_answers.py` Strategy 5 (numeric proximity) accepts very small
-  predicted values (|x| < 1e-10) when the expected value is 0.0 — handles
-  scipy p-value underflow correctly.
+- Router skill description tightened; specialized skills more reliably
+  match data-file analysis questions.
+- Phylogenetics scripts accept `--data-folder` as the canonical input
+  flag.
+- Researcher agent trimmed to a focused mission + tool-discovery pattern;
+  domain-specific analysis conventions now live exclusively in their
+  specialized skills.
+- Skill text uses general "data folder" terminology throughout.
+- `.mcp.json` no longer forces a PyPI refresh on every session start —
+  faster startup and offline-tolerant. The README documents how to force
+  a refresh or pin a version.
+- SessionStart cleanup of legacy global skills runs once via a marker
+  file instead of every session.
+
+### Removed
+- Three slash commands that duplicated default agent behavior. The four
+  remaining commands each enforce a discipline the agent won't apply on
+  its own (cross-validation, namespace-complete ID resolution,
+  domain-aware comparison, graded literature triage).
 
 ### Fixed
-- Plugin build script (`scripts/build-plugin.sh`) now excludes `test_*.py`,
-  `__pycache__/`, `*.pyc`, `.pytest_cache/`, and `.DS_Store` from skill
-  directories. Also stops shipping the local-dev `marketplace.json` inside
-  built plugin's `.claude-plugin/`. Distributed plugin size: 8.4M → 6.7M.
-- Removed internal-development paths from
-  `tooluniverse-rnaseq-deseq2/SKILL.md` and `r_deseq2_wrapper.py`.
+- Plugin build excludes test and cache artifacts from skill directories.
+- Skill count in the plugin manifest and README now matches what ships.
+- Removed a stale duplicate `marketplace.json` from the plugin source.
 
 ## [1.1.11] — earlier
 

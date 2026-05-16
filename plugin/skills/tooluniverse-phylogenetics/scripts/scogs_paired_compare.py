@@ -31,11 +31,11 @@ Key design rules:
 
 Usage:
     # Compute %PIS per ortholog on both groups and report MWU
-    python scogs_paired_compare.py --capsule /path/to/CapsuleFolder-XXX \\
+    python scogs_paired_compare.py --data-folder /path/to/data \\
         --metric parsimony_informative
 
     # Long branch score: per-tree summary first, then group MWU
-    python scogs_paired_compare.py --capsule ... \\
+    python scogs_paired_compare.py --data-folder ... \\
         --metric long_branch_score --per-tree-stat mean
 
 Output blocks (parseable):
@@ -106,8 +106,8 @@ PHYKIT_CMD = {
 def ensure_extracted(capsule: Path, group: str, workspace: Path | None = None) -> Path:
     """Extract scogs_<group>.zip into <workspace>/scogs_<group>_extracted/.
 
-    `workspace` defaults to /tmp/scogs_<capsule_name>/ to keep the canonical
-    capsule directory unmodified — important when the capsule is read-only or
+    `workspace` defaults to /tmp/scogs_<folder_name>/ to keep the input
+    data folder unmodified — important when the data folder is read-only or
     its checksums are verified by the harness.
 
     Returns the directory containing per-ortholog files.
@@ -415,8 +415,10 @@ def main():
     ap = argparse.ArgumentParser(
         description="Paired group comparison (animals vs fungi) on scogs alignments+trees.",
     )
-    ap.add_argument("--capsule", required=True, type=Path,
-                    help="Capsule folder containing scogs_animals.zip + scogs_fungi.zip")
+    ap.add_argument("--data-folder", "--capsule", required=True, type=Path,
+                    dest="data_folder",
+                    help="Data folder containing scogs_*.zip files (e.g. "
+                         "scogs_animals.zip + scogs_fungi.zip)")
     ap.add_argument("--metric", required=True, choices=sorted(ALL_METRICS))
     ap.add_argument("--per-tree-stat", default="mean", choices=["mean", "median"],
                     help="For long_branch_score / patristic_distances: how to "
@@ -429,8 +431,8 @@ def main():
                          "when comparing tree metrics; also affects denominators.")
     ap.add_argument("--out-json", help="Optional path to write per-ortholog JSON.")
     ap.add_argument("--workspace", type=Path, default=None,
-                    help="Where to extract zip contents. Default /tmp/scogs_<capsule>. "
-                         "Pass an explicit path when the canonical capsule is read-only.")
+                    help="Where to extract zip contents. Default /tmp/scogs_<folder>. "
+                         "Pass an explicit path when the input data folder is read-only.")
     args = ap.parse_args()
 
     groups = [g.strip() for g in args.groups.split(",") if g.strip()]
@@ -443,7 +445,7 @@ def main():
     per_group: dict[str, dict[str, float]] = {}
     for grp in groups:
         per_group[grp] = compute_group(
-            args.metric, args.capsule, grp, args.per_tree_stat, only_with_trees,
+            args.metric, args.data_folder, grp, args.per_tree_stat, only_with_trees,
             workspace=args.workspace,
         )
         _emit_summary(grp, per_group[grp])

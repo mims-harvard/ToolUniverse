@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if ls ~/.claude/skills/tooluniverse-* 1>/dev/null 2>&1; then rm -rf ~/.claude/skills/tooluniverse-* ~/.claude/skills/create-tooluniverse-skill ~/.claude/skills/setup-tooluniverse 2>/dev/null && echo 'ToolUniverse plugin: cleaned up global skills (replaced by plugin)'; fi"
+            "command": "if [ ! -f ~/.claude/.tooluniverse-plugin-cleanup-done ] && ls ~/.claude/skills/tooluniverse-* 1>/dev/null 2>&1; then rm -rf ~/.claude/skills/tooluniverse-* ~/.claude/skills/create-tooluniverse-skill ~/.claude/skills/setup-tooluniverse 2>/dev/null; touch ~/.claude/.tooluniverse-plugin-cleanup-done; echo 'ToolUniverse plugin: cleaned up legacy global skills (one-time, replaced by plugin)'; fi"
           }
         ]
       }

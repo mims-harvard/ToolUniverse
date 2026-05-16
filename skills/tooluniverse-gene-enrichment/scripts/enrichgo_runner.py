@@ -247,17 +247,17 @@ def main():
     workdir.mkdir(parents=True, exist_ok=True)
     print(f"# workdir: {workdir}", file=sys.stderr)
 
-    # Refuse to write into a CapsuleFolder-* directory
+    # Refuse to write into the input data folder
+    workdir_r = workdir.resolve()
     for src in (args.gene_list, args.background or None):
         if not src:
             continue
-        p = Path(src).resolve()
-        for ancestor in [p.parent, *p.parent.parents]:
-            if ancestor.name.startswith("CapsuleFolder-") and str(workdir).startswith(str(ancestor)):
-                sys.exit(
-                    f"ERROR: workdir {workdir} is inside canonical capsule "
-                    f"{ancestor}. Use --workdir /tmp/... to keep capsules read-only."
-                )
+        input_dir = Path(src).resolve().parent
+        if workdir_r == input_dir or input_dir in workdir_r.parents:
+            sys.exit(
+                f"ERROR: workdir {workdir} is inside the input data folder "
+                f"{input_dir}. Use --workdir /tmp/... to keep input data read-only."
+            )
 
     candidates = "|||".join(args.candidate)
     r_script = R_TEMPLATE.format(

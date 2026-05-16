@@ -40,17 +40,20 @@ from pathlib import Path
 import pandas as pd
 
 
-SAFE_EXIT_CAPSULE = (
-    "Refusing to write inside a canonical capsule directory.\n"
-    "Pass --workdir <path-outside-capsule>, e.g. --workdir /tmp/spline_cmp."
+SAFE_EXIT_MSG = (
+    "Refusing to write inside the input data folder.\n"
+    "Pass --workdir <path-outside-input>, e.g. --workdir /tmp/spline_cmp."
 )
 
 
-def reject_canonical(path: Path) -> None:
-    for part in path.resolve().parts:
-        if part.startswith("CapsuleFolder-"):
-            sys.stderr.write(SAFE_EXIT_CAPSULE + f"\nOffending path: {path}\n")
-            sys.exit(2)
+def reject_writing_inside_input(workdir: Path, input_csv: Path) -> None:
+    """Refuse to write into the directory holding the input CSV (or any
+    ancestor of it). Input data must remain untouched for reproducibility."""
+    workdir_r = workdir.resolve()
+    input_dir = input_csv.resolve().parent
+    if workdir_r == input_dir or input_dir in workdir_r.parents:
+        sys.stderr.write(SAFE_EXIT_MSG + f"\nOffending workdir: {workdir}\n")
+        sys.exit(2)
 
 
 def parse_args() -> argparse.Namespace:
@@ -72,10 +75,10 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def prepare_workdir(arg: str | None) -> Path:
+def prepare_workdir(arg: str | None, input_csv: Path) -> Path:
     wd = Path(arg) if arg else Path(tempfile.mkdtemp(prefix="spline_compare_"))
     wd.mkdir(parents=True, exist_ok=True)
-    reject_canonical(wd)
+    reject_writing_inside_input(wd, input_csv)
     return wd
 
 
@@ -264,7 +267,7 @@ def main() -> int:
         sys.stderr.write(f"CSV not found: {csv_path}\n")
         return 2
 
-    workdir = prepare_workdir(args.workdir)
+    workdir = prepare_workdir(args.workdir, csv_path)
     cleanup = (not args.keep_workdir) and (args.workdir is None)
     try:
         df = pd.read_csv(csv_path)

@@ -24,7 +24,7 @@ echo "  [+] Plugin manifest (plugin.json only)"
 
 # 2. Copy MCP config
 cp "$PLUGIN_SRC/.mcp.json" "$DIST_DIR/"
-echo "  [+] MCP server config (auto-update enabled)"
+echo "  [+] MCP server config"
 
 # 3. Copy settings
 cp "$PLUGIN_SRC/settings.json" "$DIST_DIR/"

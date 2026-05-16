@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compute single-copy ortholog intersection + per-ortholog stats from BUSCO output.
 
-Given a capsule with N `*.busco.zip` files (one per species) and a
+Given a data folder with N `*.busco.zip` files (one per species) and a
 `target_orthologs.txt` listing K candidate ortholog IDs, this script:
 
   1. Extracts each species' `single_copy_busco_sequences/*.faa` files.
@@ -11,7 +11,7 @@ Given a capsule with N `*.busco.zip` files (one per species) and a
      acid lengths, per-species AA counts.
 
 Usage:
-    python busco_target_orthologs.py --capsule /path/to/capsule [--targets target_orthologs.txt]
+    python busco_target_orthologs.py --data-folder /path/to/data [--targets target_orthologs.txt]
 
 Output (TSV to stdout):
     gene_id<TAB>n_species_with_single_copy<TAB>total_aa<TAB>per_species_aa
@@ -77,30 +77,32 @@ def find_single_copy_dir(species_dir: Path) -> Path | None:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--capsule", required=True, type=Path,
-                    help="Capsule folder containing *.busco.zip + target_orthologs.txt")
+    ap.add_argument("--data-folder", "--capsule", required=True, type=Path,
+                    dest="data_folder",
+                    help="Data folder containing *.busco.zip + target_orthologs.txt")
     ap.add_argument("--targets",
-                    help="Path to a custom target list (default: capsule/target_orthologs.txt)")
+                    help="Path to a custom target list "
+                         "(default: <data-folder>/target_orthologs.txt)")
     ap.add_argument("--workspace", type=Path, default=None,
-                    help="Where to extract BUSCO contents. Default: /tmp/busco_<capsule>")
+                    help="Where to extract BUSCO contents. Default: /tmp/busco_<folder>")
     ap.add_argument("--species-group", choices=["animals", "fungi", "all"], default="all",
                     help="Restrict species to one group. Standard scogs analyses are "
-                         "often per-group (e.g., 4 animal species), even when the capsule "
-                         "ships both groups. The species prefix in zip names "
-                         "('Animals_*', 'Fungi_*') drives the filter.")
+                         "often per-group (e.g., 4 animal species), even when the "
+                         "data folder ships both groups. The species prefix in zip "
+                         "names ('Animals_*', 'Fungi_*') drives the filter.")
     args = ap.parse_args()
 
-    capsule = args.capsule.resolve()
-    targets_file = Path(args.targets) if args.targets else capsule / "target_orthologs.txt"
+    data_folder = args.data_folder.resolve()
+    targets_file = Path(args.targets) if args.targets else data_folder / "target_orthologs.txt"
     if not targets_file.exists():
         sys.exit(f"ERROR: target list not found: {targets_file}")
 
     targets = [line.strip() for line in open(targets_file) if line.strip()]
     print(f"# {len(targets)} target orthologs from {targets_file}", file=sys.stderr)
 
-    busco_zips = sorted(capsule.glob("*.busco.zip"))
+    busco_zips = sorted(data_folder.glob("*.busco.zip"))
     if not busco_zips:
-        sys.exit(f"ERROR: no *.busco.zip files in {capsule}")
+        sys.exit(f"ERROR: no *.busco.zip files in {data_folder}")
     if args.species_group == "animals":
         busco_zips = [z for z in busco_zips if z.name.lower().startswith("animals_")]
     elif args.species_group == "fungi":
@@ -108,7 +110,7 @@ def main():
     species = [species_name(z) for z in busco_zips]
     print(f"# group={args.species_group}, {len(species)} species: {species}", file=sys.stderr)
 
-    workspace = args.workspace or Path("/tmp") / f"busco_{capsule.name}"
+    workspace = args.workspace or Path("/tmp") / f"busco_{data_folder.name}"
     workspace.mkdir(parents=True, exist_ok=True)
 
     species_to_dir = {}

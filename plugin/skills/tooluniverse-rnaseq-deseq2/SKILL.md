@@ -32,8 +32,8 @@ genes can use the unshrunken value. For multi-contrast runs it auto-emits
 ```bash
 # Single-factor sex DE on a CD4/CD8 subset, with FAM138A LFC
 python scripts/r_deseq2_wrapper.py \
-    --counts CapsuleFolder-XXX/counts.csv \
-    --metadata CapsuleFolder-XXX/meta.csv \
+    --counts <data-folder>/counts.csv \
+    --metadata <data-folder>/meta.csv \
     --design "~sex" --contrast "sex,M,F" \
     --subset-col celltype --subset-values "CD4,CD8" \
     --min-row-sum 10 --shrink apeglm \
@@ -97,9 +97,9 @@ the paper is the log-transformed correlation but the agent computes raw
 
 ```bash
 python scripts/gene_length_correlation.py \
-    --counts CapsuleFolder-XXX/BatchCorrected.csv \
-    --metadata CapsuleFolder-XXX/Sample_annotated.csv \
-    --gene-annot CapsuleFolder-XXX/GeneMetaInfo.csv \
+    --counts <data-folder>/BatchCorrected.csv \
+    --metadata <data-folder>/Sample_annotated.csv \
+    --gene-annot <data-folder>/GeneMetaInfo.csv \
     --biotype protein_coding --celltype-col celltype \
     --exclude-celltypes PBMC --min-row-sum 10
 ```
@@ -114,8 +114,8 @@ output makes every option visible.
 
 ```bash
 python scripts/pca_variance.py \
-    --counts CapsuleFolder-XXX/expr.csv \
-    --metadata CapsuleFolder-XXX/meta.csv \
+    --counts <data-folder>/expr.csv \
+    --metadata <data-folder>/meta.csv \
     --metadata-key projid
 ```
 

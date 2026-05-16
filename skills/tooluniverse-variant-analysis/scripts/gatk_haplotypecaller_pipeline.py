@@ -17,9 +17,9 @@ Pipeline stages (each can be skipped if the upstream artifact already exists):
 
 Workspace isolation
 -------------------
-The script REFUSES to write inside any CapsuleFolder-* directory. Pass
+The script REFUSES to write inside any the input data folder directory. Pass
 ``--workdir`` pointing into /tmp or another scratch location. The reference
-FASTA and BAM file paths can stay inside the capsule (the script reads them
+FASTA and BAM file paths can stay inside the data folder (the script reads them
 read-only); intermediate BAM, BWA indexes (when the script has to build
 them), the VCF, and stdout JSON go into ``--workdir``.
 
@@ -30,21 +30,21 @@ CLI
 ---
 The two common scenarios:
 
-  (a) capsule has reference + FASTQ but no BAM:
+  (a) data folder has reference + FASTQ but no BAM:
 
       python gatk_haplotypecaller_pipeline.py \
           --reference REF.fna \
           --fastq-r1 SAMPLE_1.fastq[.gz] --fastq-r2 SAMPLE_2.fastq[.gz] \
           --workdir /tmp/hc_run
 
-  (b) capsule already has a sorted BAM (skip alignment):
+  (b) data folder already has a sorted BAM (skip alignment):
 
       python gatk_haplotypecaller_pipeline.py \
           --reference REF.fna \
           --bam SAMPLE_sorted.bam \
           --workdir /tmp/hc_run
 
-  (c) capsule already has a HaplotypeCaller VCF (only count):
+  (c) data folder already has a HaplotypeCaller VCF (only count):
 
       python gatk_haplotypecaller_pipeline.py \
           --vcf SAMPLE_variants.vcf
@@ -81,8 +81,8 @@ from pathlib import Path
 
 
 SAFE_EXIT_CAPSULE = (
-    "Refusing to write inside a canonical capsule directory.\n"
-    "Pass --workdir <path-outside-capsule>, e.g. --workdir /tmp/hc_run."
+    "Refusing to write inside a input data folder directory.\n"
+    "Pass --workdir <path-outside-input>, e.g. --workdir /tmp/hc_run."
 )
 
 
@@ -228,7 +228,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--fastq-r1", help="paired-end R1 (gz or plain)")
     p.add_argument("--fastq-r2", help="paired-end R2 (gz or plain)")
     p.add_argument("--vcf", help="pre-existing VCF; if given, only counts (skips alignment + HaplotypeCaller)")
-    p.add_argument("--workdir", help="scratch directory for intermediate BAM/VCF (must be outside capsule). "
+    p.add_argument("--workdir", help="scratch directory for intermediate BAM/VCF (must be outside the input data folder). "
                                      "Defaults to /tmp/gatk_hc_<timestamp>.")
     p.add_argument("--sample-name", default="sample", help="basename for intermediate files (default: sample)")
     p.add_argument("--ploidy", type=int, default=2,
@@ -271,13 +271,13 @@ def main() -> int:
     workdir.mkdir(parents=True, exist_ok=True)
     sys.stderr.write(f"[workdir] {workdir}\n")
 
-    # Stage reference into workdir if it lives inside a canonical capsule —
+    # Stage reference into workdir if it lives inside a input data folder —
     # bwa/samtools/gatk write .amb/.ann/.bwt/.pac/.sa/.fai/.dict next to the
-    # FASTA, which would contaminate the capsule and trip checksum guards.
+    # FASTA, which would contaminate the data folder and trip checksum guards.
     if any(part.startswith("CapsuleFolder-") for part in reference.parts):
         staged_ref = workdir / reference.name
         if not staged_ref.exists():
-            sys.stderr.write(f"[stage] copying capsule reference into workdir\n")
+            sys.stderr.write(f"[stage] copying reference from data folder into workdir\n")
             shutil.copy2(reference, staged_ref)
         reference = staged_ref
 
@@ -290,9 +290,9 @@ def main() -> int:
         # ensure bam index
         bai = bam_path.with_suffix(bam_path.suffix + ".bai")
         if not bai.exists():
-            # If BAM is in a read-only capsule we can't index in place; copy to workdir
+            # If the input BAM is in a read-only folder we can't index in place; copy to workdir
             if any(part.startswith("CapsuleFolder-") for part in bam_path.parts):
-                sys.stderr.write(f"[bam] copying capsule BAM into workdir to add index\n")
+                sys.stderr.write(f"[bam] copying BAM into workdir to add index\n")
                 staged = workdir / bam_path.name
                 shutil.copy2(bam_path, staged)
                 bam_path = staged

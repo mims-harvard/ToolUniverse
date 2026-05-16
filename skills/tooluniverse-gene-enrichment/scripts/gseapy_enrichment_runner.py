@@ -51,7 +51,7 @@ WORKSPACE ISOLATION
 -------------------
 This script writes only to --workdir (default $TMPDIR/gseapy_run_<pid>).
 It NEVER writes to the gene-list directory. Pass --workdir /tmp/... to
-keep canonical capsules read-only.
+keep canonical data folders read-only.
 """
 
 from __future__ import annotations
@@ -331,19 +331,18 @@ def main():
     args.workdir = str(workdir)
     print(f"# workdir: {workdir}", file=sys.stderr)
 
-    # Refuse to write inside a CapsuleFolder-* directory (canonical capsules
+    # Refuse to write inside a the input data folder directory (canonical data folders
     # are read-only). Allow tmp directories.
+    workdir_r = workdir.resolve()
     for src in (args.gene_list, args.ranked_list, args.background):
         if not src:
             continue
-        p = Path(src).resolve()
-        # Walk up p.parents looking for a CapsuleFolder-* directory
-        for ancestor in [p.parent, *p.parent.parents]:
-            if ancestor.name.startswith("CapsuleFolder-") and str(workdir).startswith(str(ancestor)):
-                sys.exit(
-                    f"ERROR: workdir {workdir} is inside canonical capsule "
-                    f"{ancestor}. Use --workdir /tmp/... to keep capsules read-only."
-                )
+        input_dir = Path(src).resolve().parent
+        if workdir_r == input_dir or input_dir in workdir_r.parents:
+            sys.exit(
+                f"ERROR: workdir {workdir} is inside the input data folder "
+                f"{input_dir}. Use --workdir /tmp/... to keep input data read-only."
+            )
 
     if args.mode == "enrichr":
         if not args.gene_list:

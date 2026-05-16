@@ -16,13 +16,13 @@ shot. Avoids the timeouts that come from re-running per-group batches.
 # parsimony_informative %, RCV, gap_percentage: ~2s for 500 alignments
 # (Biopython, no subprocess fork-per-file)
 python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
-    --capsule "$DATA_PATH" --metric parsimony_informative
+    --data-folder "$DATA_PATH" --metric parsimony_informative
 
 # Long branch score / patristic distances: choose per-tree summary
 python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
-    --capsule "$DATA_PATH" --metric long_branch_score --per-tree-stat mean
+    --data-folder "$DATA_PATH" --metric long_branch_score --per-tree-stat mean
 python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
-    --capsule "$DATA_PATH" --metric long_branch_score --per-tree-stat median
+    --data-folder "$DATA_PATH" --metric long_branch_score --per-tree-stat median
 ```
 
 The output emits both `MWU animals_vs_fungi` AND `MWU fungi_vs_animals`

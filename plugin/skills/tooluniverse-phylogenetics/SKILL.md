@@ -20,7 +20,7 @@ Only follow this skill's re-analysis recipe below if **none** of the above exist
 
 ## BUSCO scogs questions (multi-species phylogenomics)
 
-Capsules with `scogs_fungi.zip` and/or `scogs_animals.zip` ship
+data folders with `scogs_fungi.zip` and/or `scogs_animals.zip` ship
 pre-computed per-ortholog alignments (and sometimes trees). The
 question asks for a metric per group, or a Mann-Whitney U / median /
 ratio comparison between groups.
@@ -37,7 +37,7 @@ lowest-non-zero ratios — in one run, no aggregation step needed:
 
 ```bash
 python skills/tooluniverse-phylogenetics/scripts/scogs_paired_compare.py \
-    --capsule "$DATA_PATH" --metric parsimony_informative
+    --data-folder "$DATA_PATH" --metric parsimony_informative
 # Metrics: parsimony_informative, rcv, gap_percentage (alignment-only,
 # Biopython-fast: ~2s for 500 alignments);
 # treeness, dvmc, total_tree_length, evolutionary_rate, long_branch_score,
@@ -73,7 +73,7 @@ per-tree summary = mean. Run TWICE (once with each) if uncertain.
 
 ```bash
 python skills/tooluniverse-phylogenetics/scripts/scogs_phykit_pipeline.py \
-    --capsule "$DATA_PATH" --group fungi --metric treeness --out /tmp/f.tsv
+    --data-folder "$DATA_PATH" --group fungi --metric treeness --out /tmp/f.tsv
 # Auto-falls-back to .faa.mafft when .faa.mafft.clipkit is absent
 # (some scogs zips ship only mafft alignments, not clipkit trims).
 ```
@@ -304,11 +304,11 @@ Sanity targets for biological scogs trees: median saturation ~0.4–0.7, median 
 
 ### Bundled script: BUSCO target_orthologs intersection
 
-When the capsule has `*.busco.zip` files + `target_orthologs.txt`, use the bundled script — do NOT enumerate `single_copy_busco_sequences/*.faa` across all zips manually:
+When the data folder has `*.busco.zip` files + `target_orthologs.txt`, use the bundled script — do NOT enumerate `single_copy_busco_sequences/*.faa` across all zips manually:
 
 ```bash
 python skills/tooluniverse-phylogenetics/scripts/busco_target_orthologs.py \
-  --capsule /path/to/capsule
+  --data-folder /path/to/data
 ```
 
 The default run prints FIVE summary lines covering every common
@@ -327,11 +327,11 @@ Match the question phrasing to the summary line:
 
 | Question phrasing | Pick this line | Why |
 |---|---|---|
-| "total AA in all single-copy ortholog sequences" with **only animal species in capsule OR question mentions only one organism group** | `# SUMMARY group=animals: sum_all total_aa=...` (or `group=fungi`) | scogs phylogenomics analyses are run PER GROUP; "all" refers to all orthologs WITHIN that group, not the union across groups |
+| "total AA in all single-copy ortholog sequences" with **only animal species in the data folder OR question mentions only one organism group** | `# SUMMARY group=animals: sum_all total_aa=...` (or `group=fungi`) | scogs phylogenomics analyses are run PER GROUP; "all" refers to all orthologs WITHIN that group, not the union across groups |
 | "total AA across orthologs single-copy in **every** / **all** species" | `intersected_total_aa` | strict intersection rule |
-| "total AA across all per-species copies" | `sum_all_aa` (group=all) | only when the question says "all species" or the capsule has just one organism group |
+| "total AA across all per-species copies" | `sum_all_aa` (group=all) | only when the question says "all species" or the data folder has just one organism group |
 
-**Default rule when the capsule contains BOTH animal AND fungal busco
+**Default rule when the data folder contains BOTH animal AND fungal busco
 zips**: published "total amino acids" answers almost always refer to
 ONE group (the analysis group), NOT the cross-group union. Use
 `group=animals: sum_all` or `group=fungi: sum_all`. Do NOT pick the
@@ -353,7 +353,7 @@ Two-step rule when counting across BUSCO `single_copy_busco_sequences/` data:
 
 Sanity check: if any species shows a much smaller per-ortholog count than others (e.g., one species at ~600 aa while others are 4000+ aa for the same ortholog set), the missing-from-some orthologs are inflating the per-ortholog average — drop them first.
 
-**Worked example.** Capsule has 8 species (4 animal, 4 fungal) `*.busco.zip` + `target_orthologs.txt` listing 10 ortholog IDs:
+**Worked example.** data folder has 8 species (4 animal, 4 fungal) `*.busco.zip` + `target_orthologs.txt` listing 10 ortholog IDs:
 - Wrong: enumerate all `single_copy_busco_sequences/*.faa` across all 8 species → ≈80 files → sum AA → answer 32228 (treats every per-species copy independently).
 - Right: for each of the 10 target IDs, check it appears as `single_copy` in **all 8** species → keep only intersected IDs (often 5/10 — some target IDs are multi-copy/missing in one species) → for kept IDs, sum AA across the 8 species → 13809.
 - **"5 trees" semantics**: when a question says "5 trees" but you find 10 treefiles, the GT used the intersected subset (orthologs single-copy in all species) — not all 10. Re-derive the intersection before averaging.

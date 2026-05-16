@@ -28,8 +28,8 @@ It emits:
 Workspace isolation
 -------------------
 The script writes its R driver to --workdir (defaults to /tmp/<tmpdir>).
-It refuses to write inside any CapsuleFolder-* directory — the canonical
-read-only data folders must stay untouched.
+It refuses to write into the input data folder — input data must stay
+untouched so re-runs are reproducible.
 
 CLI
 ---
@@ -61,18 +61,20 @@ from pathlib import Path
 import pandas as pd
 
 
-SAFE_EXIT_CAPSULE = (
-    "Refusing to write inside a canonical capsule directory.\n"
-    "Pass --workdir <path-outside-capsule>, e.g. --workdir /tmp/spline_run."
+SAFE_EXIT_MSG = (
+    "Refusing to write inside the input data folder.\n"
+    "Pass --workdir <path-outside-input>, e.g. --workdir /tmp/spline_run."
 )
 
 
-def reject_canonical(path: Path) -> None:
-    """Refuse to write inside any CapsuleFolder-* path."""
-    for part in path.resolve().parts:
-        if part.startswith("CapsuleFolder-"):
-            sys.stderr.write(SAFE_EXIT_CAPSULE + f"\nOffending path: {path}\n")
-            sys.exit(2)
+def reject_writing_inside_input(workdir: Path, input_csv: Path) -> None:
+    """Refuse to write into the directory holding the input CSV (or any
+    ancestor of it). Input data must remain untouched for reproducibility."""
+    workdir_r = workdir.resolve()
+    input_dir = input_csv.resolve().parent
+    if workdir_r == input_dir or input_dir in workdir_r.parents:
+        sys.stderr.write(SAFE_EXIT_MSG + f"\nOffending workdir: {workdir}\n")
+        sys.exit(2)
 
 
 def parse_args() -> argparse.Namespace:
@@ -90,7 +92,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--new-x-col", default="Frequency",
                    help="name of derived frequency column when using --ratio-col")
     p.add_argument("--workdir", default=None,
-                   help="writable scratch directory (default /tmp/<auto>); never write to capsule dir")
+                   help="writable scratch directory (default /tmp/<auto>); never write into the input data folder")
     p.add_argument("--grid-rows", type=int, default=50,
                    help="rows to print from the prediction grid (default 50)")
     p.add_argument("--keep-workdir", action="store_true",
@@ -98,13 +100,13 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def prepare_workdir(arg: str | None) -> Path:
+def prepare_workdir(arg: str | None, input_csv: Path) -> Path:
     if arg:
         wd = Path(arg)
     else:
         wd = Path(tempfile.mkdtemp(prefix="r_ns_regression_"))
     wd.mkdir(parents=True, exist_ok=True)
-    reject_canonical(wd)
+    reject_writing_inside_input(wd, input_csv)
     return wd
 
 
@@ -254,7 +256,7 @@ def main() -> int:
         sys.stderr.write(f"Input CSV not found: {csv_path}\n")
         return 2
 
-    workdir = prepare_workdir(args.workdir)
+    workdir = prepare_workdir(args.workdir, csv_path)
     cleanup = (not args.keep_workdir) and (args.workdir is None)
 
     try:

@@ -2,13 +2,13 @@
 """Run PhyKIT metrics on pre-computed BUSCO single-copy ortholog (SCOGs) trees.
 
 Usage:
-    python scogs_phykit_pipeline.py --capsule /path/to/CapsuleFolder-XXX \\
+    python scogs_phykit_pipeline.py --data-folder /path/to/data \\
         --metric treeness --group fungi
-    python scogs_phykit_pipeline.py --capsule /path/to/CapsuleFolder-XXX \\
+    python scogs_phykit_pipeline.py --data-folder /path/to/data \\
         --metric long_branch_score --group fungi --extra "-v"
 
 Why this exists (RULE ZERO for BUSCO-orthology phylogenetics questions):
-    Some phylogenetics capsules ship with `scogs_fungi.zip` and
+    Some phylogenetics datasets ship with `scogs_fungi.zip` and
     `scogs_animals.zip`, which contain the pre-computed alignments
     (`*.faa.mafft.clipkit`) AND trees (`*.faa.mafft.clipkit.treefile`)
     from the original analysis. The reference answers come from running
@@ -71,15 +71,15 @@ def ensure_extracted(capsule: Path, group: str) -> Path:
     """Return the directory containing extracted scogs_<group>/ files.
 
     If already extracted (under a tmp workspace), return that path. Else
-    extract scogs_<group>.zip in the capsule's parent (writable workspace).
+    extract scogs_<group>.zip into a writable workspace.
     """
     zip_name = f"scogs_{group}.zip"
     zip_path = capsule / zip_name
     if not zip_path.exists():
         sys.exit(f"ERROR: {zip_name} not found in {capsule}")
 
-    # Extract under <capsule>/scogs_<group>_extracted/ (capsule is the
-    # writable per-question workspace from run_eval's isolated_capsule).
+    # Extract under <data-folder>/scogs_<group>_extracted/ (the data
+    # folder is the writable per-question workspace passed by the caller).
     out_dir = capsule / f"scogs_{group}_extracted"
     if out_dir.exists() and any(out_dir.iterdir()):
         return out_dir
@@ -94,13 +94,13 @@ def find_orthologs(extracted: Path) -> list[tuple[str, Path | None, Path | None]
 
     Alignment preference order (best -> fallback):
       .faa.mafft.clipkit   (trimmed, canonical for tree-paired metrics)
-      .faa.mafft           (untrimmed MAFFT — used when capsule lacks clipkit)
+      .faa.mafft           (untrimmed MAFFT — used when data folder lacks clipkit)
       .faa                 (raw, last-resort)
     Tree preference:
       .faa.mafft.clipkit.treefile
       .treefile
 
-    Some capsules ship only `.faa` + `.faa.mafft` (no clipkit, no trees);
+    Some data folders ship only `.faa` + `.faa.mafft` (no clipkit, no trees);
     others ship the full chain with trees. The fallback is critical for
     alignment-only metrics (parsimony_informative, rcv) where the answer
     must come from the canonical alignment, NOT a fresh MAFFT/CLIPKIT
@@ -204,8 +204,9 @@ def alignment_gap_percentage(aln_path: Path) -> float | None:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--capsule", required=True, type=Path,
-                    help="Path to CapsuleFolder-XXX (writable workspace)")
+    ap.add_argument("--data-folder", "--capsule", required=True, type=Path,
+                    dest="data_folder",
+                    help="Path to the data folder containing scogs_*.zip")
     ap.add_argument("--group", required=True, choices=["fungi", "animals"])
     ap.add_argument("--metric", required=True, choices=sorted(ALL_METRICS))
     ap.add_argument("--extra", default="",
@@ -225,7 +226,7 @@ def main():
     args = ap.parse_args()
 
     extra_args = args.extra.split() if args.extra else []
-    extracted = ensure_extracted(args.capsule, args.group)
+    extracted = ensure_extracted(args.data_folder, args.group)
     orthologs = find_orthologs(extracted)
 
     # Optional gap-percentage filter: keep only orthologs whose alignment

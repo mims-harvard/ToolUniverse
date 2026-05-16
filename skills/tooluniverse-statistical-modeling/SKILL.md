@@ -79,18 +79,19 @@ python skills/tooluniverse-statistical-modeling/scripts/power_analysis.py \
 
 ## Workspace isolation (CRITICAL)
 
-The data folder for any analysis is **read-only**. Scripts that write
-intermediate files (R drivers, prepared CSVs, comparison tables) must write
-to `/tmp/` or to a `--workdir` you pass in. NEVER write inside the data
-folder. Both R-based scripts in this skill refuse to run if `--workdir`
-points inside a directory whose name starts with `CapsuleFolder-`.
+The input data folder for any analysis must remain untouched so re-runs
+are reproducible. Scripts that write intermediate files (R drivers,
+prepared CSVs, comparison tables) must write to `/tmp/` or to a
+`--workdir` you pass in. Both R-based scripts in this skill refuse to
+run if `--workdir` resolves to the input CSV's parent directory (or any
+ancestor of it).
 
 ```bash
 # OK
 --workdir /tmp/spline_run
 
 # Refused:
---workdir <path-containing-CapsuleFolder->/...
+--workdir <path-equal-to-or-containing-the-input-csv>/...
 ```
 
 ---
@@ -391,7 +392,7 @@ Emits R², adj R², F-stat with df1/df2, overall F-test p-value, residual SE,
 coefficient table (estimate, SE, t, p), and the prediction-grid peak with
 95% CI from `predict.lm(..., interval='confidence')`. Supports a
 `--ratio-col` shortcut to convert "a:b" string ratios into a frequency
-fraction `a/(a+b)`. Refuses to write inside `CapsuleFolder-*`.
+fraction `a/(a+b)`. Refuses to write into the input CSV's parent directory.
 
 ### `spline_model_compare.py` — Quadratic vs cubic vs natural spline
 

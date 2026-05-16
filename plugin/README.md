@@ -27,14 +27,11 @@ claude plugin install tooluniverse@tooluniverse
 ## What's Included
 
 - **MCP Server**: Auto-configured via `.mcp.json`. Provides `find_tools`, `list_tools`, `get_tool_info`, `execute_tool` — accessing 1000+ scientific APIs.
-- **114 Research Skills**: Specialized workflows for genomics, drug discovery, clinical analysis, statistical modeling, data wrangling, and more.
-- **Slash Commands** (each encodes a workflow, not a wrapper):
-  - `/tooluniverse:tu-find-tools` — multi-hop tool discovery for a research goal
-  - `/tooluniverse:tu-run-tool` — tool execution with input validation + auto-correction + output parsing
+- **116 Research Skills**: Specialized workflows for genomics, drug discovery, clinical analysis, statistical modeling, data wrangling, and more.
+- **Slash Commands** (each enforces a discipline the agent won't apply on its own):
   - `/tooluniverse:tu-translate-id` — resolve an ID across all relevant namespaces
   - `/tooluniverse:tu-cross-validate` — verify a claim across 3+ independent databases
   - `/tooluniverse:tu-compare` — N-way side-by-side comparison with domain-appropriate columns
-  - `/tooluniverse:tu-audit-data` — pre-analysis sanity check on a local data file/folder
   - `/tooluniverse:tu-literature-sweep` — graded mini-review across PubMed + EuropePMC + Semantic Scholar
 - **Research Agent**: `/tooluniverse:researcher` — autonomous agent for complex multi-database research.
 
@@ -50,30 +47,22 @@ What's the prevalence of distal renal tubular acidosis?
 
 For specific surfaces, use the right interaction below.
 
-### Discover tools
+### Discover and run tools (no slash command needed)
 
 | Use this | When |
 |---|---|
+| Natural language ("what's the prevalence of X?") | Default. The router skill auto-dispatches; the agent finds and runs tools itself. |
 | `find_tools("topic")` (MCP, agent-side) | One-shot keyword search, you already know the topic |
 | `tu find "topic"` (CLI) | Same, from the shell |
-| `/tooluniverse:tu-find-tools <research goal>` | You want **multiple** tools for a goal — the command decomposes the goal into sub-questions, runs separate searches per sub-question, follows tool-to-tool links across descriptions, and returns a structured toolkit grouped by sub-question. Use when "what tools do I need to answer X" is itself the question. |
+| `tu run <name> '<json>'` (CLI) | You know the exact tool name and JSON args. Fastest. Good in scripts. |
 
-### Run a tool
-
-| Use this | When |
-|---|---|
-| `tu run <name> '<json>'` (Bash) | You know the exact tool name and JSON args. Fastest. Good in scripts and when piping output. |
-| `execute_tool` (MCP, agent-side) | Same as above, from the agent. Equivalent to `tu run` for the agent. |
-| `/tooluniverse:tu-run-tool <name> <json-or-natural-language>` | You're not sure of the exact name (fuzzy match works), or you want auto-correction of common alias/type mistakes (`gene` → `gene_symbol`, `"10"` → `10`), or you want the output parsed into a readable summary instead of raw JSON, or you want follow-up tool suggestions. Slower than `tu run` but more forgiving. |
-
-### Verify, compare, translate
+### Slash commands (when discipline matters)
 
 | Use this | When |
 |---|---|
 | `/tooluniverse:tu-translate-id <id>` | You have an ID in one namespace and need it in others (HGNC ↔ Ensembl ↔ UniProt ↔ NCBI ↔ OMIM ↔ ChEMBL ↔ PubChem). Detects the input namespace, picks the right resolver, returns a complete cross-reference table. |
 | `/tooluniverse:tu-cross-validate <claim>` | You have a specific testable claim and want to know how strongly it's supported. Forces 3+ independent databases, reports concordance per source. Use before publishing or acting on a fact. |
 | `/tooluniverse:tu-compare <items>` | You want a side-by-side comparison of N items (drugs, targets, diseases, variants). Detects the domain, picks domain-appropriate columns, produces a tabular report. |
-| `/tooluniverse:tu-audit-data <path>` | Before invoking an analysis skill, sanity-check the local data: file format, encoding, schema, ID hygiene, distribution sanity. Catches garbage-in problems that skills assume away. |
 | `/tooluniverse:tu-literature-sweep <topic>` | Graded mini-review across PubMed + EuropePMC + Semantic Scholar with dedup, relevance scoring, and a recommended reading order. |
 
 ### Launch the research agent
@@ -99,7 +88,7 @@ Use the SDK over `tu run` in a Bash loop — registry loads once, avoiding per-c
 
 - **The router skill is the front door.** Just ask scientific questions in natural language; the router auto-routes to the specialized skill. No slash command needed for normal research.
 - **`tu run` is the fastest tool surface** when you know what you want.
-- **The slash commands earn their weight** only when they add a process the bare tool call doesn't have: `/tu-find-tools` adds multi-hop discovery, `/tu-run-tool` adds input validation and output parsing.
+- **The slash commands earn their weight** only when they enforce a discipline the agent won't apply on its own — multi-source verification (`tu-cross-validate`), namespace-complete ID resolution (`tu-translate-id`), structured N-way comparison (`tu-compare`), graded literature triage (`tu-literature-sweep`). Wrappers around defaults don't earn a command.
 - **MCP** (`find_tools`, `get_tool_info`, `execute_tool`) is what the agent uses internally — exposed for direct use too, but `tu run` from Bash is usually simpler.
 
 ## API Keys (Optional)
@@ -135,7 +124,11 @@ Once enabled, Claude Code re-pulls this repo's `marketplace.json` on each startu
 
 **What updates together with the plugin** — skills, slash commands, the research agent, hooks, and the MCP server. There's no separate update mechanism for any of them; they share the plugin's version lineage.
 
-**The MCP server's Python package** (`tooluniverse` on PyPI) is configured with `uvx --refresh` in the bundled `.mcp.json`, so it auto-pulls the latest PyPI release on every server launch — independent of plugin updates. So even an outdated plugin install gets the freshest tool definitions at MCP startup.
+**The MCP server's Python package** (`tooluniverse` on PyPI) is invoked via `uvx tooluniverse` in the bundled `.mcp.json`. `uvx` caches the resolved package and refreshes it periodically per its own cache-eviction policy — you get new PyPI releases without paying a re-resolve cost on every session start, and offline sessions still work from the cache.
+
+**To force a refresh now**, run `uvx --refresh tooluniverse --version` from a shell once; the cache update then applies to future MCP launches.
+
+**To pin a specific version**, edit your `.mcp.json` to `"args": ["tooluniverse@1.2.0"]` (or any released version). Useful for reproducibility on long-running analyses.
 
 **To opt out of auto-updates**: leave the marketplace's auto-update toggle OFF, or set `DISABLE_AUTOUPDATER=1` + `FORCE_AUTOUPDATE_PLUGINS=1` env vars to disable Claude Code auto-update while keeping plugin auto-update enabled (or vice versa).
 

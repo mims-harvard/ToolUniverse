@@ -88,12 +88,12 @@ DEFAULT_EXCLUDE_SO = (
 
 
 def reject_canonical(path: Path) -> None:
-    """Refuse to write inside any CapsuleFolder-* path."""
+    """Refuse to write inside any the input data folder path."""
     for part in path.resolve().parts:
         if part.startswith("CapsuleFolder-"):
             sys.stderr.write(
-                f"Refusing to write inside a canonical capsule directory: {path}\n"
-                f"Pass --workdir <path-outside-capsule>, e.g. --workdir /tmp/chip_run.\n"
+                f"Refusing to write inside a input data folder directory: {path}\n"
+                f"Pass --workdir <path-outside-input>, e.g. --workdir /tmp/chip_run.\n"
             )
             sys.exit(2)
 
@@ -202,7 +202,7 @@ def parse_args() -> argparse.Namespace:
                    help="VCF INFO key holding SO annotation (default ANN; use CSQ for VEP)")
     p.add_argument("--no-pass-filter", action="store_true",
                    help="for --vcf: do NOT require FILTER == PASS")
-    p.add_argument("--workdir", help="scratch directory (refuses canonical capsule paths). "
+    p.add_argument("--workdir", help="scratch directory (refuses input data folder paths). "
                                      "Optional - script never needs to write large files.")
     return p.parse_args()
 

@@ -52,7 +52,7 @@ Output blocks (parseable):
     # VENN3 A,B,C: |A∩B|=.. |A∪B∪C|=.. |A∩B-C|=.. |unique-A|=.. ...
 
 The Rscript portion is small; this Python wrapper handles arg parsing,
-workspace isolation (NEVER writes to the canonical capsule), and result
+workspace isolation (NEVER writes to the input data folder), and result
 parsing.
 
 WORKSPACE ISOLATION
@@ -351,7 +351,7 @@ def main():
     if not meta_path.exists():
         sys.exit(f"ERROR: metadata file not found: {meta_path}")
 
-    # Set up isolated workdir (NEVER write into the canonical capsule directory)
+    # Set up isolated workdir (NEVER write into the input data folder directory)
     if args.workdir:
         workdir = Path(args.workdir).resolve()
     else:
@@ -359,11 +359,12 @@ def main():
     workdir.mkdir(parents=True, exist_ok=True)
     print(f"# workdir: {workdir}", file=sys.stderr)
 
-    # Refuse to write inside the capsule dir
-    capsule_dir = counts_path.parent
-    if str(workdir).startswith(str(capsule_dir)):
-        sys.exit(f"ERROR: workdir {workdir} is inside the capsule directory "
-                 f"{capsule_dir}. Use --workdir /tmp/... to keep capsules read-only.")
+    # Refuse to write inside the input data folder
+    input_dir = counts_path.resolve().parent
+    workdir_r = workdir.resolve()
+    if workdir_r == input_dir or input_dir in workdir_r.parents:
+        sys.exit(f"ERROR: workdir {workdir} is inside the input data folder "
+                 f"{input_dir}. Use --workdir /tmp/... to keep input data read-only.")
 
     # If the counts file is in samples_x_genes orientation, transpose it
     # to genes_x_samples and write the transposed version into workdir.

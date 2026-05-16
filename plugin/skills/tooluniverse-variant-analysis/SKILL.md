@@ -34,13 +34,13 @@ new code.
 ### Workspace isolation (CRITICAL)
 
 `gatk_haplotypecaller_pipeline.py` and `coding_variant_filter.py` REFUSE
-to write inside any `CapsuleFolder-*` directory — those are read-only by
+to write inside any `the input data folder` directory — those are read-only by
 convention. Always pass `--workdir /tmp/<run_dir>` (or any writable path
-outside the capsule) for HaplotypeCaller intermediate BAM/VCF and any
+outside the data folder) for HaplotypeCaller intermediate BAM/VCF and any
 script-internal scratch files.
 
 The reference FASTA, FASTQ, and pre-existing BAM/VCF files inside the
-capsule are read-only. The script will copy a capsule BAM into the
+input data folder is read-only. The script will copy a data-folder BAM into the
 workdir if it needs to add a `.bai` index.
 
 ### Concrete invocations
@@ -53,8 +53,8 @@ that does not match the question):
 
 ```bash
 python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
-  --reference <capsule>/REF.fna \
-  --bam <capsule>/SAMPLE_sorted.bam \
+  --reference <data-folder>/REF.fna \
+  --bam <data-folder>/SAMPLE_sorted.bam \
   --workdir /tmp/hc_run --sample-name SAMPLE
 ```
 
@@ -62,8 +62,8 @@ Full pipeline from FASTQ (BWA + sort + HaplotypeCaller; ~5-10 min):
 
 ```bash
 python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
-  --reference <capsule>/REF.fna \
-  --fastq-r1 <capsule>/SAMPLE_1.fastq.gz --fastq-r2 <capsule>/SAMPLE_2.fastq.gz \
+  --reference <data-folder>/REF.fna \
+  --fastq-r1 <data-folder>/SAMPLE_1.fastq.gz --fastq-r2 <data-folder>/SAMPLE_2.fastq.gz \
   --workdir /tmp/hc_run --sample-name SAMPLE
 ```
 
@@ -74,7 +74,7 @@ shipped file's ploidy / filtering may not match the question):
 
 ```bash
 python skills/tooluniverse-variant-analysis/scripts/gatk_haplotypecaller_pipeline.py \
-  --vcf <capsule>/SAMPLE_variants.vcf
+  --vcf <data-folder>/SAMPLE_variants.vcf
 ```
 
 Average CHIP variants per sample after intronic/intergenic/UTR filter
@@ -82,7 +82,7 @@ Average CHIP variants per sample after intronic/intergenic/UTR filter
 
 ```bash
 python skills/tooluniverse-variant-analysis/scripts/coding_variant_filter.py \
-  --dir <capsule>/CHIP_DP10_GQ20_PASS --pattern '*.xlsx' --header-rows 2
+  --dir <data-folder>/CHIP_DP10_GQ20_PASS --pattern '*.xlsx' --header-rows 2
 ```
 
 Same filter on a single combined CSV:
