@@ -180,6 +180,18 @@ DEVTU_*.md
 # already excludes it from `git archive` release tarballs.
 skills/evals/
 
+# Skill iteration / evaluation workspaces — `tooluniverse-*-workspace/`
+# directories hold with-skill-vs-without-skill comparison runs produced
+# by the skill evaluator. They have no SKILL.md (not real skills), match
+# the sync-skills.sh `tooluniverse-*` glob accidentally, and bloat plugin/
+# without ever shipping to users. Keep locally for dev, never track.
+**/tooluniverse-*-workspace/
+
+# One-off outputs from working-example scripts that write to cwd
+# (e.g. ddi_working_example.py). Outputs should go to /tmp or an explicit
+# --output-dir, never beside the example source.
+**/DDI_report_*.md
+
 # Per-user auto-memory / private session notes (never push)
 memory/
 MEMORY.md

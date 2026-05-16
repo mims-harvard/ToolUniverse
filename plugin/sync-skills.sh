@@ -25,6 +25,10 @@ mkdir skills
 count=0
 for dir in ../skills/tooluniverse ../skills/tooluniverse-* ../skills/setup-tooluniverse; do
   [ -d "$dir" ] || continue
+  # Skip directories that aren't real skills (no SKILL.md). Catches
+  # accidental matches like `tooluniverse-*-workspace/` which are skill-
+  # evaluator output directories, not skills.
+  [ -f "$dir/SKILL.md" ] || continue
   name=$(basename "$dir")
   rsync -a \
     --exclude='test_*.py' \
