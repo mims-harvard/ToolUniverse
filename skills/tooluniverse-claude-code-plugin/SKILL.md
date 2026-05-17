@@ -1,12 +1,12 @@
 ---
 name: tooluniverse-claude-code-plugin
-description: Install the ToolUniverse Claude Code plugin in one step — provides MCP server with 1000+ scientific tools, 114 research skills, slash commands, hooks, and the research agent. Use for first-time plugin install, troubleshooting plugin not loading, verifying MCP server connection, listing API key requirements, or configuring auto-update.
+description: Install the ToolUniverse Claude Code plugin in one step — provides MCP server with 1000+ scientific tools, 115 research skills, slash commands, hooks, and the research agent. Use for first-time plugin install, troubleshooting plugin not loading, verifying MCP server connection, listing API key requirements, or configuring auto-update.
 disable-model-invocation: true
 ---
 
 # Install the ToolUniverse Plugin for Claude Code
 
-One-step install of the ToolUniverse plugin: MCP server with 1000+ tools, 114 research skills, slash commands, and the research agent — all auto-configured.
+One-step install of the ToolUniverse plugin: MCP server with 1000+ tools, 115 research skills, slash commands, and the research agent — all auto-configured.
 
 ## Prerequisites (check once)
 
@@ -75,7 +75,7 @@ The router skill auto-dispatches to the right specialized skill — no command p
 | **`/tooluniverse:tu-compare`** | N-way side-by-side comparison with domain-appropriate columns | Slash command |
 | **`/tooluniverse:tu-literature-sweep`** | Graded mini-review across PubMed + EuropePMC + Semantic Scholar | Slash command |
 | **`/tooluniverse:researcher`** | Autonomous multi-database research agent | Slash command |
-| **116 skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
+| **115 skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
 
 ## API keys (optional, but recommended)
 

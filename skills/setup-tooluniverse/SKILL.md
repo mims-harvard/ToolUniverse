@@ -150,7 +150,7 @@ Make sure Step 2 is done (`uv --version` works).
 > claude plugin marketplace add mims-harvard/ToolUniverse
 > claude plugin install tooluniverse@tooluniverse
 > ```
-> This installs MCP server + 114 skills + slash commands in one step.
+> This installs MCP server + 115 skills + slash commands in one step.
 
 | Client | File | How to Access |
 |--------|------|---------------|
