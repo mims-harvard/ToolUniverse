@@ -48,7 +48,7 @@ claude plugin marketplace add mims-harvard/ToolUniverse#v1.2.0
 claude plugin install tooluniverse@tooluniverse
 ```
 
-Replace `v1.1.11` with any released tag from https://github.com/mims-harvard/ToolUniverse/releases.
+Replace `v1.2.0` with any released tag from https://github.com/mims-harvard/ToolUniverse/releases.
 
 ## Verify it worked
 
