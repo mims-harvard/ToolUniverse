@@ -44,7 +44,7 @@ rm -rf ~/.claude/skills/setup-tooluniverse
 ### Pin to a version (optional)
 
 ```bash
-claude plugin marketplace add mims-harvard/ToolUniverse#v1.1.11
+claude plugin marketplace add mims-harvard/ToolUniverse#v1.2.0
 claude plugin install tooluniverse@tooluniverse
 ```
 
