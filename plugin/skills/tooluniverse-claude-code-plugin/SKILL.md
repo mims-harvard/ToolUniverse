@@ -80,10 +80,17 @@ The router skill auto-dispatches to the right specialized skill — no command p
 
 ## API keys (optional, but recommended)
 
-Most tools work without keys. For enhanced access, add the keys you care about to the MCP server's `env` block. Edit the plugin's `.mcp.json`:
+Most tools work without keys. For enhanced access, add the keys you care about to the MCP server's `env` block. Locate the installed plugin's `.mcp.json`:
 
 ```bash
-$(claude plugin path tooluniverse)/.mcp.json
+# Show component inventory + on-disk location:
+claude plugin details tooluniverse
+
+# Or find the file directly:
+find ~/.claude/plugins -name '.mcp.json' -path '*tooluniverse*'
+
+# Typical install location after marketplace install:
+# ~/.claude/plugins/cache/tooluniverse/tooluniverse/<version>/.mcp.json
 ```
 
 ```json
