@@ -29,11 +29,12 @@ claude plugin install tooluniverse@tooluniverse
 - **MCP Server**: Auto-configured via `.mcp.json`. Provides `find_tools`, `list_tools`, `get_tool_info`, `execute_tool` — accessing 1000+ scientific APIs.
 - **115 Research Skills**: Specialized workflows for genomics, drug discovery, clinical analysis, statistical modeling, data wrangling, and more.
 - **Slash Commands** (each enforces a discipline the agent won't apply on its own):
+  - `/tooluniverse:tu-research` — drive a multi-database investigation inline in this chat (you see every step)
   - `/tooluniverse:tu-translate-id` — resolve an ID across all relevant namespaces
   - `/tooluniverse:tu-cross-validate` — verify a claim across 3+ independent databases
   - `/tooluniverse:tu-compare` — N-way side-by-side comparison with domain-appropriate columns
   - `/tooluniverse:tu-literature-sweep` — graded mini-review across PubMed + EuropePMC + Semantic Scholar
-- **Research Agent**: `/tooluniverse:researcher` — autonomous agent for complex multi-database research.
+- **Research Agent**: `/tooluniverse:researcher` — same investigation, delegated to a forked-context subagent that returns one summary (use when you don't want intermediate tool-call output in your main thread).
 
 ## Usage
 
@@ -60,6 +61,7 @@ For specific surfaces, use the right interaction below.
 
 | Use this | When |
 |---|---|
+| `/tooluniverse:tu-research <question>` | You want to drive a multi-database investigation inline in this conversation, watching each step. Enforces the same look-up-don't-guess + cross-validate + honest-INDETERMINATE discipline as the `researcher` agent, but stays in-thread so you can interrupt and refine. |
 | `/tooluniverse:tu-translate-id <id>` | You have an ID in one namespace and need it in others (HGNC ↔ Ensembl ↔ UniProt ↔ NCBI ↔ OMIM ↔ ChEMBL ↔ PubChem). Detects the input namespace, picks the right resolver, returns a complete cross-reference table. |
 | `/tooluniverse:tu-cross-validate <claim>` | You have a specific testable claim and want to know how strongly it's supported. Forces 3+ independent databases, reports concordance per source. Use before publishing or acting on a fact. |
 | `/tooluniverse:tu-compare <items>` | You want a side-by-side comparison of N items (drugs, targets, diseases, variants). Detects the domain, picks domain-appropriate columns, produces a tabular report. |
@@ -69,7 +71,7 @@ For specific surfaces, use the right interaction below.
 
 | Use this | When |
 |---|---|
-| `/tooluniverse:researcher <question>` | Complex multi-database research where you want a forked autonomous agent — useful when the question would otherwise pollute your main conversation context with many tool calls and intermediate data. |
+| `/tooluniverse:researcher <question>` | Same investigation as `tu-research`, but **delegated to a forked-context subagent** that runs in isolation and returns one summary. Use when the research will otherwise pollute your main conversation with many intermediate tool calls, or when you want a clean self-contained answer (e.g., to paste elsewhere). For in-thread step-by-step research with follow-ups, use `tu-research` instead. |
 
 ### Bulk tool calls (5+ in a loop)
 

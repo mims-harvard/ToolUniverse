@@ -70,11 +70,12 @@ The router skill auto-dispatches to the right specialized skill — no command p
 | Component | What it does | How to invoke |
 |---|---|---|
 | **MCP server** | 1000+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
+| **`/tooluniverse:tu-research`** | Multi-database investigation inline in this chat (you see each step) | Slash command |
 | **`/tooluniverse:tu-translate-id`** | Resolve an ID across all relevant namespaces | Slash command |
 | **`/tooluniverse:tu-cross-validate`** | Verify a claim across 3+ independent databases | Slash command |
 | **`/tooluniverse:tu-compare`** | N-way side-by-side comparison with domain-appropriate columns | Slash command |
 | **`/tooluniverse:tu-literature-sweep`** | Graded mini-review across PubMed + EuropePMC + Semantic Scholar | Slash command |
-| **`/tooluniverse:researcher`** | Autonomous multi-database research agent | Slash command |
+| **`/tooluniverse:researcher`** | Same investigation as `tu-research`, delegated to a forked subagent | Slash command |
 | **115 skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
 
 ## API keys (optional, but recommended)

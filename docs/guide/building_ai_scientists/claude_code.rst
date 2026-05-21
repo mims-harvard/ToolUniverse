@@ -83,6 +83,9 @@ What you get
    * - **Slash commands**
      - Discipline-enforcing prompts for common research tasks
      - Type ``/tooluniverse:<command>``
+   * - ``/tooluniverse:tu-research``
+     - Drive a multi-database investigation inline in this chat — same rigor as the ``researcher`` agent, but stays in your conversation so you see each step and can refine
+     - Slash command
    * - ``/tooluniverse:tu-translate-id``
      - Resolve an ID across all relevant namespaces (HGNC ↔ Ensembl ↔ UniProt ↔ NCBI ↔ ChEMBL ↔ PubChem)
      - Slash command
@@ -96,7 +99,7 @@ What you get
      - Graded mini-review across PubMed + EuropePMC + Semantic Scholar
      - Slash command
    * - ``/tooluniverse:researcher``
-     - Autonomous forked-context research agent for complex multi-database questions
+     - Same investigation as ``tu-research``, delegated to a forked-context subagent that returns one summary (use when you don't want intermediate tool-call output in your main thread)
      - Slash command
    * - **~115 research skills**
      - Structured workflows for genomics, drug discovery, clinical analysis, statistical modeling, phylogenetics, CRISPR screens, variant interpretation, etc.
