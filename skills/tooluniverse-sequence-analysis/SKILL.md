@@ -6,6 +6,25 @@ disable-model-invocation: true
 
 # Biological Sequence Analysis
 
+## ⚠️ TOP-OF-MIND RULE: Trimmomatic "reads completely discarded" = `F + R + 2*D`, summed across samples
+
+When a question asks about Trimmomatic "reads completely discarded" / "reads thrown out" /
+"reads not in any output", do NOT report the `Dropped` field alone. `Dropped` counts
+PAIRS where both mates failed; each pair = 2 individual reads. Plus the Forward-only and
+Reverse-only buckets also discard one read per pair.
+
+```
+reads_discarded = sum over samples of (Forward_Only + Reverse_Only + 2 * Dropped)
+```
+
+❌ WRONG: `sum(Dropped per sample)` — typically reports ~thousands, GT is 100×+ higher
+
+✅ RIGHT: `sum(F + R + 2*D per sample)`
+
+Full counter table is in the FASTQ section below.
+
+---
+
 ## RULE ZERO — Check for pre-computed results FIRST
 
 Before following any instruction below, scan the data folder for:

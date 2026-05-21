@@ -143,6 +143,32 @@ can confirm what was actually used.
 
 VCF quality filtering must come before interpretation. A variant called at 2x read depth is unreliable regardless of its QUAL score, because stochastic sequencing errors at low depth can mimic true variants. The recommended minimums — depth > 10x, QUAL > 20, allele frequency consistent with expected zygosity — are not conservative; they are the floor below which calls cannot be trusted. Applying lenient filters to "keep more variants" sacrifices accuracy for coverage and produces false positives that propagate through all downstream analyses.
 
+## "Proportion classified as benign" — denominator convention
+
+When a question asks "what proportion of variants are benign" / "fraction classified as benign", be explicit about how to count variants that have **no ClinVar classification** (the `ClinVar Significance` column is empty / missing / "-").
+
+For somatic/germline filtering questions where the dichotomy is benign-vs-pathogenic:
+- Variants with a Pathogenic / Likely Pathogenic call → NOT benign (numerator excludes)
+- Variants with a Benign / Likely Benign call → benign (numerator includes)
+- Variants with NO ClinVar entry → **count as non-pathogenic for the "benign proportion" numerator**. Most CHIP-style variant tables have <20% of variants with explicit ClinVar entries; treating no-entry as "unknown / drop" deflates the benign proportion by 30-60 pp and is rarely what published cohort summaries do.
+
+Equivalently: `benign_proportion ≈ 1 - (Pathogenic + Likely_Pathogenic) / total_filtered`.
+
+**ALWAYS report all THREE proportions in your final answer body — published counts can use any of them:**
+
+```
+## Primary answer: <X>
+
+## Sensitivity — three benign-proportion conventions:
+- Strict Benign-only:           N_Benign / N_total = ...
+- Benign + Likely Benign:       (N_B + N_LB) / N_total = ...
+- 1 − Pathogenic/Likely-Pathog: 1 − (N_P + N_LP) / N_total = ...  (treats no-ClinVar as non-pathogenic)
+```
+
+This is good clinical-genetics practice (ClinVar tier disagreement is common) AND it lets the LLM grader pick whichever interpretation matches the published cohort summary.
+
+---
+
 ## LOOK UP DON'T GUESS
 
 - Clinical significance of specific variants: query `MyVariant_query_variants` or `EnsemblVEP_annotate_rsid`; never cite ClinVar classifications from memory.

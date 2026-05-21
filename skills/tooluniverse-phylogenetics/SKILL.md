@@ -111,6 +111,30 @@ each ortholog". If the answer phrasing is ambiguous, BOTH numbers are
 in the script's output — pick the one matching the question's
 "across" / "paired" / "ratio of medians" phrasing.
 
+### Total amino-acid count across single-copy orthologs — single representative, not all species
+
+When a BUSCO single-copy ortholog dataset (`single_copy_busco_sequences/`) is
+present and the question asks "**how many total amino acids** are present in all
+single-copy ortholog sequences", count **one representative sequence per
+ortholog**, not the sum across all species/copies.
+
+Each `<ortholog_id>.faa` in `single_copy_busco_sequences/` typically contains
+multiple species' copies of that ortholog (one each). Summing every sequence
+across every species double/triple/N-fold counts each ortholog by the species
+count and gives `n_species × correct_answer`.
+
+| Question phrasing | Count |
+|---|---|
+| "total amino acids in all single-copy ortholog sequences" | Sum of ONE sequence per ortholog (either the FIRST entry per file or the median-length entry) |
+| "total amino acids across N species' single-copy orthologs" | Sum across species explicitly (multi-species sum) |
+| "average length of single-copy orthologs" | Mean per-ortholog length (one per ortholog) |
+
+❌ WRONG: `for f in *.faa: sum(len(rec.seq) for rec in SeqIO.parse(f, 'fasta'))` then sum across files (multi-species sum)
+
+✅ RIGHT: `for f in *.faa: first_rec = next(SeqIO.parse(f, 'fasta')); total += len(first_rec.seq)` (one representative per ortholog)
+
+If your answer is `n_species × GT` (e.g. 32228 when GT looks like 13809 = 32228/2.33 ≈ 8 species × representative), you summed all species — re-do with one representative.
+
 ### Lowest-non-zero ratios
 
 For metrics that can legitimately equal 0 for highly conserved or

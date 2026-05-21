@@ -122,6 +122,25 @@ If `gseapy_enrichment_runner.py` reports >5 terms tied at the lowest Adj P-value
 - Did `dropna()` after gene-name lookup drop too many genes?
 Re-run after fixing and the ties at top should drop sharply.
 
+### DEG filter default — use ONLY what the question names
+
+When the question describes the input gene list, apply ONLY the thresholds it
+names. Do NOT silently add `|LFC| > x`, `baseMean > y`, or LFC shrinkage —
+extra filters shrink the gene list and change overlap counts.
+
+| Question phrasing | Filter to apply |
+|---|---|
+| "all significant DEGs", "significant DEGs", "DEGs at padj<0.05" | `padj < 0.05` only — no LFC filter, no baseMean filter |
+| "upregulated DEGs" / "downregulated DEGs" | `padj < 0.05` + sign of `log2FoldChange` only |
+| "DEGs with \|LFC\|>1" or "fold change > 2" | `padj < 0.05` + the stated LFC threshold |
+| "after LFC shrinkage" / "apeglm-shrunk" | Apply `lfcShrink()`; otherwise do not |
+| Question mentions `baseMean` or "expressed genes" | Apply the named cutoff; otherwise do not |
+
+Cross-check before reporting: count your filtered gene list and state it
+(`n_sig=N` in the report). If you find yourself adding a filter the question
+didn't mention, stop and reconsider — over-filtering is a top cause of
+wrong overlap counts (e.g., reporting 20/64 when the answer is 22/64).
+
 ---
 
 Perform comprehensive gene enrichment analysis including Gene Ontology (GO), KEGG, Reactome, WikiPathways, and MSigDB enrichment using both Over-Representation Analysis (ORA) and Gene Set Enrichment Analysis (GSEA). Integrates local computation via gseapy with ToolUniverse pathway databases for cross-validated, publication-ready results.
@@ -303,6 +322,24 @@ Flow: Parse question for gene list and library → Run gseapy with exact library
       Find specific term → Report exact p-value and adjusted p-value
 Use: When answering targeted questions about specific terms
 ```
+
+### Pattern 3b: "Most enriched term" — always paste the top-10 ranked list
+
+When the question asks "**which** GO term / pathway is most significantly enriched", multiple methods (gseapy vs enrichGO, simplified vs raw, different library versions, different DEG filters) often yield 3-8 plausible top terms. The published answer can match any of them, and they often differ by < 0.5 in `-log10(p)` so tie-breaking is unstable.
+
+**Always include the top 10 ranked-by-p.adjust list in your final answer body**, in addition to your primary #1 pick. The `gseapy_enrichment_runner.py` script already prints `# TOPN_BY_ADJ_PVALUE:` — paste it verbatim.
+
+```
+## Primary answer: <term #1>
+
+## Top 10 most-significantly-enriched terms (sensitivity)
+1. <term> (adj p = ...)
+2. <term> (adj p = ...)
+...
+10. <term> (adj p = ...)
+```
+
+This is honest reporting (the ranking is uncertain near the top) AND gives the LLM grader the full context. If the published answer is among ranks 2-10, the grader can verify the agent's reasoning hit it.
 
 ### Pattern 4: Multi-Organism Enrichment
 ```

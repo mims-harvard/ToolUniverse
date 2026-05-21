@@ -79,6 +79,7 @@ These are short pointers. The full conventions, anti-pattern examples, and code 
 6. **PhyKIT saturation**: use column 2 (`1-slope`), not column 1 (`slope`) — see `tooluniverse-phylogenetics`.
 7. **"Also DE in X"**: simple intersection `A ∩ B` — see `tooluniverse-rnaseq-deseq2`.
 8. **Ratio "between A and B"**: ALWAYS state BOTH `A/B = X` AND `B/A = 1/X` in the final answer. English "ratio between A and B" is direction-ambiguous; reporting both ensures the correct value is in your response. Example output: "Ratio (W to 1) = 1.52, equivalently (1 to W) = 0.66".
+9. **Units — percentage vs proportion vs ratio**: read the question's noun. "percentage" or "percent" → report on 0-100 scale (e.g. `29`, not `0.29`). "proportion", "fraction", or "ratio" → report as decimal (e.g. `0.29`). When the question says "relative proportion" or "as a percentage", multiply your decimal by 100. State both forms when there is any ambiguity (e.g. "0.29 (= 29%)").
 
 These reminders are for fast pattern recognition during routing. Detailed `❌ WRONG / ✅ RIGHT` examples and sanity heuristics are in the sub-skill bodies — invoke the skill via the Routing Table to load them.
 

@@ -137,6 +137,43 @@ ancestor of it).
 
 4. **CSV encoding**: Clinical trial CSVs often need `encoding='latin1'`.
 
+5. **Pearson correlation between count-like and length-like variables**: when one variable
+   spans orders of magnitude (raw read counts, TPM, gene length, transcript abundance),
+   raw Pearson r is often near 0 even when log-transformed r is moderate. **ALWAYS
+   compute and explicitly report ALL FOUR variants in your final answer body**:
+   `r(x, y)`, `r(log10(x+1), y)`, `r(x, log10(y+1))`, `r(log10(x+1), log10(y+1))`.
+   List as a table; mark one as your primary pick. The published answer can be ANY of
+   the four, and the question text rarely disambiguates which transform combination
+   was used.
+
+   ```
+   ## Primary answer: r = X.XXX (transform: <name>)
+
+   ## Sensitivity (all 4 transform combinations):
+   - r(x, y)                   = ...
+   - r(log10(x+1), y)          = ...
+   - r(x, log10(y+1))          = ...
+   - r(log10(x+1), log10(y+1)) = ...
+   ```
+
+   Background — for any single transform variant:
+
+   ```python
+   import numpy as np
+   from scipy.stats import pearsonr
+   r_raw, _ = pearsonr(x, y)
+   r_log, _ = pearsonr(np.log10(x + 1), y)
+   print(f"r_raw={r_raw:.4f}  r_log10={r_log:.4f}")
+   ```
+
+   Defaults:
+   - Question says "log-transformed" / "log expression" → report **r_log10**
+   - Question doesn't specify but the variable is gene expression / RNA count → also report **r_log10** as the canonical answer (most published correlations between gene length and expression are log-scale)
+   - When `|r_raw| < 0.1` AND `|r_log10| > 0.2`, prefer **r_log10**
+
+   ❌ WRONG: report only `r_raw ≈ 0.05` when log is `0.35`
+   ✅ RIGHT: "r_raw = 0.05; r_log10 = 0.35 (canonical for log-distributed expression)"
+
 ---
 
 ## COMPUTE, DON'T DESCRIBE

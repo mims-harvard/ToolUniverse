@@ -6,6 +6,27 @@ disable-model-invocation: true
 
 # Genomics and Epigenomics Data Processing
 
+## ⚠️ TOP-OF-MIND RULE: long-format methylation CSV — count ROWS, not unique positions
+
+When the input is a long-format methylation CSV (one row per `(sample, CpG_position)`
+e.g. columns `Pos, Chromosome, MethylationPercentage`), "how many sites are
+removed when filtering" almost always means **rows removed**, NOT unique-position
+removals. The two answers differ by a factor of ≈ `n_samples`.
+
+| Question phrasing | What it means |
+|---|---|
+| "how many sites are removed when filtering …" | **rows removed** (= samples × positions failing the filter) |
+| "how many unique CpG sites pass filter" | **unique positions** (dedupe by `Pos` then filter) |
+
+❌ WRONG: `df.drop_duplicates(["Pos"]).query("MethylationPercentage<10 or >90")` then `len(filtered)` → counts unique positions (typically 100–1500)
+
+✅ RIGHT: `df.query("MethylationPercentage<10 or MethylationPercentage>90")` then `len(df) - len(filtered)` → counts rows (typically 10k–30k)
+
+If your answer is < 2000 when the data has 1000+ positions × 20+ samples, you
+deduplicated too early. Re-read the question's noun before reporting.
+
+---
+
 ## RULE ZERO — Check for pre-computed results FIRST
 
 Before following any instruction below, scan the data folder for:
