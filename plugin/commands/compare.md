@@ -1,5 +1,5 @@
 ---
-name: tu-compare
+name: compare
 description: Side-by-side comparison of N items (drugs, targets, diseases, variants, trials, etc.) with a domain-appropriate column set, structured tabular output, and per-cell source citation. Use when the user wants to evaluate alternatives, not when they want a profile of a single item. Enforces the comparison structure that ad-hoc research doesn't.
 argument-hint: "[items separated by commas, e.g. 'alpelisib, ipatasertib, capivasertib' or 'BRCA1, BRCA2, PALB2 in ovarian cancer']"
 ---

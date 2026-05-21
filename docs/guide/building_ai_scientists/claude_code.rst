@@ -83,23 +83,23 @@ What you get
    * - **Slash commands**
      - Discipline-enforcing prompts for common research tasks
      - Type ``/tooluniverse:<command>``
-   * - ``/tooluniverse:tu-research``
+   * - ``/tooluniverse:research``
      - Drive a multi-database investigation inline in this chat — same rigor as the ``researcher`` agent, but stays in your conversation so you see each step and can refine
      - Slash command
-   * - ``/tooluniverse:tu-translate-id``
+   * - ``/tooluniverse:translate-id``
      - Resolve an ID across all relevant namespaces (HGNC ↔ Ensembl ↔ UniProt ↔ NCBI ↔ ChEMBL ↔ PubChem)
      - Slash command
-   * - ``/tooluniverse:tu-cross-validate``
+   * - ``/tooluniverse:cross-validate``
      - Verify a claim across 3+ independent databases
      - Slash command
-   * - ``/tooluniverse:tu-compare``
+   * - ``/tooluniverse:compare``
      - N-way side-by-side comparison with domain-appropriate columns
      - Slash command
-   * - ``/tooluniverse:tu-literature-sweep``
+   * - ``/tooluniverse:literature-sweep``
      - Graded mini-review across PubMed + EuropePMC + Semantic Scholar
      - Slash command
    * - ``/tooluniverse:researcher``
-     - Same investigation as ``tu-research``, delegated to a forked-context subagent that returns one summary (use when you don't want intermediate tool-call output in your main thread)
+     - Same investigation as ``research``, delegated to a forked-context subagent that returns one summary (use when you don't want intermediate tool-call output in your main thread)
      - Slash command
    * - **~115 research skills**
      - Structured workflows for genomics, drug discovery, clinical analysis, statistical modeling, phylogenetics, CRISPR screens, variant interpretation, etc.

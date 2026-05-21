@@ -1,5 +1,5 @@
 ---
-name: tu-research
+name: research
 description: Conduct a multi-database scientific research investigation inline in the current chat. Same operating discipline as the /tooluniverse:researcher agent (look up specific claims, cross-validate, honest INDETERMINATE) — but runs in this conversation so you can watch each step, follow up, and refine, instead of receiving a single summary from a forked subagent. Use when you want to drive the research yourself with ToolUniverse rather than delegating to a subagent.
 argument-hint: "[research question, e.g. 'FDA-approved indications of metformin' or 'KRAS G12C resistance mechanisms']"
 ---
