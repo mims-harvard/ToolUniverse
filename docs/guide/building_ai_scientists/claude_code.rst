@@ -103,6 +103,72 @@ What you get
      - Auto-activate when the question matches
 
 
+Run a data-analysis question (BixBench-style)
+---------------------------------------------
+
+The plugin is built for exactly this pattern: you have a data folder
+(RNA-seq counts + metadata, a VCF, a methylation table, a BUSCO ortholog
+zip, etc.) and a specific scientific question. The plugin's router auto-loads
+the matching skill, which already encodes the right pipeline.
+
+Step-by-step:
+
+1. ``cd`` into your data directory:
+
+   .. code-block:: bash
+
+      cd ~/my_research_project/
+
+   The folder can contain anything: ``counts.csv``, ``coldata.csv``,
+   ``CapsuleData-XXX/*.csv``, ``Swarm_2.csv``, ``ZF_AgeRelated_CpG_noMT_Final.csv``,
+   ``scogs_animals.zip``, etc.
+
+2. Start Claude Code: ``claude``
+
+3. Ask in plain language. The router skill detects the topic from the wording
+   and the file extensions in the folder, then dispatches to the right
+   sub-skill (115 cover RNA-seq DE, gene enrichment, phylogenetics, methylation,
+   variant interpretation, clinical-trial AE analysis, CRISPR screens,
+   single-cell, statistical modeling, image analysis, etc.):
+
+   .. code-block:: text
+
+      Run DESeq2 differential expression on this RNA-seq data
+      (CD4 vs CD14 immune cells). Apply padj<0.05, |LFC|>0.5, baseMean>10
+      with apeglm shrinkage. How many DEGs are upregulated?
+
+4. The agent computes the analysis with the plugin's deterministic helper
+   scripts (so results are reproducible), and reports the answer with a
+   sensitivity table showing alternative method choices (e.g., shrunk vs
+   unshrunk, padj-only vs padj+LFC) when the result depends on them.
+
+**Reproducibility.** The plugin's analysis skills include "RULE ZERO": if a
+canonical executed Jupyter notebook (``*_executed.ipynb``) ships with the
+data folder, the agent reads its outputs and cites them — preserving the
+exact published values rather than risking floating-point drift from library
+version changes. This is the recommended mode when you have access to the
+authors' analysis bundle.
+
+**Closed-book mode (no notebook).** When only raw data is present, the
+agent runs the full pipeline from scratch using bundled scripts:
+``r_deseq2_wrapper.py``, ``gseapy_enrichment_runner.py``, ``enrichgo_runner.py``,
+``methylation_density.py``, ``logistic_regression_or.py``,
+``r_natural_spline_regression.py``, ``phykit_dvmc_runner.py``, etc. Each
+emits multiple parameter variants so the agent (and you) can see how
+sensitive the answer is to method choices.
+
+**Iterating with the agent.** Unlike single-shot benchmark mode, Claude
+Code is conversational — you can refine after seeing the first answer:
+
+   .. code-block:: text
+
+      You: How many DEGs at padj<0.05?
+      Agent: 1,131 (with apeglm shrinkage; 1,615 without)
+      You: Use the unshrunken count, and now also intersect with the
+           genes that are DE in the cisplatin treatment.
+      Agent: 525 genes are DE in both contrasts (padj<0.05, unshrunken).
+
+
 Update / uninstall
 ------------------
 
@@ -125,11 +191,18 @@ Optional — add API keys
 -----------------------
 
 Most tools work without keys. For enhanced access (NCBI, OncoKB, NVIDIA, etc.),
-edit the plugin's ``.mcp.json``:
+edit the plugin's ``.mcp.json``. Locate the installed plugin directory with:
 
 .. code-block:: bash
 
-   $(claude plugin path tooluniverse)/.mcp.json
+   # See plugin component inventory + on-disk location:
+   claude plugin details tooluniverse
+
+   # Or find the .mcp.json directly:
+   find ~/.claude/plugins -name '.mcp.json' -path '*tooluniverse*'
+
+After install via the GitHub marketplace, the file is typically at:
+``~/.claude/plugins/cache/tooluniverse/tooluniverse/<version>/.mcp.json``.
 
 Add keys under the ``env`` block:
 
