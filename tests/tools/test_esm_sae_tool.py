@@ -296,3 +296,157 @@ def test_score_variant_disruption_metadata_reports_call_count(mock_forge):
     assert "non-commercial" in result["metadata"]["license"].lower()
     # client_cls should have been instantiated (at least once)
     assert mock_forge["client_cls"].call_count >= 1
+
+
+# ---------- describe_sae_feature ----------
+
+
+def test_describe_sae_feature_rejects_bad_feature_id():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    # Out-of-range
+    r = tool.run({"operation": "describe_sae_feature", "feature_id": -1})
+    assert r["status"] == "error" and "out of range" in r["error"]
+    r = tool.run({"operation": "describe_sae_feature", "feature_id": 16384})
+    assert r["status"] == "error" and "out of range" in r["error"]
+    # Wrong type
+    r = tool.run({"operation": "describe_sae_feature", "feature_id": "abc"})
+    assert r["status"] == "error" and "feature_id" in r["error"]
+    # Missing
+    r = tool.run({"operation": "describe_sae_feature"})
+    assert r["status"] == "error" and "feature_id" in r["error"]
+
+
+def test_describe_sae_feature_rejects_bad_n_proteins():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    r = tool.run(
+        {"operation": "describe_sae_feature", "feature_id": 100, "n_proteins": 0}
+    )
+    assert r["status"] == "error" and "n_proteins" in r["error"]
+    r = tool.run(
+        {"operation": "describe_sae_feature", "feature_id": 100, "n_proteins": 50}
+    )
+    assert r["status"] == "error" and "n_proteins" in r["error"]
+
+
+def test_describe_sae_feature_returns_uncategorized_when_no_overlap(
+    mock_forge, tmp_path, monkeypatch
+):
+    """If SAE never activates on UniProt-annotated positions, label is
+    'uncategorized'. Tests the no-evidence path."""
+    # Point cache at tmp_path so we don't pollute the user's real cache
+    monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)
+
+    # Mock the UniProt fetch to return a protein with NO informative features
+    bare_entry = {
+        "sequence": {"value": "M" * mock_forge["seq_len"]},
+        "features": [],  # no annotations
+    }
+    with mock.patch.object(
+        ESMTool, "_fetch_uniprot_entry", return_value=bare_entry
+    ):
+        tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+        # Pick a feature_id we know our mock_forge tensor doesn't activate on
+        # (fake tensor uses (r*7 + j*257) % 16384, so feature 0 is rarely hit)
+        result = tool.run(
+            {
+                "operation": "describe_sae_feature",
+                "feature_id": 12345,  # unlikely to be in our fake activations
+                "n_proteins": 2,
+                "use_cache": False,
+            }
+        )
+    assert result["status"] == "success"
+    data = result["data"]
+    # No informative features → uncategorized
+    assert data["category"] in ("uncategorized",)
+    assert data["confidence"] == 0.0
+
+
+def test_describe_sae_feature_caches_result(mock_forge, tmp_path, monkeypatch):
+    """Second call with same feature_id reads from cache (no Forge call)."""
+    monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)
+
+    bare_entry = {
+        "sequence": {"value": "M" * mock_forge["seq_len"]},
+        "features": [],
+    }
+
+    fetch_counter = {"count": 0}
+
+    def counting_fetch(self, accession):
+        fetch_counter["count"] += 1
+        return bare_entry
+
+    with mock.patch.object(ESMTool, "_fetch_uniprot_entry", counting_fetch):
+        tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+        # First call — should fetch UniProt for each panel protein
+        r1 = tool.run(
+            {
+                "operation": "describe_sae_feature",
+                "feature_id": 999,
+                "n_proteins": 3,
+            }
+        )
+        first_fetches = fetch_counter["count"]
+        assert r1["status"] == "success"
+        assert r1["metadata"]["from_cache"] is False
+        assert first_fetches >= 3  # one per panel protein
+
+        # Second call — should hit cache, no new fetches
+        r2 = tool.run(
+            {
+                "operation": "describe_sae_feature",
+                "feature_id": 999,
+                "n_proteins": 3,
+            }
+        )
+        assert r2["status"] == "success"
+        assert r2["metadata"]["from_cache"] is True
+        # No additional UniProt fetches
+        assert fetch_counter["count"] == first_fetches
+
+
+def test_describe_sae_feature_aggregates_categories(
+    mock_forge, tmp_path, monkeypatch
+):
+    """Verify the voting logic: if N proteins each have a Modified residue at
+    the activating position, category should be 'ptm'."""
+    monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)
+
+    # Build a fake protein entry whose annotation IS a Modified residue at
+    # every position in [1, seq_len]
+    seq_len = mock_forge["seq_len"]
+    fake_entry = {
+        "sequence": {"value": "M" * seq_len},
+        "features": [
+            {
+                "type": "Modified residue",
+                "location": {
+                    "start": {"value": p},
+                    "end": {"value": p},
+                },
+                "description": "Test PTM",
+            }
+            for p in range(1, seq_len + 1)
+        ],
+    }
+    with mock.patch.object(
+        ESMTool, "_fetch_uniprot_entry", return_value=fake_entry
+    ):
+        tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+        # Use a feature_id we know IS in mock_forge's fake tensor
+        # mock_forge uses (r*7+j*257)%16384 — for r=1, j=0 gives col=7
+        result = tool.run(
+            {
+                "operation": "describe_sae_feature",
+                "feature_id": 7,
+                "n_proteins": 3,
+                "use_cache": False,
+            }
+        )
+    assert result["status"] == "success"
+    # Every activation overlaps a Modified residue, so category should be ptm
+    assert result["data"]["category"] == "ptm"
+    assert result["data"]["confidence"] == 1.0
+    assert result["data"]["n_proteins_with_activation"] >= 1

@@ -848,5 +848,187 @@
         }
       }
     ]
+  },
+  {
+    "name": "ESM_describe_sae_feature",
+    "type": "ESMTool",
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
+    "description": "Label a single SAE feature_id with its dominant biological category by aggregating UniProt feature-type overlap at SAE-activating residues across a curated 10-protein panel. Returns one of: catalytic, ligand-binding, ptm, domain, motif, structural-stability, secondary-structure, transmembrane, signal-peptide, propeptide, or 'uncategorized' (no informative UniProt overlap found). Use when ESM_get_sae_features / ESM_score_variant_sae_disruption returned a feature_id that needs biological interpretation. Cost: 10 Forge credits FIRST time (1 per panel protein). Subsequent calls for the same feature_id are FREE (filesystem cache at ~/.cache/tooluniverse/sae_labels/{sae_model}/feature_{id}.json). Latency: ~30-60s first call (panel of 10 SAE inferences), <1s on cache hit. Prerequisites: same as ESM_get_sae_features. License: Cambrian Inference License \u2014 non-commercial.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "describe_sae_feature"
+          ],
+          "default": "describe_sae_feature"
+        },
+        "feature_id": {
+          "type": "integer",
+          "description": "SAE feature index in [0, 16383]. Use the values returned by ESM_get_sae_features.active_features[].feature_id."
+        },
+        "sae_model": {
+          "type": "string",
+          "description": "SAE checkpoint to label. Cache is keyed on this \u2014 different SAEs produce different labels for the same id.",
+          "default": "esmc-6b-2024-12_k64_codebook16384_layer60"
+        },
+        "model": {
+          "type": "string",
+          "description": "ESMC backbone.",
+          "enum": [
+            "esmc-6b-2024-12"
+          ],
+          "default": "esmc-6b-2024-12"
+        },
+        "n_proteins": {
+          "type": "integer",
+          "description": "Number of panel proteins to run SAE on. Default 10 (the full curated panel). Lower for cheaper exploration at the cost of confidence.",
+          "default": 10
+        },
+        "top_residues_per_protein": {
+          "type": "integer",
+          "description": "For each protein, take the top-K residues where the target feature activates most strongly, then check their UniProt annotations. Default 3.",
+          "default": 3
+        },
+        "use_cache": {
+          "type": "boolean",
+          "description": "If true (default) and a cached label exists at ~/.cache/tooluniverse/sae_labels/.../feature_{id}.json, return it instead of rerunning the panel. Set false to force a recompute.",
+          "default": true
+        }
+      },
+      "required": [
+        "operation",
+        "feature_id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "feature_id": {
+                  "type": "integer"
+                },
+                "sae_model": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "Dominant high-level category derived from UniProt feature-type voting across the panel"
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Fraction of votes for the dominant category (0-1)"
+                },
+                "n_proteins_with_activation": {
+                  "type": "integer"
+                },
+                "n_proteins_analyzed": {
+                  "type": "integer"
+                },
+                "category_vote_counts": {
+                  "type": "object",
+                  "description": "Raw vote counts per category, useful for spotting ties / weak signals"
+                },
+                "supporting_evidence": {
+                  "type": "array",
+                  "description": "Per-residue evidence rows: which panel protein, which position, activation magnitude, which UniProt feature types overlapped",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "protein": {
+                        "type": "string"
+                      },
+                      "position_1based": {
+                        "type": "integer"
+                      },
+                      "activation": {
+                        "type": "number"
+                      },
+                      "uniprot_types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "uniprot_categories": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "from_cache": {
+                  "type": "boolean"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "forge_credits_used_first_call": {
+                  "type": "integer"
+                },
+                "license": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "description": "Label SAE feature 6404 (one of the strong features at TP53 R175 \u2014 expected category likely 'ligand-binding' or 'catalytic' given TP53's DNA contact role)",
+        "arguments": {
+          "operation": "describe_sae_feature",
+          "feature_id": 6404,
+          "n_proteins": 5
+        }
+      }
+    ]
   }
 ]

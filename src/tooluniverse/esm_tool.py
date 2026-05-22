@@ -81,13 +81,15 @@ class ESMTool(BaseTool):
                 return self._get_sae_features(arguments)
             elif operation == "score_variant_sae_disruption":
                 return self._score_variant_sae_disruption(arguments)
+            elif operation == "describe_sae_feature":
+                return self._describe_sae_feature(arguments)
             else:
                 return {
                     "status": "error",
                     "error": f"Unknown operation: {operation!r}. Valid operations: "
                     "get_protein_embedding, generate_protein_sequence, "
                     "fold_protein, score_sequence, get_sae_features, "
-                    "score_variant_sae_disruption",
+                    "score_variant_sae_disruption, describe_sae_feature",
                 }
         except ImportError as e:
             return {"status": "error", "error": str(e)}
@@ -610,3 +612,281 @@ class ESMTool(BaseTool):
                 ),
             },
         }
+
+    # ------------------------------------------------------------------ #
+    # describe_sae_feature — on-demand SAE feature labeling
+    # ------------------------------------------------------------------ #
+
+    # Curated panel of well-annotated diverse human proteins. Used to label
+    # SAE features by aggregating which UniProt feature types the SAE feature
+    # activates on across the panel. Selected for category diversity:
+    # transcription factor, kinase, GTPase, serine protease, P450 enzyme,
+    # processed hormone, oxygen carrier, fibrinolytic protease, transport
+    # protein, kinase.
+    _SAE_LABELING_PANEL = [
+        "P04637",  # TP53 — tumor suppressor / DNA binding
+        "P00533",  # EGFR — receptor tyrosine kinase
+        "P01116",  # KRAS — small GTPase
+        "P00734",  # F2 thrombin — serine protease, catalytic triad
+        "P08684",  # CYP3A4 — cytochrome P450, heme binding
+        "P01308",  # INS — insulin (signal + disulfide + processing)
+        "P68871",  # HBB — hemoglobin beta, oxygen / heme binding
+        "P00750",  # PLAT/tPA — fibrinolytic protease
+        "P02768",  # ALB — serum albumin, ligand binding
+        "P31749",  # AKT1 — serine/threonine kinase
+    ]
+
+    # Map raw UniProt feature.type strings to high-level interpretable
+    # categories. Types with value None are dropped from labeling counts
+    # (too generic or uninformative for variant interpretation).
+    _UNIPROT_TYPE_TO_CATEGORY = {
+        "Active site": "catalytic",
+        "Site": "catalytic",
+        "Binding site": "ligand-binding",
+        "Metal binding": "ligand-binding",
+        "DNA binding": "ligand-binding",
+        "Modified residue": "ptm",
+        "Cross-link": "ptm",
+        "Glycosylation": "ptm",
+        "Lipidation": "ptm",
+        "Domain": "domain",
+        "Motif": "motif",
+        "Repeat": "domain",
+        "Zinc finger": "domain",
+        "Disulfide bond": "structural-stability",
+        "Helix": "secondary-structure",
+        "Beta strand": "secondary-structure",
+        "Turn": "secondary-structure",
+        "Transmembrane": "transmembrane",
+        "Intramembrane": "transmembrane",
+        "Signal": "signal-peptide",
+        "Propeptide": "propeptide",
+        "Coiled coil": "structural-stability",
+        "Region": None,
+        "Compositional bias": None,
+        "Natural variant": None,
+        "Mutagenesis": None,
+        "Alternative sequence": None,
+        "Chain": None,
+        "Peptide": None,
+        "Initiator methionine": None,
+    }
+
+    def _fetch_uniprot_entry(self, accession: str) -> Optional[Dict[str, Any]]:
+        """Fetch the full UniProt entry (sequence + features) for an accession.
+
+        Returns None on network failure — caller will skip this protein.
+        """
+        import urllib.request
+        import urllib.error
+
+        url = f"https://rest.uniprot.org/uniprotkb/{accession}.json"
+        try:
+            req = urllib.request.Request(
+                url, headers={"User-Agent": "tooluniverse/esm_tool"}
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                import json as _json
+
+                return _json.loads(resp.read().decode("utf-8"))
+        except (urllib.error.URLError, urllib.error.HTTPError, ValueError):
+            return None
+
+    def _uniprot_features_at_position(
+        self, features: List[Dict[str, Any]], position_1idx: int
+    ) -> List[Dict[str, Any]]:
+        """Return UniProt features whose annotated position/range covers
+        the 1-indexed residue position."""
+        hits = []
+        for f in features:
+            loc = f.get("location", {})
+            start = loc.get("start", {}).get("value")
+            end = loc.get("end", {}).get("value", start)
+            if start is None or end is None:
+                continue
+            if start <= position_1idx <= end:
+                hits.append(f)
+        return hits
+
+    def _cache_path_for_feature(self, sae_model: str, feature_id: int):
+        """Per-feature label cache path under ~/.cache/tooluniverse/."""
+        from pathlib import Path
+        import re
+
+        safe_model = re.sub(r"[^A-Za-z0-9._-]", "_", sae_model)
+        cache_dir = Path.home() / ".cache" / "tooluniverse" / "sae_labels" / safe_model
+        return cache_dir / f"feature_{feature_id}.json"
+
+    def _describe_sae_feature(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """On-demand labeling for a single SAE feature_id.
+
+        Runs SAE inference across a curated panel of well-annotated human
+        proteins, finds where the target feature activates most strongly,
+        and aggregates the UniProt feature types at those positions to
+        infer a biological category. Caches results under
+        ~/.cache/tooluniverse/sae_labels/{sae_model}/feature_{id}.json.
+
+        Cost: 1 Forge credit per protein in the panel (default 10, so 10
+        credits per first-time label). UniProt fetches are free.
+        Subsequent calls for the same feature_id hit the cache (free).
+
+        Categories returned: catalytic, ligand-binding, ptm, domain,
+        motif, structural-stability, secondary-structure, transmembrane,
+        signal-peptide, propeptide, or 'uncategorized'.
+        """
+        feature_id = arguments.get("feature_id")
+        sae_model = arguments.get(
+            "sae_model", "esmc-6b-2024-12_k64_codebook16384_layer60"
+        )
+        model = arguments.get("model", "esmc-6b-2024-12")
+        n_proteins = arguments.get("n_proteins", 10)
+        top_residues_per_protein = arguments.get("top_residues_per_protein", 3)
+        use_cache = arguments.get("use_cache", True)
+
+        # Validate input
+        if feature_id is None or not isinstance(feature_id, int):
+            return {
+                "status": "error",
+                "error": "feature_id (int 0-16383) is required",
+            }
+        if feature_id < 0 or feature_id >= 16384:
+            return {
+                "status": "error",
+                "error": f"feature_id {feature_id} out of range [0, 16383]",
+            }
+        if n_proteins < 1 or n_proteins > len(self._SAE_LABELING_PANEL):
+            return {
+                "status": "error",
+                "error": (
+                    f"n_proteins must be in [1, {len(self._SAE_LABELING_PANEL)}], "
+                    f"got {n_proteins}"
+                ),
+            }
+
+        # Cache check
+        cache_path = self._cache_path_for_feature(sae_model, feature_id)
+        if use_cache and cache_path.exists():
+            try:
+                import json as _json
+
+                cached = _json.loads(cache_path.read_text())
+                cached.setdefault("metadata", {})["from_cache"] = True
+                return cached
+            except Exception:
+                pass  # fall through and recompute
+
+        # Run SAE labeling pipeline across the panel
+        panel = self._SAE_LABELING_PANEL[:n_proteins]
+        evidence: List[Dict[str, Any]] = []
+
+        for accession in panel:
+            entry = self._fetch_uniprot_entry(accession)
+            if entry is None:
+                continue
+            seq = entry.get("sequence", {}).get("value")
+            uniprot_features = entry.get("features", []) or []
+            if not seq:
+                continue
+
+            sae_response = self._get_sae_features(
+                {
+                    "operation": "get_sae_features",
+                    "sequence": seq,
+                    "model": model,
+                    "sae_model": sae_model,
+                    "top_k_per_residue": 64,
+                }
+            )
+            if sae_response.get("status") != "success":
+                # Likely a panel protein too long, Forge errored, etc.; skip
+                continue
+
+            # Find residues where target feature_id activates
+            activating: List[Dict[str, Any]] = []
+            for residue in sae_response["data"]["activations"]:
+                for feat in residue["active_features"]:
+                    if feat["feature_id"] == feature_id:
+                        activating.append(
+                            {
+                                "position": residue["residue_idx_1based"],
+                                "activation": feat["activation"],
+                            }
+                        )
+                        break
+            if not activating:
+                continue
+
+            activating.sort(key=lambda x: -abs(x["activation"]))
+            top = activating[:top_residues_per_protein]
+
+            for hit in top:
+                pos = hit["position"]
+                overlapping = self._uniprot_features_at_position(uniprot_features, pos)
+                informative_types = [
+                    f["type"]
+                    for f in overlapping
+                    if self._UNIPROT_TYPE_TO_CATEGORY.get(f["type"]) is not None
+                ]
+                evidence.append(
+                    {
+                        "protein": accession,
+                        "position_1based": pos,
+                        "activation": float(hit["activation"]),
+                        "uniprot_types": informative_types,
+                        "uniprot_categories": [
+                            self._UNIPROT_TYPE_TO_CATEGORY[t] for t in informative_types
+                        ],
+                    }
+                )
+
+        # Aggregate categories across all evidence rows
+        category_counts: Dict[str, int] = {}
+        for e in evidence:
+            for cat in e["uniprot_categories"]:
+                category_counts[cat] = category_counts.get(cat, 0) + 1
+
+        if category_counts:
+            dominant = max(category_counts.items(), key=lambda x: x[1])
+            category = dominant[0]
+            total_votes = sum(category_counts.values())
+            confidence = dominant[1] / total_votes
+        else:
+            category = "uncategorized"
+            confidence = 0.0
+
+        result = {
+            "status": "success",
+            "data": {
+                "feature_id": feature_id,
+                "sae_model": sae_model,
+                "category": category,
+                "confidence": round(confidence, 3),
+                "n_proteins_with_activation": len(set(e["protein"] for e in evidence)),
+                "n_proteins_analyzed": len(panel),
+                "category_vote_counts": category_counts,
+                "supporting_evidence": evidence,
+            },
+            "metadata": {
+                "from_cache": False,
+                "method": (
+                    "Aggregated UniProt feature-type overlap at SAE-activating "
+                    "residues across a curated 10-protein panel"
+                ),
+                "forge_credits_used_first_call": n_proteins,
+                "license": (
+                    "Outputs are governed by EvolutionaryScale Cambrian "
+                    "Inference License — non-commercial use only"
+                ),
+            },
+        }
+
+        # Write cache (best-effort)
+        try:
+            import json as _json
+
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            cache_path.write_text(_json.dumps(result, indent=2))
+        except Exception:
+            pass
+
+        return result
