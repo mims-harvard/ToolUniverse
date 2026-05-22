@@ -461,5 +461,191 @@
         "model": "esmc-300m-2024-12"
       }
     ]
+  },
+  {
+    "name": "ESM_get_sae_features",
+    "type": "ESMTool",
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
+    "description": "Run a protein sequence through an ESMC Sparse Autoencoder (SAE) and return sparse feature activations per residue. SAEs decompose the protein language model's hidden states into a 16,384-feature sparse codebook (top-k=64 active per residue). Each feature is an interpretable latent \u2014 many activate on specific biological categories (catalytic site, ligand-binding region, PTM sequon, structural motif, etc.) that can be looked up via ESM_describe_sae_feature. Use for: variant interpretation (compare ref vs mutant activations), mechanism inference (which functional features the protein engages), protein-LM interpretability research. Prerequisites: (1) pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52' \u2014 the PyPI esm release does NOT yet include SAE support, which lives on an upstream feature branch. (2) ESM_API_KEY env var with a Forge token (https://forge.evolutionaryscale.ai). License note: SAE outputs are governed by the EvolutionaryScale Cambrian Inference Clickthrough License \u2014 non-commercial / academic use only.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "get_sae_features"
+          ],
+          "default": "get_sae_features"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Protein amino acid sequence in single-letter code (e.g. 'MEEPQSDPSVEPPLSQETFSDLWKLLPENN'). Standard 20 amino acids; avoid gaps or non-standard characters. Practical length cap ~2,700 AA."
+        },
+        "model": {
+          "type": "string",
+          "description": "ESMC backbone model. Currently SAE is only released for esmc-6b-2024-12 (default).",
+          "enum": [
+            "esmc-6b-2024-12"
+          ],
+          "default": "esmc-6b-2024-12"
+        },
+        "sae_model": {
+          "type": "string",
+          "description": "SAE checkpoint name. Default is the layer-60 SAE matching esmc-6b backbone.",
+          "default": "esmc-6b-2024-12_k64_codebook16384_layer60"
+        },
+        "position": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional 1-indexed residue position. If set, only activations within +/- window residues of this position are returned (use for variant analysis to keep response compact). If null, all residues are returned (large response for long sequences).",
+          "default": null
+        },
+        "window": {
+          "type": "integer",
+          "description": "Residue window radius around position (only used when position is set). Default 8 = +/- 8 residues = 17-residue window centered on the variant.",
+          "default": 8
+        },
+        "top_k_per_residue": {
+          "type": "integer",
+          "description": "Cap features returned per residue, sorted by absolute activation. Default 64 = full sparsity (no cap). Set lower (e.g. 16) to reduce response size when no position filter is used.",
+          "default": 64
+        }
+      },
+      "required": [
+        "operation",
+        "sequence"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "sequence_length": {
+                  "type": "integer"
+                },
+                "model": {
+                  "type": "string"
+                },
+                "sae_model": {
+                  "type": "string"
+                },
+                "residues_returned": {
+                  "type": "integer"
+                },
+                "position": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "window": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "top_k_per_residue": {
+                  "type": "integer"
+                },
+                "activations": {
+                  "type": "array",
+                  "description": "Per-residue active SAE features. Sparse format: each entry has the residue position (1-indexed) and its top-K non-zero features.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "residue_idx_1based": {
+                        "type": "integer"
+                      },
+                      "active_features": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "feature_id": {
+                              "type": "integer",
+                              "description": "SAE feature index 0-16383"
+                            },
+                            "activation": {
+                              "type": "number",
+                              "description": "Activation magnitude (normalized)"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_features_in_codebook": {
+                  "type": "integer"
+                },
+                "sparsity_k": {
+                  "type": "integer"
+                },
+                "license": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "description": "Get SAE features near TP53 R175H mutation site (position 175, +/- 8 residues). TP53 is P04637; first ~210 AA shown.",
+        "arguments": {
+          "operation": "get_sae_features",
+          "sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDR",
+          "position": 175,
+          "window": 8,
+          "top_k_per_residue": 16
+        }
+      }
+    ]
   }
 ]
