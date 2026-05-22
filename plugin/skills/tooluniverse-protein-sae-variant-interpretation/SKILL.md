@@ -168,7 +168,7 @@ The 16,384 SAE features have been categorized (by UniRef90 activation patterns) 
 When SAE features are lost in mutation → that biological capability is plausibly disrupted.  
 When SAE features are gained → mutation may have introduced a non-native signal (often disorder / alternative fold).
 
-Look up the specific biological description of a `feature_id` via `ESM_describe_sae_feature` (Phase B tool) — once available.
+Look up the biological category of any specific `feature_id` via `ESM_describe_sae_feature(feature_id=...)`. The first call for a given feature is slow (~30s, ~10 Forge credits as the tool runs SAE on a 10-protein labeling panel + checks UniProt annotations); subsequent calls for the same feature hit a local cache and are instant.
 
 ---
 

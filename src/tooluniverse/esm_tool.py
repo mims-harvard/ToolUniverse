@@ -354,6 +354,19 @@ class ESMTool(BaseTool):
         top_k_per_residue = arguments.get("top_k_per_residue", 64)
 
         seq_len = len(sequence)
+        # Sequence length cap — ESMC-6B Forge handles up to ~2,700 AA in
+        # practice (per ada repo + EvolutionaryScale docs). Longer sequences
+        # fail with opaque server errors; catch up front with a clear message.
+        MAX_SEQ_LEN = 2700
+        if seq_len > MAX_SEQ_LEN:
+            return {
+                "status": "error",
+                "error": (
+                    f"sequence length {seq_len} exceeds practical Forge SAE "
+                    f"limit (~{MAX_SEQ_LEN} AA). Either truncate to a region "
+                    f"of interest or split the protein and run separately."
+                ),
+            }
         if position is not None and (position < 1 or position > seq_len):
             return {
                 "status": "error",

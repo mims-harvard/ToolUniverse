@@ -147,6 +147,19 @@ def test_get_sae_features_rejects_out_of_range_position():
     assert "out of range" in result["error"]
 
 
+def test_get_sae_features_rejects_overlong_sequence():
+    """Forge SAE handles up to ~2700 AA. Longer should be caught with a
+    clear error, not allowed to fail at the server."""
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    too_long = "M" * 3000
+    result = tool.run(
+        {"operation": "get_sae_features", "sequence": too_long}
+    )
+    assert result["status"] == "error"
+    assert "exceeds practical Forge SAE limit" in result["error"]
+    assert "2700" in result["error"]
+
+
 def test_get_sae_features_missing_api_key_returns_error(mock_forge):
     """Without ESM_API_KEY env var, tool returns clear error (not crash)."""
     sequence = "M" * mock_forge["seq_len"]
