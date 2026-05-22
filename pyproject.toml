@@ -22,7 +22,6 @@ dependencies = [
     "openai>=1.107.0",
     "pyyaml>=6.0.0",
     "google-genai>=1.36.0",
-    "google-generativeai>=0.7.2",
     "mcp[cli]>=1.9.3",
     "fastmcp>=2.12.3,<4.0.0",
     "xmltodict>=1.0.0",
@@ -32,7 +31,7 @@ dependencies = [
     "rcsb-api>=1.4.0",
     "fitz>=0.0.1.dev2",
     "pandas>=2.2.3",
-    "setuptools>=70.0.0,<81.0.0", # Fix pkg_resources deprecation warnings
+    "setuptools>=70.0.0", # Fix pkg_resources deprecation warnings
     "pdfplumber>=0.11.0",
     "playwright>=1.55.0",
     "faiss-cpu==1.12.0",
