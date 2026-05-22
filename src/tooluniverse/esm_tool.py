@@ -79,12 +79,15 @@ class ESMTool(BaseTool):
                 return self._score_sequence(arguments)
             elif operation == "get_sae_features":
                 return self._get_sae_features(arguments)
+            elif operation == "score_variant_sae_disruption":
+                return self._score_variant_sae_disruption(arguments)
             else:
                 return {
                     "status": "error",
                     "error": f"Unknown operation: {operation!r}. Valid operations: "
                     "get_protein_embedding, generate_protein_sequence, "
-                    "fold_protein, score_sequence, get_sae_features",
+                    "fold_protein, score_sequence, get_sae_features, "
+                    "score_variant_sae_disruption",
                 }
         except ImportError as e:
             return {"status": "error", "error": str(e)}
@@ -459,6 +462,148 @@ class ESMTool(BaseTool):
             "metadata": {
                 "total_features_in_codebook": 16384,
                 "sparsity_k": 64,
+                "license": (
+                    "Outputs are governed by EvolutionaryScale Cambrian "
+                    "Inference License — non-commercial use only"
+                ),
+            },
+        }
+
+    # ------------------------------------------------------------------ #
+    # score_variant_sae_disruption
+    # ------------------------------------------------------------------ #
+    def _score_variant_sae_disruption(
+        self, arguments: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Composite tool: compare SAE features for reference vs mutant sequence
+        and return per-feature delta scores ranked by absolute magnitude.
+
+        This is the convenience layer that variant-interpretation skills use to
+        avoid two manual ESM_get_sae_features calls plus manual delta
+        computation. It builds the mutant sequence, runs both ref + mut through
+        the SAE, sums activations over a residue window, and ranks features by
+        gain or loss.
+
+        For each ranked feature, the response includes the ref/mut activation
+        sums so the agent can sanity-check whether a delta reflects a strong
+        feature flipping off versus a weak feature appearing.
+        """
+        sequence = arguments.get("sequence")
+        position = arguments.get("position")
+        ref_aa = arguments.get("ref_aa")
+        alt_aa = arguments.get("alt_aa")
+        window = arguments.get("window", 8)
+        top_k_features = arguments.get("top_k_features", 10)
+
+        # Validate inputs
+        if not sequence:
+            return {
+                "status": "error",
+                "error": "sequence is required for score_variant_sae_disruption",
+            }
+        if position is None or not isinstance(position, int):
+            return {
+                "status": "error",
+                "error": "position (1-indexed int) is required",
+            }
+        if not ref_aa or len(ref_aa) != 1:
+            return {
+                "status": "error",
+                "error": "ref_aa must be a single amino-acid letter",
+            }
+        if not alt_aa or len(alt_aa) != 1:
+            return {
+                "status": "error",
+                "error": "alt_aa must be a single amino-acid letter",
+            }
+        seq_len = len(sequence)
+        if position < 1 or position > seq_len:
+            return {
+                "status": "error",
+                "error": (
+                    f"position {position} out of range [1, {seq_len}] "
+                    f"for sequence of length {seq_len}"
+                ),
+            }
+        actual_aa = sequence[position - 1]
+        if actual_aa != ref_aa:
+            return {
+                "status": "error",
+                "error": (
+                    f"ref_aa mismatch: position {position} in sequence is "
+                    f"{actual_aa!r}, but ref_aa was given as {ref_aa!r}. "
+                    f"Double-check the sequence is the canonical reference for "
+                    f"this variant."
+                ),
+            }
+
+        # Build mutant
+        mutant = sequence[: position - 1] + alt_aa + sequence[position:]
+
+        # Get SAE features for ref + mut (reuse the existing operation)
+        common_args = {
+            "operation": "get_sae_features",
+            "position": position,
+            "window": window,
+            "top_k_per_residue": 64,
+            "model": arguments.get("model", "esmc-6b-2024-12"),
+            "sae_model": arguments.get(
+                "sae_model", "esmc-6b-2024-12_k64_codebook16384_layer60"
+            ),
+        }
+        ref_result = self._get_sae_features({**common_args, "sequence": sequence})
+        if ref_result["status"] != "success":
+            return {**ref_result, "stage": "ref_sae"}
+
+        mut_result = self._get_sae_features({**common_args, "sequence": mutant})
+        if mut_result["status"] != "success":
+            return {**mut_result, "stage": "mut_sae"}
+
+        # Aggregate feature activations by feature_id (summed over window)
+        def sum_features(activations_list):
+            sums: Dict[int, float] = {}
+            for r in activations_list:
+                for f in r["active_features"]:
+                    sums[f["feature_id"]] = (
+                        sums.get(f["feature_id"], 0.0) + f["activation"]
+                    )
+            return sums
+
+        ref_sums = sum_features(ref_result["data"]["activations"])
+        mut_sums = sum_features(mut_result["data"]["activations"])
+
+        all_feats = set(ref_sums) | set(mut_sums)
+        deltas = [(f, mut_sums.get(f, 0.0) - ref_sums.get(f, 0.0)) for f in all_feats]
+
+        top_lost = sorted(deltas, key=lambda x: x[1])[:top_k_features]
+        top_gained = sorted(deltas, key=lambda x: -x[1])[:top_k_features]
+
+        def feat_row(fid: int, delta: float) -> Dict[str, Any]:
+            return {
+                "feature_id": int(fid),
+                "delta": float(delta),
+                "ref_activation_sum": float(ref_sums.get(fid, 0.0)),
+                "mut_activation_sum": float(mut_sums.get(fid, 0.0)),
+            }
+
+        return {
+            "status": "success",
+            "data": {
+                "variant": f"{ref_aa}{position}{alt_aa}",
+                "position": position,
+                "window": window,
+                "n_unique_features_touched": len(all_feats),
+                "top_features_lost": [feat_row(f, d) for f, d in top_lost],
+                "top_features_gained": [feat_row(f, d) for f, d in top_gained],
+            },
+            "metadata": {
+                "method": (
+                    "ESMC-6B SAE per-feature activation delta, summed over "
+                    f"+/-{window} residue window centered on the mutation site"
+                ),
+                "ref_residues_analyzed": ref_result["data"]["residues_returned"],
+                "mut_residues_analyzed": mut_result["data"]["residues_returned"],
+                "forge_calls_made": 2,
                 "license": (
                     "Outputs are governed by EvolutionaryScale Cambrian "
                     "Inference License — non-commercial use only"

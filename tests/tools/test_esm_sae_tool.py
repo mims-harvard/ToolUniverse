@@ -188,8 +188,111 @@ def test_get_sae_features_metadata_has_codebook_size(mock_forge):
 
 
 def test_unknown_operation_lists_get_sae_features_in_error():
-    """Regression: dispatch error message must mention the new operation."""
+    """Regression: dispatch error message must mention the new operations."""
     tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
     result = tool.run({"operation": "bogus"})
     assert result["status"] == "error"
     assert "get_sae_features" in result["error"]
+    assert "score_variant_sae_disruption" in result["error"]
+
+
+# ---------- score_variant_sae_disruption ----------
+
+
+def test_score_variant_sae_disruption_happy_path(mock_forge):
+    """Tool builds mutant, runs ref+mut, returns ranked lost/gained features."""
+    seq_len = mock_forge["seq_len"]
+    sequence = "M" * seq_len
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+    result = tool.run(
+        {
+            "operation": "score_variant_sae_disruption",
+            "sequence": sequence,
+            "position": 15,
+            "ref_aa": "M",
+            "alt_aa": "A",
+            "window": 4,
+            "top_k_features": 5,
+        }
+    )
+
+    assert result["status"] == "success"
+    data = result["data"]
+    assert data["variant"] == "M15A"
+    assert data["position"] == 15
+    assert data["window"] == 4
+    assert isinstance(data["n_unique_features_touched"], int)
+    assert len(data["top_features_lost"]) <= 5
+    assert len(data["top_features_gained"]) <= 5
+    # Each entry has the 4 expected fields
+    for entry in data["top_features_lost"] + data["top_features_gained"]:
+        assert {"feature_id", "delta", "ref_activation_sum", "mut_activation_sum"} <= set(
+            entry.keys()
+        )
+
+
+def test_score_variant_disruption_rejects_ref_aa_mismatch(mock_forge):
+    """If ref_aa doesn't match sequence position, refuse — likely wrong isoform."""
+    sequence = "MEEPQSDPSV"  # position 1 is M, not R
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+    result = tool.run(
+        {
+            "operation": "score_variant_sae_disruption",
+            "sequence": sequence,
+            "position": 1,
+            "ref_aa": "R",  # WRONG — position 1 is actually M
+            "alt_aa": "H",
+        }
+    )
+    assert result["status"] == "error"
+    assert "ref_aa mismatch" in result["error"]
+    assert "'M'" in result["error"]  # tells you what's actually there
+
+
+def test_score_variant_disruption_rejects_missing_args():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    # missing position
+    r = tool.run(
+        {
+            "operation": "score_variant_sae_disruption",
+            "sequence": "MEEPQ",
+            "ref_aa": "M",
+            "alt_aa": "A",
+        }
+    )
+    assert r["status"] == "error"
+    assert "position" in r["error"]
+    # missing ref_aa
+    r = tool.run(
+        {
+            "operation": "score_variant_sae_disruption",
+            "sequence": "MEEPQ",
+            "position": 1,
+            "alt_aa": "A",
+        }
+    )
+    assert r["status"] == "error"
+    assert "ref_aa" in r["error"]
+
+
+def test_score_variant_disruption_metadata_reports_call_count(mock_forge):
+    """Composite tool makes exactly 2 Forge calls (1 ref + 1 mut)."""
+    sequence = "M" * mock_forge["seq_len"]
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+    result = tool.run(
+        {
+            "operation": "score_variant_sae_disruption",
+            "sequence": sequence,
+            "position": 10,
+            "ref_aa": "M",
+            "alt_aa": "A",
+        }
+    )
+    assert result["status"] == "success"
+    assert result["metadata"]["forge_calls_made"] == 2
+    assert "non-commercial" in result["metadata"]["license"].lower()
+    # client_cls should have been instantiated (at least once)
+    assert mock_forge["client_cls"].call_count >= 1

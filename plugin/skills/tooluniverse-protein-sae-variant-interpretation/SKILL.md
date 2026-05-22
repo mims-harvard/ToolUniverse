@@ -84,7 +84,26 @@ Parse the variant string (e.g. `R175H`):
 
 If the reference residue does NOT match, return an explicit error — do not silently mutate the wrong position.
 
-### Step 4: Get SAE features for reference and mutant
+### Quick path (recommended for variant analysis): composite tool
+
+For the standard variant-interpretation use case, use the composite tool — it does steps 4 + 5 in a single call and validates ref_aa against the sequence:
+
+```python
+ESM_score_variant_sae_disruption(
+    sequence=ref_sequence,
+    position=175,           # 1-indexed
+    ref_aa="R",
+    alt_aa="H",
+    window=8,
+    top_k_features=10,
+)
+# → returns top_features_lost + top_features_gained ranked by |delta|
+#   plus ref / mut activation sums per feature
+```
+
+If ref_aa doesn't match the sequence at the given position, the tool returns a clear error (you supplied the wrong isoform / mis-labeled the variant). Use this whenever you only need the delta scores. The longer path below is for inspecting raw per-residue features.
+
+### Step 4 (long path): Get SAE features for reference and mutant
 
 ```python
 ref_features = ESM_get_sae_features(

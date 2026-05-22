@@ -647,5 +647,206 @@
         }
       }
     ]
+  },
+  {
+    "name": "ESM_score_variant_sae_disruption",
+    "type": "ESMTool",
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
+    "description": "Composite SAE-based variant scoring. Given a protein sequence and a missense variant (position + ref_aa + alt_aa), runs ESMC-6B SAE on both reference and mutant sequences, computes per-feature activation deltas summed over a window centered on the mutation site, and returns ranked top-K features LOST and GAINED in the mutant. This is the convenience layer over ESM_get_sae_features \u2014 use this for one-shot variant interpretation; use ESM_get_sae_features directly only when you need raw per-residue features for non-variant analyses. Validates ref_aa matches the position in the supplied sequence (returns clear error if not, so you can detect transcript / isoform mismatches). Cost: 2 Forge API credits (1 ref + 1 mut). Latency: ~3-6s for typical-length human proteins. Prerequisites: same as ESM_get_sae_features (pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52', ESM_API_KEY env var). License: SAE outputs governed by Cambrian Inference License \u2014 non-commercial / academic only.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "score_variant_sae_disruption"
+          ],
+          "default": "score_variant_sae_disruption"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Reference protein sequence (canonical isoform). Single-letter codes, no gaps. The mutant sequence is built internally by substituting alt_aa at position."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-indexed mutation position. The amino acid at sequence[position-1] must equal ref_aa; otherwise the tool returns an error (the wrong sequence was supplied or the variant notation references a different isoform)."
+        },
+        "ref_aa": {
+          "type": "string",
+          "description": "Reference amino acid at the mutation position, single-letter code (e.g. 'R'). Tool validates this matches the supplied sequence."
+        },
+        "alt_aa": {
+          "type": "string",
+          "description": "Mutant amino acid, single-letter code (e.g. 'H' for R175H)."
+        },
+        "window": {
+          "type": "integer",
+          "description": "Residue window radius around the mutation. Per-feature activations are summed across this window before computing the delta. Default 8 = +/- 8 residues = 17-residue window.",
+          "default": 8
+        },
+        "top_k_features": {
+          "type": "integer",
+          "description": "Number of top LOST and top GAINED features to return. Default 10.",
+          "default": 10
+        },
+        "model": {
+          "type": "string",
+          "description": "ESMC backbone (default esmc-6b-2024-12).",
+          "enum": [
+            "esmc-6b-2024-12"
+          ],
+          "default": "esmc-6b-2024-12"
+        },
+        "sae_model": {
+          "type": "string",
+          "description": "SAE checkpoint (default layer-60 6B SAE).",
+          "default": "esmc-6b-2024-12_k64_codebook16384_layer60"
+        }
+      },
+      "required": [
+        "operation",
+        "sequence",
+        "position",
+        "ref_aa",
+        "alt_aa"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {
+                  "type": "string",
+                  "description": "e.g. 'R175H'"
+                },
+                "position": {
+                  "type": "integer"
+                },
+                "window": {
+                  "type": "integer"
+                },
+                "n_unique_features_touched": {
+                  "type": "integer"
+                },
+                "top_features_lost": {
+                  "type": "array",
+                  "description": "Features with most negative delta (strong in ref, weak/absent in mutant)",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "feature_id": {
+                        "type": "integer"
+                      },
+                      "delta": {
+                        "type": "number",
+                        "description": "mut_activation_sum - ref_activation_sum (negative)"
+                      },
+                      "ref_activation_sum": {
+                        "type": "number"
+                      },
+                      "mut_activation_sum": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "top_features_gained": {
+                  "type": "array",
+                  "description": "Features with most positive delta (absent/weak in ref, strong in mutant)",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "feature_id": {
+                        "type": "integer"
+                      },
+                      "delta": {
+                        "type": "number"
+                      },
+                      "ref_activation_sum": {
+                        "type": "number"
+                      },
+                      "mut_activation_sum": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "type": "string"
+                },
+                "ref_residues_analyzed": {
+                  "type": "integer"
+                },
+                "mut_residues_analyzed": {
+                  "type": "integer"
+                },
+                "forge_calls_made": {
+                  "type": "integer"
+                },
+                "license": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "description": "TP53 R175H \u2014 DNA-binding domain LoF hotspot. Expects negative delta on DNA-contact / binding features.",
+        "arguments": {
+          "operation": "score_variant_sae_disruption",
+          "sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDR",
+          "position": 175,
+          "ref_aa": "R",
+          "alt_aa": "H",
+          "window": 8,
+          "top_k_features": 5
+        }
+      }
+    ]
   }
 ]
