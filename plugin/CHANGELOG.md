@@ -5,6 +5,56 @@ All notable changes to the ToolUniverse Claude Code plugin.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] — 2026-05-22 (unreleased)
+
+### Added — ESM-C SAE variant interpretation + DMS analysis suite
+
+Full ToolUniverse implementation of the [ada-f/esmc_sae](https://github.com/ada-f/esmc_sae)
+methodology (Ada Fang, Marinka Zitnik lab). Adds 4 new tools and 8 new skills
+covering single-variant mechanistic interpretation through whole-protein DMS analysis.
+
+**New tools (4):**
+- `ESM_get_sae_features` — per-residue ESM-C 6B Sparse Autoencoder feature
+  activations (16,384-dim codebook, k=64 sparse) around a position window.
+- `ESM_score_variant_sae_disruption` — composite: validates `ref_aa`, runs
+  ref+mutant through the SAE, returns top features lost/gained ranked by Δ.
+- `ESM_describe_sae_feature` — on-demand SAE feature labeling via UniProt
+  feature annotations + voting on a curated 10-protein panel; cached locally.
+- `Structure_annotate_per_residue` — per-residue annotation from a PDB:
+  binding interface, ligand pocket, RSA (core/surface), optional secondary
+  structure from PDBe REST. Adds optional dep `freesasa>=2.2.0`.
+
+**New skills (8):**
+- `tooluniverse-protein-sae-variant-interpretation` — single-variant SAE
+  workflow with quick + long path, 6-category interpretation table.
+- `tooluniverse-protein-lof-mechanism` — 5-signal LoF synthesis (ESMC +
+  AlphaMissense + AlphaFold + UniProt + DynaMut2) with 6-category decision rule.
+- `tooluniverse-protein-structural-annotation-pdb` — wraps Structure_annotate_per_residue.
+- `tooluniverse-mavedb-dms-retrieval` — orchestrates `MaveDB_*` tools + HGVS parsing.
+- `tooluniverse-sae-mutant-tensor-build` — library-scale SAE tensor construction.
+- `tooluniverse-sae-dms-global-validation` — Mann-Whitney U on top-K SAE drop.
+- `tooluniverse-sae-dms-hotspot-features` — permutation-tested per-hotspot
+  feature shortlist + descriptive top-5.
+- `tooluniverse-annotated-dms-heatmap` — standard "Fig 1-style" DMS panel.
+
+**Verification:**
+- 46 unit tests pass (18 SAE + 11 structural-annotation + 17 DMS skill snippet tests).
+- `Structure_annotate_per_residue` reproduces ada's reference `kras_anno.csv`
+  with **168/168 region matches** on 6VJJ (KRAS-RAF1-GTP).
+- TP53 R175H end-to-end SAE skill workflow returns expected DNA-binding LoF mechanism.
+- PDBe live secondary-structure path verified: KRAS β1 (residues 2-9) and α3
+  (residues 87-104) come back labeled correctly.
+
+**Prerequisites:**
+- `ESM_API_KEY` env var (EvolutionaryScale Forge token, https://forge.evolutionaryscale.ai)
+- `pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52'` —
+  `SAEConfig` is on the upstream feature branch, not yet in PyPI `esm 3.2.x`.
+- For Structure tool: `pip install tooluniverse[bioinformatics]`.
+
+Outputs from ESM SAE via Forge are governed by the [Cambrian Inference
+Clickthrough License](https://www.evolutionaryscale.ai/policies/cambrian-inference-clickthrough-license-agreement)
+(non-commercial / academic use only) — surfaced in tool metadata.
+
 ## [1.2.0] — 2026-05-20
 
 ### Added
