@@ -234,7 +234,7 @@ A NumPy array `(20, n_positions)` of functional scores, plus a metadata dict:
 |---|---|
 | `tooluniverse-variant-predictor-dms-benchmarking` | Next: validate a variant-effect predictor (SAE / AlphaMissense / EVE / etc.) against this DMS data |
 | `tooluniverse-dms-hotspot-mechanism-interpretation` | Next: pick the top hotspots from this DMS and explain why each is functionally critical |
-| `tooluniverse-annotated-dms-heatmap` | Visualization |
+| (visualization is Step 7 of `tooluniverse-dms-hotspot-mechanism-interpretation`) | Annotated DMS heatmap with hotspot callouts |
 
 ---
 

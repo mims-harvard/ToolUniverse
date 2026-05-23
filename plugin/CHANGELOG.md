@@ -41,7 +41,7 @@ covering single-variant mechanistic interpretation through whole-protein DMS ana
   binding site / PTM), and optional SAE feature evidence. Returns a mechanism
   call: catalytic / ligand-binding / interface / structural-core / PTM /
   regulatory / mixed / unknown.
-- `tooluniverse-annotated-dms-heatmap` — standard "Fig 1-style" DMS panel.
+- (DMS heatmap visualization is now Step 7 of `tooluniverse-dms-hotspot-mechanism-interpretation` — the publication figure is the natural deliverable of hotspot interpretation, not a standalone user goal.)
 
 **Verification:**
 - 46 unit tests pass (18 SAE + 11 structural-annotation + 17 DMS skill snippet tests).

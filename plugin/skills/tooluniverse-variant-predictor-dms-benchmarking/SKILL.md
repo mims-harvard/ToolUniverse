@@ -270,7 +270,7 @@ and compare:
 | Per-variant ESM logits | `ESM_score_sequence` |
 | Structural prior (for predictor analysis) | `Structure_annotate_per_residue` |
 | Next step: per-hotspot mechanism | `tooluniverse-dms-hotspot-mechanism-interpretation` |
-| Final visualization | `tooluniverse-annotated-dms-heatmap` |
+| Final visualization | Step 7 of `tooluniverse-dms-hotspot-mechanism-interpretation` (annotated heatmap + callouts) |
 
 ---
 

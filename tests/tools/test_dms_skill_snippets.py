@@ -1,12 +1,12 @@
 """Execute the Python snippets from every DMS skill against synthetic data.
 
 After the Phase D refactor (skills reframed around user goals not methodology),
-the 5 DMS-analysis SKILL.md files are:
+the 4 DMS-analysis SKILL.md files are:
   - tooluniverse-mavedb-dms-retrieval
   - tooluniverse-protein-structural-annotation-pdb
   - tooluniverse-variant-predictor-dms-benchmarking  (was sae-dms-global-validation)
-  - tooluniverse-dms-hotspot-mechanism-interpretation (was sae-dms-hotspot-features)
-  - tooluniverse-annotated-dms-heatmap
+  - tooluniverse-dms-hotspot-mechanism-interpretation (was sae-dms-hotspot-features;
+      Step 7 of this skill subsumes what used to be a standalone annotated-dms-heatmap)
 
 The pooled-features / WT-diagonal-NaN / caching patterns that used to live in
 sae-mutant-tensor-build are now embedded as a 'Prerequisites' step inside the
@@ -393,7 +393,8 @@ def test_skill11_descriptive_top5(synthetic_sae_tensor):
 
 
 # ---------------------------------------------------------------------------
-# Skill 12: annotated-dms-heatmap — matplotlib code paths
+# dms-hotspot-mechanism-interpretation Step 7 (formerly annotated-dms-heatmap)
+# — matplotlib code paths for the publication figure
 # ---------------------------------------------------------------------------
 
 def test_skill12_landmark_alignment_check(kras_short_sequence):
