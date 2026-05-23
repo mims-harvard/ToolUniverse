@@ -31,10 +31,16 @@ covering single-variant mechanistic interpretation through whole-protein DMS ana
   AlphaMissense + AlphaFold + UniProt + DynaMut2) with 6-category decision rule.
 - `tooluniverse-protein-structural-annotation-pdb` — wraps Structure_annotate_per_residue.
 - `tooluniverse-mavedb-dms-retrieval` — orchestrates `MaveDB_*` tools + HGVS parsing.
-- `tooluniverse-sae-mutant-tensor-build` — library-scale SAE tensor construction.
-- `tooluniverse-sae-dms-global-validation` — Mann-Whitney U on top-K SAE drop.
-- `tooluniverse-sae-dms-hotspot-features` — permutation-tested per-hotspot
-  feature shortlist + descriptive top-5.
+- `tooluniverse-variant-predictor-dms-benchmarking` — validate ANY
+  per-variant predictor (AlphaMissense / SAE / ESM logits / EVE / conservation
+  / DynaMut2 / custom) against DMS data via Mann-Whitney U + robustness sweep.
+  SAE is shown as the worked example; the methodology is predictor-agnostic.
+- `tooluniverse-dms-hotspot-mechanism-interpretation` — given a DMS hotspot,
+  explain WHY it's functionally critical by combining structural context
+  (binding interface / ligand pocket / core), UniProt features (active site /
+  binding site / PTM), and optional SAE feature evidence. Returns a mechanism
+  call: catalytic / ligand-binding / interface / structural-core / PTM /
+  regulatory / mixed / unknown.
 - `tooluniverse-annotated-dms-heatmap` — standard "Fig 1-style" DMS panel.
 
 **Verification:**

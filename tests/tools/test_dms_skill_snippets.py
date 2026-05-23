@@ -1,14 +1,21 @@
 """Execute the Python snippets from every DMS skill against synthetic data.
 
-The 6 DMS-analysis SKILL.md files (mavedb-dms-retrieval, sae-mutant-tensor-build,
-sae-dms-global-validation, sae-dms-hotspot-features, annotated-dms-heatmap,
-protein-structural-annotation-pdb) document the workflow with Python code
-blocks. This test extracts the load-bearing logic verbatim from those skills
-and runs it against synthetic fixtures.
+After the Phase D refactor (skills reframed around user goals not methodology),
+the 5 DMS-analysis SKILL.md files are:
+  - tooluniverse-mavedb-dms-retrieval
+  - tooluniverse-protein-structural-annotation-pdb
+  - tooluniverse-variant-predictor-dms-benchmarking  (was sae-dms-global-validation)
+  - tooluniverse-dms-hotspot-mechanism-interpretation (was sae-dms-hotspot-features)
+  - tooluniverse-annotated-dms-heatmap
 
-If a code snippet in a SKILL.md drifts away from this test (or a test breaks),
-that's the signal to fix the skill. The skill is the source of truth — this
-test is the executable proof the snippet is real Python that runs.
+The pooled-features / WT-diagonal-NaN / caching patterns that used to live in
+sae-mutant-tensor-build are now embedded as a 'Prerequisites' step inside the
+two benchmarking skills.
+
+This test extracts the load-bearing logic verbatim from those skills and runs
+it against synthetic fixtures. If a snippet drifts (or a test breaks), the fix
+goes in the SKILL.md — the skill is the source of truth; this test is the
+executable proof the snippet is real Python that runs.
 """
 
 import re
@@ -166,7 +173,9 @@ def test_skill8_landmark_check(kras_short_sequence):
 
 
 # ---------------------------------------------------------------------------
-# Skill 9: sae-mutant-tensor-build — pooling + cache + WT-diagonal logic
+# Per-variant feature matrix prerequisites (formerly sae-mutant-tensor-build,
+# now folded into variant-predictor-dms-benchmarking + dms-hotspot-mechanism-interpretation)
+# — pooling + cache + WT-diagonal logic
 # ---------------------------------------------------------------------------
 
 def test_skill9_pooled_features_shape():
@@ -234,7 +243,7 @@ def test_skill9_cache_function(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# Skill 10: sae-dms-global-validation — drop, topk, categorize, MWU
+# tooluniverse-variant-predictor-dms-benchmarking — drop, topk, categorize, MWU
 # ---------------------------------------------------------------------------
 
 def topk_drop(drops, K):
@@ -314,7 +323,7 @@ def test_skill10_mannwhitneyu_significant_when_signal_present(
 
 
 # ---------------------------------------------------------------------------
-# Skill 11: sae-dms-hotspot-features — clusters, permutation, descriptive
+# tooluniverse-dms-hotspot-mechanism-interpretation — clusters, permutation, descriptive
 # ---------------------------------------------------------------------------
 
 def test_skill11_per_position_max_drop(synthetic_sae_tensor):

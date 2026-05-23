@@ -45,7 +45,7 @@ Zitnik lab).
 
 Optional:
 - `callouts`: list of `{cluster_positions, label_lines}` from
-  `tooluniverse-sae-dms-hotspot-features`
+  `tooluniverse-dms-hotspot-mechanism-interpretation`
 - `vlim`: symmetric colour limits, e.g. ±3 for ΔΔG in kcal/mol
 
 ---
@@ -227,7 +227,7 @@ A PNG per assay with rows (top → bottom):
 |---|---|
 | `tooluniverse-mavedb-dms-retrieval` | DMS matrix input |
 | `tooluniverse-protein-structural-annotation-pdb` | Annotation track input |
-| `tooluniverse-sae-dms-hotspot-features` | Callout content |
+| `tooluniverse-dms-hotspot-mechanism-interpretation` | Callout content |
 
 ---
 
