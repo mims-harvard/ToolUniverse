@@ -104,7 +104,7 @@
   },
   {
     "name": "MaveDB_get_variant_scores",
-    "description": "Get functional variant effect scores from a MaveDB score set. Returns HGVS-annotated variants with their functional scores from deep mutational scanning or other MAVE assays. Scores indicate variant effect on protein function (interpretation depends on the specific assay - check score set metadata). Optionally filter by HGVS protein notation (e.g., 'Arg175' to find all R175 substitutions).",
+    "description": "Get functional variant effect scores from a MaveDB score set. Returns HGVS-annotated variants with their functional scores from deep mutational scanning or other MAVE assays. Scores indicate variant effect on protein function (interpretation depends on the specific assay - check score set metadata). Optionally filter by HGVS protein notation (e.g., 'Arg175' to find all R175 substitutions). The /scores endpoint returns every variant in one CSV; `limit` is client-side truncation only — set `limit=0` (or omit) to receive ALL variants in one call (use this for whole-protein DMS analyses, e.g. KRAS folding ΔΔG has ~2200 variants).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -117,9 +117,9 @@
           "description": "Optional filter: HGVS protein notation substring (e.g., 'Arg175', 'p.Arg175His'). Case-insensitive partial match on protein-level HGVS."
         },
         "limit": {
-          "type": "integer",
-          "description": "Maximum variants to return (default 50, max 500).",
-          "default": 50
+          "type": ["integer", "null"],
+          "description": "Maximum variants to return after client-side filtering. Set to 0 or null to return all variants in the score set (default — needed for whole-protein DMS workflows). Set to a positive integer to truncate. The MaveDB API returns the full CSV in one HTTP call regardless, so 'unlimited' has no extra cost.",
+          "default": 0
         }
       },
       "required": ["urn"]
@@ -143,8 +143,10 @@
       "type": "object",
       "properties": {
         "urn": {"type": "string"},
-        "total_variants_in_set": {"type": ["integer", "string"]},
+        "total_variants_in_set": {"type": "integer"},
         "returned": {"type": "integer"},
+        "truncated": {"type": "boolean"},
+        "limit_applied": {"type": ["integer", "null"]},
         "hgvs_filter": {"type": ["string", "null"]},
         "variants": {
           "type": "array",

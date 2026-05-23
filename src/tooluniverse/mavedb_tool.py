@@ -135,7 +135,19 @@ class MaveDBTool(BaseTool):
             return {"status": "error", "error": "urn parameter is required"}
 
         hgvs_filter = (params.get("hgvs_pro") or "").strip()
-        limit = min(int(params.get("limit", 50)), 500)
+        # limit semantics: client-side truncation of the CSV returned by the
+        # /scores endpoint (the endpoint itself returns every variant in one
+        # call — there is no server-side pagination). limit=None / omitted /
+        # 0 means "return all", which is what DMS workflows need on whole-
+        # protein score sets (e.g. KRAS folding ΔΔG has ~2200 variants).
+        raw_limit = params.get("limit")
+        limit = None
+        if raw_limit is not None:
+            try:
+                lv = int(raw_limit)
+                limit = None if lv <= 0 else lv
+            except (TypeError, ValueError):
+                limit = None
 
         try:
             resp = self.session.get(
@@ -189,19 +201,25 @@ class MaveDBTool(BaseTool):
                         variant[key] = value
 
             variants.append(variant)
-            if len(variants) >= limit:
+            if limit is not None and len(variants) >= limit:
+                # Continue counting total_parsed so we can report the true total
+                # in the response (let the user know more variants exist that
+                # were truncated client-side).
+                for _ in reader:
+                    total_parsed += 1
                 break
 
+        truncated = (
+            limit is not None and len(variants) >= limit and total_parsed > limit
+        )
         return {
             "status": "success",
             "data": {
                 "urn": urn,
-                "total_variants_in_set": (
-                    total_parsed
-                    if len(variants) < limit
-                    else f">{total_parsed} (truncated at {limit})"
-                ),
+                "total_variants_in_set": total_parsed,
                 "returned": len(variants),
+                "truncated": truncated,
+                "limit_applied": limit,
                 "hgvs_filter": hgvs_filter or None,
                 "variants": variants,
             },

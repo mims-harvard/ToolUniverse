@@ -7,8 +7,7 @@ UniProt response type: str keys: None
 KRAS length: 189, pos 12 = G
 
 === Step 2: MaveDB KRAS folding ΔΔG ===
-  unfiltered first 500: 500
-raw variant rows (deduped): 2191
+raw variant rows: 3553 (total_in_set=3553, truncated=False)
 first row keys: ['hgvs_nt', 'hgvs_splice', 'hgvs_pro', 'score', 'std']
 first row: {'hgvs_nt': 'NA', 'hgvs_splice': 'NA', 'hgvs_pro': 'p.Thr2Ala', 'score': 0.22693041, 'std': 0.041200403}
 

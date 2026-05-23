@@ -92,9 +92,17 @@ silently inverts every downstream conclusion** — never guess.
 ### Step 3: Pull the variants
 
 ```python
+# Omit `limit` (or set limit=0) to receive ALL variants in one call.
+# The MaveDB /scores endpoint returns the full CSV in a single HTTP request,
+# so "unlimited" is the correct setting for whole-protein DMS analyses.
+# (KRAS folding ΔΔG urn:mavedb:00000115-a-7 has ~3550 variants — all returned
+# in one call once `limit` is omitted.)
 MaveDB_get_variant_scores(urn="urn:mavedb:00000115-a-1")
-# Returns rows like:
-#   {hgvs_pro: "p.Arg175His", score: -2.34, ...}
+# Returns:
+#   {data: {urn, total_variants_in_set, returned, truncated, limit_applied,
+#           hgvs_filter, variants: [{hgvs_pro: "p.Arg175His", score: -2.34, ...}, ...]}}
+# Set limit=N (positive integer) only if you genuinely want to truncate for a
+# preview; otherwise leave it unset.
 ```
 
 ### Step 4: Parse HGVS to (position, ref_aa, alt_aa) and filter

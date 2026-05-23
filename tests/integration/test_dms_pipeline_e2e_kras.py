@@ -110,36 +110,16 @@ def main():
     print(f"KRAS length: {len(seq)}, pos 12 = {seq[11]}")
     assert seq[11] == "G"
 
-    # Step 2: MaveDB variants — pull max (500) per call, paginate by per-position hgvs_pro filter
+    # Step 2: MaveDB variants — single call returns all variants now that the
+    # client-side cap has been removed (limit omitted = no truncation).
     print("\n=== Step 2: MaveDB KRAS folding ΔΔG ===")
-    all_rows = []
-    # Get the unfiltered first 500 first
-    r = tu.run({"name": "MaveDB_get_variant_scores", "arguments": {"urn": KRAS_URN, "limit": 500}})
-    rows_batch = r if isinstance(r, list) else r.get("data", r)
-    if isinstance(rows_batch, dict):
-        rows_batch = rows_batch.get("variants") or rows_batch.get("rows") or list(rows_batch.values())
-    print(f"  unfiltered first 500: {len(rows_batch) if isinstance(rows_batch, list) else 'unknown'}")
-    if isinstance(rows_batch, list):
-        all_rows.extend(rows_batch)
-    # Top up by per-position hgvs_pro filter for positions in our range
-    for pos in range(POS_MIN, POS_MAX + 1):
-        r = tu.run({"name": "MaveDB_get_variant_scores", "arguments": {
-            "urn": KRAS_URN, "hgvs_pro": str(pos), "limit": 500,
-        }})
-        batch = r if isinstance(r, list) else r.get("data", r)
-        if isinstance(batch, dict):
-            batch = batch.get("variants") or batch.get("rows") or list(batch.values())
-        if isinstance(batch, list):
-            all_rows.extend(batch)
-    # Dedup by hgvs_pro
-    seen = set()
-    rows = []
-    for row in all_rows:
-        key = row.get("hgvs_pro") or row.get("hgvs")
-        if key and key not in seen:
-            seen.add(key)
-            rows.append(row)
-    print(f"raw variant rows (deduped): {len(rows)}")
+    r = tu.run({"name": "MaveDB_get_variant_scores", "arguments": {"urn": KRAS_URN}})
+    data = r.get("data", r) if isinstance(r, dict) else r
+    rows = data.get("variants") if isinstance(data, dict) else (r if isinstance(r, list) else [])
+    if not isinstance(rows, list):
+        rows = []
+    total_in_set = data.get("total_variants_in_set") if isinstance(data, dict) else None
+    print(f"raw variant rows: {len(rows)} (total_in_set={total_in_set}, truncated={data.get('truncated') if isinstance(data, dict) else '?'})")
     if rows:
         print(f"first row keys: {list(rows[0].keys())[:15]}")
         print(f"first row: {rows[0]}")
