@@ -126,6 +126,7 @@ space = [
 ]
 bioinformatics = [
     "biopython>=1.80",
+    "freesasa>=2.2.0",
 ]
 # circuit: install manually with `pip install git+https://github.com/tooluniverse/circuit.git`
 all = [

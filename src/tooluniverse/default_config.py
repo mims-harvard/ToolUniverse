@@ -238,6 +238,9 @@ default_tool_files = {
     ),
     "cryoet": os.path.join(current_dir, "data", "cryoet_tools.json"),
     "esm": os.path.join(current_dir, "data", "esm_tools.json"),
+    "structure_annotation": os.path.join(
+        current_dir, "data", "structure_annotation_tools.json"
+    ),
     "url": os.path.join(current_dir, "data", "url_fetch_tools.json"),
     "file_download": os.path.join(current_dir, "data", "file_download_tools.json"),
     # 'langchain': os.path.join(current_dir, 'data', 'langchain_tools.json'),
