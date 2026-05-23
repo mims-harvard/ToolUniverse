@@ -128,7 +128,7 @@ downstream uses:
 
 | Use case | Field to read |
 |---|---|
-| Is variant X in a pocket? | `annotations[X-1]["region"] in ("ligand", "both")` |
+| Is variant X in a pocket? | `by_pos = {a["position"]: a for a in annotations}; by_pos[X]["region"] in ("ligand", "both")` — index by position field, NOT list index (PDB residue numbers may not start at 1 or be contiguous) |
 | Build a DMS heatmap annotation track | `[(r["position"], r["region"], r["is_core"], r.get("ss_element"))]` |
 | Filter SAE hotspot features to ligand-binding residues | filter clusters by `region == "ligand"` |
 | Compare buried vs surface signal | group statistics by `is_core` |

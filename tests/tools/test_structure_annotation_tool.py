@@ -141,3 +141,38 @@ def test_distance_cutoff_changes_classification():
     tight_iface = sum(1 for r in tight["annotations"] if r["region"] in ("interface", "both"))
     loose_iface = sum(1 for r in loose["annotations"] if r["region"] in ("interface", "both"))
     assert loose_iface >= tight_iface
+
+
+@pytest.mark.timeout(60)
+def test_include_secondary_structure_live_pdbe():
+    """Real-network test: fetch SS for 6VJJ from PDBe REST.
+
+    Verifies the include_secondary_structure=True code path actually returns
+    populated ss_element values. Skipped if PDBe is unreachable.
+    """
+    import requests
+    try:
+        requests.get("https://www.ebi.ac.uk/pdbe/api/pdb/entry/secondary_structure/6vjj", timeout=10).raise_for_status()
+    except requests.RequestException:
+        pytest.skip("PDBe REST unreachable")
+
+    tool = StructureAnnotationTool({"name": "Structure_annotate_per_residue"})
+    result = tool.run({
+        "operation": "annotate_per_residue",
+        "pdb_id": "6VJJ",
+        "target_chain": "A",
+        "partner_chains": ["B"],
+        "ligand_resnames": ["GNP", "MG"],
+        "include_secondary_structure": True,
+    })
+    assert result["status"] == "success"
+    assert result["method"]["ss_source"] == "pdbe_rest"
+    ss_values = [r.get("ss_element") for r in result["annotations"]]
+    # KRAS β1 strand spans residues 2-9 — must have strand residues in the response
+    strand_count = ss_values.count("strand")
+    helix_count = ss_values.count("helix")
+    assert strand_count > 5, f"expected KRAS to have multiple strand residues, got {strand_count}"
+    assert helix_count > 10, f"expected KRAS to have multiple helix residues, got {helix_count}"
+    # Position 5 (KRAS β1 residue) must be 'strand'
+    pos5 = next(r for r in result["annotations"] if r["position"] == 5)
+    assert pos5["ss_element"] == "strand", f"KRAS pos 5 should be strand, got {pos5['ss_element']}"
