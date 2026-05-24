@@ -1,55 +1,84 @@
 ---
-name: tooluniverse-dms-hotspot-mechanism-interpretation
-description: "Given a DMS hotspot (a residue or short cluster where many substitutions disrupt function), explain WHY that residue is functionally critical by combining multiple lines of evidence: SAE feature drops, structural context (binding interface, ligand pocket, core, secondary structure), known UniProt features (active sites, binding sites, PTM sites, disulfides), and evolutionary conservation. The output is a per-hotspot mechanism call: catalytic / ligand-binding / interface / structural-core / PTM / regulatory / unknown."
+name: tooluniverse-residue-functional-mechanism-interpretation
+description: "Given a set of residues in a protein, explain WHY they are functionally critical by combining structural context (binding interface, ligand pocket, core, secondary structure), UniProt features (active sites, binding sites, PTM sites, disulfides), optional SAE feature evidence, and optional DMS data. Accepts residues from any source: DMS hotspots (top-K by max effect), ClinVar recurrent variants, literature-reported hot regions, evolutionarily conserved positions, or user-curated lists. Returns a per-cluster mechanism call: catalytic / ligand-binding / interface / structural-core / PTM / regulatory / unknown."
 disable-model-invocation: true
 ---
 
-# DMS hotspot mechanism interpretation
+# Residue functional mechanism interpretation
 
-The core user question: **"This DMS map has a hotspot at residue X — *why* is X
-critical?"**
+The core user question: **"Why are these residues functionally critical?"**
 
-Answering needs more than one source: a hotspot in the ligand pocket means
-something different from a hotspot in a catalytic triad, an interface, the
+Answering needs more than one source: a residue in the ligand pocket means
+something different from one in a catalytic triad, an interface, the
 hydrophobic core, or a PTM sequon. This skill synthesizes evidence from
-multiple TU tools to call a mechanism.
+multiple TU tools to call a mechanism for each residue (or cluster of
+adjacent residues).
 
-**Provenance**: Hotspot detection + permutation statistics methodology adapted
-from `dms_analysis/skills/sae_hotspot_feature_enrichment.md` in
-[ada-f/esmc_sae](https://github.com/ada-f/esmc_sae) (Ada Fang, Marinka Zitnik
-lab). The multi-evidence synthesis layer (structural + SAE + UniProt) is added
-here.
+The residues can come from **any source** — this skill is agnostic to where
+they came from:
+
+| Residue source | Typical call pattern |
+|---|---|
+| **DMS map hotspots** | Use Step 1 (optional) to detect top-K by max effect, then continue |
+| **ClinVar recurrent variants** | Pull recurrent positions from ClinVar, pass directly as `user_provided_positions` |
+| **Literature hot regions** | Paste positions from a paper's Fig 1, pass directly |
+| **Evolutionarily conserved residues** | Filter by conservation score, pass top-N positions |
+| **Druggable site residues** | From a binding-site predictor, pass directly |
+| **Clinician's question** | "Why does mutation at R175 keep showing up in tumors?" — pass `[175]` |
+
+**Provenance**: Multi-evidence synthesis pattern adapted from
+`dms_analysis/skills/sae_hotspot_feature_enrichment.md` in
+[ada-f/esmc_sae](https://github.com/ada-f/esmc_sae) (Ada Fang, Marinka
+Zitnik lab). The original framing was DMS-hotspot-only; this skill generalizes
+the entry to accept residues from any source.
 
 ---
 
 ## When to use this skill
 
-- You have a DMS map and want to interpret what your top hotspots represent
-  biologically
-- You're writing the methods/discussion section of a DMS paper and need
-  mechanistic claims per hotspot
-- You're comparing DMS hotspots across orthologs and need a per-hotspot
+- You have a list of residues (from anywhere) and need to explain *why* they
+  matter biologically
+- You're writing the methods/discussion section of a paper and need
+  mechanistic claims per residue or cluster
+- You're comparing residue sets across orthologs and need a per-residue
   category to align by
 
 **Not for**:
 - Validating a *predictor* against DMS — use
   `tooluniverse-variant-predictor-dms-benchmarking`
-- Single-variant interpretation when you have one variant, no DMS — use
-  `tooluniverse-protein-sae-variant-interpretation` or
-  `tooluniverse-protein-lof-mechanism`
-- Finding hotspots in the first place from raw DMS — that's just the top-K
-  positions by max effect; this skill takes hotspots as input
+- Single-variant **SAE feature decomposition** when you want to see which
+  ESMC features changed — use `tooluniverse-protein-sae-variant-interpretation`
+- Single-variant **LoF mechanism synthesis** for one variant in isolation
+  — use `tooluniverse-protein-lof-mechanism`
+
+The single-variant skills focus on one mutation's signature; this skill
+focuses on *which residues matter and why*.
 
 ---
 
-## Required inputs
+## Required inputs (choose one entry path)
+
+**Path A — Residues supplied directly** (covers ClinVar / literature /
+custom positions):
+
+| Input | Notes |
+|---|---|
+| `user_provided_positions: List[int]` | 1-based canonical residue positions |
+| Protein metadata | UniProt accession + PDB ID + chain |
+| (optional) DMS matrix | If supplied, used to enrich each cluster with effect-size context |
+| (optional) SAE tensor | If supplied, gives SAE feature evidence as a 4th layer |
+
+**Path B — Detect hotspots from a DMS map** (original use case):
 
 | Input | Source | Notes |
 |---|---|---|
 | DMS effect matrix `(20, n_positions)` | `tooluniverse-mavedb-dms-retrieval` | NaN for unmeasured |
 | `disruptive_tail` | DMS retrieval metadata | `"top"` or `"bottom"` |
 | Protein metadata | UniProt accession + PDB ID + chain | for the multi-evidence lookups |
-| (optional) SAE tensor `(20, n_positions, 16384)` | `ESM_get_sae_features` per mutant | the SAE evidence layer; if absent the skill runs with the other 3 evidence layers |
+| (optional) SAE tensor `(20, n_positions, 16384)` | `ESM_get_sae_features` per mutant | the SAE evidence layer |
+
+In Path B the skill runs Step 1 to detect hotspots; in Path A it skips Step
+1 entirely and goes straight to Step 2 (gather evidence).
 
 ---
 
@@ -98,35 +127,53 @@ The without-skill agent in the original eval missed this and gave a
 technically-correct P-loop description while accepting the user's wrong
 premise. Don't repeat that.
 
-### Step 1: Pick hotspots from the DMS matrix
+### Step 1 (Path B only): Detect hotspots from the DMS matrix
+
+**Skip this step entirely if the user already provided positions (Path A).**
+In Path A the residue list IS the input; jump straight to clustering at the
+bottom of this section.
 
 ```python
 import numpy as np
 
-# Per-position disruption magnitude
-if disruptive_tail == "top":
-    dms_per_pos = np.nanmax(dms_matrix, axis=0)   # max destabilization at any allele
-elif disruptive_tail == "bottom":
-    dms_per_pos = -np.nanmin(dms_matrix, axis=0)  # flip for low-is-bad assays
+if user_provided_positions:
+    # Path A — residues from any source (ClinVar / literature / custom)
+    positions_to_analyze = sorted(set(user_provided_positions))
+else:
+    # Path B — detect from DMS matrix
+    if disruptive_tail == "top":
+        dms_per_pos = np.nanmax(dms_matrix, axis=0)   # max destabilization at any allele
+    elif disruptive_tail == "bottom":
+        dms_per_pos = -np.nanmin(dms_matrix, axis=0)  # flip for low-is-bad assays
 
-K = 20
-top_positions = sorted(np.argsort(-dms_per_pos)[:K].tolist())
+    K = 20
+    positions_to_analyze = sorted(np.argsort(-dms_per_pos)[:K].tolist())
 
-# Chain adjacent positions (gap ≤ 2) into clusters
+# Chain adjacent positions (gap ≤ 2) into clusters — shared by both paths
 clusters = []
-current = [top_positions[0]]
-for p in top_positions[1:]:
+current = [positions_to_analyze[0]]
+for p in positions_to_analyze[1:]:
     if p - current[-1] <= 2:
         current.append(p)
     else:
         clusters.append(current)
         current = [p]
 clusters.append(current)
-print(f"{len(clusters)} hotspot cluster(s): {clusters}")
+print(f"{len(clusters)} cluster(s): {clusters}")
 ```
 
 A "cluster" of one is allowed — it just gets less statistical power in the
 permutation test, but multi-evidence interpretation still works.
+
+**Path A workflow contracts** (what's available vs not):
+| Evidence layer | Path A (user residues) | Path B (DMS hotspots) |
+|---|---|---|
+| Structural (Step 2) | ✓ always | ✓ always |
+| UniProt features (Step 3) | ✓ always | ✓ always |
+| SAE per-feature labels (Step 4, descriptive) | ✓ if SAE tensor supplied | ✓ if SAE tensor supplied |
+| SAE permutation test (Step 4-alt) | ✗ — needs DMS-derived `max_drop` baseline; not meaningful for residues with no DMS context | ✓ if SAE tensor supplied |
+| DMS effect-size context | ✓ if DMS matrix supplied (enrichment only) | ✓ always |
+| Mechanism synthesis (Step 5) | ✓ always | ✓ always |
 
 ### Step 2: Gather structural evidence per cluster
 

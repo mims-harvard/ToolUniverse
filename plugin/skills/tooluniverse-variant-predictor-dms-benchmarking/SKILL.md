@@ -43,7 +43,7 @@ Reference: `05_validation1_global.py`, `06_validation1_aggregations.py`,
 
 **Not for**:
 - Per-position / per-feature interpretation — use
-  `tooluniverse-dms-hotspot-mechanism-interpretation`
+  `tooluniverse-residue-functional-mechanism-interpretation`
 - Single-variant interpretation (you have one variant, no DMS) — use
   `tooluniverse-protein-sae-variant-interpretation` or
   `tooluniverse-protein-lof-mechanism`
@@ -378,7 +378,7 @@ and compare:
    binding-fitness assays — same protein, different DMS, different result.
 3. **Coarse signal**. This says "predictor responds to mutational disruptiveness."
    It does NOT say "predictor identifies the *right* residues" — for that, run
-   `tooluniverse-dms-hotspot-mechanism-interpretation`.
+   `tooluniverse-residue-functional-mechanism-interpretation`.
 4. **MWU assumes independence**. DMS variants at the same position are mildly
    correlated (shared structural context); the p-values are slightly optimistic.
 5. **Tail definitions are arbitrary**. 5% disruptive cutoff and 0.1 neutral band
@@ -398,8 +398,8 @@ and compare:
 | Whole-protein AlphaMissense (cheapest for DMS) | `AlphaMissense_get_protein_scores(uniprot_id)` |
 | Per-variant ESM logits | `ESM_score_sequence` |
 | Structural prior (for predictor analysis) | `Structure_annotate_per_residue` |
-| Next step: per-hotspot mechanism | `tooluniverse-dms-hotspot-mechanism-interpretation` |
-| Final visualization | Step 7 of `tooluniverse-dms-hotspot-mechanism-interpretation` (annotated heatmap + callouts) |
+| Next step: per-hotspot mechanism | `tooluniverse-residue-functional-mechanism-interpretation` |
+| Final visualization | Step 7 of `tooluniverse-residue-functional-mechanism-interpretation` (annotated heatmap + callouts) |
 
 ---
 

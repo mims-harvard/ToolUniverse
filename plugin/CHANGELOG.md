@@ -35,13 +35,17 @@ covering single-variant mechanistic interpretation through whole-protein DMS ana
   per-variant predictor (AlphaMissense / SAE / ESM logits / EVE / conservation
   / DynaMut2 / custom) against DMS data via Mann-Whitney U + robustness sweep.
   SAE is shown as the worked example; the methodology is predictor-agnostic.
-- `tooluniverse-dms-hotspot-mechanism-interpretation` — given a DMS hotspot,
-  explain WHY it's functionally critical by combining structural context
-  (binding interface / ligand pocket / core), UniProt features (active site /
-  binding site / PTM), and optional SAE feature evidence. Returns a mechanism
-  call: catalytic / ligand-binding / interface / structural-core / PTM /
-  regulatory / mixed / unknown.
-- (DMS heatmap visualization is now Step 7 of `tooluniverse-dms-hotspot-mechanism-interpretation` — the publication figure is the natural deliverable of hotspot interpretation, not a standalone user goal.)
+- `tooluniverse-residue-functional-mechanism-interpretation` — given any set
+  of residues in a protein (DMS hotspots / ClinVar recurrent variants /
+  literature hot regions / conserved positions / user-curated list), explain
+  WHY they are functionally critical by combining structural context
+  (binding interface / ligand pocket / core / SS), UniProt features (active
+  site / binding site / PTM / disulfide), and optional SAE feature evidence.
+  Two entry paths: Path A accepts `user_provided_positions` directly; Path B
+  detects hotspots from a DMS matrix. Returns a mechanism call: catalytic /
+  ligand-binding / interface / structural-core / PTM / regulatory / mixed /
+  unknown. Step 7 produces the annotated DMS heatmap (when DMS data is
+  available).
 
 **Verification:**
 - 46 unit tests pass (18 SAE + 11 structural-annotation + 17 DMS skill snippet tests).

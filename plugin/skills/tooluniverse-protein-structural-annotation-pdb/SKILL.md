@@ -181,7 +181,7 @@ downstream uses:
 | `RCSBAdvSearch_search_structures` | Free-text RCSB search | Step 1 |
 | `UniProt_get_sequence_by_accession` | Canonical sequence | Step 3 (numbering verification) |
 | `pdbe_get_entry_secondary_structure` | SS alone | Step 4 alternative |
-| `tooluniverse-dms-hotspot-mechanism-interpretation` | Downstream consumer | Use this annotation as the structural evidence layer when interpreting DMS hotspots; the skill also plots an annotated DMS heatmap in its Step 7 |
+| `tooluniverse-residue-functional-mechanism-interpretation` | Downstream consumer | Use this annotation as the structural evidence layer when interpreting DMS hotspots; the skill also plots an annotated DMS heatmap in its Step 7 |
 
 ---
 

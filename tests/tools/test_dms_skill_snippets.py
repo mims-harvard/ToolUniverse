@@ -5,7 +5,7 @@ the 4 DMS-analysis SKILL.md files are:
   - tooluniverse-mavedb-dms-retrieval
   - tooluniverse-protein-structural-annotation-pdb
   - tooluniverse-variant-predictor-dms-benchmarking  (was sae-dms-global-validation)
-  - tooluniverse-dms-hotspot-mechanism-interpretation (was sae-dms-hotspot-features;
+  - tooluniverse-residue-functional-mechanism-interpretation (was sae-dms-hotspot-features;
       Step 7 of this skill subsumes what used to be a standalone annotated-dms-heatmap)
 
 The pooled-features / WT-diagonal-NaN / caching patterns that used to live in
@@ -174,7 +174,7 @@ def test_skill8_landmark_check(kras_short_sequence):
 
 # ---------------------------------------------------------------------------
 # Per-variant feature matrix prerequisites (formerly sae-mutant-tensor-build,
-# now folded into variant-predictor-dms-benchmarking + dms-hotspot-mechanism-interpretation)
+# now folded into variant-predictor-dms-benchmarking + residue-functional-mechanism-interpretation)
 # — pooling + cache + WT-diagonal logic
 # ---------------------------------------------------------------------------
 
@@ -323,7 +323,7 @@ def test_skill10_mannwhitneyu_significant_when_signal_present(
 
 
 # ---------------------------------------------------------------------------
-# tooluniverse-dms-hotspot-mechanism-interpretation — clusters, permutation, descriptive
+# tooluniverse-residue-functional-mechanism-interpretation — clusters, permutation, descriptive
 # ---------------------------------------------------------------------------
 
 def test_skill11_per_position_max_drop(synthetic_sae_tensor):
@@ -393,7 +393,7 @@ def test_skill11_descriptive_top5(synthetic_sae_tensor):
 
 
 # ---------------------------------------------------------------------------
-# dms-hotspot-mechanism-interpretation Step 7 (formerly annotated-dms-heatmap)
+# residue-functional-mechanism-interpretation Step 7 (formerly annotated-dms-heatmap)
 # — matplotlib code paths for the publication figure
 # ---------------------------------------------------------------------------
 
@@ -550,7 +550,7 @@ def test_variant_predictor_nan_sanity_gate():
 
 
 def test_hotspot_premise_check_rank_logic():
-    """Verbatim from dms-hotspot-mechanism-interpretation new Step 0.
+    """Verbatim from residue-functional-mechanism-interpretation new Step 0.
 
     Caught the eval-2 case: user says 'G12 is a hotspot' but G12 ranks
     105/187 (top 56%) by max ΔΔG. Skill must flag this.
@@ -578,6 +578,48 @@ def test_hotspot_premise_check_rank_logic():
     real_rank = int(ranks[real_hotspot_idx])
     real_pct = 100 * (1 - real_rank / n_pos)
     assert real_pct >= 99, f"max element should be top 1%, got top {real_pct:.0f}%"
+
+
+def test_residue_mechanism_path_a_user_provided_positions():
+    """Verbatim from residue-functional-mechanism-interpretation Step 1.
+
+    The generalized skill accepts user_provided_positions directly (covers
+    ClinVar / literature / custom residues), skipping DMS hotspot detection.
+    """
+    # Path A: user gave us residues directly (no DMS matrix needed)
+    user_provided_positions = [12, 13, 175, 273]  # mixed: KRAS + TP53 hotspots
+    dms_matrix = None
+    disruptive_tail = None
+
+    # Skill's entry-path switch
+    if user_provided_positions:
+        positions_to_analyze = sorted(set(user_provided_positions))
+    else:
+        # would do DMS hotspot detection here
+        positions_to_analyze = []
+
+    assert positions_to_analyze == [12, 13, 175, 273]
+    # Deduplication works
+    user_provided_positions = [12, 12, 13, 13]
+    positions_to_analyze = sorted(set(user_provided_positions))
+    assert positions_to_analyze == [12, 13]
+
+    # Clustering still works on a mixed-source residue list
+    clusters = []
+    current = [positions_to_analyze[0]]
+    user_provided_positions = [12, 13, 175, 273]
+    positions_to_analyze = sorted(set(user_provided_positions))
+    clusters = []
+    current = [positions_to_analyze[0]]
+    for p in positions_to_analyze[1:]:
+        if p - current[-1] <= 2:
+            current.append(p)
+        else:
+            clusters.append(current)
+            current = [p]
+    clusters.append(current)
+    # 12+13 cluster together; 175 and 273 are isolated
+    assert clusters == [[12, 13], [175], [273]]
 
 
 def test_skill7_field_extraction_pattern():
