@@ -80,7 +80,7 @@ Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics
 | `NvidiaNIM_rfdiffusion` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Backbone generation | `diffusion_steps` (NOT `num_steps`) |
 | `NvidiaNIM_proteinmpnn` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Sequence design | `pdb_string` (NOT `pdb`) |
 | `ESMFold_predict_structure` | Fast validation | `sequence` (NOT `seq`) |
-| `alphafold_get_prediction` | High-accuracy validation | `sequence`, `algorithm` |
+| `NvidiaNIM_alphafold2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | High-accuracy structure inference from sequence | `sequence`, `algorithm` |
 | `NvidiaNIM_esm2_650m` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Sequence embeddings | `sequences`, `format` |
 
 ### Common Parameter Mistakes
@@ -90,7 +90,7 @@ Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics
 | `NvidiaNIM_rfdiffusion` *(requires NVIDIA_API_KEY)* | `num_steps=50` | `diffusion_steps=50` |
 | `NvidiaNIM_proteinmpnn` *(requires NVIDIA_API_KEY)* | `pdb=content` | `pdb_string=content` |
 | `ESMFold_predict_structure` | `seq="MVLS..."` | `sequence="MVLS..."` |
-| `alphafold_get_prediction` | `seq="MVLS..."` | `sequence="MVLS..."` |
+| `NvidiaNIM_alphafold2` *(requires NVIDIA_API_KEY)* | `seq="MVLS..."` | `sequence="MVLS..."` |
 
 ### NVIDIA NIM Requirements
 - **API Key**: `NVIDIA_API_KEY` environment variable required

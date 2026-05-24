@@ -89,7 +89,7 @@ tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
 
 Common parameter corrections (verify with `get_tool_info` if uncertain):
 - `OpenTargets_*`: `ensemblId` (camelCase); `ADMETAI_*`: `smiles` must be a list
-- `alphafold_get_prediction`: `sequence` not `seq`; `NvidiaNIM_genmol` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)*: SMILES must contain `[*{min-max}]`
+- `NvidiaNIM_alphafold2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)*: `sequence` not `seq`; `NvidiaNIM_genmol` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)*: SMILES must contain `[*{min-max}]`
 - `NvidiaNIM_boltz2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)*: `polymers=[{"molecule_type": "protein", "sequence": "..."}]`
 
 ---
@@ -127,7 +127,7 @@ Use multi-source triangulation:
 ### 1.4 Structure Prediction (NVIDIA NIM)
 
 Requires `NVIDIA_API_KEY`. Two options:
-- **AlphaFold2**: `alphafold_get_prediction(sequence, algorithm="mmseqs2")` - high accuracy, 5-15 min
+- **AlphaFold2**: `NvidiaNIM_alphafold2(sequence, algorithm="mmseqs2")` - high accuracy, 5-15 min
 - **ESMFold**: `ESMFold_predict_structure(sequence)` - fast (~30s), max 1024 AA
 
 pLDDT guidance: >=90 very high confidence, 70-90 confident, <70 use with caution. Low pLDDT in the putative binding region undermines docking reliability.
