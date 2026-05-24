@@ -13,7 +13,7 @@ Comprehensive microbiome analysis using MGnify (EBI metagenomics), GTDB (genome 
 | Tool | Purpose | Auth |
 |------|---------|------|
 | **MGnify_search_studies** | Find metagenomics studies by biome/keyword | None |
-| **MGnify_search_studies_detail** | Study metadata, abstract, sample counts | None |
+| **MGnify_get_study_detail** | Study metadata, abstract, sample counts | None |
 | **MGnify_list_analyses** | List taxonomic/functional analysis outputs for a study | None |
 | **MGnify_get_taxonomy** | Taxonomic composition from an analysis | None |
 | **MGnify_get_go_terms** | GO functional annotations from an analysis | None |
@@ -56,7 +56,7 @@ studies = tu.run_one_function({
 
 # 2. Get study details
 detail = tu.run_one_function({
-    'name': 'MGnify_search_studies_detail',
+    'name': 'MGnify_get_study_detail',
     'arguments': {'study_accession': 'MGYS00006860'}
 })
 
@@ -209,7 +209,7 @@ Microbiome analysis starts with: what is the question? LOOK UP DON'T GUESS — a
 - Functional potential (what can they do?) → Shotgun metagenomics → MGnify GO terms, InterPro, KEGG pathways
 - Active function (what are they doing now?) → Metatranscriptomics → specialized pipelines (not MGnify/GTDB alone)
 
-Before calling any tool, determine which data type the user has via `MGnify_search_studies_detail` — the pipeline type (amplicon vs shotgun) determines which analyses are valid. Do not apply 16S diversity metrics to metagenomic data or vice versa.
+Before calling any tool, determine which data type the user has via `MGnify_get_study_detail` — the pipeline type (amplicon vs shotgun) determines which analyses are valid. Do not apply 16S diversity metrics to metagenomic data or vice versa.
 
 ### Dysbiosis Assessment Strategy
 

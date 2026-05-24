@@ -49,9 +49,9 @@ For any ncRNA query: first identify the class from the name/sequence, then selec
 | `LNCipedia_search_ncrna_by_type` | List all transcripts for a lncRNA gene |
 | `LNCipedia_get_lncrna_publications` | lncRNA sequence (FASTA format) |
 | `RNAcentral_search` | Search all ncRNA types across databases |
-| `RNAcentral_get_rna` | Detailed ncRNA annotations from 40+ databases |
+| `RNAcentral_get_by_accession` | Detailed ncRNA annotations from 40+ databases |
 | `Rfam_get_family` | RNA family details (structure, alignment, species distribution) |
-| `Rfam_search` | Search RNA families by keyword |
+| `Rfam_search_sequence` | Search RNA families by keyword |
 | `DisGeNET_search_gene` | ncRNA-disease associations |
 | `PubMed_search_articles` | ncRNA literature |
 | `GTEx_get_median_gene_expression` | Tissue expression of ncRNA genes |

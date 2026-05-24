@@ -104,7 +104,7 @@ See `ACMG_CLASSIFICATION.md` for thresholds.
 
 ## Phase 4: Structural Analysis (VUS/Novel Missense)
 
-Tools: `PDBe_get_uniprot_mappings`, `NvidiaNIM_alphafold2`, `alphafold_get_prediction` (param: `qualifier`, e.g., UniProt accession), `InterPro_get_protein_domains`, `UniProt_get_function_by_accession`
+Tools: `PDBe_get_uniprot_mappings`, `alphafold_get_prediction`, `alphafold_get_prediction` (param: `qualifier`, e.g., UniProt accession), `InterPro_get_protein_domains`, `UniProt_get_function_by_accession`
 
 Workflow: Get structure -> map residue -> assess domain/functional site -> predict destabilization.
 

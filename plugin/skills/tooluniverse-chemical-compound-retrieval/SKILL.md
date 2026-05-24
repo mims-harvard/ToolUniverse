@@ -44,7 +44,7 @@ Verify: CID + ChEMBL ID + canonical SMILES + stereochemistry + salt forms.
 
 **PubChem**: `PubChem_get_compound_properties_by_CID`, `PubChemBioAssay_get_assay_summary`, `PubChemTox_get_acute_effects`, `PubChem_get_compound_2D_image_by_CID`
 
-**ChEMBL**: `ChEMBL_get_bioactivity_by_chemblid`, `ChEMBL_get_target_by_chemblid`, `ChEMBL_get_assays_by_chemblid`
+**ChEMBL**: `ChEMBL_get_compound_record_activities`, `ChEMBL_get_molecule_targets`, `ChEMBL_get_assay_activities`
 
 **Optional**: `PubChem_get_associated_patents_by_CID`, `PubChem_search_compounds_by_similarity`
 
