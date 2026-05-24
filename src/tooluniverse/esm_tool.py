@@ -83,13 +83,21 @@ class ESMTool(BaseTool):
                 return self._score_variant_sae_disruption(arguments)
             elif operation == "describe_sae_feature":
                 return self._describe_sae_feature(arguments)
+            elif operation == "score_variant_sae_batch":
+                return self._score_variant_sae_batch(arguments)
+            elif operation == "get_region_sae_features":
+                return self._get_region_sae_features(arguments)
+            elif operation == "explain_variant_mechanism":
+                return self._explain_variant_mechanism(arguments)
             else:
                 return {
                     "status": "error",
                     "error": f"Unknown operation: {operation!r}. Valid operations: "
                     "get_protein_embedding, generate_protein_sequence, "
                     "fold_protein, score_sequence, get_sae_features, "
-                    "score_variant_sae_disruption, describe_sae_feature",
+                    "score_variant_sae_disruption, describe_sae_feature, "
+                    "score_variant_sae_batch, get_region_sae_features, "
+                    "explain_variant_mechanism",
                 }
         except ImportError as e:
             return {"status": "error", "error": str(e)}
@@ -903,3 +911,453 @@ class ESMTool(BaseTool):
             pass
 
         return result
+
+    @staticmethod
+    def _build_per_pos_map(
+        activations: List[Dict[str, Any]],
+    ) -> Dict[int, Dict[int, float]]:
+        """Index SAE activations as {residue_idx_1based: {feature_id: activation}}."""
+        return {
+            r["residue_idx_1based"]: {
+                f["feature_id"]: f["activation"] for f in r["active_features"]
+            }
+            for r in activations
+        }
+
+    @staticmethod
+    def _validate_batch_variant(
+        v: Dict[str, Any], i: int, sequence: str, seq_len: int
+    ) -> Optional[str]:
+        """Return None if the variant dict is valid, else an error string."""
+        for key in ("position", "ref_aa", "alt_aa"):
+            if key not in v:
+                return f"variants[{i}] missing key {key!r}"
+        pos = v["position"]
+        if not isinstance(pos, int) or pos < 1 or pos > seq_len:
+            return f"variants[{i}] position {pos} out of range [1, {seq_len}]"
+        if not isinstance(v["ref_aa"], str) or len(v["ref_aa"]) != 1:
+            return f"variants[{i}] ref_aa must be a single letter"
+        if not isinstance(v["alt_aa"], str) or len(v["alt_aa"]) != 1:
+            return f"variants[{i}] alt_aa must be a single letter"
+        actual = sequence[pos - 1]
+        if actual != v["ref_aa"]:
+            return (
+                f"variants[{i}]: position {pos} in sequence is "
+                f"{actual!r}, but ref_aa was {v['ref_aa']!r}"
+            )
+        return None
+
+    # ------------------------------------------------------------------ #
+    # score_variant_sae_batch — N variants, N+1 Forge calls (not 2N)
+    # ------------------------------------------------------------------ #
+    def _score_variant_sae_batch(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Score many missense variants against one reference sequence.
+
+        Standard score_variant_sae_disruption makes 2 Forge calls per variant
+        (ref + mut). For N variants on the same reference this tool runs the
+        reference SAE once and one mutant SAE per variant — N+1 calls total.
+        Use for saturation mutagenesis (all 19 alts at one position),
+        DMS-style sweeps, or scoring a clinical-variant panel.
+        """
+        sequence = arguments.get("sequence")
+        variants = arguments.get("variants")
+        window = arguments.get("window", 8)
+        top_k_features = arguments.get("top_k_features", 10)
+        model = arguments.get("model", "esmc-6b-2024-12")
+        sae_model = arguments.get(
+            "sae_model", "esmc-6b-2024-12_k64_codebook16384_layer60"
+        )
+
+        if not sequence:
+            return {"status": "error", "error": "sequence is required"}
+        if not variants or not isinstance(variants, list):
+            return {
+                "status": "error",
+                "error": "variants must be a non-empty list of {position, ref_aa, alt_aa}",
+            }
+        # Cap batch size — Forge cost scales linearly and a runaway list
+        # of 1000 variants would silently burn the user's credit budget.
+        MAX_VARIANTS = 100
+        if len(variants) > MAX_VARIANTS:
+            return {
+                "status": "error",
+                "error": (
+                    f"too many variants ({len(variants)}); cap is {MAX_VARIANTS} "
+                    f"per call. Split into multiple calls."
+                ),
+            }
+
+        seq_len = len(sequence)
+        for i, v in enumerate(variants):
+            err = self._validate_batch_variant(v, i, sequence, seq_len)
+            if err is not None:
+                return {"status": "error", "error": err}
+
+        # One reference SAE call over the full sequence — reused for every
+        # variant's per-window delta computation.
+        ref_full = self._get_sae_features(
+            {
+                "operation": "get_sae_features",
+                "sequence": sequence,
+                "model": model,
+                "sae_model": sae_model,
+                "top_k_per_residue": 64,
+            }
+        )
+        if ref_full["status"] != "success":
+            return {**ref_full, "stage": "ref_sae"}
+
+        ref_by_pos = self._build_per_pos_map(ref_full["data"]["activations"])
+
+        def sum_in_window(per_pos_map, pos, window):
+            lo = max(1, pos - window)
+            hi = min(seq_len, pos + window)
+            sums: Dict[int, float] = {}
+            for p in range(lo, hi + 1):
+                for fid, act in per_pos_map.get(p, {}).items():
+                    sums[fid] = sums.get(fid, 0.0) + act
+            return sums
+
+        per_variant: List[Dict[str, Any]] = []
+        forge_calls = 1  # the ref_full call above
+        for v in variants:
+            pos = v["position"]
+            mutant = sequence[: pos - 1] + v["alt_aa"] + sequence[pos:]
+            variant_label = f"{v['ref_aa']}{pos}{v['alt_aa']}"
+
+            mut_result = self._get_sae_features(
+                {
+                    "operation": "get_sae_features",
+                    "sequence": mutant,
+                    "model": model,
+                    "sae_model": sae_model,
+                    "position": pos,
+                    "window": window,
+                    "top_k_per_residue": 64,
+                }
+            )
+            forge_calls += 1
+            if mut_result["status"] != "success":
+                per_variant.append(
+                    {
+                        "variant": variant_label,
+                        "status": "error",
+                        "error": mut_result.get("error", "mut SAE failed"),
+                    }
+                )
+                continue
+
+            mut_by_pos = self._build_per_pos_map(mut_result["data"]["activations"])
+            ref_sums = sum_in_window(ref_by_pos, pos, window)
+            mut_sums = sum_in_window(mut_by_pos, pos, window)
+
+            all_feats = set(ref_sums) | set(mut_sums)
+            deltas = [
+                (f, mut_sums.get(f, 0.0) - ref_sums.get(f, 0.0)) for f in all_feats
+            ]
+            top_lost = sorted(deltas, key=lambda x: x[1])[:top_k_features]
+            top_gained = sorted(deltas, key=lambda x: -x[1])[:top_k_features]
+
+            def feat_row(fid, delta):
+                return {
+                    "feature_id": int(fid),
+                    "delta": float(delta),
+                    "ref_activation_sum": float(ref_sums.get(fid, 0.0)),
+                    "mut_activation_sum": float(mut_sums.get(fid, 0.0)),
+                }
+
+            per_variant.append(
+                {
+                    "variant": variant_label,
+                    "status": "success",
+                    "position": pos,
+                    "n_unique_features_touched": len(all_feats),
+                    "top_features_lost": [feat_row(f, d) for f, d in top_lost],
+                    "top_features_gained": [feat_row(f, d) for f, d in top_gained],
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "sequence_length": seq_len,
+                "n_variants": len(variants),
+                "n_succeeded": sum(1 for v in per_variant if v["status"] == "success"),
+                "window": window,
+                "results": per_variant,
+            },
+            "metadata": {
+                "method": (
+                    f"ESMC-6B SAE per-feature activation delta, summed over "
+                    f"+/-{window} residue window. Reference SAE computed once "
+                    f"and reused across all variants."
+                ),
+                "forge_calls_made": forge_calls,
+                "forge_calls_saved_vs_per_variant": len(variants) - 1,
+                "license": (
+                    "Outputs are governed by EvolutionaryScale Cambrian "
+                    "Inference License — non-commercial use only"
+                ),
+            },
+        }
+
+    # ------------------------------------------------------------------ #
+    # get_region_sae_features — domain/epitope-level feature signature
+    # ------------------------------------------------------------------ #
+    def _get_region_sae_features(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Aggregate SAE features over a residue range.
+
+        Characterizes a contiguous region (a domain, epitope, binding pocket,
+        signal peptide, etc.) by its dominant SAE features. Each returned
+        feature has its total |activation| over the region, mean activation,
+        and which residues in the region activate it. Feed feature_ids into
+        ESM_describe_sae_feature to get biological category labels.
+        """
+        sequence = arguments.get("sequence")
+        start = arguments.get("start_position")
+        end = arguments.get("end_position")
+        top_k_features = arguments.get("top_k_features", 20)
+        model = arguments.get("model", "esmc-6b-2024-12")
+        sae_model = arguments.get(
+            "sae_model", "esmc-6b-2024-12_k64_codebook16384_layer60"
+        )
+
+        if not sequence:
+            return {"status": "error", "error": "sequence is required"}
+        if not isinstance(start, int) or not isinstance(end, int):
+            return {
+                "status": "error",
+                "error": "start_position and end_position must be integers (1-indexed)",
+            }
+        seq_len = len(sequence)
+        if start < 1 or end > seq_len or start > end:
+            return {
+                "status": "error",
+                "error": (
+                    f"region [{start}, {end}] out of range [1, {seq_len}] "
+                    f"or start > end"
+                ),
+            }
+        region_len = end - start + 1
+        # Region cap — beyond this, top-K aggregation becomes a coarse summary
+        # and the user is better off making multiple smaller calls.
+        MAX_REGION_LEN = 500
+        if region_len > MAX_REGION_LEN:
+            return {
+                "status": "error",
+                "error": (
+                    f"region length {region_len} exceeds {MAX_REGION_LEN}; "
+                    f"split into smaller windows for meaningful aggregation"
+                ),
+            }
+
+        sae_result = self._get_sae_features(
+            {
+                "operation": "get_sae_features",
+                "sequence": sequence,
+                "model": model,
+                "sae_model": sae_model,
+                "top_k_per_residue": 64,
+            }
+        )
+        if sae_result["status"] != "success":
+            return sae_result
+
+        abs_sums: Dict[int, float] = {}
+        signed_sums: Dict[int, float] = {}
+        hit_residues: Dict[int, List[int]] = {}
+        for residue in sae_result["data"]["activations"]:
+            pos = residue["residue_idx_1based"]
+            if pos < start or pos > end:
+                continue
+            for feat in residue["active_features"]:
+                fid = feat["feature_id"]
+                act = feat["activation"]
+                abs_sums[fid] = abs_sums.get(fid, 0.0) + abs(act)
+                signed_sums[fid] = signed_sums.get(fid, 0.0) + act
+                hit_residues.setdefault(fid, []).append(pos)
+
+        ranked = sorted(abs_sums.items(), key=lambda x: -x[1])[:top_k_features]
+        features_out: List[Dict[str, Any]] = []
+        for fid, total_abs in ranked:
+            positions = hit_residues[fid]
+            features_out.append(
+                {
+                    "feature_id": int(fid),
+                    "total_abs_activation": float(total_abs),
+                    "mean_activation": float(signed_sums[fid] / len(positions)),
+                    "n_residues_active": len(positions),
+                    "fraction_residues_active": round(len(positions) / region_len, 3),
+                    "active_positions": sorted(positions),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "sequence_length": seq_len,
+                "region": [start, end],
+                "region_length": region_len,
+                "n_features_active_in_region": len(abs_sums),
+                "top_features": features_out,
+            },
+            "metadata": {
+                "method": (
+                    "SAE features summed over a residue range, ranked by "
+                    "total |activation|. Feed top feature_ids into "
+                    "ESM_describe_sae_feature for biological category labels."
+                ),
+                "forge_calls_made": 1,
+                "license": (
+                    "Outputs are governed by EvolutionaryScale Cambrian "
+                    "Inference License — non-commercial use only"
+                ),
+            },
+        }
+
+    # ------------------------------------------------------------------ #
+    # explain_variant_mechanism — disruption + describe + summary in one call
+    # ------------------------------------------------------------------ #
+    def _explain_variant_mechanism(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Composite tool: variant disruption + describe top affected features.
+
+        Runs score_variant_sae_disruption to find the most-changed features,
+        then describe_sae_feature on each (cached after first call) to get
+        biological category labels, then composes a 1-line mechanism summary
+        (e.g. "Disrupted feature categories (lost): catalytic=2, ligand-binding=1").
+        Use when the calling skill wants mechanism in one call rather than
+        orchestrating two tool calls and parsing both results.
+        """
+        sequence = arguments.get("sequence")
+        position = arguments.get("position")
+        ref_aa = arguments.get("ref_aa")
+        alt_aa = arguments.get("alt_aa")
+        window = arguments.get("window", 8)
+        top_k_features = arguments.get("top_k_features", 5)
+        include_descriptions = arguments.get("include_descriptions", True)
+        model = arguments.get("model", "esmc-6b-2024-12")
+        sae_model = arguments.get(
+            "sae_model", "esmc-6b-2024-12_k64_codebook16384_layer60"
+        )
+
+        # Delegate input validation to disruption sub-call
+        disruption = self._score_variant_sae_disruption(
+            {
+                "operation": "score_variant_sae_disruption",
+                "sequence": sequence,
+                "position": position,
+                "ref_aa": ref_aa,
+                "alt_aa": alt_aa,
+                "window": window,
+                "top_k_features": top_k_features,
+                "model": model,
+                "sae_model": sae_model,
+            }
+        )
+        if disruption["status"] != "success":
+            return disruption
+
+        top_lost = disruption["data"]["top_features_lost"]
+        top_gained = disruption["data"]["top_features_gained"]
+
+        described_lost: List[Dict[str, Any]] = []
+        described_gained: List[Dict[str, Any]] = []
+        describe_calls = 0
+        describe_credits = 0
+
+        if include_descriptions:
+            label_cache: Dict[int, Dict[str, Any]] = {}
+
+            def label_for(fid: int) -> Dict[str, Any]:
+                nonlocal describe_calls, describe_credits
+                if fid in label_cache:
+                    return label_cache[fid]
+                result = self._describe_sae_feature(
+                    {
+                        "operation": "describe_sae_feature",
+                        "feature_id": fid,
+                        "sae_model": sae_model,
+                        "model": model,
+                    }
+                )
+                describe_calls += 1
+                meta = result.get("metadata", {}) if isinstance(result, dict) else {}
+                if meta.get("from_cache") is False:
+                    describe_credits += meta.get("forge_credits_used_first_call", 0)
+                if result.get("status") == "success":
+                    cat_label = {
+                        "category": result["data"]["category"],
+                        "confidence": result["data"]["confidence"],
+                    }
+                else:
+                    cat_label = {"category": "unknown", "confidence": 0.0}
+                label_cache[fid] = cat_label
+                return cat_label
+
+            for feat in top_lost:
+                described_lost.append({**feat, **label_for(feat["feature_id"])})
+            for feat in top_gained:
+                described_gained.append({**feat, **label_for(feat["feature_id"])})
+        else:
+            described_lost = list(top_lost)
+            described_gained = list(top_gained)
+
+        def categorize(items: List[Dict[str, Any]]) -> List[tuple]:
+            cats: Dict[str, int] = {}
+            for it in items:
+                cat = it.get("category", "unknown")
+                cats[cat] = cats.get(cat, 0) + 1
+            return sorted(cats.items(), key=lambda x: -x[1])
+
+        lost_cats = categorize(described_lost)
+        gained_cats = categorize(described_gained)
+
+        if not include_descriptions:
+            summary = (
+                "Descriptions skipped (include_descriptions=False); "
+                "see top_features_lost/gained for raw feature_ids."
+            )
+        else:
+            summary_parts: List[str] = []
+            if lost_cats:
+                summary_parts.append(
+                    "Disrupted feature categories (lost): "
+                    + ", ".join(f"{c}={n}" for c, n in lost_cats[:3])
+                )
+            if gained_cats:
+                summary_parts.append(
+                    "Induced feature categories (gained): "
+                    + ", ".join(f"{c}={n}" for c, n in gained_cats[:3])
+                )
+            summary = (
+                "; ".join(summary_parts)
+                if summary_parts
+                else "No interpretable feature changes detected."
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "variant": disruption["data"]["variant"],
+                "position": position,
+                "window": window,
+                "mechanism_summary": summary,
+                "lost_feature_categories": dict(lost_cats),
+                "gained_feature_categories": dict(gained_cats),
+                "top_features_lost": described_lost,
+                "top_features_gained": described_gained,
+            },
+            "metadata": {
+                "method": (
+                    "ESMC-6B SAE variant disruption + per-feature biological "
+                    "labeling, composed into a 1-line mechanism category summary."
+                ),
+                "disruption_forge_calls": 2,
+                "describe_feature_calls": describe_calls,
+                "describe_forge_credits_used": describe_credits,
+                "license": (
+                    "Outputs are governed by EvolutionaryScale Cambrian "
+                    "Inference License — non-commercial use only"
+                ),
+            },
+        }

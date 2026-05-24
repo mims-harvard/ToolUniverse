@@ -1030,5 +1030,456 @@
         }
       }
     ]
+  },
+  {
+    "name": "ESM_score_variant_sae_batch",
+    "type": "ESMTool",
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
+    "description": "Score many missense variants against one reference protein using ESMC-6B SAE. More Forge-efficient than calling ESM_score_variant_sae_disruption N times: runs the reference SAE once and reuses it across every variant, giving N+1 Forge calls instead of 2N. Use for saturation mutagenesis at a single position (all 19 alternative residues), DMS-style sweeps, clinical variant panels, or any workflow scoring multiple variants on the same protein. Max 100 variants per call. Prerequisites: pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52' (SAE support is on an unmerged feature branch \u2014 PyPI esm 3.2.x does NOT include SAEConfig). Set ESM_API_KEY environment variable. Outputs governed by EvolutionaryScale Cambrian Inference License \u2014 non-commercial use only unless covered by a separate commercial agreement.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "score_variant_sae_batch"
+          ],
+          "default": "score_variant_sae_batch",
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Reference (wild-type) protein amino acid sequence in single-letter code. Up to ~2700 AA."
+        },
+        "variants": {
+          "type": "array",
+          "description": "List of variants to score. Each variant: {position: 1-indexed int, ref_aa: single letter matching sequence[position-1], alt_aa: single letter substitution}.",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "properties": {
+              "position": {
+                "type": "integer",
+                "description": "1-indexed residue position"
+              },
+              "ref_aa": {
+                "type": "string",
+                "description": "Single-letter wild-type amino acid (must match sequence[position-1])"
+              },
+              "alt_aa": {
+                "type": "string",
+                "description": "Single-letter substituted amino acid"
+              }
+            },
+            "required": [
+              "position",
+              "ref_aa",
+              "alt_aa"
+            ]
+          }
+        },
+        "window": {
+          "type": "integer",
+          "description": "Residue window centered on each variant for activation summation. Default 8 (i.e. positions [pos-8, pos+8]).",
+          "default": 8
+        },
+        "top_k_features": {
+          "type": "integer",
+          "description": "Number of top features to return per variant (top-K lost + top-K gained).",
+          "default": 10
+        },
+        "model": {
+          "type": "string",
+          "enum": [
+            "esmc-6b-2024-12"
+          ],
+          "default": "esmc-6b-2024-12",
+          "description": "ESMC base model (must be the 6B model \u2014 SAEs are trained against it)"
+        },
+        "sae_model": {
+          "type": "string",
+          "description": "SAE codebook identifier",
+          "default": "esmc-6b-2024-12_k64_codebook16384_layer60"
+        }
+      },
+      "required": [
+        "operation",
+        "sequence",
+        "variants"
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "score_variant_sae_batch",
+        "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSYRKQVVIDGETCLLDILDTAGQEEYSAMRDQYMRTGEGFLCVFAINNTKSFEDIHHYREQIKRVKDSEDVPMVLVGNKCDLPSRTVDTKQAQDLARSYGIPFIETSAKTRQGVDDAFYTLVREIRKHKEK",
+        "variants": [
+          {
+            "position": 12,
+            "ref_aa": "G",
+            "alt_aa": "D"
+          },
+          {
+            "position": 12,
+            "ref_aa": "G",
+            "alt_aa": "V"
+          },
+          {
+            "position": 13,
+            "ref_aa": "A",
+            "alt_aa": "T"
+          }
+        ],
+        "top_k_features": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "sequence_length": {
+                  "type": "integer"
+                },
+                "n_variants": {
+                  "type": "integer"
+                },
+                "n_succeeded": {
+                  "type": "integer"
+                },
+                "window": {
+                  "type": "integer"
+                },
+                "results": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ESM_get_region_sae_features",
+    "type": "ESMTool",
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
+    "description": "Aggregate ESMC-6B SAE features over a contiguous residue range to characterize the region's biological identity. Returns features ranked by total |activation| across the region, with each feature's per-residue hit pattern. Use for: interpreting a known domain (residues X-Y), profiling an antibody epitope, characterizing a binding pocket, comparing two regions of the same protein, or seeding ESM_describe_sae_feature calls on the top-K to get category labels. Max region length 500 residues. Prerequisites: pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52'; set ESM_API_KEY. Outputs governed by EvolutionaryScale Cambrian Inference License \u2014 non-commercial use only unless covered by a separate commercial agreement.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_region_sae_features"
+          ],
+          "default": "get_region_sae_features",
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Protein amino acid sequence in single-letter code. Up to ~2700 AA."
+        },
+        "start_position": {
+          "type": "integer",
+          "description": "1-indexed inclusive start of the region of interest."
+        },
+        "end_position": {
+          "type": "integer",
+          "description": "1-indexed inclusive end of the region of interest. Must be >= start_position and within sequence length. Region length cap: 500."
+        },
+        "top_k_features": {
+          "type": "integer",
+          "description": "Number of top features (by total |activation| over region) to return.",
+          "default": 20
+        },
+        "model": {
+          "type": "string",
+          "enum": [
+            "esmc-6b-2024-12"
+          ],
+          "default": "esmc-6b-2024-12",
+          "description": "ESMC base model"
+        },
+        "sae_model": {
+          "type": "string",
+          "description": "SAE codebook identifier",
+          "default": "esmc-6b-2024-12_k64_codebook16384_layer60"
+        }
+      },
+      "required": [
+        "operation",
+        "sequence",
+        "start_position",
+        "end_position"
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_region_sae_features",
+        "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSYRKQVVIDGETCLLDILDTAGQEEYSAMRDQYMRTGEGFLCVFAINNTKSFEDIHHYREQIKRVKDSEDVPMVLVGNKCDLPSRTVDTKQAQDLARSYGIPFIETSAKTRQGVDDAFYTLVREIRKHKEK",
+        "start_position": 10,
+        "end_position": 17,
+        "top_k_features": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "sequence_length": {
+                  "type": "integer"
+                },
+                "region": {
+                  "type": "array"
+                },
+                "region_length": {
+                  "type": "integer"
+                },
+                "n_features_active_in_region": {
+                  "type": "integer"
+                },
+                "top_features": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ESM_explain_variant_mechanism",
+    "type": "ESMTool",
+    "required_packages": [
+      "esm"
+    ],
+    "required_api_keys": [
+      "ESM_API_KEY"
+    ],
+    "description": "One-call composite for variant mechanism: runs ESMC-6B SAE variant disruption + describe_sae_feature on each top affected feature + composes a category-level mechanism summary (e.g. 'Disrupted feature categories (lost): catalytic=2, ligand-binding=1'). Use when a variant-interpretation skill wants the mechanism in a single tool call rather than orchestrating disruption + N description calls. Set include_descriptions=false to skip the category labeling step (2 Forge calls only). Otherwise: 2 disruption calls + up to (2 * top_k_features) describe calls (most cached after first use). Prerequisites: pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52'; set ESM_API_KEY. Outputs governed by EvolutionaryScale Cambrian Inference License \u2014 non-commercial use only unless covered by a separate commercial agreement.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "explain_variant_mechanism"
+          ],
+          "default": "explain_variant_mechanism",
+          "description": "Operation type"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Reference (wild-type) protein amino acid sequence in single-letter code. Up to ~2700 AA."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-indexed residue position of the variant"
+        },
+        "ref_aa": {
+          "type": "string",
+          "description": "Single-letter wild-type amino acid (must match sequence[position-1])"
+        },
+        "alt_aa": {
+          "type": "string",
+          "description": "Single-letter substituted amino acid"
+        },
+        "window": {
+          "type": "integer",
+          "description": "Residue window centered on the mutation for activation summation.",
+          "default": 8
+        },
+        "top_k_features": {
+          "type": "integer",
+          "description": "Number of top lost / top gained features to describe and include in the category summary.",
+          "default": 5
+        },
+        "include_descriptions": {
+          "type": "boolean",
+          "description": "If true (default), call ESM_describe_sae_feature on each top feature to get category labels. If false, return raw feature IDs without categories (cheaper).",
+          "default": true
+        },
+        "model": {
+          "type": "string",
+          "enum": [
+            "esmc-6b-2024-12"
+          ],
+          "default": "esmc-6b-2024-12",
+          "description": "ESMC base model"
+        },
+        "sae_model": {
+          "type": "string",
+          "description": "SAE codebook identifier",
+          "default": "esmc-6b-2024-12_k64_codebook16384_layer60"
+        }
+      },
+      "required": [
+        "operation",
+        "sequence",
+        "position",
+        "ref_aa",
+        "alt_aa"
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "explain_variant_mechanism",
+        "sequence": "MTEYKLVVVGAGGVGKSALTIQLIQNHFVDEYDPTIEDSYRKQVVIDGETCLLDILDTAGQEEYSAMRDQYMRTGEGFLCVFAINNTKSFEDIHHYREQIKRVKDSEDVPMVLVGNKCDLPSRTVDTKQAQDLARSYGIPFIETSAKTRQGVDDAFYTLVREIRKHKEK",
+        "position": 12,
+        "ref_aa": "G",
+        "alt_aa": "D",
+        "top_k_features": 3,
+        "include_descriptions": false
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "integer"
+                },
+                "window": {
+                  "type": "integer"
+                },
+                "mechanism_summary": {
+                  "type": "string"
+                },
+                "lost_feature_categories": {
+                  "type": "object"
+                },
+                "gained_feature_categories": {
+                  "type": "object"
+                },
+                "top_features_lost": {
+                  "type": "array"
+                },
+                "top_features_gained": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

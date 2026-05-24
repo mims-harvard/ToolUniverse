@@ -463,3 +463,246 @@ def test_describe_sae_feature_aggregates_categories(
     assert result["data"]["category"] == "ptm"
     assert result["data"]["confidence"] == 1.0
     assert result["data"]["n_proteins_with_activation"] >= 1
+
+
+# ---------------------------------------------------------------------- #
+# Tests for the 3 new composite tools added in this PR:
+#   score_variant_sae_batch / get_region_sae_features / explain_variant_mechanism
+# ---------------------------------------------------------------------- #
+
+
+def test_score_variant_sae_batch_runs_n_plus_one_forge_calls(mock_forge):
+    """Batch scoring 3 variants should make 1 ref + 3 mut = 4 Forge calls,
+    not 6 (2 per variant). This is the whole point of the batch tool."""
+    seq_len = mock_forge["seq_len"]
+    sequence = "M" * seq_len
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+    result = tool.run(
+        {
+            "operation": "score_variant_sae_batch",
+            "sequence": sequence,
+            "variants": [
+                {"position": 5, "ref_aa": "M", "alt_aa": "A"},
+                {"position": 10, "ref_aa": "M", "alt_aa": "V"},
+                {"position": 15, "ref_aa": "M", "alt_aa": "L"},
+            ],
+            "window": 4,
+            "top_k_features": 5,
+        }
+    )
+
+    assert result["status"] == "success"
+    data = result["data"]
+    assert data["n_variants"] == 3
+    assert data["n_succeeded"] == 3
+    assert len(data["results"]) == 3
+    # 1 ref + 3 mut = 4 calls; savings = 2 vs per-variant disruption
+    assert result["metadata"]["forge_calls_made"] == 4
+    assert result["metadata"]["forge_calls_saved_vs_per_variant"] == 2
+
+    for v_result in data["results"]:
+        assert v_result["status"] == "success"
+        assert "variant" in v_result
+        assert "top_features_lost" in v_result
+        assert "top_features_gained" in v_result
+        assert len(v_result["top_features_lost"]) <= 5
+        for feat in v_result["top_features_lost"]:
+            assert "feature_id" in feat
+            assert "delta" in feat
+            assert "ref_activation_sum" in feat
+            assert "mut_activation_sum" in feat
+
+
+def test_score_variant_sae_batch_rejects_oversize_list():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    result = tool.run(
+        {
+            "operation": "score_variant_sae_batch",
+            "sequence": "MTEY",
+            "variants": [
+                {"position": 1, "ref_aa": "M", "alt_aa": "A"}
+            ]
+            * 101,
+        }
+    )
+    assert result["status"] == "error"
+    assert "too many" in result["error"]
+
+
+def test_score_variant_sae_batch_rejects_ref_mismatch():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    result = tool.run(
+        {
+            "operation": "score_variant_sae_batch",
+            "sequence": "MTEY",
+            "variants": [{"position": 2, "ref_aa": "A", "alt_aa": "V"}],
+        }
+    )
+    assert result["status"] == "error"
+    assert "ref_aa" in result["error"]
+
+
+def test_score_variant_sae_batch_rejects_missing_keys():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    result = tool.run(
+        {
+            "operation": "score_variant_sae_batch",
+            "sequence": "MTEY",
+            "variants": [{"position": 1, "ref_aa": "M"}],
+        }
+    )
+    assert result["status"] == "error"
+    assert "alt_aa" in result["error"]
+
+
+def test_get_region_sae_features_aggregates_over_range(mock_forge):
+    """Region tool should return top features ranked by total |activation|
+    over the region, with hit-residue counts."""
+    seq_len = mock_forge["seq_len"]
+    sequence = "M" * seq_len
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+    result = tool.run(
+        {
+            "operation": "get_region_sae_features",
+            "sequence": sequence,
+            "start_position": 10,
+            "end_position": 20,
+            "top_k_features": 10,
+        }
+    )
+
+    assert result["status"] == "success"
+    data = result["data"]
+    assert data["region"] == [10, 20]
+    assert data["region_length"] == 11
+    assert len(data["top_features"]) <= 10
+    assert result["metadata"]["forge_calls_made"] == 1
+    # Each top feature should have the required fields
+    for feat in data["top_features"]:
+        assert "feature_id" in feat
+        assert "total_abs_activation" in feat
+        assert "mean_activation" in feat
+        assert "n_residues_active" in feat
+        assert "fraction_residues_active" in feat
+        assert "active_positions" in feat
+        for pos in feat["active_positions"]:
+            assert 10 <= pos <= 20
+    # Ranking: total_abs_activation should be non-increasing
+    abs_vals = [f["total_abs_activation"] for f in data["top_features"]]
+    assert abs_vals == sorted(abs_vals, reverse=True)
+
+
+def test_get_region_sae_features_rejects_bad_range():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    result = tool.run(
+        {
+            "operation": "get_region_sae_features",
+            "sequence": "MTEY",
+            "start_position": 3,
+            "end_position": 10,  # past seq_len 4
+        }
+    )
+    assert result["status"] == "error"
+    assert "out of range" in result["error"]
+
+
+def test_get_region_sae_features_rejects_oversize_region():
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+    result = tool.run(
+        {
+            "operation": "get_region_sae_features",
+            "sequence": "M" * 1000,
+            "start_position": 1,
+            "end_position": 600,
+        }
+    )
+    assert result["status"] == "error"
+    assert "exceeds" in result["error"]
+
+
+def test_explain_variant_mechanism_without_descriptions_only_2_forge_calls(
+    mock_forge,
+):
+    """include_descriptions=False should run only the 2-call disruption
+    pipeline, no describe_sae_feature follow-up."""
+    seq_len = mock_forge["seq_len"]
+    sequence = "M" * seq_len
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+    result = tool.run(
+        {
+            "operation": "explain_variant_mechanism",
+            "sequence": sequence,
+            "position": 15,
+            "ref_aa": "M",
+            "alt_aa": "A",
+            "window": 4,
+            "top_k_features": 3,
+            "include_descriptions": False,
+        }
+    )
+
+    assert result["status"] == "success"
+    data = result["data"]
+    assert data["variant"] == "M15A"
+    assert "mechanism_summary" in data
+    assert "Descriptions skipped" in data["mechanism_summary"]
+    assert result["metadata"]["disruption_forge_calls"] == 2
+    assert result["metadata"]["describe_feature_calls"] == 0
+    assert result["metadata"]["describe_forge_credits_used"] == 0
+
+
+def test_explain_variant_mechanism_with_descriptions_categorizes(
+    mock_forge, tmp_path, monkeypatch
+):
+    """include_descriptions=True: stub describe so it returns category
+    labels and verify the summary string mentions them."""
+    monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)
+
+    seq_len = mock_forge["seq_len"]
+    sequence = "M" * seq_len
+    tool = ESMTool({"name": "test", "type": "ESMTool", "parameter": {}})
+
+    # Stub describe_sae_feature to return alternating ptm / catalytic
+    call_counter = {"i": 0}
+
+    def fake_describe(self, args):
+        call_counter["i"] += 1
+        cat = "ptm" if call_counter["i"] % 2 == 0 else "catalytic"
+        return {
+            "status": "success",
+            "data": {
+                "feature_id": args["feature_id"],
+                "category": cat,
+                "confidence": 0.8,
+            },
+            "metadata": {"from_cache": True},
+        }
+
+    with mock.patch.object(ESMTool, "_describe_sae_feature", fake_describe):
+        result = tool.run(
+            {
+                "operation": "explain_variant_mechanism",
+                "sequence": sequence,
+                "position": 15,
+                "ref_aa": "M",
+                "alt_aa": "A",
+                "window": 4,
+                "top_k_features": 3,
+                "include_descriptions": True,
+            }
+        )
+
+    assert result["status"] == "success"
+    data = result["data"]
+    # Summary should contain at least one of the stubbed categories
+    summary = data["mechanism_summary"]
+    assert ("catalytic" in summary) or ("ptm" in summary)
+    # Every described feature should have category + confidence
+    for feat in data["top_features_lost"]:
+        assert "category" in feat
+        assert "confidence" in feat
+    # describe was called — credit count is 0 because we stubbed from_cache=True
+    assert result["metadata"]["describe_feature_calls"] > 0
