@@ -1,0 +1,257 @@
+[
+  {
+    "name": "ADDGENE_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://www.addgene.org/contact/",
+    "description": "Addgene plasmid repository",
+    "used_by": [
+      "addgene_tools.json"
+    ]
+  },
+  {
+    "name": "AZURE_OPENAI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://portal.azure.com/",
+    "description": "Azure OpenAI embeddings (alternative to OpenAI)",
+    "used_by": [
+      "embedding_tools.json"
+    ]
+  },
+  {
+    "name": "BIOGRID_ACCESS_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://webservice.thebiogrid.org/",
+    "description": "BioGRID protein/genetic interactions",
+    "used_by": [
+      "biogrid_tools.json"
+    ]
+  },
+  {
+    "name": "BOLTZ_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "register_url": "https://github.com/jwohlwend/boltz",
+    "description": "URL of a self-hosted Boltz structure-prediction MCP server",
+    "used_by": [
+      "boltz_mcp_loader_tools.json"
+    ]
+  },
+  {
+    "name": "BRENDA_EMAIL",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://www.brenda-enzymes.org/register.php",
+    "description": "BRENDA enzyme database account email",
+    "used_by": [
+      "brenda_tools.json"
+    ]
+  },
+  {
+    "name": "BRENDA_PASSWORD",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://www.brenda-enzymes.org/register.php",
+    "description": "BRENDA enzyme database account password",
+    "used_by": [
+      "brenda_tools.json"
+    ]
+  },
+  {
+    "name": "CLUE_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://clue.io",
+    "description": "CLUE.io drug-repurposing (free key)",
+    "used_by": [
+      "clue_tools.json"
+    ]
+  },
+  {
+    "name": "DISGENET_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://www.disgenet.org/",
+    "description": "DisGeNET gene-disease associations",
+    "used_by": [
+      "disgenet_tools.json"
+    ]
+  },
+  {
+    "name": "ESM_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://forge.evolutionaryscale.ai/",
+    "description": "EvolutionaryScale ESM Forge protein models",
+    "used_by": [
+      "esm_tools.json"
+    ]
+  },
+  {
+    "name": "ESM_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "register_url": "https://forge.evolutionaryscale.ai/",
+    "description": "URL of a self-hosted ESM MCP server",
+    "used_by": [
+      "mcp_auto_loader_esm.json"
+    ]
+  },
+  {
+    "name": "EXPERT_FEEDBACK_MCP_SERVER_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "register_url": "https://github.com/mims-harvard/ToolUniverse",
+    "description": "URL of a self-hosted expert-feedback MCP server",
+    "used_by": [
+      "expert_feedback_tools.json"
+    ]
+  },
+  {
+    "name": "FDA_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://open.fda.gov/apis/authentication/",
+    "description": "OpenFDA (raises rate limits; optional)",
+    "used_by": [
+      "openfda_approval_tools.json",
+      "openfda_label_tools.json",
+      "openfda_tools.json"
+    ]
+  },
+  {
+    "name": "FDC_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://fdc.nal.usda.gov/api-guide.html",
+    "description": "USDA FoodData Central (defaults to DEMO_KEY)",
+    "used_by": [
+      "fooddata_central_tools.json"
+    ]
+  },
+  {
+    "name": "HF_TOKEN",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://huggingface.co/settings/tokens",
+    "description": "Hugging Face token for gated models/datasets",
+    "used_by": [
+      "embedding_tools.json"
+    ]
+  },
+  {
+    "name": "MCULE_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://mcule.com/api/",
+    "description": "MCule compound purchasing/availability",
+    "used_by": [
+      "mcule_tools.json"
+    ]
+  },
+  {
+    "name": "NCBI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://www.ncbi.nlm.nih.gov/account/",
+    "description": "NCBI Entrez (raises PubMed/iCite rate limits)",
+    "used_by": [
+      "icite_tools.json",
+      "pubmed_tools.json",
+      "pubtator3_ext_tools.json"
+    ]
+  },
+  {
+    "name": "NVIDIA_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://build.nvidia.com/",
+    "description": "NVIDIA NIM model endpoints",
+    "used_by": [
+      "nvidia_nim_tools.json"
+    ]
+  },
+  {
+    "name": "OMIM_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://omim.org/api",
+    "description": "OMIM Mendelian inheritance database",
+    "used_by": [
+      "omim_tools.json"
+    ]
+  },
+  {
+    "name": "ONCOKB_API_TOKEN",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://www.oncokb.org/apiAccess",
+    "description": "OncoKB cancer variant knowledgebase (demo mode without token)",
+    "used_by": [
+      "oncokb_tools.json"
+    ]
+  },
+  {
+    "name": "OPENAI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://platform.openai.com/api-keys",
+    "description": "OpenAI embeddings for tool finder",
+    "used_by": [
+      "embedding_tools.json"
+    ]
+  },
+  {
+    "name": "PHARMVAR_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://www.pharmvar.org/",
+    "description": "PharmVar pharmacogene allele database",
+    "used_by": [
+      "pharmvar_tools.json"
+    ]
+  },
+  {
+    "name": "SEMANTIC_SCHOLAR_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "register_url": "https://www.semanticscholar.org/product/api",
+    "description": "Semantic Scholar (raises rate limits)",
+    "used_by": [
+      "semantic_scholar_ext_tools.json",
+      "semantic_scholar_tools.json"
+    ]
+  },
+  {
+    "name": "TXAGENT_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "register_url": "https://github.com/mims-harvard/TxAgent",
+    "description": "URL of a self-hosted TxAgent MCP server",
+    "used_by": [
+      "txagent_client_tools.json"
+    ]
+  },
+  {
+    "name": "USPTO_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "register_url": "https://developer.uspto.gov/",
+    "description": "USPTO patent API",
+    "used_by": [
+      "uspto_tools.json"
+    ]
+  },
+  {
+    "name": "USPTO_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "register_url": "https://developer.uspto.gov/",
+    "description": "URL of a self-hosted USPTO MCP server",
+    "used_by": [
+      "uspto_downloader_tools.json"
+    ]
+  }
+]
