@@ -299,6 +299,55 @@ result = tu.tools.AlphaMissense_get_variant_score(
 
 ---
 
+### ESMC-6B SAE - Mechanism of Effect (for VUS missense)
+
+AlphaMissense scores tell you a variant is likely pathogenic. ESMC-6B Sparse Autoencoder features tell you **which interpretable protein-language-model features the mutation disrupts** — catalytic, ligand-binding, PTM, domain, transmembrane, etc. Use as a mechanism complement to pathogenicity scores.
+
+| Tool | Purpose | Key Parameters |
+|------|---------|----------------|
+| `ESM_explain_variant_mechanism` | One-call mechanism (disruption + feature labels + summary) | `sequence`, `position`, `ref_aa`, `alt_aa`, `top_k_features` |
+| `ESM_score_variant_sae_disruption` | Single variant — top features lost/gained, no labels | `sequence`, `position`, `ref_aa`, `alt_aa` |
+| `ESM_score_variant_sae_batch` | Multiple variants on same protein, N+1 Forge calls instead of 2N | `sequence`, `variants` (list) |
+| `ESM_get_region_sae_features` | Aggregate features over a residue range (domain, motif) | `sequence`, `start_position`, `end_position` |
+| `ESM_describe_sae_feature` | Label a feature_id by biological category | `feature_id` |
+
+**Example — One-call mechanism for a VUS**:
+```python
+result = tu.tools.ESM_explain_variant_mechanism(
+    sequence=wt_aa_sequence,
+    position=600, ref_aa="V", alt_aa="E",
+    top_k_features=5,
+)
+# result["data"]["mechanism_summary"] e.g.:
+#   "Disrupted feature categories (lost): catalytic=2, ligand-binding=1"
+```
+
+**Example — Saturation at one position (all 19 alternates)**:
+```python
+from itertools import product
+alts = "ACDEFGHIKLMNPQRSTVWY".replace(wt_residue, "")
+variants = [{"position": 600, "ref_aa": "V", "alt_aa": a} for a in alts]
+result = tu.tools.ESM_score_variant_sae_batch(
+    sequence=wt_aa_sequence, variants=variants, top_k_features=5,
+)
+# Forge cost: 20 calls (1 ref + 19 mut), not 38 (2 per variant)
+```
+
+**Mapping SAE categories → ACMG support**:
+| SAE category lost | Mechanistic claim | ACMG line |
+|---|---|---|
+| `catalytic` | Active-site disruption | PS3 (functional) candidate; supports PP3 |
+| `ligand-binding` | Substrate/cofactor binding loss | Supports PP3 |
+| `ptm` | Post-translational modification site | Supports PP3 |
+| `domain` / `motif` | Domain integrity loss | Supports PP3 |
+| `structural-stability` | Disulfide / coiled-coil disruption | Supports PP3 |
+| `transmembrane` / `signal-peptide` | Targeting / membrane integration | Supports PP3 |
+| (no interpretable change) | No mechanistic signal | Do not strengthen PP3 above the predictor score alone |
+
+**Requires**: `ESM_API_KEY` (free non-commercial token at https://forge.evolutionaryscale.ai) and `pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52'` (PyPI esm 3.2.x lacks SAEConfig). Outputs governed by EvolutionaryScale Cambrian Inference License — non-commercial use only.
+
+---
+
 ### EVE - Evolutionary Variant Effect (NEW)
 
 Unsupervised deep learning model using evolutionary data (Harvard/Oxford).

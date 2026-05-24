@@ -472,6 +472,34 @@ def comprehensive_vus_prediction(tu, variant_info):
                 )
             }
 
+    # 2b. ESMC-6B SAE - Mechanism of effect
+    # AlphaMissense answers "is it pathogenic?". SAE answers "how?" — which
+    # protein-language-model features are disrupted (catalytic, ligand-binding,
+    # PTM, etc.). Use when AlphaMissense is ambiguous or when the report
+    # needs a mechanistic explanation alongside the pathogenicity score.
+    # Requires ESM_API_KEY env var; missense only; needs the WT protein
+    # sequence (fetch via UniProt_get_entry_by_accession if not at hand).
+    if (variant_info.get('wt_sequence')
+            and variant_info.get('aa_position')
+            and variant_info.get('aa_ref')
+            and variant_info.get('aa_alt')):
+        mech = tu.tools.ESM_explain_variant_mechanism(
+            sequence=variant_info['wt_sequence'],
+            position=variant_info['aa_position'],
+            ref_aa=variant_info['aa_ref'],
+            alt_aa=variant_info['aa_alt'],
+            top_k_features=5,
+        )
+        if mech.get('status') == 'success':
+            predictions['sae_mechanism'] = {
+                'summary': mech['data']['mechanism_summary'],
+                'lost_categories': mech['data']['lost_feature_categories'],
+                'gained_categories': mech['data']['gained_feature_categories'],
+                # Map to ACMG: catalytic / ligand-binding / ptm loss is
+                # mechanistic evidence supporting PP3 (does not replace
+                # functional study PS3).
+            }
+
     # 3. EVE - Evolutionary prediction
     eve = tu.tools.EVE_get_variant_score(
         chrom=variant_info['chrom'],
