@@ -1,13 +1,18 @@
 [
     {
         "name": "AlphaMissense_get_protein_scores",
-        "description": "Get all AlphaMissense pathogenicity scores for a protein by UniProt ID. Returns comprehensive residue-level data for all possible missense variants across the entire protein. Useful for identifying pathogenic hotspots and overall protein vulnerability assessment.",
+        "description": "Get AlphaMissense pathogenicity scores for EVERY residue of a protein in one call. The upstream hegelab API only exposes per-residue queries; this tool hides that by looking up the protein length from UniProt and concurrently fetching all residues via a thread pool. Returns a list of per-position records (one per residue) plus protein length, count of successful fetches, and the pathogenic/ambiguous/benign thresholds. Use this when you want whole-protein vulnerability assessment, hotspot detection, or to build a (20 × n_positions) AlphaMissense score matrix for benchmarking. Set max_residues > 0 to cap the loop for fast diagnostic calls.",
         "parameter": {
             "type": "object",
             "properties": {
                 "uniprot_id": {
                     "type": "string",
-                    "description": "UniProt accession ID (e.g., 'P00533' for EGFR)"
+                    "description": "UniProt accession ID (e.g., 'P00533' for EGFR, 'P01116' for KRAS, 'P04637' for TP53)."
+                },
+                "max_residues": {
+                    "type": ["integer", "null"],
+                    "description": "Optional cap on the number of residues fetched. 0 / null / omitted = no cap (fetch every residue of the protein, recommended for whole-protein analysis). Positive integer = fetch only the first N residues (useful for fast diagnostic calls on very long proteins).",
+                    "default": 0
                 }
             },
             "required": ["uniprot_id"]
@@ -18,32 +23,55 @@
         "type": "AlphaMissenseTool",
         "test_examples": [
             {
-                "uniprot_id": "P00533"
+                "uniprot_id": "P01116",
+                "max_residues": 20
             },
             {
-                "uniprot_id": "P15056"
+                "uniprot_id": "P00533",
+                "max_residues": 10
             }
         ],
         "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
+            "oneOf": [
+                {
                     "type": "object",
                     "properties": {
-                        "uniprot_id": {"type": "string"},
-                        "residue_data": {"type": "object"},
-                        "thresholds": {"type": "object"}
-                    }
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "uniprot_id": {"type": "string"},
+                                "protein_length": {"type": "integer"},
+                                "scores": {
+                                    "type": "array",
+                                    "description": "Per-residue records, one per position with successful fetch. Each record carries position, uid, aa, resi, benign/ambiguous/pathogenic bin strings (e.g. '6:A,C,D,R,S,V'), benign_all/ambiguous_all/pathogenic_all (covering all 19 substitutions, not just SNV-reachable), and mean/mean_all numeric scores.",
+                                    "items": {"type": "object"}
+                                },
+                                "n_positions_returned": {"type": "integer"},
+                                "n_positions_attempted": {"type": "integer"},
+                                "max_residues_cap": {"type": ["integer", "null"]},
+                                "thresholds": {"type": "object"},
+                                "pdb_download": {"type": "string"}
+                            },
+                            "required": ["uniprot_id", "protein_length", "scores", "n_positions_returned"]
+                        }
+                    },
+                    "required": ["status", "data"]
                 },
-                "error": {"type": "string"},
-                "message": {"type": "string"}
-            }
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string"}
+                    },
+                    "required": ["status", "error"]
+                }
+            ]
         },
         "label": ["AlphaMissense", "Protein", "Pathogenicity"],
         "metadata": {
             "tags": ["pathogenicity", "protein_analysis", "missense", "hotspot"],
-            "estimated_execution_time": "< 3 seconds"
+            "estimated_execution_time": "~5-15 seconds for proteins under 500 residues (concurrent per-residue fetch)"
         }
     },
     {
