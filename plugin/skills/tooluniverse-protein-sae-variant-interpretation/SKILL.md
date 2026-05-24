@@ -84,22 +84,42 @@ If the reference residue does NOT match, return an explicit error — do not sil
 
 ### Quick path (recommended for variant analysis): composite tool
 
-For the standard variant-interpretation use case, use the composite tool — it does steps 4 + 5 in a single call and validates ref_aa against the sequence:
+For the standard variant-interpretation use case, use one of two composite tools depending on how much you need:
 
+**Fullest one-call** — disruption + per-feature biological category labels + mechanism summary:
+```python
+ESM_explain_variant_mechanism(
+    sequence=ref_sequence,
+    position=175, ref_aa="R", alt_aa="H",
+    window=8,
+    top_k_features=5,       # describe top 5 lost + top 5 gained
+)
+# data["mechanism_summary"] e.g. "Disrupted feature categories (lost): catalytic=2, ligand-binding=1"
+# data["lost_feature_categories"] / ["gained_feature_categories"] — category counts
+# data["top_features_lost"] / ["top_features_gained"] — per-feature delta + category + confidence
+```
+This is the right default for variant-mechanism reports — saves you from chaining `ESM_score_variant_sae_disruption` + N `ESM_describe_sae_feature` calls. Set `include_descriptions=false` to skip labeling (2 Forge calls only) when you just need the deltas.
+
+**Raw delta only** (no category labels, no describe calls — faster):
 ```python
 ESM_score_variant_sae_disruption(
     sequence=ref_sequence,
-    position=175,           # 1-indexed
-    ref_aa="R",
-    alt_aa="H",
-    window=8,
-    top_k_features=10,
+    position=175, ref_aa="R", alt_aa="H",
+    window=8, top_k_features=10,
 )
 # → returns top_features_lost + top_features_gained ranked by |delta|
 #   plus ref / mut activation sums per feature
 ```
 
-If ref_aa doesn't match the sequence at the given position, the tool returns a clear error (you supplied the wrong isoform / mis-labeled the variant). Use this whenever you only need the delta scores. The longer path below is for inspecting raw per-residue features.
+If ref_aa doesn't match the sequence at the given position, both tools return a clear error (you supplied the wrong isoform / mis-labeled the variant). The longer path below is for inspecting raw per-residue features.
+
+**Multiple variants at once** (e.g. saturation at residue 175 — all 19 alternates):
+```python
+alts = "ACDEFGHIKLMNPQRSTVWY".replace("R", "")
+variants = [{"position": 175, "ref_aa": "R", "alt_aa": a} for a in alts]
+ESM_score_variant_sae_batch(sequence=ref_sequence, variants=variants, top_k_features=5)
+# 1 + 19 = 20 Forge calls, not 38
+```
 
 ### Step 4 (long path): Get SAE features for reference and mutant
 

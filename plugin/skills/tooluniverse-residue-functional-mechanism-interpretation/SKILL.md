@@ -69,7 +69,7 @@ custom positions):
 | DMS effect matrix `(20, n_positions)` | `MaveDB_get_effect_matrix` | NaN for unmeasured |
 | `disruptive_tail` | DMS retrieval metadata | `"top"` or `"bottom"` |
 | Protein metadata | UniProt accession + PDB ID + chain | for the multi-evidence lookups |
-| (optional) SAE tensor `(20, n_positions, 16384)` | `ESM_get_sae_features` per mutant | the SAE evidence layer |
+| (optional) SAE evidence | `ESM_get_region_sae_features` for one contiguous cluster (1 Forge call), OR a precomputed full DMS SAE tensor from `ESM_get_sae_features` per mutant | the SAE evidence layer; see Step 4 for which path |
 
 In Path B the skill runs Step 1 to detect hotspots; in Path A it skips Step
 1 entirely and goes straight to Step 2 (gather evidence).
@@ -217,11 +217,24 @@ for cluster in clusters:
     }
 ```
 
-### Step 4 (optional, requires SAE tensor): Per-cluster SAE feature ranking
+### Step 4 (optional): Per-cluster SAE feature ranking
 
-If you have an SAE tensor from `ESM_get_sae_features` runs on this protein's
-DMS library, compute which SAE features drop the most at this cluster.
+Two paths depending on whether you already have a full DMS SAE tensor:
 
+**Path A — no precomputed tensor (most cases): use the region tool directly.**
+If the cluster is a contiguous range (or you can pad to one), `ESM_get_region_sae_features` aggregates SAE features over the range in a single Forge call:
+```python
+region = ESM_get_region_sae_features(
+    sequence=ref_sequence,
+    start_position=min(cluster_positions),
+    end_position=max(cluster_positions),
+    top_k_features=5,
+)
+top_features = [f["feature_id"] for f in region["data"]["top_features"]]
+```
+This is the right default — 1 Forge call vs 20 × cluster-size for the DMS-tensor path. For non-contiguous clusters, run once per contiguous sub-range and union the top-K.
+
+**Path B — you already have a precomputed SAE tensor** from a DMS sweep (e.g. the variant-predictor-dms-benchmarking pipeline left one on disk): compute drops directly without re-calling Forge.
 ```python
 def cluster_sae_features(sae_tensor, wt_vec, cluster_positions, top_n=5):
     """Returns top SAE features by mean drop at cluster, ready for labeling."""
@@ -231,8 +244,10 @@ def cluster_sae_features(sae_tensor, wt_vec, cluster_positions, top_n=5):
     return np.argsort(-cluster_mean)[:top_n].tolist()
 
 top_features = cluster_sae_features(sae_tensor, wt_vec, cluster_cols, top_n=5)
+```
 
-# Label each via the SAE feature labeler
+Label each top feature via the SAE feature labeler:
+```python
 for f in top_features:
     label = ESM_describe_sae_feature(feature_id=int(f), n_proteins=5)
     print(f"  feature {f}: {label['data'].get('category')} (conf {label['data'].get('confidence')})")
@@ -481,7 +496,8 @@ own sequence — see `tooluniverse-protein-structural-annotation-pdb` pitfalls).
 | `MaveDB_get_effect_matrix` | DMS matrix input |
 | `tooluniverse-protein-structural-annotation-pdb` (or `Structure_annotate_per_residue` directly) | Structural evidence |
 | `UniProt_get_function_by_accession` | UniProt features (active sites, binding sites, PTMs, disulfides) |
-| `ESM_get_sae_features` | SAE tensor for the optional Step 4 |
+| `ESM_get_region_sae_features` | Step 4 Path A — aggregate SAE features over a contiguous cluster in 1 Forge call (preferred) |
+| `ESM_get_sae_features` | Step 4 Path B — only if you already have a precomputed full DMS SAE tensor |
 | `ESM_describe_sae_feature` | Label SAE features in Step 4 |
 | `tooluniverse-variant-predictor-dms-benchmarking` | Sibling skill: validate a predictor before trusting its scores |
 | (heatmap visualization is now Step 7 of this skill) | annotated DMS panel with per-hotspot callouts |

@@ -13,7 +13,7 @@ For a single missense variant, integrate 5 independent computational signals to 
 | Pathogenicity | `AlphaMissense_get_variant_score` | "Is this variant damaging?" |
 | Structural context | `alphafold_get_prediction` | "Is the mutation in a folded vs disordered region?" |
 | Sequence likelihood | `ESM_score_sequence` | "Is the substitution evolutionarily plausible?" |
-| Feature disruption | `ESM_score_variant_sae_disruption` + `ESM_describe_sae_feature` | "Which biological feature breaks?" |
+| Feature disruption | `ESM_explain_variant_mechanism` (or `ESM_score_variant_sae_disruption` + `ESM_describe_sae_feature` for raw control) | "Which biological feature breaks?" |
 | Stability | `DynaMut2_predict_stability` | "Does the protein still fold correctly?" |
 
 ---
@@ -129,24 +129,33 @@ Compute **ΔlogP = mean_logP(mutant) − mean_logP(reference)** at the position 
 
 ### Step 4: SAE feature disruption (the unique signal)
 
+**Recommended — one call** (composite tool, returns disruption + category labels + summary):
 ```python
-ESM_score_variant_sae_disruption(
+ESM_explain_variant_mechanism(
     sequence=ref_sequence,
     position=175,
     ref_aa="R",
     alt_aa="H",
     window=8,
-    top_k_features=10,
+    top_k_features=5,
 )
+# data["mechanism_summary"] e.g.:
+#   "Disrupted feature categories (lost): catalytic=2, ligand-binding=1"
+# data["lost_feature_categories"] / data["gained_feature_categories"] give the raw counts
+# data["top_features_lost"] / data["top_features_gained"] include per-feature deltas + categories
 ```
 
-For each of the top 3-5 most-disrupted features, look up its biological category:
+**Lower-level alternative** (use only if you need the raw feature_ids before labeling, e.g. to filter to one category before describe calls):
 ```python
-for feat in top_features_lost[:5]:
-    ESM_describe_sae_feature(feature_id=feat["feature_id"])
-    # → returns category: catalytic | ligand-binding | ptm | domain |
-    #   motif | structural-stability | secondary-structure |
-    #   transmembrane | signal-peptide | propeptide | uncategorized
+ESM_score_variant_sae_disruption(
+    sequence=ref_sequence, position=175, ref_aa="R", alt_aa="H",
+    window=8, top_k_features=10,
+)
+# Then for each kept feature:
+ESM_describe_sae_feature(feature_id=feat["feature_id"])
+# → returns category: catalytic | ligand-binding | ptm | domain |
+#   motif | structural-stability | secondary-structure |
+#   transmembrane | signal-peptide | propeptide | uncategorized
 ```
 
 **Dominant category among top lost features = the function most likely disrupted.**

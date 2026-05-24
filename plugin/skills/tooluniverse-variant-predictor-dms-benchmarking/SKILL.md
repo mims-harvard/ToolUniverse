@@ -88,9 +88,9 @@ Pick **one** of these predictor sources. The choice changes Step 2 only; Steps
 
 #### Predictor option A — ESM-C 6B SAE (the worked example)
 
-For every variant, call `ESM_get_sae_features` with WT and mutant sequences,
-sum activations across the residue window, compute drop = max(0, WT − mut),
-and aggregate to one score per variant via the top-K mean of drops:
+For every variant, sum SAE activations across the residue window, compute
+drop = max(0, WT − mut), and aggregate to one score per variant via the
+top-K mean of drops:
 
 ```python
 import numpy as np
@@ -102,11 +102,22 @@ def sae_drop_per_variant(wt_pooled, variant_pooled, K=3):
     return float(sorted_desc[:K].mean())
 ```
 
-Build the (20, n_positions) predictor matrix by looping mutants. The expensive
-step is the `ESM_get_sae_features` calls — cache by `(sequence, position)`
-to make reruns free. The full library scale is well-tested:
-`tests/integration/test_dms_pipeline_e2e_kras.py` runs ~300 mutants for KRAS
-positions 10–25.
+**Two ways to score a saturation sweep** — pick based on batch size:
+
+| When | Use | Forge cost (for 19 alts × N positions) |
+|---|---|---|
+| Saturation at ≤100 variants OR you only need top-K-per-variant deltas | `ESM_score_variant_sae_batch(sequence, variants=[...], top_k_features=10)` | **1 + 19N** (1 ref + 1 per mut) |
+| Full-protein per-feature tensor (e.g. for downstream PCA / clustering) | Loop `ESM_get_sae_features(sequence=mutant)`, cache by `(sequence, position)` | **2 × 19N** (cached reruns free) |
+
+The batch tool is the right default — it halves Forge cost vs the per-variant
+disruption pattern, and the cap of 100 variants per call covers saturation
+mutagenesis at one position (19) or short positional sweeps (e.g. positions
+10-15: 90 variants). For longer sweeps, split into multiple batch calls.
+
+For the full per-residue × per-feature tensor needed by some predictor
+analyses, fall back to the loop pattern. The full library scale is
+well-tested: `tests/integration/test_dms_pipeline_e2e_kras.py` runs ~300
+mutants for KRAS positions 10–25.
 
 #### Predictor option B — AlphaMissense (hegelab proxy: categorical, not per-substitution numeric)
 
@@ -399,7 +410,8 @@ and compare:
 | Step | Tool / Skill |
 |---|---|
 | DMS retrieval | `MaveDB_get_effect_matrix` |
-| Per-variant SAE scoring | `ESM_get_sae_features`, `ESM_score_variant_sae_disruption` |
+| Per-variant SAE scoring (≤100 variants) | `ESM_score_variant_sae_batch` (preferred — N+1 calls) |
+| Per-variant SAE scoring (full tensor / unlimited) | `ESM_get_sae_features` (loop + cache), `ESM_score_variant_sae_disruption` (single variant) |
 | Per-variant AlphaMissense (single lookup) | `AlphaMissense_get_variant_score(uniprot_id, variant)` |
 | Per-position AlphaMissense (saturation) | `AlphaMissense_get_residue_scores(uniprot_id, position)` |
 | Whole-protein AlphaMissense (cheapest for DMS) | `AlphaMissense_get_protein_scores(uniprot_id)` |
