@@ -64,10 +64,19 @@ class ESMTool(BaseTool):
     structure prediction, and sequence scoring via the EvolutionaryScale Forge API.
     """
 
+    def __init__(self, tool_config):
+        super().__init__(tool_config)
+        # Bind this instance to one operation via fields.operation, matching
+        # the AlphaMissense / MaveDB multi-op pattern. Callers no longer need
+        # to pass operation= explicitly via tu.tools.X() / tu.run_one_function().
+        # Falls back to arguments["operation"] when fields.operation isn't set,
+        # for backward compatibility with tests / direct instantiation.
+        self.operation = tool_config.get("fields", {}).get("operation", "")
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the tool with given arguments."""
         try:
-            operation = arguments.get("operation", "")
+            operation = self.operation or arguments.get("operation", "")
 
             if operation == "get_protein_embedding":
                 return self._get_protein_embedding(arguments)
