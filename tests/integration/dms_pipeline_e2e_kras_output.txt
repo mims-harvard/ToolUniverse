@@ -1,5 +1,5 @@
 ℹ️  Number of tools after load tools: 2294
-ℹ️  Auto-loaded workspace profile.yaml: /Users/shgao/logs/25.05.28tooluniverse/codes/ToolUniverse-auto/.tooluniverse/profile.yaml
+ℹ️  Auto-loaded workspace profile.yaml: <REPO_ROOT>/.tooluniverse/profile.yaml
 ℹ️  Number of tools after load tools: 2294
 
 === Step 1: KRAS sequence ===
