@@ -72,7 +72,7 @@ custom positions):
 
 | Input | Source | Notes |
 |---|---|---|
-| DMS effect matrix `(20, n_positions)` | `tooluniverse-mavedb-dms-retrieval` | NaN for unmeasured |
+| DMS effect matrix `(20, n_positions)` | `MaveDB_get_effect_matrix` | NaN for unmeasured |
 | `disruptive_tail` | DMS retrieval metadata | `"top"` or `"bottom"` |
 | Protein metadata | UniProt accession + PDB ID + chain | for the multi-evidence lookups |
 | (optional) SAE tensor `(20, n_positions, 16384)` | `ESM_get_sae_features` per mutant | the SAE evidence layer |
@@ -488,7 +488,7 @@ own sequence — see `tooluniverse-protein-structural-annotation-pdb` pitfalls).
 
 | Tool / Skill | Role |
 |---|---|
-| `tooluniverse-mavedb-dms-retrieval` | DMS matrix input |
+| `MaveDB_get_effect_matrix` | DMS matrix input |
 | `tooluniverse-protein-structural-annotation-pdb` (or `Structure_annotate_per_residue` directly) | Structural evidence |
 | `UniProt_get_function_by_accession` | UniProt features (active sites, binding sites, PTMs, disulfides) |
 | `ESM_get_sae_features` | SAE tensor for the optional Step 4 |

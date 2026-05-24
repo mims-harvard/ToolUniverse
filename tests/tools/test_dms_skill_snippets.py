@@ -1,12 +1,20 @@
 """Execute the Python snippets from every DMS skill against synthetic data.
 
-After the Phase D refactor (skills reframed around user goals not methodology),
-the 4 DMS-analysis SKILL.md files are:
-  - tooluniverse-mavedb-dms-retrieval
+After the Phase D refactor (skills reframed around user goals not methodology;
+DMS retrieval lifted into the MaveDB_get_effect_matrix tool), the 3 remaining
+DMS-analysis SKILL.md files are:
   - tooluniverse-protein-structural-annotation-pdb
-  - tooluniverse-variant-predictor-dms-benchmarking  (was sae-dms-global-validation)
-  - tooluniverse-residue-functional-mechanism-interpretation (was sae-dms-hotspot-features;
-      Step 7 of this skill subsumes what used to be a standalone annotated-dms-heatmap)
+  - tooluniverse-variant-predictor-dms-benchmarking
+  - tooluniverse-residue-functional-mechanism-interpretation
+    (Step 7 subsumes what used to be a standalone annotated-dms-heatmap skill;
+     entry generalized to accept user-provided residues, not just DMS hotspots)
+
+DMS retrieval boilerplate (HGVS parsing + filter + numbering verification +
+matrix reshape) used to live in the mavedb-dms-retrieval skill; it is now
+encapsulated inside the MaveDB_get_effect_matrix atomic tool, with its own
+unit tests in test_mavedb_tool.py. The snippet tests below for HGVS parsing
++ matrix reshape are kept as a reference implementation of the same logic
+the tool runs internally.
 
 The pooled-features / WT-diagonal-NaN / caching patterns that used to live in
 sae-mutant-tensor-build are now embedded as a 'Prerequisites' step inside the
@@ -94,7 +102,7 @@ def synthetic_dms_matrix():
 
 
 # ---------------------------------------------------------------------------
-# Skill 8: mavedb-dms-retrieval — HGVS parsing + matrix construction
+# Skill 8: MaveDB_get_effect_matrix — HGVS parsing + matrix construction
 # ---------------------------------------------------------------------------
 
 # From skill: Step 4 — parse HGVS to (position, ref_aa, alt_aa) and filter

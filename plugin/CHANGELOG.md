@@ -30,7 +30,7 @@ covering single-variant mechanistic interpretation through whole-protein DMS ana
 - `tooluniverse-protein-lof-mechanism` — 5-signal LoF synthesis (ESMC +
   AlphaMissense + AlphaFold + UniProt + DynaMut2) with 6-category decision rule.
 - `tooluniverse-protein-structural-annotation-pdb` — wraps Structure_annotate_per_residue.
-- `tooluniverse-mavedb-dms-retrieval` — orchestrates `MaveDB_*` tools + HGVS parsing.
+- `MaveDB_get_effect_matrix` — orchestrates `MaveDB_*` tools + HGVS parsing.
 - `tooluniverse-variant-predictor-dms-benchmarking` — validate ANY
   per-variant predictor (AlphaMissense / SAE / ESM logits / EVE / conservation
   / DynaMut2 / custom) against DMS data via Mann-Whitney U + robustness sweep.

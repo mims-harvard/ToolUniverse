@@ -223,5 +223,91 @@
         }
       }
     }
+  },
+  {
+    "name": "MaveDB_get_effect_matrix",
+    "description": "One-shot DMS data loader: fetch a MaveDB score set, parse HGVS to (ref_aa, position, alt_aa), filter to single missense, optionally verify position numbering against a UniProt canonical sequence, and reshape into a (20 amino acids × n_positions) effect matrix ready for downstream analysis. Hides the boilerplate that variant-effect-prediction benchmarking and residue-mechanism interpretation skills used to inline. Returns the matrix, the position list, the standard amino acid order, and explicit numbering / drop / score-field metadata so the caller can audit what was loaded.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "urn": {
+          "type": "string",
+          "description": "MaveDB score set URN (e.g., 'urn:mavedb:00000115-a-7'). Obtain from MaveDB_search_score_sets."
+        },
+        "uniprot_id": {
+          "type": ["string", "null"],
+          "description": "Optional UniProt accession (e.g., 'P01116' for KRAS). If supplied, the tool fetches the canonical sequence and verifies the MaveDB position numbering against it via a landmark check; sets numbering_offset and surfaces a warning in numbering_check if the positions don't match (silent off-by-N is the #1 silent bug in DMS analysis)."
+        },
+        "score_field": {
+          "type": ["string", "null"],
+          "description": "Optional explicit column name to use as the variant score (e.g., 'score', 'ddG', 'fitness'). If omitted, tries 'score' → 'ddG' → 'fitness' → first numeric non-HGVS field in that order. The actual field used is reported in data.score_field_used."
+        }
+      },
+      "required": ["urn"]
+    },
+    "fields": {
+      "operation": "get_effect_matrix"
+    },
+    "type": "MaveDBTool",
+    "test_examples": [
+      {
+        "urn": "urn:mavedb:00000115-a-7",
+        "uniprot_id": "P01116"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "urn": {"type": "string"},
+                "matrix": {
+                  "type": "array",
+                  "description": "(20 × n_positions) effect matrix. Rows = 20 standard amino acids in 'ACDEFGHIKLMNPQRSTVWY' order. Cells = score for that (alt_aa, position) variant, or null for unmeasured / WT-diagonal.",
+                  "items": {
+                    "type": "array",
+                    "items": {"type": ["number", "null"]}
+                  }
+                },
+                "positions": {
+                  "type": "array",
+                  "description": "Sorted list of 1-based residue positions (length = matrix's column count).",
+                  "items": {"type": "integer"}
+                },
+                "amino_acid_order": {
+                  "type": "string",
+                  "description": "Always 'ACDEFGHIKLMNPQRSTVWY' for consistency across downstream skills."
+                },
+                "shape": {
+                  "type": "array",
+                  "items": {"type": "integer"}
+                },
+                "n_parsed_single_missense": {"type": "integer"},
+                "n_dropped": {"type": "integer"},
+                "n_total_rows": {"type": "integer"},
+                "score_field_used": {"type": ["string", "null"]},
+                "numbering_check": {"type": ["object", "null"]},
+                "numbering_offset": {"type": ["integer", "null"]}
+              },
+              "required": ["matrix", "positions", "amino_acid_order"]
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
   }
 ]

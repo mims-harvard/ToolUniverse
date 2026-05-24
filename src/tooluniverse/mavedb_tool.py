@@ -11,13 +11,42 @@ Reference: Esposito et al. (2019) Genome Research
 
 import csv
 import io
+import re
+from collections import Counter
 
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional, Tuple
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 MAVEDB_API = "https://api.mavedb.org/api/v1"
+UNIPROT_API = "https://rest.uniprot.org/uniprotkb"
+
+# Standard 20-amino-acid order (matches what every downstream skill expects)
+_STANDARD_AAS = "ACDEFGHIKLMNPQRSTVWY"
+_THREE_TO_ONE: Dict[str, str] = {
+    "Ala": "A",
+    "Arg": "R",
+    "Asn": "N",
+    "Asp": "D",
+    "Cys": "C",
+    "Gln": "Q",
+    "Glu": "E",
+    "Gly": "G",
+    "His": "H",
+    "Ile": "I",
+    "Leu": "L",
+    "Lys": "K",
+    "Met": "M",
+    "Phe": "F",
+    "Pro": "P",
+    "Ser": "S",
+    "Thr": "T",
+    "Trp": "W",
+    "Tyr": "Y",
+    "Val": "V",
+}
+_HGVS_SINGLE_MISSENSE_RE = re.compile(r"^p\.\(?([A-Z][a-z]{2})(\d+)([A-Z][a-z]{2})\)?$")
 
 
 @register_tool("MaveDBTool")
@@ -286,6 +315,198 @@ class MaveDBTool(BaseTool):
             },
         }
 
+    def _get_effect_matrix(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Fetch DMS score set and return ready-to-analyze effect matrix.
+
+        Hides the parsing pipeline that every consuming skill used to inline:
+          1. Fetch all variants (uses _get_variant_scores with no limit)
+          2. Parse HGVS protein notation → (ref_aa, position, alt_aa)
+          3. Filter to single missense (drop synonymous/nonsense/indels/multi)
+          4. Optional: verify position numbering against UniProt canonical
+          5. Reshape to (20 amino acids × n_positions) matrix in standard
+             AA order ('ACDEFGHIKLMNPQRSTVWY')
+        """
+        urn = params.get("urn", "")
+        if not urn:
+            return {"status": "error", "error": "urn parameter is required"}
+
+        uniprot_id: Optional[str] = params.get("uniprot_id")
+        score_field: Optional[str] = params.get("score_field")
+
+        # 1) Pull all variants via the existing helper (it uses the same session)
+        raw = self._get_variant_scores({"urn": urn, "limit": 0})
+        if raw.get("status") != "success":
+            return raw
+
+        variants = raw["data"].get("variants", [])
+        total_in_set = raw["data"].get("total_variants_in_set", len(variants))
+
+        # 2-3) parse HGVS + filter to single missense
+        parsed: List[Tuple[str, int, str, float]] = []
+        n_dropped = 0
+        score_field_counter: Counter = Counter()
+        for row in variants:
+            hgvs = row.get("hgvs_pro") or ""
+            m = _HGVS_SINGLE_MISSENSE_RE.match(hgvs)
+            if not m:
+                n_dropped += 1
+                continue
+            ref3, pos_str, alt3 = m.group(1), m.group(2), m.group(3)
+            if ref3 not in _THREE_TO_ONE or alt3 not in _THREE_TO_ONE:
+                n_dropped += 1
+                continue
+            # Pick a score field — explicit > 'score' > 'ddG' > 'fitness' > first numeric
+            score: Optional[float] = None
+            if score_field and score_field in row:
+                try:
+                    score = float(row[score_field])
+                    score_field_counter[score_field] += 1
+                except (TypeError, ValueError):
+                    pass
+            else:
+                for cand in ("score", "ddG", "fitness"):
+                    if row.get(cand) is None:
+                        continue
+                    try:
+                        score = float(row[cand])
+                        score_field_counter[cand] += 1
+                        break
+                    except (TypeError, ValueError):
+                        continue
+                if score is None:
+                    for k, v in row.items():
+                        if k.startswith("hgvs") or k == "accession":
+                            continue
+                        try:
+                            score = float(v)
+                            score_field_counter[k] += 1
+                            break
+                        except (TypeError, ValueError):
+                            continue
+            if score is None or (isinstance(score, float) and (score != score)):
+                n_dropped += 1
+                continue
+            parsed.append(
+                (_THREE_TO_ONE[ref3], int(pos_str), _THREE_TO_ONE[alt3], score)
+            )
+
+        if not parsed:
+            return {
+                "status": "error",
+                "error": (
+                    f"No usable single-missense variants found in '{urn}' "
+                    f"({total_in_set} rows, {n_dropped} dropped — check that the "
+                    f"score set uses HGVS protein notation and has numeric scores)."
+                ),
+            }
+
+        score_field_used = (
+            score_field_counter.most_common(1)[0][0] if score_field_counter else None
+        )
+
+        # 4) optional numbering verification against UniProt canonical
+        numbering_offset: Optional[int] = None
+        landmark_check: Optional[Dict[str, Any]] = None
+        if uniprot_id:
+            try:
+                resp = self.session.get(f"{UNIPROT_API}/{uniprot_id}.fasta", timeout=30)
+                if resp.status_code == 200:
+                    seq_lines = resp.text.strip().splitlines()
+                    canonical_seq = "".join(seq_lines[1:])
+                    # Use the most-common parsed position as the landmark
+                    position_counts = Counter(p[1] for p in parsed)
+                    landmark_pos = position_counts.most_common(1)[0][0]
+                    landmark_ref = next(p[0] for p in parsed if p[1] == landmark_pos)
+                    seq_idx = landmark_pos - 1
+                    if 0 <= seq_idx < len(canonical_seq):
+                        uniprot_aa = canonical_seq[seq_idx]
+                        if uniprot_aa == landmark_ref:
+                            numbering_offset = 0
+                            landmark_check = {
+                                "position": landmark_pos,
+                                "mavedb_ref": landmark_ref,
+                                "uniprot_aa": uniprot_aa,
+                                "match": True,
+                            }
+                        else:
+                            # Try common offsets to detect the shift
+                            offset_detected = None
+                            for offset in range(-10, 11):
+                                target_idx = seq_idx + offset
+                                if (
+                                    0 <= target_idx < len(canonical_seq)
+                                    and canonical_seq[target_idx] == landmark_ref
+                                ):
+                                    offset_detected = offset
+                                    break
+                            landmark_check = {
+                                "position": landmark_pos,
+                                "mavedb_ref": landmark_ref,
+                                "uniprot_aa": uniprot_aa,
+                                "match": False,
+                                "detected_offset": offset_detected,
+                                "warning": (
+                                    f"MaveDB position {landmark_pos} has ref_aa "
+                                    f"{landmark_ref} but UniProt {uniprot_id} "
+                                    f"position {landmark_pos} is {uniprot_aa}."
+                                    + (
+                                        f" Likely offset = {offset_detected}."
+                                        if offset_detected is not None
+                                        else ""
+                                    )
+                                ),
+                            }
+                            numbering_offset = offset_detected
+                else:
+                    landmark_check = {
+                        "warning": f"UniProt {uniprot_id} lookup HTTP {resp.status_code}"
+                    }
+            except requests.exceptions.RequestException as exc:
+                landmark_check = {"warning": f"UniProt verification failed: {exc}"}
+
+        # 5) reshape into (20 × n_positions)
+        positions = sorted({p[1] for p in parsed})
+        pos_index = {p: i for i, p in enumerate(positions)}
+        aa_index = {a: i for i, a in enumerate(_STANDARD_AAS)}
+
+        matrix: List[List[Optional[float]]] = [
+            [None] * len(positions) for _ in range(20)
+        ]
+        for ref_aa, pos, alt_aa, score in parsed:
+            if alt_aa not in aa_index:
+                continue
+            matrix[aa_index[alt_aa]][pos_index[pos]] = score
+
+        return {
+            "status": "success",
+            "data": {
+                "urn": urn,
+                "matrix": matrix,
+                "positions": positions,
+                "amino_acid_order": _STANDARD_AAS,
+                "shape": [20, len(positions)],
+                "n_parsed_single_missense": len(parsed),
+                "n_dropped": n_dropped,
+                "n_total_rows": total_in_set,
+                "score_field_used": score_field_used,
+                "numbering_check": landmark_check,
+                "numbering_offset": numbering_offset,
+            },
+            "metadata": {
+                "source": "MaveDB",
+                "matrix_layout": (
+                    "rows = 20 amino acids in 'ACDEFGHIKLMNPQRSTVWY' order; "
+                    "columns = positions (1-based canonical, see positions field); "
+                    "cells = score (None for unmeasured / WT-diagonal)"
+                ),
+                "note": (
+                    "WT diagonal cells are None (the MaveDB API doesn't "
+                    "include 'X→X' rows). Downstream skills should treat None "
+                    "as missing data."
+                ),
+            },
+        }
+
     def run(self, params: Dict[str, Any]) -> Dict[str, Any]:
         operation = self.tool_config.get("fields", {}).get("operation", "")
         dispatch = {
@@ -293,6 +514,7 @@ class MaveDBTool(BaseTool):
             "get_score_set": self._get_score_set,
             "get_variant_scores": self._get_variant_scores,
             "search_experiments": self._search_experiments,
+            "get_effect_matrix": self._get_effect_matrix,
         }
         handler = dispatch.get(operation)
         if handler:

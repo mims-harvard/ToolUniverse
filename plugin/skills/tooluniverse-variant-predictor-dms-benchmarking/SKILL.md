@@ -55,7 +55,7 @@ Reference: `05_validation1_global.py`, `06_validation1_aggregations.py`,
 
 | Input | Format | Example |
 |---|---|---|
-| DMS effect matrix | (20 amino acids × n_positions) `np.array`, NaN for unmeasured | from `tooluniverse-mavedb-dms-retrieval` |
+| DMS effect matrix | (20 amino acids × n_positions) `np.array`, NaN for unmeasured | from `MaveDB_get_effect_matrix` |
 | Disruptive tail convention | `"top"` (ΔΔG positive = destabilizing) or `"bottom"` (fitness low = LoF) | metadata from DMS retrieval step |
 | Per-variant predictor scores | (20 × n_positions) `np.array` matching DMS layout | computed from your chosen predictor — see Step 2 |
 | Aggregation K | `int`, mean of top-K when the predictor outputs many sub-scores per variant | only relevant for multi-feature predictors like SAE; ignore otherwise |
@@ -64,15 +64,28 @@ Reference: `05_validation1_global.py`, `06_validation1_aggregations.py`,
 
 ## Workflow
 
-### Step 1: Retrieve DMS
+### Step 1: Retrieve DMS as an effect matrix
+
+One call returns a ready-to-analyze `(20 × n_positions)` matrix — HGVS parsing,
+single-missense filtering, score-field detection, and (optional) UniProt
+numbering verification are done inside the tool:
 
 ```python
-# Pulls all variants in one call after the MaveDB-pagination fix
-MaveDB_get_variant_scores(urn="urn:mavedb:00000115-a-7")
+r = MaveDB_get_effect_matrix(
+    urn="urn:mavedb:00000115-a-7",
+    uniprot_id="P01116",     # optional but recommended — enables numbering check
+)
+matrix = np.array(r["data"]["matrix"], dtype=np.float32)  # (20, n_positions)
+positions = r["data"]["positions"]
+amino_acid_order = r["data"]["amino_acid_order"]          # always 'ACDEFGHIKLMNPQRSTVWY'
+# Audit fields — surface in your report:
+#   r["data"]["n_parsed_single_missense"], n_dropped, score_field_used,
+#   numbering_offset, numbering_check
 ```
 
-Then parse + reshape into the (20 × n_positions) matrix as documented in
-`tooluniverse-mavedb-dms-retrieval`.
+If `numbering_offset != 0`, the MaveDB position numbering differs from the
+UniProt canonical sequence — apply the offset before joining to any other
+source (PDB / SAE features / AlphaMissense).
 
 ### Step 2: Compute per-variant predictor scores
 
@@ -391,7 +404,7 @@ and compare:
 
 | Step | Tool / Skill |
 |---|---|
-| DMS retrieval | `tooluniverse-mavedb-dms-retrieval` |
+| DMS retrieval | `MaveDB_get_effect_matrix` |
 | Per-variant SAE scoring | `ESM_get_sae_features`, `ESM_score_variant_sae_disruption` |
 | Per-variant AlphaMissense (single lookup) | `AlphaMissense_get_variant_score(uniprot_id, variant)` |
 | Per-position AlphaMissense (saturation) | `AlphaMissense_get_residue_scores(uniprot_id, position)` |
