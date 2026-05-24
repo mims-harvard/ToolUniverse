@@ -55,6 +55,49 @@ here.
 
 ## Workflow
 
+### Step 0 (MANDATORY if user names specific positions): Premise check
+
+If the user says "explain why residue/cluster X is a hotspot", do NOT take
+that as a given. Verify it's actually a hotspot in THIS DMS first — users
+import biological knowledge from other contexts that may not match what the
+specific assay measured.
+
+```python
+# Per-position disruption magnitude (same formula as Step 1)
+if disruptive_tail == "top":
+    dms_per_pos = np.nanmax(dms_matrix, axis=0)
+elif disruptive_tail == "bottom":
+    dms_per_pos = -np.nanmin(dms_matrix, axis=0)
+
+# Where do the user-named positions actually rank?
+ranks = (-dms_per_pos).argsort().argsort()  # 0 = highest
+for user_pos in user_named_positions:
+    rank = int(ranks[pos_index[user_pos]])
+    pct = 100 * (1 - rank / len(dms_per_pos))
+    print(f"  pos {user_pos}: rank {rank+1}/{len(dms_per_pos)}, "
+          f"top {pct:.0f}% by max effect")
+```
+
+**Decision rule:**
+- If named position is in top 25% by max effect → premise confirmed, proceed.
+- If named position is in top 50% but not 25% → premise weakly supported;
+  proceed but note the rank in your report.
+- **If named position is below top 50% → REPORT THIS MISMATCH TRANSPARENTLY**
+  at the top of your answer before continuing with the mechanism analysis.
+
+Concrete example: the user asks "why is KRAS G12/G13 a folding hotspot in
+this DMS?" The data say G12 ranks 105/187 (top 56%) and G13 ranks 124/187
+(top 66%) by max ΔΔG — they are NOT folding hotspots in this AbundancePCA
+assay (even though they ARE famous oncogenic positions). The skill's job
+is to surface that contradiction up front, then proceed with a mechanism
+analysis for those residues (their oncogenic effect is via GTPase
+abolishment, not fold disruption — and that's a genuinely useful answer to
+the user's actual scientific question, just not the one they literally asked).
+
+The without-skill agent in the original eval missed this and gave a
+technically-correct P-loop description while accepting the user's wrong
+premise. Don't repeat that.
+
 ### Step 1: Pick hotspots from the DMS matrix
 
 ```python

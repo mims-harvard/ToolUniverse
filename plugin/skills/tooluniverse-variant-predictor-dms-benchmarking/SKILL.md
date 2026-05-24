@@ -101,20 +101,77 @@ to make reruns free. The full library scale is well-tested:
 `tests/integration/test_dms_pipeline_e2e_kras.py` runs ~300 mutants for KRAS
 positions 10–25.
 
-#### Predictor option B — AlphaMissense
+#### Predictor option B — AlphaMissense (hegelab proxy: categorical, not per-substitution numeric)
+
+The TU AlphaMissense tools proxy a public API (hegelab.org) that returns
+**residue-level categorical assignments**, not per-(position, alt_aa) numeric
+scores. Three calls are available; pick the one that matches your scale:
+
+| Tool | Signature | Returns |
+|---|---|---|
+| `AlphaMissense_get_variant_score` | `uniprot_id`, `variant` (e.g. `"p.G12V"`) | Residue-level data INCLUDING the alt_aa's bin (`benign` / `ambiguous` / `pathogenic`); also `mean`/`mean_all` |
+| `AlphaMissense_get_residue_scores` | `uniprot_id`, `position` | Same residue-level data (per-position lookup, cheaper than 19 variant calls) |
+| `AlphaMissense_get_protein_scores` | `uniprot_id` | Whole-protein dump in one call (cheapest for full-protein DMS analysis) |
+
+The response shape is the same for all three. Example for KRAS pos 12:
 
 ```python
-# AlphaMissense gives 0-1 pathogenicity score per missense variant
-AlphaMissense_get_variant_score(
-    uniprot_accession="P01116",
-    position=12,
-    reference_amino_acid="G",
-    alternate_amino_acid="V",
-)
+r = AlphaMissense_get_residue_scores(uniprot_id="P01116", position=12)
+# r["data"]["scores"]:
+#   {"uid":"P01116","aa":"G","resi":12,
+#    "benign":"", "ambiguous":"",
+#    "pathogenic":"6:A,C,D,R,S,V",                  # ← SNV-reachable subs only
+#    "pathogenic_all":"19:A,C,D,E,F,...,Y",         # ← all 19 substitutions
+#    "mean":0.9885,           # mean over SNV-reachable subs
+#    "mean_all":0.9950}       # mean over all 19 substitutions
+# r["data"]["thresholds"]:
+#   {"pathogenic":"> 0.564","ambiguous":"0.34 - 0.564","benign":"< 0.34"}
 ```
 
-Looped over the DMS variant list to populate the (20, n_positions) matrix.
-Free, no API key required.
+**To populate the `(20, n_positions)` predictor matrix**, parse the bin
+strings and map each alt_aa to a numeric score (bin-midpoint is the standard
+imputation since the tool doesn't expose true per-substitution numerics):
+
+```python
+BIN_MIDPOINTS = {"benign": 0.17, "ambiguous": 0.452, "pathogenic": 0.782}
+
+def parse_bin_list(bin_str):
+    """'6:A,C,D,R,S,V' → ['A','C','D','R','S','V']; '' → []."""
+    if not bin_str:
+        return []
+    _, aas = bin_str.split(":", 1)
+    return aas.split(",")
+
+def am_per_variant_matrix(uniprot_id, positions, aa_index):
+    AAS = list(aa_index)
+    M = np.full((20, len(positions)), np.nan, dtype=np.float32)
+    # One whole-protein call is much cheaper than n_positions calls
+    p = AlphaMissense_get_protein_scores(uniprot_id=uniprot_id)
+    per_res = {row["resi"]: row for row in p["data"]["scores"]}
+    for pos_idx, pos in enumerate(positions):
+        row = per_res.get(pos, {})
+        for cat in ("benign", "ambiguous", "pathogenic"):
+            for alt in parse_bin_list(row.get(f"{cat}_all", "")):
+                if alt in aa_index:
+                    M[aa_index[alt], pos_idx] = BIN_MIDPOINTS[cat]
+    return M
+```
+
+**Higher-resolution alternative — DeepMind bulk CSV** (only if you genuinely
+need true per-substitution numerics rather than bin-midpoints):
+
+```python
+# The official DeepMind release contains per-variant continuous scores
+# (not just bin assignments). Not currently wrapped by a TU tool — fetch directly:
+#   https://alphafold.ebi.ac.uk/files/AF-<uniprot_id>-F1-aa-substitutions.csv
+# or stream-filter https://storage.googleapis.com/dm_alphamissense/AlphaMissense_aa_substitutions.tsv.gz
+```
+
+Use the bulk CSV when you need rank-correlation analysis (Spearman benefits
+from continuous values, not 3-bin midpoints). Use the TU proxy when you only
+need the binary "is this variant in the pathogenic bin" signal.
+
+Both options are free, no API key required.
 
 #### Predictor option C — ESM logits-based score
 
@@ -160,23 +217,93 @@ weakly-disruptive variants into the "neutral" group and erodes the contrast.
 **Sign matters** — get `disruptive_tail` from the DMS-retrieval skill's metadata;
 a flipped sign silently inverts every conclusion.
 
+### Step 3.5 (MANDATORY): Pre-MWU sanity gate — catch silent NaN failures
+
+**Before running any statistical test**, verify the predictor scores actually
+populated. Silent NaN matrices are the most common failure mode in this
+workflow — a batch SAE compute that errored midway, an AlphaMissense fetch
+that skipped variants, an ESM forge call that timed out — and they produce
+"successful" runs that report meaningless statistics.
+
+```python
+neutral, disruptive = categorize(dms_matrix, disruptive_tail)
+s_neutral_all = predictor_scores[neutral]
+s_disruptive_all = predictor_scores[disruptive]
+s_neutral_finite = s_neutral_all[~np.isnan(s_neutral_all)]
+s_disruptive_finite = s_disruptive_all[~np.isnan(s_disruptive_all)]
+
+# Hard gate: NaN coverage check
+coverage_n = len(s_neutral_finite) / max(len(s_neutral_all), 1)
+coverage_d = len(s_disruptive_finite) / max(len(s_disruptive_all), 1)
+if len(s_neutral_finite) < 5 or len(s_disruptive_finite) < 5:
+    raise ValueError(
+        f"Insufficient predictor scores: only {len(s_neutral_finite)} neutral "
+        f"and {len(s_disruptive_finite)} disruptive non-NaN values. "
+        f"Coverage = {coverage_n:.0%} / {coverage_d:.0%}. "
+        f"Predictor matrix may be empty / failed to populate. "
+        f"INVESTIGATE THE PREDICTOR COMPUTATION STEP before continuing."
+    )
+if coverage_n < 0.5 or coverage_d < 0.5:
+    print(f"WARNING: predictor coverage only {coverage_n:.0%} (neutral) / "
+          f"{coverage_d:.0%} (disruptive). Results may be biased toward the "
+          f"non-NaN subset.")
+```
+
+If you hit the `ValueError`: do not paper over with "predictor X wins by
+default". The right response is to debug the predictor computation step
+(re-run, check API keys, check log files) and report what failed.
+
+**Sign-convention double-check** (also mandatory if the dataset is new):
+verify `disruptive_tail` against the data using an internal landmark. The
+metadata field can be misleading on subsets (e.g. a window of TP53 DBD
+might run the opposite direction from the full TP53 abundance assay). The
+cheapest check is Spearman correlation between DMS effect and a predictor
+known to align in a fixed direction (AlphaMissense pathogenicity score is
+always positive=more-damaging):
+
+```python
+from scipy.stats import spearmanr
+flat_dms = dms_matrix.ravel()
+flat_pred = predictor_scores.ravel()
+mask = ~(np.isnan(flat_dms) | np.isnan(flat_pred))
+rho, p_corr = spearmanr(flat_dms[mask], flat_pred[mask])
+expected_sign = "+" if disruptive_tail == "top" else "-"
+got_sign = "+" if rho > 0 else "-"
+if got_sign != expected_sign and abs(rho) > 0.1:
+    print(f"WARNING: Spearman rho = {rho:.3f} (sign={got_sign}) but "
+          f"disruptive_tail='{disruptive_tail}' expects sign={expected_sign}. "
+          f"Sign convention may be inverted for THIS subset. Verify before "
+          f"interpreting MWU.")
+```
+
 ### Step 4: One-sided Mann-Whitney U test
 
 ```python
 from scipy.stats import mannwhitneyu
 
-neutral, disruptive = categorize(dms_matrix, disruptive_tail)
-s_neutral = predictor_scores[neutral][~np.isnan(predictor_scores[neutral])]
-s_disruptive = predictor_scores[disruptive][~np.isnan(predictor_scores[disruptive])]
-
-u, p = mannwhitneyu(s_disruptive, s_neutral, alternative="greater")
-print(f"disruptive median = {np.median(s_disruptive):.4f}, "
-      f"neutral median = {np.median(s_neutral):.4f}, p = {p:.3g}")
+u, p = mannwhitneyu(s_disruptive_finite, s_neutral_finite, alternative="greater")
+print(f"disruptive median = {np.median(s_disruptive_finite):.4f}, "
+      f"neutral median = {np.median(s_neutral_finite):.4f}, p = {p:.3g}")
 ```
 
 For SAE-style multi-feature predictors with a top-K parameter, run this for
 K ∈ {1, 3, 10} and report all three — the best K is usually different across
 predictors and you want the comparison transparent, not tuned.
+
+**MWU is the discrimination test, but it's not the only valid analysis.**
+Consider also reporting (one or both):
+- **Spearman rank correlation** between predictor and DMS effect — captures
+  graded calibration the binary neutral/disruptive split discards. Best for
+  "is this predictor calibrated?" questions, not just "does it discriminate?"
+- **AUROC** at a clinically-meaningful disruption threshold (e.g. ΔΔG > 1
+  kcal/mol) — gives a 0-1 number practitioners recognize and lets you compare
+  to literature predictors directly.
+
+The eval that motivated this skill (KRAS folding AlphaMissense benchmark)
+got *qualitatively similar* answers from MWU (p=0.20, "not reliable") and
+Spearman (ρ=0.23, p<1e-30, "weakly calibrated") — but Spearman's reading was
+richer. If the user just asks "is X reliable?", give both unless one is
+clearly inappropriate for the data shape.
 
 ### Step 5: Robustness sweep
 
@@ -266,7 +393,9 @@ and compare:
 |---|---|
 | DMS retrieval | `tooluniverse-mavedb-dms-retrieval` |
 | Per-variant SAE scoring | `ESM_get_sae_features`, `ESM_score_variant_sae_disruption` |
-| Per-variant AlphaMissense | `AlphaMissense_get_variant_score` |
+| Per-variant AlphaMissense (single lookup) | `AlphaMissense_get_variant_score(uniprot_id, variant)` |
+| Per-position AlphaMissense (saturation) | `AlphaMissense_get_residue_scores(uniprot_id, position)` |
+| Whole-protein AlphaMissense (cheapest for DMS) | `AlphaMissense_get_protein_scores(uniprot_id)` |
 | Per-variant ESM logits | `ESM_score_sequence` |
 | Structural prior (for predictor analysis) | `Structure_annotate_per_residue` |
 | Next step: per-hotspot mechanism | `tooluniverse-dms-hotspot-mechanism-interpretation` |
