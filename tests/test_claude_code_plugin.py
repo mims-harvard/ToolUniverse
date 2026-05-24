@@ -403,6 +403,21 @@ class TestBuildScript:
         assert (dist_dir / "agents").is_dir()
         assert (dist_dir / "README.md").exists()
 
+        # setup-keys command + helper scripts + bundled catalog ship in dist
+        assert (dist_dir / "commands" / "setup-keys.md").exists()
+        assert (dist_dir / "scripts" / "setup_keys_server.py").exists()
+        assert (dist_dir / "scripts" / "keys_env.py").exists()
+        catalog_path = dist_dir / "scripts" / "api_keys_catalog.json"
+        assert catalog_path.exists(), "api_keys_catalog.json not bundled in dist"
+        catalog = json.loads(catalog_path.read_text())
+        assert any(e["name"] == "OMIM_API_KEY" for e in catalog)
+
+    def test_setup_keys_source_present(self):
+        """The setup-keys command and its scripts exist in the plugin source."""
+        assert (PLUGIN_DIR / "commands" / "setup-keys.md").exists()
+        assert (PLUGIN_DIR / "scripts" / "setup_keys_server.py").exists()
+        assert (PLUGIN_DIR / "scripts" / "keys_env.py").exists()
+
     def test_build_includes_skills(self):
         """Build should bundle tooluniverse* skills."""
         dist_dir = REPO_ROOT / "dist" / "tooluniverse-plugin"

@@ -34,6 +34,11 @@ echo "  [+] Default settings"
 cp -r "$PLUGIN_SRC/commands" "$DIST_DIR/"
 echo "  [+] Slash commands"
 
+# 4b. Copy helper scripts + bundle the generated API key catalog next to them
+cp -r "$PLUGIN_SRC/scripts" "$DIST_DIR/"
+cp "$REPO_ROOT/src/tooluniverse/data/api_keys_catalog.json" "$DIST_DIR/scripts/"
+echo "  [+] Setup scripts + API key catalog"
+
 # 5. Copy agents
 cp -r "$PLUGIN_SRC/agents" "$DIST_DIR/"
 echo "  [+] Research agent"
