@@ -107,6 +107,8 @@ EnsemblVEP_annotate_hgvs(hgvs_notation="...") # consequence, SpliceAI deltas
 
 For non-missense variants, skip PP3/BP4 and focus on SpliceAI scores in Phase 5.
 
+**Mechanism complement for VUS-resolution narratives**: PP3/BP4 is a vote count of predictor scores — it tells you *whether* the variant is damaging, not *how*. For a VUS resolution report where the verdict needs a mechanistic explanation (clinician asks "why is this damaging?"), add `ESM_explain_variant_mechanism(sequence=..., position=..., ref_aa=..., alt_aa=...)` — returns lost/gained ESMC-6B SAE feature categories (catalytic / ligand-binding / ptm / structural-stability / domain / etc.) with a one-line summary. This does not change PP3 strength but turns "PP3 satisfied (REVEL 0.78, AlphaMissense 0.85)" into "PP3 satisfied — and SAE shows catalytic-feature loss at position X, consistent with active-site disruption." Requires `ESM_API_KEY`; missense only.
+
 ---
 
 ## Phase 3: Clinical Database Evidence (PS1, PM5, PP5, BP6)
