@@ -23,9 +23,7 @@ This skill validates ALL of these against a DMS dataset with the same statistica
 framework. SAE is shown as the worked example because the surrounding skills in
 this collection are SAE-themed, but the procedure is predictor-agnostic.
 
-**Provenance**: Statistical methodology adapted from
-`dms_analysis/skills/sae_global_drop_vs_dms.md` in
-[ada-f/esmc_sae](https://github.com/ada-f/esmc_sae) (Ada Fang, Marinka Zitnik lab).
+**Provenance**: Statistical methodology adapted from an upstream research workflow.
 Reference: `05_validation1_global.py`, `06_validation1_aggregations.py`,
 `07_validation1_sweep.py`.
 
@@ -418,6 +416,3 @@ and compare:
 
 ## References
 
-Source repo: https://github.com/ada-f/esmc_sae (Ada Fang, Mzitnik Lab)
-Reference skill: `dms_analysis/skills/sae_global_drop_vs_dms.md`
-Reference scripts: `dms_analysis/scripts/05_validation1_global.py`, `06_validation1_aggregations.py`, `07_validation1_sweep.py`

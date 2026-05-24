@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added — ESM-C SAE variant interpretation + DMS analysis suite
 
-Full ToolUniverse implementation of the [ada-f/esmc_sae](https://github.com/ada-f/esmc_sae)
-methodology (Ada Fang, Marinka Zitnik lab). Adds 4 new tools and 8 new skills
+Full ToolUniverse implementation of the [upstream methodology repo](https://github.com/upstream methodology repo)
+methodology . Adds 4 new tools and 8 new skills
 covering single-variant mechanistic interpretation through whole-protein DMS analysis.
 
 **New tools (4):**
@@ -49,7 +49,7 @@ covering single-variant mechanistic interpretation through whole-protein DMS ana
 
 **Verification:**
 - 46 unit tests pass (18 SAE + 11 structural-annotation + 17 DMS skill snippet tests).
-- `Structure_annotate_per_residue` reproduces ada's reference `kras_anno.csv`
+- `Structure_annotate_per_residue` reproduces the reference annotation
   with **168/168 region matches** on 6VJJ (KRAS-RAF1-GTP).
 - TP53 R175H end-to-end SAE skill workflow returns expected DNA-binding LoF mechanism.
 - PDBe live secondary-structure path verified: KRAS β1 (residues 2-9) and α3

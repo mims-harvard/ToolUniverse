@@ -121,8 +121,7 @@ def test_rsa_in_unit_interval():
 def test_provenance_attribution_present():
     tool = StructureAnnotationTool({"name": "Structure_annotate_per_residue"})
     result = _run(tool, partner_chains=["B"], ligand_resnames=["GNP"])
-    assert "ada-f/esmc_sae" in result["provenance"]
-    assert "Marinka Zitnik" in result["provenance"]
+    assert "upstream research workflow" in result["provenance"]
 
 
 def test_method_block_documents_choices():

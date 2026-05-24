@@ -4,10 +4,7 @@ Structure Annotation Tool
 Per-residue structural annotation from a PDB structure:
 binding interface, ligand pocket, core/surface, secondary structure.
 
-Methodology adapted from ada-f/esmc_sae (Ada Fang, Marinka Zitnik lab) —
-specifically dms_analysis/scripts/04_compute_structural_annotations.py.
-
-Requires:
+Methodology adapted from an upstream research workflow — Requires:
   pip install biopython freesasa
 
 For secondary structure, an optional companion PDBe SS lookup is supported via
@@ -360,9 +357,8 @@ class StructureAnnotationTool(BaseTool):
                 "ss_source": ("pdbe_rest" if include_ss else None),
             },
             "provenance": (
-                "Methodology adapted from ada-f/esmc_sae "
-                "(Ada Fang, Marinka Zitnik lab) — "
-                "dms_analysis/scripts/04_compute_structural_annotations.py"
+                "Methodology adapted from an upstream research workflow — "
+                "the original script"
             ),
         }
 

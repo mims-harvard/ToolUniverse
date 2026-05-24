@@ -12,9 +12,7 @@ binding interface, in a ligand pocket, is buried vs solvent-exposed, and
 annotation track that anchors any DMS heatmap or per-residue interpretation
 to the protein's actual physical context.
 
-**Provenance**: Methodology adapted from `dms_analysis/scripts/04_compute_structural_annotations.py`
-in [ada-f/esmc_sae](https://github.com/ada-f/esmc_sae) (Ada Fang, Marinka
-Zitnik lab). The scHA distance rule + isolated-chain freesasa RSA convention
+**Provenance**: Methodology adapted from an upstream research workflow. The scHA distance rule + isolated-chain freesasa RSA convention
 is from that work.
 
 ---
@@ -187,6 +185,3 @@ downstream uses:
 
 ## References
 
-Source repo: https://github.com/ada-f/esmc_sae (Ada Fang, Mzitnik Lab)
-Reference script: `dms_analysis/scripts/04_compute_structural_annotations.py`
-Reference output: `dms_analysis/data/kras_anno.csv` (168 KRAS residues annotated)

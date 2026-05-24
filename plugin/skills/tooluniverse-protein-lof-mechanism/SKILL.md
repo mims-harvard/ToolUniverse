@@ -16,7 +16,7 @@ For a single missense variant, integrate 5 independent computational signals to 
 | Feature disruption | `ESM_score_variant_sae_disruption` + `ESM_describe_sae_feature` | "Which biological feature breaks?" |
 | Stability | `DynaMut2_predict_stability` | "Does the protein still fold correctly?" |
 
-**Provenance**: This skill is the ToolUniverse port of the `variant_lof_mechanism.md` workflow in [ada-f/esmc_sae](https://github.com/ada-f/esmc_sae) (Ada Fang, Marinka Zitnik lab). The 5-signal synthesis + the structural-stability-vs-direct-functional-disruption decision rule are from that work. The ada repo uses ThermoMPNN for the stability signal; we use DynaMut2 (similar task, different model, hosted by University of Queensland BioSig lab — zero install for end users). For users with GPU + research need for ThermoMPNN specifically, see the "Optional: ThermoMPNN" section at the bottom.
+**Provenance**: This skill is the ToolUniverse port of the `variant_lof_mechanism.md` workflow in an upstream research workflow. The 5-signal synthesis + the structural-stability-vs-direct-functional-disruption decision rule are from that work. The ada repo uses ThermoMPNN for the stability signal; we use DynaMut2 (similar task, different model, hosted by University of Queensland BioSig lab — zero install for end users). For users with GPU + research need for ThermoMPNN specifically, see the "Optional: ThermoMPNN" section at the bottom.
 
 ---
 
@@ -288,8 +288,7 @@ If your work depends on any of those three, switch to ThermoMPNN. Otherwise Dyna
 
 ## References
 
-- Source workflow: https://github.com/ada-f/esmc_sae (Ada Fang, Mzitnik Lab)
-- AlphaMissense: Cheng et al., Science 2023
+- - AlphaMissense: Cheng et al., Science 2023
 - ESMC + SAE: EvolutionaryScale ESMC release 2024-12; SAE on ishaan/sae branch
 - DynaMut2: Rodrigues, Pires, Ascher, NAR 2021
 - ThermoMPNN: Dieckhaus et al., PNAS 2024 (10.1073/pnas.2314853121)

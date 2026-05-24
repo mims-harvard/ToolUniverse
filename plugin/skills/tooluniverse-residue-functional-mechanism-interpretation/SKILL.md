@@ -26,10 +26,7 @@ they came from:
 | **Druggable site residues** | From a binding-site predictor, pass directly |
 | **Clinician's question** | "Why does mutation at R175 keep showing up in tumors?" — pass `[175]` |
 
-**Provenance**: Multi-evidence synthesis pattern adapted from
-`dms_analysis/skills/sae_hotspot_feature_enrichment.md` in
-[ada-f/esmc_sae](https://github.com/ada-f/esmc_sae) (Ada Fang, Marinka
-Zitnik lab). The original framing was DMS-hotspot-only; this skill generalizes
+**Provenance**: Multi-evidence synthesis pattern adapted from an upstream research workflow. The original framing was DMS-hotspot-only; this skill generalizes
 the entry to accept residues from any source.
 
 ---
@@ -501,6 +498,3 @@ own sequence — see `tooluniverse-protein-structural-annotation-pdb` pitfalls).
 
 ## References
 
-Source repo: https://github.com/ada-f/esmc_sae (Ada Fang, Mzitnik Lab)
-Reference skill: `dms_analysis/skills/sae_hotspot_feature_enrichment.md`
-Reference scripts: `dms_analysis/scripts/08_validation2_hotspot_enrichment.py`, `09_validation2_descriptive.py`, `10_validation2_plot_callouts.py`
