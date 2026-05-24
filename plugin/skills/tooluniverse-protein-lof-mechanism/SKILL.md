@@ -16,8 +16,6 @@ For a single missense variant, integrate 5 independent computational signals to 
 | Feature disruption | `ESM_score_variant_sae_disruption` + `ESM_describe_sae_feature` | "Which biological feature breaks?" |
 | Stability | `DynaMut2_predict_stability` | "Does the protein still fold correctly?" |
 
-**Provenance**: This skill is the ToolUniverse port of the `variant_lof_mechanism.md` workflow in an upstream research workflow. The 5-signal synthesis + the structural-stability-vs-direct-functional-disruption decision rule are from that work. The ada repo uses ThermoMPNN for the stability signal; we use DynaMut2 (similar task, different model, hosted by University of Queensland BioSig lab — zero install for end users). For users with GPU + research need for ThermoMPNN specifically, see the "Optional: ThermoMPNN" section at the bottom.
-
 ---
 
 ## When to use this skill
@@ -178,7 +176,7 @@ DynaMut2_predict_stability(
 
 ### Step 6: Synthesis — decide the LoF mechanism category
 
-Apply the decision rule from ada's variant_lof_mechanism workflow:
+Apply the upstream variant_lof_mechanism decision rule:
 
 | Signal pattern | Inferred mechanism |
 |---|---|
@@ -234,7 +232,7 @@ LIMITATIONS: {any signals that conflicted, missing data, low pLDDT, etc.}
 3. **SAE labels are inferred, not curated.** `ESM_describe_sae_feature` labels are best-effort aggregations from a 10-protein panel; some features stay "uncategorized" with high activation values — flag this as low-confidence interpretation.
 4. **DynaMut2 needs PDB.** If no PDB covers the mutation position and AlphaFold confidence is low (pLDDT < 50), the stability signal is unreliable.
 5. **Long-range allosteric effects not captured.** SAE window is ±8 residues. Some mutations break protein function via distant effects (e.g., dimerization interface modulation) — SAE alone won't see this.
-6. **Synthesis decision rule is heuristic.** The 6-category mapping in Step 6 is from ada's lab work — it's a reasonable starting point, not a clinical gold standard. For high-stakes interpretation, the rule should be treated as a hypothesis to be tested experimentally.
+6. **Synthesis decision rule is heuristic.** The 6-category mapping in Step 6 — it's a reasonable starting point, not a clinical gold standard. For high-stakes interpretation, the rule should be treated as a hypothesis to be tested experimentally.
 7. **Non-commercial license on SAE outputs** (per EvolutionaryScale Cambrian License).
 
 ---
@@ -284,11 +282,3 @@ For LoF mechanism classification (this skill's use case), the binary distinction
 
 If your work depends on any of those three, switch to ThermoMPNN. Otherwise DynaMut2 is sufficient for the LoF mechanism decision in this skill.
 
----
-
-## References
-
-- - AlphaMissense: Cheng et al., Science 2023
-- ESMC + SAE: EvolutionaryScale ESMC release 2024-12; SAE on ishaan/sae branch
-- DynaMut2: Rodrigues, Pires, Ascher, NAR 2021
-- ThermoMPNN: Dieckhaus et al., PNAS 2024 (10.1073/pnas.2314853121)

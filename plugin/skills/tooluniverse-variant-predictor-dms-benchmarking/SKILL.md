@@ -23,10 +23,6 @@ This skill validates ALL of these against a DMS dataset with the same statistica
 framework. SAE is shown as the worked example because the surrounding skills in
 this collection are SAE-themed, but the procedure is predictor-agnostic.
 
-**Provenance**: Statistical methodology adapted from an upstream research workflow.
-Reference: `05_validation1_global.py`, `06_validation1_aggregations.py`,
-`07_validation1_sweep.py`.
-
 ---
 
 ## When to use this skill
@@ -411,8 +407,4 @@ and compare:
 | Structural prior (for predictor analysis) | `Structure_annotate_per_residue` |
 | Next step: per-hotspot mechanism | `tooluniverse-residue-functional-mechanism-interpretation` |
 | Final visualization | Step 7 of `tooluniverse-residue-functional-mechanism-interpretation` (annotated heatmap + callouts) |
-
----
-
-## References
 

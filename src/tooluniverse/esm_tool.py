@@ -355,7 +355,7 @@ class ESMTool(BaseTool):
 
         seq_len = len(sequence)
         # Sequence length cap — ESMC-6B Forge handles up to ~2,700 AA in
-        # practice (per ada repo + EvolutionaryScale docs). Longer sequences
+        # practice (per EvolutionaryScale docs). Longer sequences
         # fail with opaque server errors; catch up front with a clear message.
         MAX_SEQ_LEN = 2700
         if seq_len > MAX_SEQ_LEN:

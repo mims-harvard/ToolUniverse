@@ -8,8 +8,6 @@ disable-model-invocation: true
 
 Interpret a single missense variant by comparing reference vs mutant Sparse Autoencoder (SAE) feature activations from the ESMC-6B protein language model. SAE features are interpretable latent dimensions of the model's hidden state — many activate on biologically meaningful patterns (active sites, ligand-binding pockets, PTM sequons, structural motifs).
 
-**Provenance**: This skill adapts an upstream research workflow. The methodology — running ref + mutant through ESMC-6B SAE, computing per-feature activation deltas over a residue window, and ranking gained/lost features — is from that work.
-
 ---
 
 ## When to use this skill
@@ -225,8 +223,3 @@ Confidence: {high|medium|low}, based on:
   - Limitations encountered: {any of the 6 caveats above that apply}
 ```
 
----
-
-## References
-
-SAE model: `esmc-6b-2024-12_k64_codebook16384_layer60` via [EvolutionaryScale Forge](https://forge.evolutionaryscale.ai)

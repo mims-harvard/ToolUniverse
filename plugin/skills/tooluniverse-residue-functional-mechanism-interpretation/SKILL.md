@@ -26,9 +26,6 @@ they came from:
 | **Druggable site residues** | From a binding-site predictor, pass directly |
 | **Clinician's question** | "Why does mutation at R175 keep showing up in tumors?" — pass `[175]` |
 
-**Provenance**: Multi-evidence synthesis pattern adapted from an upstream research workflow. The original framing was DMS-hotspot-only; this skill generalizes
-the entry to accept residues from any source.
-
 ---
 
 ## When to use this skill
@@ -119,10 +116,6 @@ is to surface that contradiction up front, then proceed with a mechanism
 analysis for those residues (their oncogenic effect is via GTPase
 abolishment, not fold disruption — and that's a genuinely useful answer to
 the user's actual scientific question, just not the one they literally asked).
-
-The without-skill agent in the original eval missed this and gave a
-technically-correct P-loop description while accepting the user's wrong
-premise. Don't repeat that.
 
 ### Step 1 (Path B only): Detect hotspots from the DMS matrix
 
@@ -493,8 +486,4 @@ own sequence — see `tooluniverse-protein-structural-annotation-pdb` pitfalls).
 | `tooluniverse-variant-predictor-dms-benchmarking` | Sibling skill: validate a predictor before trusting its scores |
 | (heatmap visualization is now Step 7 of this skill) | annotated DMS panel with per-hotspot callouts |
 | `alphafold_get_prediction` | pLDDT context if no experimental PDB available |
-
----
-
-## References
 

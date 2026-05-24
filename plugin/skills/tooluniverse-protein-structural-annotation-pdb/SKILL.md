@@ -12,9 +12,6 @@ binding interface, in a ligand pocket, is buried vs solvent-exposed, and
 annotation track that anchors any DMS heatmap or per-residue interpretation
 to the protein's actual physical context.
 
-**Provenance**: Methodology adapted from an upstream research workflow. The scHA distance rule + isolated-chain freesasa RSA convention
-is from that work.
-
 ---
 
 ## When to use this skill
@@ -156,7 +153,7 @@ downstream uses:
    to a sequence or to another annotation source. The skill cannot detect
    silent offsets for you.
 3. **Distance cutoff is a convention, not a truth**. 5.0 Å is the literature
-   default (matches ada's reference). Tighten to 4.0 Å for stricter pocket
+   default. Tighten to 4.0 Å for stricter pocket
    calls; loosen to 6.0 Å to include 2nd-shell residues.
 4. **freesasa RSA can exceed 1.0** for small / unusual structures because the
    max-ASA reference is calibrated for a typical protein context. For real
@@ -180,8 +177,3 @@ downstream uses:
 | `UniProt_get_sequence_by_accession` | Canonical sequence | Step 3 (numbering verification) |
 | `pdbe_get_entry_secondary_structure` | SS alone | Step 4 alternative |
 | `tooluniverse-residue-functional-mechanism-interpretation` | Downstream consumer | Use this annotation as the structural evidence layer when interpreting DMS hotspots; the skill also plots an annotated DMS heatmap in its Step 7 |
-
----
-
-## References
-
