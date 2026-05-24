@@ -24,19 +24,38 @@ def test_discover_keys_marks_required_over_optional(tmp_path, monkeypatch):
 
 def test_build_catalog_reports_missing_and_unused():
     found = {"K1": {"requirement": "required", "used_by": {"a.json"}}}
-    metadata = {"K2": {"type": "secret", "register_url": "u", "description": "d"}}
+    metadata = {"K2": {"type": "secret", "domain": "D", "register_url": "u",
+                       "purpose": "p", "without": "w"}}
     catalog, missing, unused = gen.build_catalog(found, metadata)
     assert catalog == []
     assert missing == ["K1"]
     assert unused == ["K2"]
 
 
-def test_build_catalog_emits_entry():
+def test_build_catalog_emits_entry_with_domain_and_notes():
     found = {"K1": {"requirement": "optional", "used_by": {"b.json", "a.json"}}}
-    metadata = {"K1": {"type": "secret", "register_url": "u", "description": "d"}}
+    metadata = {"K1": {"type": "secret", "domain": "Genomics", "register_url": "u",
+                       "purpose": "p", "without": "w"}}
     catalog, missing, unused = gen.build_catalog(found, metadata)
     assert missing == [] and unused == []
     assert catalog == [{
-        "name": "K1", "requirement": "optional", "type": "secret",
-        "register_url": "u", "description": "d", "used_by": ["a.json", "b.json"],
+        "name": "K1", "requirement": "optional", "type": "secret", "domain": "Genomics",
+        "register_url": "u", "purpose": "p", "without": "w",
+        "used_by": ["a.json", "b.json"],
     }]
+
+
+def test_render_env_template_groups_by_domain():
+    catalog = [
+        {"name": "A_KEY", "requirement": "required", "type": "secret",
+         "domain": "Drugs & Chemistry", "register_url": "u", "purpose": "p", "without": "w",
+         "used_by": []},
+        {"name": "B_KEY", "requirement": "optional", "type": "secret",
+         "domain": "Genomics & Variants", "register_url": "u2", "purpose": "p2", "without": "w2",
+         "used_by": []},
+    ]
+    text = gen.render_env_template(catalog)
+    assert text.index("=== Genomics & Variants ===") < text.index("=== Drugs & Chemistry ===")
+    assert "B_KEY (optional) — p2" in text
+    assert "Without: w" in text
+    assert "AUTO-GENERATED" in text

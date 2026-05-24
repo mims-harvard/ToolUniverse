@@ -10,9 +10,11 @@ SPEC.loader.exec_module(srv)
 
 CATALOG = [
     {"name": "OMIM_API_KEY", "requirement": "optional", "type": "secret",
-     "register_url": "https://omim.org/api", "description": "OMIM"},
+     "domain": "Genomics & Variants", "register_url": "https://omim.org/api",
+     "purpose": "Look up Mendelian disease records.", "without": "OMIM tools return no data without it."},
     {"name": "ESM_MCP_SERVER_HOST", "requirement": "required", "type": "endpoint",
-     "register_url": "https://forge.evolutionaryscale.ai/", "description": "ESM server"},
+     "domain": "Models & Infrastructure", "register_url": "https://forge.evolutionaryscale.ai/",
+     "purpose": "URL of a self-hosted ESM MCP server.", "without": "Leave blank unless you self-host."},
 ]
 
 
@@ -21,9 +23,19 @@ def test_render_form_shows_names_links_and_masks_existing():
     assert "OMIM_API_KEY" in html
     assert "https://omim.org/api" in html
     assert "tok" in html
-    assert "****1234" in html          # masked placeholder shown
-    assert "sk-secret-1234" not in html  # raw secret never rendered
-    assert "Service Endpoints" in html   # endpoint section present
+    assert "****1234" in html
+    assert "sk-secret-1234" not in html
+
+
+def test_render_form_groups_by_domain_with_purpose_and_without():
+    html = srv.render_form(CATALOG, existing={}, token="tok")
+    assert "Genomics &amp; Variants" in html
+    assert "Models &amp; Infrastructure" in html
+    assert "Look up Mendelian disease records." in html
+    assert "Leave blank unless you self-host." in html
+    assert html.count('class="card"') == 2
+    assert "Required keys" not in html
+    assert "Service Endpoints" not in html
 
 
 def test_compute_updates_sets_and_clears():
