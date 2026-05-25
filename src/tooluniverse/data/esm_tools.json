@@ -600,14 +600,10 @@
     },
     "test_examples": [
       {
-        "description": "Get SAE features near TP53 R175H mutation site (position 175, +/- 8 residues). TP53 is P04637; first ~210 AA shown.",
-        "arguments": {
-          "operation": "get_sae_features",
-          "sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDR",
-          "position": 175,
-          "window": 8,
-          "top_k_per_residue": 16
-        }
+        "sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDR",
+        "position": 175,
+        "window": 8,
+        "top_k_per_residue": 16
       }
     ],
     "fields": {
@@ -794,16 +790,12 @@
     },
     "test_examples": [
       {
-        "description": "TP53 R175H \u2014 DNA-binding domain LoF hotspot. Expects negative delta on DNA-contact / binding features.",
-        "arguments": {
-          "operation": "score_variant_sae_disruption",
-          "sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDR",
-          "position": 175,
-          "ref_aa": "R",
-          "alt_aa": "H",
-          "window": 8,
-          "top_k_features": 5
-        }
+        "sequence": "MEEPQSDPSVEPPLSQETFSDLWKLLPENNVLSPLPSQAMDDLMLSPDDIEQWFTEDPGPDEAPRMPEAAPPVAPAPAAPTPAAPAPAPSWPLSSSVPSQKTYQGSYGFRLGFLHSGTAKSVTCTYSPALNKMFCQLAKTCPVQLWVDSTPPPGTRVRAMAIYKQSQHMTEVVRRCPHHERCSDSDGLAPPQHLIRVEGNLRVEYLDDR",
+        "position": 175,
+        "ref_aa": "R",
+        "alt_aa": "H",
+        "window": 8,
+        "top_k_features": 5
       }
     ],
     "fields": {
@@ -975,12 +967,8 @@
     },
     "test_examples": [
       {
-        "description": "Label SAE feature 6404 (one of the strong features at TP53 R175 \u2014 expected category likely 'ligand-binding' or 'catalytic' given TP53's DNA contact role)",
-        "arguments": {
-          "operation": "describe_sae_feature",
-          "feature_id": 6404,
-          "n_proteins": 5
-        }
+        "feature_id": 6404,
+        "n_proteins": 5
       }
     ],
     "fields": {
