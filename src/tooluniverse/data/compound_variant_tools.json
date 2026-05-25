@@ -7,15 +7,24 @@
       "type": "object",
       "properties": {
         "variant": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Variant name (e.g., 'BRAF V600E', 'TP53 R175H'). Gene symbol + amino acid change."
         },
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene symbol (e.g., 'BRCA1'). Used for gnomAD/CIViC lookup."
         },
         "rsid": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "dbSNP rsID (e.g., 'rs113488022')."
         }
       },
@@ -26,31 +35,59 @@
       "oneOf": [
         {
           "properties": {
-            "status": {"const": "success"},
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "query": {"type": "object"},
-                "sources_queried": {"type": "array"},
-                "sources_failed": {"type": "array"},
-                "summary": {"type": "object"},
-                "annotations": {"type": "object"}
+                "query": {
+                  "type": "object"
+                },
+                "sources_queried": {
+                  "type": "array"
+                },
+                "sources_failed": {
+                  "type": "array"
+                },
+                "summary": {
+                  "type": "object"
+                },
+                "annotations": {
+                  "type": "object"
+                }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"variant": "BRAF V600E"},
-      {"gene": "BRCA1"},
-      {"rsid": "rs113488022"}
+      {
+        "variant": "BRAF V600E"
+      },
+      {
+        "gene": "BRCA1"
+      },
+      {
+        "rsid": "rs113488022"
+      }
     ]
   }
 ]

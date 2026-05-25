@@ -11,38 +11,68 @@
           "description": "Disease name (e.g., 'breast cancer', 'cystic fibrosis', 'distal renal tubular acidosis')"
         }
       },
-      "required": ["disease"]
+      "required": [
+        "disease"
+      ]
     },
     "return_schema": {
       "type": "object",
       "oneOf": [
         {
           "properties": {
-            "status": {"const": "success"},
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "query": {"type": "string"},
-                "sources_queried": {"type": "array"},
-                "sources_failed": {"type": "array"},
-                "profile": {"type": "object"},
-                "per_source": {"type": "object"}
+                "query": {
+                  "type": "string"
+                },
+                "sources_queried": {
+                  "type": "array"
+                },
+                "sources_failed": {
+                  "type": "array"
+                },
+                "profile": {
+                  "type": "object"
+                },
+                "per_source": {
+                  "type": "object"
+                }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"disease": "breast cancer"},
-      {"disease": "cystic fibrosis"},
-      {"disease": "distal renal tubular acidosis"}
+      {
+        "disease": "breast cancer"
+      },
+      {
+        "disease": "cystic fibrosis"
+      },
+      {
+        "disease": "distal renal tubular acidosis"
+      }
     ]
   }
 ]

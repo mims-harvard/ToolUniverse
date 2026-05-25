@@ -72,7 +72,11 @@
                 "description": "MSigDB collection code: H, C1-C8"
               },
               "filteredBySimilarity": {
-                "type": ["boolean", "array", "null"]
+                "type": [
+                  "boolean",
+                  "array",
+                  "null"
+                ]
               },
               "externalNamesForSimilarTerms": {
                 "type": "array"
@@ -190,38 +194,70 @@
           "description": "Gene symbol to check (e.g., 'SELENOP', 'TP53', 'CD37')"
         }
       },
-      "required": ["gene_set_name", "gene"]
+      "required": [
+        "gene_set_name",
+        "gene"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"const": "success"},
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "gene_set_name": {"type": "string"},
-                "gene": {"type": "string"},
-                "is_member": {"type": "boolean"},
-                "total_genes_in_set": {"type": "integer"}
+                "gene_set_name": {
+                  "type": "string"
+                },
+                "gene": {
+                  "type": "string"
+                },
+                "is_member": {
+                  "type": "boolean"
+                },
+                "total_genes_in_set": {
+                  "type": "integer"
+                }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"gene_set_name": "ZNF549_TARGET_GENES", "gene": "SELENOP"},
-      {"gene_set_name": "HALLMARK_APOPTOSIS", "gene": "TP53"},
-      {"gene_set_name": "ESC_V6.5_UP_EARLY.V1_DN", "gene": "CD37"}
+      {
+        "gene_set_name": "ZNF549_TARGET_GENES",
+        "gene": "SELENOP"
+      },
+      {
+        "gene_set_name": "HALLMARK_APOPTOSIS",
+        "gene": "TP53"
+      },
+      {
+        "gene_set_name": "ESC_V6.5_UP_EARLY.V1_DN",
+        "gene": "CD37"
+      }
     ]
   },
   {
@@ -239,38 +275,66 @@
           "description": "Exact MSigDB gene set name (e.g., 'ZNF549_TARGET_GENES', 'MIR675_3P_TARGET_GENES', 'ESC_V6.5_UP_EARLY.V1_DN')"
         }
       },
-      "required": ["gene_set_name"]
+      "required": [
+        "gene_set_name"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"const": "success"},
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "gene_set_name": {"type": "string"},
-                "num_genes": {"type": "integer"},
-                "genes": {"type": "array"},
-                "collection": {"type": "string"}
+                "gene_set_name": {
+                  "type": "string"
+                },
+                "num_genes": {
+                  "type": "integer"
+                },
+                "genes": {
+                  "type": "array"
+                },
+                "collection": {
+                  "type": "string"
+                }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"gene_set_name": "HALLMARK_APOPTOSIS"},
-      {"gene_set_name": "ZNF549_TARGET_GENES"},
-      {"gene_set_name": "ESC_V6.5_UP_EARLY.V1_DN"}
+      {
+        "gene_set_name": "HALLMARK_APOPTOSIS"
+      },
+      {
+        "gene_set_name": "ZNF549_TARGET_GENES"
+      },
+      {
+        "gene_set_name": "ESC_V6.5_UP_EARLY.V1_DN"
+      }
     ]
   }
 ]

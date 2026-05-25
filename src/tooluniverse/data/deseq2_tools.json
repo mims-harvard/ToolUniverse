@@ -8,7 +8,10 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["deseq2", "enrichgo"],
+          "enum": [
+            "deseq2",
+            "enrichgo"
+          ],
           "description": "deseq2: differential expression, enrichgo: GO enrichment with clusterProfiler::simplify"
         },
         "counts_file": {
@@ -24,11 +27,17 @@
           "description": "R formula string (e.g., '~ condition', '~ Replicate + Media + Strain')"
         },
         "contrast": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Contrast specification: 'variable, level, reference' (e.g., 'Strain, 97, 1')"
         },
         "ref_level": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Reference level: 'variable, level' (e.g., 'condition, Control')"
         },
         "alpha": {
@@ -48,11 +57,17 @@
           "description": "Refit Cook's outliers (default: false)"
         },
         "gene_list_file": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "For enrichgo: path to file with one gene ID per line"
         },
         "background_file": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "For enrichgo: path to background gene list file"
         },
         "ontology": {
@@ -72,27 +87,48 @@
           "description": "Organism annotation DB (org.Hs.eg.db, org.Mm.eg.db). Default: org.Hs.eg.db"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "type": "object",
       "oneOf": [
         {
           "properties": {
-            "status": {"const": "success"},
-            "data": {"type": "object"}
-          }
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"operation": "deseq2", "counts_file": "/tmp/counts.csv", "metadata_file": "/tmp/meta.csv", "design": "~ condition"}
+      {
+        "operation": "deseq2",
+        "counts_file": "/tmp/counts.csv",
+        "metadata_file": "/tmp/meta.csv",
+        "design": "~ condition"
+      }
     ]
   }
 ]

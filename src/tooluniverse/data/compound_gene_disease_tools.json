@@ -7,11 +7,17 @@
       "type": "object",
       "properties": {
         "gene": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene symbol (e.g., 'TP53', 'BRCA1'). At least one of gene or disease required."
         },
         "disease": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Disease name (e.g., 'breast cancer', 'distal renal tubular acidosis'). At least one of gene or disease required."
         }
       },
@@ -22,31 +28,60 @@
       "oneOf": [
         {
           "properties": {
-            "status": {"const": "success"},
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
-                "query": {"type": "object"},
-                "sources_queried": {"type": "array"},
-                "sources_failed": {"type": "array"},
-                "num_associations": {"type": "integer"},
-                "associations": {"type": "array"}
+                "query": {
+                  "type": "object"
+                },
+                "sources_queried": {
+                  "type": "array"
+                },
+                "sources_failed": {
+                  "type": "array"
+                },
+                "num_associations": {
+                  "type": "integer"
+                },
+                "associations": {
+                  "type": "array"
+                }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "properties": {
-            "status": {"const": "error"},
-            "error": {"type": "string"}
-          }
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"gene": "TP53"},
-      {"disease": "breast cancer"},
-      {"gene": "BRCA1", "disease": "breast cancer"}
+      {
+        "gene": "TP53"
+      },
+      {
+        "disease": "breast cancer"
+      },
+      {
+        "gene": "BRCA1",
+        "disease": "breast cancer"
+      }
     ]
   }
 ]
