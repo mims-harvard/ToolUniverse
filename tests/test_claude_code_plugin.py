@@ -438,8 +438,10 @@ class TestBuildScript:
             )
         finally:
             canary.unlink(missing_ok=True)
-            try: pycache.rmdir()
-            except OSError: pass
+            try:
+                pycache.rmdir()
+            except OSError:
+                pass
 
     def test_build_includes_skills(self):
         """Build should bundle tooluniverse* skills."""
