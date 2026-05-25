@@ -418,6 +418,29 @@ class TestBuildScript:
         assert (PLUGIN_DIR / "scripts" / "setup_keys_server.py").exists()
         assert (PLUGIN_DIR / "scripts" / "keys_env.py").exists()
 
+    def test_build_excludes_pycache_from_scripts(self, tmp_path):
+        """Stray __pycache__ in plugin/scripts/ must NOT ship in the built plugin."""
+        # Create a fake __pycache__ so we'd notice if the build copies it.
+        pycache = PLUGIN_DIR / "scripts" / "__pycache__"
+        pycache.mkdir(exist_ok=True)
+        canary = pycache / "regression_canary.pyc"
+        canary.write_text("not a real pyc")
+        try:
+            subprocess.run(
+                ["bash", str(BUILD_SCRIPT)],
+                capture_output=True, text=True,
+                cwd=str(REPO_ROOT), timeout=120,
+                env=os.environ.copy(),
+            )
+            dist_scripts = REPO_ROOT / "dist" / "tooluniverse-plugin" / "scripts"
+            assert not (dist_scripts / "__pycache__").exists(), (
+                "__pycache__ was shipped into the built plugin"
+            )
+        finally:
+            canary.unlink(missing_ok=True)
+            try: pycache.rmdir()
+            except OSError: pass
+
     def test_build_includes_skills(self):
         """Build should bundle tooluniverse* skills."""
         dist_dir = REPO_ROOT / "dist" / "tooluniverse-plugin"

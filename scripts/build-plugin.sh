@@ -34,8 +34,10 @@ echo "  [+] Default settings"
 cp -r "$PLUGIN_SRC/commands" "$DIST_DIR/"
 echo "  [+] Slash commands"
 
-# 4b. Copy helper scripts + bundle the generated API key catalog next to them
-cp -r "$PLUGIN_SRC/scripts" "$DIST_DIR/"
+# 4b. Copy helper scripts + bundle the generated API key catalog next to them.
+# Use rsync to exclude __pycache__ / *.pyc so stray local artifacts don't ship.
+rsync -a --exclude='__pycache__' --exclude='*.pyc' \
+    "$PLUGIN_SRC/scripts/" "$DIST_DIR/scripts/"
 cp "$REPO_ROOT/src/tooluniverse/data/api_keys_catalog.json" "$DIST_DIR/scripts/"
 echo "  [+] Setup scripts + API key catalog"
 
