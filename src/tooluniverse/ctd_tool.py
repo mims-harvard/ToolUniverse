@@ -1,74 +1,79 @@
-# ctd_tool.py
-"""
-CTD (Comparative Toxicogenomics Database) REST API tool for ToolUniverse.
+"""CTD (Comparative Toxicogenomics Database) tool — backed by the RENCI Automat
+mirror of CTD's knowledge graph.
 
-CTD is a curated database that advances understanding about how environmental
-exposures affect human health. It provides manually curated interactions between
-chemicals, genes, phenotypes, diseases, and exposure data.
-
-API: https://ctdbase.org/tools/batchQuery.go
-No authentication required. Free for academic/research use.
+CTD's native batchQuery.go now requires an altcha proof-of-work CAPTCHA, so
+direct programmatic access via that endpoint is blocked. This tool uses the
+NIH-NCATS-Translator-funded mirror at https://automat.renci.org/ctd/ instead.
+That mirror is **chemical-centric** (June-2024 snapshot, 26k nodes / 166k
+edges, biolink-categorized predicates) — it covers chemical↔gene and
+chemical↔disease cleanly, but does NOT contain CTD's gene-disease inferred
+edges. Gene→disease queries return an honest error pointing at OpenTargets.
 """
 
 import requests
-from typing import Dict, Any
+from typing import Any, Dict, Optional
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-CTD_BASE_URL = "https://ctdbase.org/tools/batchQuery.go"
-CTD_REQUEST_HEADERS = {
-    "Accept": "application/json",
-    "User-Agent": "ToolUniverse CTDTool",
+RENCI_BASE = "https://automat.renci.org/ctd"
+RENCI_HEADERS = {"Accept": "application/json", "User-Agent": "ToolUniverse CTDTool"}
+DATA_AS_OF = "2024-06"  # RENCI snapshot version
+
+# Maps the existing tool configs' (input_type, report_type) to RENCI
+# (source_category, target_category). The gene→disease entry is None
+# because RENCI's CTD ingestion is chemical-centric (no gene-disease edges).
+_TYPE_MAP = {
+    ("chem", "genes_curated"): ("biolink:SmallMolecule", "biolink:Gene"),
+    ("chem", "diseases_curated"): ("biolink:SmallMolecule", "biolink:Disease"),
+    ("gene", "diseases_curated"): None,
+    ("gene", "chems_curated"): ("biolink:Gene", "biolink:SmallMolecule"),
+    ("disease", "chems_curated"): ("biolink:Disease", "biolink:SmallMolecule"),
 }
 
 
 @register_tool("CTDTool")
 class CTDTool(BaseTool):
-    """
-    Tool for querying the Comparative Toxicogenomics Database (CTD).
-
-    CTD curates chemical-gene, chemical-disease, and gene-disease relationships
-    from peer-reviewed literature. Supports queries by chemical names, gene
-    symbols, disease names, or their standard identifiers.
-
-    No authentication required.
-    """
+    """Query CTD curated relationships via the RENCI Automat mirror."""
 
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
-        self.timeout = tool_config.get("timeout", 60)
-        self.input_type = tool_config.get("fields", {}).get("input_type", "chem")
-        self.report_type = tool_config.get("fields", {}).get(
-            "report_type", "genes_curated"
-        )
+        fields = tool_config.get("fields") or {}
+        self.input_type = fields.get("input_type", "chem")
+        self.report_type = fields.get("report_type", "genes_curated")
+        self.timeout = int(fields.get("timeout", 30))
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute the CTD batch query API call."""
         try:
             return self._query(arguments)
         except requests.exceptions.Timeout:
             return {
                 "status": "error",
-                "error": f"CTD API request timed out after {self.timeout} seconds",
+                "error": f"RENCI CTD mirror timed out after {self.timeout}s",
+                "metadata": {"backend": "RENCI Automat CTD", "data_as_of": DATA_AS_OF},
             }
         except requests.exceptions.ConnectionError:
             return {
                 "status": "error",
-                "error": "Failed to connect to CTD API. Check network connectivity.",
+                "error": "Failed to connect to the RENCI CTD mirror. Check network.",
+                "metadata": {"backend": "RENCI Automat CTD", "data_as_of": DATA_AS_OF},
             }
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"CTD API HTTP error: {e.response.status_code}",
+                "error": f"RENCI CTD mirror HTTP error: {e.response.status_code}",
+                "metadata": {"backend": "RENCI Automat CTD", "data_as_of": DATA_AS_OF},
             }
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             return {
                 "status": "error",
-                "error": f"Unexpected error querying CTD: {str(e)}",
+                "error": f"Unexpected error querying RENCI CTD mirror: {e}",
+                "metadata": {"backend": "RENCI Automat CTD", "data_as_of": DATA_AS_OF},
             }
 
+    # -- internals -----------------------------------------------------------
+
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute a CTD batch query and return structured results."""
         input_terms = (
             arguments.get("input_terms")
             or arguments.get("query")
@@ -76,105 +81,118 @@ class CTDTool(BaseTool):
             or arguments.get("chemical_name")
             or arguments.get("disease_name")
             or ""
-        )
+        ).strip()
         if not input_terms:
             return {"status": "error", "error": "input_terms parameter is required"}
 
-        # Allow overriding input_type and report_type from arguments
         input_type = arguments.get("input_type", self.input_type)
         report_type = arguments.get("report_type", self.report_type)
-
-        # Feature-31B-03: CTD uses mitochondrial gene names without "MT-" prefix
-        # (e.g., "ND5" not "MT-ND5"). Strip prefix for gene queries.
-        normalized_terms = input_terms
-        if input_type == "gene" and input_terms.upper().startswith("MT-"):
-            normalized_terms = input_terms[3:]
-
-        params = {
-            "inputType": input_type,
-            "inputTerms": normalized_terms,
-            "report": report_type,
-            "format": "json",
-        }
-
-        response = requests.get(
-            CTD_BASE_URL,
-            params=params,
-            headers=CTD_REQUEST_HEADERS,
-            timeout=self.timeout,
-        )
-        response.raise_for_status()
-
-        raw_text = response.text.strip()
         metadata = {
+            "backend": "RENCI Automat CTD",
+            "data_as_of": DATA_AS_OF,
+            "input_terms": input_terms,
             "input_type": input_type,
             "report_type": report_type,
-            "query": input_terms,
         }
-        if normalized_terms != input_terms:
-            metadata["normalized_query"] = normalized_terms
-            metadata["note"] = (
-                f"CTD uses '{normalized_terms}' instead of '{input_terms}' "
-                "for mitochondrial genes."
-            )
 
-        if not raw_text or raw_text == "[]":
-            return {
-                "status": "success",
-                "data": [],
-                "metadata": {**metadata, "total_results": 0},
-            }
-
-        content_type = response.headers.get("content-type", "")
-        try:
-            data = response.json()
-        except ValueError:
-            snippet = raw_text[:200]
-            lower_text = raw_text.lower()
-            is_html = "text/html" in content_type or raw_text.lstrip().startswith("<")
-            is_human_verification = any(
-                phrase in lower_text
-                for phrase in (
-                    "verify you are a human",
-                    "human verification",
-                    "captcha",
-                    "checking your browser",
-                )
-            )
+        if (input_type, report_type) == ("gene", "diseases_curated"):
             return {
                 "status": "error",
                 "error": (
-                    "CTD API blocked programmatic access with human verification"
-                    if is_human_verification
-                    else "CTD API returned non-JSON response"
+                    "Gene→disease relationships are not available in the RENCI CTD "
+                    "mirror (chemical-centric snapshot, no gene-disease edges)."
                 ),
-                "status_code": response.status_code,
-                "content_type": content_type,
-                "request_url": response.url,
-                "response_snippet": snippet,
-                "metadata": metadata,
-                "retryable": is_html and not is_human_verification,
                 "suggestion": (
-                    "CTD returned a CAPTCHA or human-verification page instead of JSON. "
-                    "This cannot be resolved by retrying from ToolUniverse. Use CTD's "
-                    "website directly, or consider OpenTargets for gene-disease "
-                    "associations and FAERS/OpenFDA tools for chemical safety questions."
-                    if is_human_verification
-                    else (
-                        "CTD may be under maintenance or rate-limiting. "
-                        "Check https://ctdbase.org for status and retry. "
-                        "If this persists, include request_url and response_snippet "
-                        "when reporting the issue."
-                        if is_html
-                        else "Response was truncated or malformed. Retry the request."
-                    )
+                    "Use OpenTargets_get_associated_diseases (live, more sources) "
+                    "or DGIdb_search_interactions for gene-disease associations."
                 ),
+                "metadata": metadata,
             }
 
-        if isinstance(data, (list, dict)):
-            metadata["total_results"] = len(data) if isinstance(data, list) else 1
-            return {"status": "success", "data": data, "metadata": metadata}
+        mapping = _TYPE_MAP.get((input_type, report_type))
+        if not mapping:
+            return {
+                "status": "error",
+                "error": (
+                    f"Unsupported query: input_type={input_type!r}, "
+                    f"report_type={report_type!r}."
+                ),
+                "metadata": metadata,
+            }
+        source_cat, target_cat = mapping
+
+        canonical = self._resolve_curie(input_terms)
+        if not canonical:
+            return {
+                "status": "error",
+                "error": (
+                    f"'{input_terms}' was not found in the RENCI CTD mirror "
+                    f"(searched by id, equivalent_identifiers, and name)."
+                ),
+                "metadata": metadata,
+            }
+        metadata["canonical_curie"] = canonical
+        metadata["source_category"] = source_cat
+        metadata["target_category"] = target_cat
+
+        url = f"{RENCI_BASE}/{source_cat}/{target_cat}/{canonical}"
+        resp = requests.get(url, headers=RENCI_HEADERS, timeout=self.timeout)
+        resp.raise_for_status()
+        raw_edges = resp.json()
+        if not isinstance(raw_edges, list):
+            return {
+                "status": "error",
+                "error": "RENCI CTD mirror returned unexpected (non-list) payload",
+                "metadata": metadata,
+            }
+        formatted = [self._format_edge(e) for e in raw_edges]
+        formatted = [e for e in formatted if e]
+        metadata["total_results"] = len(formatted)
+        return {"status": "success", "data": formatted, "metadata": metadata}
+
+    def _resolve_curie(self, term: str) -> Optional[str]:
+        """Resolve an input (name or any CURIE) to the graph's canonical id.
+
+        Uses RENCI's /cypher endpoint to search by `id`, `equivalent_identifiers`,
+        or case-insensitive `name`. Returns the canonical `id` or None.
+        """
+        safe = term.replace('"', "").replace("\\", "")
+        query = (
+            'MATCH (n) WHERE n.id = "' + safe + '" OR "' + safe + '" IN '
+            'n.equivalent_identifiers OR toLower(n.name) = toLower("' + safe + '") '
+            "RETURN n.id AS id LIMIT 1"
+        )
+        resp = requests.post(
+            f"{RENCI_BASE}/cypher",
+            headers={"Content-Type": "application/json"},
+            json={"query": query},
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        try:
+            return data["results"][0]["data"][0]["row"][0]
+        except (KeyError, IndexError, TypeError):
+            return None
+
+    @staticmethod
+    def _format_edge(edge: Any) -> Optional[Dict[str, Any]]:
+        """RENCI returns each edge as [source_node, edge_props, target_node]."""
+        if not isinstance(edge, list) or len(edge) < 3:
+            return None
+        src, props, tgt = edge[0], edge[1], edge[2]
+        s = src if isinstance(src, dict) else {}
+        t = tgt if isinstance(tgt, dict) else {}
+        p = props if isinstance(props, dict) else {}
         return {
-            "status": "error",
-            "error": f"Unexpected CTD response type: {type(data).__name__}",
+            "source_id": s.get("id"),
+            "source_name": s.get("name"),
+            "target_id": t.get("id"),
+            "target_name": t.get("name"),
+            "predicate": p.get("predicate"),
+            "qualified_predicate": p.get("qualified_predicate"),
+            "object_direction_qualifier": p.get("object_direction_qualifier"),
+            "knowledge_level": p.get("knowledge_level"),
+            "agent_type": p.get("agent_type"),
+            "primary_knowledge_source": p.get("primary_knowledge_source"),
         }
