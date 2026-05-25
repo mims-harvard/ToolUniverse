@@ -1610,7 +1610,10 @@
                     "type": "string"
                   },
                   "similarity": {
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "string"
+                    ]
                   }
                 }
               }

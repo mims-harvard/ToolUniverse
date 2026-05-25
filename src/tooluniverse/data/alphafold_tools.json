@@ -334,73 +334,142 @@
                 "type": "object",
                 "properties": {
                   "model_identifier": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "model_category": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "model_url": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "model_format": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "model_type": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "model_page_url": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "provider": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "number_of_conformers": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
                   "ensemble_sample_url": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "ensemble_sample_format": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "created": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "sequence_identity": {
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   },
                   "uniprot_start": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
                   "uniprot_end": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
                   "coverage": {
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   },
                   "experimental_method": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "resolution": {
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   },
                   "confidence_type": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "confidence_version": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "confidence_avg_local_score": {
-                    "type": "number"
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   },
                   "oligomeric_state": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "preferred_assembly_id": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "entities": {
-                    "type": "array",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
                     "items": {
                       "type": "object",
                       "properties": {
@@ -443,7 +512,7 @@
   },
   {
     "name": "alphafold_get_annotations",
-    "description": "Retrieve AlphaFold MUTAGEN annotations for a given UniProt accession. Returns experimental mutagenesis data mapped onto protein structures from UniProt. The qualifier must be a UniProt ACCESSION (e.g., 'P69905'). Note: Not all proteins have MUTAGEN annotations available in the database.",
+    "description": "Retrieve AlphaFold MUTAGEN annotations for a given UniProt accession. Returns experimental mutagenesis data mapped onto protein structures from UniProt. The qualifier must be a UniProt ACCESSION (e.g., 'P69905'). Note: Not all proteins have MUTAGEN annotations available in the database. As of 2026-05 AFDB's MUTAGEN annotation endpoint returns empty for all tested UniProts; the tool returns a structured error in that case.",
     "type": "AlphaFoldRESTTool",
     "parameter": {
       "type": "object",
@@ -533,10 +602,6 @@
         }
       }
     },
-    "test_examples": [
-      {
-        "qualifier": "P69905"
-      }
-    ]
+    "test_examples": []
   }
 ]
