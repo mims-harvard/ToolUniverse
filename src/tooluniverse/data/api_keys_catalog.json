@@ -158,6 +158,18 @@
     ]
   },
   {
+    "name": "GEMINI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://aistudio.google.com/apikey",
+    "purpose": "Use Google Gemini models for LLM-backed (agentic) tools.",
+    "without": "Only needed if you select Gemini as the agentic LLM provider.",
+    "used_by": [
+      "agentic_tools.json"
+    ]
+  },
+  {
     "name": "HF_TOKEN",
     "requirement": "required",
     "type": "secret",
@@ -167,6 +179,30 @@
     "without": "Public models work without it; needed for gated or private repos.",
     "used_by": [
       "embedding_tools.json"
+    ]
+  },
+  {
+    "name": "ICD_CLIENT_ID",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://icd.who.int/icdapi",
+    "purpose": "WHO ICD-11 API client ID (OAuth) for disease classification lookups.",
+    "without": "ICD-11 tools are blocked without it (paired with the client secret).",
+    "used_by": [
+      "icd_tools.json"
+    ]
+  },
+  {
+    "name": "ICD_CLIENT_SECRET",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://icd.who.int/icdapi",
+    "purpose": "WHO ICD-11 API client secret (OAuth), used with the client ID.",
+    "without": "Required together with ICD_CLIENT_ID.",
+    "used_by": [
+      "icd_tools.json"
     ]
   },
   {
@@ -244,6 +280,18 @@
     ]
   },
   {
+    "name": "OPENROUTER_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://openrouter.ai/keys",
+    "purpose": "Use OpenRouter-hosted models for LLM-backed (agentic) tools.",
+    "without": "Only needed if you select OpenRouter as the agentic LLM provider.",
+    "used_by": [
+      "agentic_tools.json"
+    ]
+  },
+  {
     "name": "PHARMVAR_API_KEY",
     "requirement": "required",
     "type": "secret",
@@ -278,6 +326,18 @@
     "without": "Leave blank unless you run your own TxAgent.",
     "used_by": [
       "txagent_client_tools.json"
+    ]
+  },
+  {
+    "name": "UMLS_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://uts.nlm.nih.gov/uts/signup-login",
+    "purpose": "Authenticate to UMLS for concept, SNOMED CT, and LOINC lookups.",
+    "without": "UMLS/SNOMED/LOINC tools are blocked without it (free UMLS license).",
+    "used_by": [
+      "umls_tools.json"
     ]
   },
   {
