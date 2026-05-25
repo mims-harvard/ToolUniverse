@@ -46,28 +46,33 @@ class AOPWikiListTool:
         base = self.tool_config.get("settings", {}).get("base_url", _BASE)
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
+        aops, page = [], 1
         try:
-            result = _get_json(f"{base}/aops.json", timeout=timeout)
+            while True:
+                payload = _get_json(
+                    f"{base}/aops.json?per_page=500&page={page}", timeout=timeout
+                )
+                items = payload["aops"] if isinstance(payload, dict) else payload
+                if not isinstance(items, list):
+                    return {"status": "error", "error": "Unexpected response format"}
+                aops.extend(
+                    {
+                        "id": it.get("id"),
+                        "title": it.get("title"),
+                        "short_name": it.get("short_name"),
+                    }
+                    for it in items
+                )
+                pagination = (
+                    payload.get("pagination") if isinstance(payload, dict) else None
+                )
+                if not pagination or page >= pagination.get("total_pages", 1):
+                    break
+                page += 1
         except Exception as e:
             return {"status": "error", "error": f"AOPWiki API error: {e}"}
 
-        if not isinstance(result, list):
-            return {"status": "error", "error": "Unexpected response format"}
-
-        aops = []
-        for item in result:
-            aops.append(
-                {
-                    "id": item.get("id"),
-                    "title": item.get("title"),
-                    "short_name": item.get("short_name"),
-                }
-            )
-
-        return {
-            "status": "success",
-            "data": aops,
-        }
+        return {"status": "success", "data": aops}
 
 
 @register_tool(
