@@ -218,3 +218,7 @@ CLAUDE.md
 credentials.json
 *_api_key*
 *_token*
+
+# Local-only harness sweep artifacts (test-all command output)
+TOOL_TEST_REPORT.md
+TOOL_SWEEP_TRIAGE.md
