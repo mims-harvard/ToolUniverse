@@ -31,7 +31,7 @@ covering single-variant mechanistic interpretation through whole-protein DMS ana
   AlphaMissense + AlphaFold + UniProt + DynaMut2) with 6-category decision rule.
 - `tooluniverse-protein-structural-annotation-pdb` — wraps Structure_annotate_per_residue.
 - `MaveDB_get_effect_matrix` — orchestrates `MaveDB_*` tools + HGVS parsing.
-- `tooluniverse-variant-predictor-dms-benchmarking` — validate ANY
+- `tooluniverse-variant-predictor-dms-validation` — validate ANY
   per-variant predictor (AlphaMissense / SAE / ESM logits / EVE / conservation
   / DynaMut2 / custom) against DMS data via Mann-Whitney U + robustness sweep.
   SAE is shown as the worked example; the methodology is predictor-agnostic.
