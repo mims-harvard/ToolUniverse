@@ -149,7 +149,6 @@ class ClinicalTrialsTool(RESTfulTool):
             "query_intr": "query.intr",
             "query_term": "query.term",
             "filter_status": "filter.overallStatus",
-            "filter_study_type": "filter.studyType",
             "page_size": "pageSize",
             "next_page_token": "pageToken",
             "intervention": "query.intr",
@@ -181,6 +180,15 @@ class ClinicalTrialsTool(RESTfulTool):
                 if len(phases) > 1:
                     phase_clause = f"({phase_clause})"
                 advanced_clauses.append(phase_clause)
+            elif key == "filter_study_type":
+                # CTG API v2 uses filter.advanced for study type, not filter.studyType
+                study_types = [s.strip() for s in value.split(",")]
+                study_type_clause = " OR ".join(
+                    f"AREA[StudyType]{s}" for s in study_types
+                )
+                if len(study_types) > 1:
+                    study_type_clause = f"({study_type_clause})"
+                advanced_clauses.append(study_type_clause)
             elif key in _SEARCH_PARAM_MAP:
                 params[_SEARCH_PARAM_MAP[key]] = value
 
