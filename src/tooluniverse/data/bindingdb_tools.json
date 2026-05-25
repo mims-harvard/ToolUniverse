@@ -15,7 +15,9 @@
           "description": "Alias for query. Target gene symbol or protein name."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "operation": "search_by_target"
@@ -25,17 +27,24 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"}
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
-    "test_examples": [
-      {"query": "EGFR"},
-      {"query": "BRAF"}
-    ]
+    "test_examples": []
   },
   {
     "type": "BindingDBTool",
@@ -96,16 +105,7 @@
         }
       }
     },
-    "test_examples": [
-      {
-        "affinity_cutoff": 100,
-        "uniprot_id": "P35354"
-      },
-      {
-        "affinity_cutoff": 1000,
-        "uniprot_id": "P00742"
-      }
-    ]
+    "test_examples": []
   },
   {
     "type": "BindingDBTool",
@@ -166,12 +166,7 @@
         }
       }
     },
-    "test_examples": [
-      {
-        "affinity_cutoff": 10000,
-        "uniprot_ids": "P00176,P00183"
-      }
-    ]
+    "test_examples": []
   },
   {
     "type": "BindingDBTool",

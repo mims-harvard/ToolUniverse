@@ -302,7 +302,10 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
@@ -369,11 +372,7 @@
           "type": "object",
           "properties": {
             "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+              "const": "success"
             },
             "data": {
               "type": "object",
@@ -425,14 +424,11 @@
             },
             "url": {
               "type": "string"
-            },
-            "error": {
-              "type": "string"
-            },
-            "status_code": {
-              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
@@ -500,11 +496,7 @@
           "type": "object",
           "properties": {
             "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+              "const": "success"
             },
             "data": {
               "type": "object",
@@ -556,14 +548,11 @@
             },
             "url": {
               "type": "string"
-            },
-            "error": {
-              "type": "string"
-            },
-            "status_code": {
-              "type": "integer"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
@@ -657,11 +646,7 @@
           ],
           "properties": {
             "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+              "const": "success"
             },
             "url": {
               "type": [
@@ -745,16 +730,13 @@
                 "null"
               ]
             },
-            "status_code": {
-              "type": "integer"
-            },
             "retryable": {
               "type": "boolean"
-            },
-            "error": {
-              "type": "string"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
@@ -860,11 +842,7 @@
           ],
           "properties": {
             "status": {
-              "type": "string",
-              "enum": [
-                "success",
-                "error"
-              ]
+              "const": "success"
             },
             "url": {
               "type": [
@@ -949,16 +927,13 @@
             "truncated": {
               "type": "boolean"
             },
-            "error": {
-              "type": "string"
-            },
-            "status_code": {
-              "type": "integer"
-            },
             "retryable": {
               "type": "boolean"
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
@@ -1016,18 +991,23 @@
           "description": "Structured full-text content",
           "properties": {
             "status": {
-              "type": "string",
-              "enum": ["success"]
+              "const": "success"
             },
             "data": {
               "type": "object",
               "properties": {
                 "title": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Article title"
                 },
                 "abstract": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "Article abstract text"
                 },
                 "sections": {
@@ -1035,27 +1015,45 @@
                   "description": "Body sections keyed by canonical name (introduction, methods, results, discussion, conclusions, acknowledgments, other_sections). Each value is a string (single section) or array of {title, text} objects (multiple subsections).",
                   "properties": {
                     "introduction": {
-                      "type": ["string", "object"],
+                      "type": [
+                        "string",
+                        "object"
+                      ],
                       "description": "Introduction / background section text"
                     },
                     "methods": {
-                      "type": ["string", "object"],
+                      "type": [
+                        "string",
+                        "object"
+                      ],
                       "description": "Methods / materials and methods section text"
                     },
                     "results": {
-                      "type": ["string", "object"],
+                      "type": [
+                        "string",
+                        "object"
+                      ],
                       "description": "Results / findings section text"
                     },
                     "discussion": {
-                      "type": ["string", "object"],
+                      "type": [
+                        "string",
+                        "object"
+                      ],
                       "description": "Discussion section text"
                     },
                     "conclusions": {
-                      "type": ["string", "object"],
+                      "type": [
+                        "string",
+                        "object"
+                      ],
                       "description": "Conclusions / summary section text"
                     },
                     "acknowledgments": {
-                      "type": ["string", "object"],
+                      "type": [
+                        "string",
+                        "object"
+                      ],
                       "description": "Acknowledgments section text"
                     },
                     "other_sections": {
@@ -1064,8 +1062,12 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "title": {"type": "string"},
-                          "text": {"type": "string"}
+                          "title": {
+                            "type": "string"
+                          },
+                          "text": {
+                            "type": "string"
+                          }
                         }
                       }
                     }
@@ -1077,9 +1079,21 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {"type": "string"},
-                      "label": {"type": ["string", "null"]},
-                      "caption": {"type": ["string", "null"]}
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "caption": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 },
@@ -1089,9 +1103,21 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {"type": "string"},
-                      "label": {"type": ["string", "null"]},
-                      "caption": {"type": ["string", "null"]}
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "caption": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 },
@@ -1101,8 +1127,12 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "id": {"type": "string"},
-                      "text": {"type": "string"}
+                      "id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      }
                     }
                   }
                 },
@@ -1123,20 +1153,34 @@
             "metadata": {
               "type": "object",
               "properties": {
-                "pmcid": {"type": "string"},
-                "source": {"type": ["string", "null"]},
-                "format": {"type": ["string", "null"]}
+                "pmcid": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "format": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
               }
             }
-          }
+          },
+          "required": [
+            "status"
+          ]
         },
         {
           "type": "object",
           "description": "Error response",
           "properties": {
             "status": {
-              "type": "string",
-              "enum": ["error"]
+              "const": "error"
             },
             "error": {
               "type": "string",
@@ -1150,7 +1194,10 @@
               }
             }
           },
-          "required": ["error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },

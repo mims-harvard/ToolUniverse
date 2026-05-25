@@ -102,11 +102,15 @@ def _schema_describes_envelope(schema: Dict[str, Any]) -> bool:
     """Heuristic: schema describes the {status,data,error,metadata} envelope.
 
     Many tool configs declare return_schema at the envelope level (top-level
-    properties include 'data', 'error', or 'status'). For those, validating
-    the unwrapped result.get('data') against the schema always fails ("Schema
+    properties include 'data' or 'status'). For those, validating the
+    unwrapped result.get('data') against the schema always fails ("Schema
     Mismatch: At root: ..."). Detect that style and validate the full result
-    instead. Inner-data schemas (no 'data'/'error'/'status' at top) keep the
+    instead. Inner-data schemas (no 'data'/'status' at top) keep the
     historical unwrapped behaviour.
+
+    Looking for 'error' alone is NOT enough — many inner-data schemas pair an
+    inner array with a {'error': str} error wrapper but still describe the
+    inner data shape, not the envelope.
     """
     if not isinstance(schema, dict):
         return False
@@ -115,7 +119,7 @@ def _schema_describes_envelope(schema: Dict[str, Any]) -> bool:
         if not isinstance(br, dict):
             continue
         props = br.get("properties") or {}
-        if any(k in props for k in ("data", "error", "status")):
+        if "data" in props or "status" in props:
             return True
     return False
 
