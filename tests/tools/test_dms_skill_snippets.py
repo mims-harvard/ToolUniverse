@@ -4,7 +4,7 @@ After the Phase D refactor (skills reframed around user goals not methodology;
 DMS retrieval lifted into the MaveDB_get_effect_matrix tool), the 3 remaining
 DMS-analysis SKILL.md files are:
   - tooluniverse-protein-structural-annotation-pdb
-  - tooluniverse-variant-predictor-dms-benchmarking
+  - tooluniverse-variant-predictor-dms-validation
   - tooluniverse-residue-functional-mechanism-interpretation
     (Step 7 subsumes what used to be a standalone annotated-dms-heatmap skill;
      entry generalized to accept user-provided residues, not just DMS hotspots)
@@ -182,7 +182,7 @@ def test_skill8_landmark_check(kras_short_sequence):
 
 # ---------------------------------------------------------------------------
 # Per-variant feature matrix prerequisites (formerly sae-mutant-tensor-build,
-# now folded into variant-predictor-dms-benchmarking + residue-functional-mechanism-interpretation)
+# now folded into variant-predictor-dms-validation + residue-functional-mechanism-interpretation)
 # — pooling + cache + WT-diagonal logic
 # ---------------------------------------------------------------------------
 
@@ -251,7 +251,7 @@ def test_skill9_cache_function(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# tooluniverse-variant-predictor-dms-benchmarking — drop, topk, categorize, MWU
+# tooluniverse-variant-predictor-dms-validation — drop, topk, categorize, MWU
 # ---------------------------------------------------------------------------
 
 def topk_drop(drops, K):
@@ -482,7 +482,7 @@ def test_skill12_full_render(tmp_path, synthetic_dms_matrix, kras_short_sequence
 # ---------------------------------------------------------------------------
 
 def test_variant_predictor_alphamissense_bin_parsing():
-    """Verbatim from variant-predictor-dms-benchmarking Step 2 option B.
+    """Verbatim from variant-predictor-dms-validation Step 2 option B.
 
     AM hegelab proxy returns categorical bins like 'pathogenic_all':
     '19:A,C,D,E,...,Y'; the skill maps each alt_aa to a bin-midpoint to
@@ -530,7 +530,7 @@ def test_variant_predictor_alphamissense_bin_parsing():
 
 
 def test_variant_predictor_nan_sanity_gate():
-    """Verbatim from variant-predictor-dms-benchmarking new Step 3.5.
+    """Verbatim from variant-predictor-dms-validation new Step 3.5.
 
     Catches the silent-NaN failure mode that hit iter-1 eval-1 (SAE matrix
     all NaN → MWU still ran → "AM wins by default" false-positive).
