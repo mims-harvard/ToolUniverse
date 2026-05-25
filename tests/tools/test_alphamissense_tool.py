@@ -40,7 +40,7 @@ class TestAlphaMissenseToolDirect:
 
         Pins the iter-3 fix: previously the tool returned only sample_residue +
         sample_data (one position); now it returns the full scores list. Skill
-        5 (variant-predictor-dms-benchmarking) iterates `data['scores']` keyed
+        5 (variant-predictor-dms-validation) iterates `data['scores']` keyed
         by `resi`, so this shape contract is load-bearing.
         """
         from tooluniverse.alphamissense_tool import AlphaMissenseTool

@@ -39,7 +39,7 @@ they came from:
 
 **Not for**:
 - Validating a *predictor* against DMS — use
-  `tooluniverse-variant-predictor-dms-benchmarking`
+  `tooluniverse-variant-predictor-dms-validation`
 - Single-variant **SAE feature decomposition** when you want to see which
   ESMC features changed — use `tooluniverse-protein-sae-variant-interpretation`
 - Single-variant **LoF mechanism synthesis** for one variant in isolation
@@ -234,7 +234,7 @@ top_features = [f["feature_id"] for f in region["data"]["top_features"]]
 ```
 This is the right default — 1 Forge call vs 20 × cluster-size for the DMS-tensor path. For non-contiguous clusters, run once per contiguous sub-range and union the top-K.
 
-**Path B — you already have a precomputed SAE tensor** from a DMS sweep (e.g. the variant-predictor-dms-benchmarking pipeline left one on disk): compute drops directly without re-calling Forge.
+**Path B — you already have a precomputed SAE tensor** from a DMS sweep (e.g. the variant-predictor-dms-validation pipeline left one on disk): compute drops directly without re-calling Forge.
 ```python
 def cluster_sae_features(sae_tensor, wt_vec, cluster_positions, top_n=5):
     """Returns top SAE features by mean drop at cluster, ready for labeling."""
@@ -499,7 +499,7 @@ own sequence — see `tooluniverse-protein-structural-annotation-pdb` pitfalls).
 | `ESM_get_region_sae_features` | Step 4 Path A — aggregate SAE features over a contiguous cluster in 1 Forge call (preferred) |
 | `ESM_get_sae_features` | Step 4 Path B — only if you already have a precomputed full DMS SAE tensor |
 | `ESM_describe_sae_feature` | Label SAE features in Step 4 |
-| `tooluniverse-variant-predictor-dms-benchmarking` | Sibling skill: validate a predictor before trusting its scores |
+| `tooluniverse-variant-predictor-dms-validation` | Sibling skill: validate a predictor before trusting its scores |
 | (heatmap visualization is now Step 7 of this skill) | annotated DMS panel with per-hotspot callouts |
 | `alphafold_get_prediction` | pLDDT context if no experimental PDB available |
 
