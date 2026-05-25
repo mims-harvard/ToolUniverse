@@ -184,6 +184,20 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
                     stats["skipped"] += 1
                     continue
 
+            # Skip LLM-backed AgenticTool/SmolAgent tools if no LLM provider env
+            # is set. Otherwise they show as "Schema Mismatch: None is not of
+            # type object" once the provider call fails silently inside the agent.
+            if tool.get("type") in ("AgenticTool", "SmolAgent"):
+                providers = (
+                    "OPENAI_API_KEY", "AZURE_OPENAI_API_KEY", "OPENROUTER_API_KEY",
+                    "GEMINI_API_KEY", "ANTHROPIC_API_KEY", "BEDROCK_ACCESS_KEY_ID",
+                )
+                if not any(os.getenv(p) for p in providers):
+                    if args.verbose:
+                        print(f"  ⏭️  {name}: Skipped (no LLM provider env set)")
+                    stats["skipped"] += 1
+                    continue
+
             if not examples:
                 if args.verbose:
                     print(f"  ⏭️  {name}: No test examples")
