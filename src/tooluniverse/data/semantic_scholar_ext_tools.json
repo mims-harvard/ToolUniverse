@@ -278,79 +278,75 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Author search results from Semantic Scholar",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "total": {
-              "type": [
-                "integer",
-                "null"
-              ],
-              "description": "Total number of matching authors"
+            "status": {
+              "const": "success"
             },
             "data": {
-              "type": "array",
-              "description": "Array of matching author records",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "authorId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Semantic Scholar author ID. Use with SemanticScholar_get_author."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Author display name"
-                  },
-                  "hIndex": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "h-index"
-                  },
-                  "citationCount": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Total citation count"
-                  },
-                  "paperCount": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Total number of papers"
-                  },
-                  "affiliations": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "description": "Current affiliations",
-                    "items": {
-                      "type": "string"
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "next": {
+                  "type": "integer"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "authorId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "affiliations": {
+                        "type": "array"
+                      },
+                      "paperCount": {
+                        "type": "integer"
+                      },
+                      "citationCount": {
+                        "type": "integer"
+                      },
+                      "hIndex": {
+                        "type": "integer"
+                      }
                     }
                   }
                 }
               }
+            },
+            "metadata": {
+              "type": "object"
+            },
+            "url": {
+              "type": "string"
             }
           }
         },
         {
           "type": "object",
-          "properties": {
-            "error": {
-              "type": "string",
-              "description": "Error message"
-            }
-          },
           "required": [
+            "status",
             "error"
-          ]
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
       ]
     },
@@ -545,108 +541,43 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Paper recommendations from Semantic Scholar",
           "required": [
-            "recommendedPapers"
+            "status"
           ],
           "properties": {
-            "recommendedPapers": {
-              "type": "array",
-              "description": "Array of recommended papers",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "paperId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Semantic Scholar paper ID"
-                  },
-                  "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Paper title"
-                  },
-                  "year": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Publication year"
-                  },
-                  "citationCount": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of citations"
-                  },
-                  "abstract": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Paper abstract"
-                  },
-                  "authors": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "authorId": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "name": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "externalIds": {
-                    "type": [
-                      "object",
-                      "null"
-                    ],
-                    "properties": {
-                      "DOI": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "PubMed": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "recommendedPapers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
                   }
                 }
               }
+            },
+            "url": {
+              "type": "string"
             }
           }
         },
         {
           "type": "object",
-          "properties": {
-            "error": {
-              "type": "string",
-              "description": "Error message"
-            }
-          },
           "required": [
+            "status",
             "error"
-          ]
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
       ]
     },

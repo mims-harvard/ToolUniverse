@@ -822,13 +822,12 @@ class HPAGetDiseaseExpressionTool(HPASearchApiTool):
         if not disease_name:
             return {"status": "error", "error": "Parameter 'disease_name' is required"}
 
-        # Enhanced validation with intelligent recommendations
-        disease_key = f"{tissue_type}_{disease_name}" if tissue_type else disease_name
+        # Normalise to underscore form to match cancer_columns dict keys
+        # ("lung cancer" -> "lung_cancer"). Caller may pass either form.
+        disease_norm = disease_name.replace(" ", "_")
         cancer_column = None
-
-        # Match cancer type
         for key, column in self.cancer_columns.items():
-            if disease_key in key or disease_name in key:
+            if disease_norm == key or disease_norm in key or key in disease_norm:
                 cancer_column = column
                 break
 

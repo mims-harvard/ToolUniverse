@@ -160,8 +160,8 @@
     "test_examples": [
       {
         "gene_name": "TP53",
-        "tissue_type": "liver",
-        "disease_name": "Diabetes Mellitus"
+        "tissue_type": "lung",
+        "disease_name": "lung cancer"
       }
     ],
     "return_schema": {
@@ -549,11 +549,7 @@
     },
     "input_description": "Input a single gene name. The tool will query HPA's protein-protein interaction database.",
     "output_description": "Returns a list of proteins that are known to interact with the protein product of the queried gene. Includes interaction partner count and detailed interaction summary.",
-    "test_examples": [
-      {
-        "gene_name": "TP53"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -611,8 +607,12 @@
     "output_description": "Returns a dictionary mapping queried tissue names to their expression data, including matched tissue name, expression value in nTPM, and categorized expression level (Very high/High/Medium/Low/Very low). Also provides a sample of available tissues for reference.",
     "test_examples": [
       {
-        "ensembl_id": "ENSG00000141510",
-        "tissue_names": []
+        "ensembl_id": "ENSG00000075624",
+        "tissue_names": [
+          "brain",
+          "liver",
+          "kidney"
+        ]
       }
     ],
     "return_schema": {
@@ -655,7 +655,7 @@
     "test_examples": [
       {
         "gene_name": "TP53",
-        "context_name": "The quick brown fox jumps over the lazy dog."
+        "context_name": "brain"
       }
     ],
     "return_schema": {
