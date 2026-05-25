@@ -24,7 +24,7 @@
         "input_terms": "bisphenol A"
       },
       {
-        "input_terms": "acetaminophen"
+        "input_terms": "CHEBI:46195"
       }
     ],
     "return_schema": {
@@ -199,7 +199,7 @@
         "input_terms": "bisphenol A"
       },
       {
-        "input_terms": "arsenic"
+        "input_terms": "CHEBI:27563"
       }
     ],
     "return_schema": {
@@ -375,14 +375,7 @@
       "report_type": "diseases_curated"
     },
     "type": "CTDTool",
-    "test_examples": [
-      {
-        "input_terms": "CYP1A1"
-      },
-      {
-        "input_terms": "TP53"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {
@@ -730,7 +723,7 @@
         "input_terms": "asthma"
       },
       {
-        "input_terms": "Liver Neoplasms"
+        "input_terms": "MESH:D008113"
       }
     ],
     "return_schema": {
