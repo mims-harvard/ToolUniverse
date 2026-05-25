@@ -97,6 +97,29 @@ def validate_against_schema(data: Any, schema: Dict[str, Any]) -> Tuple[bool, Op
     except Exception as e:
         return False, str(e)
 
+
+def _schema_describes_envelope(schema: Dict[str, Any]) -> bool:
+    """Heuristic: schema describes the {status,data,error,metadata} envelope.
+
+    Many tool configs declare return_schema at the envelope level (top-level
+    properties include 'data', 'error', or 'status'). For those, validating
+    the unwrapped result.get('data') against the schema always fails ("Schema
+    Mismatch: At root: ..."). Detect that style and validate the full result
+    instead. Inner-data schemas (no 'data'/'error'/'status' at top) keep the
+    historical unwrapped behaviour.
+    """
+    if not isinstance(schema, dict):
+        return False
+    branches = schema.get("oneOf") or schema.get("anyOf") or [schema]
+    for br in branches:
+        if not isinstance(br, dict):
+            continue
+        props = br.get("properties") or {}
+        if any(k in props for k in ("data", "error", "status")):
+            return True
+    return False
+
+
 def format_result(val: Any, max_len: int = 100) -> str:
     """Format result for display."""
     s = str(val)
@@ -226,8 +249,11 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
 
                     if success:
                         stats["passed"] += 1
-                        # Validate Schema
-                        is_valid, schema_err = validate_against_schema(data, schema)
+                        # Validate Schema: envelope-style schemas describe the
+                        # whole {status,data,...} return; inner-data schemas
+                        # describe only the data payload. Pick the right target.
+                        validation_target = result if _schema_describes_envelope(schema) else data
+                        is_valid, schema_err = validate_against_schema(validation_target, schema)
                         if is_valid:
                             stats["schema_valid"] += 1
                             if args.verbose:
