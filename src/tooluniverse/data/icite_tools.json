@@ -172,7 +172,16 @@
     },
     "optional_api_keys": [
       "NCBI_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "NCBI_API_KEY": {
+        "domain": "Literature & Patents",
+        "type": "secret",
+        "register_url": "https://www.ncbi.nlm.nih.gov/account/",
+        "purpose": "Search PubMed and fetch citation metrics (iCite) and PubTator annotations.",
+        "without": "Works at 3 requests/sec without it; the key raises the limit to 10/sec."
+      }
+    }
   },
   {
     "name": "iCite_search_publications",

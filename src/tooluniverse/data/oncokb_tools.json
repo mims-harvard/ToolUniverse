@@ -36,14 +36,29 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string", "enum": ["success", "error"]},
-        "data": {"type": "object"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"query": "BRAF V600E"},
-      {"gene": "BRAF", "variant": "V600E"}
+      {
+        "query": "BRAF V600E"
+      },
+      {
+        "gene": "BRAF",
+        "variant": "V600E"
+      }
     ]
   },
   {
@@ -130,7 +145,16 @@
     ],
     "optional_api_keys": [
       "ONCOKB_API_TOKEN"
-    ]
+    ],
+    "api_key_info": {
+      "ONCOKB_API_TOKEN": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.oncokb.org/apiAccess",
+        "purpose": "Annotate cancer variants with oncogenicity and matched therapy implications.",
+        "without": "Runs in demo mode (BRAF, TP53, ROS1 only) without a token."
+      }
+    }
   },
   {
     "name": "OncoKB_get_gene_info",
@@ -150,7 +174,7 @@
         },
         "gene_symbol": {
           "type": "string",
-          "description": "Gene symbol alias \u2014 alternative to gene parameter"
+          "description": "Gene symbol alias — alternative to gene parameter"
         }
       },
       "required": []

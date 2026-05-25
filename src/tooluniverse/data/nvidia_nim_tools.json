@@ -12,15 +12,22 @@
         },
         "algorithm": {
           "type": "string",
-          "enum": ["jackhmmer", "mmseqs2"],
+          "enum": [
+            "jackhmmer",
+            "mmseqs2"
+          ],
           "description": "MSA search algorithm. mmseqs2 is faster, jackhmmer is more sensitive",
           "default": "mmseqs2"
         },
         "databases": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Sequence databases for MSA search: uniref90, mgnify, small_bfd",
-          "default": ["small_bfd"]
+          "default": [
+            "small_bfd"
+          ]
         },
         "e_value": {
           "type": "number",
@@ -43,7 +50,9 @@
           "default": true
         }
       },
-      "required": ["sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "fields": {
       "endpoint": "deepmind/alphafold2",
@@ -52,7 +61,18 @@
       "response_type": "json",
       "timeout": 900
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
+    "api_key_info": {
+      "NVIDIA_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "secret",
+        "register_url": "https://build.nvidia.com/",
+        "purpose": "Call NVIDIA NIM model endpoints (hosted inference for bio/chem models).",
+        "without": "NIM tools are blocked without it."
+      }
+    },
     "return_schema": {
       "type": "object",
       "description": "AlphaFold2 structure prediction result with PDB coordinates, confidence scores, and model metrics",
@@ -73,16 +93,23 @@
       "properties": {
         "sequences": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Array of 1-6 protein sequences (amino acid single letter codes) to predict as a complex",
           "minItems": 1,
           "maxItems": 6
         },
         "databases": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Sequence databases for MSA: uniref90, small_bfd",
-          "default": ["uniref90", "small_bfd"]
+          "default": [
+            "uniref90",
+            "small_bfd"
+          ]
         },
         "relax_prediction": {
           "type": "boolean",
@@ -90,7 +117,9 @@
           "default": false
         }
       },
-      "required": ["sequences"]
+      "required": [
+        "sequences"
+      ]
     },
     "fields": {
       "endpoint": "deepmind/alphafold2-multimer",
@@ -99,7 +128,9 @@
       "response_type": "json",
       "timeout": 900
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "AlphaFold2-Multimer complex structure prediction with multi-chain PDB coordinates and confidence scores",
@@ -107,7 +138,10 @@
     },
     "test_examples": [
       {
-        "sequences": ["MNVIDIAIAMAI", "IAMNVIDIAAI"]
+        "sequences": [
+          "MNVIDIAIAMAI",
+          "IAMNVIDIAAI"
+        ]
       }
     ]
   },
@@ -124,7 +158,9 @@
           "maxLength": 1024
         }
       },
-      "required": ["sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "fields": {
       "endpoint": "nvidia/esmfold",
@@ -132,9 +168,14 @@
       "response_type": "pdb",
       "timeout": 120
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "PDB format structure text (returned via 'structure' field, not 'data'). Contains ATOM records with coordinates and pLDDT confidence in B-factor column."
     },
     "test_examples": [
@@ -161,12 +202,19 @@
         },
         "selected_models": {
           "type": "array",
-          "items": {"type": "integer"},
+          "items": {
+            "type": "integer"
+          },
           "description": "Model indices to use for prediction (1-5)",
-          "default": [1, 2]
+          "default": [
+            1,
+            2
+          ]
         }
       },
-      "required": ["sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "fields": {
       "endpoint": "openfold/openfold2/predict-structure-from-msa-and-template",
@@ -175,7 +223,9 @@
       "response_type": "json",
       "timeout": 600
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "OpenFold2 structure prediction with PDB coordinates and model quality metrics",
@@ -184,7 +234,9 @@
     "test_examples": [
       {
         "sequence": "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH",
-        "selected_models": [1]
+        "selected_models": [
+          1
+        ]
       }
     ]
   },
@@ -200,7 +252,9 @@
           "items": {
             "type": "object",
             "properties": {
-              "input_id": {"type": "string"},
+              "input_id": {
+                "type": "string"
+              },
               "molecules": {
                 "type": "array",
                 "items": {
@@ -208,14 +262,26 @@
                   "description": "Molecule spec: type (protein/dna/rna/ligand), sequence, msa, etc."
                 }
               },
-              "diffusion_samples": {"type": "integer", "default": 1},
-              "output_format": {"type": "string", "enum": ["cif", "pdb"], "default": "pdb"}
+              "diffusion_samples": {
+                "type": "integer",
+                "default": 1
+              },
+              "output_format": {
+                "type": "string",
+                "enum": [
+                  "cif",
+                  "pdb"
+                ],
+                "default": "pdb"
+              }
             }
           },
           "description": "List of input specifications for structure prediction"
         }
       },
-      "required": ["inputs"]
+      "required": [
+        "inputs"
+      ]
     },
     "fields": {
       "endpoint": "openfold/openfold3/predict",
@@ -224,7 +290,9 @@
       "response_type": "json",
       "timeout": 900
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "OpenFold3 biomolecular complex structure prediction (proteins, DNA, RNA, ligands) with coordinates and confidence metrics",
@@ -232,11 +300,26 @@
     },
     "test_examples": [
       {
-        "inputs": [{
-          "input_id": "test",
-          "molecules": [{"type": "protein", "sequence": "MKTVRQERLKSIVR", "msa": {"main": {"a3m": {"alignment": ">query\nMKTVRQERLKSIVR", "format": "a3m"}}}}],
-          "output_format": "pdb"
-        }]
+        "inputs": [
+          {
+            "input_id": "test",
+            "molecules": [
+              {
+                "type": "protein",
+                "sequence": "MKTVRQERLKSIVR",
+                "msa": {
+                  "main": {
+                    "a3m": {
+                      "alignment": ">query\nMKTVRQERLKSIVR",
+                      "format": "a3m"
+                    }
+                  }
+                }
+              }
+            ],
+            "output_format": "pdb"
+          }
+        ]
       }
     ]
   },
@@ -252,13 +335,34 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "string", "description": "Chain identifier (A-Z or 4-char PDB style)"},
-              "molecule_type": {"type": "string", "enum": ["protein", "dna", "rna"]},
-              "sequence": {"type": "string"},
-              "cyclic": {"type": "boolean", "default": false},
-              "msa": {"type": "object", "description": "MSA for proteins"}
+              "id": {
+                "type": "string",
+                "description": "Chain identifier (A-Z or 4-char PDB style)"
+              },
+              "molecule_type": {
+                "type": "string",
+                "enum": [
+                  "protein",
+                  "dna",
+                  "rna"
+                ]
+              },
+              "sequence": {
+                "type": "string"
+              },
+              "cyclic": {
+                "type": "boolean",
+                "default": false
+              },
+              "msa": {
+                "type": "object",
+                "description": "MSA for proteins"
+              }
             },
-            "required": ["molecule_type", "sequence"]
+            "required": [
+              "molecule_type",
+              "sequence"
+            ]
           },
           "description": "List of polymer molecules (1-12)",
           "minItems": 1,
@@ -269,9 +373,17 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "string"},
-              "ccd": {"type": "string", "description": "CCD code (e.g., ATP)"},
-              "smiles": {"type": "string", "description": "SMILES string"}
+              "id": {
+                "type": "string"
+              },
+              "ccd": {
+                "type": "string",
+                "description": "CCD code (e.g., ATP)"
+              },
+              "smiles": {
+                "type": "string",
+                "description": "SMILES string"
+              }
             }
           },
           "description": "Ligands specified by CCD code OR SMILES (max 20)"
@@ -299,11 +411,15 @@
         },
         "output_format": {
           "type": "string",
-          "enum": ["mmcif"],
+          "enum": [
+            "mmcif"
+          ],
           "default": "mmcif"
         }
       },
-      "required": ["polymers"]
+      "required": [
+        "polymers"
+      ]
     },
     "fields": {
       "endpoint": "mit/boltz2/predict",
@@ -312,7 +428,9 @@
       "response_type": "json",
       "timeout": 900
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "Boltz2 multi-molecular complex structure prediction (proteins, DNA, RNA, ligands) in mmCIF format with confidence scores",
@@ -320,7 +438,13 @@
     },
     "test_examples": [
       {
-        "polymers": [{"id": "A", "molecule_type": "protein", "sequence": "MKTVRQERLKSIVR"}],
+        "polymers": [
+          {
+            "id": "A",
+            "molecule_type": "protein",
+            "sequence": "MKTVRQERLKSIVR"
+          }
+        ],
         "sampling_steps": 50
       }
     ]
@@ -348,9 +472,13 @@
         },
         "sampling_temp": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Sampling temperatures (0.1-0.3 recommended for high quality)",
-          "default": [0.1]
+          "default": [
+            0.1
+          ]
         },
         "num_seq_per_target": {
           "type": "integer",
@@ -358,7 +486,9 @@
           "default": 1
         }
       },
-      "required": ["input_pdb"]
+      "required": [
+        "input_pdb"
+      ]
     },
     "fields": {
       "endpoint": "ipd/proteinmpnn/predict",
@@ -366,7 +496,9 @@
       "response_type": "mfasta",
       "timeout": 120
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "ProteinMPNN inverse folding result with designed sequences in Multi-FASTA format and per-residue log-probabilities",
@@ -375,7 +507,9 @@
     "test_examples": [
       {
         "input_pdb": "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N",
-        "sampling_temp": [0.1]
+        "sampling_temp": [
+          0.1
+        ]
       }
     ]
   },
@@ -396,7 +530,9 @@
         },
         "hotspot_res": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Hotspot residues for binder design (e.g., ['A50', 'A51', 'A52'])"
         },
         "diffusion_steps": {
@@ -409,7 +545,10 @@
           "description": "Random seed for reproducibility"
         }
       },
-      "required": ["contigs", "input_pdb"]
+      "required": [
+        "contigs",
+        "input_pdb"
+      ]
     },
     "fields": {
       "endpoint": "ipd/rfdiffusion/generate",
@@ -418,7 +557,9 @@
       "response_type": "json",
       "timeout": 600
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "RFdiffusion de novo protein design result with generated PDB structure coordinates",
@@ -449,7 +590,10 @@
         },
         "ligand_file_type": {
           "type": "string",
-          "enum": ["sdf", "mol2"],
+          "enum": [
+            "sdf",
+            "mol2"
+          ],
           "description": "Ligand file format",
           "default": "sdf"
         },
@@ -481,7 +625,10 @@
           "default": false
         }
       },
-      "required": ["protein", "ligand"]
+      "required": [
+        "protein",
+        "ligand"
+      ]
     },
     "fields": {
       "endpoint": "mit/diffdock",
@@ -491,7 +638,9 @@
       "response_type": "json",
       "timeout": 600
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "DiffDock blind molecular docking result with predicted ligand binding poses and confidence scores",
@@ -545,12 +694,17 @@
         },
         "scoring": {
           "type": "string",
-          "enum": ["QED", "LogP"],
+          "enum": [
+            "QED",
+            "LogP"
+          ],
           "description": "Property to score generated molecules",
           "default": "QED"
         }
       },
-      "required": ["smiles"]
+      "required": [
+        "smiles"
+      ]
     },
     "fields": {
       "endpoint": "nvidia/genmol/generate",
@@ -558,7 +712,9 @@
       "response_type": "json",
       "timeout": 120
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "GenMol generated molecules with SMILES strings and property scores (QED or LogP)",
@@ -592,12 +748,17 @@
         },
         "algorithm": {
           "type": "string",
-          "enum": ["CMA-ES", "GA"],
+          "enum": [
+            "CMA-ES",
+            "GA"
+          ],
           "description": "Optimization algorithm: CMA-ES (Covariance Matrix Adaptation Evolution Strategy) or GA (Genetic Algorithm)",
           "default": "CMA-ES"
         }
       },
-      "required": ["smi"]
+      "required": [
+        "smi"
+      ]
     },
     "fields": {
       "endpoint": "nvidia/molmim/generate",
@@ -605,7 +766,9 @@
       "response_type": "json",
       "timeout": 120
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "MolMIM controlled molecule generation result with optimized SMILES and property scores",
@@ -660,7 +823,9 @@
           "default": false
         }
       },
-      "required": ["sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "fields": {
       "endpoint": "arc/evo2-40b/generate",
@@ -668,7 +833,9 @@
       "response_type": "json",
       "timeout": 120
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "Evo2 DNA sequence generation result with generated nucleotide sequence and optional per-nucleotide probabilities",
@@ -705,13 +872,23 @@
         },
         "output_alignment_formats": {
           "type": "array",
-          "items": {"type": "string", "enum": ["a3m", "fasta"]},
+          "items": {
+            "type": "string",
+            "enum": [
+              "a3m",
+              "fasta"
+            ]
+          },
           "description": "Output alignment formats",
-          "default": ["a3m"]
+          "default": [
+            "a3m"
+          ]
         },
         "databases": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Specific databases to search"
         },
         "max_msa_sequences": {
@@ -719,7 +896,9 @@
           "description": "Maximum sequences in output MSA (max 10000)"
         }
       },
-      "required": ["sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "fields": {
       "endpoint": "colabfold/msa-search/predict",
@@ -728,7 +907,9 @@
       "response_type": "json",
       "timeout": 600
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "object",
       "description": "MSA search result with multiple sequence alignments in a3m/fasta format from database searches",
@@ -738,7 +919,9 @@
       {
         "sequence": "SGSMKTAISLPDETFDRVSRRASELGMSRSEFFTKAAQR",
         "e_value": 0.0001,
-        "output_alignment_formats": ["a3m"]
+        "output_alignment_formats": [
+          "a3m"
+        ]
       }
     ]
   },
@@ -751,17 +934,25 @@
       "properties": {
         "sequences": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Array of protein sequences (max 1024 amino acids each, valid: ARNDCQEGHILKMFPSTWYVXBOU)"
         },
         "format": {
           "type": "string",
-          "enum": ["npz", "json"],
+          "enum": [
+            "npz",
+            "json"
+          ],
           "description": "Output format: npz (binary NumPy archive) or json",
           "default": "npz"
         }
       },
-      "required": ["sequences", "format"]
+      "required": [
+        "sequences",
+        "format"
+      ]
     },
     "fields": {
       "endpoint": "meta/esm2-650m",
@@ -769,14 +960,18 @@
       "response_type": "binary",
       "timeout": 120
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "string",
       "description": "Binary NPZ or JSON embedding data. For NPZ format: '<Binary data, N bytes>'. For JSON format: embedding vectors as nested arrays."
     },
     "test_examples": [
       {
-        "sequences": ["MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"],
+        "sequences": [
+          "MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSH"
+        ],
         "format": "npz"
       }
     ]
@@ -796,12 +991,24 @@
         },
         "body_region": {
           "type": "array",
-          "items": {"type": "string", "enum": ["head", "chest", "thorax", "abdomen", "pelvis", "lower"]},
+          "items": {
+            "type": "string",
+            "enum": [
+              "head",
+              "chest",
+              "thorax",
+              "abdomen",
+              "pelvis",
+              "lower"
+            ]
+          },
           "description": "Body regions to generate"
         },
         "anatomy_list": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "Specific anatomical structures to include (e.g., liver, spleen, kidney)"
         },
         "controllable_anatomy_size": {
@@ -814,27 +1021,48 @@
         },
         "output_size": {
           "type": "array",
-          "items": {"type": "integer"},
+          "items": {
+            "type": "integer"
+          },
           "description": "Output volume size [x, y, z]. x,y: 256-512, z: 128-768",
           "minItems": 3,
           "maxItems": 3,
-          "default": [512, 512, 512]
+          "default": [
+            512,
+            512,
+            512
+          ]
         },
         "spacing": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Voxel spacing [x, y, z] in mm",
-          "default": [1.0, 1.0, 1.0]
+          "default": [
+            1.0,
+            1.0,
+            1.0
+          ]
         },
         "image_output_ext": {
           "type": "string",
-          "enum": [".nii.gz", ".nii", ".nrrd", ".dcm"],
+          "enum": [
+            ".nii.gz",
+            ".nii",
+            ".nrrd",
+            ".dcm"
+          ],
           "description": "Output image format",
           "default": ".nii.gz"
         },
         "label_output_ext": {
           "type": "string",
-          "enum": [".nii.gz", ".nii", ".nrrd"],
+          "enum": [
+            ".nii.gz",
+            ".nii",
+            ".nrrd"
+          ],
           "description": "Output segmentation format",
           "default": ".nii.gz"
         },
@@ -844,7 +1072,10 @@
           "default": ""
         }
       },
-      "required": ["num_output_samples", "body_region"]
+      "required": [
+        "num_output_samples",
+        "body_region"
+      ]
     },
     "fields": {
       "endpoint": "nvidia/maisi",
@@ -853,7 +1084,9 @@
       "response_type": "zip",
       "timeout": 300
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "string",
       "description": "ZIP file containing synthetic CT images (NIfTI/NRRD) and segmentation masks. Returned as '<ZIP file, N bytes>'."
@@ -861,9 +1094,17 @@
     "test_examples": [
       {
         "num_output_samples": 1,
-        "body_region": ["abdomen"],
-        "anatomy_list": ["liver"],
-        "output_size": [256, 256, 256]
+        "body_region": [
+          "abdomen"
+        ],
+        "anatomy_list": [
+          "liver"
+        ],
+        "output_size": [
+          256,
+          256,
+          256
+        ]
       }
     ]
   },
@@ -883,7 +1124,9 @@
           "properties": {
             "classes": {
               "type": "array",
-              "items": {"type": "string"},
+              "items": {
+                "type": "string"
+              },
               "description": "Anatomical classes to segment (e.g., 'spleen', 'liver', 'kidney')"
             },
             "points": {
@@ -894,7 +1137,9 @@
           "description": "Segmentation prompts: classes and optional point coordinates"
         }
       },
-      "required": ["image"]
+      "required": [
+        "image"
+      ]
     },
     "fields": {
       "endpoint": "nvidia/vista-3d",
@@ -903,7 +1148,9 @@
       "response_type": "zip",
       "timeout": 300
     },
-    "required_api_keys": ["NVIDIA_API_KEY"],
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
     "return_schema": {
       "type": "string",
       "description": "ZIP file containing 3D segmentation masks (NIfTI/NRRD) for requested anatomical structures. Returned as '<ZIP file, N bytes>'."
@@ -912,7 +1159,9 @@
       {
         "image": "https://assets.ngc.nvidia.com/products/api-catalog/vista3d/example-1.nii.gz",
         "prompts": {
-          "classes": ["spleen"]
+          "classes": [
+            "spleen"
+          ]
         }
       }
     ]

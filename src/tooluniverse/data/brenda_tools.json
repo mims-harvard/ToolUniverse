@@ -7,6 +7,22 @@
       "BRENDA_EMAIL",
       "BRENDA_PASSWORD"
     ],
+    "api_key_info": {
+      "BRENDA_EMAIL": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.brenda-enzymes.org/register.php",
+        "purpose": "BRENDA account email — retrieves enzyme kinetics, substrates, and parameters.",
+        "without": "BRENDA tools are blocked without an account (paired with the password)."
+      },
+      "BRENDA_PASSWORD": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.brenda-enzymes.org/register.php",
+        "purpose": "BRENDA account password — authenticates the enzyme-data SOAP API.",
+        "without": "Required together with the BRENDA email."
+      }
+    },
     "parameter": {
       "type": "object",
       "properties": {
@@ -258,7 +274,10 @@
           "description": "Alias for ec_number. Enzyme identifier in EC notation."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of SABIO-RK kinetic law entries to retrieve (default 20)"
         }
       },
@@ -267,11 +286,30 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "ec_number": {"type": "string"},
-        "enzyme_name": {"type": "string"},
-        "alternative_names": {"type": "array", "items": {"type": "string"}},
-        "catalytic_activity": {"type": "array", "items": {"type": "string"}},
-        "comments": {"type": "array", "items": {"type": "string"}},
+        "ec_number": {
+          "type": "string"
+        },
+        "enzyme_name": {
+          "type": "string"
+        },
+        "alternative_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "catalytic_activity": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "kinetic_parameters": {
           "type": "array",
           "description": "Individual kinetic law entries from SABIO-RK"
@@ -280,10 +318,21 @@
           "type": "object",
           "description": "Aggregated statistics for Km, kcat, Ki, Vmax across all entries"
         },
-        "sabiork_total_entries": {"type": "integer"},
-        "ph_optima": {"type": "array", "description": "Optimal pH values (BRENDA only, requires credentials)"},
-        "temperature_optima": {"type": "array", "description": "Optimal temperature values (BRENDA only, requires credentials)"},
-        "specific_activity": {"type": "array", "description": "Specific activity values (BRENDA only, requires credentials)"}
+        "sabiork_total_entries": {
+          "type": "integer"
+        },
+        "ph_optima": {
+          "type": "array",
+          "description": "Optimal pH values (BRENDA only, requires credentials)"
+        },
+        "temperature_optima": {
+          "type": "array",
+          "description": "Optimal temperature values (BRENDA only, requires credentials)"
+        },
+        "specific_activity": {
+          "type": "array",
+          "description": "Specific activity values (BRENDA only, requires credentials)"
+        }
       }
     },
     "test_examples": [

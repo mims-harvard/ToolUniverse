@@ -120,7 +120,16 @@
     ],
     "required_api_keys": [
       "ADDGENE_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "ADDGENE_API_KEY": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://www.addgene.org/contact/",
+        "purpose": "Look up plasmids and deposited constructs from the Addgene repository.",
+        "without": "Addgene tools are blocked without it."
+      }
+    }
   },
   {
     "name": "Addgene_get_plasmid",

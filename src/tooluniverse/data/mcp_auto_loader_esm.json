@@ -8,6 +8,15 @@
     "required_api_keys": [
       "ESM_MCP_SERVER_HOST"
     ],
+    "api_key_info": {
+      "ESM_MCP_SERVER_HOST": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://forge.evolutionaryscale.ai/",
+        "purpose": "URL of a self-hosted ESM MCP server.",
+        "without": "Leave blank unless you run your own ESM server."
+      }
+    },
     "return_schema": {
       "type": "object",
       "description": "MCP server auto-discovered tools and their execution results. Structure varies by discovered tool.",

@@ -8,6 +8,15 @@
     "required_api_keys": [
       "ESM_API_KEY"
     ],
+    "api_key_info": {
+      "ESM_API_KEY": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://forge.evolutionaryscale.ai/",
+        "purpose": "Run EvolutionaryScale ESM protein language models (embeddings, structure prediction).",
+        "without": "ESM Forge tools are blocked without it."
+      }
+    },
     "description": "Get protein sequence embeddings from EvolutionaryScale ESMC (ESM Cambrian) models via the Forge API. Returns a mean-pooled embedding vector (320-dim for esmc-300m, 1152-dim for esmc-600m) representing the entire protein, and optionally per-residue embeddings. ESMC is a fast, high-quality protein language model suitable for downstream tasks: similarity search, clustering, property prediction. Prerequisites: pip install esm; set ESM_API_KEY environment variable (token from https://forge.evolutionaryscale.ai). Use for: encoding protein sequences for ML, computing protein-protein similarity, featurizing sequences.",
     "parameter": {
       "type": "object",

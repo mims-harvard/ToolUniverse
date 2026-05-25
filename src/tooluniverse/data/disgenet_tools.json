@@ -6,6 +6,15 @@
     "optional_api_keys": [
       "DISGENET_API_KEY"
     ],
+    "api_key_info": {
+      "DISGENET_API_KEY": {
+        "domain": "Genomics & Variants",
+        "type": "secret",
+        "register_url": "https://www.disgenet.org/",
+        "purpose": "Pull curated gene–disease association scores and supporting evidence.",
+        "without": "Limited public data works without it; the key unlocks full access."
+      }
+    },
     "parameter": {
       "type": "object",
       "properties": {
