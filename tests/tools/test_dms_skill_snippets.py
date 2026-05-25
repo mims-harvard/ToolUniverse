@@ -596,8 +596,6 @@ def test_residue_mechanism_path_a_user_provided_positions():
     """
     # Path A: user gave us residues directly (no DMS matrix needed)
     user_provided_positions = [12, 13, 175, 273]  # mixed: KRAS + TP53 hotspots
-    dms_matrix = None
-    disruptive_tail = None
 
     # Skill's entry-path switch
     if user_provided_positions:
