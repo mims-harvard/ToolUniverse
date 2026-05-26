@@ -1,0 +1,17 @@
+{
+  "nodes": [
+    {
+      "id": "ExampleTool",
+      "name": "ExampleTool",
+      "type": "SampleTool"
+    }
+  ],
+  "edges": [],
+  "stats": {
+    "tools": 1,
+    "pairs_evaluated": 0,
+    "edges": 0,
+    "llm_calls": 0,
+    "runtime_sec": 0.0
+  }
+}

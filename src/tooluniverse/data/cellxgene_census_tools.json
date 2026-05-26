@@ -6,7 +6,7 @@
       "cellxgene_census",
       "tiledbsoma"
     ],
-    "description": "Get list of available CELLxGENE Census versions with release dates and descriptions. The Census contains single-cell RNA-seq data from 50M+ cells (human, mouse, non-human primates). Latest LTS release: 2025-11-08. Prerequisites: Requires 'cellxgene-census' package (install: pip install tooluniverse[singlecell]). Use for: checking available data versions, selecting stable vs latest builds, understanding data updates.",
+    "description": "Get list of available CELLxGENE Census versions with release dates and descriptions. The Census contains single-cell RNA-seq data from 50M+ cells (human, mouse, non-human primates). Latest LTS release: 2025-11-08. Prerequisites: Requires 'cellxgene-census' package (install: pip install tooluniverse[singlecell]). Use for: checking available data versions, selecting stable vs latest builds, understanding data updates. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live access.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -52,6 +52,9 @@
       {
         "operation": "get_census_versions"
       }
+    ],
+    "required_api_keys": [
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
     ]
   },
   {
@@ -61,7 +64,7 @@
       "cellxgene_census",
       "tiledbsoma"
     ],
-    "description": "Query cell metadata from CELLxGENE Census (50M+ human/mouse single cells). CRITICAL: obs_value_filter is REQUIRED - unfiltered queries will timeout. Common filters: tissue_general (brain, heart, lung, liver, blood, kidney, skin, eye, intestine), cell_type (T cell, B cell, neuron, macrophage, fibroblast), disease (normal, COVID-19, Alzheimer disease, cancer). Start with: obs_value_filter='tissue_general == \"lung\" and disease == \"normal\"'. Returns cell type, tissue, disease, donor info. Use for: finding cells by criteria, cohort selection, exploring cell populations.",
+    "description": "Query cell metadata from CELLxGENE Census (50M+ human/mouse single cells). CRITICAL: obs_value_filter is REQUIRED - unfiltered queries will timeout. Common filters: tissue_general (brain, heart, lung, liver, blood, kidney, skin, eye, intestine), cell_type (T cell, B cell, neuron, macrophage, fibroblast), disease (normal, COVID-19, Alzheimer disease, cancer). Start with: obs_value_filter='tissue_general == \"lung\" and disease == \"normal\"'. Returns cell type, tissue, disease, donor info. Use for: finding cells by criteria, cohort selection, exploring cell populations. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live access.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -147,6 +150,9 @@
         "obs_value_filter": "tissue_general == 'brain' and disease == 'normal'",
         "census_version": "stable"
       }
+    ],
+    "required_api_keys": [
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
     ]
   },
   {
@@ -156,7 +162,7 @@
       "cellxgene_census",
       "tiledbsoma"
     ],
-    "description": "Query gene (variable) metadata from CELLxGENE Census. Returns gene symbols, Ensembl IDs, feature types, and summary statistics. Filter by gene name, feature type, or expression characteristics. Use for: finding genes of interest, validating gene symbols, exploring feature presence across datasets.",
+    "description": "Query gene (variable) metadata from CELLxGENE Census. Returns gene symbols, Ensembl IDs, feature types, and summary statistics. Filter by gene name, feature type, or expression characteristics. Use for: finding genes of interest, validating gene symbols, exploring feature presence across datasets. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live access.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -234,6 +240,9 @@
         "var_value_filter": "feature_name == 'TP53'",
         "census_version": "stable"
       }
+    ],
+    "required_api_keys": [
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
     ]
   },
   {
@@ -243,7 +252,7 @@
       "cellxgene_census",
       "tiledbsoma"
     ],
-    "description": "Query gene expression data from CELLxGENE Census (50M+ cells, 60K+ genes). CRITICAL: At least one filter REQUIRED - unfiltered queries timeout. Start with: obs_value_filter='tissue_general == \"lung\" and disease == \"normal\"' AND var_value_filter='feature_name in [\"TP53\", \"EGFR\"]'. Returns AnnData summary (dimensions, metadata). For full matrix data, use Python API with sufficient memory.",
+    "description": "Query gene expression data from CELLxGENE Census (50M+ cells, 60K+ genes). CRITICAL: At least one filter REQUIRED - unfiltered queries timeout. Start with: obs_value_filter='tissue_general == \"lung\" and disease == \"normal\"' AND var_value_filter='feature_name in [\"TP53\", \"EGFR\"]'. Returns AnnData summary (dimensions, metadata). For full matrix data, use Python API with sufficient memory. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live access.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -328,6 +337,9 @@
         "var_value_filter": "feature_name in ['SOX2', 'GFAP', 'OLIG2']",
         "census_version": "stable"
       }
+    ],
+    "required_api_keys": [
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
     ]
   },
   {
@@ -337,7 +349,7 @@
       "cellxgene_census",
       "tiledbsoma"
     ],
-    "description": "Get feature presence matrix showing which genes are measured in which datasets. Returns sparse matrix dimensions and density. Useful for understanding data completeness and selecting datasets with genes of interest. Use for: checking gene coverage, dataset selection, quality assessment.",
+    "description": "Get feature presence matrix showing which genes are measured in which datasets. Returns sparse matrix dimensions and density. Useful for understanding data completeness and selecting datasets with genes of interest. Use for: checking gene coverage, dataset selection, quality assessment. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live access.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -416,6 +428,9 @@
         "organism": "Homo sapiens",
         "census_version": "stable"
       }
+    ],
+    "required_api_keys": [
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
     ]
   },
   {
@@ -425,7 +440,7 @@
       "cellxgene_census",
       "tiledbsoma"
     ],
-    "description": "Access pre-calculated cell embeddings (scVI, Geneformer) from CELLxGENE Census. Returns available embedding names or specific embedding data. Embeddings enable rapid visualization and analysis without recomputation. Use for: UMAP/t-SNE visualization, cell similarity analysis, transfer learning.",
+    "description": "Access pre-calculated cell embeddings (scVI, Geneformer) from CELLxGENE Census. Returns available embedding names or specific embedding data. Embeddings enable rapid visualization and analysis without recomputation. Use for: UMAP/t-SNE visualization, cell similarity analysis, transfer learning. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live access.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -505,6 +520,9 @@
         "organism": "Homo sapiens",
         "census_version": "stable"
       }
+    ],
+    "required_api_keys": [
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
     ]
   },
   {
@@ -514,7 +532,7 @@
       "cellxgene_census",
       "tiledbsoma"
     ],
-    "description": "Download original H5AD (HDF5-based AnnData) files from CELLxGENE datasets or get their URIs. Access unprocessed data from individual studies with complete metadata and analysis results. Requires dataset_id from CELLxGENE Discover. Note: Files can be large (GBs). Use for: accessing raw data, reproducibility, offline analysis, custom processing pipelines.",
+    "description": "Download original H5AD (HDF5-based AnnData) files from CELLxGENE datasets or get their URIs. Access unprocessed data from individual studies with complete metadata and analysis results. Requires dataset_id from CELLxGENE Discover. Note: Files can be large (GBs). Use for: accessing raw data, reproducibility, offline analysis, custom processing pipelines. Note: requires the cellxgene-census Python package; install with `pip install cellxgene-census` for live access.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -578,6 +596,9 @@
         "dataset_id": "4eb29386-de81-452f-b3c0-e00844e8c7fd",
         "census_version": "stable"
       }
+    ],
+    "required_api_keys": [
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
     ]
   }
 ]

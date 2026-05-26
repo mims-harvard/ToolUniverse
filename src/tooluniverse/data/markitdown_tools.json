@@ -25,41 +25,47 @@
       ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "markdown_content": {
-          "type": "string",
-          "description": "The converted Markdown content"
-        },
-        "content": {
-          "type": "string",
-          "description": "The converted Markdown content (same as markdown_content, provided for convenience when no output_path is specified)"
-        },
-        "file_info": {
+      "oneOf": [
+        {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "original_file": {
-              "type": "string"
+            "status": {
+              "const": "success"
             },
-            "file_type": {
-              "type": "string"
+            "data": {
+              "type": [
+                "object",
+                "string"
+              ]
             },
-            "output_file": {
-              "type": "string"
+            "metadata": {
+              "type": "object"
             }
           }
         },
-        "error": {
-          "type": "string",
-          "description": "Error message if conversion failed"
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {
-        "uri": "https://example.com/file.txt",
-        "output_path": "./downloads/output.txt",
-        "enable_plugins": false
+        "uri": "https://peps.python.org/pep-0008/"
       }
     ]
   }

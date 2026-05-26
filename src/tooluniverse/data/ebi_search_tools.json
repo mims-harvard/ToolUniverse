@@ -33,12 +33,18 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json",
           "description": "Response format: 'json' or 'xml'"
         }
       },
-      "required": ["domain", "query"]
+      "required": [
+        "domain",
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "",
@@ -46,21 +52,63 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Array of search result entries",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Entry ID"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source database"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": [
+                  "null",
+                  "object"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -111,11 +159,17 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json"
         }
       },
-      "required": ["domain", "query"]
+      "required": [
+        "domain",
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "",
@@ -123,29 +177,147 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "entries": {
-              "type": "array",
-              "description": "Search result entries"
+            "status": {
+              "const": "success"
             },
-            "facets": {
-              "type": "object",
-              "description": "Facet information for filtering"
+            "data": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "hitCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "entries": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "null",
+                      "object"
+                    ],
+                    "properties": {
+                      "acc": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "facets": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "null",
+                      "object"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "label": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "total": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "facetValues": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "null",
+                            "object"
+                          ],
+                          "properties": {
+                            "label": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "value": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "count": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             },
-            "hitCount": {
-              "type": "integer",
-              "description": "Total number of results"
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
             }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -178,11 +350,17 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json"
         }
       },
-      "required": ["domain", "entry_id"]
+      "required": [
+        "domain",
+        "entry_id"
+      ]
     },
     "fields": {
       "endpoint": "",
@@ -190,16 +368,77 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
-          "description": "Complete entry data"
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": [
+                "null",
+                "object"
+              ],
+              "properties": {
+                "entries": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "null",
+                      "object"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "acc": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -221,7 +460,10 @@
       "properties": {
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json",
           "description": "Response format"
         }
@@ -234,16 +476,397 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
-          "description": "List of available domains with metadata"
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "domains": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "subdomains": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "null",
+                            "object"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "description": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "subdomains": {
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "items": {
+                                "type": [
+                                  "null",
+                                  "object"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "name": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "description": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "indexInfos": {
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "items": {
+                                      "type": [
+                                        "null",
+                                        "object"
+                                      ],
+                                      "properties": {
+                                        "name": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "fieldInfos": {
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "items": {
+                                      "type": [
+                                        "null",
+                                        "object"
+                                      ],
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "name": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "options": {
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "items": {
+                                            "type": [
+                                              "null",
+                                              "object"
+                                            ],
+                                            "properties": {
+                                              "name": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "value": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "subdomains": {
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "items": {
+                                      "type": [
+                                        "null",
+                                        "object"
+                                      ],
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "name": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "indexInfos": {
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "items": {
+                                            "type": [
+                                              "null",
+                                              "object"
+                                            ],
+                                            "properties": {
+                                              "name": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "value": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "fieldInfos": {
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "items": {
+                                            "type": [
+                                              "null",
+                                              "object"
+                                            ],
+                                            "properties": {
+                                              "id": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "name": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "description": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "options": {
+                                                "type": [
+                                                  "array",
+                                                  "null"
+                                                ],
+                                                "items": {
+                                                  "type": [
+                                                    "null",
+                                                    "object"
+                                                  ],
+                                                  "properties": {
+                                                    "name": {},
+                                                    "value": {}
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "subdomains": {
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "items": {
+                                            "type": [
+                                              "null",
+                                              "object"
+                                            ],
+                                            "properties": {
+                                              "id": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "name": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "description": {
+                                                "type": [
+                                                  "null",
+                                                  "string"
+                                                ]
+                                              },
+                                              "indexInfos": {
+                                                "type": [
+                                                  "array",
+                                                  "null"
+                                                ],
+                                                "items": {
+                                                  "type": [
+                                                    "null",
+                                                    "object"
+                                                  ],
+                                                  "properties": {
+                                                    "name": {},
+                                                    "value": {}
+                                                  }
+                                                }
+                                              },
+                                              "fieldInfos": {
+                                                "type": [
+                                                  "array",
+                                                  "null"
+                                                ],
+                                                "items": {
+                                                  "type": [
+                                                    "null",
+                                                    "object"
+                                                  ],
+                                                  "properties": {
+                                                    "id": {},
+                                                    "name": {},
+                                                    "description": {},
+                                                    "options": {}
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {}
@@ -262,11 +885,16 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json"
         }
       },
-      "required": ["domain"]
+      "required": [
+        "domain"
+      ]
     },
     "fields": {
       "endpoint": "",
@@ -274,16 +902,277 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "object",
-          "description": "Domain metadata including fields, description, and capabilities"
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": [
+                "null",
+                "object"
+              ],
+              "properties": {
+                "domains": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "null",
+                      "object"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "subdomains": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "description": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "indexInfos": {
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "items": {
+                                "type": [
+                                  "null",
+                                  "object"
+                                ],
+                                "properties": {
+                                  "name": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "value": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "fieldInfos": {
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "items": {
+                                "type": [
+                                  "null",
+                                  "object"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "name": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "description": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "options": {
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "items": {
+                                      "type": [
+                                        "null",
+                                        "object"
+                                      ],
+                                      "properties": {
+                                        "name": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "indexInfos": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "null",
+                            "object"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "value": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "fieldInfos": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": [
+                            "null",
+                            "object"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "description": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "options": {
+                              "type": [
+                                "array",
+                                "null"
+                              ],
+                              "items": {
+                                "type": [
+                                  "null",
+                                  "object"
+                                ],
+                                "properties": {
+                                  "name": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "value": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -307,11 +1196,16 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json"
         }
       },
-      "required": ["domain"]
+      "required": [
+        "domain"
+      ]
     },
     "fields": {
       "endpoint": "",
@@ -319,11 +1213,43 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of available fields with metadata",
-      "items": {
-        "type": "object"
-      }
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "test_examples": [
       {
@@ -356,11 +1282,17 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json"
         }
       },
-      "required": ["domain", "query"]
+      "required": [
+        "domain",
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "",
@@ -368,21 +1300,43 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Entries with cross-reference information",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Entry ID"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source database"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {

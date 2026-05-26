@@ -6,7 +6,7 @@
       "biopython",
       "freesasa"
     ],
-    "description": "Per-residue structural annotation from a PDB structure: which residues sit at a binding interface (vs a partner chain), which line a ligand pocket, which are buried (core) vs solvent-exposed (surface). For each residue of the target chain returns: 1-letter amino acid, min side-chain-heavy-atom distance to the partner chain(s), min distance to ligand heavy atoms, relative SASA (computed with freesasa on the ISOLATED target chain — partner chains would bias the call by burying interface residues), a region label in {interface, ligand, both, other}, and an is_core boolean. Optionally fetches secondary structure (helix/strand/coil) from PDBe REST. This is the structural annotation track plotted under a DMS heatmap and the structural prior SAE feature drops are read against. Methodology adapted from an upstream research workflow.",
+    "description": "Per-residue structural annotation from a PDB structure: which residues sit at a binding interface (vs a partner chain), which line a ligand pocket, which are buried (core) vs solvent-exposed (surface). For each residue of the target chain returns: 1-letter amino acid, min side-chain-heavy-atom distance to the partner chain(s), min distance to ligand heavy atoms, relative SASA (computed with freesasa on the ISOLATED target chain \u2014 partner chains would bias the call by burying interface residues), a region label in {interface, ligand, both, other}, and an is_core boolean. Optionally fetches secondary structure (helix/strand/coil) from PDBe REST. This is the structural annotation track plotted under a DMS heatmap and the structural prior SAE feature drops are read against. Methodology adapted from an upstream research workflow.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -197,21 +197,8 @@
     },
     "test_examples": [
       {
-        "name": "KRAS-RAF1 interface + GTP pocket annotation",
-        "arguments": {
-          "operation": "annotate_per_residue",
-          "pdb_id": "6VJJ",
-          "target_chain": "A",
-          "partner_chains": [
-            "B"
-          ],
-          "ligand_resnames": [
-            "GNP",
-            "MG"
-          ],
-          "distance_cutoff": 5.0,
-          "core_rsa_cutoff": 0.25
-        }
+        "operation": "annotate_per_residue",
+        "pdb_id": "1CRN"
       }
     ]
   }
