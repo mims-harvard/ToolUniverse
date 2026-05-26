@@ -13,7 +13,11 @@
         "linearization": {
           "type": "string",
           "description": "ICD-11 linearization to search (default: 'mms' for mortality/morbidity statistics)",
-          "enum": ["mms", "icf", "ichi"],
+          "enum": [
+            "mms",
+            "icf",
+            "ichi"
+          ],
           "default": "mms"
         },
         "flatResults": {
@@ -32,8 +36,13 @@
           "default": "en"
         }
       },
-      "required": ["query"],
-      "required_api_keys": ["ICD_CLIENT_ID", "ICD_CLIENT_SECRET"]
+      "required": [
+        "query"
+      ],
+      "required_api_keys": [
+        "ICD_CLIENT_ID",
+        "ICD_CLIENT_SECRET"
+      ]
     },
     "fields": {
       "endpoint": "/release/11/2024-01/{linearization}/search?q={search_term}",
@@ -51,23 +60,45 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": {"type": "string"},
-                  "title": {"type": "string"},
-                  "score": {"type": "number"},
-                  "chapter": {"type": "string"},
-                  "theCode": {"type": "string"}
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "number"
+                  },
+                  "chapter": {
+                    "type": "string"
+                  },
+                  "theCode": {
+                    "type": "string"
+                  }
                 }
               }
             },
-            "guessType": {"type": ["integer", "object", "null"]}
+            "guessType": {
+              "type": [
+                "integer",
+                "object",
+                "null"
+              ]
+            }
           }
         },
         "metadata": {
           "type": "object",
           "properties": {
-            "source": {"type": "string"},
-            "endpoint": {"type": "string"},
-            "linearization": {"type": "string"}
+            "source": {
+              "type": "string"
+            },
+            "endpoint": {
+              "type": "string"
+            },
+            "linearization": {
+              "type": "string"
+            }
           }
         }
       }
@@ -91,7 +122,27 @@
         "useFlexisearch": true,
         "language": "en"
       }
-    ]
+    ],
+    "optional_api_keys": [
+      "ICD_CLIENT_ID",
+      "ICD_CLIENT_SECRET"
+    ],
+    "api_key_info": {
+      "ICD_CLIENT_ID": {
+        "domain": "Clinical & Safety",
+        "type": "secret",
+        "register_url": "https://icd.who.int/icdapi",
+        "purpose": "WHO ICD-11 API client ID (OAuth) for disease classification lookups.",
+        "without": "ICD-11 tools are blocked without it (paired with the client secret)."
+      },
+      "ICD_CLIENT_SECRET": {
+        "domain": "Clinical & Safety",
+        "type": "secret",
+        "register_url": "https://icd.who.int/icdapi",
+        "purpose": "WHO ICD-11 API client secret (OAuth), used with the client ID.",
+        "without": "Required together with ICD_CLIENT_ID."
+      }
+    }
   },
   {
     "name": "ICD11_get_entity",
@@ -107,7 +158,11 @@
         "linearization": {
           "type": "string",
           "description": "ICD-11 linearization (default: 'mms')",
-          "enum": ["mms", "icf", "ichi"],
+          "enum": [
+            "mms",
+            "icf",
+            "ichi"
+          ],
           "default": "mms"
         },
         "language": {
@@ -116,8 +171,13 @@
           "default": "en"
         }
       },
-      "required": ["entity_id"],
-      "required_api_keys": ["ICD_CLIENT_ID", "ICD_CLIENT_SECRET"]
+      "required": [
+        "entity_id"
+      ],
+      "required_api_keys": [
+        "ICD_CLIENT_ID",
+        "ICD_CLIENT_SECRET"
+      ]
     },
     "fields": {
       "endpoint": "/release/11/2024-01/{linearization}/{entity_id}",
@@ -130,18 +190,42 @@
         "data": {
           "type": "object",
           "properties": {
-            "@id": {"type": "string"},
-            "title": {"type": "object"},
-            "definition": {"type": "object"},
-            "longDefinition": {"type": "object"},
-            "fullySpecifiedName": {"type": "object"},
-            "parent": {"type": "array"},
-            "child": {"type": "array"},
-            "inclusion": {"type": "array"},
-            "exclusion": {"type": "array"},
-            "browserUrl": {"type": "string"},
-            "code": {"type": "string"},
-            "codingNote": {"type": "object"}
+            "@id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "object"
+            },
+            "definition": {
+              "type": "object"
+            },
+            "longDefinition": {
+              "type": "object"
+            },
+            "fullySpecifiedName": {
+              "type": "object"
+            },
+            "parent": {
+              "type": "array"
+            },
+            "child": {
+              "type": "array"
+            },
+            "inclusion": {
+              "type": "array"
+            },
+            "exclusion": {
+              "type": "array"
+            },
+            "browserUrl": {
+              "type": "string"
+            },
+            "code": {
+              "type": "string"
+            },
+            "codingNote": {
+              "type": "object"
+            }
           }
         }
       }
@@ -173,7 +257,11 @@
         "linearization": {
           "type": "string",
           "description": "ICD-11 linearization to browse",
-          "enum": ["mms", "icf", "ichi"],
+          "enum": [
+            "mms",
+            "icf",
+            "ichi"
+          ],
           "default": "mms"
         },
         "language": {
@@ -182,8 +270,13 @@
           "default": "en"
         }
       },
-      "required": ["entity_id"],
-      "required_api_keys": ["ICD_CLIENT_ID", "ICD_CLIENT_SECRET"]
+      "required": [
+        "entity_id"
+      ],
+      "required_api_keys": [
+        "ICD_CLIENT_ID",
+        "ICD_CLIENT_SECRET"
+      ]
     },
     "fields": {
       "endpoint": "/release/11/2024-01/{linearization}/{entity_id}",
@@ -203,8 +296,12 @@
                 "description": "Child entity URI"
               }
             },
-            "title": {"type": "object"},
-            "code": {"type": "string"}
+            "title": {
+              "type": "object"
+            },
+            "code": {
+              "type": "string"
+            }
           }
         }
       }
@@ -234,7 +331,9 @@
           "default": 20
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "/icd10cm/v3/search",
@@ -247,14 +346,20 @@
         "data": {
           "type": "object",
           "properties": {
-            "total": {"type": "integer"},
+            "total": {
+              "type": "integer"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {"type": "string"},
-                  "name": {"type": "string"}
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -263,8 +368,12 @@
         "metadata": {
           "type": "object",
           "properties": {
-            "source": {"type": "string"},
-            "version": {"type": "string"}
+            "source": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
           }
         }
       }
@@ -300,7 +409,9 @@
           "description": "ICD-10-CM code (e.g., 'E11.9', 'I10', 'J44.0')"
         }
       },
-      "required": ["code"]
+      "required": [
+        "code"
+      ]
     },
     "fields": {
       "endpoint": "/icd10cm/v3/search?sf=code&terms={code}",
@@ -313,14 +424,20 @@
         "data": {
           "type": "object",
           "properties": {
-            "total": {"type": "integer"},
+            "total": {
+              "type": "integer"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {"type": "string"},
-                  "name": {"type": "string"}
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 }
               }
             }

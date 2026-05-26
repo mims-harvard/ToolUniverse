@@ -51,7 +51,16 @@
     ],
     "optional_api_keys": [
       "MCULE_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "MCULE_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://mcule.com/api/",
+        "purpose": "Check purchasability and pricing of chemical compounds.",
+        "without": "Compound search works without it; the key unlocks ordering and availability."
+      }
+    }
   },
   {
     "name": "Mcule_get_compound",

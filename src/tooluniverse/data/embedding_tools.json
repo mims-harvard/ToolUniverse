@@ -57,6 +57,29 @@
       ]
     },
     "required_api_keys": [],
+    "api_key_info": {
+      "HF_TOKEN": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://huggingface.co/settings/tokens",
+        "purpose": "Download Hugging Face models and datasets used by structure/sequence tools.",
+        "without": "Public models work without it; needed for gated or private repos."
+      },
+      "OPENAI_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "secret",
+        "register_url": "https://platform.openai.com/api-keys",
+        "purpose": "Generate text embeddings for the semantic tool finder.",
+        "without": "The tool finder falls back to local embeddings without it."
+      },
+      "AZURE_OPENAI_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "secret",
+        "register_url": "https://portal.azure.com/",
+        "purpose": "Use Azure-hosted OpenAI models for embeddings (enterprise alternative to OpenAI).",
+        "without": "Optional alternative to OpenAI — leave blank if you don't use Azure."
+      }
+    },
     "optional_api_keys": [
       "OPENAI_API_KEY",
       "AZURE_OPENAI_API_KEY",
@@ -72,7 +95,9 @@
       {
         "action": "create_from_docs",
         "database_name": "biomedical_tools",
-        "documents": ["Sample document for testing embeddings"],
+        "documents": [
+          "Sample document for testing embeddings"
+        ],
         "metadata": [],
         "provider": "openai",
         "model": "all-MiniLM-L6-v2",
@@ -153,7 +178,9 @@
       {
         "action": "add_docs",
         "database_name": "biomedical_tools",
-        "documents": ["Sample document to add"],
+        "documents": [
+          "Sample document to add"
+        ],
         "metadata": [],
         "provider": "openai",
         "model": "all-MiniLM-L6-v2"

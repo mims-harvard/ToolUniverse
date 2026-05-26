@@ -90,7 +90,8 @@ If a tool has no required parameters, use `"required": []` (not omitting the key
 
 ## Authentication
 
-For APIs requiring API keys, add them as a header. Store the key value in `.tooluniverse/.env`, not the JSON:
+For APIs requiring API keys, reference the env var in a header. Store the key
+value in `.tooluniverse/.env` (or `~/.tooluniverse/.env`), never in the JSON:
 
 ```json
 "fields": {
@@ -98,6 +99,36 @@ For APIs requiring API keys, add them as a header. Store the key value in `.tool
   "headers": { "Authorization": "Bearer ${MY_API_KEY}" }
 }
 ```
+
+Then **declare** the key so ToolUniverse knows the tool needs it, and
+**describe** it with an `api_key_info` block so it appears in the setup UI
+(`/tooluniverse:setup-keys`) and the generated `.env.template`:
+
+```json
+{
+  "name": "MyAPI_search",
+  "type": "MyAPITool",
+  "required_api_keys": ["MY_API_KEY"],
+  "api_key_info": {
+    "MY_API_KEY": {
+      "domain": "Drugs & Chemistry",
+      "type": "secret",
+      "register_url": "https://example.com/get-a-key",
+      "purpose": "What this key unlocks (one sentence).",
+      "without": "What happens without it: blocked / demo mode / lower limits."
+    }
+  }
+}
+```
+
+- Use `required_api_keys` if the tool cannot work without the key, or
+  `optional_api_keys` if it only raises rate limits / unlocks extras.
+- `api_key_info` lives in the same config — define it **once per key** even if
+  several tools share it. `type` is `secret` (an API key) or `endpoint` (a
+  self-hosted server URL); `domain` groups the key in the setup UI.
+- After editing, run `python scripts/gen_api_key_catalog.py` to refresh
+  `src/tooluniverse/data/api_keys_catalog.json` and `.env.template`. CI also
+  auto-syncs on push and fails PRs whose catalog is out of date.
 
 `.tooluniverse/.env`:
 ```

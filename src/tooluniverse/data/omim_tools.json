@@ -72,7 +72,16 @@
     ],
     "required_api_keys": [
       "OMIM_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "OMIM_API_KEY": {
+        "domain": "Genomics & Variants",
+        "type": "secret",
+        "register_url": "https://omim.org/api",
+        "purpose": "Look up Mendelian disease\u2013gene relationships and clinical variant records for interpretation.",
+        "without": "OMIM tools return no data without it. Free for academic use."
+      }
+    }
   },
   {
     "name": "OMIM_get_entry",

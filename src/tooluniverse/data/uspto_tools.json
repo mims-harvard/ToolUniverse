@@ -52,6 +52,15 @@
     "required_api_keys": [
       "USPTO_API_KEY"
     ],
+    "api_key_info": {
+      "USPTO_API_KEY": {
+        "domain": "Literature & Patents",
+        "type": "secret",
+        "register_url": "https://developer.uspto.gov/",
+        "purpose": "Search US patents and patent-application full text.",
+        "without": "USPTO patent tools are blocked without it."
+      }
+    },
     "return_schema": {
       "type": "object",
       "properties": {

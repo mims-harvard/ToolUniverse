@@ -62,6 +62,15 @@
     "required_api_keys": [
       "BIOGRID_ACCESS_KEY"
     ],
+    "api_key_info": {
+      "BIOGRID_ACCESS_KEY": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://webservice.thebiogrid.org/",
+        "purpose": "Retrieve protein–protein and genetic interaction networks.",
+        "without": "BioGRID tools are blocked without it. The key is free."
+      }
+    },
     "return_schema": {
       "oneOf": [
         {
@@ -161,7 +170,7 @@
   {
     "type": "BioGRIDRESTTool",
     "name": "BioGRID_get_chemical_interactions",
-    "description": "Query experimentally validated interactions for specific genes/proteins from BioGRID, filtered for potential chemical relevance. **Important limitation**: The BioGRID REST API does not support chemical-only queries \u2014 you MUST provide gene_names. The chemicalList parameter is unreliable. For drug-protein interaction queries, prefer ChEMBL_search_mechanisms or DGIdb_search_interactions instead. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/).",
+    "description": "Query experimentally validated interactions for specific genes/proteins from BioGRID, filtered for potential chemical relevance. **Important limitation**: The BioGRID REST API does not support chemical-only queries — you MUST provide gene_names. The chemicalList parameter is unreliable. For drug-protein interaction queries, prefer ChEMBL_search_mechanisms or DGIdb_search_interactions instead. **Prerequisites**: Requires BIOGRID_API_KEY environment variable (free academic API key at https://webservice.thebiogrid.org/).",
     "parameter": {
       "type": "object",
       "properties": {

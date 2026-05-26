@@ -1,0 +1,43 @@
+name: Sync API key catalog
+
+on:
+  push:
+    paths:
+      - "src/tooluniverse/data/*.json"
+      - "scripts/gen_api_key_catalog.py"
+  pull_request:
+    paths:
+      - "src/tooluniverse/data/*.json"
+      - "scripts/gen_api_key_catalog.py"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Regenerate catalog
+        run: python3 scripts/gen_api_key_catalog.py
+      - name: Commit drift (push to branch only)
+        if: github.event_name == 'push'
+        run: |
+          if [ -n "$(git status --porcelain src/tooluniverse/data/api_keys_catalog.json .env.template)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add src/tooluniverse/data/api_keys_catalog.json .env.template
+            git commit -m "chore: sync API key catalog [skip ci]"
+            git push
+          fi
+      - name: Fail PRs on drift
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -n "$(git status --porcelain src/tooluniverse/data/api_keys_catalog.json .env.template)" ]; then
+            echo "::error::Catalog out of sync. Run: python3 scripts/gen_api_key_catalog.py"
+            git --no-pager diff
+            exit 1
+          fi

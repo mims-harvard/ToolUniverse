@@ -71,7 +71,19 @@
         "pageNumber": 1,
         "pageSize": 25
       }
-    ]
+    ],
+    "optional_api_keys": [
+      "UMLS_API_KEY"
+    ],
+    "api_key_info": {
+      "UMLS_API_KEY": {
+        "domain": "Clinical & Safety",
+        "type": "secret",
+        "register_url": "https://uts.nlm.nih.gov/uts/signup-login",
+        "purpose": "Authenticate to UMLS for concept, SNOMED CT, and LOINC lookups.",
+        "without": "UMLS/SNOMED/LOINC tools are blocked without it (free UMLS license)."
+      }
+    }
   },
   {
     "name": "umls_get_concept_details",

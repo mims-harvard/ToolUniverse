@@ -1,0 +1,367 @@
+[
+  {
+    "name": "ADDGENE_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Proteins & Structure",
+    "register_url": "https://www.addgene.org/contact/",
+    "purpose": "Look up plasmids and deposited constructs from the Addgene repository.",
+    "without": "Addgene tools are blocked without it.",
+    "used_by": [
+      "addgene_tools.json"
+    ]
+  },
+  {
+    "name": "AZURE_OPENAI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://portal.azure.com/",
+    "purpose": "Use Azure-hosted OpenAI models for embeddings (enterprise alternative to OpenAI).",
+    "without": "Optional alternative to OpenAI \u2014 leave blank if you don't use Azure.",
+    "used_by": [
+      "embedding_tools.json"
+    ]
+  },
+  {
+    "name": "BIOGRID_ACCESS_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Proteins & Structure",
+    "register_url": "https://webservice.thebiogrid.org/",
+    "purpose": "Retrieve protein\u2013protein and genetic interaction networks.",
+    "without": "BioGRID tools are blocked without it. The key is free.",
+    "used_by": [
+      "biogrid_tools.json"
+    ]
+  },
+  {
+    "name": "BOLTZ_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://github.com/jwohlwend/boltz",
+    "purpose": "URL of a self-hosted Boltz structure-prediction MCP server.",
+    "without": "Leave blank unless you run your own Boltz server.",
+    "used_by": [
+      "boltz_mcp_loader_tools.json"
+    ]
+  },
+  {
+    "name": "BRENDA_EMAIL",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Drugs & Chemistry",
+    "register_url": "https://www.brenda-enzymes.org/register.php",
+    "purpose": "BRENDA account email \u2014 retrieves enzyme kinetics, substrates, and parameters.",
+    "without": "BRENDA tools are blocked without an account (paired with the password).",
+    "used_by": [
+      "brenda_tools.json"
+    ]
+  },
+  {
+    "name": "BRENDA_PASSWORD",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Drugs & Chemistry",
+    "register_url": "https://www.brenda-enzymes.org/register.php",
+    "purpose": "BRENDA account password \u2014 authenticates the enzyme-data SOAP API.",
+    "without": "Required together with the BRENDA email.",
+    "used_by": [
+      "brenda_tools.json"
+    ]
+  },
+  {
+    "name": "CLUE_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Drugs & Chemistry",
+    "register_url": "https://clue.io",
+    "purpose": "Query Connectivity Map drug\u2013gene perturbation signatures for repurposing.",
+    "without": "CLUE tools are blocked without it. The key is free.",
+    "used_by": [
+      "clue_tools.json"
+    ]
+  },
+  {
+    "name": "DISGENET_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Genomics & Variants",
+    "register_url": "https://www.disgenet.org/",
+    "purpose": "Pull curated gene\u2013disease association scores and supporting evidence.",
+    "without": "Limited public data works without it; the key unlocks full access.",
+    "used_by": [
+      "disgenet_tools.json"
+    ]
+  },
+  {
+    "name": "ESM_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Proteins & Structure",
+    "register_url": "https://forge.evolutionaryscale.ai/",
+    "purpose": "Run EvolutionaryScale ESM protein language models (embeddings, structure prediction).",
+    "without": "ESM Forge tools are blocked without it.",
+    "used_by": [
+      "esm_tools.json"
+    ]
+  },
+  {
+    "name": "ESM_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://forge.evolutionaryscale.ai/",
+    "purpose": "URL of a self-hosted ESM MCP server.",
+    "without": "Leave blank unless you run your own ESM server.",
+    "used_by": [
+      "mcp_auto_loader_esm.json"
+    ]
+  },
+  {
+    "name": "EXPERT_FEEDBACK_MCP_SERVER_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://github.com/mims-harvard/ToolUniverse",
+    "purpose": "URL of a self-hosted expert-feedback MCP service.",
+    "without": "Leave blank unless you run this service.",
+    "used_by": [
+      "expert_feedback_tools.json"
+    ]
+  },
+  {
+    "name": "FDA_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://open.fda.gov/apis/authentication/",
+    "purpose": "Query FDA drug labels, adverse-event reports (FAERS), and recalls.",
+    "without": "Works at 240 requests/min without it; the key raises it to 120,000/day.",
+    "used_by": [
+      "openfda_approval_tools.json",
+      "openfda_label_tools.json",
+      "openfda_tools.json"
+    ]
+  },
+  {
+    "name": "FDC_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://fdc.nal.usda.gov/api-guide.html",
+    "purpose": "Look up food and nutrient composition from USDA FoodData Central.",
+    "without": "Falls back to a shared, rate-limited DEMO_KEY without it.",
+    "used_by": [
+      "fooddata_central_tools.json"
+    ]
+  },
+  {
+    "name": "GEMINI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://aistudio.google.com/apikey",
+    "purpose": "Use Google Gemini models for LLM-backed (agentic) tools.",
+    "without": "Only needed if you select Gemini as the agentic LLM provider.",
+    "used_by": [
+      "agentic_tools.json"
+    ]
+  },
+  {
+    "name": "HF_TOKEN",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Proteins & Structure",
+    "register_url": "https://huggingface.co/settings/tokens",
+    "purpose": "Download Hugging Face models and datasets used by structure/sequence tools.",
+    "without": "Public models work without it; needed for gated or private repos.",
+    "used_by": [
+      "embedding_tools.json"
+    ]
+  },
+  {
+    "name": "ICD_CLIENT_ID",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://icd.who.int/icdapi",
+    "purpose": "WHO ICD-11 API client ID (OAuth) for disease classification lookups.",
+    "without": "ICD-11 tools are blocked without it (paired with the client secret).",
+    "used_by": [
+      "icd_tools.json"
+    ]
+  },
+  {
+    "name": "ICD_CLIENT_SECRET",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://icd.who.int/icdapi",
+    "purpose": "WHO ICD-11 API client secret (OAuth), used with the client ID.",
+    "without": "Required together with ICD_CLIENT_ID.",
+    "used_by": [
+      "icd_tools.json"
+    ]
+  },
+  {
+    "name": "MCULE_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Drugs & Chemistry",
+    "register_url": "https://mcule.com/api/",
+    "purpose": "Check purchasability and pricing of chemical compounds.",
+    "without": "Compound search works without it; the key unlocks ordering and availability.",
+    "used_by": [
+      "mcule_tools.json"
+    ]
+  },
+  {
+    "name": "NCBI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://www.ncbi.nlm.nih.gov/account/",
+    "purpose": "Search PubMed and fetch citation metrics (iCite) and PubTator annotations.",
+    "without": "Works at 3 requests/sec without it; the key raises the limit to 10/sec.",
+    "used_by": [
+      "icite_tools.json",
+      "pubmed_tools.json",
+      "pubtator3_ext_tools.json"
+    ]
+  },
+  {
+    "name": "NVIDIA_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://build.nvidia.com/",
+    "purpose": "Call NVIDIA NIM model endpoints (hosted inference for bio/chem models).",
+    "without": "NIM tools are blocked without it.",
+    "used_by": [
+      "nvidia_nim_tools.json"
+    ]
+  },
+  {
+    "name": "OMIM_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Genomics & Variants",
+    "register_url": "https://omim.org/api",
+    "purpose": "Look up Mendelian disease\u2013gene relationships and clinical variant records for interpretation.",
+    "without": "OMIM tools return no data without it. Free for academic use.",
+    "used_by": [
+      "omim_tools.json"
+    ]
+  },
+  {
+    "name": "ONCOKB_API_TOKEN",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Drugs & Chemistry",
+    "register_url": "https://www.oncokb.org/apiAccess",
+    "purpose": "Annotate cancer variants with oncogenicity and matched therapy implications.",
+    "without": "Runs in demo mode (BRAF, TP53, ROS1 only) without a token.",
+    "used_by": [
+      "oncokb_tools.json"
+    ]
+  },
+  {
+    "name": "OPENAI_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://platform.openai.com/api-keys",
+    "purpose": "Generate text embeddings for the semantic tool finder.",
+    "without": "The tool finder falls back to local embeddings without it.",
+    "used_by": [
+      "embedding_tools.json"
+    ]
+  },
+  {
+    "name": "OPENROUTER_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://openrouter.ai/keys",
+    "purpose": "Use OpenRouter-hosted models for LLM-backed (agentic) tools.",
+    "without": "Only needed if you select OpenRouter as the agentic LLM provider.",
+    "used_by": [
+      "agentic_tools.json"
+    ]
+  },
+  {
+    "name": "PHARMVAR_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Genomics & Variants",
+    "register_url": "https://www.pharmvar.org/",
+    "purpose": "Resolve pharmacogene star-allele definitions (e.g. CYP2D6, CYP2C19).",
+    "without": "PharmVar tools are blocked without it.",
+    "used_by": [
+      "pharmvar_tools.json"
+    ]
+  },
+  {
+    "name": "SEMANTIC_SCHOLAR_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://www.semanticscholar.org/product/api",
+    "purpose": "Search papers and traverse citation graphs via Semantic Scholar.",
+    "without": "Works at ~1 request/sec without it; the key raises rate limits.",
+    "used_by": [
+      "semantic_scholar_ext_tools.json",
+      "semantic_scholar_tools.json"
+    ]
+  },
+  {
+    "name": "TXAGENT_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://github.com/mims-harvard/TxAgent",
+    "purpose": "URL of a self-hosted TxAgent MCP server.",
+    "without": "Leave blank unless you run your own TxAgent.",
+    "used_by": [
+      "txagent_client_tools.json"
+    ]
+  },
+  {
+    "name": "UMLS_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://uts.nlm.nih.gov/uts/signup-login",
+    "purpose": "Authenticate to UMLS for concept, SNOMED CT, and LOINC lookups.",
+    "without": "UMLS/SNOMED/LOINC tools are blocked without it (free UMLS license).",
+    "used_by": [
+      "umls_tools.json"
+    ]
+  },
+  {
+    "name": "USPTO_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://developer.uspto.gov/",
+    "purpose": "Search US patents and patent-application full text.",
+    "without": "USPTO patent tools are blocked without it.",
+    "used_by": [
+      "uspto_tools.json"
+    ]
+  },
+  {
+    "name": "USPTO_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://developer.uspto.gov/",
+    "purpose": "URL of a self-hosted USPTO MCP server.",
+    "without": "Leave blank unless you run your own USPTO server.",
+    "used_by": [
+      "uspto_downloader_tools.json"
+    ]
+  }
+]

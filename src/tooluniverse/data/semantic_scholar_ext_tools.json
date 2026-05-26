@@ -231,7 +231,16 @@
     },
     "optional_api_keys": [
       "SEMANTIC_SCHOLAR_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "SEMANTIC_SCHOLAR_API_KEY": {
+        "domain": "Literature & Patents",
+        "type": "secret",
+        "register_url": "https://www.semanticscholar.org/product/api",
+        "purpose": "Search papers and traverse citation graphs via Semantic Scholar.",
+        "without": "Works at ~1 request/sec without it; the key raises rate limits."
+      }
+    }
   },
   {
     "name": "SemanticScholar_search_authors",
