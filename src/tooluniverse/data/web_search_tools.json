@@ -20,82 +20,159 @@
         "search_type": {
           "type": "string",
           "description": "Type of search to perform",
-          "enum": ["general", "api_documentation", "python_packages", "github"],
+          "enum": [
+            "general",
+            "api_documentation",
+            "python_packages",
+            "github"
+          ],
           "default": "general"
         },
         "backend": {
           "type": "string",
           "description": "Search engine backend to use",
-          "enum": ["auto", "google", "bing", "brave", "yahoo", "duckduckgo"],
+          "enum": [
+            "auto",
+            "google",
+            "bing",
+            "brave",
+            "yahoo",
+            "duckduckgo"
+          ],
           "default": "auto"
         },
         "region": {
           "type": "string",
           "description": "Search region/locale",
-          "enum": ["us-en", "cn-zh", "uk-en", "de-de", "fr-fr", "ja-jp"],
+          "enum": [
+            "us-en",
+            "cn-zh",
+            "uk-en",
+            "de-de",
+            "fr-fr",
+            "ja-jp"
+          ],
           "default": "us-en"
         },
         "safesearch": {
           "type": "string",
           "description": "Safe search level",
-          "enum": ["on", "moderate", "off"],
+          "enum": [
+            "on",
+            "moderate",
+            "off"
+          ],
           "default": "moderate"
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "Status of the search operation",
-          "enum": ["success", "error"]
-        },
-        "query": {
-          "type": "string",
-          "description": "The search query that was executed"
-        },
-        "search_type": {
-          "type": "string",
-          "description": "Type of search that was performed"
-        },
-        "total_results": {
-          "type": "integer",
-          "description": "Total number of results found"
-        },
-        "results": {
-          "type": "array",
-          "description": "Array of search results",
-          "items": {
-            "type": "object",
-            "properties": {
-              "title": {
-                "type": "string",
-                "description": "Title of the search result"
-              },
-              "url": {
-                "type": "string",
-                "description": "URL of the search result"
-              },
-              "snippet": {
-                "type": "string",
-                "description": "Snippet or description of the result"
-              },
-              "rank": {
-                "type": "integer",
-                "description": "Rank of the result in search results"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "query": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "search_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "total_results": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "snippet": {
+                        "type": "string"
+                      },
+                      "rank": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "backend_used": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "attempted_backends": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "provider_errors": {
+                  "type": "object",
+                  "properties": {
+                    "duckduckgo": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               }
             },
-            "required": ["title", "url", "snippet", "rank"]
+            "metadata": {
+              "type": "object"
+            }
           }
         },
-        "error": {
-          "type": "string",
-          "description": "Error message if status is error"
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "required": ["status", "query", "total_results", "results"]
+      ]
     },
     "test_examples": [
       {
@@ -113,7 +190,12 @@
       }
     ],
     "metadata": {
-      "tags": ["web-search", "multi-engine", "no-api-key", "ddgs"],
+      "tags": [
+        "web-search",
+        "multi-engine",
+        "no-api-key",
+        "ddgs"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "2-5 seconds"
     }
@@ -139,74 +221,147 @@
         "focus": {
           "type": "string",
           "description": "Focus area for the search",
-          "enum": ["api_docs", "python_packages", "github_repos"],
+          "enum": [
+            "api_docs",
+            "python_packages",
+            "github_repos"
+          ],
           "default": "api_docs"
         },
         "backend": {
           "type": "string",
           "description": "Search engine backend to use",
-          "enum": ["auto", "google", "bing", "brave", "yahoo", "duckduckgo"],
+          "enum": [
+            "auto",
+            "google",
+            "bing",
+            "brave",
+            "yahoo",
+            "duckduckgo"
+          ],
           "default": "auto"
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "Status of the search operation",
-          "enum": ["success", "error"]
-        },
-        "query": {
-          "type": "string",
-          "description": "The search query that was executed"
-        },
-        "focus": {
-          "type": "string",
-          "description": "Focus area that was used for the search"
-        },
-        "enhanced_query": {
-          "type": "string",
-          "description": "Enhanced query that was actually executed"
-        },
-        "total_results": {
-          "type": "integer",
-          "description": "Total number of results found"
-        },
-        "results": {
-          "type": "array",
-          "description": "Array of search results",
-          "items": {
-            "type": "object",
-            "properties": {
-              "title": {
-                "type": "string",
-                "description": "Title of the search result"
-              },
-              "url": {
-                "type": "string",
-                "description": "URL of the search result"
-              },
-              "snippet": {
-                "type": "string",
-                "description": "Snippet or description of the result"
-              },
-              "rank": {
-                "type": "integer",
-                "description": "Rank of the result in search results"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "query": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "search_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "total_results": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string"
+                      },
+                      "snippet": {
+                        "type": "string"
+                      },
+                      "rank": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "backend_used": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "attempted_backends": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "provider_errors": {
+                  "type": "object",
+                  "properties": {
+                    "duckduckgo": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "focus": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "enhanced_query": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
               }
             },
-            "required": ["title", "url", "snippet", "rank"]
+            "metadata": {
+              "type": "object"
+            }
           }
         },
-        "error": {
-          "type": "string",
-          "description": "Error message if status is error"
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "required": ["status", "query", "total_results", "results"]
+      ]
     },
     "test_examples": [
       {
@@ -232,7 +387,14 @@
       }
     ],
     "metadata": {
-      "tags": ["web-search", "api-documentation", "python-packages", "technical-resources", "multi-engine", "ddgs"],
+      "tags": [
+        "web-search",
+        "api-documentation",
+        "python-packages",
+        "technical-resources",
+        "multi-engine",
+        "ddgs"
+      ],
       "difficulty_level": "easy",
       "estimated_execution_time": "2-5 seconds"
     }

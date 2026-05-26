@@ -122,8 +122,41 @@
     ],
     "return_schema": {
       "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "original_length": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "summary_length": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "chunks_processed": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tool_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
     }
   }
 ]

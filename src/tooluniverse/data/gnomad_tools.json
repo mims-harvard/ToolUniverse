@@ -30,47 +30,127 @@
       "query_schema": "query GeneConstraints($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id exac_constraint { exp_lof obs_lof pLI exp_mis obs_mis exp_syn obs_syn } gnomad_constraint { exp_lof obs_lof oe_lof pLI exp_mis obs_mis oe_mis exp_syn obs_syn oe_syn } } }"
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "gene"
-      ],
-      "properties": {
-        "gene": {
-          "type": [
-            "object",
-            "null"
-          ],
+      "oneOf": [
+        {
+          "type": "object",
           "required": [
-            "symbol",
-            "gene_id"
+            "status"
           ],
           "properties": {
-            "symbol": {
-              "type": "string"
+            "status": {
+              "const": "success"
             },
-            "gene_id": {
-              "type": "string"
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "gene_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "exac_constraint": {
+                      "type": "null"
+                    },
+                    "gnomad_constraint": {
+                      "type": "object",
+                      "properties": {
+                        "exp_lof": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "obs_lof": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "oe_lof": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "pLI": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "exp_mis": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "obs_mis": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "oe_mis": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "exp_syn": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "obs_syn": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "oe_syn": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             },
-            "exac_constraint": {
-              "type": [
-                "object",
-                "null"
-              ],
-              "additionalProperties": true
-            },
-            "gnomad_constraint": {
-              "type": [
-                "object",
-                "null"
-              ],
-              "additionalProperties": true
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response containing gene constraint data."
+      ]
     },
     "test_examples": [
       {
@@ -126,40 +206,68 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "gene_search"
-      ],
-      "properties": {
-        "gene_search": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "ensembl_id",
-              "symbol"
-            ],
-            "properties": {
-              "ensembl_id": {
-                "type": "string"
-              },
-              "ensembl_version": {
-                "type": [
-                  "string",
-                  "integer",
-                  "null"
-                ]
-              },
-              "symbol": {
-                "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_search": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ensembl_id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "ensembl_version": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "symbol": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
+                }
               }
             },
-            "additionalProperties": true
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response containing gene search results."
+      ]
     },
     "test_examples": [
       {
@@ -220,65 +328,95 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "gene"
-      ],
-      "properties": {
-        "gene": {
-          "type": [
-            "object",
-            "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
           ],
           "properties": {
-            "gene_id": {
-              "type": "string"
+            "status": {
+              "const": "success"
             },
-            "symbol": {
-              "type": "string"
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene": {
+                  "type": "object",
+                  "properties": {
+                    "gene_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "symbol": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "chrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stop": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "strand": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "canonical_transcript_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
             },
-            "name": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "chrom": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "start": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "stop": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "strand": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "canonical_transcript_id": {
-              "type": [
-                "string",
-                "null"
-              ]
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response containing gene metadata."
+      ]
     },
     "test_examples": [
       {
@@ -325,77 +463,100 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "transcript"
-      ],
-      "properties": {
-        "transcript": {
-          "type": [
-            "object",
-            "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
           ],
           "properties": {
-            "transcript_id": {
-              "type": "string"
+            "status": {
+              "const": "success"
             },
-            "gene_id": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "gene": {
-              "type": [
-                "object",
-                "null"
-              ],
+            "data": {
+              "type": "object",
               "properties": {
-                "gene_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "symbol": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                "transcript": {
+                  "type": "object",
+                  "properties": {
+                    "transcript_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "gene_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "gene": {
+                      "type": "object",
+                      "properties": {
+                        "gene_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "symbol": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "chrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stop": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "strand": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
                 }
-              },
-              "additionalProperties": true
+              }
             },
-            "chrom": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "start": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "stop": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "strand": {
-              "type": [
-                "string",
-                "null"
-              ]
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response containing transcript metadata."
+      ]
     },
     "test_examples": [
       {
@@ -434,29 +595,56 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "variant_search"
-      ],
-      "properties": {
-        "variant_search": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": [
-              "variant_id"
-            ],
-            "properties": {
-              "variant_id": {
-                "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant_search": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
               }
             },
-            "additionalProperties": true
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response containing variant search results."
+      ]
     },
     "test_examples": [
       {
@@ -498,108 +686,109 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "variant"
-      ],
-      "properties": {
-        "variant": {
-          "type": [
-            "object",
-            "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
           ],
           "properties": {
-            "variant_id": {
-              "type": "string"
+            "status": {
+              "const": "success"
             },
-            "chrom": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "pos": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "ref": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "alt": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "rsid": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "genome": {
-              "type": [
-                "object",
-                "null"
-              ],
+            "data": {
+              "type": "object",
               "properties": {
-                "af": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "an": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "ac": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
+                "variant": {
+                  "type": "object",
+                  "properties": {
+                    "variant_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "chrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pos": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "alt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "rsid": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "genome": {
+                      "type": "object",
+                      "properties": {
+                        "af": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "an": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "ac": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "exome": {
+                      "type": "null"
+                    }
+                  }
                 }
               }
             },
-            "exome": {
-              "type": [
-                "object",
-                "null"
-              ],
-              "properties": {
-                "af": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "an": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "ac": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                }
-              }
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response containing variant metadata."
+      ]
     },
     "test_examples": [
       {
@@ -661,80 +850,99 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "region"
-      ],
-      "properties": {
-        "region": {
-          "type": [
-            "object",
-            "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
           ],
           "properties": {
-            "chrom": {
-              "type": [
-                "string",
-                "null"
-              ]
+            "status": {
+              "const": "success"
             },
-            "start": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "stop": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "genes": {
-              "type": [
-                "array",
-                "null"
-              ],
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "symbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+            "data": {
+              "type": "object",
+              "properties": {
+                "region": {
+                  "type": "object",
+                  "properties": {
+                    "chrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stop": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "genes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "gene_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "symbol": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "variants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "variant_id": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          }
+                        }
+                      }
+                    }
                   }
-                },
-                "additionalProperties": true
+                }
               }
             },
-            "variants": {
-              "type": [
-                "array",
-                "null"
-              ],
-              "items": {
-                "type": "object",
-                "properties": {
-                  "variant_id": {
-                    "type": "string"
-                  }
-                },
-                "additionalProperties": true
-              }
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response containing region metadata."
+      ]
     },
     "test_examples": [
       {
@@ -784,119 +992,160 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "gene"
-      ],
-      "properties": {
-        "gene": {
-          "type": [
-            "object",
-            "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
           ],
           "properties": {
-            "symbol": {
-              "type": "string"
+            "status": {
+              "const": "success"
             },
-            "gene_id": {
-              "type": "string"
-            },
-            "chrom": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "start": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "stop": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "structural_variants": {
-              "type": [
-                "array",
-                "null"
-              ],
-              "items": {
-                "type": "object",
-                "properties": {
-                  "variant_id": {
-                    "type": "string",
-                    "description": "gnomAD SV ID (e.g., DEL_chr17_24e4872b)"
-                  },
-                  "chrom": {
-                    "type": "string"
-                  },
-                  "pos": {
-                    "type": "integer",
-                    "description": "Start position (1-based)"
-                  },
-                  "end": {
-                    "type": "integer",
-                    "description": "End position"
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "SV type: DEL, DUP, INV, INS, BND, CPX, CTX, CNV"
-                  },
-                  "length": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "SV length in bp (-1 for BND)"
-                  },
-                  "ac": {
-                    "type": "integer",
-                    "description": "Allele count"
-                  },
-                  "an": {
-                    "type": "integer",
-                    "description": "Allele number (total chromosomes)"
-                  },
-                  "af": {
-                    "type": "number",
-                    "description": "Allele frequency"
-                  },
-                  "homozygote_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "major_consequence": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Most severe consequence (lof, copy_gain, intronic, etc.)"
-                  },
-                  "filters": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene": {
+                  "type": "object",
+                  "properties": {
+                    "symbol": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "gene_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "chrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stop": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "structural_variants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "variant_id": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "chrom": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "pos": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "end": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "type": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "length": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ac": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "an": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "af": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "homozygote_count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "major_consequence": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "filters": {
+                            "type": "array",
+                            "items": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      }
                     }
                   }
-                },
-                "additionalProperties": true
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response with structural variants for a gene."
+      ]
     },
     "test_examples": [
       {
@@ -965,128 +1214,168 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "region"
-      ],
-      "properties": {
-        "region": {
-          "type": [
-            "object",
-            "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
           ],
           "properties": {
-            "chrom": {
-              "type": [
-                "string",
-                "null"
-              ]
+            "status": {
+              "const": "success"
             },
-            "start": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "stop": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "genes": {
-              "type": [
-                "array",
-                "null"
-              ],
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "symbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                },
-                "additionalProperties": true
-              }
-            },
-            "structural_variants": {
-              "type": [
-                "array",
-                "null"
-              ],
-              "items": {
-                "type": "object",
-                "properties": {
-                  "variant_id": {
-                    "type": "string"
-                  },
-                  "chrom": {
-                    "type": "string"
-                  },
-                  "pos": {
-                    "type": "integer"
-                  },
-                  "end": {
-                    "type": "integer"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "length": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "ac": {
-                    "type": "integer"
-                  },
-                  "an": {
-                    "type": "integer"
-                  },
-                  "af": {
-                    "type": "number"
-                  },
-                  "homozygote_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "major_consequence": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "filters": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
+            "data": {
+              "type": "object",
+              "properties": {
+                "region": {
+                  "type": "object",
+                  "properties": {
+                    "chrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stop": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "genes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "gene_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "symbol": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "structural_variants": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "variant_id": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "chrom": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "pos": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "end": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "type": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "length": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ac": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "an": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "af": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "homozygote_count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "major_consequence": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "filters": {
+                            "type": "array",
+                            "items": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      }
                     }
                   }
-                },
-                "additionalProperties": true
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response with structural variants in a region."
+      ]
     },
     "test_examples": [
       {
@@ -1133,127 +1422,164 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "required": [
-        "structural_variant"
-      ],
-      "properties": {
-        "structural_variant": {
-          "type": [
-            "object",
-            "null"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
           ],
           "properties": {
-            "variant_id": {
-              "type": "string"
+            "status": {
+              "const": "success"
             },
-            "chrom": {
-              "type": "string"
-            },
-            "pos": {
-              "type": "integer"
-            },
-            "end": {
-              "type": "integer"
-            },
-            "type": {
-              "type": "string",
-              "description": "SV type: DEL, DUP, INV, INS, BND, CPX, CTX, CNV"
-            },
-            "length": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "ac": {
-              "type": "integer",
-              "description": "Allele count"
-            },
-            "an": {
-              "type": "integer",
-              "description": "Allele number"
-            },
-            "af": {
-              "type": "number",
-              "description": "Allele frequency in gnomAD"
-            },
-            "homozygote_count": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "hemizygote_count": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "major_consequence": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "consequence": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "reference_genome": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "filters": {
-              "type": [
-                "array",
-                "null"
-              ],
-              "items": {
-                "type": "string"
+            "data": {
+              "type": "object",
+              "properties": {
+                "structural_variant": {
+                  "type": "object",
+                  "properties": {
+                    "variant_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "chrom": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pos": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "end": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "length": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "ac": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "an": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "af": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "homozygote_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "hemizygote_count": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "major_consequence": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "consequence": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reference_genome": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "chrom2": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pos2": {
+                      "type": "null"
+                    },
+                    "end2": {
+                      "type": "null"
+                    },
+                    "ac_hom": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "ac_hemi": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               }
             },
-            "chrom2": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "Second chromosome for translocations"
-            },
-            "pos2": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "end2": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "ac_hom": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            },
-            "ac_hemi": {
-              "type": [
-                "integer",
-                "null"
-              ]
+            "metadata": {
+              "type": "object"
             }
-          },
-          "additionalProperties": true
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "additionalProperties": true,
-      "description": "gnomAD GraphQL response with structural variant details."
+      ]
     },
     "test_examples": [
       {

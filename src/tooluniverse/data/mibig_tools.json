@@ -25,68 +25,105 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "accession": {
-                "type": "string",
-                "description": "MIBiG accession with version (e.g., BGC0000455.6)"
-              },
-              "quality": {
-                "type": "string",
-                "description": "Data quality: questionable, good, or excellent"
-              },
-              "completeness": {
-                "type": "string",
-                "description": "BGC completeness: complete, partial, or unknown"
-              },
-              "status": {
-                "type": "string",
-                "description": "Entry status: active or retired"
-              },
-              "products": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "Natural product name"
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "quality": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "completeness": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "products": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
                     }
+                  },
+                  "classes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "css_class": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "organism": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
                   }
                 }
-              },
-              "classes": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "Biosynthetic class: PKS, NRPS, Terpene, Saccharide, RiPP, Other"
-                    }
-                  }
-                }
-              },
-              "organism": {
-                "type": "string",
-                "description": "Source organism name"
               }
+            },
+            "metadata": {
+              "type": "object"
             }
-          },
-          "description": "Array of BGC entries"
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -110,76 +147,130 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "counts": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
               "type": "object",
               "properties": {
-                "total": {
-                  "type": "integer",
-                  "description": "Total number of BGC entries"
+                "counts": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "complete": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "partial": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "pending": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "active": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "retired": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
                 },
-                "complete": {
-                  "type": "integer"
+                "clusters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "css_class": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
                 },
-                "partial": {
-                  "type": "integer"
-                },
-                "pending": {
-                  "type": "integer"
-                },
-                "active": {
-                  "type": "integer"
-                },
-                "retired": {
-                  "type": "integer"
-                }
-              }
-            },
-            "clusters": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "Biosynthetic class name"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "count": {
-                    "type": "integer"
+                "phyla": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "description": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }
             },
-            "phyla": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "description": {
-                    "type": "string",
-                    "description": "Phylum name"
-                  },
-                  "count": {
-                    "type": "integer"
-                  }
-                }
-              }
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }

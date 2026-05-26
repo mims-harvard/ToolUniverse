@@ -1,115 +1,407 @@
 [
-    {
-        "name": "ComplexPortal_search_complexes",
-        "description": "Search for curated protein complexes by gene/protein name from the EBI Complex Portal (includes CORUM mammalian complexes). Returns complex names, subunit compositions, and cross-references. Use to find which protein complexes a target participates in.",
-        "parameter": {
-            "type": "object",
-            "properties": {
+  {
+    "name": "ComplexPortal_search_complexes",
+    "description": "Search for curated protein complexes by gene/protein name from the EBI Complex Portal (includes CORUM mammalian complexes). Returns complex names, subunit compositions, and cross-references. Use to find which protein complexes a target participates in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene symbol, protein name, or complex name to search (e.g., 'WDR7', 'RAVE complex', 'proteasome')"
+        },
+        "species": {
+          "type": "string",
+          "description": "NCBI taxonomy ID to filter by species (default: '9606' for human). Use '10090' for mouse, '10116' for rat, '' for all species.",
+          "default": "9606"
+        },
+        "number": {
+          "type": "integer",
+          "description": "Maximum complexes to return (default: 25)",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search_complexes"
+    },
+    "type": "ComplexPortalTool",
+    "test_examples": [
+      {
+        "query": "TP53",
+        "species": "9606",
+        "number": 10
+      },
+      {
+        "query": "proteasome",
+        "species": "9606"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
                 "query": {
-                    "type": "string",
-                    "description": "Gene symbol, protein name, or complex name to search (e.g., 'WDR7', 'RAVE complex', 'proteasome')"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "species_filter": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "complexes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "complex_id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "species": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "predicted": {
+                        "type": "boolean"
+                      },
+                      "subunits": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "identifier": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "description": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "stoichiometry": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "interactor_type": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "total_found": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "label": [
+      "Complex Portal",
+      "CORUM",
+      "PPI",
+      "Protein Complex"
+    ],
+    "metadata": {
+      "tags": [
+        "protein_complex",
+        "subunit",
+        "corum",
+        "ppi",
+        "complex_composition"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "ComplexPortal_get_complex",
+    "description": "Get detailed information for a specific protein complex by Complex Portal ID (e.g., CPX-1234). Returns full subunit composition with stoichiometry, function description, disease associations, GO annotations, and cross-references to PDB/Reactome.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "complex_id": {
+          "type": "string",
+          "description": "Complex Portal accession ID (e.g., 'CPX-1', 'CPX-6512')"
+        }
+      },
+      "required": [
+        "complex_id"
+      ]
+    },
+    "fields": {
+      "operation": "get_complex"
+    },
+    "type": "ComplexPortalTool",
+    "test_examples": [
+      {
+        "complex_id": "CPX-1"
+      },
+      {
+        "complex_id": "CPX-100"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "complex_id": {
+                  "type": "null"
+                },
+                "name": {
+                  "type": "null"
+                },
+                "systematic_name": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "species": {
-                    "type": "string",
-                    "description": "NCBI taxonomy ID to filter by species (default: '9606' for human). Use '10090' for mouse, '10116' for rat, '' for all species.",
-                    "default": "9606"
+                  "type": "null"
                 },
-                "number": {
-                    "type": "integer",
-                    "description": "Maximum complexes to return (default: 25)",
-                    "default": 25,
-                    "minimum": 1,
-                    "maximum": 100
-                }
-            },
-            "required": ["query"]
-        },
-        "fields": {
-            "operation": "search_complexes"
-        },
-        "type": "ComplexPortalTool",
-        "test_examples": [
-            {"query": "TP53", "species": "9606", "number": 10},
-            {"query": "proteasome", "species": "9606"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
+                "taxonomy_id": {
+                  "type": "null"
+                },
+                "description": {
+                  "type": "null"
+                },
+                "properties": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                },
+                "complex_type": {
+                  "type": "null"
+                },
+                "evidence_type": {
+                  "type": "object",
+                  "properties": {
+                    "identifier": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "description": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "searchURL": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "confidenceScore": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "subunits": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                        "query": {"type": "string"},
-                        "complexes": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "complex_id": {"type": "string"},
-                                    "name": {"type": "string"},
-                                    "species": {"type": "string"},
-                                    "subunits": {"type": "array"}
-                                }
-                            }
-                        },
-                        "count": {"type": "integer"},
-                        "total_found": {"type": "integer"}
+                      "identifier": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "stoichiometry": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "interactor_type": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
                     }
+                  }
                 },
-                "error": {"type": "string"}
+                "cross_references": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "database": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "identifier": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "diseases": {
+                  "type": "array"
+                },
+                "go_annotations": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
             }
+          }
         },
-        "label": ["Complex Portal", "CORUM", "PPI", "Protein Complex"],
-        "metadata": {
-            "tags": ["protein_complex", "subunit", "corum", "ppi", "complex_composition"],
-            "estimated_execution_time": "< 5 seconds"
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
+      ]
     },
-    {
-        "name": "ComplexPortal_get_complex",
-        "description": "Get detailed information for a specific protein complex by Complex Portal ID (e.g., CPX-1234). Returns full subunit composition with stoichiometry, function description, disease associations, GO annotations, and cross-references to PDB/Reactome.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "complex_id": {
-                    "type": "string",
-                    "description": "Complex Portal accession ID (e.g., 'CPX-1', 'CPX-6512')"
-                }
-            },
-            "required": ["complex_id"]
-        },
-        "fields": {
-            "operation": "get_complex"
-        },
-        "type": "ComplexPortalTool",
-        "test_examples": [
-            {"complex_id": "CPX-1"},
-            {"complex_id": "CPX-100"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "complex_id": {"type": "string"},
-                        "name": {"type": "string"},
-                        "species": {"type": "string"},
-                        "description": {"type": "string"},
-                        "subunits": {"type": "array"},
-                        "diseases": {"type": "array"},
-                        "go_annotations": {"type": "array"},
-                        "cross_references": {"type": "array"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["Complex Portal", "CORUM", "Protein Complex"],
-        "metadata": {
-            "tags": ["protein_complex", "stoichiometry", "complex_detail"],
-            "estimated_execution_time": "< 3 seconds"
-        }
+    "label": [
+      "Complex Portal",
+      "CORUM",
+      "Protein Complex"
+    ],
+    "metadata": {
+      "tags": [
+        "protein_complex",
+        "stoichiometry",
+        "complex_detail"
+      ],
+      "estimated_execution_time": "< 3 seconds"
     }
+  }
 ]

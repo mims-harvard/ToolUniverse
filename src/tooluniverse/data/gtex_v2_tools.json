@@ -61,27 +61,87 @@
       "required": []
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "median": {
-            "type": "number"
-          },
-          "tissueSiteDetailId": {
-            "type": "string"
-          },
-          "gencodeId": {
-            "type": "string"
-          },
-          "geneSymbol": {
-            "type": "string"
-          },
-          "unit": {
-            "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "median": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "tissueSiteDetailId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ontologyId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "gencodeId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "unit": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -131,39 +191,270 @@
       "required": []
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "tissueSiteDetailId": {
-            "type": "string"
-          },
-          "tissueSiteDetail": {
-            "type": "string"
-          },
-          "tissueSite": {
-            "type": "string"
-          },
-          "colorHex": {
-            "type": "string"
-          },
-          "eGeneCount": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "expressedGeneCount": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "rnaSeqSampleSummary": {
-            "type": "object"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tissueSiteDetailId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "colorHex": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "colorRgb": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "eGeneCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "expressedGeneCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "hasEGenes": {
+                    "type": "boolean"
+                  },
+                  "hasSGenes": {
+                    "type": "boolean"
+                  },
+                  "mappedInHubmap": {
+                    "type": "boolean"
+                  },
+                  "eqtlSampleSummary": {
+                    "type": "object",
+                    "properties": {
+                      "totalCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "female": {
+                        "type": "object",
+                        "properties": {
+                          "ageMax": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMin": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMean": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "male": {
+                        "type": "object",
+                        "properties": {
+                          "ageMax": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMin": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMean": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "rnaSeqSampleSummary": {
+                    "type": "object",
+                    "properties": {
+                      "totalCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "female": {
+                        "type": "object",
+                        "properties": {
+                          "ageMax": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMin": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMean": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "male": {
+                        "type": "object",
+                        "properties": {
+                          "ageMax": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMin": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "ageMean": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "count": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "sGeneCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "samplingSite": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissueSite": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissueSiteDetail": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissueSiteDetailAbbr": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ontologyId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ontologyIri": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -217,33 +508,105 @@
       "required": []
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "gencodeId": {
-            "type": "string"
-          },
-          "geneSymbol": {
-            "type": "string"
-          },
-          "tissueSiteDetailId": {
-            "type": "string"
-          },
-          "pValue": {
-            "type": "number"
-          },
-          "qValue": {
-            "type": "number"
-          },
-          "log2AllelicFoldChange": {
-            "type": "number"
-          },
-          "empiricalPValue": {
-            "type": "number"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tissueSiteDetailId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ontologyId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "empiricalPValue": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "gencodeId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "log2AllelicFoldChange": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "pValue": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "pValueThreshold": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "qValue": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -313,39 +676,123 @@
       "required": []
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "gencodeId": {
-            "type": "string"
-          },
-          "geneSymbol": {
-            "type": "string"
-          },
-          "variantId": {
-            "type": "string"
-          },
-          "snpId": {
-            "type": "string"
-          },
-          "tissueSiteDetailId": {
-            "type": "string"
-          },
-          "pValue": {
-            "type": "number"
-          },
-          "nes": {
-            "type": "number"
-          },
-          "chromosome": {
-            "type": "string"
-          },
-          "pos": {
-            "type": "integer"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "snpId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "pos": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "snpIdUpper": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "variantId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "pValue": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "geneSymbolUpper": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissueSiteDetailId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ontologyId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "chromosome": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "gencodeId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "nes": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -402,42 +849,138 @@
       ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "gencodeId": {
-          "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  }
+                },
+                "error": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "gencodeId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "geneSymbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                },
+                "hetCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "homoAltCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "homoRefCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "maf": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "nes": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "pValue": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "pValueThreshold": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "tStatistic": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "tissueSiteDetailId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "variantId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
         },
-        "geneSymbol": {
-          "type": "string"
-        },
-        "variantId": {
-          "type": "string"
-        },
-        "tissueSiteDetailId": {
-          "type": "string"
-        },
-        "pValue": {
-          "type": "number"
-        },
-        "nes": {
-          "type": "number"
-        },
-        "tStatistic": {
-          "type": "number"
-        },
-        "pValueThreshold": {
-          "type": "number"
-        },
-        "data": {
-          "type": "array"
-        },
-        "genotypes": {
-          "type": "array"
-        },
-        "maf": {
-          "type": "number"
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -498,27 +1041,87 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "gencodeId": {
-            "type": "string"
-          },
-          "geneSymbol": {
-            "type": "string"
-          },
-          "median": {
-            "type": "number"
-          },
-          "unit": {
-            "type": "string"
-          },
-          "tissueSiteDetailId": {
-            "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tissueSiteDetailId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ontologyId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "gencodeId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "median": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "unit": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -555,39 +1158,129 @@
       "required": []
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "datasetId": {
-            "type": "string"
-          },
-          "displayName": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "gencodeVersion": {
-            "type": "string"
-          },
-          "genomeBuild": {
-            "type": "string"
-          },
-          "dbSnpBuild": {
-            "type": "integer"
-          },
-          "subjectCount": {
-            "type": "integer"
-          },
-          "tissueCount": {
-            "type": "integer"
-          },
-          "rnaSeqSampleCount": {
-            "type": "integer"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "dbSnpBuild": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "dbgapId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "displayName": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "eqtlSubjectCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "eqtlTissuesCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "gencodeVersion": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "genomeBuild": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "organization": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "rnaSeqAndGenotypeSampleCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "rnaSeqSampleCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "subjectCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "tissueCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -660,33 +1353,93 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "gencodeId": {
-            "type": "string"
-          },
-          "geneSymbol": {
-            "type": "string"
-          },
-          "tissueSiteDetailId": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "type": "number"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "null",
+                        "number"
+                      ]
+                    }
+                  },
+                  "tissueSiteDetailId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontologyId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gencodeId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subsetGroup": {
+                    "type": "null"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
             }
-          },
-          "unit": {
-            "type": "string"
-          },
-          "subsetGroup": {
-            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -781,51 +1534,156 @@
       "required": []
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "sampleId": {
-            "type": "string"
-          },
-          "subjectId": {
-            "type": "string"
-          },
-          "tissueSiteDetailId": {
-            "type": "string"
-          },
-          "sex": {
-            "type": "string"
-          },
-          "ageBracket": {
-            "type": "string"
-          },
-          "ischemicTime": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "rin": {
-            "type": [
-              "number",
-              "null"
-            ]
-          },
-          "hardyScale": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "pathologyNotes": {
-            "type": [
-              "string",
-              "null"
-            ]
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ischemicTime": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "aliquotId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissueSampleId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissueSiteDetail": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "dataType": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ischemicTimeGroup": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "pathologyNotesCategories": {
+                    "type": "object"
+                  },
+                  "freezeType": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "pathologyNotes": {
+                    "type": "null"
+                  },
+                  "sampleId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "sampleIdUpper": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "ageBracket": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "rin": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "hardyScale": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissueSiteDetailId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "subjectId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "uberonId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "sex": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "autolysisScore": {
+                    "type": "null"
+                  },
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -886,53 +1744,1495 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "gencodeId": {
-            "type": "string"
-          },
-          "variantId": {
-            "type": "string"
-          },
-          "metaP": {
-            "type": "number"
-          },
-          "tissues": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "mValue": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "pValue": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "nes": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "se": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gencodeId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "metaP": {
+                    "type": [
+                      "null",
+                      "number"
+                    ]
+                  },
+                  "variantId": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "tissues": {
+                    "type": "object",
+                    "properties": {
+                      "Thyroid": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Testis": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Small_Intestine_Terminal_Ileum": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Frontal_Cortex_BA9": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Skin_Not_Sun_Exposed_Suprapubic": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Vagina": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Whole_Blood": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Breast_Mammary_Tissue": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Pituitary": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Minor_Salivary_Gland": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Adipose_Subcutaneous": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Adrenal_Gland": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Heart_Atrial_Appendage": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Amygdala": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Stomach": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Caudate_basal_ganglia": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Colon_Transverse": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Cerebellum": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Esophagus_Muscularis": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Liver": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Hypothalamus": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Prostate": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Pancreas": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Nerve_Tibial": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Spleen": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Colon_Sigmoid": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Anterior_cingulate_cortex_BA24": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Muscle_Skeletal": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Hippocampus": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Cortex": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Heart_Left_Ventricle": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Artery_Tibial": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Uterus": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Ovary": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Esophagus_Gastroesophageal_Junction": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Cells_EBV-transformed_lymphocytes": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Artery_Coronary": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Spinal_cord_cervical_c-1": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Adipose_Visceral_Omentum": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Nucleus_accumbens_basal_ganglia": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Cerebellar_Hemisphere": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Esophagus_Mucosa": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Cells_Cultured_fibroblasts": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Artery_Aorta": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Putamen_basal_ganglia": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Lung": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Kidney_Cortex": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Brain_Substantia_nigra": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "Skin_Sun_Exposed_Lower_leg": {
+                        "type": "object",
+                        "properties": {
+                          "mValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "pValue": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "se": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          },
+                          "nes": {
+                            "type": [
+                              "null",
+                              "number"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
             }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {

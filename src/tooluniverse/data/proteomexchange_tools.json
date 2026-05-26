@@ -30,23 +30,35 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "px_id": {
-                  "type": "string"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "title": {
                   "type": [
-                    "string",
-                    "null"
+                    "null",
+                    "string"
                   ]
                 },
                 "species": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": [
+                      "null",
+                      "string"
+                    ]
                   }
                 },
                 "identifiers": {
@@ -55,10 +67,16 @@
                     "type": "object",
                     "properties": {
                       "name": {
-                        "type": "string"
+                        "type": [
+                          "null",
+                          "string"
+                        ]
                       },
                       "value": {
-                        "type": "string"
+                        "type": [
+                          "null",
+                          "string"
+                        ]
                       }
                     }
                   }
@@ -66,7 +84,10 @@
                 "instruments": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": [
+                      "null",
+                      "string"
+                    ]
                   }
                 },
                 "publications": {
@@ -76,53 +97,46 @@
                     "properties": {
                       "pubmed_id": {
                         "type": [
-                          "string",
-                          "null"
+                          "null",
+                          "string"
                         ]
                       },
                       "doi": {
                         "type": [
-                          "string",
-                          "null"
+                          "null",
+                          "string"
                         ]
                       }
                     }
                   }
                 },
                 "file_count": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -167,7 +181,13 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "array",
               "items": {
@@ -175,57 +195,50 @@
                 "properties": {
                   "accession": {
                     "type": [
-                      "string",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   },
                   "title": {
                     "type": [
-                      "string",
-                      "null"
+                      "null",
+                      "string"
                     ]
                   },
                   "species": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "contact": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
                   }
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_returned": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }

@@ -32,33 +32,539 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Dataset ID"
-          },
-          "name": {
-            "type": "string",
-            "description": "Dataset name"
-          },
-          "description": {
-            "type": "string",
-            "description": "Dataset description"
-          },
-          "category": {
-            "type": "string"
-          },
-          "viewCount": {
-            "type": "integer"
-          },
-          "downloadCount": {
-            "type": "integer"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "assetType": {
+                    "type": "string"
+                  },
+                  "averageRating": {
+                    "type": "integer"
+                  },
+                  "blobFilename": {
+                    "type": "string"
+                  },
+                  "blobFileSize": {
+                    "type": "integer"
+                  },
+                  "blobId": {
+                    "type": "string"
+                  },
+                  "blobMimeType": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "integer"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "diciBackend": {
+                    "type": "boolean"
+                  },
+                  "displayType": {
+                    "type": "string"
+                  },
+                  "downloadCount": {
+                    "type": "integer"
+                  },
+                  "hideFromCatalog": {
+                    "type": "boolean"
+                  },
+                  "hideFromDataJson": {
+                    "type": "boolean"
+                  },
+                  "locked": {
+                    "type": "boolean"
+                  },
+                  "newBackend": {
+                    "type": "boolean"
+                  },
+                  "numberOfComments": {
+                    "type": "integer"
+                  },
+                  "oid": {
+                    "type": "integer"
+                  },
+                  "provenance": {
+                    "type": "string"
+                  },
+                  "publicationAppendEnabled": {
+                    "type": "boolean"
+                  },
+                  "publicationDate": {
+                    "type": "integer"
+                  },
+                  "publicationGroup": {
+                    "type": "integer"
+                  },
+                  "publicationStage": {
+                    "type": "string"
+                  },
+                  "rowsUpdatedAt": {
+                    "type": "integer"
+                  },
+                  "tableId": {
+                    "type": "integer"
+                  },
+                  "totalTimesRated": {
+                    "type": "integer"
+                  },
+                  "viewCount": {
+                    "type": "integer"
+                  },
+                  "viewLastModified": {
+                    "type": "integer"
+                  },
+                  "viewType": {
+                    "type": "string"
+                  },
+                  "approvals": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "reviewedAt": {
+                          "type": "integer"
+                        },
+                        "reviewedAutomatically": {
+                          "type": "boolean"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "submissionId": {
+                          "type": "integer"
+                        },
+                        "submissionObject": {
+                          "type": "string"
+                        },
+                        "submissionOutcome": {
+                          "type": "string"
+                        },
+                        "submittedAt": {
+                          "type": "integer"
+                        },
+                        "targetAudience": {
+                          "type": "string"
+                        },
+                        "workflowId": {
+                          "type": "integer"
+                        },
+                        "submissionDetails": {
+                          "type": "object",
+                          "properties": {
+                            "permissionType": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "submissionOutcomeApplication": {
+                          "type": "object",
+                          "properties": {
+                            "endedAt": {
+                              "type": "integer"
+                            },
+                            "failureCount": {
+                              "type": "integer"
+                            },
+                            "startedAt": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "submitter": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "clientContext": {
+                    "type": "object",
+                    "properties": {
+                      "clientContextVariables": {
+                        "type": "array"
+                      },
+                      "inheritedVariables": {
+                        "type": "object"
+                      }
+                    }
+                  },
+                  "grants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "inherited": {
+                          "type": "boolean"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "flags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "properties": {
+                      "custom_fields": {
+                        "type": "object",
+                        "properties": {
+                          "Common Core": {
+                            "type": "object",
+                            "properties": {
+                              "Contact Email": {
+                                "type": "string"
+                              },
+                              "Contact Name": {
+                                "type": "string"
+                              },
+                              "Program Code": {
+                                "type": "string"
+                              },
+                              "Bureau Code": {
+                                "type": "string"
+                              },
+                              "Homepage": {
+                                "type": "string"
+                              },
+                              "Update Frequency": {
+                                "type": "string"
+                              },
+                              "Temporal Applicability": {
+                                "type": "string"
+                              },
+                              "Collection": {
+                                "type": "string"
+                              },
+                              "Geographic Coverage": {
+                                "type": "string"
+                              },
+                              "Access Level Comment": {
+                                "type": "string"
+                              },
+                              "Publisher": {
+                                "type": "string"
+                              },
+                              "Public Access Level": {
+                                "type": "string"
+                              },
+                              "Language": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "Described By": {
+                                "type": "string"
+                              },
+                              "References": {
+                                "type": "string"
+                              },
+                              "Issued": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "Data Quality": {
+                            "type": "object",
+                            "properties": {
+                              "Footnotes": {
+                                "type": "string"
+                              },
+                              "Suggested Citation": {
+                                "type": "string"
+                              },
+                              "Geospatial Resolution": {
+                                "type": "string"
+                              },
+                              "Geographic Unit of Analysis": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "Analytical Methods Reference": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "availableDisplayTypes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "attachments": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "filename": {
+                              "type": "string"
+                            },
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "additionalAccessPoints": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "urls": {
+                              "type": "object",
+                              "properties": {
+                                "App Process": {
+                                  "type": "string"
+                                },
+                                "zip": {
+                                  "type": "string"
+                                },
+                                "sas format txt": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "sas input txt": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "dct": {
+                                  "type": "string"
+                                },
+                                "readme txt": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "sas label txt": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "txt": {
+                                  "type": "string"
+                                },
+                                "do": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "sps": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "describedBy": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "accessPoints": {
+                        "type": "object",
+                        "properties": {
+                          "App Process": {
+                            "type": "string"
+                          },
+                          "zip": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "sas format txt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "sas input txt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "dct": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "readme txt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "sas label txt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "rowLabel": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "owner": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "displayName": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "flags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "rights": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tableAuthor": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "displayName": {
+                        "type": "string"
+                      },
+                      "screenName": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "flags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "flags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "rowsUpdatedBy": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -106,21 +612,574 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "type": "array",
-            "description": "Data row as array of values"
-          },
-          "description": "Data rows from the dataset (Socrata format: array of arrays)"
-        },
-        "meta": {
+      "oneOf": [
+        {
           "type": "object",
-          "description": "Metadata about the dataset including column definitions"
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "view": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "assetType": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "attribution": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "averageRating": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "category": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "diciBackend": {
+                          "type": "boolean"
+                        },
+                        "displayType": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "downloadCount": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "hideFromCatalog": {
+                          "type": "boolean"
+                        },
+                        "hideFromDataJson": {
+                          "type": "boolean"
+                        },
+                        "locked": {
+                          "type": "boolean"
+                        },
+                        "newBackend": {
+                          "type": "boolean"
+                        },
+                        "numberOfComments": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "oid": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "provenance": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "publicationAppendEnabled": {
+                          "type": "boolean"
+                        },
+                        "publicationDate": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "publicationGroup": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "publicationStage": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "rowsUpdatedAt": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "rowsUpdatedBy": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "tableId": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "totalTimesRated": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "viewCount": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "viewLastModified": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "viewType": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "approvals": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "reviewedAt": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "reviewedAutomatically": {
+                                "type": "boolean"
+                              },
+                              "state": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "submissionId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "submissionObject": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "submissionOutcome": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "submittedAt": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "targetAudience": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "workflowId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "submissionDetails": {
+                                "type": "object",
+                                "properties": {
+                                  "permissionType": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                }
+                              },
+                              "submissionOutcomeApplication": {
+                                "type": "object",
+                                "properties": {
+                                  "endedAt": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "failureCount": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "startedAt": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "status": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                }
+                              },
+                              "submitter": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "displayName": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "clientContext": {
+                          "type": "object",
+                          "properties": {
+                            "clientContextVariables": {
+                              "type": "array"
+                            },
+                            "inheritedVariables": {
+                              "type": "object",
+                              "properties": {}
+                            }
+                          }
+                        },
+                        "columns": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "dataTypeName": {
+                                "type": "string"
+                              },
+                              "fieldName": {
+                                "type": "string"
+                              },
+                              "position": {
+                                "type": "integer"
+                              },
+                              "renderTypeName": {
+                                "type": "string"
+                              },
+                              "format": {
+                                "type": "object"
+                              },
+                              "flags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "grants": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "inherited": {
+                                "type": "boolean"
+                              },
+                              "type": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "flags": {
+                                "type": "array",
+                                "items": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "properties": {
+                            "custom_fields": {
+                              "type": "object",
+                              "properties": {
+                                "Common Core": {
+                                  "type": "object",
+                                  "properties": {
+                                    "Contact Email": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "Contact Name": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "Program Code": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "Geographic Coverage": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "Publisher": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "Bureau Code": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "Public Access Level": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "rowLabel": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "availableDisplayTypes": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "owner": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "displayName": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "screenName": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "type": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "flags": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "query": {
+                          "type": "object",
+                          "properties": {}
+                        },
+                        "rights": {
+                          "type": "array",
+                          "items": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "tableAuthor": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "displayName": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "screenName": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "type": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "flags": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "flags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "integer",
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {

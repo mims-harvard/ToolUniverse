@@ -72,86 +72,1229 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Eurostat dataset response in JSON-stat format",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "version": {
-              "type": "string"
-            },
-            "class": {
-              "type": "string"
-            },
-            "label": {
-              "type": "string",
-              "description": "Dataset title"
-            },
-            "source": {
-              "type": "string"
-            },
-            "updated": {
-              "type": "string"
-            },
-            "value": {
-              "type": "object",
-              "description": "Data values indexed by position string. Position indices correspond to ordered combination of dimension values."
-            },
             "status": {
-              "type": [
-                "object",
-                "null"
-              ],
-              "description": "Status flags for data points (e.g., estimated, provisional)"
+              "const": "success"
             },
-            "dimension": {
+            "data": {
               "type": "object",
-              "description": "Dimension metadata defining the structure. Each dimension has 'category' with 'index' (position mapping) and 'label' (value labels).",
-              "additionalProperties": {
-                "type": "object",
-                "properties": {
-                  "label": {
+              "properties": {
+                "version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "class": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "value": {
+                  "type": "object",
+                  "properties": {
+                    "16": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "17": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "18": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "19": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "20": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "21": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "22": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "23": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "24": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "25": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "26": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "27": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "28": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "29": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "30": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "31": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "32": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "33": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "34": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "35": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "36": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "37": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "38": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "39": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "40": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "41": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "42": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "43": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "44": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "45": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "46": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "47": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "48": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "49": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "50": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "status": {
+                  "type": "object",
+                  "properties": {
+                    "47": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "48": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "49": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "50": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "id": {
+                  "type": "array",
+                  "items": {
                     "type": "string"
-                  },
-                  "category": {
-                    "type": "object",
-                    "properties": {
-                      "index": {
+                  }
+                },
+                "size": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                },
+                "dimension": {
+                  "type": "object",
+                  "properties": {
+                    "freq": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "object",
+                              "properties": {
+                                "A": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            },
+                            "label": {
+                              "type": "object",
+                              "properties": {
+                                "A": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "unit": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "object",
+                              "properties": {
+                                "CP_MEUR": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            },
+                            "label": {
+                              "type": "object",
+                              "properties": {
+                                "CP_MEUR": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "na_item": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "object",
+                              "properties": {
+                                "B1GQ": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            },
+                            "label": {
+                              "type": "object",
+                              "properties": {
+                                "B1GQ": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "geo": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "object",
+                              "properties": {
+                                "DE": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            },
+                            "label": {
+                              "type": "object",
+                              "properties": {
+                                "DE": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "time": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "index": {
+                              "type": "object",
+                              "properties": {
+                                "1975": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1976": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1977": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1978": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1979": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1980": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1981": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1982": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1983": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1984": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1985": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1986": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1987": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1988": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1989": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1990": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1991": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1992": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1993": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1994": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1995": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1996": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1997": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1998": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "1999": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2000": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2001": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2002": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2003": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2004": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2005": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2006": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2007": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2008": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2009": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2010": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2011": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2012": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2013": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2014": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2015": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2016": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2017": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2018": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2019": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2020": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2021": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2022": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2023": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2024": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "2025": {
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            },
+                            "label": {
+                              "type": "object",
+                              "properties": {
+                                "1975": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1976": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1977": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1978": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1979": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1980": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1981": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1982": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1983": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1984": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1985": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1986": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1987": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1988": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1989": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1990": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1991": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1992": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1993": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1994": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1995": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1996": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1997": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1998": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "1999": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2000": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2001": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2002": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2003": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2004": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2005": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2006": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2007": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2008": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2009": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2010": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2011": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2012": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2013": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2014": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2015": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2016": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2017": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2018": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2019": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2020": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2021": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2022": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2023": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2024": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "2025": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "extension": {
+                  "type": "object",
+                  "properties": {
+                    "lang": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "agencyId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "datastructure": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "agencyId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "annotation": {
+                      "type": "array",
+                      "items": {
                         "type": "object",
-                        "description": "Dimension value to position index"
-                      },
-                      "label": {
-                        "type": "object",
-                        "description": "Dimension value code to label"
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "date": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "href": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "object",
+                          "properties": {
+                            "p": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "positions-with-no-data": {
+                      "type": "object",
+                      "properties": {
+                        "freq": {
+                          "type": "array"
+                        },
+                        "unit": {
+                          "type": "array"
+                        },
+                        "na_item": {
+                          "type": "array"
+                        },
+                        "geo": {
+                          "type": "array"
+                        },
+                        "time": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer"
+                          }
+                        }
                       }
                     }
                   }
                 }
               }
             },
-            "id": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Ordered list of dimension IDs"
-            },
-            "size": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              },
-              "description": "Size of each dimension"
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }

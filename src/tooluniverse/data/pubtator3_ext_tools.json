@@ -40,96 +40,261 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "PubTator3 BioC JSON annotation results",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "PubTator3": {
-              "type": "array",
-              "description": "Array of annotated publications",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "PubMed ID"
-                  },
-                  "passages": {
-                    "type": "array",
-                    "description": "Article passages (title, abstract) with annotations",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "infons": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "PubTator3": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "infons": {
+                        "type": "object"
+                      },
+                      "passages": {
+                        "type": "array",
+                        "items": {
                           "type": "object",
-                          "description": "Passage metadata (type: title/abstract, journal, year, authors)"
-                        },
-                        "text": {
-                          "type": "string",
-                          "description": "Passage text"
-                        },
-                        "annotations": {
-                          "type": "array",
-                          "description": "Entity annotations found in this passage",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "infons": {
-                                "type": "object",
-                                "description": "Entity details: identifier (e.g., NCBI Gene ID, MeSH ID), type (gene/disease/chemical/species/mutation/cellline), name",
-                                "properties": {
-                                  "identifier": {
-                                    "type": "string"
-                                  },
-                                  "type": {
-                                    "type": "string"
-                                  },
-                                  "name": {
-                                    "type": "string"
-                                  },
-                                  "database": {
-                                    "type": "string"
-                                  }
+                          "properties": {
+                            "infons": {
+                              "type": "object",
+                              "properties": {
+                                "journal": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "year": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "article-id_pmc": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "type": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "authors": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
                                 }
-                              },
-                              "text": {
-                                "type": "string",
-                                "description": "Entity text as it appears in the article"
-                              },
-                              "locations": {
-                                "type": "array",
-                                "description": "Text positions (offset, length)",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "offset": {
-                                      "type": "integer"
-                                    },
-                                    "length": {
-                                      "type": "integer"
+                              }
+                            },
+                            "offset": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "text": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "sentences": {
+                              "type": "array"
+                            },
+                            "annotations": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "infons": {
+                                    "type": "object",
+                                    "properties": {
+                                      "identifier": {
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      },
+                                      "type": {
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      },
+                                      "valid": {
+                                        "type": "boolean"
+                                      },
+                                      "normalized": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": [
+                                            "integer",
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      },
+                                      "database": {
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      },
+                                      "normalized_id": {
+                                        "type": [
+                                          "integer",
+                                          "null",
+                                          "string"
+                                        ]
+                                      },
+                                      "biotype": {
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      },
+                                      "name": {
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      },
+                                      "accession": {
+                                        "type": [
+                                          "null",
+                                          "string"
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  "text": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "locations": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "offset": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "length": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        }
+                                      }
                                     }
                                   }
                                 }
                               }
+                            },
+                            "relations": {
+                              "type": "array"
                             }
                           }
                         }
+                      },
+                      "relations": {
+                        "type": "array"
+                      },
+                      "pmid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "pmcid": {
+                        "type": "null"
+                      },
+                      "meta": {
+                        "type": "object"
+                      },
+                      "date": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "journal": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "authors": {
+                        "type": "array",
+                        "items": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      },
+                      "relations_display": {
+                        "type": "array"
                       }
                     }
                   }
                 }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     },

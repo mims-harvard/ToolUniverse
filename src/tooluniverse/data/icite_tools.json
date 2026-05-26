@@ -30,143 +30,340 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "iCite citation metrics results",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
-              "type": "array",
-              "description": "List of publication citation metrics",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "pmid": {
-                    "type": "integer",
-                    "description": "PubMed ID"
-                  },
-                  "doi": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "DOI"
-                  },
-                  "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Publication title"
-                  },
-                  "journal": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Journal name"
-                  },
-                  "year": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Publication year"
-                  },
-                  "citation_count": {
-                    "type": "integer",
-                    "description": "Total citations received"
-                  },
-                  "citations_per_year": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Average citations per year"
-                  },
-                  "expected_citations_per_year": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Expected citations/year based on field"
-                  },
-                  "field_citation_rate": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Average citation rate in the same field"
-                  },
-                  "nih_percentile": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Citation percentile within NIH-funded papers (0-100)"
-                  },
-                  "apt": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Approximate Potential to Translate score (0-1): likelihood of clinical translation"
-                  },
-                  "is_research_article": {
-                    "type": "boolean",
-                    "description": "True if this is a primary research article"
-                  },
-                  "is_clinical": {
-                    "type": "boolean",
-                    "description": "True if this is a clinical article"
-                  },
-                  "human": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "1 if research involves humans"
-                  },
-                  "animal": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "1 if research involves animals"
-                  },
-                  "molecular_cellular": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "1 if molecular/cellular research"
-                  },
-                  "cited_by": {
-                    "type": "array",
-                    "description": "List of PMIDs that cite this paper",
-                    "items": {
-                      "type": "integer"
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "authors": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "lastName": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "fullName": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "firstName": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "doi": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "pmid": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "animal": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "human": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "apt": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "citedByClinicalArticle": {
+                        "type": "boolean"
+                      },
+                      "citedByPmidsByYear": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "36244096": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "39507426": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "34717201": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "39359723": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "35359543": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "24939975": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "31555204": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "35359563": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "31518578": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "32679995": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "38359253": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "41414399": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "35209409": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "36236933": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "35473031": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "38394080": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "33804690": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "36010775": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "37420482": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "37361425": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "year": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "journal": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "is_research_article": {
+                        "type": "boolean"
+                      },
+                      "citation_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "field_citation_rate": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "expected_citations_per_year": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "citations_per_year": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "relative_citation_ratio": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "nih_percentile": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "molecular_cellular": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "x_coord": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "y_coord": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "is_clinical": {
+                        "type": "boolean"
+                      },
+                      "cited_by_clin": {
+                        "type": "null"
+                      },
+                      "cited_by": {
+                        "type": "array",
+                        "items": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      },
+                      "references": {
+                        "type": "array",
+                        "items": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      },
+                      "provisional": {
+                        "type": "boolean"
+                      }
                     }
-                  },
-                  "cited_by_clin": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "description": "Clinical PMIDs citing this paper"
                   }
                 }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     },
@@ -218,91 +415,729 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "description": "Matching publications with citation metrics",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "pmid": {
-                    "type": "integer"
-                  },
-                  "doi": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "journal": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "year": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "citation_count": {
-                    "type": "integer"
-                  },
-                  "nih_percentile": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "apt": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Approximate Potential to Translate (0-1)"
-                  },
-                  "is_research_article": {
-                    "type": "boolean"
-                  },
-                  "human": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "animal": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "lastName": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "fullName": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "firstName": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
                   }
                 }
+              },
+              "doi": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "pmid": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "title": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "animal": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "human": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "apt": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "citedByClinicalArticle": {
+                "type": "boolean"
+              },
+              "citedByPmidsByYear": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "39835522": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39951991": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38807211": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41342555": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41802075": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40049793": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39993249": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40543226": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39817753": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38421667": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39304386": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39765192": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41562223": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39254767": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39501091": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40210811": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41554333": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41171336": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41499127": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41762747": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "31477031": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "36749493": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40211798": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "34818569": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40631546": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39354765": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38678239": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35001340": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35422214": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35821172": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40351419": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41283249": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40484584": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40142593": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41687243": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40564925": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39430478": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39766883": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41827695": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41673417": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41252478": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40523654": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35233481": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "36331586": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37486153": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37942333": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38398712": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38898690": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38257820": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37146127": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35851461": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "36851087": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40633772": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39665081": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38362368": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37880990": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38539075": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "42010558": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39340030": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39648920": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "36280532": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41438289": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38359993": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "34953348": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37336390": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38458735": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39723654": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35871216": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "36986734": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35108321": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "34032279": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39088986": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37445851": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41256007": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39384157": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37631034": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "39302695": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "38329387": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41635346": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41835055": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37346977": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "35127087": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37401740": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "40933709": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "41781347": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "36133441": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "37514037": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "36267192": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "journal": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "is_research_article": {
+                "type": "boolean"
+              },
+              "citation_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "field_citation_rate": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "expected_citations_per_year": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "citations_per_year": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "relative_citation_ratio": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "nih_percentile": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "molecular_cellular": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "x_coord": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "y_coord": {
+                "type": [
+                  "null",
+                  "number"
+                ]
+              },
+              "is_clinical": {
+                "type": "boolean"
+              },
+              "cited_by_clin": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "cited_by": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "references": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "provisional": {
+                "type": "boolean"
               }
             }
           }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
         }
-      ]
+      }
     },
     "optional_api_keys": [
       "NCBI_API_KEY"

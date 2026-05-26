@@ -19,31 +19,65 @@
           "description": "Constraints (python version, license, etc.)"
         }
       },
-      "required": ["requirements"]
+      "required": [
+        "requirements"
+      ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {"type": "string"},
-        "candidates": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {"type": "string"},
-              "version": {"type": "string"},
-              "quality_score": {"type": "number"},
-              "reasoning": {"type": "string"},
-              "description": {"type": "string"},
-              "has_docs": {"type": "boolean"},
-              "is_stable": {"type": "boolean"}
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "candidates": {
+                  "type": "array"
+                },
+                "recommendation": {
+                  "type": "null"
+                },
+                "message": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
-        "recommendation": {"type": "object"},
-        "total_evaluated": {"type": "integer"}
-      },
-      "required": ["status", "candidates"]
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "test_examples": [
       {
@@ -52,7 +86,11 @@
       }
     ],
     "metadata": {
-      "tags": ["package-discovery", "pypi", "dynamic"],
+      "tags": [
+        "package-discovery",
+        "pypi",
+        "dynamic"
+      ],
       "difficulty_level": "intermediate",
       "estimated_execution_time": "5-15 seconds"
     }

@@ -34,41 +34,83 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "regulatory_elements": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "accession": {
-                "type": "string"
-              },
-              "assay_title": {
-                "type": "string"
-              },
-              "target": {
-                "type": "object"
-              },
-              "biosample_ontology": {
-                "type": "object"
-              },
-              "description": {
-                "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "element_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "regulatory_elements": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": "string"
+                      },
+                      "assay_title": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "biosample": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
-        "gene_name": {
-          "type": "string"
-        },
-        "element_type": {
-          "type": "string"
-        },
-        "count": {
-          "type": "integer"
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      }
+      ]
     },
     "test_examples": [
       {

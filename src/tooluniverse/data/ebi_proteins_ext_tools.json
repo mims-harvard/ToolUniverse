@@ -30,30 +30,30 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "accession": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
+                    "null",
+                    "string"
+                  ]
                 },
                 "entry_name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
+                    "null",
+                    "string"
+                  ]
                 },
                 "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Gene name"
+                  "type": "null"
                 },
                 "features": {
                   "type": "array",
@@ -62,82 +62,96 @@
                     "properties": {
                       "type": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (MUTAGEN)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_start": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_end": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "original_sequence": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Mutant sequence"
+                          "null",
+                          "string"
+                        ]
                       },
                       "description": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Functional effect of mutation"
+                          "null",
+                          "string"
+                        ]
                       },
                       "evidences": {
                         "type": "array",
                         "items": {
-                          "type": "object"
-                        },
-                        "description": "Literature evidence (PMID, etc.)"
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "source_name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "source_id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "source_url": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "description": "Mutagenesis features (max 100)"
+                  }
                 },
                 "total_features": {
-                  "type": "integer",
-                  "description": "Total number of mutagenesis features"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -173,23 +187,27 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "accession": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
+                    "null",
+                    "string"
+                  ]
                 },
                 "entry_name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
+                    "null",
+                    "string"
+                  ]
                 },
                 "features": {
                   "type": "array",
@@ -198,75 +216,92 @@
                     "properties": {
                       "type": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (PROTEOMICS_PTM)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_start": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_end": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "PTM description"
+                        "type": "null"
                       },
                       "evidences": {
                         "type": "array",
                         "items": {
-                          "type": "object"
-                        },
-                        "description": "Evidence from proteomics databases"
+                          "type": "object",
+                          "properties": {
+                            "source": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "url": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "properties": {
+                              "type": "object",
+                              "properties": {
+                                "PEP": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "description": "PTM features (max 100)"
+                  }
                 },
                 "total_features": {
-                  "type": "integer",
-                  "description": "Total number of PTM features"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -314,23 +349,27 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "accession": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
+                    "null",
+                    "string"
+                  ]
                 },
                 "entry_name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
+                    "null",
+                    "string"
+                  ]
                 },
                 "variants": {
                   "type": "array",
@@ -339,38 +378,33 @@
                     "properties": {
                       "position_start": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start residue position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_end": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End residue position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "wild_type": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Wild-type amino acid"
+                          "null",
+                          "string"
+                        ]
                       },
                       "alternative": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Alternative amino acid (mutant)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "source_type": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Variant source (large_scale_study, mixed, uniprot)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "clinical_significances": {
                         "type": [
@@ -378,9 +412,25 @@
                           "null"
                         ],
                         "items": {
-                          "type": "object"
-                        },
-                        "description": "Clinical significance (pathogenic, benign, VUS, etc.)"
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "sources": {
+                              "type": "array",
+                              "items": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              }
+                            }
+                          }
+                        }
                       },
                       "associations": {
                         "type": [
@@ -388,64 +438,111 @@
                           "null"
                         ],
                         "items": {
-                          "type": "object"
-                        },
-                        "description": "Disease/phenotype associations"
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "description": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "is_disease": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
                       },
                       "xrefs": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": "object"
-                        },
-                        "description": "Cross-references (dbSNP, COSMIC, ClinVar)"
+                          "type": "object",
+                          "properties": {
+                            "database": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "url": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "description": "Protein sequence variants (max 100)"
+                  }
                 },
                 "total_variants": {
-                  "type": "integer",
-                  "description": "Total variants matching filter"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "total_all_sources": {
-                  "type": "integer",
-                  "description": "Total variants across all sources"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "source_counts": {
                   "type": "object",
-                  "description": "Count of variants by source type"
+                  "properties": {
+                    "large_scale_study": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "mixed": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "uniprot": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -487,34 +584,39 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "accession": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
+                    "null",
+                    "string"
+                  ]
                 },
                 "entry_name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
+                    "null",
+                    "string"
+                  ]
                 },
                 "sequence_length": {
                   "type": [
-                    "string",
+                    "integer",
                     "null"
-                  ],
-                  "description": "Protein sequence length"
+                  ]
                 },
                 "category_queried": {
-                  "type": "string",
-                  "description": "Category that was queried"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "features": {
                   "type": "array",
@@ -523,38 +625,33 @@
                     "properties": {
                       "type": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (DOMAIN, BINDING, REGION, etc.)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "category": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature category"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_start": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_end": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "description": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature description"
+                          "null",
+                          "string"
+                        ]
                       },
                       "evidences": {
                         "type": [
@@ -562,46 +659,59 @@
                           "null"
                         ],
                         "items": {
-                          "type": "object"
-                        },
-                        "description": "Evidence references"
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "source_name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "source_id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "description": "Protein features (max 100)"
+                  }
                 },
                 "total_features": {
-                  "type": "integer",
-                  "description": "Total features in category"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -637,23 +747,27 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "accession": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
+                    "null",
+                    "string"
+                  ]
                 },
                 "entry_name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
+                    "null",
+                    "string"
+                  ]
                 },
                 "antigenic_regions": {
                   "type": "array",
@@ -662,75 +776,90 @@
                     "properties": {
                       "type": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (ANTIGEN)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_start": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Start position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_end": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "End position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "match_score": {
                         "type": [
                           "integer",
                           "null"
-                        ],
-                        "description": "Match score (0-100)"
+                        ]
                       },
                       "antigen_sequence": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Antigen sequence"
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "evidences": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "source_name": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "source_id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "description": "Antigenic regions"
+                  }
                 },
                 "total_regions": {
-                  "type": "integer",
-                  "description": "Total antigenic regions"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -766,30 +895,33 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "accession": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
+                    "null",
+                    "string"
+                  ]
                 },
                 "name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Protein name"
+                    "null",
+                    "string"
+                  ]
                 },
                 "sequence_length": {
                   "type": [
                     "integer",
                     "null"
-                  ],
-                  "description": "Protein sequence length"
+                  ]
                 },
                 "genomic_mappings": {
                   "type": "array",
@@ -798,89 +930,73 @@
                     "properties": {
                       "ensembl_gene_id": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ensembl gene ID"
+                          "null",
+                          "string"
+                        ]
                       },
                       "ensembl_transcript_id": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ensembl transcript ID"
+                          "null",
+                          "string"
+                        ]
                       },
                       "chromosome": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Chromosome number"
+                          "null",
+                          "string"
+                        ]
                       },
                       "start": {
                         "type": [
                           "integer",
                           "null"
-                        ],
-                        "description": "Genomic start position"
+                        ]
                       },
                       "end": {
                         "type": [
                           "integer",
                           "null"
-                        ],
-                        "description": "Genomic end position"
+                        ]
                       },
                       "reverseStrand": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ],
-                        "description": "Whether on reverse strand"
+                        "type": "boolean"
                       },
                       "num_exons": {
                         "type": [
                           "integer",
                           "null"
-                        ],
-                        "description": "Number of exons"
+                        ]
                       }
                     }
-                  },
-                  "description": "Genomic coordinate mappings"
+                  }
                 },
                 "total_mappings": {
-                  "type": "integer",
-                  "description": "Total number of coordinate mappings"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -916,23 +1032,27 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "accession": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
+                    "null",
+                    "string"
+                  ]
                 },
                 "entry_name": {
                   "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
+                    "null",
+                    "string"
+                  ]
                 },
                 "peptides": {
                   "type": "array",
@@ -941,75 +1061,81 @@
                     "properties": {
                       "type": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (PROTEOMICS)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_start": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Peptide start position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "position_end": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Peptide end position"
+                          "null",
+                          "string"
+                        ]
                       },
                       "peptide": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Peptide sequence"
+                          "null",
+                          "string"
+                        ]
                       },
                       "unique": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ],
-                        "description": "Whether peptide is unique to this protein"
+                        "type": "boolean"
+                      },
+                      "evidences": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "source": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "description": "Detected peptides (max 100)"
+                  }
                 },
                 "total_peptides": {
-                  "type": "integer",
-                  "description": "Total number of detected peptides"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }

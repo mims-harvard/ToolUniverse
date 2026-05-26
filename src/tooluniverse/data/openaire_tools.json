@@ -35,77 +35,81 @@
       ]
     },
     "return_schema": {
-      "type": "object",
-      "description": "OpenAIRE search results with metadata",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "Status of the search operation",
-          "enum": ["success", "error"]
-        },
-        "query": {
-          "type": "string",
-          "description": "The search query that was executed"
-        },
-        "type": {
-          "type": "string",
-          "description": "Type of research product searched",
-          "enum": ["publications", "datasets", "software"]
-        },
-        "total_results": {
-          "type": "integer",
-          "description": "Total number of results found"
-        },
-        "results": {
-          "type": "array",
-          "description": "List of OpenAIRE research products matching the search query",
-          "items": {
-            "type": "object",
-            "properties": {
-              "title": {
-                "type": ["string", "null"],
-                "description": "Title of the research product"
-              },
-              "authors": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
-                "description": "List of author/creator names"
-              },
-              "year": {
-                "type": ["string", "null"],
-                "description": "Publication or creation year"
-              },
-              "doi": {
-                "type": ["string", "null"],
-                "description": "Digital Object Identifier"
-              },
-              "url": {
-                "type": ["string", "null"],
-                "description": "URL to access the research product"
-              },
-              "type": {
-                "type": "string",
-                "description": "Type of research product (publications/datasets/software)"
-              },
-              "source": {
-                "type": "string",
-                "description": "Source identifier (always 'OpenAIRE')"
+                "error": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "reason": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "query": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "type": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "total_results": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "results": {
+                  "type": "array"
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
-        "error": {
-          "type": "string",
-          "description": "Error message if status is error"
-        },
-        "reason": {
-          "type": "string",
-          "description": "Detailed reason for the error if available"
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
-      },
-      "required": ["status", "query", "type", "total_results", "results"]
+      ]
     },
     "test_examples": [
       {

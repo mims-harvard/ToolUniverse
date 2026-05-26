@@ -45,118 +45,414 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Small body database record",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "object": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
               "type": "object",
-              "description": "Object identification and classification",
               "properties": {
-                "des": {
-                  "type": "string",
-                  "description": "Primary designation"
+                "phys_par": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "desc": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "units": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "sigma": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "ref": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "notes": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
                 },
-                "fullname": {
-                  "type": "string",
-                  "description": "Full name (e.g., '1 Ceres (A801 AA)')"
-                },
-                "shortname": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "kind": {
-                  "type": "string",
-                  "description": "Object kind: 'an' (numbered asteroid), 'au' (unnumbered asteroid), 'cn' (numbered comet), 'cu' (unnumbered comet)"
-                },
-                "neo": {
-                  "type": "boolean",
-                  "description": "Near-Earth Object classification"
-                },
-                "pha": {
-                  "type": "boolean",
-                  "description": "Potentially Hazardous Asteroid classification"
-                },
-                "spkid": {
-                  "type": "string",
-                  "description": "JPL SPK body ID"
-                },
-                "orbit_class": {
+                "object": {
                   "type": "object",
                   "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "Orbit class name (e.g., 'Main-belt Asteroid', 'Near-Earth Object, Atira')"
+                    "spkid": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
                     },
-                    "code": {
-                      "type": "string"
+                    "kind": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "fullname": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "orbit_class": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "code": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
+                    },
+                    "orbit_id": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "shortname": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "des": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "prefix": {
+                      "type": "null"
+                    },
+                    "pha": {
+                      "type": "boolean"
+                    },
+                    "neo": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "signature": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "source": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  }
+                },
+                "orbit": {
+                  "type": "object",
+                  "properties": {
+                    "n_obs_used": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "first_obs": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "not_valid_after": {
+                      "type": "null"
+                    },
+                    "soln_date": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "last_obs": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "comment": {
+                      "type": "null"
+                    },
+                    "moid": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "not_valid_before": {
+                      "type": "null"
+                    },
+                    "epoch": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "source": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "model_pars": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "n": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "desc": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "kind": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "name": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "value": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "sigma": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "units": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "pe_used": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "t_jup": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "moid_jup": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "cov_epoch": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "elements": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "sigma": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "name": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "label": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "title": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "units": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "value": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "n_dop_obs_used": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "two_body": {
+                      "type": "null"
+                    },
+                    "rms": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "orbit_id": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "n_del_obs_used": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "condition_code": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "data_arc": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "sb_used": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "equinox": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "producer": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
                     }
                   }
                 }
               }
             },
-            "phys_par": {
-              "type": "array",
-              "description": "Physical parameters list",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Parameter name (H=absolute magnitude, G=slope, diameter, albedo, rot_per)"
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "value": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "sigma": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "units": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "desc": {
-                    "type": "string"
-                  },
-                  "ref": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "orbit": {
-              "type": "object",
-              "description": "Orbital elements and solution details"
-            },
-            "signature": {
+            "metadata": {
               "type": "object"
             }
           }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
@@ -239,52 +535,87 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Close approach data results",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "signature": {
-              "type": "object"
-            },
-            "count": {
-              "type": ["string", "integer"],
-              "description": "Number of results returned"
-            },
-            "total": {
-              "type": ["string", "integer", "null"],
-              "description": "Total matching events"
-            },
-            "fields": {
-              "type": "array",
-              "description": "Column names for data rows: des (designation), orbit_id, jd (Julian date), cd (calendar date), dist (distance AU), dist_min, dist_max, v_rel (relative velocity km/s), v_inf, t_sigma_f, h (absolute magnitude)",
-              "items": {
-                "type": "string"
-              }
+            "status": {
+              "const": "success"
             },
             "data": {
-              "type": "array",
-              "description": "Close approach records as arrays matching field order",
-              "items": {
-                "type": "array",
-                "description": "Row: [designation, orbit_id, Julian_date, calendar_date, distance_AU, dist_min_AU, dist_max_AU, v_rel_km_s, v_inf_km_s, time_sigma, h_magnitude]",
-                "items": {
+              "type": "object",
+              "properties": {
+                "signature": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "source": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  }
+                },
+                "count": {
                   "type": [
-                    "string",
+                    "integer",
                     "null"
                   ]
+                },
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "fields": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  }
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  }
                 }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }

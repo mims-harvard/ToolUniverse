@@ -17,80 +17,332 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of publicly available GRADE-based clinical guidelines from MAGICapp",
-          "items": {
-            "type": "object",
-            "properties": {
-              "guidelineId": {
-                "type": "integer",
-                "description": "Numeric guideline ID (use published version ID for API lookups)"
-              },
-              "publishedId": {
-                "type": "integer",
-                "description": "Published version ID - use this for MAGICapp_get_guideline and MAGICapp_get_recommendations"
-              },
-              "shortCode": {
-                "type": "string",
-                "description": "Short alphanumeric code for the guideline"
-              },
-              "name": {
-                "type": "string",
-                "description": "Full name of the clinical guideline"
-              },
-              "owner": {
-                "type": "string",
-                "description": "Organization that owns/published the guideline (e.g., WHO, ADA)"
-              },
-              "language": {
-                "type": "string",
-                "description": "Language code (e.g., 'en' for English)"
-              },
-              "countryFlag": {
-                "type": "string",
-                "description": "Country code for the guideline's origin"
-              },
-              "isPublic": {
-                "type": "boolean",
-                "description": "Whether the guideline is publicly accessible"
-              },
-              "publishedRecommendationCount": {
-                "type": "integer",
-                "description": "Number of published clinical recommendations"
-              },
-              "publishedPicoCount": {
-                "type": "integer",
-                "description": "Number of PICO (Patient/Intervention/Comparison/Outcome) questions"
-              },
-              "versionLabel": {
-                "type": "string",
-                "description": "Version number label (e.g., '1.2')"
-              },
-              "publishDate": {
-                "type": ["string", "null"],
-                "description": "Publication date"
-              },
-              "pdfPublishedPath": {
-                "type": ["string", "null"],
-                "description": "URL to the published PDF version"
-              },
-              "jsonPath": {
-                "type": ["string", "null"],
-                "description": "URL to the full JSON export of the guideline"
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "byName": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "shortCode": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "owner": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "mainEditor": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "startDate": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "lastEdit": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "language": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "countryFlag": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "sponsors": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "disclaimer": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "contactName": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "contactAddress": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "contactEmail": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "contactTelephone": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "institutionId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "institutionName": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "institutionUrl": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "institutionLogoUrl": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "institutionShortName": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "institutionGradeStrength": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "hasAltGrade": {
+                    "type": "boolean"
+                  },
+                  "guidelineId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "currentDraftId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "publishedId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "editDraft": {
+                    "type": "boolean"
+                  },
+                  "editPublish": {
+                    "type": "boolean"
+                  },
+                  "permissionDraft": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "permissionPublish": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "isLatestPublished": {
+                    "type": "boolean"
+                  },
+                  "isDraftEditable": {
+                    "type": "boolean"
+                  },
+                  "isPublic": {
+                    "type": "boolean"
+                  },
+                  "versionMajor": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "versionMinor": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "versionLabel": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "draftPicoCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "draftRecommendationCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "publishedPicoCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "publishedRecommendationCount": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "pdfPublishedPath": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "jsonPath": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "contentAdmin": {
+                    "type": "boolean"
+                  },
+                  "status": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "commentsInPublished": {
+                    "type": "boolean"
+                  },
+                  "publishCreationTime": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "publishDate": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "publishLastSearchDate": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "trackChanges": {
+                    "type": "boolean"
+                  },
+                  "sectionNumbers": {
+                    "type": "boolean"
+                  },
+                  "showRecByline": {
+                    "type": "boolean"
+                  },
+                  "showRecNumbers": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "showConflicts": {
+                    "type": "boolean"
+                  },
+                  "showCertaintyStrengthLabels": {
+                    "type": "boolean"
+                  },
+                  "showSectionPreview": {
+                    "type": "boolean"
+                  },
+                  "subscriptions": {
+                    "type": "boolean"
+                  }
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
@@ -106,123 +358,528 @@
           "description": "Numeric guideline ID (use the publishedId from MAGICapp_list_guidelines, e.g., 10962, 10258, 7594)"
         }
       },
-      "required": ["guideline_id"]
+      "required": [
+        "guideline_id"
+      ]
     },
     "fields": {
       "endpoint": "https://api.magicapp.org/api/v1/guidelines/{guideline_id}"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"guideline_id": 10962},
-      {"guideline_id": 10258},
-      {"guideline_id": 7594}
+      {
+        "guideline_id": 10962
+      },
+      {
+        "guideline_id": 10258
+      },
+      {
+        "guideline_id": 7594
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Detailed guideline information from MAGICapp",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "guidelineId": {
-              "type": "integer",
-              "description": "Guideline ID"
+            "status": {
+              "const": "success"
             },
-            "name": {
-              "type": "string",
-              "description": "Full name of the clinical guideline"
+            "data": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "byName": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "shortCode": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "owner": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "mainEditor": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "startDate": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "lastEdit": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "language": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "countryFlag": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "sponsors": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "disclaimer": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "isbn": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "issn": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "orgDocId": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "department": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "contactName": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "contactAddress": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "contactEmail": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "contactTelephone": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "contactWeb": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "institutionId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "institutionName": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "institutionLogoUrl": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "institutionShortName": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "institutionGradeStrength": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "hasAltGrade": {
+                  "type": "boolean"
+                },
+                "guidelineId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "currentDraftId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "publishedId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "edit": {
+                  "type": "boolean"
+                },
+                "permission": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "isLatestPublished": {
+                  "type": "boolean"
+                },
+                "isDraftEditable": {
+                  "type": "boolean"
+                },
+                "isPublic": {
+                  "type": "boolean"
+                },
+                "versionMajor": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "versionMinor": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "draftPicoCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "draftRecommendationCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "publishedPicoCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "publishedRecommendationCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "pdfPublishedPath": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "jsonPath": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "contentAdmin": {
+                  "type": "boolean"
+                },
+                "status": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "commentsInPublished": {
+                  "type": "boolean"
+                },
+                "publishCreationTime": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "publishDate": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "publishLastSearchDate": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "trackChanges": {
+                  "type": "boolean"
+                },
+                "sectionNumbers": {
+                  "type": "boolean"
+                },
+                "showRecByline": {
+                  "type": "boolean"
+                },
+                "showRecNumbers": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "showConflicts": {
+                  "type": "boolean"
+                },
+                "showCertaintyStrengthLabels": {
+                  "type": "boolean"
+                },
+                "showSectionPreview": {
+                  "type": "boolean"
+                },
+                "subscriptions": {
+                  "type": "boolean"
+                },
+                "defaultKeyInfoType": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "pdfSettings": {
+                  "type": "object",
+                  "properties": {
+                    "pdfPageSize": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "pdfCoverPage": {
+                      "type": "object",
+                      "properties": {
+                        "image": {
+                          "type": "null"
+                        },
+                        "fileName": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "fileType": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "fileUrl": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
+                    },
+                    "pdfLastPage": {
+                      "type": "object",
+                      "properties": {
+                        "image": {
+                          "type": "null"
+                        },
+                        "fileName": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "fileType": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "fileUrl": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
+                    },
+                    "pdfSectionTitleColor": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "pdfTabText": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "pdfSectionText": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "pdfPicoReferences": {
+                      "type": "boolean"
+                    },
+                    "pdfPageB": {
+                      "type": "boolean"
+                    },
+                    "pdfSubChpPageBreak": {
+                      "type": "boolean"
+                    },
+                    "pdfPage2": {
+                      "type": "boolean"
+                    },
+                    "pdfTOC": {
+                      "type": "boolean"
+                    },
+                    "pdfSOR": {
+                      "type": "boolean"
+                    },
+                    "pdfTrackChanges": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "pdfWatermark": {
+                      "type": "boolean"
+                    },
+                    "pdfHideHiddenRecInDraft": {
+                      "type": "boolean"
+                    },
+                    "pdfHeadFont": {
+                      "type": "null"
+                    },
+                    "pdfHeadSize": {
+                      "type": "null"
+                    },
+                    "pdfHeadSub1Size": {
+                      "type": "null"
+                    },
+                    "pdfHeadSub2Size": {
+                      "type": "null"
+                    },
+                    "pdfHeadSub3Size": {
+                      "type": "null"
+                    },
+                    "pdfTextFont": {
+                      "type": "null"
+                    },
+                    "pdfTextSize": {
+                      "type": "null"
+                    },
+                    "pdfOnlySOR": {
+                      "type": "boolean"
+                    },
+                    "pdfPicoInAppendix": {
+                      "type": "boolean"
+                    },
+                    "pdfPicoFootNotes": {
+                      "type": "boolean"
+                    },
+                    "pdfHidePicos": {
+                      "type": "boolean"
+                    },
+                    "pdfCiteSquare": {
+                      "type": "boolean"
+                    },
+                    "saveSettings": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "gradeStrengthLabel": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "keyInfoJudgementType": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                }
+              }
             },
-            "byName": {
-              "type": "string",
-              "description": "Short name or subtitle"
-            },
-            "owner": {
-              "type": "string",
-              "description": "Organization that published the guideline"
-            },
-            "mainEditor": {
-              "type": "string",
-              "description": "Main editor or lead author"
-            },
-            "language": {
-              "type": "string",
-              "description": "Language code"
-            },
-            "sponsors": {
-              "type": "string",
-              "description": "Funding/sponsorship information (may contain HTML)"
-            },
-            "description": {
-              "type": "string",
-              "description": "Guideline description"
-            },
-            "contactName": {
-              "type": "string",
-              "description": "Contact person name"
-            },
-            "contactEmail": {
-              "type": "string",
-              "description": "Contact email"
-            },
-            "institutionName": {
-              "type": "string",
-              "description": "Authoring institution name"
-            },
-            "institutionUrl": {
-              "type": ["string", "null"],
-              "description": "Institution website URL"
-            },
-            "isPublic": {
-              "type": "boolean",
-              "description": "Whether publicly accessible"
-            },
-            "versionMajor": {
-              "type": "integer",
-              "description": "Major version number"
-            },
-            "versionMinor": {
-              "type": "integer",
-              "description": "Minor version number"
-            },
-            "draftRecommendationCount": {
-              "type": "integer",
-              "description": "Number of recommendations in current draft"
-            },
-            "publishedRecommendationCount": {
-              "type": "integer",
-              "description": "Number of published recommendations"
-            },
-            "pdfPublishedPath": {
-              "type": ["string", "null"],
-              "description": "URL to published PDF"
-            },
-            "jsonPath": {
-              "type": ["string", "null"],
-              "description": "URL to full JSON export"
-            },
-            "publishDate": {
-              "type": ["string", "null"],
-              "description": "Publication date"
-            },
-            "publishLastSearchDate": {
-              "type": ["string", "null"],
-              "description": "Date of last evidence search"
-            },
-            "institutionGradeStrength": {
-              "type": "string",
-              "description": "GRADE strength scale used (e.g., 'STRONG_WEAK')"
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
@@ -238,124 +895,2278 @@
           "description": "Numeric guideline ID (use the publishedId from MAGICapp_list_guidelines, e.g., 10962 for oral cancer screening, 10258 for WHO mpox guidelines)"
         }
       },
-      "required": ["guideline_id"]
+      "required": [
+        "guideline_id"
+      ]
     },
     "fields": {
       "endpoint": "https://api.magicapp.org/api/v1/guidelines/{guideline_id}/recommendations"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"guideline_id": 10962},
-      {"guideline_id": 10258},
-      {"guideline_id": 7594}
+      {
+        "guideline_id": 10962
+      },
+      {
+        "guideline_id": 10258
+      },
+      {
+        "guideline_id": 7594
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of clinical recommendations from the guideline",
-          "items": {
-            "type": "object",
-            "properties": {
-              "recommendationId": {
-                "type": "integer",
-                "description": "Unique recommendation ID"
-              },
-              "shortCode": {
-                "type": "string",
-                "description": "Short alphanumeric code"
-              },
-              "guidelineId": {
-                "type": "integer",
-                "description": "Parent guideline ID"
-              },
-              "sectionId": {
-                "type": "integer",
-                "description": "Section containing this recommendation"
-              },
-              "strength": {
-                "type": "string",
-                "description": "GRADE recommendation strength: STRONG (high confidence), WEAK (conditional), PRACTICE (good practice statement), NO_STRENGTH (not graded)"
-              },
-              "status": {
-                "type": "string",
-                "description": "Recommendation status (NEW, UPDATED, etc.)"
-              },
-              "text": {
-                "type": "string",
-                "description": "Full recommendation text (HTML format with clinical details)"
-              },
-              "remarks": {
-                "type": "string",
-                "description": "Additional remarks and implementation notes (HTML)"
-              },
-              "advice": {
-                "type": "string",
-                "description": "Clinical advice for implementation"
-              },
-              "rational": {
-                "type": "string",
-                "description": "Rationale for the recommendation"
-              },
-              "implementation": {
-                "type": "string",
-                "description": "Implementation considerations"
-              },
-              "research": {
-                "type": "string",
-                "description": "Research priorities related to this recommendation"
-              },
-              "keyInfoType": {
-                "type": "string",
-                "description": "Key information type (e.g., 'ETD' for Evidence to Decision)"
-              },
-              "keyInfo": {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Key information including benefits, evidence quality, patient preferences, and resource implications",
                 "properties": {
-                  "benefits": {
-                    "type": "string",
-                    "description": "Benefits assessment"
+                  "recommendationId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
-                  "evidence": {
-                    "type": "string",
-                    "description": "Evidence quality assessment"
+                  "shortCode": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
                   },
-                  "preferences": {
-                    "type": "string",
-                    "description": "Patient values and preferences"
+                  "guidelineId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
-                  "resources": {
-                    "type": "string",
-                    "description": "Resource requirements"
+                  "sectionId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
-                  "benefitsStrength": {
-                    "type": "string",
-                    "description": "GRADE certainty of benefits (NOTSET, VERY_LOW, LOW, MODERATE, HIGH)"
+                  "order": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
-                  "evidenceStrength": {
-                    "type": "string",
-                    "description": "GRADE certainty of evidence"
+                  "strength": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "heading": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "text": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "remarks": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "advice": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "rational": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "adaptation": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "implementation": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "evaluation": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "research": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "keyInfoType": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "keyInfoDisplayMode": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "hideInPublish": {
+                    "type": "boolean"
+                  },
+                  "picoIds": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "keyInfo": {
+                    "type": "object",
+                    "properties": {
+                      "keyInfoType": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "recommendationId": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "guidelineId": {
+                        "type": "null"
+                      },
+                      "sectionId": {
+                        "type": "null"
+                      },
+                      "benefits": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "benefitsResearchEvidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "benefitsResearchEvidenceInPublic": {
+                        "type": "boolean"
+                      },
+                      "benefitsAdditionalConsideration": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "benefitsAdditionalConsiderationInPublic": {
+                        "type": "boolean"
+                      },
+                      "evidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "evidenceResearchEvidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "evidenceResearchEvidenceInPublic": {
+                        "type": "boolean"
+                      },
+                      "evidenceAdditionalConsideration": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "evidenceAdditionalConsiderationInPublic": {
+                        "type": "boolean"
+                      },
+                      "preferences": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "preferencesResearchEvidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "preferencesResearchEvidenceInPublic": {
+                        "type": "boolean"
+                      },
+                      "preferencesAdditionalConsideration": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "preferencesAdditionalConsiderationInPublic": {
+                        "type": "boolean"
+                      },
+                      "resources": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "resourcesResearchEvidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "resourcesResearchEvidenceInPublic": {
+                        "type": "boolean"
+                      },
+                      "resourcesAdditionalConsideration": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "resourcesAdditionalConsiderationInPublic": {
+                        "type": "boolean"
+                      },
+                      "benefitsStrength": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "evidenceStrength": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "preferencesStrength": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "resourcesStrength": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "interventions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "recommendationId": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "picoId": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "picoElement": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "intervention": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "isComparator": {
+                              "type": "boolean"
+                            },
+                            "showComparator": {
+                              "type": "boolean"
+                            },
+                            "sortOrder": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "judgements": {
+                              "type": "object",
+                              "properties": {
+                                "BENEFITS_DESIRABLE": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "BENEFITS_UNDESIRABLE": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "EVIDENCE": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "PREFERENCES": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "RESOURCES": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "EQUITY": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "ACCEPTABILITY": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "FEASIBILITY": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                }
+                              }
+                            },
+                            "comparator": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "isSummaryOfJudgementPublic": {
+                        "type": "boolean"
+                      },
+                      "acceptabilityStrength": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "acceptability": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "acceptabilityResearchEvidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "acceptabilityResearchEvidenceInPublic": {
+                        "type": "boolean"
+                      },
+                      "acceptabilityAdditionalConsideration": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "acceptabilityAdditionalConsiderationInPublic": {
+                        "type": "boolean"
+                      },
+                      "equityStrength": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "equity": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "equityResearchEvidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "equityResearchEvidenceInPublic": {
+                        "type": "boolean"
+                      },
+                      "equityAdditionalConsideration": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "equityAdditionalConsiderationInPublic": {
+                        "type": "boolean"
+                      },
+                      "feasibilityStrength": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "feasibility": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "feasibilityResearchEvidence": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "feasibilityResearchEvidenceInPublic": {
+                        "type": "boolean"
+                      },
+                      "feasibilityAdditionalConsideration": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "feasibilityAdditionalConsiderationInPublic": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "interventions": {
+                    "type": "object",
+                    "properties": {
+                      "recommendationId": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "shortCode": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "guidelineId": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "sectionId": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "emrImplement": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "emrResources": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "targetPopulation": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "recommendedInvention": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "codes": {
+                        "type": "array"
+                      }
+                    }
+                  },
+                  "emrCodes": {
+                    "type": "array"
+                  },
+                  "picos": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "picoId": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "sectionId": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "order": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "population": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "populationShortName": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "intervention": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "interventionShortName": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "comparator": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "comparatorShortName": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "shortCode": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "summary": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "outcomes": {
+                          "type": "object",
+                          "properties": {
+                            "picoId": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "sectionId": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "guidelineId": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "dichotomousOutcomes": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "outcomeId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "picoId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "sectionId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "guidelineId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "status": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "isHidden": {
+                                    "type": "boolean"
+                                  },
+                                  "sortOrder": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "shortCode": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "outcome": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "shortName": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "importanceLevel": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionStudies": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionTotalParticipants": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "interventionReferenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorReferenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityInterventionStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityOfEvidenceLevel": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityOfEvidenceComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityRiskOfBias": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityInconsistency": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityIndirectness": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityIndirectnessComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityImprecision": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityPublicationBias": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityUpgrade": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "plainSummaryComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "directionOfEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifference": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "absoluteDifferenceDirection": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceConfidenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceLow": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "absoluteDifferenceLowDirection": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceHigh": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "absoluteDifferenceHighDirection": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "relativeEffect": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "relativeEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "relativeEffectConfidenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "relativeEffectConfidenceLow": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "relativeEffectConfidenceHigh": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "comparatorEffect": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "comparatorEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionEffect": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "interventionEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "autoCalcInterventions": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "shadow_PARENT_ID_FOR_MERGING": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "qualityRiskOfBiasComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityImprecisionComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityRiskOfBiasIssues": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "type": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "comparatorStudies": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorTotalParticipants": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "comparatorTotalEvents": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "qualityUpgradeComment": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "timeFrame": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "description": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionStudyFollowUp": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorFollowUp": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityInconsistencyComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityPublicationBiasComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityInconsistencyIssues": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "type": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "qualityPublicationBiasIssues": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "type": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "continuousOutcomes": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "outcomeId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "picoId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "sectionId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "guidelineId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "status": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "isHidden": {
+                                    "type": "boolean"
+                                  },
+                                  "sortOrder": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "shortCode": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "outcome": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "shortName": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "importanceLevel": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionStudies": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionReferenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorReferenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityInterventionStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityOfEvidenceLevel": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityOfEvidenceComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityRiskOfBias": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityRiskOfBiasComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityInconsistency": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityIndirectness": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityImprecision": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityPublicationBias": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityPublicationBiasComment": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "qualityUpgrade": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityRiskOfBiasIssues": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "type": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "qualityPublicationBiasIssues": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "type": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "plainSummaryComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "directionOfEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "measurementLabel": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "scaleLow": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "scaleDirection": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "unit": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionEffect": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionEffectConfidenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionEffectConfidenceLow": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionEffectConfidenceHigh": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorEffect": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorEffectConfidenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorEffectConfidenceLow": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorEffectConfidenceHigh": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifference": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceDirection": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceConfidenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceLow": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceLowDirection": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceHigh": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceHighDirection": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "absoluteDifferenceDirectionType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "shadow_PARENT_ID_FOR_MERGING": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "qualityInconsistencyComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "description": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "interventionTotalParticipants": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "qualityInconsistencyIssues": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "description": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "type": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "scaleHigh": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "nonPoolableOutcomes": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "outcomeId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "picoId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "sectionId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "guidelineId": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "status": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "isHidden": {
+                                    "type": "boolean"
+                                  },
+                                  "sortOrder": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "shortCode": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "outcome": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "shortName": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "importanceLevel": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionStudies": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionTotalParticipants": {
+                                    "type": [
+                                      "null",
+                                      "number"
+                                    ]
+                                  },
+                                  "interventionReferenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "interventionStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "comparatorReferenceType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "extraReferences": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "referenceId": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "referenceNumber": {
+                                          "type": [
+                                            "integer",
+                                            "null"
+                                          ]
+                                        },
+                                        "authors": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "id": {},
+                                              "firstName": {},
+                                              "lastName": {},
+                                              "formattedName": {}
+                                            }
+                                          }
+                                        },
+                                        "titleText": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "url": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "doi": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "pmid": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "journal": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "year": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "volume": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "issue": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "pageStart": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "pageEnd": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "creationType": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "comment": {
+                                          "type": [
+                                            "null",
+                                            "string"
+                                          ]
+                                        },
+                                        "attachedFiles": {
+                                          "type": "array"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "qualityInterventionStudyType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityOfEvidenceLevel": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityOfEvidenceComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityRiskOfBias": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityRiskOfBiasComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityInconsistency": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityIndirectness": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityIndirectnessComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityImprecision": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityImprecisionComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityPublicationBias": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "qualityUpgrade": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "plainSummaryComment": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "directionOfEffectType": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "estimatesDescription": {
+                                    "type": [
+                                      "null",
+                                      "string"
+                                    ]
+                                  },
+                                  "shadow_PARENT_ID_FOR_MERGING": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  }
+                                }
+                              }
+                            },
+                            "practicalIssues": {
+                              "type": "array"
+                            }
+                          }
+                        },
+                        "guidelineId": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "references": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "referenceId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "referenceNumber": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "authors": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": [
+                                        "integer",
+                                        "null"
+                                      ]
+                                    },
+                                    "firstName": {
+                                      "type": [
+                                        "null",
+                                        "string"
+                                      ]
+                                    },
+                                    "lastName": {
+                                      "type": [
+                                        "null",
+                                        "string"
+                                      ]
+                                    },
+                                    "formattedName": {
+                                      "type": [
+                                        "null",
+                                        "string"
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "titleText": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "url": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "doi": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "pmid": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "journal": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "year": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "volume": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "issue": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "pageStart": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "pageEnd": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "creationType": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "guidelineId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "shortName": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "order": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "referenceType": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "studyType": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "attachedFiles": {
+                                "type": "array"
+                              },
+                              "abstractText": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "comments": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "selected": {
+                                "type": "boolean"
+                              },
+                              "usageCount": {
+                                "type": "null"
+                              },
+                              "referencePicos": {
+                                "type": "array"
+                              },
+                              "files": {
+                                "type": "array"
+                              },
+                              "results": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "picoCodes": {
+                          "type": "array"
+                        }
+                      }
+                    }
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "referenceId": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "referenceNumber": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "authors": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "firstName": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "lastName": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              "formattedName": {
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "titleText": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "url": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "doi": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "pmid": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "journal": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "year": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "volume": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "issue": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "pageStart": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "pageEnd": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "creationType": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "guidelineId": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "shortName": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "order": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "referenceType": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "studyType": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "attachedFiles": {
+                          "type": "array"
+                        },
+                        "abstractText": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "comments": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "selected": {
+                          "type": "boolean"
+                        },
+                        "usageCount": {
+                          "type": "null"
+                        },
+                        "referencePicos": {
+                          "type": "array"
+                        },
+                        "files": {
+                          "type": "array"
+                        },
+                        "results": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "files": {
+                    "type": "array"
+                  },
+                  "images": {
+                    "type": "array"
+                  },
+                  "referenceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
                   }
                 }
-              },
-              "hideInPublish": {
-                "type": "boolean",
-                "description": "Whether hidden in published version"
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
@@ -371,81 +3182,143 @@
           "description": "Numeric guideline ID (use the publishedId from MAGICapp_list_guidelines, e.g., 10962 for oral cancer screening, 10258 for WHO mpox guidelines)"
         }
       },
-      "required": ["guideline_id"]
+      "required": [
+        "guideline_id"
+      ]
     },
     "fields": {
       "endpoint": "https://api.magicapp.org/api/v1/guidelines/{guideline_id}/sections"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"guideline_id": 10962},
-      {"guideline_id": 10258}
+      {
+        "guideline_id": 10962
+      },
+      {
+        "guideline_id": 10258
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of guideline sections organized hierarchically",
-          "items": {
-            "type": "object",
-            "properties": {
-              "sectionId": {
-                "type": "integer",
-                "description": "Unique section ID"
-              },
-              "guidelineId": {
-                "type": "integer",
-                "description": "Parent guideline ID"
-              },
-              "parentId": {
-                "type": "integer",
-                "description": "Parent section ID (0 for top-level sections)"
-              },
-              "order": {
-                "type": "integer",
-                "description": "Display order within parent"
-              },
-              "sectionType": {
-                "type": "string",
-                "description": "Section type (STANDARD, RECOMMENDATION, etc.)"
-              },
-              "shortCode": {
-                "type": "string",
-                "description": "Short alphanumeric code"
-              },
-              "sectionLabel": {
-                "type": "string",
-                "description": "Section label (e.g., '1', '1.1')"
-              },
-              "sectionNumber": {
-                "type": "string",
-                "description": "Section number"
-              },
-              "heading": {
-                "type": "string",
-                "description": "Section heading (HTML format)"
-              },
-              "text": {
-                "type": "string",
-                "description": "Section content text (HTML format with clinical information)"
-              },
-              "isNumbered": {
-                "type": "boolean",
-                "description": "Whether the section is numbered"
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "guidelineId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "sectionId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "parentId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "order": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "sectionType": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "shortCode": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "sectionLabel": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "sectionNumber": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "isNumbered": {
+                    "type": "boolean"
+                  },
+                  "heading": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "text": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "counts": {
+                    "type": "object",
+                    "properties": {
+                      "picoCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "recommendationCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "hasUncommittedChanges": {
+                    "type": "boolean"
+                  }
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
@@ -479,123 +3352,330 @@
           "description": "Filter by research area key: 'cancer_treatment', 'cancer_biology', 'cancer_omics', 'screening_detection', 'causes_of_cancer', 'cancer_health_disparities', 'cancer_statistics', 'cancer_prevention', 'cancer_diagnosis', 'cancer_survivorship'"
         }
       },
-      "required": ["q"]
+      "required": [
+        "q"
+      ]
     },
     "fields": {
       "endpoint": "https://webapis.cancer.gov/r4r/v1/resources"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"q": "breast cancer treatment", "size": 5},
-      {"q": "genomics analysis tools", "size": 5, "toolTypes": "analysis_tools"},
-      {"q": "clinical trial", "size": 5, "researchAreas": "cancer_treatment"}
+      {
+        "q": "breast cancer treatment",
+        "size": 5
+      },
+      {
+        "q": "genomics analysis tools",
+        "size": 5,
+        "toolTypes": "analysis_tools"
+      },
+      {
+        "q": "clinical trial",
+        "size": 5,
+        "researchAreas": "cancer_treatment"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "NCI R4R search results containing cancer research resources",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "meta": {
-              "type": "object",
-              "description": "Result metadata",
-              "properties": {
-                "totalResults": {
-                  "type": "integer",
-                  "description": "Total number of matching resources"
-                },
-                "from": {
-                  "type": "integer",
-                  "description": "Result offset"
-                },
-                "originalQuery": {
-                  "type": "string",
-                  "description": "The query as processed by the API"
-                }
-              }
+            "status": {
+              "const": "success"
             },
-            "results": {
-              "type": "array",
-              "description": "Matching cancer research resources",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "description": "Resource ID"
-                  },
-                  "title": {
-                    "type": "string",
-                    "description": "Resource title"
-                  },
-                  "website": {
-                    "type": "string",
-                    "description": "URL to the resource"
-                  },
-                  "body": {
-                    "type": "string",
-                    "description": "Full description (HTML)"
-                  },
-                  "description": {
-                    "type": "string",
-                    "description": "Short description (HTML)"
-                  },
-                  "toolTypes": {
-                    "type": "array",
-                    "description": "Tool type classifications",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {"type": "string"},
-                        "label": {"type": "string"}
+            "data": {
+              "type": "object",
+              "properties": {
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "totalResults": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "from": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "originalQuery": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  }
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "website": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "body": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "toolTypes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "label": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "toolSubtypes": {
+                        "type": "null"
+                      },
+                      "researchAreas": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "label": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "researchTypes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "label": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "resourceAccess": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          },
+                          "notes": {
+                            "type": [
+                              "null",
+                              "string"
+                            ]
+                          }
+                        }
+                      },
+                      "doCs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "label": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "poCs": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "object",
+                              "properties": {
+                                "prefix": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "firstName": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "middleName": {
+                                  "type": "null"
+                                },
+                                "lastName": {
+                                  "type": [
+                                    "null",
+                                    "string"
+                                  ]
+                                },
+                                "suffix": {
+                                  "type": "null"
+                                }
+                              }
+                            },
+                            "title": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "phone": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "email": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "researchAreas": {
-                    "type": "array",
-                    "description": "Research area classifications",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {"type": "string"},
-                        "label": {"type": "string"}
+                  }
+                },
+                "facets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "param": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "label": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "count": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "selected": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
                       }
                     }
-                  },
-                  "researchTypes": {
-                    "type": "array",
-                    "description": "Research type classifications",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {"type": "string"},
-                        "label": {"type": "string"}
-                      }
-                    }
-                  },
-                  "docs": {
-                    "type": "array",
-                    "description": "Related documentation links"
-                  },
-                  "pocs": {
-                    "type": "array",
-                    "description": "Points of contact"
                   }
                 }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
@@ -611,94 +3691,162 @@
           "description": "Pretty URL name (slug) of the drug (e.g., 'pembrolizumab', 'tamoxifen-citrate', 'nivolumab', 'trastuzumab')"
         }
       },
-      "required": ["drug_name"]
+      "required": [
+        "drug_name"
+      ]
     },
     "fields": {
       "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/{drug_name}"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"drug_name": "pembrolizumab"},
-      {"drug_name": "tamoxifen-citrate"},
-      {"drug_name": "nivolumab"}
+      {
+        "drug_name": "pembrolizumab"
+      },
+      {
+        "drug_name": "tamoxifen-citrate"
+      },
+      {
+        "drug_name": "nivolumab"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Detailed cancer drug information from NCI Drug Dictionary",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "termId": {
-              "type": "integer",
-              "description": "NCI drug term ID"
+            "status": {
+              "const": "success"
             },
-            "name": {
-              "type": "string",
-              "description": "Preferred drug name"
-            },
-            "prettyUrlName": {
-              "type": "string",
-              "description": "URL-friendly name slug"
-            },
-            "firstLetter": {
-              "type": "string",
-              "description": "First letter of the drug name"
-            },
-            "type": {
-              "type": "string",
-              "description": "Term type (DrugTerm)"
-            },
-            "termNameType": {
-              "type": "string",
-              "description": "Name type (PreferredName)"
-            },
-            "nciConceptId": {
-              "type": "string",
-              "description": "NCI Thesaurus concept ID (e.g., 'C68814')"
-            },
-            "nciConceptName": {
-              "type": "string",
-              "description": "NCI concept name"
-            },
-            "definition": {
+            "data": {
               "type": "object",
-              "description": "Drug definition with HTML and plain text versions",
               "properties": {
-                "html": {"type": "string", "description": "Definition in HTML format"},
-                "text": {"type": "string", "description": "Definition in plain text"}
-              }
-            },
-            "aliases": {
-              "type": "array",
-              "description": "Drug aliases including brand names, synonyms, code names, and CAS numbers",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "type": {"type": "string", "description": "Alias type (USBrandName, Synonym, CodeName, CASRegistryName, ChemicalStructureName, ForeignBrandName, Abbreviation, ObsoleteName)"},
-                  "name": {"type": "string", "description": "Alias value"}
+                "aliases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "definition": {
+                  "type": "object",
+                  "properties": {
+                    "html": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "text": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  }
+                },
+                "drugInfoSummaryLink": {
+                  "type": "object",
+                  "properties": {
+                    "uri": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "text": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    }
+                  }
+                },
+                "nciConceptId": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "nciConceptName": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "termId": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "firstLetter": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "type": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "termNameType": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "prettyUrlName": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 }
               }
             },
-            "drugInfoSummaryLink": {
-              "type": ["object", "null"],
-              "description": "Link to NCI drug information summary page",
-              "properties": {
-                "uri": {"type": "string"},
-                "text": {"type": "string"}
-              }
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
@@ -724,90 +3872,133 @@
           "default": 0
         }
       },
-      "required": ["letter"]
+      "required": [
+        "letter"
+      ]
     },
     "fields": {
       "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/expand/{letter}"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"letter": "a", "size": 5},
-      {"letter": "p", "size": 5},
-      {"letter": "t", "size": 5}
+      {
+        "letter": "a",
+        "size": 5
+      },
+      {
+        "letter": "p",
+        "size": 5
+      },
+      {
+        "letter": "t",
+        "size": 5
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "NCI Drug Dictionary browse results for a letter",
+          "required": [
+            "status"
+          ],
           "properties": {
-            "meta": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
               "type": "object",
-              "description": "Result metadata",
               "properties": {
-                "totalResults": {
-                  "type": "integer",
-                  "description": "Total drugs starting with this letter"
-                },
-                "from": {
-                  "type": "integer",
-                  "description": "Offset"
-                }
-              }
-            },
-            "results": {
-              "type": "array",
-              "description": "Drug entries starting with the specified letter",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "termId": {
-                    "type": "integer",
-                    "description": "Drug term ID"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Drug name or alias"
-                  },
-                  "firstLetter": {
-                    "type": "string",
-                    "description": "First letter"
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "Entry type: 'DrugTerm' (primary name) or 'DrugAlias' (alternative name)"
-                  },
-                  "termNameType": {
-                    "type": "string",
-                    "description": "Name classification (PreferredName, USBrandName, CodeName, etc.)"
-                  },
-                  "prettyUrlName": {
-                    "type": "string",
-                    "description": "URL-friendly name for detailed lookups via NCI_get_drug_by_name"
-                  },
-                  "preferredName": {
-                    "type": ["string", "null"],
-                    "description": "Preferred drug name (present for aliases)"
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "totalResults": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "from": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
                   }
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "preferredName": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "termId": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "firstLetter": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "type": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "termNameType": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "prettyUrlName": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "links": {
+                  "type": "null"
                 }
               }
             },
-            "links": {
-              "type": ["object", "null"],
-              "description": "Pagination links"
+            "metadata": {
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
@@ -833,82 +4024,160 @@
           "default": 1
         }
       },
-      "required": ["drug_class_name"]
+      "required": [
+        "drug_class_name"
+      ]
     },
     "fields": {
       "endpoint": "https://dailymed.nlm.nih.gov/dailymed/services/v2/drugclasses.json"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"drug_class_name": "kinase inhibitor", "pagesize": 10},
-      {"drug_class_name": "antibacterial", "pagesize": 10},
-      {"drug_class_name": "receptor", "pagesize": 10}
+      {
+        "drug_class_name": "kinase inhibitor",
+        "pagesize": 10
+      },
+      {
+        "drug_class_name": "antibacterial",
+        "pagesize": 10
+      },
+      {
+        "drug_class_name": "receptor",
+        "pagesize": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "DailyMed drug class search results",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
-              "type": "array",
-              "description": "Matching FDA Established Pharmacologic Classes",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "description": "NDF-RT code for the drug class (e.g., 'N0000175477')"
-                  },
-                  "codingSystem": {
-                    "type": "string",
-                    "description": "Code system OID"
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "Class type (EPC = Established Pharmacologic Class)"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Drug class name (e.g., 'Aminoglycoside Antibacterial')"
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "codingSystem": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "type": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "metadata": {
+                  "type": "object",
+                  "properties": {
+                    "db_published_date": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "elements_per_page": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "current_url": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "next_page_url": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "total_elements": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "total_pages": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "current_page": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "previous_page": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "previous_page_url": {
+                      "type": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "next_page": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
                   }
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "description": "Pagination metadata",
-              "properties": {
-                "total_elements": {
-                  "type": "integer",
-                  "description": "Total number of matching drug classes"
-                },
-                "total_pages": {
-                  "type": "integer",
-                  "description": "Total pages"
-                },
-                "current_page": {
-                  "type": "integer",
-                  "description": "Current page number"
-                },
-                "elements_per_page": {
-                  "type": "integer",
-                  "description": "Results per page"
-                }
-              }
+              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "description": "Error response",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
-              "type": "string",
-              "description": "Error message"
+              "type": "string"
             }
-          },
-          "required": ["error"]
+          }
         }
       ]
     }
