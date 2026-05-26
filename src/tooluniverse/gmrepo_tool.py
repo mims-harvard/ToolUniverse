@@ -88,7 +88,9 @@ class GmrepoTool(BaseTool):
 
         all_species = data.get("all_species", [])
         query_lower = query.lower()
-        matches = [s for s in all_species if query_lower in s.get("name", "").lower()]
+        matches = [
+            s for s in all_species if query_lower in (s.get("name") or "").lower()
+        ]
 
         # Sort by number of presented samples (most abundant first)
         matches.sort(key=lambda x: int(x.get("presented_samples", "0")), reverse=True)
@@ -112,7 +114,11 @@ class GmrepoTool(BaseTool):
             "metadata": {
                 "query": query,
                 "total_matches": len(
-                    [s for s in all_species if query_lower in s.get("name", "").lower()]
+                    [
+                        s
+                        for s in all_species
+                        if query_lower in (s.get("name") or "").lower()
+                    ]
                 ),
                 "returned": len(results),
                 "total_species_in_db": len(all_species),
@@ -145,7 +151,7 @@ class GmrepoTool(BaseTool):
         if query:
             query_lower = query.lower()
             phenotypes = [
-                p for p in phenotypes if query_lower in p.get("term", "").lower()
+                p for p in phenotypes if query_lower in (p.get("term") or "").lower()
             ]
 
         # Sort by number of valid runs (most data first)

@@ -11,6 +11,17 @@ from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+# Many sites (Wikipedia, Cloudflare-protected hosts, etc.) reject the default
+# python-requests/* User-Agent with 403. Send a generic browser-like UA so the
+# tool works on the same set of URLs the user would expect curl to handle.
+_DEFAULT_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36 ToolUniverse/FileDownload"
+    )
+}
+
 
 @register_tool("FileDownloadTool")
 class FileDownloadTool(BaseTool):
@@ -87,7 +98,11 @@ class FileDownloadTool(BaseTool):
             output_path = os.path.join(temp_dir, filename)
         try:
             response = requests.get(
-                url, timeout=timeout, allow_redirects=follow_redirects, stream=True
+                url,
+                timeout=timeout,
+                allow_redirects=follow_redirects,
+                stream=True,
+                headers=_DEFAULT_HEADERS,
             )
             response.raise_for_status()
 
@@ -201,7 +216,9 @@ class BinaryDownloadTool(BaseTool):
                 return {"status": "error", "error": f"Failed to create directory: {e}"}
 
         try:
-            response = requests.get(url, timeout=timeout, stream=True)
+            response = requests.get(
+                url, timeout=timeout, stream=True, headers=_DEFAULT_HEADERS
+            )
             response.raise_for_status()
 
             file_size = 0
@@ -258,7 +275,7 @@ class TextDownloadTool(BaseTool):
         encoding = arguments.get("encoding", None)  # Auto-detect if None
 
         try:
-            response = requests.get(url, timeout=timeout)
+            response = requests.get(url, timeout=timeout, headers=_DEFAULT_HEADERS)
             response.raise_for_status()
 
             if encoding:

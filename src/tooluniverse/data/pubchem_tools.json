@@ -569,7 +569,9 @@
     "test_examples": [
       {
         "cid": 2244,
-        "xref_types": []
+        "xref_types": [
+          "PubMedID"
+        ]
       }
     ],
     "return_schema": {

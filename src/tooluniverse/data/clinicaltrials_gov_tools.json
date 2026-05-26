@@ -602,7 +602,7 @@
     "test_examples": [
       {
         "nct_ids": [
-          "NCT01158625"
+          "NCT04368728"
         ],
         "references": "Study"
       }
@@ -650,7 +650,7 @@
     "test_examples": [
       {
         "nct_ids": [
-          "NCT04852770"
+          "NCT04368728"
         ],
         "outcome_measure": "primary"
       }
@@ -744,10 +744,11 @@
     "test_examples": [
       {
         "nct_ids": [
-          "NCT01158625"
+          "NCT04368728"
         ],
         "organ_systems": [
-          "Cardiac Disorders"
+          "Cardiac Disorders",
+          "Nervous System Disorders"
         ],
         "adverse_event_type": "serious"
       }

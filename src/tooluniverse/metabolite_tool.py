@@ -159,22 +159,69 @@ class MetaboliteTool(BaseTool):
         return []
 
     def _ctd_diseases(self, chemical_term: str) -> List[Dict[str, Any]]:
-        """Query CTD for curated disease associations for a chemical term."""
-        resp = requests.get(
-            CTD_API,
-            params={
-                "inputType": "chem",
-                "inputTerms": chemical_term,
-                "report": "diseases_curated",
-                "format": "json",
-            },
-            timeout=self.timeout,
+        """Query CTD-via-RENCI Automat mirror for curated disease associations.
+
+        CTD's native batchQuery.go is altcha-CAPTCHA-blocked since early
+        2026 — see ctd_tool.py for the migration. The mirror at
+        automat.renci.org exposes the same chemical-disease edges; we
+        cypher-resolve the chemical name to a CURIE, then hit the typed
+        edge endpoint and flatten back to CTD-style rows so callers see no
+        change in shape.
+        """
+        # 1) Resolve the free-text chemical term to a graph CURIE
+        safe = chemical_term.replace('"', "").replace("\\", "")
+        cypher = (
+            'MATCH (n) WHERE n.id = "' + safe + '" OR "' + safe + '" IN '
+            'n.equivalent_identifiers OR toLower(n.name) = toLower("' + safe + '") '
+            "RETURN n.id AS id LIMIT 1"
         )
-        if resp.status_code != 200:
+        try:
+            r = requests.post(
+                "https://automat.renci.org/ctd/cypher",
+                headers={"Content-Type": "application/json"},
+                json={"query": cypher},
+                timeout=self.timeout,
+            )
+            r.raise_for_status()
+            payload = r.json()
+            curie = payload["results"][0]["data"][0]["row"][0]
+        except (requests.RequestException, KeyError, IndexError, TypeError, ValueError):
             return []
-        data = resp.json()
-        rows = data if isinstance(data, list) else []
-        return [r for r in rows if isinstance(r, dict) and r.get("DiseaseName")]
+
+        # 2) Fetch the SmallMolecule → Disease edges
+        try:
+            r = requests.get(
+                f"https://automat.renci.org/ctd/biolink:SmallMolecule/biolink:Disease/{curie}",
+                headers={"Accept": "application/json"},
+                timeout=self.timeout,
+            )
+            r.raise_for_status()
+            edges = r.json()
+        except (requests.RequestException, ValueError):
+            return []
+        if not isinstance(edges, list):
+            return []
+
+        # 3) Flatten [source, edge_props, target] back to CTD-style rows
+        rows = []
+        for edge in edges:
+            if not isinstance(edge, list) or len(edge) < 3:
+                continue
+            tgt = edge[2] if isinstance(edge[2], dict) else {}
+            props = edge[1] if isinstance(edge[1], dict) else {}
+            disease_name = tgt.get("name")
+            if not disease_name:
+                continue
+            rows.append(
+                {
+                    "DiseaseName": disease_name,
+                    "DiseaseID": tgt.get("id"),
+                    "DirectEvidence": props.get("qualified_predicate")
+                    or props.get("predicate"),
+                    "PubMedIDs": [],
+                }
+            )
+        return rows
 
     def _resolve_ctd_term(
         self, title: str, synonyms: List[str]

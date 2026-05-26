@@ -211,50 +211,45 @@ class ReactomeContentTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Extract sub-events
-        sub_events = []
-        for e in data.get("hasEvent", []):
-            sub_events.append(
-                {
-                    "stId": e.get("stId"),
-                    "name": e.get("displayName"),
-                    "schemaClass": e.get("schemaClass"),
-                }
-            )
+        # Extract sub-events (defensive: Reactome occasionally returns ints
+        # in hasEvent for terminal references — only descend into dicts).
+        sub_events = [
+            {
+                "stId": e.get("stId"),
+                "name": e.get("displayName"),
+                "schemaClass": e.get("schemaClass"),
+            }
+            for e in data.get("hasEvent", [])
+            if isinstance(e, dict)
+        ]
 
         # Extract literature
-        literature = []
-        for ref in data.get("literatureReference", []):
-            literature.append(
-                {
-                    "title": ref.get("title"),
-                    "pubMedIdentifier": ref.get("pubMedIdentifier"),
-                    "year": ref.get("year"),
-                    "journal": ref.get("journal", {}).get("title")
-                    if isinstance(ref.get("journal"), dict)
-                    else None,
-                }
-            )
+        literature = [
+            {
+                "title": ref.get("title"),
+                "pubMedIdentifier": ref.get("pubMedIdentifier"),
+                "year": ref.get("year"),
+                "journal": ref.get("journal", {}).get("title")
+                if isinstance(ref.get("journal"), dict)
+                else None,
+            }
+            for ref in data.get("literatureReference", [])
+            if isinstance(ref, dict)
+        ]
 
         # Extract GO terms
         go_terms = []
         go_bp = data.get("goBiologicalProcess")
-        if go_bp:
-            if isinstance(go_bp, list):
-                for g in go_bp:
-                    go_terms.append(
-                        {
-                            "accession": g.get("accession"),
-                            "name": g.get("displayName"),
-                        }
-                    )
-            elif isinstance(go_bp, dict):
-                go_terms.append(
-                    {
-                        "accession": go_bp.get("accession"),
-                        "name": go_bp.get("displayName"),
-                    }
-                )
+        if isinstance(go_bp, list):
+            go_terms.extend(
+                {"accession": g.get("accession"), "name": g.get("displayName")}
+                for g in go_bp
+                if isinstance(g, dict)
+            )
+        elif isinstance(go_bp, dict):
+            go_terms.append(
+                {"accession": go_bp.get("accession"), "name": go_bp.get("displayName")}
+            )
 
         # Extract summation (description)
         summation = ""
