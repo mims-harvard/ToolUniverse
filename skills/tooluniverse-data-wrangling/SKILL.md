@@ -159,7 +159,7 @@ with tarfile.open("archive.tar.gz") as t:                     # tar.gz
 Each category shows: which ToolUniverse tools exist, and how to go beyond them with direct API calls.
 
 ### 1. NCBI E-utilities (Gene, Nucleotide, Protein, SRA, GEO)
-Tools: `NCBI_search_gene`, `NCBI_search_nucleotide`, `SRA_search_runs`, `GEO_search_datasets`
+Tools: `NCBIGene_search`, `NCBI_search_nucleotide`, `SRA_search_experiments`, `geo_search_datasets`
 ```python
 import requests
 base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
@@ -227,7 +227,7 @@ props = requests.get(url).json()["PropertyTable"]["Properties"]
 ```
 
 ### 7. Expression (GEO, ArrayExpress, GTEx)
-Tools: `GEO_search_datasets`, `ArrayExpress_search`
+Tools: `geo_search_datasets`, `arrayexpress_search_experiments`
 ```python
 # GEO series matrix direct download
 geo_id = "GSE12345"

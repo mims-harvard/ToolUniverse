@@ -181,7 +181,7 @@ Create a markdown report progressively: header â†’ Phase 1 enrichment results â†
 
 ## Domain Reasoning: Enzyme Kinetics & Metabolic Analysis
 
-LOOK UP DON'T GUESS: Km values, kcat values, cofactor requirements, and optimal pH/temperature for specific enzymes. Use `BindingDB_search_by_target`, `ChEMBL_get_molecule`, `BRENDA_search` (if available), or `EuropePMC_search_articles` to retrieve published kinetic parameters. Do not estimate Km from first principles.
+LOOK UP DON'T GUESS: Km values, kcat values, cofactor requirements, and optimal pH/temperature for specific enzymes. Use `BindingDB_search_by_target`, `ChEMBL_get_molecule`, `BRENDA_get_enzyme_info` *(requires BRENDA_EMAIL + BRENDA_PASSWORD env vars; free academic registration at brenda-enzymes.org)* (if available), or `EuropePMC_search_articles` to retrieve published kinetic parameters. Do not estimate Km from first principles.
 
 ### Michaelis-Menten Kinetics
 

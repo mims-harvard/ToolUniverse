@@ -208,8 +208,8 @@ Aggregate all findings into final report. Grade every candidate. Provide 3+ imme
 
 | Primary Tool | Fallback 1 | Fallback 2 |
 |--------------|------------|------------|
-| `NvidiaNIM_alphafold2` | `alphafold_get_prediction` | `ESMFold_predict_structure` |
-| `get_diffdock_info` | `NvidiaNIM_boltz2` | Manual docking |
+| `NvidiaNIM_alphafold2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | `alphafold_get_prediction` (AlphaFold DB by UniProt) | `ESMFold_predict_structure` |
+| `get_diffdock_info` | `NvidiaNIM_boltz2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Manual docking |
 | `NCBIDatasets_suggest_taxonomy` | `UniProtTaxonomy_get_taxon` | Manual classification |
 | `ChEMBL_search_drugs` | `drugbank_vocab_search` | PubChem bioassays |
 

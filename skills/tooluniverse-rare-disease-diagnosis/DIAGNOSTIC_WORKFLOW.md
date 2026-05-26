@@ -472,6 +472,39 @@ def comprehensive_vus_prediction(tu, variant_info):
                 )
             }
 
+    # 2b. ESMC-6B SAE - Mechanism of effect
+    # AlphaMissense answers "is it pathogenic?". SAE answers "how?" — which
+    # protein-language-model features are disrupted (catalytic, ligand-binding,
+    # PTM, etc.). Use when AlphaMissense is ambiguous or when the report
+    # needs a mechanistic explanation alongside the pathogenicity score.
+    # Requires ESM_API_KEY env var; missense only. Fetches the WT protein
+    # sequence on demand from UniProt and parses ref/pos/alt from aa_change.
+    import re
+    aa_match = re.match(r'^p?\.?([A-Z])(\d+)([A-Z])$', variant_info.get('aa_change', ''))
+    if variant_info.get('uniprot_id') and aa_match:
+        ref_aa, pos_str, alt_aa = aa_match.groups()
+        position = int(pos_str)
+        up = tu.tools.UniProt_get_entry_by_accession(accession=variant_info['uniprot_id'])
+        wt_seq = ((up.get('data') or {}).get('sequence', {}) or {}).get('value') if up.get('status') == 'success' else None
+        # Only call SAE when the WT residue at `position` matches `ref_aa` —
+        # otherwise the variant is on a different isoform than the UniProt
+        # canonical sequence, and a silent skip is safer than the tool's
+        # ref_aa-mismatch error in the diagnostic report.
+        if wt_seq and 1 <= position <= len(wt_seq) and wt_seq[position - 1] == ref_aa:
+            mech = tu.tools.ESM_explain_variant_mechanism(
+                sequence=wt_seq, position=position, ref_aa=ref_aa, alt_aa=alt_aa,
+                top_k_features=5,
+            )
+            if mech.get('status') == 'success':
+                predictions['sae_mechanism'] = {
+                    'summary': mech['data']['mechanism_summary'],
+                    'lost_categories': mech['data']['lost_feature_categories'],
+                    'gained_categories': mech['data']['gained_feature_categories'],
+                    # Map to ACMG: catalytic / ligand-binding / ptm loss is
+                    # mechanistic evidence supporting PP3 (does not replace
+                    # functional study PS3).
+                }
+
     # 3. EVE - Evolutionary prediction
     eve = tu.tools.EVE_get_variant_score(
         chrom=variant_info['chrom'],

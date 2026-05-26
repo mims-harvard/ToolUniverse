@@ -123,7 +123,7 @@ When interpreting results, ask: does the eQTL effect occur in the tissue most re
 
 ## Phase 4: OpenTargets GWAS Integration
 
-`OpenTargets_search_gwas_studies_by_disease` takes `diseaseIds` as an array of MONDO IDs. It provides locus-to-gene (L2G) scores from multiple GWAS studies, which go beyond simple proximity to incorporate colocalisation, eQTL, and chromatin data. Use `OpenTargets_multi_entity_search` or `OpenTargets_get_disease_id_description_by_name` to resolve disease names to MONDO/EFO IDs first.
+`OpenTargets_search_gwas_studies_by_disease` takes `diseaseIds` as an array of MONDO IDs. It provides locus-to-gene (L2G) scores from multiple GWAS studies, which go beyond simple proximity to incorporate colocalisation, eQTL, and chromatin data. Use `OpenTargets_multi_entity_search_by_query_string` or `OpenTargets_get_disease_id_description_by_name` to resolve disease names to MONDO/EFO IDs first.
 
 ---
 
@@ -143,7 +143,7 @@ After collecting evidence, reason through the layers:
 - **GWAS Catalog returns empty**: Switch from free-text `disease_trait` to `efo_id`; broaden the trait term.
 - **GTEx eQTL empty for gene**: Verify gene symbol spelling; try Ensembl ID; increase `size` parameter.
 - **RegulomeDB returns no data**: Query ENCODE directly; the variant may lack regulatory annotations in available data.
-- **OpenTargets GWAS returns None**: Verify MONDO/EFO ID format; try `OpenTargets_multi_entity_search` first to confirm the correct ID.
+- **OpenTargets GWAS returns None**: Verify MONDO/EFO ID format; try `OpenTargets_multi_entity_search_by_query_string` first to confirm the correct ID.
 - **ENCODE tissue not found**: ENCODE uses specific biosample names; RegulomeDB aggregates data from many cell types and may cover the gap.
 
 ---

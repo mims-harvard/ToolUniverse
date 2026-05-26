@@ -92,7 +92,7 @@ IntAct tools accept `protein_name` as an alias parameter in addition to the orig
 
 ## Domain Reasoning: Multimeric Assemblies & Binding Valency
 
-LOOK UP DON'T GUESS: oligomeric state, subunit stoichiometry, and binding valency. Use RCSB PDB (`RCSB_search_structures`, `RCSB_get_entry_info`) or UniProt (`UniProt_get_function_by_accession`) to confirm whether a protein is a monomer, dimer, trimer, etc. Do not assume from gene name alone.
+LOOK UP DON'T GUESS: oligomeric state, subunit stoichiometry, and binding valency. Use RCSB PDB (`RCSBAdvSearch_search_structures`, `RCSBData_get_entry`) or UniProt (`UniProt_get_function_by_accession`) to confirm whether a protein is a monomer, dimer, trimer, etc. Do not assume from gene name alone.
 
 ### Calculating Multimer Valency from Binding Data
 

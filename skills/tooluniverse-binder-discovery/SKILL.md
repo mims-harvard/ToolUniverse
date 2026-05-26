@@ -89,8 +89,8 @@ tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
 
 Common parameter corrections (verify with `get_tool_info` if uncertain):
 - `OpenTargets_*`: `ensemblId` (camelCase); `ADMETAI_*`: `smiles` must be a list
-- `NvidiaNIM_alphafold2`: `sequence` not `seq`; `NvidiaNIM_genmol`: SMILES must contain `[*{min-max}]`
-- `NvidiaNIM_boltz2`: `polymers=[{"molecule_type": "protein", "sequence": "..."}]`
+- `NvidiaNIM_alphafold2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)*: `sequence` not `seq`; `NvidiaNIM_genmol` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)*: SMILES must contain `[*{min-max}]`
+- `NvidiaNIM_boltz2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)*: `polymers=[{"molecule_type": "protein", "sequence": "..."}]`
 
 ---
 
@@ -237,7 +237,7 @@ Deliver top 20 candidates with: Rank, ID, SMILES, docking score, ADMET score, ov
 Target ID:     ChEMBL_search_targets -> GtoPdb_get_targets -> "Not in databases"
 Druggability:  OpenTargets tractability -> DGIdb druggability -> target class proxy
 Bioactivity:   ChEMBL -> BindingDB -> GtoPdb -> PubChem BioAssay -> "No data"
-Structure:     PDB -> EMDB (membrane) -> NvidiaNIM_alphafold2 -> NvidiaNIM_esmfold -> AlphaFold DB -> "None"
+Structure:     PDB -> EMDB (membrane) -> alphafold_get_prediction -> NvidiaNIM_esmfold -> AlphaFold DB -> "None"
 Similarity:    ChEMBL similar -> PubChem similar -> "Search failed"
 Docking:       get_diffdock_info -> NvidiaNIM_boltz2 -> similarity-based scoring
 Generation:    NvidiaNIM_genmol -> NvidiaNIM_molmim -> similarity search only

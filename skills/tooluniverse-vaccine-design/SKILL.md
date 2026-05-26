@@ -12,7 +12,7 @@ Computational pipeline for designing peptide/subunit vaccine candidates through 
 
 Vaccine design requires presenting the right epitopes to elicit protective immunity — not just any immune response, but one that is neutralizing, durable, and broadly applicable. For T-cell vaccines, the core tool is MHC binding prediction (IEDB tools): predict peptide-MHC affinity across multiple HLA alleles, then select epitopes with broad coverage of the target population. For antibody vaccines, prioritize surface-exposed conserved regions — a deeply buried or hypervariable region makes a poor antibody target. MHC binding does not equal immunogenicity; many good binders are not immunogenic in vivo due to tolerance, poor processing, or lack of T-cell help. A multi-epitope strategy (combining MHC-I for CD8+ CTL response, MHC-II for CD4+ helper response, and B-cell epitopes for antibody induction) is more robust than any single epitope. Conservation across pathogen strains is critical — an epitope that mutates under immune pressure (like HIV envelope hypervariable regions) is a poor vaccine target.
 
-**LOOK UP DON'T GUESS**: Do not predict MHC binding or population coverage from memory — use `IEDB_predict_mhci_binding` and `IEDB_predict_mhcii_binding` for predictions and `IEDB_search_epitopes` for validated experimental data. Do not assume what's on the pathogen surface; retrieve annotated sequences from UniProt or BVBRC.
+**LOOK UP DON'T GUESS**: Do not predict MHC binding or population coverage from memory — use `IEDB_predict_mhci_binding` and `IEDB_predict_mhcii_binding` for predictions and `iedb_search_epitopes` for validated experimental data. Do not assume what's on the pathogen surface; retrieve annotated sequences from UniProt or BVBRC.
 
 **Key principles**:
 1. **Epitope-driven** — vaccines work by presenting epitopes to T/B cells; start with epitope prediction
@@ -39,8 +39,8 @@ Vaccine design requires presenting the right epitopes to elicit protective immun
 
 | Tool | Use For |
 |------|---------|
-| `IEDB_search_epitopes` | Search experimentally validated epitopes |
-| `IEDB_get_epitope` | Get detailed epitope data (assay results, MHC restriction) |
+| `iedb_search_epitopes` | Search experimentally validated epitopes |
+| `iedb_get_epitope_mhc` | Get detailed epitope data (assay results, MHC restriction) |
 | `iedb_search_mhc` | Search validated MHC binding assay data |
 | `IEDB_predict_mhci_binding` | **Predict MHC-I binding** (NetMHCpan EL; rank < 0.5% = strong binder) |
 | `IEDB_predict_mhcii_binding` | **Predict MHC-II binding** (NetMHCIIpan EL; CD4+ helper epitopes) |
@@ -150,7 +150,7 @@ B-cell epitopes trigger antibody production. Look for:
 
 ```python
 # Check for known B-cell epitopes
-IEDB_search_epitopes(query="[protein_name]", epitope_type="B cell")
+iedb_search_epitopes(query="[protein_name]", epitope_type="B cell")
 # Get structure for conformational epitope prediction
 alphafold_get_prediction(uniprot_id="[accession]")
 ```

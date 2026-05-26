@@ -27,10 +27,10 @@ Stem cell differentiation follows developmental biology — to make any target c
 
 | Tool | Use For |
 |------|---------|
-| `CellxGene_search_datasets` | Find single-cell atlas data. **Requires `cellxgene-census` package (`pip install cellxgene-census`). May not be installed by default.** |
+| `CELLxGENE_get_census_versions` | Discover CELLxGENE Census release versions; then use `CELLxGENE_get_cell_metadata` / `CELLxGENE_get_expression_data` for specific cells / genes. **Requires `cellxgene-census` package (`pip install cellxgene-census`). May not be installed by default.** |
 | `CellMarker_search_by_cell_type` | Cell type marker genes. **Requires `operation="search_by_cell_type"`, `cell_name=` (NOT `cell_type=`)** |
 | `CellMarker_search_by_gene` | Which cell types express a gene. **Requires `operation="search_by_gene"`, `gene_symbol=`** |
-| `HCA_search_projects` | Human Cell Atlas organoid/development projects |
+| `hca_search_projects` | Human Cell Atlas organoid/development projects |
 | `GEO_search_rnaseq_datasets` | Find stem cell RNA-seq datasets |
 | `kegg_search_pathway` | Differentiation signaling pathways (WNT, Notch, Hedgehog) |
 | `ReactomeAnalysis_pathway_enrichment` | Pathway analysis of stem cell gene sets |
@@ -86,8 +86,8 @@ Key signaling pathways for directed differentiation:
 
 ```python
 # Find stem cell single-cell datasets
-CellxGene_search_datasets(query="iPSC organoid", organism="Homo sapiens")
-HCA_search_projects(query="organoid")
+CELLxGENE_get_census_versions()  # discover available Census releases, then use CELLxGENE_get_cell_metadata / CELLxGENE_get_expression_data
+hca_search_projects(query="organoid")
 GEO_search_rnaseq_datasets(query="iPSC differentiation neural", organism="Homo sapiens")
 ```
 

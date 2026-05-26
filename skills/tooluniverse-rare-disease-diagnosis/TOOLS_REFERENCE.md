@@ -253,6 +253,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 |------|---------|----------------|
 | `CADD_get_variant_score` | **CADD deleteriousness (NEW API)** | `chrom`, `pos`, `ref`, `alt`, `version` |
 | `AlphaMissense_get_variant_score` | **DeepMind pathogenicity (NEW)** | `uniprot_id`, `variant` |
+| `ESM_explain_variant_mechanism` | **ESMC-6B SAE mechanism of effect (NEW)** | `sequence`, `position`, `ref_aa`, `alt_aa` |
 | `EVE_get_variant_score` | **Evolutionary pathogenicity (NEW)** | `chrom`, `pos`, `ref`, `alt` OR `variant` (HGVS) |
 | `SpliceAI_predict_splice` | **Splice impact (NEW)** | `variant`, `genome` |
 | `SpliceAI_get_max_delta` | **Quick splice triage (NEW)** | `variant`, `genome` |
@@ -288,6 +289,38 @@ result = tu.tools.AlphaMissense_get_variant_score(
 # Returns: pathogenicity_score, classification (pathogenic/ambiguous/benign)
 # Thresholds: >0.564 pathogenic, <0.34 benign
 ```
+
+### ESMC-6B SAE — Mechanism of Effect (NEW)
+
+AlphaMissense gives a pathogenicity score but no mechanism. ESMC-6B Sparse Autoencoder features identify **which interpretable protein-language-model features the mutation disrupts** (catalytic, ligand-binding, PTM, domain, transmembrane, etc.). Use as a mechanism complement when the report needs to explain *how* a variant is pathogenic, not just *whether*.
+
+```python
+# One-call mechanism for a VUS (requires WT protein sequence)
+result = tu.tools.ESM_explain_variant_mechanism(
+    sequence=wt_protein_sequence,
+    position=1541, ref_aa="E", alt_aa="K",
+    top_k_features=5,
+)
+# result["data"]["mechanism_summary"] e.g.:
+#   "Disrupted feature categories (lost): ligand-binding=2, domain=1"
+```
+
+**Other SAE tools** (advanced):
+- `ESM_score_variant_sae_disruption` — single variant, raw feature deltas, no labels (faster, no describe-feature calls)
+- `ESM_score_variant_sae_batch` — many variants at once (N+1 Forge calls instead of 2N); use for saturation mutagenesis
+- `ESM_get_region_sae_features` — aggregate features over a residue range (e.g. characterize a domain or motif)
+- `ESM_describe_sae_feature` — biological category label for a feature_id (cached per id)
+
+**Mapping SAE categories → ACMG support**:
+| SAE category lost | Mechanistic claim | ACMG line |
+|---|---|---|
+| `catalytic` | Active-site disruption | Mechanistic support for PP3 |
+| `ligand-binding` / `ptm` / `domain` | Functional site disruption | Supports PP3 |
+| `structural-stability` / `secondary-structure` | Fold-destabilizing | Supports PP3 |
+| `transmembrane` / `signal-peptide` | Targeting / membrane integration | Supports PP3 |
+| (no interpretable change) | No mechanistic signal | Do not strengthen PP3 above the predictor score alone |
+
+**Requires**: `ESM_API_KEY` env var (free non-commercial token at https://forge.evolutionaryscale.ai) and `pip install 'esm @ git+https://github.com/evolutionaryscale/esm@ee891c52'` (SAE support on unmerged feature branch; PyPI esm 3.2.x lacks SAEConfig). Outputs governed by EvolutionaryScale Cambrian Inference License — non-commercial use only.
 
 ### EVE (NEW)
 

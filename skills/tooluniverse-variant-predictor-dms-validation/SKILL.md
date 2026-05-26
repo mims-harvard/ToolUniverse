@@ -1,5 +1,5 @@
 ---
-name: tooluniverse-variant-predictor-dms-benchmarking
+name: tooluniverse-variant-predictor-dms-validation
 description: "Validate a variant-effect predictor (AlphaMissense, ESM-C SAE, ESM logits, EVE, conservation scores, or any per-variant numeric score) against experimental deep mutational scanning (DMS) data. Computes per-variant predictor scores, splits variants into neutral vs disruptive groups by DMS effect, runs a Mann-Whitney U test on the predictor scores, and sweeps the stratification thresholds for robustness. Use when you need to know whether a predictor's scores track real functional disruption on a specific protein."
 disable-model-invocation: true
 ---

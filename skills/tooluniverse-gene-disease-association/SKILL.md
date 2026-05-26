@@ -102,7 +102,7 @@ disgenet_ranked = tu.tools.DisGeNET_get_disease_genes(disease=disease_name, min_
 ```python
 ot_diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(ensemblId=ensembl_id)
 ot_evidence = tu.tools.OpenTargets_target_disease_evidence(ensemblId=ensembl_id, efoId=efo_id)
-# Both require pre-resolved Ensembl/EFO IDs. Use OpenTargets_multi_entity_search to discover IDs.
+# Both require pre-resolved Ensembl/EFO IDs. Use OpenTargets_multi_entity_search_by_query_string to discover IDs.
 ```
 
 ---
