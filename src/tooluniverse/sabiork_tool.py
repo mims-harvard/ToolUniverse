@@ -193,32 +193,39 @@ class SABIORKTool(BaseTool):
             }
 
     def _build_query(self, arguments: Dict[str, Any]) -> str:
-        """Build SABIO-RK search query string from arguments."""
+        """Build SABIO-RK Solr query string from arguments.
+
+        The new Solr endpoint uses Title-Cased field names matching the
+        Solr schema (ECNumber, EnzymeName, Substrate, Organism, Product,
+        ParameterType). Multi-word values must be quoted.
+        """
         parts = []
-        ec = arguments.get("ec_number", "")
-        if ec:
-            parts.append(f"ecnumber:{ec}")
-        ename = arguments.get("enzyme_name", "")
-        if ename:
+        if ec := arguments.get("ec_number", ""):
+            parts.append(f"ECNumber:{ec}")
+        if ename := arguments.get("enzyme_name", ""):
             parts.append(f'EnzymeName:"{ename}"')
-        substrate = arguments.get("substrate", "")
-        if substrate:
+        if substrate := arguments.get("substrate", ""):
             parts.append(f'Substrate:"{substrate}"')
-        organism = arguments.get("organism", "")
-        if organism:
+        if organism := arguments.get("organism", ""):
             parts.append(f'Organism:"{organism}"')
-        product = arguments.get("product", "")
-        if product:
+        if product := arguments.get("product", ""):
             parts.append(f'Product:"{product}"')
-        param_type = arguments.get("parameter_type", "")
-        if param_type:
-            parts.append(f'parametertype:"{param_type}"')
+        if param_type := arguments.get("parameter_type", ""):
+            parts.append(f'ParameterType:"{param_type}"')
         if not parts:
             return ""
         return " AND ".join(parts)
 
     def _search_reactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search SABIO-RK for kinetic laws matching the query."""
+        """Search SABIO-RK kinetic laws via the new Solr-backed endpoint.
+
+        The legacy /sabioRestWebServices/searchKineticLaws/entryIDs?q=
+        endpoint was retired in 2025; the SPA at sabiork.h-its.org now
+        proxies queries to a Solr index at /api/ft/proxy-select. Each
+        document already contains the kinetics fields we previously had
+        to re-fetch as SBML, so the two-step fetch is collapsed into one
+        Solr call.
+        """
         query = self._build_query(arguments)
         if not query:
             return {
@@ -227,48 +234,102 @@ class SABIORKTool(BaseTool):
             }
 
         limit = int(arguments.get("limit", 20))
-
-        # Step 1: Get entry IDs
-        url = f"{SABIORK_BASE}/searchKineticLaws/entryIDs?q={query}"
-        resp = requests.get(url, timeout=self.timeout)
+        url = "https://sabiork.h-its.org/api/ft/proxy-select"
+        params = {
+            "q": query,
+            "df": "Everything",
+            "wt": "json",
+            "rows": limit,
+            "fl": ",".join(
+                [
+                    "EntryID",
+                    "SabioReactionID",
+                    "ReactionEquation",
+                    "ECNumber",
+                    "EnzymeName",
+                    "Organism",
+                    "Tissue",
+                    "Substrate",
+                    "Product",
+                    "Catalyst",
+                    "Parameter",
+                    "ParameterType",
+                    "ParameterUnit",
+                    "KineticMechanismType",
+                    "PubMedID",
+                    "InsertDate",
+                ]
+            ),
+        }
+        try:
+            resp = requests.get(url, params=params, timeout=self.timeout)
+        except requests.exceptions.Timeout:
+            return {
+                "status": "error",
+                "error": f"SABIO-RK Solr timed out after {self.timeout}s",
+            }
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"SABIO-RK search returned HTTP {resp.status_code}",
+                "error": f"SABIO-RK Solr returned HTTP {resp.status_code}: {resp.text[:200]}",
             }
 
-        if _is_no_data_response(resp.text):
-            return {
-                "status": "success",
-                "data": {
-                    "query": query,
-                    "kinetic_laws": [],
-                    "total_count": 0,
-                    "returned_count": 0,
-                },
-                "metadata": {"source": "SABIO-RK", "url": url},
-            }
-
-        entry_ids = _parse_entry_ids(resp.text)
-        total_count = len(entry_ids)
-
-        # Step 2: Fetch SBML for limited set of entries
-        fetch_ids = entry_ids[:limit]
-        ids_str = ",".join(fetch_ids)
-        sbml_url = f"{SABIORK_BASE}/kineticLaws?kinlawids={ids_str}"
-        resp2 = requests.get(sbml_url, timeout=self.timeout)
-        if resp2.status_code != 200:
+        try:
+            body = resp.json()
+        except ValueError:
             return {
                 "status": "error",
-                "error": f"SABIO-RK SBML fetch returned HTTP {resp2.status_code}",
+                "error": "SABIO-RK Solr returned non-JSON response",
             }
+        response = body.get("response", {}) or {}
+        total_count = response.get("numFound", 0)
+        docs = response.get("docs", []) or []
 
-        records = _parse_sbml_kinetics(resp2.text)
+        # Flatten Solr doc into the legacy {kinetic_laws:[{entry_id,
+        # reaction_equation, ec_number, ...}]} shape so callers see no
+        # behavioural change. Multi-valued Solr fields come back as lists;
+        # join them or pick the first as appropriate.
+        def _first(v):
+            return v[0] if isinstance(v, list) and v else v
 
-        # Attach entry IDs to records
-        for i, rec in enumerate(records):
-            if i < len(fetch_ids):
-                rec["entry_id"] = fetch_ids[i]
+        records = [
+            {
+                "entry_id": str(_first(d.get("EntryID")) or ""),
+                "sabio_reaction_id": str(_first(d.get("SabioReactionID")) or ""),
+                "reaction_equation": _first(d.get("ReactionEquation")),
+                "ec_number": _first(d.get("ECNumber")),
+                "enzyme_name": _first(d.get("EnzymeName")),
+                "organism": _first(d.get("Organism")),
+                "tissue": _first(d.get("Tissue")),
+                "substrates": d.get("Substrate")
+                if isinstance(d.get("Substrate"), list)
+                else [d.get("Substrate")]
+                if d.get("Substrate")
+                else [],
+                "products": d.get("Product")
+                if isinstance(d.get("Product"), list)
+                else [d.get("Product")]
+                if d.get("Product")
+                else [],
+                "catalysts": d.get("Catalyst")
+                if isinstance(d.get("Catalyst"), list)
+                else [d.get("Catalyst")]
+                if d.get("Catalyst")
+                else [],
+                "parameters": d.get("Parameter")
+                if isinstance(d.get("Parameter"), list)
+                else [],
+                "parameter_types": d.get("ParameterType")
+                if isinstance(d.get("ParameterType"), list)
+                else [],
+                "parameter_units": d.get("ParameterUnit")
+                if isinstance(d.get("ParameterUnit"), list)
+                else [],
+                "mechanism_type": _first(d.get("KineticMechanismType")),
+                "pubmed_id": _first(d.get("PubMedID")),
+            }
+            for d in docs
+        ]
 
         return {
             "status": "success",
@@ -279,8 +340,8 @@ class SABIORKTool(BaseTool):
                 "returned_count": len(records),
             },
             "metadata": {
-                "source": "SABIO-RK",
-                "url": f"http://sabiork.h-its.org/",
+                "source": "SABIO-RK (Solr backend)",
+                "url": "https://sabiork.h-its.org/api/ft/proxy-select",
                 "note": f"Showing {len(records)} of {total_count} kinetic laws",
             },
         }
