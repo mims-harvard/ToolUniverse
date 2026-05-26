@@ -922,9 +922,18 @@
     },
     "test_examples": [
       {
-        "urls": [],
-        "max_chars": 1,
-        "return_html": true
+        "urls": [
+          "https://health.gov/myhealthfinder/api/v3/topicsearch.json?topicId=30606"
+        ],
+        "max_chars": 2000,
+        "return_html": false
+      },
+      {
+        "urls": [
+          "https://health.gov/myhealthfinder/api/v3/topicsearch.json?topicId=30606"
+        ],
+        "max_chars": 5000,
+        "return_html": false
       }
     ]
   }

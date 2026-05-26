@@ -48,7 +48,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "@context": {
                   "type": [
@@ -57,9 +60,15 @@
                   ]
                 },
                 "@graph": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "@id": {
                         "type": [
@@ -68,7 +77,10 @@
                         ]
                       },
                       "@type": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "null",
@@ -95,12 +107,21 @@
                         ]
                       },
                       "audit": {
-                        "type": "object",
+                        "type": [
+                          "null",
+                          "object"
+                        ],
                         "properties": {
                           "INTERNAL_ACTION": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "null",
+                                "object"
+                              ],
                               "properties": {
                                 "path": {
                                   "type": [
@@ -142,9 +163,15 @@
                             }
                           },
                           "NOT_COMPLIANT": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "object",
+                                "null"
+                              ],
                               "properties": {
                                 "path": {
                                   "type": [
@@ -186,9 +213,15 @@
                             }
                           },
                           "WARNING": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "null",
+                                "object"
+                              ],
                               "properties": {
                                 "path": {
                                   "type": [
@@ -232,7 +265,10 @@
                         }
                       },
                       "award": {
-                        "type": "object",
+                        "type": [
+                          "null",
+                          "object"
+                        ],
                         "properties": {
                           "project": {
                             "type": [
@@ -243,7 +279,10 @@
                         }
                       },
                       "biosample_ontology": {
-                        "type": "object",
+                        "type": [
+                          "null",
+                          "object"
+                        ],
                         "properties": {
                           "term_name": {
                             "type": [
@@ -266,7 +305,10 @@
                         ]
                       },
                       "dbxrefs": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "string",
@@ -281,9 +323,15 @@
                         ]
                       },
                       "files": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "object",
+                          "type": [
+                            "null",
+                            "object"
+                          ],
                           "properties": {
                             "@id": {
                               "type": [
@@ -295,7 +343,10 @@
                         }
                       },
                       "lab": {
-                        "type": "object",
+                        "type": [
+                          "null",
+                          "object"
+                        ],
                         "properties": {
                           "title": {
                             "type": [
@@ -306,15 +357,27 @@
                         }
                       },
                       "related_series": {
-                        "type": "array"
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       },
                       "replicates": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "object",
+                          "type": [
+                            "null",
+                            "object"
+                          ],
                           "properties": {
                             "antibody": {
-                              "type": "object",
+                              "type": [
+                                "object",
+                                "null"
+                              ],
                               "properties": {
                                 "accession": {
                                   "type": [
@@ -325,13 +388,22 @@
                               }
                             },
                             "library": {
-                              "type": "object",
+                              "type": [
+                                "null",
+                                "object"
+                              ],
                               "properties": {
                                 "biosample": {
-                                  "type": "object",
+                                  "type": [
+                                    "null",
+                                    "object"
+                                  ],
                                   "properties": {
                                     "organism": {
-                                      "type": "object",
+                                      "type": [
+                                        "null",
+                                        "object"
+                                      ],
                                       "properties": {
                                         "scientific_name": {
                                           "type": [
@@ -342,24 +414,82 @@
                                       }
                                     },
                                     "applied_modifications": {
-                                      "type": "array",
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
                                       "items": {
-                                        "type": "object",
+                                        "type": [
+                                          "object",
+                                          "null"
+                                        ],
                                         "properties": {
                                           "modified_site_by_target_id": {
-                                            "type": "object",
+                                            "type": [
+                                              "object",
+                                              "null"
+                                            ],
                                             "properties": {
                                               "organism": {
-                                                "type": "object",
+                                                "type": [
+                                                  "object",
+                                                  "null"
+                                                ],
                                                 "properties": {
-                                                  "schema_version": {},
-                                                  "@type": {},
-                                                  "name": {},
-                                                  "taxon_id": {},
-                                                  "scientific_name": {},
-                                                  "@id": {},
-                                                  "uuid": {},
-                                                  "status": {}
+                                                  "schema_version": {
+                                                    "type": [
+                                                      "string",
+                                                      "null"
+                                                    ]
+                                                  },
+                                                  "@type": {
+                                                    "type": [
+                                                      "array",
+                                                      "null"
+                                                    ],
+                                                    "items": {
+                                                      "type": [
+                                                        "null",
+                                                        "string"
+                                                      ]
+                                                    }
+                                                  },
+                                                  "name": {
+                                                    "type": [
+                                                      "string",
+                                                      "null"
+                                                    ]
+                                                  },
+                                                  "taxon_id": {
+                                                    "type": [
+                                                      "string",
+                                                      "null"
+                                                    ]
+                                                  },
+                                                  "scientific_name": {
+                                                    "type": [
+                                                      "string",
+                                                      "null"
+                                                    ]
+                                                  },
+                                                  "@id": {
+                                                    "type": [
+                                                      "string",
+                                                      "null"
+                                                    ]
+                                                  },
+                                                  "uuid": {
+                                                    "type": [
+                                                      "string",
+                                                      "null"
+                                                    ]
+                                                  },
+                                                  "status": {
+                                                    "type": [
+                                                      "string",
+                                                      "null"
+                                                    ]
+                                                  }
                                                 }
                                               }
                                             }
@@ -417,12 +547,21 @@
                         ]
                       },
                       "target": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "genes": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "object",
+                                "null"
+                              ],
                               "properties": {
                                 "symbol": {
                                   "type": [
@@ -457,7 +596,10 @@
                   ]
                 },
                 "@type": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -478,10 +620,16 @@
                   ]
                 },
                 "columns": {
-                  "type": "object",
+                  "type": [
+                    "null",
+                    "object"
+                  ],
                   "properties": {
                     "@id": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -492,7 +640,10 @@
                       }
                     },
                     "accession": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -503,7 +654,10 @@
                       }
                     },
                     "assay_term_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -514,7 +668,10 @@
                       }
                     },
                     "assay_title": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -525,7 +682,10 @@
                       }
                     },
                     "biosample_ontology.classification": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -536,7 +696,10 @@
                       }
                     },
                     "target.@id": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -547,7 +710,10 @@
                       }
                     },
                     "target.label": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -558,7 +724,10 @@
                       }
                     },
                     "target.genes.symbol": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -569,7 +738,10 @@
                       }
                     },
                     "biosample_summary": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -580,7 +752,10 @@
                       }
                     },
                     "biosample_ontology.term_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -591,7 +766,10 @@
                       }
                     },
                     "dbxrefs": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -602,7 +780,10 @@
                       }
                     },
                     "description": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -613,7 +794,10 @@
                       }
                     },
                     "lab.title": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -624,7 +808,10 @@
                       }
                     },
                     "award.project": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -635,7 +822,10 @@
                       }
                     },
                     "status": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -646,7 +836,10 @@
                       }
                     },
                     "files.@id": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -657,7 +850,10 @@
                       }
                     },
                     "related_series": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -668,7 +864,10 @@
                       }
                     },
                     "replicates.library.biosample.accession": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -679,7 +878,10 @@
                       }
                     },
                     "replicates.biological_replicate_number": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -690,7 +892,10 @@
                       }
                     },
                     "replicates.technical_replicate_number": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -701,7 +906,10 @@
                       }
                     },
                     "replicates.antibody.accession": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -712,7 +920,10 @@
                       }
                     },
                     "replicates.library.biosample.organism.scientific_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -723,7 +934,10 @@
                       }
                     },
                     "replicates.library.biosample.life_stage": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -734,7 +948,10 @@
                       }
                     },
                     "replicates.library.biosample.age_display": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -745,7 +962,10 @@
                       }
                     },
                     "replicates.library.biosample.treatments.treatment_term_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -756,7 +976,10 @@
                       }
                     },
                     "replicates.library.biosample.treatments.treatment_term_id": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -767,7 +990,10 @@
                       }
                     },
                     "replicates.library.biosample.treatments.amount": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -778,7 +1004,10 @@
                       }
                     },
                     "replicates.library.biosample.treatments.amount_units": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -789,7 +1018,10 @@
                       }
                     },
                     "replicates.library.biosample.treatments.duration": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -800,7 +1032,10 @@
                       }
                     },
                     "replicates.library.biosample.treatments.duration_units": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -811,7 +1046,10 @@
                       }
                     },
                     "replicates.library.biosample.synchronization": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -822,7 +1060,10 @@
                       }
                     },
                     "replicates.library.biosample.post_synchronization_time": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -833,7 +1074,10 @@
                       }
                     },
                     "replicates.library.biosample.post_synchronization_time_units": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -844,7 +1088,10 @@
                       }
                     },
                     "replicates.library.biosample.applied_modifications.modified_site_by_target_id.organism": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -855,7 +1102,10 @@
                       }
                     },
                     "replicates.library.biosample.applied_modifications.introduced_gene.organism": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -866,7 +1116,10 @@
                       }
                     },
                     "replicates.@id": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -877,7 +1130,10 @@
                       }
                     },
                     "replicates.library.mixed_biosamples": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -888,7 +1144,10 @@
                       }
                     },
                     "replicates.library.biosample.subcellular_fraction_term_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -899,7 +1158,10 @@
                       }
                     },
                     "replicates.library.construction_platform.term_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -910,7 +1172,10 @@
                       }
                     },
                     "replicates.library.construction_method": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -923,9 +1188,15 @@
                   }
                 },
                 "facet_groups": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "name": {
                         "type": [
@@ -940,7 +1211,10 @@
                         ]
                       },
                       "facet_fields": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "null",
@@ -952,9 +1226,15 @@
                   }
                 },
                 "facets": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "field": {
                         "type": [
@@ -969,9 +1249,15 @@
                         ]
                       },
                       "terms": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "object",
+                          "type": [
+                            "null",
+                            "object"
+                          ],
                           "properties": {
                             "key": {
                               "type": [
@@ -1008,18 +1294,30 @@
                         ]
                       },
                       "appended": {
-                        "type": "boolean"
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
                       },
                       "open_on_load": {
-                        "type": "boolean"
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
                       }
                     }
                   }
                 },
                 "filters": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "field": {
                         "type": [
@@ -1049,10 +1347,16 @@
                   ]
                 },
                 "sort": {
-                  "type": "object",
+                  "type": [
+                    "null",
+                    "object"
+                  ],
                   "properties": {
                     "date_created": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -1069,7 +1373,10 @@
                       }
                     },
                     "label": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -1086,7 +1393,10 @@
                       }
                     },
                     "uuid": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -1205,7 +1515,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "@context": {
                   "type": [
@@ -1214,9 +1527,15 @@
                   ]
                 },
                 "@graph": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "object",
+                      "null"
+                    ],
                     "properties": {
                       "@id": {
                         "type": [
@@ -1225,7 +1544,10 @@
                         ]
                       },
                       "@type": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "null",
@@ -1246,12 +1568,21 @@
                         ]
                       },
                       "audit": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "INTERNAL_ACTION": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "null",
+                                "object"
+                              ],
                               "properties": {
                                 "path": {
                                   "type": [
@@ -1293,9 +1624,15 @@
                             }
                           },
                           "NOT_COMPLIANT": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "object",
+                                "null"
+                              ],
                               "properties": {
                                 "path": {
                                   "type": [
@@ -1337,9 +1674,15 @@
                             }
                           },
                           "WARNING": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "object",
+                                "null"
+                              ],
                               "properties": {
                                 "path": {
                                   "type": [
@@ -1383,7 +1726,10 @@
                         }
                       },
                       "award": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "project": {
                             "type": [
@@ -1394,7 +1740,10 @@
                         }
                       },
                       "biological_replicates": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "integer",
@@ -1403,10 +1752,16 @@
                         }
                       },
                       "biosample_ontology": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "organ_slims": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
                               "type": [
                                 "null",
@@ -1459,7 +1814,10 @@
                         ]
                       },
                       "lab": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "title": {
                             "type": [
@@ -1482,13 +1840,22 @@
                         ]
                       },
                       "quality_metrics": {
-                        "type": "array"
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       },
                       "replicate": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "library": {
-                            "type": "object",
+                            "type": [
+                              "object",
+                              "null"
+                            ],
                             "properties": {
                               "accession": {
                                 "type": [
@@ -1519,7 +1886,10 @@
                         ]
                       },
                       "technical_replicates": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "string",
@@ -1543,7 +1913,10 @@
                   ]
                 },
                 "@type": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "string",
@@ -1564,10 +1937,16 @@
                   ]
                 },
                 "columns": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "@id": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1578,7 +1957,10 @@
                       }
                     },
                     "title": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1589,7 +1971,10 @@
                       }
                     },
                     "accession": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1600,7 +1985,10 @@
                       }
                     },
                     "dataset": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1611,7 +1999,10 @@
                       }
                     },
                     "assembly": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1622,7 +2013,10 @@
                       }
                     },
                     "technical_replicates": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1633,7 +2027,10 @@
                       }
                     },
                     "biological_replicates": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1644,7 +2041,10 @@
                       }
                     },
                     "file_format": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1655,7 +2055,10 @@
                       }
                     },
                     "file_type": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1666,7 +2069,10 @@
                       }
                     },
                     "file_format_type": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1677,7 +2083,10 @@
                       }
                     },
                     "file_size": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1688,7 +2097,10 @@
                       }
                     },
                     "assay_term_name": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1699,7 +2111,10 @@
                       }
                     },
                     "biosample_ontology.term_name": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1710,7 +2125,10 @@
                       }
                     },
                     "biosample_ontology.organ_slims": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1721,7 +2139,10 @@
                       }
                     },
                     "simple_biosample_summary": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1732,7 +2153,10 @@
                       }
                     },
                     "origin_batches": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1743,7 +2167,10 @@
                       }
                     },
                     "target.label": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1754,7 +2181,10 @@
                       }
                     },
                     "href": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1765,7 +2195,10 @@
                       }
                     },
                     "derived_from": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1776,7 +2209,10 @@
                       }
                     },
                     "genome_annotation": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1787,7 +2223,10 @@
                       }
                     },
                     "replicate.library.accession": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1798,7 +2237,10 @@
                       }
                     },
                     "paired_end": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1809,7 +2251,10 @@
                       }
                     },
                     "paired_with": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1820,7 +2265,10 @@
                       }
                     },
                     "preferred_default": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1831,7 +2279,10 @@
                       }
                     },
                     "run_type": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1842,7 +2293,10 @@
                       }
                     },
                     "read_length": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1853,7 +2307,10 @@
                       }
                     },
                     "mapped_read_length": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1864,7 +2321,10 @@
                       }
                     },
                     "cropped_read_length": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1875,7 +2335,10 @@
                       }
                     },
                     "cropped_read_length_tolerance": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1886,7 +2349,10 @@
                       }
                     },
                     "mapped_run_type": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1897,7 +2363,10 @@
                       }
                     },
                     "read_length_units": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1908,7 +2377,10 @@
                       }
                     },
                     "output_category": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1919,7 +2391,10 @@
                       }
                     },
                     "output_type": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1930,7 +2405,10 @@
                       }
                     },
                     "index_of": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1941,7 +2419,10 @@
                       }
                     },
                     "quality_metrics": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1952,7 +2433,10 @@
                       }
                     },
                     "lab.title": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1963,7 +2447,10 @@
                       }
                     },
                     "award.project": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1974,7 +2461,10 @@
                       }
                     },
                     "step_run": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1985,7 +2475,10 @@
                       }
                     },
                     "date_created": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -1996,7 +2489,10 @@
                       }
                     },
                     "analysis_step_version": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2007,7 +2503,10 @@
                       }
                     },
                     "restricted": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2018,7 +2517,10 @@
                       }
                     },
                     "submitter_comment": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2029,7 +2531,10 @@
                       }
                     },
                     "status": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2040,7 +2545,10 @@
                       }
                     },
                     "annotation_type": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2051,7 +2559,10 @@
                       }
                     },
                     "annotation_subtype": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2062,7 +2573,10 @@
                       }
                     },
                     "biochemical_inputs": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2073,7 +2587,10 @@
                       }
                     },
                     "encyclopedia_version": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -2086,9 +2603,15 @@
                   }
                 },
                 "facet_groups": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "name": {
                         "type": [
@@ -2103,7 +2626,10 @@
                         ]
                       },
                       "facet_fields": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "null",
@@ -2115,9 +2641,15 @@
                   }
                 },
                 "facets": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "field": {
                         "type": [
@@ -2132,9 +2664,15 @@
                         ]
                       },
                       "terms": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "object",
+                          "type": [
+                            "null",
+                            "object"
+                          ],
                           "properties": {
                             "key": {
                               "type": [
@@ -2164,18 +2702,30 @@
                         ]
                       },
                       "appended": {
-                        "type": "boolean"
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
                       },
                       "open_on_load": {
-                        "type": "boolean"
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
                       }
                     }
                   }
                 },
                 "filters": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "field": {
                         "type": [
@@ -2205,10 +2755,16 @@
                   ]
                 },
                 "sort": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "date_created": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -2225,7 +2781,10 @@
                       }
                     },
                     "label": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -2242,7 +2801,10 @@
                       }
                     },
                     "uuid": {
-                      "type": "object",
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -2348,7 +2910,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "assay_term_name": {
                   "type": [
@@ -2363,10 +2928,16 @@
                   ]
                 },
                 "documents": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "references": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2387,10 +2958,16 @@
                   ]
                 },
                 "alternate_accessions": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "analyses": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2405,7 +2982,10 @@
                   ]
                 },
                 "dbxrefs": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2426,7 +3006,10 @@
                   ]
                 },
                 "internal_tags": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2465,7 +3048,10 @@
                   ]
                 },
                 "aliases": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "string",
@@ -2486,7 +3072,10 @@
                   ]
                 },
                 "possible_controls": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2495,10 +3084,16 @@
                   }
                 },
                 "supersedes": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "related_files": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "internal_status": {
                   "type": [
@@ -2525,13 +3120,22 @@
                   ]
                 },
                 "objective_slims": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "type_slims": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "category_slims": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "assay_title": {
                   "type": [
@@ -2540,7 +3144,10 @@
                   ]
                 },
                 "assay_slims": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2549,7 +3156,10 @@
                   }
                 },
                 "replicates": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2582,7 +3192,10 @@
                   ]
                 },
                 "@type": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2597,7 +3210,10 @@
                   ]
                 },
                 "original_files": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2606,7 +3222,10 @@
                   }
                 },
                 "contributing_files": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2615,7 +3234,10 @@
                   }
                 },
                 "files": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2624,10 +3246,16 @@
                   }
                 },
                 "revoked_files": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "assembly": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2648,7 +3276,10 @@
                   ]
                 },
                 "related_series": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2657,10 +3288,16 @@
                   }
                 },
                 "superseded_by": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "related_annotations": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2675,7 +3312,10 @@
                   ]
                 },
                 "perturbed": {
-                  "type": "boolean"
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 }
               }
             },
@@ -2742,7 +3382,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "accession": {
                   "type": [
@@ -2751,7 +3394,10 @@
                   ]
                 },
                 "aliases": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "schema_version": {
                   "type": [
@@ -2784,7 +3430,10 @@
                   ]
                 },
                 "alternate_accessions": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "file_format": {
                   "type": [
@@ -2793,7 +3442,10 @@
                   ]
                 },
                 "no_file_available": {
-                  "type": "boolean"
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 },
                 "submitted_file_name": {
                   "type": [
@@ -2814,7 +3466,10 @@
                   ]
                 },
                 "fastq_signature": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "file_size": {
                   "type": [
@@ -2835,7 +3490,10 @@
                   ]
                 },
                 "flowcell_details": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "output_type": {
                   "type": [
@@ -2844,7 +3502,10 @@
                   ]
                 },
                 "derived_from": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "string",
@@ -2871,7 +3532,10 @@
                   ]
                 },
                 "dbxrefs": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "@id": {
                   "type": [
@@ -2880,7 +3544,10 @@
                   ]
                 },
                 "@type": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -2913,7 +3580,10 @@
                   ]
                 },
                 "biological_replicates": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "integer",
@@ -2922,7 +3592,10 @@
                   }
                 },
                 "technical_replicates": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "string",
@@ -2937,7 +3610,10 @@
                   ]
                 },
                 "donors": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "string",
@@ -2952,7 +3628,10 @@
                   ]
                 },
                 "quality_metrics": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "file_type": {
                   "type": [
@@ -2961,10 +3640,16 @@
                   ]
                 },
                 "superseded_by": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "cloud_metadata": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "url": {
                       "type": [
@@ -3029,7 +3714,10 @@
                   ]
                 },
                 "analyses": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "string",
@@ -3038,7 +3726,10 @@
                   }
                 },
                 "processed": {
-                  "type": "boolean"
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 }
               }
             },
@@ -3115,7 +3806,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "@context": {
                   "type": [
@@ -3124,9 +3818,15 @@
                   ]
                 },
                 "@graph": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "object",
+                      "null"
+                    ],
                     "properties": {
                       "@id": {
                         "type": [
@@ -3135,7 +3835,10 @@
                         ]
                       },
                       "@type": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "null",
@@ -3156,9 +3859,15 @@
                         ]
                       },
                       "applied_modifications": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "object",
+                          "type": [
+                            "object",
+                            "null"
+                          ],
                           "properties": {
                             "method": {
                               "type": [
@@ -3173,10 +3882,16 @@
                               ]
                             },
                             "modified_site_by_target_id": {
-                              "type": "object",
+                              "type": [
+                                "object",
+                                "null"
+                              ],
                               "properties": {
                                 "organism": {
-                                  "type": "object",
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ],
                                   "properties": {
                                     "schema_version": {
                                       "type": [
@@ -3185,7 +3900,10 @@
                                       ]
                                     },
                                     "@type": {
-                                      "type": "array",
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
                                       "items": {
                                         "type": [
                                           "null",
@@ -3249,12 +3967,21 @@
                         }
                       },
                       "audit": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "WARNING": {
-                            "type": "array",
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
-                              "type": "object",
+                              "type": [
+                                "object",
+                                "null"
+                              ],
                               "properties": {
                                 "path": {
                                   "type": [
@@ -3298,7 +4025,10 @@
                         }
                       },
                       "biosample_ontology": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "term_name": {
                             "type": [
@@ -3315,7 +4045,10 @@
                         }
                       },
                       "lab": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "title": {
                             "type": [
@@ -3332,7 +4065,10 @@
                         ]
                       },
                       "organism": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "scientific_name": {
                             "type": [
@@ -3343,10 +4079,16 @@
                         }
                       },
                       "parent_of": {
-                        "type": "array"
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       },
                       "source": {
-                        "type": "object",
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "title": {
                             "type": [
@@ -3369,9 +4111,15 @@
                         ]
                       },
                       "treatments": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "object",
+                          "type": [
+                            "object",
+                            "null"
+                          ],
                           "properties": {
                             "treatment_term_name": {
                               "type": [
@@ -3398,7 +4146,10 @@
                   ]
                 },
                 "@type": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -3413,10 +4164,16 @@
                   ]
                 },
                 "columns": {
-                  "type": "object",
+                  "type": [
+                    "null",
+                    "object"
+                  ],
                   "properties": {
                     "@id": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3427,7 +4184,10 @@
                       }
                     },
                     "accession": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3438,7 +4198,10 @@
                       }
                     },
                     "description": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3449,7 +4212,10 @@
                       }
                     },
                     "age": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3460,7 +4226,10 @@
                       }
                     },
                     "age_units": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3471,7 +4240,10 @@
                       }
                     },
                     "age_display": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3482,7 +4254,10 @@
                       }
                     },
                     "biosample_ontology.term_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3493,7 +4268,10 @@
                       }
                     },
                     "biosample_ontology.classification": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3504,7 +4282,10 @@
                       }
                     },
                     "synchronization": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3515,7 +4296,10 @@
                       }
                     },
                     "post_synchronization_time": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3526,7 +4310,10 @@
                       }
                     },
                     "post_synchronization_time_units": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3537,7 +4324,10 @@
                       }
                     },
                     "organism.scientific_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3548,7 +4338,10 @@
                       }
                     },
                     "parent_of": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3559,7 +4352,10 @@
                       }
                     },
                     "applied_modifications.modified_site_by_target_id.name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3570,7 +4366,10 @@
                       }
                     },
                     "applied_modifications.modified_site_by_target_id.organism": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3581,7 +4380,10 @@
                       }
                     },
                     "applied_modifications.introduced_gene.organism": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3592,7 +4394,10 @@
                       }
                     },
                     "applied_modifications.purpose": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3603,7 +4408,10 @@
                       }
                     },
                     "applied_modifications.method": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3614,7 +4422,10 @@
                       }
                     },
                     "applied_modifications.category": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3625,7 +4436,10 @@
                       }
                     },
                     "source.title": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3636,7 +4450,10 @@
                       }
                     },
                     "lab.title": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3647,7 +4464,10 @@
                       }
                     },
                     "life_stage": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3658,7 +4478,10 @@
                       }
                     },
                     "status": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3669,7 +4492,10 @@
                       }
                     },
                     "treatments.treatment_term_name": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3680,7 +4506,10 @@
                       }
                     },
                     "treatments.treatment_type_details": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3691,7 +4520,10 @@
                       }
                     },
                     "treatments.purpose": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3702,7 +4534,10 @@
                       }
                     },
                     "culture_harvest_date": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3713,7 +4548,10 @@
                       }
                     },
                     "date_obtained": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3724,7 +4562,10 @@
                       }
                     },
                     "summary": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "title": {
                           "type": [
@@ -3737,9 +4578,15 @@
                   }
                 },
                 "facet_groups": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "name": {
                         "type": [
@@ -3754,7 +4601,10 @@
                         ]
                       },
                       "facet_fields": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
                           "type": [
                             "null",
@@ -3766,9 +4616,15 @@
                   }
                 },
                 "facets": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "field": {
                         "type": [
@@ -3783,12 +4639,19 @@
                         ]
                       },
                       "terms": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "object",
+                          "type": [
+                            "null",
+                            "object"
+                          ],
                           "properties": {
                             "key": {
                               "type": [
+                                "integer",
                                 "null",
                                 "string"
                               ]
@@ -3800,7 +4663,16 @@
                               ]
                             },
                             "isEqual": {
-                              "type": "boolean"
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            },
+                            "key_as_string": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
                             }
                           }
                         }
@@ -3818,18 +4690,30 @@
                         ]
                       },
                       "appended": {
-                        "type": "boolean"
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
                       },
                       "open_on_load": {
-                        "type": "boolean"
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
                       }
                     }
                   }
                 },
                 "filters": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "field": {
                         "type": [
@@ -3859,10 +4743,16 @@
                   ]
                 },
                 "sort": {
-                  "type": "object",
+                  "type": [
+                    "null",
+                    "object"
+                  ],
                   "properties": {
                     "date_created": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -3879,7 +4769,10 @@
                       }
                     },
                     "label": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -3896,7 +4789,10 @@
                       }
                     },
                     "uuid": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "order": {
                           "type": [
@@ -3999,7 +4895,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "accession": {
                   "type": [
@@ -4014,7 +4913,10 @@
                   ]
                 },
                 "aliases": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "string",
@@ -4065,7 +4967,10 @@
                   ]
                 },
                 "documents": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -4074,7 +4979,10 @@
                   }
                 },
                 "references": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "source": {
                   "type": [
@@ -4095,10 +5003,16 @@
                   ]
                 },
                 "genetic_modifications": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "alternate_accessions": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "description": {
                   "type": [
@@ -4107,10 +5021,16 @@
                   ]
                 },
                 "treatments": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "dbxrefs": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -4137,7 +5057,10 @@
                   ]
                 },
                 "internal_tags": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "culture_harvest_date": {
                   "type": [
@@ -4158,7 +5081,10 @@
                   ]
                 },
                 "@type": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": [
                       "null",
@@ -4203,13 +5129,22 @@
                   ]
                 },
                 "applied_modifications": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "characterizations": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "parent_of": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 },
                 "age_display": {
                   "type": [
@@ -4224,7 +5159,10 @@
                   ]
                 },
                 "perturbed": {
-                  "type": "boolean"
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 },
                 "simple_summary": {
                   "type": [
@@ -4269,7 +5207,10 @@
                   ]
                 },
                 "model_organism_donor_modifications": {
-                  "type": "array"
+                  "type": [
+                    "array",
+                    "null"
+                  ]
                 }
               }
             },

@@ -34,9 +34,15 @@
               "const": "success"
             },
             "data": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
-                "type": "object",
+                "type": [
+                  "null",
+                  "object"
+                ],
                 "properties": {
                   "accession": {
                     "type": [
@@ -63,9 +69,15 @@
                     ]
                   },
                   "products": {
-                    "type": "array",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
                     "items": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "name": {
                           "type": [
@@ -77,9 +89,15 @@
                     }
                   },
                   "classes": {
-                    "type": "array",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
                     "items": {
-                      "type": "object",
+                      "type": [
+                        "null",
+                        "object"
+                      ],
                       "properties": {
                         "name": {
                           "type": [
@@ -155,10 +173,16 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "counts": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "total": {
                       "type": [
@@ -199,9 +223,15 @@
                   }
                 },
                 "clusters": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "type": {
                         "type": [
@@ -231,9 +261,15 @@
                   }
                 },
                 "phyla": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "description": {
                         "type": [

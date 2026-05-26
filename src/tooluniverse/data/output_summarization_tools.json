@@ -57,9 +57,14 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "description": "Output of the tool execution.",
-      "properties": {}
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        }
+      ]
     }
   },
   {
@@ -121,10 +126,16 @@
       }
     ],
     "return_schema": {
-      "type": "object",
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
         "success": {
-          "type": "boolean"
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "original_length": {
           "type": [
