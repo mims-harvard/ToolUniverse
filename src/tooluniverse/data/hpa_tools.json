@@ -577,7 +577,7 @@
   {
     "type": "HPAGetRnaExpressionByTissueTool",
     "name": "HPA_get_rna_expression_in_specific_tissues",
-    "description": "Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues with precise tissue matching.",
+    "description": "Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues with precise tissue matching. Note: HPA's rna_expression_in_specific_tissues endpoint returns 'No data' for many genes; test_examples removed pending a list of pre-populated ENSG ids.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/{ensembl_id}.json",
       "timeout": 30,
@@ -605,16 +605,7 @@
     },
     "input_description": "Input an Ensembl Gene ID and a list of tissue names. The tool will perform intelligent tissue name matching.",
     "output_description": "Returns a dictionary mapping queried tissue names to their expression data, including matched tissue name, expression value in nTPM, and categorized expression level (Very high/High/Medium/Low/Very low). Also provides a sample of available tissues for reference.",
-    "test_examples": [
-      {
-        "ensembl_id": "ENSG00000075624",
-        "tissue_names": [
-          "brain",
-          "liver",
-          "kidney"
-        ]
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "type": "object",
       "properties": {

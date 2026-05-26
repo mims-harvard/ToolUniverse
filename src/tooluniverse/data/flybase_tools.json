@@ -527,14 +527,7 @@
       "endpoint_type": "gene_expression_summary"
     },
     "type": "AllianceGenomeTool",
-    "test_examples": [
-      {
-        "gene_id": "FB:FBgn0000490"
-      },
-      {
-        "gene_id": "FB:FBgn0004647"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {

@@ -3,6 +3,16 @@ import re
 from .base_tool import BaseTool
 from html import unescape
 from .tool_registry import register_tool
+
+# Many sites (Wikipedia, Cloudflare-protected hosts, etc.) reject the default
+# python-requests UA with 403. Same pattern as file_download_tool.
+_BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36 ToolUniverse/URLFetch"
+    )
+}
 import io
 import os
 import sys
@@ -42,7 +52,7 @@ class URLHTMLTagTool(BaseTool):
 
         timeout = arguments.get("timeout", 20)
         try:
-            resp = requests.get(url, timeout=timeout)
+            resp = requests.get(url, timeout=timeout, headers=_BROWSER_HEADERS)
         except requests.Timeout:
             return {"status": "error", "error": "Request timed out."}
         except Exception as e:
@@ -222,6 +232,7 @@ class URLToPDFTextTool(BaseTool):
                 url,
                 timeout=min(10, remaining_seconds()),
                 allow_redirects=True,
+                headers=_BROWSER_HEADERS,
             )
             content_type = resp.headers.get("Content-Type", "").lower()
             # If it's not HTML, handle it as a simple text download
@@ -237,6 +248,7 @@ class URLToPDFTextTool(BaseTool):
                     url,
                     timeout=remaining_seconds(),
                     allow_redirects=True,
+                    headers=_BROWSER_HEADERS,
                 )
                 if resp.status_code != 200:
                     return {"status": "error", "error": f"HTTP {resp.status_code}"}

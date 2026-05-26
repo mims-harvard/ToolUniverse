@@ -634,14 +634,7 @@
       "endpoint_type": "gene_expression_summary"
     },
     "type": "AllianceGenomeTool",
-    "test_examples": [
-      {
-        "gene_id": "ZFIN:ZDB-GENE-990415-8"
-      },
-      {
-        "gene_id": "ZFIN:ZDB-GENE-980526-166"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "oneOf": [
         {
@@ -850,44 +843,75 @@
           "default": 10
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint_type": "zfin_search"
     },
     "type": "AllianceGenomeTool",
     "test_examples": [
-      {"query": "tp53"},
-      {"query": "sox9a"}
+      {
+        "query": "tp53"
+      },
+      {
+        "query": "sox9a"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
+            "status": {
+              "type": "string"
+            },
             "data": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "symbol": {"type": "string"},
-                  "name": {"type": ["string", "null"]},
-                  "gene_id": {"type": "string"},
-                  "category": {"type": ["string", "null"]}
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

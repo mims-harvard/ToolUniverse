@@ -13,7 +13,12 @@
         "field": {
           "type": "string",
           "description": "Field to search in. One of: 'name' (cancer type name), 'code' (OncoTree code), 'main_type' (main cancer category), 'tissue' (tissue of origin). Default: 'name'.",
-          "enum": ["name", "code", "main_type", "tissue"],
+          "enum": [
+            "name",
+            "code",
+            "main_type",
+            "tissue"
+          ],
           "default": "name"
         },
         "exact_match": {
@@ -27,52 +32,131 @@
           "default": "oncotree_latest_stable"
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
             "data": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "code": {"type": ["string", "null"]},
-                  "name": {"type": ["string", "null"]},
-                  "main_type": {"type": ["string", "null"]},
-                  "tissue": {"type": ["string", "null"]},
-                  "parent": {"type": ["string", "null"]},
-                  "level": {"type": ["integer", "null"]},
-                  "external_references": {"type": "object"}
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "main_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tissue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "level": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "external_references": {
+                    "type": "object"
+                  }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "retryable": {"type": "boolean"}
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "breast cancer", "field": "name"},
-      {"query": "LUAD", "field": "code", "exact_match": true},
-      {"query": "Lung", "field": "tissue"}
+      {
+        "query": "breast cancer",
+        "field": "name"
+      },
+      {
+        "query": "LUAD",
+        "field": "code",
+        "exact_match": true
+      },
+      {
+        "query": "Lung",
+        "field": "tissue"
+      }
     ],
-    "label": ["OncoTree", "Cancer", "Oncology", "Classification"],
+    "label": [
+      "OncoTree",
+      "Cancer",
+      "Oncology",
+      "Classification"
+    ],
     "metadata": {
-      "tags": ["cancer", "oncology", "tumor type", "classification", "MSK", "UMLS", "NCI"],
+      "tags": [
+        "cancer",
+        "oncology",
+        "tumor type",
+        "classification",
+        "MSK",
+        "UMLS",
+        "NCI"
+      ],
       "estimated_execution_time": "1-2 seconds"
     }
   },
@@ -93,51 +177,130 @@
           "default": "oncotree_latest_stable"
         }
       },
-      "required": ["code"]
+      "required": [
+        "code"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
             "data": {
               "type": "object",
               "properties": {
-                "code": {"type": ["string", "null"]},
-                "name": {"type": ["string", "null"]},
-                "main_type": {"type": ["string", "null"]},
-                "tissue": {"type": ["string", "null"]},
-                "color": {"type": ["string", "null"]},
-                "parent": {"type": ["string", "null"]},
-                "level": {"type": ["integer", "null"]},
-                "history": {"type": "array"},
-                "external_references": {"type": "object"}
+                "code": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "main_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "tissue": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "color": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "parent": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "level": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "history": {
+                  "type": "array"
+                },
+                "external_references": {
+                  "type": "object"
+                }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "retryable": {"type": "boolean"}
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"code": "BRCA"},
-      {"code": "LUAD"},
-      {"code": "GBM"}
+      {
+        "code": "BRCA"
+      },
+      {
+        "code": "LUAD"
+      }
     ],
-    "label": ["OncoTree", "Cancer", "Oncology", "Classification"],
+    "label": [
+      "OncoTree",
+      "Cancer",
+      "Oncology",
+      "Classification"
+    ],
     "metadata": {
-      "tags": ["cancer", "oncology", "tumor type", "code lookup", "MSK", "UMLS", "NCI"],
+      "tags": [
+        "cancer",
+        "oncology",
+        "tumor type",
+        "code lookup",
+        "MSK",
+        "UMLS",
+        "NCI"
+      ],
       "estimated_execution_time": "1-2 seconds"
     }
   },
@@ -160,32 +323,66 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["success"]},
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
             "data": {
               "type": "array",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "enum": ["error"]},
-            "error": {"type": "string"},
-            "retryable": {"type": "boolean"}
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "retryable": {
+              "type": "boolean"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "status",
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
       {}
     ],
-    "label": ["OncoTree", "Cancer", "Oncology", "Classification"],
+    "label": [
+      "OncoTree",
+      "Cancer",
+      "Oncology",
+      "Classification"
+    ],
     "metadata": {
-      "tags": ["cancer", "tissue", "oncology", "MSK"],
+      "tags": [
+        "cancer",
+        "tissue",
+        "oncology",
+        "MSK"
+      ],
       "estimated_execution_time": "2-3 seconds"
     }
   }

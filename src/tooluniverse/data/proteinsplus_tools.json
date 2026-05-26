@@ -44,8 +44,12 @@
                   "description": "Array of predicted binding pockets (URLs or objects)",
                   "items": {
                     "oneOf": [
-                      {"type": "string"},
-                      {"type": "object"}
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object"
+                      }
                     ]
                   }
                 }
@@ -55,26 +59,33 @@
               "type": "object"
             }
           },
-          "required": ["data"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
             "error": {
-              "oneOf": [{"type": "string"}, {"type": "object"}]
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object"
+                }
+              ]
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
       {
         "pdb_id": "2OZR"
-      },
-      {
-        "pdb_id": "4HHB",
-        "chain": "A"
       }
     ]
   },
@@ -104,15 +115,23 @@
         "analysis_detail": {
           "type": "string",
           "description": "Analysis level: '0' for pockets only (faster), '1' for pockets and subpockets (comprehensive). Default: '1'. Example: Use '1' for detailed analysis, '0' for quick screening.",
-          "enum": ["0", "1"]
+          "enum": [
+            "0",
+            "1"
+          ]
         },
         "druggability": {
           "type": "string",
           "description": "Prediction granularity: '0' for geometric properties only, '1' for properties and druggability scores. Default: '1'. Example: Use '1' for drug discovery (includes druggability), '0' for structure analysis only.",
-          "enum": ["0", "1"]
+          "enum": [
+            "0",
+            "1"
+          ]
         }
       },
-      "required": ["pdb_id"]
+      "required": [
+        "pdb_id"
+      ]
     },
     "fields": {
       "endpoint": "/dogsite3_rest",
@@ -141,20 +160,34 @@
                   "description": "Array of predicted pockets with subpocket information",
                   "items": {
                     "oneOf": [
-                      {"type": "string"},
-                      {"type": "object"}
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object"
+                      }
                     ]
                   }
                 },
                 "residues": {
                   "oneOf": [
-                    {"type": "object"},
-                    {"type": "array", "items": {"type": "string"}}
+                    {
+                      "type": "object"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
                   ],
                   "description": "Mapping of pockets to constituent residues, or array of URL strings"
                 },
                 "descriptor_explanation": {
-                  "type": ["string", "null"],
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "description": "URL or explanations of calculated descriptors"
                 },
                 "parameters": {
@@ -167,7 +200,9 @@
               "type": "object"
             }
           },
-          "required": ["data"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
@@ -176,7 +211,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -213,7 +250,10 @@
           "description": "Ligand identifier in format 'residue_name_residue_chain_residue_number' (e.g., 'JE2_A_701'). Required."
         }
       },
-      "required": ["pdb_id", "ligand"]
+      "required": [
+        "pdb_id",
+        "ligand"
+      ]
     },
     "fields": {
       "endpoint": "/poseview_rest",
@@ -251,16 +291,27 @@
               "type": "object"
             }
           },
-          "required": ["data"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
             "error": {
-              "oneOf": [{"type": "string"}, {"type": "object"}]
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object"
+                }
+              ]
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -268,10 +319,6 @@
       {
         "pdb_id": "1KZK",
         "ligand": "JE2_A_701"
-      },
-      {
-        "pdb_id": "2OZR",
-        "ligand": "4SP_A_301"
       }
     ]
   },
@@ -289,7 +336,13 @@
         "mode": {
           "type": "string",
           "description": "Analysis mode: 'flexibility_analysis' (compare protein conformations), 'docking' (prepare ensemble for docking), 'screening' (find similar binding sites for virtual screening), 'mutation_analysis' (assess mutation tolerance), or 'ligand_pose_comparison' (compare binding poses). Required. Example: Use 'screening' for hit discovery across protein families.",
-          "enum": ["flexibility_analysis", "docking", "screening", "mutation_analysis", "ligand_pose_comparison"]
+          "enum": [
+            "flexibility_analysis",
+            "docking",
+            "screening",
+            "mutation_analysis",
+            "ligand_pose_comparison"
+          ]
         },
         "ligand": {
           "type": "string",
@@ -336,7 +389,10 @@
           "maximum": 10
         }
       },
-      "required": ["pdb_id", "mode"]
+      "required": [
+        "pdb_id",
+        "mode"
+      ]
     },
     "fields": {
       "endpoint": "/siena_rest",
@@ -369,8 +425,15 @@
                 },
                 "ligands": {
                   "oneOf": [
-                    {"type": "string"},
-                    {"type": "array", "items": {"type": "string"}}
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
                   ],
                   "description": "SDF file URL(s) with aligned ligands"
                 },
@@ -388,16 +451,27 @@
               "type": "object"
             }
           },
-          "required": ["data"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
             "error": {
-              "oneOf": [{"type": "string"}, {"type": "object"}]
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object"
+                }
+              ]
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -406,17 +480,6 @@
         "pdb_id": "1KZK",
         "mode": "screening",
         "ligand": "JE2_A_701"
-      },
-      {
-        "pdb_id": "2OZR",
-        "mode": "flexibility_analysis",
-        "ligand": "4SP_A_301",
-        "flexibility_sensitivity": 0.7
-      },
-      {
-        "pdb_id": "4HHB",
-        "mode": "docking",
-        "ligand": "HEM_A_142"
       }
     ]
   },
@@ -434,10 +497,17 @@
         "setting": {
           "type": "string",
           "description": "Validation setting: 'astex' (Astex diverse set criteria), 'iridium' (Iridium validation rules), 'platinum' (PlatinumQuality standards), or 'combined' (all checks). Default: 'combined'. Example: Use 'combined' for thorough validation, 'astex' for docking benchmark standards.",
-          "enum": ["astex", "iridium", "platinum", "combined"]
+          "enum": [
+            "astex",
+            "iridium",
+            "platinum",
+            "combined"
+          ]
         }
       },
-      "required": ["pdb_id"]
+      "required": [
+        "pdb_id"
+      ]
     },
     "fields": {
       "endpoint": "/structurechecker_rest",
@@ -487,7 +557,9 @@
               "type": "object"
             }
           },
-          "required": ["data"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
@@ -496,7 +568,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

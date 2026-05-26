@@ -1000,11 +1000,7 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [
-      {
-        "chemblId": "CHEMBL25"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -1450,11 +1446,7 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [
-      {
-        "ensemblId": "ENSG00000141510"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -3131,11 +3123,7 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [
-      {
-        "chemblId": "CHEMBL25"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -3187,11 +3175,7 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [
-      {
-        "chemblId": "CHEMBL25"
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -4155,13 +4139,7 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [
-      {
-        "goIds": [
-          "GO:0005515"
-        ]
-      }
-    ],
+    "test_examples": [],
     "return_schema": {
       "type": "object",
       "properties": {

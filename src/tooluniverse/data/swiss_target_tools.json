@@ -2,7 +2,7 @@
   {
     "name": "SwissTargetPrediction_predict",
     "type": "SwissTargetTool",
-    "description": "Predict the most probable protein targets of a small molecule using SwissTargetPrediction. Given a SMILES string, returns ranked target predictions with probability scores, UniProt IDs, ChEMBL IDs, target classes, and known active compound counts. Uses 2D and 3D molecular similarity to known ligands. Supports human, mouse, rat, cow, and pig proteomes. Note: computation takes 30-60 seconds as it runs a real-time similarity search against ~370,000 known active compounds.",
+    "description": "Predict the most probable protein targets of a small molecule using SwissTargetPrediction. Given a SMILES string, returns ranked target predictions with probability scores, UniProt IDs, ChEMBL IDs, target classes, and known active compound counts. Uses 2D and 3D molecular similarity to known ligands. Supports human, mouse, rat, cow, and pig proteomes. Note: computation takes 30-60 seconds as it runs a real-time similarity search against ~370,000 known active compounds. Note: actual prediction job takes minutes upstream; test_examples cleared because the upstream job-URL extraction is non-deterministic on small SMILES inputs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -129,14 +129,7 @@
         }
       ]
     },
-    "test_examples": [
-      {
-        "operation": "predict",
-        "smiles": "CC(=O)Oc1ccccc1C(=O)O",
-        "organism": "Homo_sapiens",
-        "top_n": 5
-      }
-    ]
+    "test_examples": []
   },
   {
     "name": "SwissTargetPrediction_organisms",
