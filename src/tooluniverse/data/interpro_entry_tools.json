@@ -38,63 +38,36 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "protein_accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "total_entries": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "entries": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "short_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "source_database": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -174,63 +147,39 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "query": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "total_results": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "returned": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "entries": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "short_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "protein_count": {
                         "type": "null"

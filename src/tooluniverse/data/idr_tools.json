@@ -58,7 +58,10 @@
                         "type": "string"
                       },
                       "@id": {
-                        "type": "integer"
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
                       },
                       "omero:details": {
                         "type": "object",
@@ -73,7 +76,10 @@
                                 "type": "string"
                               },
                               "@id": {
-                                "type": "integer"
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
                               "omero:details": {
                                 "type": "object",
@@ -154,7 +160,10 @@
                                 "type": "string"
                               },
                               "@id": {
-                                "type": "integer"
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
                               "omero:details": {
                                 "type": "object",
@@ -280,25 +289,25 @@
                     "offset": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "limit": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "maxLimit": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "totalCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -373,64 +382,46 @@
                   "type": "object",
                   "properties": {
                     "@type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "@id": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "omero:details": {
                       "type": "object",
                       "properties": {
                         "@type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "owner": {
                           "type": "object",
                           "properties": {
                             "@type": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "@id": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "omero:details": {
                               "type": "object",
                               "properties": {
                                 "@type": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "permissions": {
                                   "type": "object",
                                   "properties": {
                                     "@type": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "perm": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "canAnnotate": {
                                       "type": "boolean"
@@ -470,40 +461,22 @@
                               }
                             },
                             "FirstName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "MiddleName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "LastName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "Email": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "Institution": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "UserName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
@@ -511,40 +484,28 @@
                           "type": "object",
                           "properties": {
                             "@type": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "@id": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "omero:details": {
                               "type": "object",
                               "properties": {
                                 "@type": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "permissions": {
                                   "type": "object",
                                   "properties": {
                                     "@type": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "perm": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "canAnnotate": {
                                       "type": "boolean"
@@ -584,10 +545,7 @@
                               }
                             },
                             "Name": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
@@ -595,16 +553,10 @@
                           "type": "object",
                           "properties": {
                             "@type": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "perm": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "canAnnotate": {
                               "type": "boolean"
@@ -644,22 +596,13 @@
                       }
                     },
                     "Name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Description": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "url:datasets": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 }
@@ -754,7 +697,10 @@
                         "type": "string"
                       },
                       "@id": {
-                        "type": "integer"
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
                       },
                       "omero:details": {
                         "type": "object",
@@ -769,7 +715,10 @@
                                 "type": "string"
                               },
                               "@id": {
-                                "type": "integer"
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
                               "omero:details": {
                                 "type": "object",
@@ -850,7 +799,10 @@
                                 "type": "string"
                               },
                               "@id": {
-                                "type": "integer"
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
                               "omero:details": {
                                 "type": "object",
@@ -976,25 +928,25 @@
                     "offset": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "limit": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "maxLimit": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "totalCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }

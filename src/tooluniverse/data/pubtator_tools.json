@@ -114,7 +114,8 @@
               "pmid": {
                 "type": [
                   "integer",
-                  "null"
+                  "null",
+                  "number"
                 ]
               },
               "title": {
@@ -209,25 +210,29 @@
         "page_size": {
           "type": [
             "integer",
-            "null"
+            "null",
+            "number"
           ]
         },
         "current": {
           "type": [
             "integer",
-            "null"
+            "null",
+            "number"
           ]
         },
         "count": {
           "type": [
             "integer",
-            "null"
+            "null",
+            "number"
           ]
         },
         "total_pages": {
           "type": [
             "integer",
-            "null"
+            "null",
+            "number"
           ]
         }
       }

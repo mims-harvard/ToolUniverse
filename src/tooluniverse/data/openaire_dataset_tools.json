@@ -54,10 +54,7 @@
               "type": "object",
               "properties": {
                 "keywords": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "funder": {
                   "type": [
@@ -74,13 +71,13 @@
                 "total_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "returned": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "datasets": {
@@ -89,10 +86,7 @@
                     "type": "object",
                     "properties": {
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
                         "type": [
@@ -103,10 +97,7 @@
                       "creators": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "date": {
@@ -122,10 +113,7 @@
                         ]
                       },
                       "access_rights": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "doi": {
                         "type": [
@@ -136,10 +124,7 @@
                       "subjects": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }

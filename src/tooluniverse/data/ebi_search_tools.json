@@ -63,27 +63,15 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "source": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -188,105 +176,63 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "hitCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "entries": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "acc": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "source": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "facets": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "label": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "total": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "facetValues": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "label": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "value": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "count": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
@@ -379,39 +325,21 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "entries": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "source": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "acc": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -487,146 +415,74 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "domains": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "object",
-                      "null"
-                    ],
+                    "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "subdomains": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "description": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "subdomains": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "object"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "id": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "name": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "description": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "indexInfos": {
-                                    "type": [
-                                      "array",
-                                      "null"
-                                    ],
+                                    "type": "array",
                                     "items": {
-                                      "type": [
-                                        "null",
-                                        "object"
-                                      ],
+                                      "type": "object",
                                       "properties": {
                                         "name": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "value": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
                                   },
                                   "fieldInfos": {
-                                    "type": [
-                                      "array",
-                                      "null"
-                                    ],
+                                    "type": "array",
                                     "items": {
-                                      "type": [
-                                        "null",
-                                        "object"
-                                      ],
+                                      "type": "object",
                                       "properties": {
                                         "id": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "name": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
                                           "type": [
@@ -635,27 +491,15 @@
                                           ]
                                         },
                                         "options": {
-                                          "type": [
-                                            "array",
-                                            "null"
-                                          ],
+                                          "type": "array",
                                           "items": {
-                                            "type": [
-                                              "null",
-                                              "object"
-                                            ],
+                                            "type": "object",
                                             "properties": {
                                               "name": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               },
                                               "value": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               }
                                             }
                                           }
@@ -664,82 +508,43 @@
                                     }
                                   },
                                   "subdomains": {
-                                    "type": [
-                                      "array",
-                                      "null"
-                                    ],
+                                    "type": "array",
                                     "items": {
-                                      "type": [
-                                        "null",
-                                        "object"
-                                      ],
+                                      "type": "object",
                                       "properties": {
                                         "id": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "name": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "indexInfos": {
-                                          "type": [
-                                            "array",
-                                            "null"
-                                          ],
+                                          "type": "array",
                                           "items": {
-                                            "type": [
-                                              "null",
-                                              "object"
-                                            ],
+                                            "type": "object",
                                             "properties": {
                                               "name": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               },
                                               "value": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               }
                                             }
                                           }
                                         },
                                         "fieldInfos": {
-                                          "type": [
-                                            "array",
-                                            "null"
-                                          ],
+                                          "type": "array",
                                           "items": {
-                                            "type": [
-                                              "null",
-                                              "object"
-                                            ],
+                                            "type": "object",
                                             "properties": {
                                               "id": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               },
                                               "name": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               },
                                               "description": {
                                                 "type": [
@@ -748,15 +553,9 @@
                                                 ]
                                               },
                                               "options": {
-                                                "type": [
-                                                  "array",
-                                                  "null"
-                                                ],
+                                                "type": "array",
                                                 "items": {
-                                                  "type": [
-                                                    "null",
-                                                    "object"
-                                                  ],
+                                                  "type": "object",
                                                   "properties": {
                                                     "name": {},
                                                     "value": {}
@@ -767,44 +566,23 @@
                                           }
                                         },
                                         "subdomains": {
-                                          "type": [
-                                            "array",
-                                            "null"
-                                          ],
+                                          "type": "array",
                                           "items": {
-                                            "type": [
-                                              "null",
-                                              "object"
-                                            ],
+                                            "type": "object",
                                             "properties": {
                                               "id": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               },
                                               "name": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               },
                                               "description": {
-                                                "type": [
-                                                  "null",
-                                                  "string"
-                                                ]
+                                                "type": "string"
                                               },
                                               "indexInfos": {
-                                                "type": [
-                                                  "array",
-                                                  "null"
-                                                ],
+                                                "type": "array",
                                                 "items": {
-                                                  "type": [
-                                                    "null",
-                                                    "object"
-                                                  ],
+                                                  "type": "object",
                                                   "properties": {
                                                     "name": {},
                                                     "value": {}
@@ -812,15 +590,9 @@
                                                 }
                                               },
                                               "fieldInfos": {
-                                                "type": [
-                                                  "array",
-                                                  "null"
-                                                ],
+                                                "type": "array",
                                                 "items": {
-                                                  "type": [
-                                                    "null",
-                                                    "object"
-                                                  ],
+                                                  "type": "object",
                                                   "properties": {
                                                     "id": {},
                                                     "name": {},
@@ -913,117 +685,60 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "domains": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "subdomains": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "description": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "indexInfos": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "object"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "name": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "value": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
                             },
                             "fieldInfos": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "object"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "id": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "name": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "description": {
                                     "type": [
@@ -1032,27 +747,15 @@
                                     ]
                                   },
                                   "options": {
-                                    "type": [
-                                      "array",
-                                      "null"
-                                    ],
+                                    "type": "array",
                                     "items": {
-                                      "type": [
-                                        "null",
-                                        "object"
-                                      ],
+                                      "type": "object",
                                       "properties": {
                                         "name": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "value": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
@@ -1064,53 +767,29 @@
                         }
                       },
                       "indexInfos": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "value": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "fieldInfos": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "description": {
                               "type": [
@@ -1119,27 +798,15 @@
                               ]
                             },
                             "options": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "object"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "name": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "value": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -1224,10 +891,7 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "array",
-                "null"
-              ]
+              "type": "array"
             },
             "metadata": {
               "type": "object"
@@ -1311,10 +975,7 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "array",
-                "null"
-              ]
+              "type": "array"
             },
             "metadata": {
               "type": "object"

@@ -126,46 +126,34 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": "object",
       "properties": {
         "success": {
-          "type": [
-            "boolean",
-            "null"
-          ]
+          "type": "boolean"
         },
         "original_length": {
           "type": [
             "integer",
-            "null"
+            "number"
           ]
         },
         "summary_length": {
           "type": [
             "integer",
-            "null"
+            "number"
           ]
         },
         "chunks_processed": {
           "type": [
             "integer",
-            "null"
+            "number"
           ]
         },
         "summary": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "tool_name": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         }
       }
     }

@@ -31,136 +31,73 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "byName": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "shortCode": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "owner": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "mainEditor": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "startDate": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "lastEdit": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "language": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "countryFlag": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "sponsors": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "disclaimer": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "description": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "contactName": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "contactAddress": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "contactEmail": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "contactTelephone": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "institutionId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "institutionName": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "institutionUrl": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "institutionLogoUrl": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "institutionShortName": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "institutionGradeStrength": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "hasAltGrade": {
                     "type": "boolean"
@@ -168,19 +105,19 @@
                   "guidelineId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "currentDraftId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "publishedId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "editDraft": {
@@ -192,13 +129,13 @@
                   "permissionDraft": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "permissionPublish": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "isLatestPublished": {
@@ -213,86 +150,65 @@
                   "versionMajor": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "versionMinor": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "versionLabel": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "draftPicoCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "draftRecommendationCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "publishedPicoCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "publishedRecommendationCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "pdfPublishedPath": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "jsonPath": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "contentAdmin": {
                     "type": "boolean"
                   },
                   "status": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "commentsInPublished": {
                     "type": "boolean"
                   },
                   "publishCreationTime": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "publishDate": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "publishLastSearchDate": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "trackChanges": {
                     "type": "boolean"
@@ -304,10 +220,7 @@
                     "type": "boolean"
                   },
                   "showRecNumbers": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "showConflicts": {
                     "type": "boolean"
@@ -392,160 +305,85 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "byName": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "shortCode": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "owner": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "mainEditor": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "startDate": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "lastEdit": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "language": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "countryFlag": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sponsors": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "disclaimer": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "description": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "isbn": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "issn": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "orgDocId": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "department": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "contactName": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "contactAddress": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "contactEmail": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "contactTelephone": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "contactWeb": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "institutionId": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "institutionName": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "institutionLogoUrl": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "institutionShortName": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "institutionGradeStrength": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "hasAltGrade": {
                   "type": "boolean"
@@ -553,19 +391,19 @@
                 "guidelineId": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "currentDraftId": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "publishedId": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "edit": {
@@ -574,7 +412,7 @@
                 "permission": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "isLatestPublished": {
@@ -589,80 +427,62 @@
                 "versionMajor": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "versionMinor": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "draftPicoCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "draftRecommendationCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "publishedPicoCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "publishedRecommendationCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "pdfPublishedPath": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "jsonPath": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "contentAdmin": {
                   "type": "boolean"
                 },
                 "status": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "commentsInPublished": {
                   "type": "boolean"
                 },
                 "publishCreationTime": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "publishDate": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "publishLastSearchDate": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "trackChanges": {
                   "type": "boolean"
@@ -674,10 +494,7 @@
                   "type": "boolean"
                 },
                 "showRecNumbers": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "showConflicts": {
                   "type": "boolean"
@@ -692,19 +509,13 @@
                   "type": "boolean"
                 },
                 "defaultKeyInfoType": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "pdfSettings": {
                   "type": "object",
                   "properties": {
                     "pdfPageSize": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "pdfCoverPage": {
                       "type": "object",
@@ -713,22 +524,13 @@
                           "type": "null"
                         },
                         "fileName": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "fileType": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "fileUrl": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
@@ -739,22 +541,13 @@
                           "type": "null"
                         },
                         "fileName": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "fileType": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "fileUrl": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
@@ -765,16 +558,10 @@
                       ]
                     },
                     "pdfTabText": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "pdfSectionText": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "pdfPicoReferences": {
                       "type": "boolean"
@@ -795,10 +582,7 @@
                       "type": "boolean"
                     },
                     "pdfTrackChanges": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "pdfWatermark": {
                       "type": "boolean"
@@ -848,16 +632,10 @@
                   }
                 },
                 "gradeStrengthLabel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "keyInfoJudgementType": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -933,110 +711,68 @@
                   "recommendationId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "shortCode": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "guidelineId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "sectionId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "order": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "strength": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "status": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "heading": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "text": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "remarks": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "advice": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "rational": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "adaptation": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "implementation": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "evaluation": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "research": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "keyInfoType": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "keyInfoDisplayMode": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "hideInPublish": {
                     "type": "boolean"
@@ -1046,7 +782,7 @@
                     "items": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   },
@@ -1054,15 +790,12 @@
                     "type": "object",
                     "properties": {
                       "keyInfoType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "recommendationId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "guidelineId": {
@@ -1072,124 +805,76 @@
                         "type": "null"
                       },
                       "benefits": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "benefitsResearchEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "benefitsResearchEvidenceInPublic": {
                         "type": "boolean"
                       },
                       "benefitsAdditionalConsideration": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "benefitsAdditionalConsiderationInPublic": {
                         "type": "boolean"
                       },
                       "evidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "evidenceResearchEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "evidenceResearchEvidenceInPublic": {
                         "type": "boolean"
                       },
                       "evidenceAdditionalConsideration": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "evidenceAdditionalConsiderationInPublic": {
                         "type": "boolean"
                       },
                       "preferences": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "preferencesResearchEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "preferencesResearchEvidenceInPublic": {
                         "type": "boolean"
                       },
                       "preferencesAdditionalConsideration": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "preferencesAdditionalConsiderationInPublic": {
                         "type": "boolean"
                       },
                       "resources": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "resourcesResearchEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "resourcesResearchEvidenceInPublic": {
                         "type": "boolean"
                       },
                       "resourcesAdditionalConsideration": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "resourcesAdditionalConsiderationInPublic": {
                         "type": "boolean"
                       },
                       "benefitsStrength": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "evidenceStrength": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "preferencesStrength": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "resourcesStrength": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "interventions": {
                         "type": "array",
@@ -1199,26 +884,20 @@
                             "recommendationId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "picoId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "picoElement": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "intervention": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "isComparator": {
                               "type": "boolean"
@@ -1229,59 +908,35 @@
                             "sortOrder": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "judgements": {
                               "type": "object",
                               "properties": {
                                 "BENEFITS_DESIRABLE": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "BENEFITS_UNDESIRABLE": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "EVIDENCE": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "PREFERENCES": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "RESOURCES": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "EQUITY": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "ACCEPTABILITY": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "FEASIBILITY": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
@@ -1295,91 +950,55 @@
                         "type": "boolean"
                       },
                       "acceptabilityStrength": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "acceptability": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "acceptabilityResearchEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "acceptabilityResearchEvidenceInPublic": {
                         "type": "boolean"
                       },
                       "acceptabilityAdditionalConsideration": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "acceptabilityAdditionalConsiderationInPublic": {
                         "type": "boolean"
                       },
                       "equityStrength": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "equity": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "equityResearchEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "equityResearchEvidenceInPublic": {
                         "type": "boolean"
                       },
                       "equityAdditionalConsideration": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "equityAdditionalConsiderationInPublic": {
                         "type": "boolean"
                       },
                       "feasibilityStrength": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "feasibility": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "feasibilityResearchEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "feasibilityResearchEvidenceInPublic": {
                         "type": "boolean"
                       },
                       "feasibilityAdditionalConsideration": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "feasibilityAdditionalConsiderationInPublic": {
                         "type": "boolean"
@@ -1392,50 +1011,35 @@
                       "recommendationId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "shortCode": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "guidelineId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "sectionId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "emrImplement": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "emrResources": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "targetPopulation": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "recommendedInvention": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "codes": {
                         "type": "array"
@@ -1453,68 +1057,44 @@
                         "picoId": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "sectionId": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "order": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "population": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "populationShortName": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "intervention": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "interventionShortName": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "comparator": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "comparatorShortName": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "shortCode": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "summary": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "outcomes": {
                           "type": "object",
@@ -1522,19 +1102,19 @@
                             "picoId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "sectionId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "guidelineId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "dichotomousOutcomes": {
@@ -1545,32 +1125,29 @@
                                   "outcomeId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "picoId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "sectionId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "guidelineId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "status": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "isHidden": {
                                     "type": "boolean"
@@ -1578,266 +1155,140 @@
                                   "sortOrder": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "shortCode": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "outcome": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "shortName": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "importanceLevel": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionStudies": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionTotalParticipants": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "interventionReferenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorReferenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityInterventionStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityOfEvidenceLevel": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityOfEvidenceComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityRiskOfBias": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityInconsistency": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityIndirectness": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityIndirectnessComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityImprecision": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityPublicationBias": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityUpgrade": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "plainSummaryComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "directionOfEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifference": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "absoluteDifferenceDirection": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceConfidenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceLow": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "absoluteDifferenceLowDirection": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceHigh": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "absoluteDifferenceHighDirection": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "relativeEffect": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "relativeEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "relativeEffectConfidenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "relativeEffectConfidenceLow": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "relativeEffectConfidenceHigh": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "comparatorEffect": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "comparatorEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionEffect": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "interventionEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "autoCalcInterventions": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "shadow_PARENT_ID_FOR_MERGING": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "qualityRiskOfBiasComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityImprecisionComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityRiskOfBiasIssues": {
                                     "type": "array",
@@ -1847,89 +1298,53 @@
                                         "id": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "value": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "type": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
                                   },
                                   "comparatorStudies": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorTotalParticipants": {
                                     "type": [
                                       "integer",
-                                      "null"
-                                    ]
-                                  },
-                                  "comparatorTotalEvents": {
-                                    "type": [
-                                      "null",
                                       "number"
                                     ]
                                   },
+                                  "comparatorTotalEvents": {
+                                    "type": "number"
+                                  },
                                   "qualityUpgradeComment": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   },
                                   "timeFrame": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "description": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionStudyFollowUp": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorFollowUp": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityInconsistencyComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityPublicationBiasComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityInconsistencyIssues": {
                                     "type": "array",
@@ -1939,26 +1354,17 @@
                                         "id": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "value": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "type": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
@@ -1971,26 +1377,17 @@
                                         "id": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "value": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "type": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
@@ -2006,32 +1403,29 @@
                                   "outcomeId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "picoId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "sectionId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "guidelineId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "status": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "isHidden": {
                                     "type": "boolean"
@@ -2039,128 +1433,68 @@
                                   "sortOrder": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "shortCode": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "outcome": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "shortName": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "importanceLevel": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionStudies": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionReferenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorReferenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityInterventionStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityOfEvidenceLevel": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityOfEvidenceComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityRiskOfBias": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityRiskOfBiasComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityInconsistency": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityIndirectness": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityImprecision": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityPublicationBias": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityPublicationBiasComment": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityUpgrade": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityRiskOfBiasIssues": {
                                     "type": "array",
@@ -2170,26 +1504,17 @@
                                         "id": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "value": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "type": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
@@ -2202,203 +1527,110 @@
                                         "id": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "value": {
-                                          "type": [
-                                            "string",
-                                            "null"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
-                                          "type": [
-                                            "string",
-                                            "null"
-                                          ]
+                                          "type": "string"
                                         },
                                         "type": {
-                                          "type": [
-                                            "string",
-                                            "null"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
                                   },
                                   "plainSummaryComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "directionOfEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "measurementLabel": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "scaleLow": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "scaleDirection": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "unit": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionEffect": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionEffectConfidenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionEffectConfidenceLow": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionEffectConfidenceHigh": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorEffect": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorEffectConfidenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorEffectConfidenceLow": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorEffectConfidenceHigh": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifference": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceDirection": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceConfidenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceLow": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceLowDirection": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceHigh": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceHighDirection": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "absoluteDifferenceDirectionType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "shadow_PARENT_ID_FOR_MERGING": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "qualityInconsistencyComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "description": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionTotalParticipants": {
-                                    "type": [
-                                      "null",
-                                      "number"
-                                    ]
+                                    "type": "number"
                                   },
                                   "qualityInconsistencyIssues": {
                                     "type": "array",
@@ -2408,35 +1640,23 @@
                                         "id": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "value": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "description": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "type": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
                                   },
                                   "scaleHigh": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -2449,32 +1669,29 @@
                                   "outcomeId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "picoId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "sectionId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "guidelineId": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "status": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "isHidden": {
                                     "type": "boolean"
@@ -2482,68 +1699,38 @@
                                   "sortOrder": {
                                     "type": [
                                       "integer",
-                                      "null"
-                                    ]
-                                  },
-                                  "shortCode": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
-                                  },
-                                  "outcome": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
-                                  },
-                                  "shortName": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
-                                  },
-                                  "importanceLevel": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
-                                  },
-                                  "interventionStudies": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
-                                  },
-                                  "interventionTotalParticipants": {
-                                    "type": [
-                                      "null",
                                       "number"
                                     ]
                                   },
+                                  "shortCode": {
+                                    "type": "string"
+                                  },
+                                  "outcome": {
+                                    "type": "string"
+                                  },
+                                  "shortName": {
+                                    "type": "string"
+                                  },
+                                  "importanceLevel": {
+                                    "type": "string"
+                                  },
+                                  "interventionStudies": {
+                                    "type": "string"
+                                  },
+                                  "interventionTotalParticipants": {
+                                    "type": "number"
+                                  },
                                   "interventionReferenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "interventionStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "comparatorReferenceType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "extraReferences": {
                                     "type": "array",
@@ -2553,13 +1740,13 @@
                                         "referenceId": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "referenceNumber": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "authors": {
@@ -2567,84 +1754,59 @@
                                           "items": {
                                             "type": "object",
                                             "properties": {
-                                              "id": {},
-                                              "firstName": {},
-                                              "lastName": {},
-                                              "formattedName": {}
+                                              "id": {
+                                                "type": [
+                                                  "integer",
+                                                  "number"
+                                                ]
+                                              },
+                                              "firstName": {
+                                                "type": "string"
+                                              },
+                                              "lastName": {
+                                                "type": "string"
+                                              },
+                                              "formattedName": {
+                                                "type": "string"
+                                              }
                                             }
                                           }
                                         },
                                         "titleText": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "url": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "doi": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "pmid": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "journal": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "year": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "volume": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "issue": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "pageStart": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "pageEnd": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "creationType": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "comment": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "attachedFiles": {
                                           "type": "array"
@@ -2653,99 +1815,54 @@
                                     }
                                   },
                                   "qualityInterventionStudyType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityOfEvidenceLevel": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityOfEvidenceComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityRiskOfBias": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityRiskOfBiasComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityInconsistency": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityIndirectness": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityIndirectnessComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityImprecision": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityImprecisionComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityPublicationBias": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "qualityUpgrade": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "plainSummaryComment": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "directionOfEffectType": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "estimatesDescription": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "shadow_PARENT_ID_FOR_MERGING": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   }
                                 }
@@ -2759,7 +1876,7 @@
                         "guidelineId": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "references": {
@@ -2770,13 +1887,13 @@
                               "referenceId": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "referenceNumber": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "authors": {
@@ -2787,140 +1904,83 @@
                                     "id": {
                                       "type": [
                                         "integer",
-                                        "null"
+                                        "number"
                                       ]
                                     },
                                     "firstName": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     },
                                     "lastName": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     },
                                     "formattedName": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 }
                               },
                               "titleText": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "url": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "doi": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "pmid": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "journal": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "year": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "volume": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "issue": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "pageStart": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "pageEnd": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "creationType": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "guidelineId": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "shortName": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "order": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "referenceType": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "studyType": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "attachedFiles": {
                                 "type": "array"
                               },
                               "abstractText": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "comments": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "selected": {
                                 "type": "boolean"
@@ -2935,10 +1995,7 @@
                                 "type": "array"
                               },
                               "results": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -2957,13 +2014,13 @@
                         "referenceId": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "referenceNumber": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "authors": {
@@ -2974,140 +2031,83 @@
                               "id": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "firstName": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "lastName": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "formattedName": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
                         },
                         "titleText": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "url": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "doi": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "pmid": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "journal": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "year": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "volume": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "issue": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "pageStart": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "pageEnd": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "creationType": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "guidelineId": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "shortName": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "order": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "referenceType": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "studyType": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "attachedFiles": {
                           "type": "array"
                         },
                         "abstractText": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "comments": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "selected": {
                           "type": "boolean"
@@ -3122,10 +2122,7 @@
                           "type": "array"
                         },
                         "results": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -3141,7 +2138,7 @@
                     "items": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -3217,65 +2214,47 @@
                   "guidelineId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "sectionId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "parentId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "order": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "sectionType": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "shortCode": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "sectionLabel": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "sectionNumber": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "isNumbered": {
                     "type": "boolean"
                   },
                   "heading": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "text": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "counts": {
                     "type": "object",
@@ -3283,13 +2262,13 @@
                       "picoCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "recommendationCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       }
                     }
@@ -3396,20 +2375,17 @@
                     "totalResults": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "from": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "originalQuery": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -3421,32 +2397,20 @@
                       "id": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "website": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "body": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "toolTypes": {
                         "type": "array",
@@ -3454,16 +2418,10 @@
                           "type": "object",
                           "properties": {
                             "key": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "label": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -3477,16 +2435,10 @@
                           "type": "object",
                           "properties": {
                             "key": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "label": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -3497,16 +2449,10 @@
                           "type": "object",
                           "properties": {
                             "key": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "label": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -3534,16 +2480,10 @@
                           "type": "object",
                           "properties": {
                             "key": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "label": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -3595,10 +2535,7 @@
                               ]
                             },
                             "email": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -3612,16 +2549,10 @@
                     "type": "object",
                     "properties": {
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "param": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "items": {
                         "type": "array",
@@ -3629,21 +2560,15 @@
                           "type": "object",
                           "properties": {
                             "key": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "label": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "count": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "selected": {
@@ -3730,16 +2655,10 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -3748,16 +2667,10 @@
                   "type": "object",
                   "properties": {
                     "html": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "text": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -3765,66 +2678,39 @@
                   "type": "object",
                   "properties": {
                     "uri": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "text": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "nciConceptId": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "nciConceptName": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "termId": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "firstLetter": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "type": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "termNameType": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "prettyUrlName": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -3914,13 +2800,13 @@
                     "totalResults": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "from": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -3931,46 +2817,28 @@
                     "type": "object",
                     "properties": {
                       "preferredName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "termId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "firstLetter": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "termNameType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "prettyUrlName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -4066,28 +2934,16 @@
                     "type": "object",
                     "properties": {
                       "code": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "codingSystem": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -4096,63 +2952,48 @@
                   "type": "object",
                   "properties": {
                     "db_published_date": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "elements_per_page": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "current_url": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "next_page_url": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "total_elements": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "total_pages": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "current_page": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "previous_page": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "previous_page_url": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "next_page": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }

@@ -54,31 +54,22 @@
               "type": "object",
               "properties": {
                 "Error": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "Total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "Query": {
                   "type": "object",
                   "properties": {
                     "ApiVersion": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "ApiType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "TopicId": {
                       "type": "null"
@@ -90,37 +81,22 @@
                       "type": "null"
                     },
                     "Age": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Sex": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Pregnant": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Lang": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Type": {
                       "type": "null"
                     },
                     "ReturnType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Callback": {
                       "type": "null"
@@ -128,22 +104,13 @@
                   }
                 },
                 "Language": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "MyHFHeading": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "AboutTheseResults": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "Resources": {
                   "type": "object",
@@ -157,76 +124,40 @@
                             "type": "object",
                             "properties": {
                               "Type": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "Id": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "Title": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "TranslationId": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "Categories": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFTitle": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFCategory": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFCategoryHeading": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "LastUpdate": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "ImageUrl": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "ImageAlt": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "AccessibleVersion": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "RelatedItems": {
                                 "type": "object",
@@ -237,28 +168,16 @@
                                       "type": "object",
                                       "properties": {
                                         "Type": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "Id": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "Title": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "Url": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
@@ -274,16 +193,10 @@
                                       "type": "object",
                                       "properties": {
                                         "Title": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         },
                                         "Content": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     }
@@ -291,22 +204,13 @@
                                 }
                               },
                               "HealthfinderLogo": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "HealthfinderUrl": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFLinkUrl": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFPromoted": {
                                 "type": "boolean"
@@ -317,16 +221,10 @@
                                   "type": "object",
                                   "properties": {
                                     "Title": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     },
                                     "PlainContent": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 }
@@ -350,76 +248,40 @@
                             "type": "object",
                             "properties": {
                               "Type": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "Id": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "Title": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "TranslationId": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "Categories": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFTitle": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFCategory": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFCategoryHeading": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "LastUpdate": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "ImageUrl": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "ImageAlt": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "AccessibleVersion": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "RelatedItems": {
                                 "type": "null"
@@ -428,22 +290,13 @@
                                 "type": "null"
                               },
                               "HealthfinderLogo": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "HealthfinderUrl": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFLinkUrl": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "MyHFPromoted": {
                                 "type": "boolean"
@@ -529,31 +382,22 @@
               "type": "object",
               "properties": {
                 "Error": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "Total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "Query": {
                   "type": "object",
                   "properties": {
                     "ApiVersion": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "ApiType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "TopicId": {
                       "type": "null"
@@ -574,39 +418,24 @@
                       "type": "null"
                     },
                     "Lang": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "ReturnType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Callback": {
                       "type": "null"
                     },
                     "APiType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "Language": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "Items": {
                   "type": "object",
@@ -617,34 +446,19 @@
                         "type": "object",
                         "properties": {
                           "Type": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "Id": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "Title": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "ParentId": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "TranslationId": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -737,46 +551,31 @@
               "type": "object",
               "properties": {
                 "Error": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "Total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "Query": {
                   "type": "object",
                   "properties": {
                     "ApiVersion": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "ApiType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "TopicId": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "CategoryId": {
                       "type": "null"
                     },
                     "Keyword": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Age": {
                       "type": "null"
@@ -788,36 +587,24 @@
                       "type": "null"
                     },
                     "Lang": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Type": {
                       "type": "null"
                     },
                     "ReturnType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "Callback": {
                       "type": "null"
                     },
                     "APiType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "Language": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -898,7 +685,10 @@
                 "type": "string"
               },
               "status": {
-                "type": "integer"
+                "type": [
+                  "integer",
+                  "number"
+                ]
               },
               "content_type": {
                 "type": "string"
@@ -908,15 +698,17 @@
               },
               "text": {
                 "type": "string"
-              },
-              "html": {
-                "type": "string"
               }
             }
           }
         },
         "metadata": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            }
+          }
         }
       }
     },

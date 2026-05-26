@@ -54,7 +54,6 @@
             "data": {
               "type": [
                 "array",
-                "null",
                 "string"
               ]
             },
@@ -132,70 +131,37 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "pubchem_cid": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "inchi_key": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "exactmass": {
-                  "type": [
-                    "null",
-                    "number"
-                  ]
+                  "type": "number"
                 },
                 "formula": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "super_class": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "main_class": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sub_class": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "smiles": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "regno": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "refmet_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -279,76 +245,40 @@
               "type": "object",
               "properties": {
                 "pubchem_cid": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "regno": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "formula": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "exactmass": {
-                  "type": [
-                    "null",
-                    "number"
-                  ]
+                  "type": "number"
                 },
                 "inchi_key": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sys_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "hmdb_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "kegg_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "chebi_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "metacyc_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "smiles": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -423,70 +353,37 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "pubchem_cid": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "inchi_key": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "exactmass": {
-                  "type": [
-                    "null",
-                    "number"
-                  ]
+                  "type": "number"
                 },
                 "formula": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "super_class": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "main_class": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sub_class": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "smiles": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "regno": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "refmet_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -576,10 +473,7 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "string"
-              ]
+              "type": "string"
             },
             "metadata": {
               "type": "object"
@@ -650,10 +544,7 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "string"
-              ]
+              "type": "string"
             },
             "metadata": {
               "type": "object"

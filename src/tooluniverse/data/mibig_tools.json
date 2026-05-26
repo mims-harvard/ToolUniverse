@@ -34,56 +34,29 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "accession": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "quality": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "completeness": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "status": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "products": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
+                    "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "name": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -94,31 +67,19 @@
                       "null"
                     ],
                     "items": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "name": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "css_class": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   },
                   "organism": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -173,114 +134,84 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "counts": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "total": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "complete": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "partial": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "pending": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "active": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "retired": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
                 },
                 "clusters": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "count": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "css_class": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "phyla": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "count": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       }
                     }

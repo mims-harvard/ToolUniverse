@@ -38,81 +38,54 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "protein_length": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "domain_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "domains": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "pfam_accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "integrated_interpro": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "start": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "end": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "score": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
+                        "type": "number"
                       }
                     }
                   }
@@ -188,63 +161,39 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "pfam_accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "total_structures": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "returned": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "structures": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "pdb_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "experiment_type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "resolution": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
+                        "type": "number"
                       }
                     }
                   }
@@ -319,75 +268,42 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "clan_accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "clan_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "description": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "member_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "members": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "short_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "score": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
+                        "type": "number"
                       }
                     }
                   }

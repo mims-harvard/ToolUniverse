@@ -56,16 +56,10 @@
               "type": "object",
               "properties": {
                 "query": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "species_filter": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "complexes": {
                   "type": "array",
@@ -73,28 +67,16 @@
                     "type": "object",
                     "properties": {
                       "complex_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "species": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "predicted": {
                         "type": "boolean"
@@ -105,16 +87,10 @@
                           "type": "object",
                           "properties": {
                             "identifier": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "description": {
                               "type": [
@@ -129,10 +105,7 @@
                               ]
                             },
                             "interactor_type": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -143,13 +116,13 @@
                 "count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "total_found": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -241,10 +214,7 @@
                   "type": "null"
                 },
                 "systematic_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "species": {
                   "type": "null"
@@ -258,10 +228,7 @@
                 "properties": {
                   "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "complex_type": {
@@ -271,27 +238,18 @@
                   "type": "object",
                   "properties": {
                     "identifier": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "description": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "searchURL": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "confidenceScore": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -302,34 +260,19 @@
                     "type": "object",
                     "properties": {
                       "identifier": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "stoichiometry": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "interactor_type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -340,16 +283,10 @@
                     "type": "object",
                     "properties": {
                       "database": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "identifier": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
                         "type": [

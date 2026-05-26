@@ -67,7 +67,10 @@
                     "type": "string"
                   },
                   "length": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "repeat_type": {
                     "type": "string"
@@ -146,90 +149,51 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "length": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "classification": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "repeat_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "repeat_subtype": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "consensus_sequence": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "author": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "date_created": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "date_modified": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "curation_state": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "clades": {
                   "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "citations": {
@@ -240,20 +204,14 @@
                       "pmid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "authors": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -264,16 +222,10 @@
                     "type": "object",
                     "properties": {
                       "database": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "alias": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -386,30 +338,47 @@
                   "bit_score": {
                     "type": [
                       "integer",
-                      "number",
-                      "null"
+                      "number"
                     ]
                   },
                   "e_value": {
                     "type": "string"
                   },
                   "seq_start": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "seq_end": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "ali_start": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "ali_end": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "model_start": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "model_end": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   }
                 }
               }

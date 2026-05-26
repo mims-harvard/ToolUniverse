@@ -47,16 +47,10 @@
                   "type": "object",
                   "properties": {
                     "symbol": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "gene_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "exac_constraint": {
                       "type": "null"
@@ -65,64 +59,43 @@
                       "type": "object",
                       "properties": {
                         "exp_lof": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "obs_lof": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "oe_lof": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "pLI": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "exp_mis": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "obs_mis": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "oe_mis": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "exp_syn": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "obs_syn": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "oe_syn": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         }
                       }
                     }
@@ -225,22 +198,13 @@
                     "type": "object",
                     "properties": {
                       "ensembl_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "ensembl_version": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "symbol": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -345,52 +309,34 @@
                   "type": "object",
                   "properties": {
                     "gene_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "symbol": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "chrom": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "start": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "stop": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "strand": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "canonical_transcript_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 }
@@ -480,57 +426,39 @@
                   "type": "object",
                   "properties": {
                     "transcript_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "gene_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "gene": {
                       "type": "object",
                       "properties": {
                         "gene_id": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "symbol": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "chrom": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "start": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "stop": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "strand": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 }
@@ -614,10 +542,7 @@
                     "type": "object",
                     "properties": {
                       "variant_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -703,60 +628,42 @@
                   "type": "object",
                   "properties": {
                     "variant_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "chrom": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "pos": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "ref": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "alt": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "rsid": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "genome": {
                       "type": "object",
                       "properties": {
                         "af": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "an": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "ac": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         }
                       }
@@ -867,21 +774,18 @@
                   "type": "object",
                   "properties": {
                     "chrom": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "start": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "stop": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "genes": {
@@ -890,16 +794,10 @@
                         "type": "object",
                         "properties": {
                           "gene_id": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "symbol": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -910,10 +808,7 @@
                         "type": "object",
                         "properties": {
                           "variant_id": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -1009,33 +904,24 @@
                   "type": "object",
                   "properties": {
                     "symbol": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "gene_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "chrom": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "start": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "stop": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "structural_variants": {
@@ -1044,78 +930,60 @@
                         "type": "object",
                         "properties": {
                           "variant_id": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "chrom": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "pos": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "end": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "type": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "length": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "ac": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "an": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "af": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "homozygote_count": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "major_consequence": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "filters": {
                             "type": "array",
                             "items": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -1231,21 +1099,18 @@
                   "type": "object",
                   "properties": {
                     "chrom": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "start": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "stop": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "genes": {
@@ -1254,16 +1119,10 @@
                         "type": "object",
                         "properties": {
                           "gene_id": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "symbol": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -1274,78 +1133,60 @@
                         "type": "object",
                         "properties": {
                           "variant_id": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "chrom": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "pos": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "end": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "type": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "length": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "ac": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "an": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "af": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "homozygote_count": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "major_consequence": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "filters": {
                             "type": "array",
                             "items": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -1439,103 +1280,76 @@
                   "type": "object",
                   "properties": {
                     "variant_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "chrom": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "pos": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "end": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "length": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "ac": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "an": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "af": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
+                      "type": "number"
                     },
                     "homozygote_count": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "hemizygote_count": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "major_consequence": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "consequence": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "reference_genome": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "filters": {
                       "type": "array",
                       "items": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     },
                     "chrom2": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "pos2": {
                       "type": "null"
@@ -1546,13 +1360,13 @@
                     "ac_hom": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "ac_hemi": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }

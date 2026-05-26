@@ -63,21 +63,15 @@
               "type": "object",
               "properties": {
                 "from_db": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "to_db": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "result_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -86,16 +80,10 @@
                     "type": "object",
                     "properties": {
                       "from": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "to": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -170,15 +158,12 @@
               "type": "object",
               "properties": {
                 "query_ids": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "result_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -187,16 +172,10 @@
                     "type": "object",
                     "properties": {
                       "from": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "to": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -283,21 +262,18 @@
               "type": "object",
               "properties": {
                 "gene_names": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "species_taxid": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "result_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -306,16 +282,10 @@
                     "type": "object",
                     "properties": {
                       "from": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "to": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -377,7 +347,7 @@
                 "group_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "groups": {
@@ -386,10 +356,7 @@
                     "type": "object",
                     "properties": {
                       "group_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "databases": {
                         "type": "array",
@@ -397,16 +364,10 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "display_name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "from_supported": {
                               "type": "boolean"

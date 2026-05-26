@@ -45,43 +45,28 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "query": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "id": {
                       "type": "null"
                     },
                     "referenceGenome": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "hugoSymbol": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "entrezGeneId": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "alteration": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "alterationType": {
                       "type": "null"
@@ -111,397 +96,223 @@
                       "type": "null"
                     },
                     "germline": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
+                      "type": "boolean"
                     }
                   }
                 },
                 "geneExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "variantExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "mutationEffect": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "knownEffect": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "description": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "citations": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "pmids": {
-                          "type": [
-                            "array",
-                            "null"
-                          ],
+                          "type": "array",
                           "items": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         },
                         "abstracts": {
-                          "type": [
-                            "array",
-                            "null"
-                          ]
+                          "type": "array"
                         }
                       }
                     }
                   }
                 },
                 "highestSensitiveLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "highestResistanceLevel": {
                   "type": "null"
                 },
                 "highestDiagnosticImplicationLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "highestPrognosticImplicationLevel": {
                   "type": "null"
                 },
                 "geneSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "variantSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "tumorTypeSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "prognosticSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "diagnosticSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "diagnosticImplications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "levelOfEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "alterations": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "tumorType": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "id": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "code": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "color": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "name": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "mainType": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "id": {
                                 "type": "null"
                               },
                               "name": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "tumorForm": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "tissue": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "children": {
-                            "type": [
-                              "null",
-                              "object"
-                            ]
+                            "type": "object"
                           },
                           "parent": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "level": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "tumorForm": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "pmids": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "abstracts": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "prognosticImplications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "treatments": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "alterations": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "drugs": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "ncitCode": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "drugName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "approvedIndications": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       },
                       "level": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "fdaLevel": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "levelAssociatedCancerType": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "id": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "code": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "color": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "name": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "mainType": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "id": {
                                 "type": "null"
                               },
                               "name": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "tumorForm": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "tissue": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "children": {
-                            "type": [
-                              "null",
-                              "object"
-                            ]
+                            "type": "object"
                           },
                           "parent": {
                             "type": [
@@ -512,86 +323,53 @@
                           "level": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "tumorForm": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "levelExcludedCancerTypes": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "id": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "code": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "color": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "mainType": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "id": {
                                   "type": "null"
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "tumorForm": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
                             "tissue": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "children": {
-                              "type": [
-                                "null",
-                                "object"
-                              ]
+                              "type": "object"
                             },
                             "parent": {
                               "type": [
@@ -602,121 +380,70 @@
                             "level": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "tumorForm": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "pmids": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "abstracts": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "link": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "abstract": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "dataVersion": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "lastUpdate": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "alleleExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "oncogenic": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "hotspot": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "highestFdaLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "otherSignificantSensitiveLevels": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "otherSignificantResistanceLevels": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "exon": {
                   "type": "null"
                 },
                 "vus": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 }
               }
             },
@@ -799,43 +526,28 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "query": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "id": {
                       "type": "null"
                     },
                     "referenceGenome": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "hugoSymbol": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "entrezGeneId": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "alteration": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "alterationType": {
                       "type": "null"
@@ -868,76 +580,43 @@
                       "type": "null"
                     },
                     "germline": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
+                      "type": "boolean"
                     }
                   }
                 },
                 "geneExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "variantExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "mutationEffect": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "knownEffect": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "description": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "citations": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "pmids": {
-                          "type": [
-                            "array",
-                            "null"
-                          ],
+                          "type": "array",
                           "items": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         },
                         "abstracts": {
-                          "type": [
-                            "array",
-                            "null"
-                          ]
+                          "type": "array"
                         }
                       }
                     }
                   }
                 },
                 "highestSensitiveLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "highestResistanceLevel": {
                   "type": "null"
@@ -952,313 +631,175 @@
                   "type": "null"
                 },
                 "geneSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "variantSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "tumorTypeSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "prognosticSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "diagnosticSummary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "diagnosticImplications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "levelOfEvidence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "alterations": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "tumorType": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "id": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "code": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "color": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "name": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "mainType": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "id": {
                                 "type": "null"
                               },
                               "name": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "tumorForm": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "tissue": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "children": {
-                            "type": [
-                              "null",
-                              "object"
-                            ]
+                            "type": "object"
                           },
                           "parent": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "level": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "tumorForm": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "pmids": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "abstracts": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "prognosticImplications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "treatments": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "alterations": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "drugs": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "ncitCode": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "drugName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "approvedIndications": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       },
                       "level": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "fdaLevel": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "levelAssociatedCancerType": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "id": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "code": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "color": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "name": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "mainType": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "id": {
                                 "type": "null"
                               },
                               "name": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "tumorForm": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "tissue": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "children": {
-                            "type": [
-                              "null",
-                              "object"
-                            ]
+                            "type": "object"
                           },
                           "parent": {
                             "type": [
@@ -1269,86 +810,53 @@
                           "level": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "tumorForm": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "levelExcludedCancerTypes": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "id": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "code": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "color": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "mainType": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "id": {
                                   "type": "null"
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "tumorForm": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
                             "tissue": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "children": {
-                              "type": [
-                                "null",
-                                "object"
-                              ]
+                              "type": "object"
                             },
                             "parent": {
                               "type": [
@@ -1359,121 +867,70 @@
                             "level": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "tumorForm": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "pmids": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "abstracts": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "link": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "abstract": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "dataVersion": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "lastUpdate": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "alleleExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "oncogenic": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "hotspot": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "highestFdaLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "otherSignificantSensitiveLevels": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "otherSignificantResistanceLevels": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "exon": {
                   "type": "null"
                 },
                 "vus": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 }
               }
             },
@@ -1549,82 +1006,46 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "grch37Isoform": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "grch37RefSeq": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "grch38Isoform": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "grch38RefSeq": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "entrezGeneId": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "hugoSymbol": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "geneType": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "highestSensitiveLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "highestResistanceLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "summary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "background": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "highestResistancLevel": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -1689,93 +1110,57 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "total_genes": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "cancer_genes_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "genes": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "entrezGeneId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "hugoSymbol": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "geneType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "grch37Isoform": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "grch37RefSeq": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "grch38Isoform": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "grch38RefSeq": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "geneAliases": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "genesets": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       }
                     }
                   }
@@ -1838,106 +1223,55 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "LEVEL_Dx2": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Dx1": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Dx3": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_1": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Fda2": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Fda3": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_3B": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_R1": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_R2": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_3A": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Px3": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_2": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Fda1": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Px1": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_Px2": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "LEVEL_4": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -2023,40 +1357,25 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "query": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "id": {
                       "type": "null"
                     },
                     "referenceGenome": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "hugoSymbol": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "entrezGeneId": {
                       "type": "null"
                     },
                     "alteration": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "alterationType": {
                       "type": "null"
@@ -2086,60 +1405,33 @@
                       "type": "null"
                     },
                     "germline": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
+                      "type": "boolean"
                     }
                   }
                 },
                 "geneExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "variantExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "mutationEffect": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "knownEffect": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "description": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "citations": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "pmids": {
-                          "type": [
-                            "array",
-                            "null"
-                          ]
+                          "type": "array"
                         },
                         "abstracts": {
-                          "type": [
-                            "array",
-                            "null"
-                          ]
+                          "type": "array"
                         }
                       }
                     }
@@ -2158,112 +1450,61 @@
                   "type": "null"
                 },
                 "geneSummary": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "variantSummary": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "tumorTypeSummary": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "prognosticSummary": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "diagnosticSummary": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "diagnosticImplications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "prognosticImplications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "treatments": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "dataVersion": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "lastUpdate": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "alleleExist": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "oncogenic": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "hotspot": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "highestFdaLevel": {
                   "type": "null"
                 },
                 "otherSignificantSensitiveLevels": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "otherSignificantResistanceLevels": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "exon": {
                   "type": "null"
                 },
                 "vus": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "warning": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },

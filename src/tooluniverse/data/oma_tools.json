@@ -43,79 +43,61 @@
                 "entry_nr": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "oma_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "canonical_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sequence_length": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "species_code": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "species_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "taxon_id": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "oma_group": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "oma_hog_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "chromosome": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "locus_start": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "locus_end": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "locus_strand": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "is_main_isoform": {
@@ -124,7 +106,7 @@
                 "roothog_id": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -213,64 +195,40 @@
                 "type": "object",
                 "properties": {
                   "oma_id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "canonical_id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "species_name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "species_code": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "taxon_id": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "rel_type": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "distance": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "score": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "sequence_length": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "chromosome": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -342,34 +300,22 @@
                 "type": "object",
                 "properties": {
                   "hog_id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "level": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "roothog_id": {
                     "type": [
                       "integer",
-                      "null"
-                    ]
-                  },
-                  "completeness_score": {
-                    "type": [
-                      "null",
                       "number"
                     ]
                   },
+                  "completeness_score": {
+                    "type": "number"
+                  },
                   "description": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "parent_hogs": {
                     "type": "array"
@@ -380,18 +326,12 @@
                       "type": "object",
                       "properties": {
                         "hog_id": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "alternative_levels": {
                           "type": "array",
                           "items": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -400,10 +340,7 @@
                   "alternative_levels": {
                     "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 }
@@ -476,20 +413,14 @@
                 "group_nr": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "fingerprint": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "description": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "members": {
                   "type": "array",
@@ -497,46 +428,31 @@
                     "type": "object",
                     "properties": {
                       "oma_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "canonical_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "species_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "species_code": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "taxon_id": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "sequence_length": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "chromosome": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }

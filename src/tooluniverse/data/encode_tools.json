@@ -48,216 +48,120 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "@context": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "@graph": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "@id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "@type": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "assay_term_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "assay_title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "audit": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "INTERNAL_ACTION": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "path": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level_name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level": {
                                   "type": [
                                     "integer",
-                                    "null"
+                                    "number"
                                   ]
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "detail": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "category": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
                           },
                           "NOT_COMPLIANT": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "path": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level_name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level": {
                                   "type": [
                                     "integer",
-                                    "null"
+                                    "number"
                                   ]
                                 },
                                 "name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "detail": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "category": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
                           },
                           "WARNING": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "path": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level_name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level": {
                                   "type": [
                                     "integer",
-                                    "null"
+                                    "number"
                                   ]
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "detail": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "category": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
@@ -265,230 +169,122 @@
                         }
                       },
                       "award": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "project": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "biosample_ontology": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "term_name": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "classification": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "biosample_summary": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "dbxrefs": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       },
                       "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "files": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "@id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "lab": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "title": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "related_series": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       },
                       "replicates": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "antibody": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "accession": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
                             "library": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "biosample": {
-                                  "type": [
-                                    "null",
-                                    "object"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "organism": {
-                                      "type": [
-                                        "null",
-                                        "object"
-                                      ],
+                                      "type": "object",
                                       "properties": {
                                         "scientific_name": {
-                                          "type": [
-                                            "null",
-                                            "string"
-                                          ]
+                                          "type": "string"
                                         }
                                       }
                                     },
                                     "applied_modifications": {
-                                      "type": [
-                                        "array",
-                                        "null"
-                                      ],
+                                      "type": "array",
                                       "items": {
-                                        "type": [
-                                          "object",
-                                          "null"
-                                        ],
+                                        "type": "object",
                                         "properties": {
                                           "modified_site_by_target_id": {
-                                            "type": [
-                                              "object",
-                                              "null"
-                                            ],
+                                            "type": "object",
                                             "properties": {
                                               "organism": {
-                                                "type": [
-                                                  "object",
-                                                  "null"
-                                                ],
+                                                "type": "object",
                                                 "properties": {
                                                   "schema_version": {
-                                                    "type": [
-                                                      "string",
-                                                      "null"
-                                                    ]
+                                                    "type": "string"
                                                   },
                                                   "@type": {
-                                                    "type": [
-                                                      "array",
-                                                      "null"
-                                                    ],
+                                                    "type": "array",
                                                     "items": {
-                                                      "type": [
-                                                        "null",
-                                                        "string"
-                                                      ]
+                                                      "type": "string"
                                                     }
                                                   },
                                                   "name": {
-                                                    "type": [
-                                                      "string",
-                                                      "null"
-                                                    ]
+                                                    "type": "string"
                                                   },
                                                   "taxon_id": {
-                                                    "type": [
-                                                      "string",
-                                                      "null"
-                                                    ]
+                                                    "type": "string"
                                                   },
                                                   "scientific_name": {
-                                                    "type": [
-                                                      "string",
-                                                      "null"
-                                                    ]
+                                                    "type": "string"
                                                   },
                                                   "@id": {
-                                                    "type": [
-                                                      "string",
-                                                      "null"
-                                                    ]
+                                                    "type": "string"
                                                   },
                                                   "uuid": {
-                                                    "type": [
-                                                      "string",
-                                                      "null"
-                                                    ]
+                                                    "type": "string"
                                                   },
                                                   "status": {
-                                                    "type": [
-                                                      "string",
-                                                      "null"
-                                                    ]
+                                                    "type": "string"
                                                   }
                                                 }
                                               }
@@ -498,91 +294,58 @@
                                       }
                                     },
                                     "age_display": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "life_stage": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     },
                                     "accession": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 }
                               }
                             },
                             "@id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "technical_replicate_number": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "biological_replicate_number": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
                         }
                       },
                       "status": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "target": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "genes": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "symbol": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
                           },
                           "label": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "@id": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -590,693 +353,396 @@
                   }
                 },
                 "@id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "@type": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "all": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "clear_filters": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "columns": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "@id": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "accession": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "assay_term_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "assay_title": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biosample_ontology.classification": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "target.@id": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "target.label": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "target.genes.symbol": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biosample_summary": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biosample_ontology.term_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "dbxrefs": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "description": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "lab.title": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "award.project": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "status": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "files.@id": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "related_series": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.accession": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.biological_replicate_number": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.technical_replicate_number": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.antibody.accession": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.organism.scientific_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.life_stage": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.age_display": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.treatments.treatment_term_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.treatments.treatment_term_id": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.treatments.amount": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.treatments.amount_units": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.treatments.duration": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.treatments.duration_units": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.synchronization": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.post_synchronization_time": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.post_synchronization_time_units": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.applied_modifications.modified_site_by_target_id.organism": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.applied_modifications.introduced_gene.organism": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.@id": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.mixed_biosamples": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.biosample.subcellular_fraction_term_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.construction_platform.term_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicates.library.construction_method": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "facet_groups": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "facet_fields": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "facets": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "field": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "terms": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "key": {
                               "type": [
                                 "integer",
-                                "null",
+                                "number",
                                 "string"
                               ]
                             },
                             "doc_count": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "key_as_string": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -1284,146 +750,86 @@
                       "total": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "appended": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "open_on_load": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       }
                     }
                   }
                 },
                 "filters": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "field": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "term": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "remove": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "notification": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sort": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "date_created": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "label": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "uuid": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "title": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -1515,210 +921,117 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "@context": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "@graph": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "object",
-                      "null"
-                    ],
+                    "type": "object",
                     "properties": {
                       "@id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "@type": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "assay_term_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "audit": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "INTERNAL_ACTION": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "path": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level_name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level": {
                                   "type": [
                                     "integer",
-                                    "null"
+                                    "number"
                                   ]
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "detail": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "category": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
                           },
                           "NOT_COMPLIANT": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "path": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level_name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level": {
                                   "type": [
                                     "integer",
-                                    "null"
+                                    "number"
                                   ]
                                 },
                                 "name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "detail": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "category": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
                           },
                           "WARNING": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "path": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level_name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level": {
                                   "type": [
                                     "integer",
-                                    "null"
+                                    "number"
                                   ]
                                 },
                                 "name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "detail": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "category": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
@@ -1726,964 +1039,547 @@
                         }
                       },
                       "award": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "project": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "biological_replicates": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         }
                       },
                       "biosample_ontology": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "organ_slims": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           },
                           "term_name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "dataset": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "date_created": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "file_format": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "file_size": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "file_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "href": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "lab": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "title": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "output_category": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "output_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "quality_metrics": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       },
                       "replicate": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "library": {
-                            "type": [
-                              "object",
-                              "null"
-                            ],
+                            "type": "object",
                             "properties": {
                               "accession": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
                         }
                       },
                       "run_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "simple_biosample_summary": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "status": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "technical_replicates": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       },
                       "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "@id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "@type": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "all": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "clear_filters": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "columns": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "@id": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "title": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "accession": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "dataset": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "assembly": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "technical_replicates": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biological_replicates": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "file_format": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "file_type": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "file_format_type": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "file_size": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "assay_term_name": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biosample_ontology.term_name": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biosample_ontology.organ_slims": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "simple_biosample_summary": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "origin_batches": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "target.label": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "href": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "derived_from": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "genome_annotation": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "replicate.library.accession": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "paired_end": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "paired_with": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "preferred_default": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "run_type": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "read_length": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "mapped_read_length": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "cropped_read_length": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "cropped_read_length_tolerance": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "mapped_run_type": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "read_length_units": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "output_category": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "output_type": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "index_of": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "quality_metrics": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "lab.title": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "award.project": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "step_run": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "date_created": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "analysis_step_version": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "restricted": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "submitter_comment": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "status": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "annotation_type": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "annotation_subtype": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biochemical_inputs": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "encyclopedia_version": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "facet_groups": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "facet_fields": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "facets": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "field": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "terms": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "key": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "doc_count": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
@@ -2692,146 +1588,86 @@
                       "total": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "appended": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "open_on_load": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       }
                     }
                   }
                 },
                 "filters": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "field": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "term": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "remove": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "notification": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "sort": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "date_created": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "label": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "uuid": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -2910,412 +1746,214 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "assay_term_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "biosample_ontology": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "documents": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "references": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "schema_version": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "alternate_accessions": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "analyses": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "description": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "dbxrefs": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "date_released": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "doi": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "internal_tags": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "status": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "date_created": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "submitted_by": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "lab": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "award": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "aliases": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "date_submitted": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "target": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "possible_controls": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "supersedes": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "related_files": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "internal_status": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "bio_replicate_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "tech_replicate_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "replication_type": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "objective_slims": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "type_slims": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "category_slims": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "assay_title": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "assay_slims": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "replicates": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "simple_biosample_summary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "biosample_summary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "assay_term_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "@id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "@type": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "uuid": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "original_files": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "contributing_files": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "files": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "revoked_files": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "assembly": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "hub": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "default_analysis": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "related_series": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "superseded_by": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "related_annotations": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "life_stage_age": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "perturbed": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 }
               }
             },
@@ -3382,354 +2020,192 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "aliases": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "schema_version": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "lab": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "award": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "date_created": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "submitted_by": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "alternate_accessions": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "file_format": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "no_file_available": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "submitted_file_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "md5sum": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "content_md5sum": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "fastq_signature": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "file_size": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "mapped_read_length": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "mapped_run_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "flowcell_details": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "output_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "derived_from": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "dataset": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "assembly": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "status": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "dbxrefs": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "@id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "@type": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "uuid": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "href": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "read_length_units": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "biological_replicates": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   }
                 },
                 "technical_replicates": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "biological_replicates_formatted": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "donors": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "output_category": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "quality_metrics": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "file_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "superseded_by": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "cloud_metadata": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "url": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "md5sum_base64": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "file_size": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
                 },
                 "s3_uri": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "azure_uri": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "assay_title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "assay_term_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "biosample_ontology": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "simple_biosample_summary": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "target": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "analyses": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "processed": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 }
               }
             },
@@ -3806,218 +2282,116 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "@context": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "@graph": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "object",
-                      "null"
-                    ],
+                    "type": "object",
                     "properties": {
                       "@id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "@type": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "age": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "applied_modifications": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "method": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "purpose": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "modified_site_by_target_id": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "organism": {
-                                  "type": [
-                                    "object",
-                                    "null"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "schema_version": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "@type": {
-                                      "type": [
-                                        "array",
-                                        "null"
-                                      ],
+                                      "type": "array",
                                       "items": {
-                                        "type": [
-                                          "null",
-                                          "string"
-                                        ]
+                                        "type": "string"
                                       }
                                     },
                                     "name": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "taxon_id": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "scientific_name": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "@id": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "uuid": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "status": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 },
                                 "name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
                             "category": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "audit": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "WARNING": {
-                            "type": [
-                              "array",
-                              "null"
-                            ],
+                            "type": "array",
                             "items": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "path": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level_name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "level": {
                                   "type": [
                                     "integer",
-                                    "null"
+                                    "number"
                                   ]
                                 },
                                 "name": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "detail": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "category": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
@@ -4025,113 +2399,62 @@
                         }
                       },
                       "biosample_ontology": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "term_name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "classification": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "lab": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "title": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "life_stage": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "organism": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "scientific_name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "parent_of": {
-                        "type": [
-                          "array",
-                          "null"
-                        ]
+                        "type": "array"
                       },
                       "source": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "title": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "status": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "summary": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "treatments": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "treatment_term_name": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "purpose": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -4140,539 +2463,308 @@
                   }
                 },
                 "@id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "@type": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "clear_filters": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "columns": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "@id": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "accession": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "description": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "age": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "age_units": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "age_display": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biosample_ontology.term_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "biosample_ontology.classification": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "synchronization": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "post_synchronization_time": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "post_synchronization_time_units": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "organism.scientific_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "parent_of": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "applied_modifications.modified_site_by_target_id.name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "applied_modifications.modified_site_by_target_id.organism": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "applied_modifications.introduced_gene.organism": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "applied_modifications.purpose": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "applied_modifications.method": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "applied_modifications.category": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "source.title": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "lab.title": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "life_stage": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "status": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "treatments.treatment_term_name": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "treatments.treatment_type_details": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "treatments.purpose": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "culture_harvest_date": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "date_obtained": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "summary": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "facet_groups": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "facet_fields": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "facets": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "field": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "terms": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
+                        "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "key": {
                               "type": [
                                 "integer",
-                                "null",
+                                "number",
                                 "string"
                               ]
                             },
                             "doc_count": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "isEqual": {
-                              "type": [
-                                "boolean",
-                                "null"
-                              ]
+                              "type": "boolean"
                             },
                             "key_as_string": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -4680,153 +2772,90 @@
                       "total": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "appended": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "open_on_load": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       }
                     }
                   }
                 },
                 "filters": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "field": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "term": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "remove": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
                 },
                 "notification": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sort": {
-                  "type": [
-                    "null",
-                    "object"
-                  ],
+                  "type": "object",
                   "properties": {
                     "date_created": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "label": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "uuid": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "order": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "unmapped_type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "title": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "all": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -4895,322 +2924,166 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "url": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "aliases": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "schema_version": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "status": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "lab": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "award": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "date_created": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "submitted_by": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "notes": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "documents": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "references": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "source": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "product_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "biosample_ontology": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "genetic_modifications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "alternate_accessions": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "description": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "treatments": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "dbxrefs": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "donor": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "organism": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "passage_number": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "internal_tags": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "culture_harvest_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "culture_start_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "@id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "@type": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 },
                 "uuid": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sex": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "age": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "age_units": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "health_status": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "life_stage": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "applied_modifications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "characterizations": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "parent_of": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 },
                 "age_display": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "origin_batch": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "perturbed": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 },
                 "simple_summary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "summary": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "model_organism_sex": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "mouse_life_stage": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "model_organism_age": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "model_organism_age_units": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "model_organism_health_status": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "model_organism_donor_modifications": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
+                  "type": "array"
                 }
               }
             },

@@ -47,64 +47,37 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": "object",
       "properties": {
         "drug_name": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "analysis_parameters": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "patient_sex_filter": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "serious_events_only": {
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": "boolean"
             }
           }
         },
         "adverse_events": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "result": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "term": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "count": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   }
                 }
@@ -116,93 +89,48 @@
           "type": "null"
         },
         "safety_literature": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "status": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "data": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "title": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "abstract": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "authors": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
+                    "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   },
                   "journal": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "year": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "doi": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "url": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "source_db": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "article_id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "pmid": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "pmcid": {
                     "type": [
@@ -211,10 +139,7 @@
                     ]
                   },
                   "doi_url": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "fulltext_xml_url": {
                     "type": [
@@ -225,86 +150,47 @@
                   "citations": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "open_access": {
-                    "type": [
-                      "boolean",
-                      "null"
-                    ]
+                    "type": "boolean"
                   },
                   "keywords": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
+                    "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   },
                   "source": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "data_quality": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "has_abstract": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "has_authors": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "has_journal": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "has_year": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "has_doi": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "has_citations": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "has_keywords": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       },
                       "has_url": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
+                        "type": "boolean"
                       }
                     }
                   }
@@ -312,55 +198,37 @@
               }
             },
             "metadata": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "query": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "source": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             }
           }
         },
         "analysis_summary": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "has_adverse_events": {
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": "boolean"
             },
             "has_molecular_data": {
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": "boolean"
             },
             "literature_papers_found": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             }
           }
@@ -400,116 +268,62 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": "object",
       "properties": {
         "success": {
-          "type": [
-            "boolean",
-            "null"
-          ]
+          "type": "boolean"
         },
         "result": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "metadata": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "prompt_used": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "input_arguments": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "research_topic": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "literature_content": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "focus_area": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "study_types": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "quality_level": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "review_scope": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },
             "model_info": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "api_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "model_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "temperature": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 }
               }
             },
             "execution_time_seconds": {
-              "type": [
-                "number",
-                "null"
-              ]
+              "type": "number"
             },
             "timestamp": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             }
           }
         }
@@ -552,95 +366,53 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": "object",
       "properties": {
         "target_selection": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "status": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "disease": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "associatedTargets": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "count": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "rows": {
-                          "type": [
-                            "array",
-                            "null"
-                          ],
+                          "type": "array",
                           "items": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "target": {
-                                "type": [
-                                  "null",
-                                  "object"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "id": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "approvedSymbol": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               },
                               "score": {
-                                "type": [
-                                  "null",
-                                  "number"
-                                ]
+                                "type": "number"
                               }
                             }
                           }
@@ -654,156 +426,90 @@
           }
         },
         "lead_discovery": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "total_drugs": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             },
             "approved_drugs": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             },
             "drug_data": {
-              "type": [
-                "array",
-                "null"
-              ]
+              "type": "array"
             }
           }
         },
         "safety_assessment": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "error": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             }
           }
         },
         "literature_validation": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "success": {
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": "boolean"
             },
             "result": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "metadata": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "prompt_used": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "input_arguments": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "research_topic": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "literature_content": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "focus_area": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "study_types": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "quality_level": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "review_scope": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "model_info": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "api_type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "model_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "temperature": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
+                      "type": "number"
                     }
                   }
                 },
                 "execution_time_seconds": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "timestamp": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             }
@@ -855,360 +561,195 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": "object",
       "properties": {
         "disease": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "sample_type": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "literature_evidence": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "success": {
-              "type": [
-                "boolean",
-                "null"
-              ]
+              "type": "boolean"
             },
             "result": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "metadata": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "prompt_used": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "input_arguments": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "research_topic": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "literature_content": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "focus_area": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "study_types": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "quality_level": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "review_scope": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "model_info": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "api_type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "model_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "temperature": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
+                      "type": "number"
                     }
                   }
                 },
                 "execution_time_seconds": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "timestamp": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             }
           }
         },
         "expression_data": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "search_query": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "genes_found": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             },
             "search_strategy": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "gene_details": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "status": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "error": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "error_details": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "message": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "retriable": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
+                      "type": "boolean"
                     },
                     "next_steps": {
-                      "type": [
-                        "array",
-                        "null"
-                      ],
+                      "type": "array",
                       "items": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     },
                     "details": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "validation_error": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "path": {
-                          "type": [
-                            "array",
-                            "null"
-                          ]
+                          "type": "array"
                         },
                         "schema": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "type": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "properties": {
-                              "type": [
-                                "object",
-                                "null"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "ensembl_id": {
-                                  "type": [
-                                    "object",
-                                    "null"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "type": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "description": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 },
                                 "include_images": {
-                                  "type": [
-                                    "object",
-                                    "null"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "type": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "description": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 },
                                 "include_antibodies": {
-                                  "type": [
-                                    "object",
-                                    "null"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "type": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "description": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 },
                                 "include_expression": {
-                                  "type": [
-                                    "object",
-                                    "null"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "type": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "description": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 }
                               }
                             },
                             "required": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
                         },
                         "parameter": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "expected": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -1217,33 +758,18 @@
               }
             },
             "all_candidates": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "gene_name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ensembl_id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "description": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -1251,109 +777,67 @@
           }
         },
         "pathway_analysis": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "error": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             }
           }
         },
         "clinical_validation": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "meta": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "skip": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "limit": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
             },
             "results": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "clinical_pharmacology": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
+                    "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   },
                   "openfda.brand_name": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
+                    "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   },
                   "openfda.generic_name": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
+                    "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   },
                   "set_id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -1361,16 +845,10 @@
           }
         },
         "protein_information": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "error": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             }
           }
         }
@@ -1484,132 +962,66 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "array",
-        "null"
-      ],
+      "type": "array",
       "items": {
-        "type": [
-          "object",
-          "null"
-        ],
+        "type": "object",
         "properties": {
           "id": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "name": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "description": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "detailed_description": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "toolType": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "tags": {
-            "type": [
-              "array",
-              "null"
-            ]
+            "type": "array"
           },
           "category": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "lab": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "source": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "version": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "reviewed": {
-            "type": [
-              "boolean",
-              "null"
-            ]
+            "type": "boolean"
           },
           "isValidated": {
-            "type": [
-              "boolean",
-              "null"
-            ]
+            "type": "boolean"
           },
           "usageStats": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "capabilities": {
-            "type": [
-              "array",
-              "null"
-            ]
+            "type": "array"
           },
           "limitations": {
-            "type": [
-              "array",
-              "null"
-            ]
+            "type": "array"
           },
           "parameters": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "properties": {}
+            "type": "object"
           },
           "inputSchema": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "properties": {}
+            "type": "object"
           },
           "exampleInput": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "properties": {}
+            "type": "object"
           },
           "apiEndpoints": {
-            "type": [
-              "array",
-              "null"
-            ]
+            "type": "array"
           }
         }
       }
@@ -1670,102 +1082,66 @@
       }
     ],
     "return_schema": {
-      "type": [
-        "object",
-        "null"
-      ],
+      "type": "object",
       "properties": {
         "status": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "output_file": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "graph": {
-          "type": [
-            "object",
-            "null"
-          ],
+          "type": "object",
           "properties": {
             "nodes": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "object",
-                  "null"
-                ],
+                "type": "object",
                 "properties": {
                   "id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 }
               }
             },
             "edges": {
-              "type": [
-                "array",
-                "null"
-              ]
+              "type": "array"
             },
             "stats": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "tools": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "pairs_evaluated": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "edges": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "llm_calls": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "runtime_sec": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 }
               }
             }

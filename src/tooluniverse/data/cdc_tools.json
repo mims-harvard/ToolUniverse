@@ -57,13 +57,19 @@
                     "type": "string"
                   },
                   "averageRating": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "blobFilename": {
                     "type": "string"
                   },
                   "blobFileSize": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "blobId": {
                     "type": "string"
@@ -75,7 +81,10 @@
                     "type": "string"
                   },
                   "createdAt": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "description": {
                     "type": "string"
@@ -87,7 +96,10 @@
                     "type": "string"
                   },
                   "downloadCount": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "hideFromCatalog": {
                     "type": "boolean"
@@ -102,10 +114,16 @@
                     "type": "boolean"
                   },
                   "numberOfComments": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "oid": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "provenance": {
                     "type": "string"
@@ -114,28 +132,49 @@
                     "type": "boolean"
                   },
                   "publicationDate": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "publicationGroup": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "publicationStage": {
                     "type": "string"
                   },
                   "rowsUpdatedAt": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "tableId": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "totalTimesRated": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "viewCount": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "viewLastModified": {
-                    "type": "integer"
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
                   },
                   "viewType": {
                     "type": "string"
@@ -146,7 +185,10 @@
                       "type": "object",
                       "properties": {
                         "reviewedAt": {
-                          "type": "integer"
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
                         },
                         "reviewedAutomatically": {
                           "type": "boolean"
@@ -155,7 +197,10 @@
                           "type": "string"
                         },
                         "submissionId": {
-                          "type": "integer"
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
                         },
                         "submissionObject": {
                           "type": "string"
@@ -164,13 +209,19 @@
                           "type": "string"
                         },
                         "submittedAt": {
-                          "type": "integer"
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
                         },
                         "targetAudience": {
                           "type": "string"
                         },
                         "workflowId": {
-                          "type": "integer"
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
                         },
                         "submissionDetails": {
                           "type": "object",
@@ -184,13 +235,22 @@
                           "type": "object",
                           "properties": {
                             "endedAt": {
-                              "type": "integer"
+                              "type": [
+                                "integer",
+                                "number"
+                              ]
                             },
                             "failureCount": {
-                              "type": "integer"
+                              "type": [
+                                "integer",
+                                "number"
+                              ]
                             },
                             "startedAt": {
-                              "type": "integer"
+                              "type": [
+                                "integer",
+                                "number"
+                              ]
                             },
                             "status": {
                               "type": "string"
@@ -288,10 +348,7 @@
                                 "type": "string"
                               },
                               "Language": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "Described By": {
                                 "type": "string"
@@ -300,6 +357,36 @@
                                 "type": "string"
                               },
                               "Issued": {
+                                "type": "string"
+                              },
+                              "Data Standard": {
+                                "type": "string"
+                              },
+                              "Primary IT Investment UII": {
+                                "type": "string"
+                              },
+                              "System of Records": {
+                                "type": "string"
+                              },
+                              "IsQualityData": {
+                                "type": "string"
+                              },
+                              "License": {
+                                "type": "string"
+                              },
+                              "Footnotes": {
+                                "type": "string"
+                              },
+                              "Suggested Citation": {
+                                "type": "string"
+                              },
+                              "test": {
+                                "type": "string"
+                              },
+                              "Is Quality Data": {
+                                "type": "string"
+                              },
+                              "Theme": {
                                 "type": "string"
                               }
                             }
@@ -317,12 +404,29 @@
                                 "type": "string"
                               },
                               "Geographic Unit of Analysis": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "Analytical Methods Reference": {
+                                "type": "string"
+                              },
+                              "Geographic Coverage": {
+                                "type": "string"
+                              },
+                              "Update Frequency": {
+                                "type": "string"
+                              },
+                              "Temporal Applicability": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "Dataset Information": {
+                            "type": "object",
+                            "properties": {
+                              "Glossary/Methodology": {
+                                "type": "string"
+                              },
+                              "Glossary/Methodology ": {
                                 "type": "string"
                               }
                             }
@@ -348,6 +452,9 @@
                             },
                             "name": {
                               "type": "string"
+                            },
+                            "blobId": {
+                              "type": "string"
                             }
                           }
                         }
@@ -367,46 +474,148 @@
                                   "type": "string"
                                 },
                                 "sas format txt": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "sas input txt": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "dct": {
                                   "type": "string"
                                 },
                                 "readme txt": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "sas label txt": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "txt": {
                                   "type": "string"
                                 },
                                 "do": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 },
                                 "sps": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
+                                },
+                                "SAS zip": {
+                                  "type": "string"
+                                },
+                                "SPSS zip": {
+                                  "type": "string"
+                                },
+                                "STATA zip": {
+                                  "type": "string"
+                                },
+                                "html": {
+                                  "type": "string"
+                                },
+                                "htm": {
+                                  "type": "string"
+                                },
+                                "rds": {
+                                  "type": "string"
+                                },
+                                "dta": {
+                                  "type": "string"
+                                },
+                                "sas7bdat": {
+                                  "type": "string"
+                                },
+                                "R readme file": {
+                                  "type": "string"
+                                },
+                                "STATA input statements": {
+                                  "type": "string"
+                                },
+                                "sas input statements": {
+                                  "type": "string"
+                                },
+                                "stata input statements": {
+                                  "type": "string"
+                                },
+                                "dta ": {
+                                  "type": "string"
+                                },
+                                "R datafile (IP)": {
+                                  "type": "string"
+                                },
+                                "sas input statements (IP)": {
+                                  "type": "string"
+                                },
+                                "stata datafile (IP)": {
+                                  "type": "string"
+                                },
+                                "sas datafile (IP)": {
+                                  "type": "string"
+                                },
+                                "R readme file (IP)": {
+                                  "type": "string"
+                                },
+                                "stata input statements (IP)": {
+                                  "type": "string"
+                                },
+                                "r datafile (IP)": {
+                                  "type": "string"
+                                },
+                                "stata datafile (ED)": {
+                                  "type": "string"
+                                },
+                                "sas datafile (ED)": {
+                                  "type": "string"
+                                },
+                                "R readme file (ED)": {
+                                  "type": "string"
+                                },
+                                "stata input statements (ED)": {
+                                  "type": "string"
+                                },
+                                "sas input statement (ED)": {
+                                  "type": "string"
+                                },
+                                "r datafile (ED)": {
+                                  "type": "string"
+                                },
+                                "r datafile": {
+                                  "type": "string"
+                                },
+                                "sas input statements (ED)": {
+                                  "type": "string"
+                                },
+                                "application": {
+                                  "type": "string"
+                                },
+                                ".ZIP/.exe data files": {
+                                  "type": "string"
+                                },
+                                "Questionnaire": {
+                                  "type": "string"
+                                },
+                                "Documentation": {
+                                  "type": "string"
+                                },
+                                "readme": {
+                                  "type": "string"
+                                },
+                                "documentation": {
+                                  "type": "string"
+                                },
+                                "sas format": {
+                                  "type": "string"
+                                },
+                                "R datafile": {
+                                  "type": "string"
+                                },
+                                ".exe data files": {
+                                  "type": "string"
+                                },
+                                ".exe/.zip data files": {
+                                  "type": "string"
+                                },
+                                ".txt": {
+                                  "type": "string"
+                                },
+                                "HTML": {
+                                  "type": "string"
                                 }
                               }
                             },
@@ -429,45 +638,477 @@
                             "type": "string"
                           },
                           "zip": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "sas format txt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "sas input txt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "dct": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "readme txt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "sas label txt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
+                          },
+                          "SAS zip": {
+                            "type": "string"
+                          },
+                          "SPSS zip": {
+                            "type": "string"
+                          },
+                          "STATA zip": {
+                            "type": "string"
+                          },
+                          "html": {
+                            "type": "string"
+                          },
+                          "htm": {
+                            "type": "string"
+                          },
+                          "rds": {
+                            "type": "string"
+                          },
+                          "dta": {
+                            "type": "string"
+                          },
+                          "sas7bdat": {
+                            "type": "string"
+                          },
+                          "R readme file": {
+                            "type": "string"
+                          },
+                          "STATA input statements": {
+                            "type": "string"
+                          },
+                          "sas input statements": {
+                            "type": "string"
+                          },
+                          "R datafile (IP)": {
+                            "type": "string"
+                          },
+                          "sas input statements (IP)": {
+                            "type": "string"
+                          },
+                          "stata datafile (IP)": {
+                            "type": "string"
+                          },
+                          "sas datafile (IP)": {
+                            "type": "string"
+                          },
+                          "R readme file (IP)": {
+                            "type": "string"
+                          },
+                          "stata input statements (IP)": {
+                            "type": "string"
+                          },
+                          "application": {
+                            "type": "string"
+                          },
+                          ".ZIP/.exe data files": {
+                            "type": "string"
+                          },
+                          "Questionnaire": {
+                            "type": "string"
+                          },
+                          "Documentation": {
+                            "type": "string"
+                          },
+                          "readme": {
+                            "type": "string"
+                          },
+                          ".exe data files": {
+                            "type": "string"
+                          },
+                          ".txt": {
+                            "type": "string"
+                          },
+                          "HTML": {
+                            "type": "string"
+                          },
+                          "map-server": {
+                            "type": "string"
+                          },
+                          "application/html": {
+                            "type": "string"
                           }
                         }
                       },
                       "rowLabel": {
                         "type": "string"
+                      },
+                      "jsonQuery": {
+                        "type": "object",
+                        "properties": {
+                          "order": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "columnFieldName": {
+                                  "type": "string"
+                                },
+                                "ascending": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "rowIdentifier": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "string"
+                        ]
+                      },
+                      "renderTypeConfig": {
+                        "type": "object",
+                        "properties": {
+                          "visible": {
+                            "type": "object",
+                            "properties": {
+                              "table": {
+                                "type": "boolean"
+                              },
+                              "story": {
+                                "type": "boolean"
+                              },
+                              "blob": {
+                                "type": "boolean"
+                              },
+                              "fatrow": {
+                                "type": "boolean"
+                              },
+                              "href": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "isStorytellerAsset": {
+                        "type": "boolean"
+                      },
+                      "initialized": {
+                        "type": "boolean"
+                      },
+                      "tileConfig": {
+                        "type": "object",
+                        "properties": {
+                          "description": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "arcgis_connection": {
+                        "type": "object",
+                        "properties": {
+                          "url": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "filterCondition": {
+                        "type": "object",
+                        "properties": {
+                          "metadata": {
+                            "type": "object",
+                            "properties": {
+                              "advanced": {
+                                "type": "boolean"
+                              },
+                              "unifiedVersion": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              }
+                            }
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "metadata": {
+                                  "type": "object",
+                                  "properties": {
+                                    "tableColumnId": {
+                                      "type": "object",
+                                      "properties": {
+                                        "18597387": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "18588514": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "18305543": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "18305385": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "17071854": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "17069086": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "16385308": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "16385114": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "15821117": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "15820938": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "15425966": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "15425931": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "14919580": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "14768094": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "1595946": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "1595912": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "1595906": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        },
+                                        "1553919": {
+                                          "type": [
+                                            "integer",
+                                            "number"
+                                          ]
+                                        }
+                                      }
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "customValues": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": [
+                                            "integer",
+                                            "number",
+                                            "string"
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "value": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "rdfSubject": {
+                        "type": "string"
+                      },
+                      "rdfClass": {
+                        "type": "string"
+                      },
+                      "customRdfClass": {
+                        "type": "string"
+                      },
+                      "sidebar": {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          }
+                        }
+                      },
+                      "richRendererConfigs": {
+                        "type": "object",
+                        "properties": {
+                          "page": {
+                            "type": "object",
+                            "properties": {
+                              "columns": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "rows": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "fields": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "tableColumnId": {
+                                                  "type": [
+                                                    "integer",
+                                                    "number"
+                                                  ]
+                                                },
+                                                "type": {
+                                                  "type": "string"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "thumbnail": {
+                        "type": "object",
+                        "properties": {
+                          "page": {
+                            "type": "object",
+                            "properties": {
+                              "filename": {
+                                "type": "string"
+                              },
+                              "selection": {
+                                "type": "object",
+                                "properties": {
+                                  "width": {
+                                    "type": [
+                                      "integer",
+                                      "number"
+                                    ]
+                                  },
+                                  "y1": {
+                                    "type": [
+                                      "integer",
+                                      "number"
+                                    ]
+                                  },
+                                  "y2": {
+                                    "type": [
+                                      "integer",
+                                      "number"
+                                    ]
+                                  },
+                                  "x1": {
+                                    "type": [
+                                      "integer",
+                                      "number"
+                                    ]
+                                  },
+                                  "x2": {
+                                    "type": [
+                                      "integer",
+                                      "number"
+                                    ]
+                                  },
+                                  "height": {
+                                    "type": [
+                                      "integer",
+                                      "number"
+                                    ]
+                                  }
+                                }
+                              },
+                              "created": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   },
@@ -491,6 +1132,21 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "profileImageUrlLarge": {
+                        "type": "string"
+                      },
+                      "profileImageUrlMedium": {
+                        "type": "string"
+                      },
+                      "profileImageUrlSmall": {
+                        "type": "string"
+                      },
+                      "disabledAt": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
                       }
                     }
                   },
@@ -520,6 +1176,21 @@
                         "items": {
                           "type": "string"
                         }
+                      },
+                      "profileImageUrlLarge": {
+                        "type": "string"
+                      },
+                      "profileImageUrlMedium": {
+                        "type": "string"
+                      },
+                      "profileImageUrlSmall": {
+                        "type": "string"
+                      },
+                      "disabledAt": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
                       }
                     }
                   },
@@ -536,10 +1207,57 @@
                     }
                   },
                   "rowsUpdatedBy": {
+                    "type": "string"
+                  },
+                  "resourceName": {
+                    "type": "string"
+                  },
+                  "modifyingViewUid": {
+                    "type": "string"
+                  },
+                  "queryString": {
+                    "type": "string"
+                  },
+                  "rowIdentifierColumnId": {
                     "type": [
-                      "string",
-                      "null"
+                      "integer",
+                      "number"
                     ]
+                  },
+                  "externalId": {
+                    "type": "string"
+                  },
+                  "indexUpdatedAt": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "rowClass": {
+                    "type": "string"
+                  },
+                  "locale": {
+                    "type": "string"
+                  },
+                  "iconUrl": {
+                    "type": "string"
+                  },
+                  "disabledFeatureFlags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ratings": {
+                    "type": "object",
+                    "properties": {
+                      "rating": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -632,66 +1350,45 @@
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "assetType": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "attribution": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "averageRating": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "category": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "createdAt": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "diciBackend": {
                           "type": "boolean"
                         },
                         "displayType": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "downloadCount": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "hideFromCatalog": {
@@ -709,20 +1406,17 @@
                         "numberOfComments": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "oid": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "provenance": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "publicationAppendEnabled": {
                           "type": "boolean"
@@ -730,62 +1424,53 @@
                         "publicationDate": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "publicationGroup": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "publicationStage": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "rowsUpdatedAt": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "rowsUpdatedBy": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "tableId": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "totalTimesRated": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "viewCount": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "viewLastModified": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "viewType": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "approvals": {
                           "type": "array",
@@ -795,62 +1480,47 @@
                               "reviewedAt": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "reviewedAutomatically": {
                                 "type": "boolean"
                               },
                               "state": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "submissionId": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "submissionObject": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "submissionOutcome": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "submittedAt": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "targetAudience": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "workflowId": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "submissionDetails": {
                                 "type": "object",
                                 "properties": {
                                   "permissionType": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               },
@@ -860,26 +1530,23 @@
                                   "endedAt": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "failureCount": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "startedAt": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "status": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               },
@@ -887,16 +1554,10 @@
                                 "type": "object",
                                 "properties": {
                                   "id": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   },
                                   "displayName": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -910,8 +1571,7 @@
                               "type": "array"
                             },
                             "inheritedVariables": {
-                              "type": "object",
-                              "properties": {}
+                              "type": "object"
                             }
                           }
                         },
@@ -921,7 +1581,10 @@
                             "type": "object",
                             "properties": {
                               "id": {
-                                "type": "integer"
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
                               "name": {
                                 "type": "string"
@@ -933,18 +1596,75 @@
                                 "type": "string"
                               },
                               "position": {
-                                "type": "integer"
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
                               },
                               "renderTypeName": {
                                 "type": "string"
                               },
                               "format": {
-                                "type": "object"
+                                "type": "object",
+                                "properties": {
+                                  "decimalSeparator": {
+                                    "type": "string"
+                                  },
+                                  "groupSeparator": {
+                                    "type": "string"
+                                  }
+                                }
                               },
                               "flags": {
                                 "type": "array",
                                 "items": {
                                   "type": "string"
+                                }
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "tableColumnId": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "cachedContents": {
+                                "type": "object",
+                                "properties": {
+                                  "non_null": {
+                                    "type": "string"
+                                  },
+                                  "largest": {
+                                    "type": "string"
+                                  },
+                                  "null": {
+                                    "type": "string"
+                                  },
+                                  "top": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "item": {
+                                          "type": "string"
+                                        },
+                                        "count_1": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "smallest": {
+                                    "type": "string"
+                                  },
+                                  "count": {
+                                    "type": "string"
+                                  },
+                                  "cardinality": {
+                                    "type": "string"
+                                  }
                                 }
                               }
                             }
@@ -959,18 +1679,12 @@
                                 "type": "boolean"
                               },
                               "type": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "flags": {
                                 "type": "array",
                                 "items": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
@@ -986,56 +1700,32 @@
                                   "type": "object",
                                   "properties": {
                                     "Contact Email": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "Contact Name": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "Program Code": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "Geographic Coverage": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "Publisher": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "Bureau Code": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     },
                                     "Public Access Level": {
-                                      "type": [
-                                        "string",
-                                        "null"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 }
                               }
                             },
                             "rowLabel": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "availableDisplayTypes": {
                               "type": "array",
@@ -1049,28 +1739,16 @@
                           "type": "object",
                           "properties": {
                             "id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "displayName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "screenName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "type": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "flags": {
                               "type": "array",
@@ -1081,44 +1759,28 @@
                           }
                         },
                         "query": {
-                          "type": "object",
-                          "properties": {}
+                          "type": "object"
                         },
                         "rights": {
                           "type": "array",
                           "items": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         },
                         "tableAuthor": {
                           "type": "object",
                           "properties": {
                             "id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "displayName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "screenName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "type": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "flags": {
                               "type": "array",
@@ -1151,8 +1813,9 @@
                     "items": {
                       "type": [
                         "integer",
-                        "string",
-                        "null"
+                        "null",
+                        "number",
+                        "string"
                       ]
                     }
                   }

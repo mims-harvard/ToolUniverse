@@ -43,32 +43,20 @@
                 "taxon_id": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "scientific_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "common_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "mnemonic": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "rank": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "lineage": {
                   "type": "array",
@@ -78,20 +66,14 @@
                       "taxon_id": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "scientific_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "rank": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "hidden": {
                         "type": "boolean"
@@ -105,13 +87,13 @@
                     "reviewed_protein_count": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "unreviewed_protein_count": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -192,14 +174,11 @@
                   "taxon_id": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "scientific_name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "common_name": {
                     "type": [
@@ -208,27 +187,21 @@
                     ]
                   },
                   "mnemonic": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "rank": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "reviewed_protein_count": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "unreviewed_protein_count": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   }
                 }

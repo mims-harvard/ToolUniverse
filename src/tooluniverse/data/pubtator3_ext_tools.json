@@ -56,16 +56,10 @@
                     "type": "object",
                     "properties": {
                       "_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "infons": {
                         "type": "object"
@@ -79,48 +73,30 @@
                               "type": "object",
                               "properties": {
                                 "journal": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "year": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "article-id_pmc": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "type": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "authors": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
                             "offset": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "text": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "sentences": {
                               "type": "array"
@@ -131,25 +107,16 @@
                                 "type": "object",
                                 "properties": {
                                   "id": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "infons": {
                                     "type": "object",
                                     "properties": {
                                       "identifier": {
-                                        "type": [
-                                          "null",
-                                          "string"
-                                        ]
+                                        "type": "string"
                                       },
                                       "type": {
-                                        "type": [
-                                          "null",
-                                          "string"
-                                        ]
+                                        "type": "string"
                                       },
                                       "valid": {
                                         "type": "boolean"
@@ -159,35 +126,26 @@
                                         "items": {
                                           "type": [
                                             "integer",
-                                            "null",
+                                            "number",
                                             "string"
                                           ]
                                         }
                                       },
                                       "database": {
-                                        "type": [
-                                          "null",
-                                          "string"
-                                        ]
+                                        "type": "string"
                                       },
                                       "normalized_id": {
                                         "type": [
                                           "integer",
-                                          "null",
+                                          "number",
                                           "string"
                                         ]
                                       },
                                       "biotype": {
-                                        "type": [
-                                          "null",
-                                          "string"
-                                        ]
+                                        "type": "string"
                                       },
                                       "name": {
-                                        "type": [
-                                          "null",
-                                          "string"
-                                        ]
+                                        "type": "string"
                                       },
                                       "accession": {
                                         "type": [
@@ -198,10 +156,7 @@
                                     }
                                   },
                                   "text": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "locations": {
                                     "type": "array",
@@ -211,13 +166,13 @@
                                         "offset": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         },
                                         "length": {
                                           "type": [
                                             "integer",
-                                            "null"
+                                            "number"
                                           ]
                                         }
                                       }
@@ -238,7 +193,7 @@
                       "pmid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "pmcid": {
@@ -248,24 +203,15 @@
                         "type": "object"
                       },
                       "date": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "journal": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "authors": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "relations_display": {

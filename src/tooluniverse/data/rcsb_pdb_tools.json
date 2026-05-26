@@ -48,19 +48,13 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "struct": {
                     "type": "object",
                     "properties": {
                       "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   },
@@ -70,10 +64,7 @@
                       "type": "object",
                       "properties": {
                         "method": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -84,10 +75,7 @@
                       "resolution_combined": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         }
                       }
                     }
@@ -96,10 +84,7 @@
                     "type": "object",
                     "properties": {
                       "initial_release_date": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -162,10 +147,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_entry_container_identifiers": {
                     "type": "object",
@@ -173,10 +155,7 @@
                       "polymer_entity_ids": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -241,19 +220,13 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_polymer_entity": {
                     "type": "object",
                     "properties": {
                       "pdbx_description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   },
@@ -261,10 +234,7 @@
                     "type": "object",
                     "properties": {
                       "rcsb_entity_polymer_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -327,10 +297,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "polymer_entities": {
                     "type": "array",
@@ -343,10 +310,7 @@
                             "type": "object",
                             "properties": {
                               "ncbi_scientific_name": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -425,10 +389,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_primary_citation": {
                     "type": "object",
@@ -436,35 +397,23 @@
                       "rcsb_authors": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       },
                       "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "rcsb_journal_abbrev": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "year": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "pdbx_database_id_DOI": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "rcsb_ORCID_identifiers": {
                         "type": "null"
@@ -475,10 +424,7 @@
                     "type": "object",
                     "properties": {
                       "rcsb_pubmed_abstract_text": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "rcsb_pubmed_mesh_descriptors_lineage": {
                         "type": "null"
@@ -544,10 +490,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "polymer_entities": {
                     "type": "array",
@@ -560,7 +503,7 @@
                             "rcsb_sample_sequence_length": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
@@ -622,10 +565,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "polymer_entities": {
                     "type": "array",
@@ -636,10 +576,7 @@
                           "type": "object",
                           "properties": {
                             "pdbx_seq_one_letter_code_can": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -712,10 +649,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "polymer_entities": {
                     "type": "array",
@@ -728,7 +662,7 @@
                             "rcsb_mutation_count": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
@@ -737,28 +671,16 @@
                           "type": "object",
                           "properties": {
                             "pdbx_mutation": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "details": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "pdbx_fragment": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "pdbx_description": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -840,10 +762,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "em_3d_fitting_list": {
                     "type": "null"
@@ -854,10 +773,7 @@
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "algorithm": {
                           "type": "null"
@@ -875,27 +791,18 @@
                           "type": "null"
                         },
                         "resolution": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "resolution_method": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "symmetry_type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "num_particles": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "num_class_averages": {
@@ -976,10 +883,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_assembly_info": {
                     "type": "object",
@@ -987,38 +891,35 @@
                       "polymer_entity_instance_count_protein": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "polymer_entity_instance_count_DNA": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "polymer_entity_instance_count_RNA": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "num_homomeric_interface_entities": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "num_heteromeric_interface_entities": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "total_assembly_buried_surface_area": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       }
                     }
                   },
@@ -1028,22 +929,13 @@
                       "type": "object",
                       "properties": {
                         "symbol": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "oligomeric_state": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -1108,10 +1000,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "assemblies": {
                     "type": "array",
@@ -1122,10 +1011,7 @@
                           "type": "object",
                           "properties": {
                             "assembly_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
@@ -1136,10 +1022,7 @@
                               "type": "null"
                             },
                             "details": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -1206,10 +1089,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "polymer_entities": {
                     "type": "array",
@@ -1233,10 +1113,7 @@
                             "type": "object",
                             "properties": {
                               "ncbi_parent_scientific_name": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -1304,25 +1181,16 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_accession_info": {
                     "type": "object",
                     "properties": {
                       "initial_release_date": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "deposit_date": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -1386,10 +1254,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "polymer_entities": {
                     "type": "array",
@@ -1633,10 +1498,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "nonpolymer_entities": {
                     "type": "array",
@@ -1676,7 +1538,12 @@
                                       "rcsb_chem_comp_info": {
                                         "type": "object",
                                         "properties": {
-                                          "bond_count": {}
+                                          "bond_count": {
+                                            "type": [
+                                              "integer",
+                                              "number"
+                                            ]
+                                          }
                                         }
                                       }
                                     }
@@ -1752,10 +1619,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "exptl_crystal_grow": {
                     "type": "null"
@@ -1822,10 +1686,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "uniprots": {
                     "type": "array",
@@ -1835,10 +1696,7 @@
                         "rcsb_uniprot_accession": {
                           "type": "array",
                           "items": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -1850,16 +1708,10 @@
                       "type": "object",
                       "properties": {
                         "annotation_id": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "description": {
                           "type": "null"
@@ -1981,10 +1833,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_polymer_instance_feature": {
                     "type": "array",
@@ -1992,10 +1841,7 @@
                       "type": "object",
                       "properties": {
                         "type": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "feature_positions": {
                           "type": "array",
@@ -2005,13 +1851,14 @@
                               "beg_seq_id": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "end_seq_id": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "null",
+                                  "number"
                                 ]
                               }
                             }
@@ -2084,49 +1931,28 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "cell": {
                     "type": "object",
                     "properties": {
                       "length_a": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "length_b": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "length_c": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "angle_alpha": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "angle_beta": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "angle_gamma": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       }
                     }
                   },
@@ -2134,10 +1960,7 @@
                     "type": "object",
                     "properties": {
                       "space_group_name_H_M": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -2201,10 +2024,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "refine": {
                     "type": "array",
@@ -2226,10 +2046,7 @@
                       "type": "object",
                       "properties": {
                         "clashscore": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         }
                       }
                     }
@@ -2291,19 +2108,13 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "struct": {
                     "type": "object",
                     "properties": {
                       "title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -2364,10 +2175,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_entry_info": {
                     "type": "object",
@@ -2375,7 +2183,7 @@
                       "polymer_entity_count": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       }
                     }
@@ -2437,10 +2245,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_entry_container_identifiers": {
                     "type": "object",
@@ -2558,10 +2363,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "exptl_crystal_grow": {
                     "type": "null"
@@ -2623,19 +2425,13 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "symmetry": {
                     "type": "object",
                     "properties": {
                       "space_group_name_H_M": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -2696,19 +2492,13 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "struct_keywords": {
                     "type": "object",
                     "properties": {
                       "pdbx_keywords": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -2771,10 +2561,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "software": {
                     "type": "array",
@@ -2782,10 +2569,7 @@
                       "type": "object",
                       "properties": {
                         "name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "version": {
                           "type": "null"
@@ -2853,10 +2637,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "refine": {
                     "type": "array",
@@ -2864,10 +2645,7 @@
                       "type": "object",
                       "properties": {
                         "ls_d_res_high": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         }
                       }
                     }
@@ -2932,10 +2710,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_binding_affinity": {
                     "type": "null"
@@ -2998,19 +2773,13 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "rcsb_chem_comp_descriptor": {
                     "type": "object",
                     "properties": {
                       "SMILES": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -3079,10 +2848,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "refine": {
                     "type": "array",
@@ -3179,10 +2945,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "polymer_entities": {
                     "type": "array",
@@ -3259,10 +3022,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "nonpolymer_entities": {
                     "type": "null"
@@ -3326,10 +3086,7 @@
                 "type": "object",
                 "properties": {
                   "rcsb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "nonpolymer_entities": {
                     "type": "null"

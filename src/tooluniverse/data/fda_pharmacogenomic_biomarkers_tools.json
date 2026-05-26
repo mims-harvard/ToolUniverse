@@ -26,21 +26,18 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": [
-            "null",
-            "string"
-          ]
+          "type": "string"
         },
         "count": {
           "type": [
             "integer",
-            "null"
+            "number"
           ]
         },
         "shown": {
           "type": [
             "integer",
-            "null"
+            "number"
           ]
         },
         "results": {
@@ -49,28 +46,16 @@
             "type": "object",
             "properties": {
               "Drug": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "TherapeuticArea": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "Biomarker": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "LabelingSection": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               }
             }
           }

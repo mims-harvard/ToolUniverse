@@ -84,27 +84,18 @@
               "type": "object",
               "properties": {
                 "status": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "query": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "search_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "total_results": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -122,16 +113,16 @@
                         "type": "string"
                       },
                       "rank": {
-                        "type": "integer"
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
                       }
                     }
                   }
                 },
                 "backend_used": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "attempted_backends": {
                   "type": "array",
@@ -143,10 +134,7 @@
                   "type": "object",
                   "properties": {
                     "duckduckgo": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 }
@@ -261,27 +249,18 @@
               "type": "object",
               "properties": {
                 "status": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "query": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "search_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "total_results": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -299,16 +278,16 @@
                         "type": "string"
                       },
                       "rank": {
-                        "type": "integer"
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
                       }
                     }
                   }
                 },
                 "backend_used": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "attempted_backends": {
                   "type": "array",
@@ -320,24 +299,15 @@
                   "type": "object",
                   "properties": {
                     "duckduckgo": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "focus": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "enhanced_query": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },

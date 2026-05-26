@@ -41,46 +41,25 @@
                     "type": "object",
                     "properties": {
                       "median": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
+                        "type": "number"
                       },
                       "tissueSiteDetailId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "ontologyId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "datasetId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "gencodeId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "geneSymbol": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "unit": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -202,82 +181,46 @@
                     "type": "object",
                     "properties": {
                       "snpId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "pos": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "snpIdUpper": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "variantId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "geneSymbol": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "pValue": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
+                        "type": "number"
                       },
                       "geneSymbolUpper": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "datasetId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "tissueSiteDetailId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "ontologyId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "chromosome": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "gencodeId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "nes": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
+                        "type": "number"
                       }
                     }
                   }

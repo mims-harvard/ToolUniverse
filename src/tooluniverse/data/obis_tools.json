@@ -46,52 +46,34 @@
                     "type": "object",
                     "properties": {
                       "scientificName": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "aphiaID": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "rank": {
                         "type": "null"
                       },
                       "kingdom": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "phylum": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "class": {
                         "type": "null"
                       },
                       "order": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "family": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "genus": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -99,7 +81,7 @@
                 "total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -191,7 +173,7 @@
                 "total": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -200,351 +182,225 @@
                     "type": "object",
                     "properties": {
                       "basisOfRecord": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "class": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "classid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "collectionCode": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "coordinateUncertaintyInMeters": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "dataGeneralizations": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "datasetID": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "datasetName": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "date_end": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "date_mid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "date_start": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "date_year": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "decimalLatitude": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "decimalLongitude": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "eventDate": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "eventID": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "eventType": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "family": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "familyid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "genus": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "genusid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "geodeticDatum": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "infraphylum": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "infraphylumid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "institutionCode": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "kingdom": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "kingdomid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "license": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "locationRemarks": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "marine": {
                         "type": "boolean"
                       },
                       "maximumElevationInMeters": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "megaclass": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "megaclassid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "minimumElevationInMeters": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "occurrenceID": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "occurrenceStatus": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "order": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "orderid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "organismID": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "organismName": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "parentEventID": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "phylum": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "phylumid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "rightsHolder": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "samplingProtocol": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "scientificName": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "scientificNameID": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "sex": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "species": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "speciesid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "subphylum": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "subphylumid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "superclass": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "superclassid": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "dataset_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "node_id": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       },
                       "dropped": {
@@ -554,15 +410,12 @@
                         "type": "boolean"
                       },
                       "originalScientificName": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "aphiaID": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "flags": {
@@ -574,13 +427,13 @@
                       "bathymetry": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "shoredistance": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       }
                     }

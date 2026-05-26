@@ -41,34 +41,19 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "definition": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "content": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "category": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "note": {
                   "type": "null"
@@ -83,16 +68,10 @@
                   ],
                   "properties": {
                     "id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -102,16 +81,10 @@
                     "type": "object",
                     "properties": {
                       "go_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -119,13 +92,13 @@
                 "reviewed_protein_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "unreviewed_protein_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "part_of": {
@@ -134,16 +107,10 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -226,34 +193,19 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "definition": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "content": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "category": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "note": {
                     "type": [
@@ -264,10 +216,7 @@
                   "synonyms": {
                     "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   },
                   "keyword": {
@@ -277,16 +226,10 @@
                     ],
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   },
@@ -296,16 +239,10 @@
                       "type": "object",
                       "properties": {
                         "go_id": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "name": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -313,13 +250,13 @@
                   "reviewed_protein_count": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "unreviewed_protein_count": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "part_of": {
@@ -328,16 +265,10 @@
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "name": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -348,16 +279,10 @@
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "name": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }

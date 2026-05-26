@@ -50,69 +50,42 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "null",
-                "object"
-              ],
+              "type": "object",
               "properties": {
                 "domain_id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "total_proteins": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "proteins": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
+                  "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "source_database": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "length": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "source_organism": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "tax_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -120,14 +93,11 @@
                 "page_size": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "reviewed_only": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
+                  "type": "boolean"
                 }
               }
             },

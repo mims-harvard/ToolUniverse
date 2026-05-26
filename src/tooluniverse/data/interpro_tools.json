@@ -32,180 +32,99 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "metadata": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "source_database": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "integrated": {
                         "type": "null"
                       },
                       "member_databases": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "panther": {
-                            "type": [
-                              "object",
-                              "null"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PTHR11447": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "prints": {
-                            "type": [
-                              "object",
-                              "null"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PR00386": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "ssf": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "SSF49417": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SSF47719": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "pfam": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PF07710": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF00870": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF08563": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF18521": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "cdd": {
-                            "type": [
-                              "object",
-                              "null"
-                            ],
+                            "type": "object",
                             "properties": {
                               "cd08367": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "cathgene3d": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "G3DSA:2.60.40.720": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "G3DSA:4.10.170.10": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "prosite": {
-                            "type": [
-                              "object",
-                              "null"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PS00348": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -217,40 +136,22 @@
                           "null"
                         ],
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "identifier": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "category": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "code": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
@@ -260,100 +161,61 @@
                     }
                   },
                   "proteins": {
-                    "type": [
-                      "array",
-                      "null"
-                    ],
+                    "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "object"
-                      ],
+                      "type": "object",
                       "properties": {
                         "accession": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "protein_length": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "source_database": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "organism": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "in_alphafold": {
-                          "type": [
-                            "boolean",
-                            "null"
-                          ]
+                          "type": "boolean"
                         },
                         "in_bfvd": {
-                          "type": [
-                            "boolean",
-                            "null"
-                          ]
+                          "type": "boolean"
                         },
                         "entry_protein_locations": {
-                          "type": [
-                            "array",
-                            "null"
-                          ],
+                          "type": "array",
                           "items": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "fragments": {
-                                "type": [
-                                  "array",
-                                  "null"
-                                ],
+                                "type": "array",
                                 "items": {
-                                  "type": [
-                                    "null",
-                                    "object"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "start": {
                                       "type": [
                                         "integer",
-                                        "null"
+                                        "number"
                                       ]
                                     },
                                     "end": {
                                       "type": [
                                         "integer",
-                                        "null"
+                                        "number"
                                       ]
                                     },
                                     "dc-status": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     }
                                   }
                                 }
                               },
                               "representative": {
-                                "type": [
-                                  "boolean",
-                                  "null"
-                                ]
+                                "type": "boolean"
                               },
                               "model": {
                                 "type": "null"
@@ -438,462 +300,243 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "array",
-                "null"
-              ],
+              "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "object"
-                ],
+                "type": "object",
                 "properties": {
                   "metadata": {
-                    "type": [
-                      "null",
-                      "object"
-                    ],
+                    "type": "object",
                     "properties": {
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "source_database": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "integrated": {
                         "type": "null"
                       },
                       "member_databases": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "pfam": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PF00365": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF00794": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF00454": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF02110": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF01288": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF01214": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF00069": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF00609": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF01111": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PF00871": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "prints": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PR00717": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PR00653": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PR01099": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PR00472": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PR00473": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PR00296": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PR00094": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PR00471": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "panther": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PTHR23255": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PTHR11740": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PTHR23359": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PTHR21060": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "profile": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PS51546": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PS50290": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PS50011": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PS51285": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "smart": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "SM00144": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SM00146": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SM00090": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SM01085": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SM00220": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SM00045": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SM01084": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "SM00133": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "cdd": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "cd01170": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "cd00483": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "cd00464": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "cd02023": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "cd01428": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "hamap": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "MF_00228": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "MF_00109": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "MF_00235": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "MF_00384": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "ncbifam": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "TIGR00694": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "TIGR01498": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "TIGR00131": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "TIGR00235": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "TIGR00191": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "pirsf": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PIRSF000513": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PIRSF000538": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PIRSF000676": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "prosite": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "PS00794": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PS01101": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PS00945": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               },
                               "PS00944": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -905,40 +548,22 @@
                           "null"
                         ],
                         "items": {
-                          "type": [
-                            "null",
-                            "object"
-                          ],
+                          "type": "object",
                           "properties": {
                             "identifier": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "category": {
-                              "type": [
-                                "null",
-                                "object"
-                              ],
+                              "type": "object",
                               "properties": {
                                 "code": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
@@ -1011,72 +636,39 @@
               "const": "success"
             },
             "data": {
-              "type": [
-                "object",
-                "null"
-              ],
+              "type": "object",
               "properties": {
                 "metadata": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
+                  "type": "object",
                   "properties": {
                     "accession": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "entry_id": {
                       "type": "null"
                     },
                     "type": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "go_terms": {
-                      "type": [
-                        "array",
-                        "null"
-                      ],
+                      "type": "array",
                       "items": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "identifier": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "name": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "category": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "code": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "name": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -1084,56 +676,32 @@
                       }
                     },
                     "source_database": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "member_databases": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "profile": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PS50011": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "pfam": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PF00069": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "smart": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "SM00220": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -1143,121 +711,61 @@
                       "type": "null"
                     },
                     "hierarchy": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "accession": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "children": {
-                          "type": [
-                            "array",
-                            "null"
-                          ],
+                          "type": "array",
                           "items": {
-                            "type": [
-                              "null",
-                              "object"
-                            ],
+                            "type": "object",
                             "properties": {
                               "accession": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "name": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "type": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "children": {
-                                "type": [
-                                  "array",
-                                  "null"
-                                ],
+                                "type": "array",
                                 "items": {
-                                  "type": [
-                                    "null",
-                                    "object"
-                                  ],
+                                  "type": "object",
                                   "properties": {
                                     "accession": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     },
                                     "name": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     },
                                     "type": {
-                                      "type": [
-                                        "null",
-                                        "string"
-                                      ]
+                                      "type": "string"
                                     },
                                     "children": {
-                                      "type": [
-                                        "array",
-                                        "null"
-                                      ],
+                                      "type": "array",
                                       "items": {
-                                        "type": [
-                                          "null",
-                                          "object"
-                                        ],
+                                        "type": "object",
                                         "properties": {
                                           "accession": {
-                                            "type": [
-                                              "null",
-                                              "string"
-                                            ]
+                                            "type": "string"
                                           },
                                           "name": {
-                                            "type": [
-                                              "null",
-                                              "string"
-                                            ]
+                                            "type": "string"
                                           },
                                           "type": {
-                                            "type": [
-                                              "null",
-                                              "string"
-                                            ]
+                                            "type": "string"
                                           },
                                           "children": {
-                                            "type": [
-                                              "array",
-                                              "null"
-                                            ]
+                                            "type": "array"
                                           }
                                         }
                                       }
@@ -1271,59 +779,32 @@
                       }
                     },
                     "name": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "short": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     },
                     "description": {
-                      "type": [
-                        "array",
-                        "null"
-                      ],
+                      "type": "array",
                       "items": {
-                        "type": [
-                          "null",
-                          "object"
-                        ],
+                        "type": "object",
                         "properties": {
                           "text": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "llm": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
+                            "type": "boolean"
                           },
                           "checked": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
+                            "type": "boolean"
                           },
                           "updated": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
+                            "type": "boolean"
                           }
                         }
                       }
@@ -1332,111 +813,72 @@
                       "type": "null"
                     },
                     "literature": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "PUB00001530": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00003568": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
                               "type": "null"
@@ -1444,76 +886,49 @@
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00003569": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
                               "type": "null"
@@ -1521,613 +936,382 @@
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00005115": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00005145": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00015293": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "string",
-                                  "null"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00020114": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00015362": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00034898": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         },
                         "PUB00034899": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "PMID": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "ISBN": {
                               "type": "null"
                             },
                             "volume": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "issue": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "year": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "title": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "URL": {
                               "type": "null"
                             },
                             "raw_pages": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "medline_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "ISO_journal": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "DOI_URL": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -2137,107 +1321,86 @@
                       "type": "null"
                     },
                     "overlaps_with": {
-                      "type": [
-                        "array",
-                        "null"
-                      ],
+                      "type": "array",
                       "items": {
-                        "type": [
-                          "object",
-                          "null"
-                        ],
+                        "type": "object",
                         "properties": {
                           "accession": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "type": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
                     },
                     "counters": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "subfamilies": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "domain_architectures": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "interactions": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "matches": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "pathways": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "proteins": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "proteomes": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "sets": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "structural_models": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "alphafold": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "bfvd": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
@@ -2245,89 +1408,62 @@
                         "structures": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "taxa": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         }
                       }
                     },
                     "entry_annotations": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "alignment:seed": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "alignment:full": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         }
                       }
                     },
                     "cross_references": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "prositedoc": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "displayName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "description": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "rank": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "accessions": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "object",
-                                  "null"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "accession": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   },
                                   "url": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -2335,51 +1471,30 @@
                           }
                         },
                         "gp": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "displayName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "description": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "rank": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "accessions": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "object",
-                                  "null"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "accession": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   },
                                   "url": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -2387,51 +1502,30 @@
                           }
                         },
                         "ec": {
-                          "type": [
-                            "object",
-                            "null"
-                          ],
+                          "type": "object",
                           "properties": {
                             "displayName": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "description": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             },
                             "rank": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "accessions": {
-                              "type": [
-                                "array",
-                                "null"
-                              ],
+                              "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "object"
-                                ],
+                                "type": "object",
                                 "properties": {
                                   "accession": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "url": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -2441,40 +1535,22 @@
                       }
                     },
                     "is_llm": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
+                      "type": "boolean"
                     },
                     "is_reviewed_llm": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
+                      "type": "boolean"
                     },
                     "is_updated_llm": {
-                      "type": [
-                        "boolean",
-                        "null"
-                      ]
+                      "type": "boolean"
                     },
                     "representative_structure": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
+                      "type": "object",
                       "properties": {
                         "accession": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }

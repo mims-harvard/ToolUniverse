@@ -77,46 +77,25 @@
                 "type": "object",
                 "properties": {
                   "median": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "tissueSiteDetailId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ontologyId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "gencodeId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "geneSymbol": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "unit": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -207,39 +186,28 @@
                 "type": "object",
                 "properties": {
                   "tissueSiteDetailId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "colorHex": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "colorRgb": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "eGeneCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "null",
+                      "number"
                     ]
                   },
                   "expressedGeneCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "hasEGenes": {
@@ -257,7 +225,7 @@
                       "totalCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "female": {
@@ -266,13 +234,15 @@
                           "ageMax": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMin": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMean": {
@@ -284,7 +254,7 @@
                           "count": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           }
                         }
@@ -295,13 +265,15 @@
                           "ageMax": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMin": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMean": {
@@ -313,7 +285,7 @@
                           "count": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           }
                         }
@@ -326,7 +298,7 @@
                       "totalCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "female": {
@@ -335,13 +307,15 @@
                           "ageMax": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMin": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMean": {
@@ -353,7 +327,7 @@
                           "count": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           }
                         }
@@ -364,13 +338,15 @@
                           "ageMax": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMin": {
                             "type": [
                               "integer",
-                              "null"
+                              "null",
+                              "number"
                             ]
                           },
                           "ageMean": {
@@ -382,7 +358,7 @@
                           "count": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           }
                         }
@@ -392,44 +368,27 @@
                   "sGeneCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "null",
+                      "number"
                     ]
                   },
                   "samplingSite": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissueSite": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissueSiteDetail": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissueSiteDetailAbbr": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ontologyId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ontologyIri": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -524,64 +483,34 @@
                 "type": "object",
                 "properties": {
                   "tissueSiteDetailId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ontologyId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "empiricalPValue": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "gencodeId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "geneSymbol": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "log2AllelicFoldChange": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "pValue": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "pValueThreshold": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "qValue": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   }
                 }
               }
@@ -692,82 +621,46 @@
                 "type": "object",
                 "properties": {
                   "snpId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "pos": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "snpIdUpper": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "variantId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "geneSymbol": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "pValue": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "geneSymbolUpper": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissueSiteDetailId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ontologyId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "chromosome": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "gencodeId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "nes": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   }
                 }
               }
@@ -865,98 +758,65 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   }
                 },
                 "error": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "gencodeId": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "geneSymbol": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "genotypes": {
                   "type": "array",
                   "items": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   }
                 },
                 "hetCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "homoAltCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "homoRefCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "maf": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "nes": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "pValue": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "pValueThreshold": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "tStatistic": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "tissueSiteDetailId": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "variantId": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },
@@ -1057,46 +917,25 @@
                 "type": "object",
                 "properties": {
                   "tissueSiteDetailId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ontologyId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "gencodeId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "geneSymbol": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "median": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "unit": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -1174,15 +1013,12 @@
                 "type": "object",
                 "properties": {
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "dbSnpBuild": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "dbgapId": {
@@ -1192,69 +1028,54 @@
                     ]
                   },
                   "description": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "displayName": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "eqtlSubjectCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "eqtlTissuesCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "gencodeVersion": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "genomeBuild": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "organization": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "rnaSeqAndGenotypeSampleCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "rnaSeqSampleCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "subjectCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "tissueCount": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   }
                 }
@@ -1371,47 +1192,26 @@
                   "data": {
                     "type": "array",
                     "items": {
-                      "type": [
-                        "null",
-                        "number"
-                      ]
+                      "type": "number"
                     }
                   },
                   "tissueSiteDetailId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "ontologyId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "datasetId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "gencodeId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "geneSymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "unit": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   },
                   "subsetGroup": {
                     "type": "null"
@@ -1552,68 +1352,41 @@
                   "ischemicTime": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "aliquotId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissueSampleId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissueSiteDetail": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "dataType": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ischemicTimeGroup": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "pathologyNotesCategories": {
                     "type": "object"
                   },
                   "freezeType": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "pathologyNotes": {
                     "type": "null"
                   },
                   "sampleId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "sampleIdUpper": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "ageBracket": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "rin": {
                     "type": [
@@ -1622,43 +1395,25 @@
                     ]
                   },
                   "hardyScale": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissueSiteDetailId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "subjectId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "uberonId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "sex": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "autolysisScore": {
                     "type": "null"
                   },
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -1760,28 +1515,16 @@
                 "type": "object",
                 "properties": {
                   "gencodeId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "datasetId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "metaP": {
-                    "type": [
-                      "null",
-                      "number"
-                    ]
+                    "type": "number"
                   },
                   "variantId": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "tissues": {
                     "type": "object",
@@ -1790,28 +1533,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -1819,28 +1550,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -1848,28 +1567,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -1877,28 +1584,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -1906,28 +1601,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -1935,28 +1618,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -1964,28 +1635,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -1993,28 +1652,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2022,28 +1669,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2051,28 +1686,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2080,28 +1703,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2109,28 +1720,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2138,28 +1737,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2167,28 +1754,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2196,28 +1771,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2225,28 +1788,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2254,28 +1805,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2283,28 +1822,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2312,28 +1839,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2341,28 +1856,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2370,28 +1873,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2399,28 +1890,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2428,28 +1907,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2457,28 +1924,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2486,28 +1941,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2515,28 +1958,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2544,28 +1975,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2573,28 +1992,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2602,28 +2009,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2631,28 +2026,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2660,28 +2043,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2689,28 +2060,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2718,28 +2077,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2747,28 +2094,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2776,28 +2111,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2805,28 +2128,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2834,28 +2145,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2863,28 +2162,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2892,28 +2179,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2921,28 +2196,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2950,28 +2213,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -2979,28 +2230,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -3008,28 +2247,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -3037,28 +2264,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -3066,28 +2281,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -3095,28 +2298,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -3130,10 +2321,7 @@
                             ]
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
                             "type": [
@@ -3142,10 +2330,7 @@
                             ]
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -3153,28 +2338,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       },
@@ -3182,28 +2355,16 @@
                         "type": "object",
                         "properties": {
                           "mValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "pValue": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "se": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           },
                           "nes": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
+                            "type": "number"
                           }
                         }
                       }

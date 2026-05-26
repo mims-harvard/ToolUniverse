@@ -41,16 +41,10 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "entry_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "gene_name": {
                   "type": "null"
@@ -61,34 +55,19 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_start": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_end": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "original_sequence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "evidences": {
                         "type": "array",
@@ -96,28 +75,16 @@
                           "type": "object",
                           "properties": {
                             "code": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "source_name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "source_id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "source_url": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -128,7 +95,7 @@
                 "total_features": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -198,16 +165,10 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "entry_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "features": {
                   "type": "array",
@@ -215,22 +176,13 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_start": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_end": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
                         "type": "null"
@@ -247,25 +199,16 @@
                               ]
                             },
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "url": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "properties": {
                               "type": "object",
                               "properties": {
                                 "PEP": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             }
@@ -278,7 +221,7 @@
                 "total_features": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -360,16 +303,10 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "entry_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "variants": {
                   "type": "array",
@@ -377,22 +314,13 @@
                     "type": "object",
                     "properties": {
                       "position_start": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_end": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "wild_type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "alternative": {
                         "type": [
@@ -401,10 +329,7 @@
                         ]
                       },
                       "source_type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "clinical_significances": {
                         "type": [
@@ -415,18 +340,12 @@
                           "type": "object",
                           "properties": {
                             "type": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "sources": {
                               "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -441,10 +360,7 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "description": {
                               "type": [
@@ -464,16 +380,10 @@
                           "type": "object",
                           "properties": {
                             "database": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "url": {
                               "type": [
@@ -490,13 +400,13 @@
                 "total_variants": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "total_all_sources": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "source_counts": {
@@ -505,19 +415,19 @@
                     "large_scale_study": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "mixed": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "uniprot": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -595,28 +505,19 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "entry_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sequence_length": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "category_queried": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "features": {
                   "type": "array",
@@ -624,28 +525,16 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "category": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_start": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_end": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
                         "type": [
@@ -662,10 +551,7 @@
                           "type": "object",
                           "properties": {
                             "code": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "source_name": {
                               "type": [
@@ -688,7 +574,7 @@
                 "total_features": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -758,16 +644,10 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "entry_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "antigenic_regions": {
                   "type": "array",
@@ -775,34 +655,22 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_start": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_end": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "match_score": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "antigen_sequence": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "evidences": {
                         "type": "array",
@@ -810,22 +678,13 @@
                           "type": "object",
                           "properties": {
                             "code": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "source_name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "source_id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -836,7 +695,7 @@
                 "total_regions": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -906,21 +765,15 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "sequence_length": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "genomic_mappings": {
@@ -929,33 +782,24 @@
                     "type": "object",
                     "properties": {
                       "ensembl_gene_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "ensembl_transcript_id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "chromosome": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "start": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "end": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "reverseStrand": {
@@ -964,7 +808,7 @@
                       "num_exons": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       }
                     }
@@ -973,7 +817,7 @@
                 "total_mappings": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -1043,16 +887,10 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "entry_name": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "peptides": {
                   "type": "array",
@@ -1060,28 +898,16 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_start": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "position_end": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "peptide": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "unique": {
                         "type": "boolean"
@@ -1098,10 +924,7 @@
                               ]
                             },
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -1112,7 +935,7 @@
                 "total_peptides": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }

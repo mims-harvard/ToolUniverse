@@ -60,66 +60,42 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "taxonomy": {
                         "type": "object",
                         "properties": {
                           "scientificName": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "commonName": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "taxonId": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "mnemonic": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "synonyms": {
                             "type": "array",
                             "items": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "modified": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "proteomeType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "components": {
                         "type": "array",
@@ -127,31 +103,22 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "description": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "proteinCount": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "genomeAnnotation": {
                               "type": "object",
                               "properties": {
                                 "source": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
@@ -161,16 +128,10 @@
                                 "type": "object",
                                 "properties": {
                                   "database": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "id": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -184,24 +145,15 @@
                           "type": "object",
                           "properties": {
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "citationType": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "authors": {
                               "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "citationCrossReferences": {
@@ -210,70 +162,40 @@
                                 "type": "object",
                                 "properties": {
                                   "database": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   },
                                   "id": {
-                                    "type": [
-                                      "null",
-                                      "string"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
                             },
                             "title": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "publicationDate": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "journal": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "firstPage": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "lastPage": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "volume": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "authoringGroup": {
                               "type": "array",
                               "items": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             },
                             "submissionDatabase": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -281,14 +203,11 @@
                       "annotationScore": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "superkingdom": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "proteomeCompletenessReport": {
                         "type": "object",
@@ -299,49 +218,46 @@
                               "complete": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "completeSingle": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "completeDuplicated": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "fragmented": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "missing": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "total": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "lineageDb": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "score": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               }
                             }
@@ -352,32 +268,26 @@
                               "proteomeCount": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "stdCdss": {
-                                "type": [
-                                  "null",
-                                  "number"
-                                ]
+                                "type": "number"
                               },
                               "averageCdss": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "confidence": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "status": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -387,57 +297,39 @@
                         "type": "object",
                         "properties": {
                           "assemblyId": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "genomeAssemblyUrl": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "level": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "source": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "geneCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "proteinCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "genomeAnnotation": {
                         "type": "object",
                         "properties": {
                           "source": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "url": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
@@ -447,31 +339,22 @@
                           "type": "object",
                           "properties": {
                             "scientificName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "taxonId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             },
                             "rank": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "hidden": {
                               "type": "boolean"
                             },
                             "commonName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -482,34 +365,28 @@
                           "reviewedProteinCount": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "unreviewedProteinCount": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "isoformProteinCount": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           }
                         }
                       },
                       "panproteome": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "strain": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "redundantProteomes": {
                         "type": "array",
@@ -517,16 +394,10 @@
                           "type": "object",
                           "properties": {
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "similarity": {
-                              "type": [
-                                "null",
-                                "number"
-                              ]
+                              "type": "number"
                             }
                           }
                         }
@@ -607,57 +478,36 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "description": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "taxonomy": {
                   "type": "object",
                   "properties": {
                     "scientificName": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "commonName": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "taxonId": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "mnemonic": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "modified": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "proteomeType": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "components": {
                   "type": "array",
@@ -665,31 +515,22 @@
                     "type": "object",
                     "properties": {
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "proteinCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "genomeAnnotation": {
                         "type": "object",
                         "properties": {
                           "source": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
@@ -699,16 +540,10 @@
                           "type": "object",
                           "properties": {
                             "database": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -722,24 +557,15 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "citationType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "authors": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "citationCrossReferences": {
@@ -748,63 +574,36 @@
                           "type": "object",
                           "properties": {
                             "database": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "publicationDate": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "journal": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "firstPage": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "lastPage": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "volume": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "authoringGroup": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -813,14 +612,11 @@
                 "annotationScore": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "superkingdom": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "proteomeCompletenessReport": {
                   "type": "object",
@@ -831,49 +627,46 @@
                         "complete": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "completeSingle": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "completeDuplicated": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "fragmented": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "missing": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "total": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "lineageDb": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         },
                         "score": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         }
                       }
@@ -884,32 +677,26 @@
                         "proteomeCount": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "stdCdss": {
-                          "type": [
-                            "null",
-                            "number"
-                          ]
+                          "type": "number"
                         },
                         "averageCdss": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "confidence": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "status": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -919,57 +706,39 @@
                   "type": "object",
                   "properties": {
                     "assemblyId": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "genomeAssemblyUrl": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "level": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "source": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "geneCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "proteinCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "genomeAnnotation": {
                   "type": "object",
                   "properties": {
                     "source": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     },
                     "url": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -979,31 +748,22 @@
                     "type": "object",
                     "properties": {
                       "scientificName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "taxonId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "rank": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "hidden": {
                         "type": "boolean"
                       },
                       "commonName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -1014,28 +774,25 @@
                     "reviewedProteinCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "unreviewedProteinCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "isoformProteinCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
                 },
                 "strain": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "redundantProteomes": {
                   "type": "array",
@@ -1043,25 +800,16 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "similarity": {
-                        "type": [
-                          "null",
-                          "number"
-                        ]
+                        "type": "number"
                       }
                     }
                   }
                 },
                 "panproteome": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             },

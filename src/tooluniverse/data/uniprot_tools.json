@@ -45,66 +45,42 @@
               "type": "object",
               "properties": {
                 "entryType": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "primaryAccession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "uniProtkbId": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "protein_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "gene_names": {
                   "type": "array",
                   "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": "string"
                   }
                 },
                 "organism": {
                   "type": "object",
                   "properties": {
                     "scientificName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "commonName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "taxonId": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "lineage": {
                       "type": "array",
                       "items": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -113,48 +89,33 @@
                   "type": "object",
                   "properties": {
                     "value": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "length": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "molWeight": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "crc64": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "md5": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "annotationScore": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
+                  "type": "number"
                 },
                 "proteinExistence": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "keywords": {
                   "type": "array",
@@ -162,22 +123,13 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "category": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -188,18 +140,12 @@
                     "type": "object",
                     "properties": {
                       "commentType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "texts": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -211,16 +157,10 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "location": {
                         "type": "object",
@@ -231,14 +171,11 @@
                               "value": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "modifier": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
@@ -248,14 +185,11 @@
                               "value": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "modifier": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           }
@@ -267,7 +201,7 @@
                 "xref_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -325,10 +259,7 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": [
-          "string",
-          "null"
-        ]
+        "type": "string"
       }
     }
   },
@@ -393,10 +324,7 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": [
-          "null",
-          "string"
-        ]
+        "type": "string"
       }
     }
   },
@@ -461,10 +389,7 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": [
-          "null",
-          "string"
-        ]
+        "type": "string"
       }
     }
   },
@@ -501,10 +426,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "location": {
             "type": "object",
@@ -515,14 +437,11 @@
                   "value": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "modifier": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               },
@@ -532,47 +451,32 @@
                   "value": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "modifier": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
             }
           },
           "description": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "featureId": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "alternativeSequence": {
             "type": "object",
             "properties": {
               "originalSequence": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "alternativeSequences": {
                 "type": "array",
                 "items": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             }
@@ -583,16 +487,27 @@
               "type": "object",
               "properties": {
                 "database": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "evidences": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "evidenceCode": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
                 }
               }
             }
@@ -634,10 +549,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "location": {
             "type": "object",
@@ -648,14 +560,11 @@
                   "value": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "modifier": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               },
@@ -665,24 +574,18 @@
                   "value": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   },
                   "modifier": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               }
             }
           },
           "description": {
-            "type": [
-              "null",
-              "string"
-            ]
+            "type": "string"
           },
           "evidences": {
             "type": "array",
@@ -690,22 +593,13 @@
               "type": "object",
               "properties": {
                 "evidenceCode": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "source": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "id": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               }
             }
@@ -775,10 +669,7 @@
     "return_schema": {
       "type": "array",
       "items": {
-        "type": [
-          "null",
-          "string"
-        ]
+        "type": "string"
       }
     }
   },
@@ -853,13 +744,13 @@
                 "total_results": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "returned": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -868,42 +759,27 @@
                     "type": "object",
                     "properties": {
                       "accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "protein_name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "gene_names": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "organism": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "length": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       }
                     }
@@ -1005,7 +881,7 @@
                 "mapped_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -1014,31 +890,19 @@
                     "type": "object",
                     "properties": {
                       "from": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "to": {
                         "type": "object",
                         "properties": {
                           "accession": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "id": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           },
                           "gene_name": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": "string"
                           }
                         }
                       }
@@ -1114,57 +978,36 @@
               "type": "object",
               "properties": {
                 "id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "taxonomy": {
                   "type": "object",
                   "properties": {
                     "scientificName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "commonName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "taxonId": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "mnemonic": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "modified": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "proteomeType": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "components": {
                   "type": "array",
@@ -1172,31 +1015,22 @@
                     "type": "object",
                     "properties": {
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "proteinCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "genomeAnnotation": {
                         "type": "object",
                         "properties": {
                           "source": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
@@ -1206,16 +1040,10 @@
                           "type": "object",
                           "properties": {
                             "database": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
@@ -1229,24 +1057,15 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "citationType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "authors": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "citationCrossReferences": {
@@ -1255,63 +1074,36 @@
                           "type": "object",
                           "properties": {
                             "database": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "id": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           }
                         }
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "publicationDate": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "journal": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "firstPage": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "lastPage": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "volume": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "authoringGroup": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -1320,14 +1112,11 @@
                 "annotationScore": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "superkingdom": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "proteomeCompletenessReport": {
                   "type": "object",
@@ -1338,49 +1127,46 @@
                         "complete": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "completeSingle": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "completeDuplicated": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "fragmented": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "missing": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "total": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "lineageDb": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         },
                         "score": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         }
                       }
@@ -1391,32 +1177,26 @@
                         "proteomeCount": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "stdCdss": {
-                          "type": [
-                            "number",
-                            "null"
-                          ]
+                          "type": "number"
                         },
                         "averageCdss": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "confidence": {
                           "type": [
                             "integer",
-                            "null"
+                            "number"
                           ]
                         },
                         "status": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -1426,57 +1206,39 @@
                   "type": "object",
                   "properties": {
                     "assemblyId": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "genomeAssemblyUrl": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "level": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "source": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "geneCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "proteinCount": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "genomeAnnotation": {
                   "type": "object",
                   "properties": {
                     "source": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "url": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -1486,31 +1248,22 @@
                     "type": "object",
                     "properties": {
                       "scientificName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "taxonId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "rank": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "hidden": {
                         "type": "boolean"
                       },
                       "commonName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -1521,19 +1274,19 @@
                     "reviewedProteinCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "unreviewedProteinCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "isoformProteinCount": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -1593,156 +1346,105 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "name": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "memberCount": {
           "type": [
             "integer",
-            "null"
+            "number"
           ]
         },
         "updated": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "entryType": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "commonTaxon": {
           "type": "object",
           "properties": {
             "scientificName": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "taxonId": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             }
           }
         },
         "seedId": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "representativeMember": {
           "type": "object",
           "properties": {
             "memberIdType": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "memberId": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "organismName": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "organismTaxId": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             },
             "sequenceLength": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             },
             "proteinName": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "accessions": {
               "type": "array",
               "items": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               }
             },
             "uniref90Id": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "uniref100Id": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "uniparcId": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "sequence": {
               "type": "object",
               "properties": {
                 "value": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "length": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "molWeight": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "crc64": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "md5": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 }
               }
             }
@@ -1754,67 +1456,46 @@
             "type": "object",
             "properties": {
               "memberIdType": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "memberId": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "organismName": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "organismTaxId": {
                 "type": [
                   "integer",
-                  "null"
+                  "number"
                 ]
               },
               "sequenceLength": {
                 "type": [
                   "integer",
-                  "null"
+                  "number"
                 ]
               },
               "proteinName": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "accessions": {
                 "type": "array",
                 "items": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 }
               },
               "uniref90Id": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "uniref100Id": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "uniparcId": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
+              },
+              "seed": {
+                "type": "boolean"
               }
             }
           }
@@ -1882,13 +1563,13 @@
                 "total_results": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "returned": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -1897,42 +1578,27 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "updated": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "entryType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "commonTaxon": {
                         "type": "object",
                         "properties": {
                           "scientificName": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "taxonId": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           }
                         }
@@ -1940,146 +1606,101 @@
                       "memberCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "organismCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "representativeMember": {
                         "type": "object",
                         "properties": {
                           "memberIdType": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "memberId": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "organismName": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "organismTaxId": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "sequenceLength": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "proteinName": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "accessions": {
                             "type": "array",
                             "items": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             }
                           },
                           "uniref50Id": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "uniref100Id": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "uniparcId": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "sequence": {
                             "type": "object",
                             "properties": {
                               "value": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "length": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "molWeight": {
                                 "type": [
                                   "integer",
-                                  "null"
+                                  "number"
                                 ]
                               },
                               "crc64": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               },
                               "md5": {
-                                "type": [
-                                  "null",
-                                  "string"
-                                ]
+                                "type": "string"
                               }
                             }
                           },
                           "uniref90Id": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
                       "seedId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "memberIdTypes": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "members": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "organisms": {
@@ -2088,21 +1709,15 @@
                           "type": "object",
                           "properties": {
                             "scientificName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "commonName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "taxonId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
@@ -2166,10 +1781,7 @@
       "type": "object",
       "properties": {
         "uniParcId": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "uniParcCrossReferences": {
           "type": "array",
@@ -2177,90 +1789,66 @@
             "type": "object",
             "properties": {
               "database": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "id": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "versionI": {
                 "type": [
                   "integer",
-                  "null"
+                  "number"
                 ]
               },
               "version": {
                 "type": [
                   "integer",
-                  "null"
+                  "number"
                 ]
               },
               "active": {
                 "type": "boolean"
               },
               "created": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "lastUpdated": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "geneName": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "proteinName": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "organism": {
                 "type": "object",
                 "properties": {
                   "scientificName": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "commonName": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "taxonId": {
                     "type": [
                       "integer",
-                      "null"
+                      "number"
                     ]
                   }
                 }
               },
               "ncbiGi": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "chain": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "string"
+              },
+              "proteomeId": {
+                "type": "string"
+              },
+              "component": {
+                "type": "string"
               }
             }
           }
@@ -2269,34 +1857,25 @@
           "type": "object",
           "properties": {
             "value": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "length": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             },
             "molWeight": {
               "type": [
                 "integer",
-                "null"
+                "number"
               ]
             },
             "crc64": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "md5": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             }
           }
         },
@@ -2309,30 +1888,18 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   },
                   "name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
+                    "type": "string"
                   }
                 }
               },
               "database": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "databaseId": {
-                "type": [
-                  "null",
-                  "string"
-                ]
+                "type": "string"
               },
               "locations": {
                 "type": "array",
@@ -2342,14 +1909,17 @@
                     "start": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "end": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
+                    },
+                    "alignment": {
+                      "type": "string"
                     }
                   }
                 }
@@ -2358,16 +1928,10 @@
           }
         },
         "oldestCrossRefCreated": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "mostRecentCrossRefUpdated": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         }
       }
     }
@@ -2421,13 +1985,13 @@
                 "total_results": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "returned": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "results": {
@@ -2436,15 +2000,12 @@
                     "type": "object",
                     "properties": {
                       "uniParcId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "crossReferenceCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "commonTaxons": {
@@ -2453,21 +2014,15 @@
                           "type": "object",
                           "properties": {
                             "topLevel": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "commonTaxon": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "commonTaxonId": {
                               "type": [
                                 "integer",
-                                "null"
+                                "number"
                               ]
                             }
                           }
@@ -2476,44 +2031,32 @@
                       "uniProtKBAccessions": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       },
                       "sequence": {
                         "type": "object",
                         "properties": {
                           "value": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "length": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "molWeight": {
                             "type": [
                               "integer",
-                              "null"
+                              "number"
                             ]
                           },
                           "crc64": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           },
                           "md5": {
-                            "type": [
-                              "null",
-                              "string"
-                            ]
+                            "type": "string"
                           }
                         }
                       },
@@ -2526,30 +2069,18 @@
                               "type": "object",
                               "properties": {
                                 "id": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 },
                                 "name": {
-                                  "type": [
-                                    "null",
-                                    "string"
-                                  ]
+                                  "type": "string"
                                 }
                               }
                             },
                             "database": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "databaseId": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
+                              "type": "string"
                             },
                             "locations": {
                               "type": "array",
@@ -2559,20 +2090,17 @@
                                   "start": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "end": {
                                     "type": [
                                       "integer",
-                                      "null"
+                                      "number"
                                     ]
                                   },
                                   "alignment": {
-                                    "type": [
-                                      "string",
-                                      "null"
-                                    ]
+                                    "type": "string"
                                   }
                                 }
                               }
@@ -2581,16 +2109,10 @@
                         }
                       },
                       "oldestCrossRefCreated": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "mostRecentCrossRefUpdated": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }

@@ -48,21 +48,15 @@
               "type": "object",
               "properties": {
                 "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "element_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "regulatory_elements": {

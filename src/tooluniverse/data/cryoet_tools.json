@@ -63,7 +63,7 @@
                 "count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "datasets": {
@@ -74,56 +74,32 @@
                       "id": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "title": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "organismName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "tissueName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "cellName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "sampleType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "depositionDate": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "releaseDate": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "relatedDatabaseEntries": {
                         "type": "null"
@@ -135,16 +111,10 @@
                         ]
                       },
                       "s3Prefix": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "httpsPrefix": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -229,74 +199,44 @@
                     "id": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "title": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "description": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "organismName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "organismTaxid": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "tissueName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "tissueId": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "cellName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "cellTypeId": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "cellStrainName": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "sampleType": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "samplePreparation": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "gridPreparation": {
                       "type": "null"
@@ -305,58 +245,31 @@
                       "type": "null"
                     },
                     "depositionDate": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "releaseDate": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "lastModifiedDate": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "datasetPublications": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "relatedDatabaseEntries": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "keyPhotoUrl": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "s3Prefix": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "httpsPrefix": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "fileSize": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
+                      "type": "number"
                     }
                   }
                 }
@@ -446,13 +359,13 @@
                 "dataset_id": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "runs": {
@@ -463,32 +376,23 @@
                       "id": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "name": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "datasetId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "s3Prefix": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "httpsPrefix": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -580,13 +484,13 @@
                 "run_id": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "tomograms": {
@@ -597,65 +501,50 @@
                       "id": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "runId": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "voxelSpacing": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
+                        "type": "number"
                       },
                       "sizeX": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "sizeY": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "sizeZ": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "reconstructionMethod": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "processing": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "processingSoftware": {
                         "type": "null"
                       },
                       "reconstructionSoftware": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "isPortalStandard": {
                         "type": "boolean"
@@ -670,34 +559,19 @@
                         "type": "boolean"
                       },
                       "s3OmezarrDir": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "httpsMrcFile": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "s3MrcFile": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "depositionDate": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       },
                       "releaseDate": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -793,13 +667,13 @@
                 "run_id": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "annotations": {
@@ -810,20 +684,14 @@
                       "id": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "objectName": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "objectId": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "objectDescription": {
                         "type": [
@@ -837,20 +705,14 @@
                       "objectCount": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "annotationMethod": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "annotationSoftware": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "groundTruthStatus": {
                         "type": "boolean"
@@ -859,40 +721,22 @@
                         "type": "boolean"
                       },
                       "methodType": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "depositionDate": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "releaseDate": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "annotationPublication": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "s3MetadataPath": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "httpsMetadataPath": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }

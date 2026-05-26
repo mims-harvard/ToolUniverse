@@ -70,31 +70,31 @@
                     "total": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "limit": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "offset": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "total_pages": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "current_page": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     }
                   }
@@ -108,7 +108,10 @@
                         "type": "number"
                       },
                       "id": {
-                        "type": "integer"
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
                       },
                       "api_model": {
                         "type": "string"
@@ -129,10 +132,16 @@
                             "type": "string"
                           },
                           "width": {
-                            "type": "integer"
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
                           },
                           "height": {
-                            "type": "integer"
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
                           },
                           "alt_text": {
                             "type": "string"
@@ -149,10 +158,7 @@
                   "type": "object",
                   "properties": {
                     "license_text": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "license_links": {
                       "type": "array",
@@ -161,10 +167,7 @@
                       }
                     },
                     "version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -172,16 +175,10 @@
                   "type": "object",
                   "properties": {
                     "iiif_url": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "website_url": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 }
@@ -263,77 +260,44 @@
                     "id": {
                       "type": [
                         "integer",
-                        "null"
+                        "number"
                       ]
                     },
                     "title": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "date_display": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "artist_display": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "place_of_origin": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "description": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "dimensions": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "medium_display": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "credit_line": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "is_public_domain": {
                       "type": "boolean"
                     },
                     "artwork_type_title": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "style_title": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "image_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -341,10 +305,7 @@
                   "type": "object",
                   "properties": {
                     "license_text": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "license_links": {
                       "type": "array",
@@ -353,10 +314,7 @@
                       }
                     },
                     "version": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -364,16 +322,10 @@
                   "type": "object",
                   "properties": {
                     "iiif_url": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     },
                     "website_url": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
+                      "type": "string"
                     }
                   }
                 }

@@ -47,16 +47,10 @@
               "type": "object",
               "properties": {
                 "gene": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "species": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "baseline_experiments": {
                   "type": "array",
@@ -64,43 +58,28 @@
                     "type": "object",
                     "properties": {
                       "experiment_accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "experiment_type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "experiment_description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "species": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "num_assays": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "gene_mentioned": {
                         "type": "boolean"
                       },
                       "last_update": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -108,13 +87,13 @@
                 "total_baseline": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "gene_specific_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -207,22 +186,13 @@
               "type": "object",
               "properties": {
                 "gene": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "condition": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "species": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "experiments": {
                   "type": "array",
@@ -230,33 +200,21 @@
                     "type": "object",
                     "properties": {
                       "experiment_accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "experiment_type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "experiment_description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "species": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "num_assays": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "gene_mentioned": {
@@ -265,10 +223,7 @@
                       "factors": {
                         "type": "array",
                         "items": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
+                          "type": "string"
                         }
                       }
                     }
@@ -277,7 +232,7 @@
                 "experiment_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -367,22 +322,13 @@
               "type": "object",
               "properties": {
                 "gene": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "condition": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "species": {
-                  "type": [
-                    "null",
-                    "string"
-                  ]
+                  "type": "string"
                 },
                 "experiments": {
                   "type": "array",
@@ -390,33 +336,21 @@
                     "type": "object",
                     "properties": {
                       "experiment_accession": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "experiment_type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "experiment_description": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "species": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
+                        "type": "string"
                       },
                       "num_assays": {
                         "type": [
                           "integer",
-                          "null"
+                          "number"
                         ]
                       },
                       "gene_mentioned": {
@@ -431,13 +365,13 @@
                 "total_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 },
                 "gene_specific_count": {
                   "type": [
                     "integer",
-                    "null"
+                    "number"
                   ]
                 }
               }
@@ -516,28 +450,16 @@
               "type": "object",
               "properties": {
                 "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "species": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": "string"
                 },
                 "factors": {
                   "type": "array"
