@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from tooluniverse.ctd_tool import CTD_REQUEST_HEADERS, CTDTool
+from tooluniverse.ctd_tool import RENCI_HEADERS, CTDTool
 
 
 def make_ctd_tool(input_type="gene", report_type="diseases_curated"):
@@ -98,7 +98,7 @@ def test_ctd_request_asks_for_json(mock_get):
 
     tool.run({"input_terms": "TP53"})
 
-    assert mock_get.call_args.kwargs["headers"] == CTD_REQUEST_HEADERS
+    assert mock_get.call_args.kwargs["headers"] == RENCI_HEADERS
 
 
 @pytest.mark.unit
