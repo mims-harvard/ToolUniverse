@@ -191,7 +191,7 @@ def run_tests(tu: ToolUniverse, configs: List[Tuple[Path, List[Dict]]], args) ->
             # Skip LLM-backed AgenticTool/SmolAgent tools if no LLM provider env
             # is set. Otherwise they show as "Schema Mismatch: None is not of
             # type object" once the provider call fails silently inside the agent.
-            if tool.get("type") in ("AgenticTool", "SmolAgent", "SmolAgentTool"):
+            if tool.get("type") in ("AgenticTool", "SmolAgent", "SmolAgentTool", "ToolFinderLLM", "ToolFinderEmbedding", "ComposeTool"):
                 # Gemini fallback fails AgenticTool callers with
                 # 'JSON mode not supported here' — agentic framework requires
                 # structured-output support. Only count JSON-mode providers.

@@ -38,7 +38,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "accession": {
                   "type": [
@@ -59,9 +62,15 @@
                   ]
                 },
                 "domains": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "pfam_accession": {
                         "type": [
@@ -179,7 +188,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "pfam_accession": {
                   "type": [
@@ -200,9 +212,15 @@
                   ]
                 },
                 "structures": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "pdb_id": {
                         "type": [
@@ -301,7 +319,10 @@
               "const": "success"
             },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "clan_accession": {
                   "type": [
@@ -328,9 +349,15 @@
                   ]
                 },
                 "members": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "accession": {
                         "type": [

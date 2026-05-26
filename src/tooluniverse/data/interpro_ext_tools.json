@@ -42,105 +42,114 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "status"
+          ],
           "properties": {
+            "status": {
+              "const": "success"
+            },
             "data": {
-              "type": "object",
+              "type": [
+                "null",
+                "object"
+              ],
               "properties": {
                 "domain_id": {
-                  "type": "string",
-                  "description": "InterPro domain accession queried"
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
                 "total_proteins": {
-                  "type": "integer",
-                  "description": "Total number of proteins with this domain"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "proteins": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object",
+                    "type": [
+                      "null",
+                      "object"
+                    ],
                     "properties": {
                       "accession": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "UniProt accession"
+                          "null",
+                          "string"
+                        ]
                       },
                       "name": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Protein name"
+                          "null",
+                          "string"
+                        ]
                       },
                       "source_database": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Source (reviewed=Swiss-Prot, unreviewed=TrEMBL)"
+                          "null",
+                          "string"
+                        ]
                       },
                       "length": {
                         "type": [
                           "integer",
                           "null"
-                        ],
-                        "description": "Sequence length"
+                        ]
                       },
                       "source_organism": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Species scientific name"
+                          "null",
+                          "string"
+                        ]
                       },
                       "tax_id": {
                         "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "NCBI taxonomy ID"
+                          "null",
+                          "string"
+                        ]
                       }
                     }
-                  },
-                  "description": "Proteins containing this domain"
+                  }
                 },
                 "page_size": {
-                  "type": "integer",
-                  "description": "Page size used"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "reviewed_only": {
-                  "type": "boolean",
-                  "description": "Whether only Swiss-Prot entries were returned"
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
                 }
               }
             },
             "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "domain_id": {
-                  "type": "string"
-                }
-              }
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
           "properties": {
+            "status": {
+              "const": "error"
+            },
             "error": {
               "type": "string"
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
       ]
     }
