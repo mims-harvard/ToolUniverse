@@ -17,6 +17,19 @@ from .tool_registry import register_tool
 # Base URL for LIPID MAPS REST API
 LIPIDMAPS_BASE_URL = "https://www.lipidmaps.org/rest"
 
+# LIPID MAPS sits behind Cloudflare and 403s the default python-requests UA
+# with a "Just a moment..." challenge page. A normal browser UA passes through
+# the JS-less challenge for plain REST endpoints — same trick as
+# file_download_tool.py uses for Wikipedia.
+_REQUEST_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36 ToolUniverse/LipidMaps"
+    ),
+    "Accept": "application/json,text/plain,*/*",
+}
+
 
 @register_tool("LipidMapsTool")
 class LipidMapsTool(BaseTool):
@@ -81,7 +94,7 @@ class LipidMapsTool(BaseTool):
         """Central method to handle API requests and response parsing."""
         url = f"{LIPIDMAPS_BASE_URL}/{sub_path}"
 
-        response = requests.get(url, timeout=self.timeout)
+        response = requests.get(url, timeout=self.timeout, headers=_REQUEST_HEADERS)
         response.raise_for_status()
 
         raw_text = response.text.strip()
@@ -173,7 +186,7 @@ class LipidMapsTool(BaseTool):
 
         # LIPID MAPS m/z endpoint returns TSV, not JSON
         url = f"{LIPIDMAPS_BASE_URL}/moverz/LIPIDS/{mz_value}/{ion_type}/-/{tolerance}/txt"
-        response = requests.get(url, timeout=self.timeout)
+        response = requests.get(url, timeout=self.timeout, headers=_REQUEST_HEADERS)
         response.raise_for_status()
 
         raw_text = response.text.strip()

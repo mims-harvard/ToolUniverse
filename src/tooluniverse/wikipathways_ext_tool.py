@@ -1,21 +1,30 @@
 # wikipathways_ext_tool.py
-"""
-WikiPathways Extended tool for ToolUniverse.
+"""WikiPathways Extended tool — backed by the SPARQL endpoint.
 
-Provides additional WikiPathways endpoints for extracting gene lists
-from pathways and finding pathways by gene identifier.
-
-API: https://webservice.wikipathways.org/
-No authentication required. Free public access.
+The legacy webservice.wikipathways.org REST API (getXrefList,
+findPathwaysByXref) was deprecated; this tool now talks to
+sparql.wikipathways.org which is the current public access path. The
+envelope shape and parameter names are unchanged.
 """
 
-import requests
-from typing import Dict, Any
+import json
+from typing import Any, Dict
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
+
 from .base_tool import BaseTool
 
 
-WP_BASE_URL = "https://webservice.wikipathways.org"
+SPARQL_ENDPOINT = "https://sparql.wikipathways.org/sparql"
+_BROWSER_UA = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/124.0.0.0 Safari/537.36 ToolUniverse/WikiPathways"
+)
 
+# Legacy single-letter codes accepted by the old getXrefList endpoint.
+# Map them to the BridgeDB datasource URIs that the SPARQL store uses
+# inside `dc:source`.
 CODE_TO_NAME = {
     "H": "HGNC Symbol",
     "En": "Ensembl",
@@ -23,14 +32,44 @@ CODE_TO_NAME = {
     "L": "Entrez Gene",
     "Ce": "ChEBI",
 }
+# SPARQL store uses BridgeDB-style source strings; keep the friendly
+# substring match flexible so we accept both URI-form and short-form sources.
+_CODE_TO_SOURCE_SUBSTR = {
+    "H": "HGNC",
+    "En": "Ensembl",
+    "S": "Uniprot",
+    "L": "Entrez Gene",
+    "Ce": "ChEBI",
+}
+
+
+def _sparql(query: str, timeout: int = 30) -> Dict[str, Any]:
+    body = urlencode({"query": query, "format": "json"}).encode()
+    req = Request(
+        SPARQL_ENDPOINT,
+        data=body,
+        method="POST",
+        headers={
+            "User-Agent": _BROWSER_UA,
+            "Accept": "application/sparql-results+json",
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    )
+    with urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read().decode("utf-8", errors="ignore"))
+
+
+def _val(binding: Dict[str, Any], key: str) -> str:
+    return (binding.get(key) or {}).get("value", "")
+
+
+def _wpid_from_uri(uri: str) -> str:
+    tail = uri.rstrip("/").rsplit("/", 1)[-1]
+    return tail.split("_", 1)[0]
 
 
 class WikiPathwaysExtTool(BaseTool):
-    """
-    Tool for WikiPathways extended API endpoints.
-
-    No authentication required.
-    """
+    """WikiPathways extended endpoints via SPARQL."""
 
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
@@ -39,37 +78,20 @@ class WikiPathwaysExtTool(BaseTool):
         self.endpoint = fields.get("endpoint", "get_pathway_genes")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute the WikiPathways API call."""
         try:
-            return self._query(arguments)
-        except requests.exceptions.Timeout:
-            return {
-                "status": "error",
-                "error": f"WikiPathways API timed out after {self.timeout}s",
-            }
-        except requests.exceptions.ConnectionError:
-            return {"status": "error", "error": "Failed to connect to WikiPathways API"}
-        except requests.exceptions.HTTPError as e:
-            code = e.response.status_code if e.response is not None else "unknown"
-            return {"status": "error", "error": f"WikiPathways API HTTP error: {code}"}
-        except Exception as e:
-            return {
-                "status": "error",
-                "error": f"Unexpected error querying WikiPathways: {str(e)}",
-            }
-
-    def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Route to appropriate endpoint."""
-        if self.endpoint == "get_pathway_genes":
-            return self._get_pathway_genes(arguments)
-        elif self.endpoint == "find_pathways_by_gene":
-            return self._find_pathways_by_gene(arguments)
-        else:
+            if self.endpoint == "get_pathway_genes":
+                return self._get_pathway_genes(arguments)
+            if self.endpoint == "find_pathways_by_gene":
+                return self._find_pathways_by_gene(arguments)
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
+        except Exception as e:  # noqa: BLE001
+            return {
+                "status": "error",
+                "error": f"Unexpected error querying WikiPathways: {e}",
+            }
 
     def _get_pathway_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get all genes in a WikiPathways pathway."""
-        pathway_id = arguments.get("pathway_id", "")
+        pathway_id = (arguments.get("pathway_id") or "").upper().replace('"', "")
         if not pathway_id:
             return {
                 "status": "error",
@@ -78,39 +100,51 @@ class WikiPathwaysExtTool(BaseTool):
 
         code = arguments.get("code", "H")
         id_type_name = CODE_TO_NAME.get(code, code)
+        source_substr = _CODE_TO_SOURCE_SUBSTR.get(code, code)
 
-        url = f"{WP_BASE_URL}/getXrefList"
-        params = {
-            "pwId": pathway_id,
-            "code": code,
-            "format": "json",
-        }
-        response = requests.get(url, params=params, timeout=self.timeout)
-        response.raise_for_status()
-        data = response.json()
-
-        xrefs = data.get("xrefs", [])
-        # Deduplicate and sort
-        unique_genes = sorted(set(xrefs))
-
+        identifier_uri = f"https://identifiers.org/wikipathways/{pathway_id}"
+        sparql = f"""
+PREFIX wp: <http://vocabularies.wikipathways.org/wp#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?gene_id ?gene_label WHERE {{
+  ?gene dcterms:isPartOf ?pathway ;
+        a wp:GeneProduct ;
+        dc:identifier ?gene_id ;
+        rdfs:label ?gene_label ;
+        dc:source ?src .
+  ?pathway dc:identifier <{identifier_uri}> .
+  FILTER(CONTAINS(STR(?src), "{source_substr}"))
+}} LIMIT 500
+"""
+        data = _sparql(sparql, timeout=self.timeout)
+        # SPARQL returns the gene URI in ?gene_id; flatten to the bare label
+        # so callers see the same {gene_count, genes:[symbol]} shape as before.
+        symbols = sorted(
+            {
+                _val(b, "gene_label")
+                for b in data.get("results", {}).get("bindings", [])
+                if _val(b, "gene_label")
+            }
+        )
         return {
             "status": "success",
             "data": {
                 "pathway_id": pathway_id,
-                "gene_count": len(unique_genes),
+                "gene_count": len(symbols),
                 "identifier_type": id_type_name,
-                "genes": unique_genes,
+                "genes": symbols,
             },
             "metadata": {
-                "source": "WikiPathways API",
+                "source": "WikiPathways SPARQL",
                 "pathway_id": pathway_id,
                 "code": code,
             },
         }
 
     def _find_pathways_by_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Find pathways containing a specific gene."""
-        gene = arguments.get("gene", "")
+        gene = (arguments.get("gene") or "").replace('"', "")
         if not gene:
             return {
                 "status": "error",
@@ -118,58 +152,53 @@ class WikiPathwaysExtTool(BaseTool):
             }
 
         species = arguments.get("species", "Homo sapiens")
+        organism_filter = (
+            f'  FILTER(LCASE(STR(?organism)) = "{species.lower()}")' if species else ""
+        )
 
-        url = f"{WP_BASE_URL}/findPathwaysByXref"
-        params = {
-            "ids": gene,
-            "codes": "H",
-            "format": "json",
-        }
-        response = requests.get(url, params=params, timeout=self.timeout)
-        response.raise_for_status()
-        data = response.json()
-
-        # WikiPathways returns a list on server error (e.g., ["error", 500, "..."])
-        if isinstance(data, list):
-            msg = str(data[2])[:200] if len(data) > 2 else str(data)
-            return {
-                "status": "error",
-                "error": f"WikiPathways API server error: {msg}",
-            }
-
-        results = data.get("result", [])
-
-        # Filter by species
-        if species:
-            results = [
-                r for r in results if species.lower() in r.get("species", "").lower()
-            ]
-
-        # Deduplicate by pathway ID (some genes appear multiple times in same pathway)
+        sparql = f"""
+PREFIX wp: <http://vocabularies.wikipathways.org/wp#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?pathway ?title ?organism WHERE {{
+  ?gene dcterms:isPartOf ?pathway ;
+        a wp:GeneProduct ;
+        rdfs:label "{gene}" .
+  ?pathway a wp:Pathway ;
+           dc:title ?title ;
+           wp:organismName ?organism .
+{organism_filter}
+}} LIMIT 100
+"""
+        data = _sparql(sparql, timeout=self.timeout)
+        bindings = data.get("results", {}).get("bindings", [])
         seen = set()
-        unique_pathways = []
-        for r in results:
-            pid = r.get("id", "")
-            if pid not in seen:
-                seen.add(pid)
-                unique_pathways.append(
-                    {
-                        "id": pid,
-                        "name": r.get("name", ""),
-                        "species": r.get("species", ""),
-                        "url": r.get("url"),
-                    }
-                )
+        pathways = []
+        for b in bindings:
+            uri = _val(b, "pathway")
+            pid = _wpid_from_uri(uri)
+            if pid in seen:
+                continue
+            seen.add(pid)
+            pathways.append(
+                {
+                    "id": pid,
+                    "name": _val(b, "title"),
+                    "species": _val(b, "organism"),
+                    "url": uri,
+                }
+            )
 
         return {
             "status": "success",
             "data": {
                 "gene": gene,
-                "total_pathways": len(unique_pathways),
-                "pathways": unique_pathways,
+                "total_pathways": len(pathways),
+                "pathways": pathways,
             },
             "metadata": {
-                "source": "WikiPathways API",
+                "source": "WikiPathways SPARQL",
                 "gene": gene,
                 "species": species,
             },

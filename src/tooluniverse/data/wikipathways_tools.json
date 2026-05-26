@@ -24,50 +24,57 @@
       "format": "json"
     },
     "return_schema": {
-      "type": "object",
-      "description": "WikiPathways API response with pathway search results",
-      "properties": {
-        "result": {
-          "type": "array",
-          "description": "Array of matching pathways",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "WikiPathways ID (WPID)"
-              },
-              "name": {
-                "type": "string",
-                "description": "Pathway name"
-              },
-              "species": {
-                "type": "string",
-                "description": "Organism name"
-              },
-              "url": {
-                "type": "string",
-                "description": "Pathway URL"
-              },
-              "revision": {
-                "type": "string",
-                "description": "Revision number"
-              },
-              "score": {
-                "type": [
-                  "object",
-                  "null"
-                ],
-                "description": "Search relevance score"
-              },
-              "fields": {
-                "type": "array",
-                "description": "Additional fields"
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "wpid": {
+                    "type": "string"
+                  },
+                  "uri": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "organism": {
+                    "type": "string"
+                  }
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
             }
           }
         }
-      }
+      ]
     },
     "test_examples": [
       {
