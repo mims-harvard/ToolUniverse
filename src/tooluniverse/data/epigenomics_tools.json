@@ -161,7 +161,10 @@
         "chromatin"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_methylation_experiments",
@@ -281,7 +284,10 @@
         "cpg"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_chromatin_accessibility",
@@ -403,7 +409,10 @@
         "open-chromatin"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_annotations",
@@ -535,7 +544,10 @@
         "chromatin-state"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "UCSC_get_cpg_islands",
@@ -677,7 +689,10 @@
         "promoters"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "UCSC_get_encode_cCREs",
@@ -819,7 +834,10 @@
         "promoters"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "UCSC_get_tf_binding_clusters",
@@ -950,7 +968,10 @@
         "binding-sites"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_methylation_datasets",
@@ -1078,7 +1099,10 @@
         "geo"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_chipseq_datasets",
@@ -1198,7 +1222,10 @@
         "transcription-factor"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_get_dataset_details",
@@ -1310,7 +1337,10 @@
         "dataset-metadata"
       ],
       "estimated_execution_time": "< 3 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "EnsemblReg_get_regulatory_elements",
@@ -1445,7 +1475,10 @@
         "promoters"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_get_chromatin_state",
@@ -1566,7 +1599,10 @@
         "functional-annotation"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_rnaseq_datasets",
@@ -1696,7 +1732,10 @@
         "geo"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "GEO_search_atacseq_datasets",
@@ -1827,7 +1866,10 @@
         "epigenomics"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_rnaseq_experiments",
@@ -1984,7 +2026,10 @@
         "gene-expression"
       ],
       "estimated_execution_time": "< 5 seconds"
-    }
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
   },
   {
     "name": "ENCODE_search_hic_experiments",
@@ -2084,6 +2129,9 @@
         "assay_type": "Hi-C",
         "limit": 3
       }
+    ],
+    "optional_api_keys": [
+      "NCBI_API_KEY"
     ]
   },
   {
@@ -2176,6 +2224,9 @@
         "organism": "Homo sapiens",
         "limit": 10
       }
+    ],
+    "optional_api_keys": [
+      "NCBI_API_KEY"
     ]
   }
 ]

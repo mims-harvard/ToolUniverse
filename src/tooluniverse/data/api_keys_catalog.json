@@ -250,6 +250,7 @@
     "purpose": "Search PubMed and fetch citation metrics (iCite) and PubTator annotations.",
     "without": "Works at 3 requests/sec without it; the key raises the limit to 10/sec.",
     "used_by": [
+      "epigenomics_tools.json",
       "icite_tools.json",
       "pubmed_tools.json",
       "pubtator3_ext_tools.json"
