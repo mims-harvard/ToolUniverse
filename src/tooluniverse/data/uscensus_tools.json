@@ -90,6 +90,15 @@
     },
     "required_api_keys": [
       "CENSUS_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "CENSUS_API_KEY": {
+        "domain": "Clinical & Safety",
+        "type": "secret",
+        "register_url": "https://api.census.gov/data/key_signup.html",
+        "purpose": "Pull population, demographic, and economic data from the US Census Bureau (decennial + ACS).",
+        "without": "Census endpoints return an HTML rate-limit page that breaks the tool's JSON parser. Free to register."
+      }
+    }
   }
 ]

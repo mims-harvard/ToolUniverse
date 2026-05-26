@@ -72,6 +72,30 @@
     ]
   },
   {
+    "name": "CELLXGENE_CENSUS_PACKAGE_INSTALLED",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Genomics & Variants",
+    "register_url": "https://chanzuckerberg.github.io/cellxgene-census/",
+    "purpose": "Synthetic gate. Set to '1' after `pip install cellxgene-census`; CELLxGENE tools require the Python package, not a network key.",
+    "without": "All 7 CELLxGENE tools skip in the test harness and return a clear 'package not installed' error at runtime.",
+    "used_by": [
+      "cellxgene_census_tools.json"
+    ]
+  },
+  {
+    "name": "CENSUS_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Clinical & Safety",
+    "register_url": "https://api.census.gov/data/key_signup.html",
+    "purpose": "Pull population, demographic, and economic data from the US Census Bureau (decennial + ACS).",
+    "without": "Census endpoints return an HTML rate-limit page that breaks the tool's JSON parser. Free to register.",
+    "used_by": [
+      "uscensus_tools.json"
+    ]
+  },
+  {
     "name": "CLUE_API_KEY",
     "requirement": "required",
     "type": "secret",
@@ -85,7 +109,7 @@
   },
   {
     "name": "DISGENET_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Genomics & Variants",
     "register_url": "https://www.disgenet.org/",
@@ -245,7 +269,7 @@
   },
   {
     "name": "OMIM_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Genomics & Variants",
     "register_url": "https://omim.org/api",

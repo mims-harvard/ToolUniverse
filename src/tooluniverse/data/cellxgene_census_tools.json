@@ -55,7 +55,16 @@
     ],
     "required_api_keys": [
       "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
-    ]
+    ],
+    "api_key_info": {
+      "CELLXGENE_CENSUS_PACKAGE_INSTALLED": {
+        "domain": "Genomics & Variants",
+        "type": "secret",
+        "register_url": "https://chanzuckerberg.github.io/cellxgene-census/",
+        "purpose": "Synthetic gate. Set to '1' after `pip install cellxgene-census`; CELLxGENE tools require the Python package, not a network key.",
+        "without": "All 7 CELLxGENE tools skip in the test harness and return a clear 'package not installed' error at runtime."
+      }
+    }
   },
   {
     "name": "CELLxGENE_get_cell_metadata",
