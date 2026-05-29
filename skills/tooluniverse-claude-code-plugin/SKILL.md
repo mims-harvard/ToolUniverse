@@ -46,10 +46,10 @@ rm -rf ~/.claude/skills/setup-tooluniverse
 The MCP server runs the `tooluniverse` PyPI package via `uvx`. To lock tool behavior for a long-running analysis, pin the package version in the plugin's `.mcp.json` — change the args to:
 
 ```json
-"args": ["tooluniverse@1.2.0"]
+"args": ["tooluniverse@1.2.2"]
 ```
 
-Replace `1.2.0` with any released version from https://pypi.org/project/tooluniverse/. Restart Claude Code to apply. (`.mcp.json` location is shown under "API keys" below.)
+Replace `1.2.2` with any released version from https://pypi.org/project/tooluniverse/. Restart Claude Code to apply. (`.mcp.json` location is shown under "API keys" below.)
 
 ## Verify it worked
 
