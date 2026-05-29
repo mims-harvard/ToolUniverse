@@ -66,15 +66,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -199,15 +208,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -337,15 +355,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -470,15 +497,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -603,15 +639,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -742,15 +787,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -881,15 +935,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -977,15 +1040,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -1073,15 +1145,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -1169,15 +1250,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -1265,15 +1355,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -1334,8 +1433,8 @@
   {
     "type": "PackageTool",
     "name": "get_pyrosetta_info",
-    "description": "Get information about the pyrosetta package. Python interface to Rosetta macromolecular modeling suite",
-    "package_name": "pyrosetta",
+    "description": "Get information about the pyrosetta package. Python interface to Rosetta macromolecular modeling suite. PyRosetta itself requires an academic/commercial license (not on public PyPI); 'pyrosetta-installer' is the PyPI helper that fetches it.",
+    "package_name": "pyrosetta-installer",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -1361,15 +1460,24 @@
           "description": "Latest version number"
         },
         "author": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author or maintainer"
         },
         "license": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "License type"
         },
         "home_page": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Home page URL"
         },
         "documentation": {
@@ -1425,6 +1533,9 @@
           "description": "Step-by-step guide to get started"
         }
       }
+    },
+    "local_info": {
+      "import_name": "pyrosetta"
     }
   }
 ]

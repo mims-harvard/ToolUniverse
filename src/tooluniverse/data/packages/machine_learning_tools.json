@@ -2448,7 +2448,7 @@
     "type": "PackageTool",
     "name": "get_skopt_info",
     "description": "Get information about the skopt package. Scikit-Optimize: sequential model-based optimization",
-    "package_name": "skopt",
+    "package_name": "scikit-optimize",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -2547,6 +2547,9 @@
           "description": "Step-by-step guide to get started"
         }
       }
+    },
+    "local_info": {
+      "import_name": "skopt"
     }
   },
   {
