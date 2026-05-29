@@ -1,12 +1,12 @@
 ---
 name: tooluniverse-claude-code-plugin
-description: Install the ToolUniverse Claude Code plugin in one step — provides MCP server with 1000+ scientific tools, 115 research skills, slash commands, hooks, and the research agent. Use for first-time plugin install, troubleshooting plugin not loading, verifying MCP server connection, listing API key requirements, or configuring auto-update.
+description: Install the ToolUniverse Claude Code plugin in one step — provides MCP server with 1000+ scientific tools, 120+ research skills, slash commands, hooks, and the research agent. Use for first-time plugin install, troubleshooting plugin not loading, verifying MCP server connection, listing API key requirements, or configuring auto-update.
 disable-model-invocation: true
 ---
 
 # Install the ToolUniverse Plugin for Claude Code
 
-One-step install of the ToolUniverse plugin: MCP server with 1000+ tools, 115 research skills, slash commands, and the research agent — all auto-configured.
+One-step install of the ToolUniverse plugin: MCP server with 1000+ tools, 120+ research skills, slash commands, and the research agent — all auto-configured.
 
 ## Prerequisites (check once)
 
@@ -41,14 +41,15 @@ rm -rf ~/.claude/skills/create-tooluniverse-skill
 rm -rf ~/.claude/skills/setup-tooluniverse
 ```
 
-### Pin to a version (optional)
+### Pin the tool version (optional, for reproducibility)
 
-```bash
-claude plugin marketplace add mims-harvard/ToolUniverse#v1.2.0
-claude plugin install tooluniverse@tooluniverse
+The MCP server runs the `tooluniverse` PyPI package via `uvx`. To lock tool behavior for a long-running analysis, pin the package version in the plugin's `.mcp.json` — change the args to:
+
+```json
+"args": ["tooluniverse@1.2.0"]
 ```
 
-Replace `v1.2.0` with any released tag from https://github.com/mims-harvard/ToolUniverse/releases.
+Replace `1.2.0` with any released version from https://pypi.org/project/tooluniverse/. Restart Claude Code to apply. (`.mcp.json` location is shown under "API keys" below.)
 
 ## Verify it worked
 
@@ -76,7 +77,7 @@ The router skill auto-dispatches to the right specialized skill — no command p
 | **`/tooluniverse:compare`** | N-way side-by-side comparison with domain-appropriate columns | Slash command |
 | **`/tooluniverse:literature-sweep`** | Graded mini-review across PubMed + EuropePMC + Semantic Scholar | Slash command |
 | **`/tooluniverse:researcher`** | Same investigation as `research`, delegated to a forked subagent | Slash command |
-| **115 skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
+| **120+ skills** | Structured workflows (drug research, variant interpretation, pharmacovigilance, CRISPR screens, statistical modeling, etc.) | Auto-activate on matching questions |
 
 ## API keys (optional, but recommended)
 
@@ -98,7 +99,7 @@ find ~/.claude/plugins -name '.mcp.json' -path '*tooluniverse*'
   "mcpServers": {
     "tooluniverse": {
       "command": "uvx",
-      "args": ["--refresh", "tooluniverse"],
+      "args": ["tooluniverse"],
       "env": {
         "PYTHONIOENCODING": "utf-8",
         "NCBI_API_KEY": "your_key",

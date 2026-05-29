@@ -27,7 +27,7 @@ claude plugin install tooluniverse@tooluniverse
 ## What's Included
 
 - **MCP Server**: Auto-configured via `.mcp.json`. Provides `find_tools`, `list_tools`, `get_tool_info`, `execute_tool` — accessing 1000+ scientific APIs.
-- **115 Research Skills**: Specialized workflows for genomics, drug discovery, clinical analysis, statistical modeling, data wrangling, and more.
+- **120+ Research Skills**: Specialized workflows for genomics, drug discovery, clinical analysis, statistical modeling, data wrangling, and more.
 - **Slash Commands** (each enforces a discipline the agent won't apply on its own):
   - `/tooluniverse:research` — drive a multi-database investigation inline in this chat (you see every step)
   - `/tooluniverse:translate-id` — resolve an ID across all relevant namespaces

@@ -12,7 +12,7 @@
     {
       "name": "tooluniverse",
       "source": "./plugin",
-      "description": "1000+ scientific tools (PubMed, UniProt, PubChem, TCGA, FAERS, ClinicalTrials.gov, etc.) + 115 research skills + MCP server + research slash commands.",
+      "description": "1000+ scientific tools (PubMed, UniProt, PubChem, TCGA, FAERS, ClinicalTrials.gov, etc.) + 120+ research skills + MCP server + research slash commands.",
       "category": "science",
       "strict": false
     }
