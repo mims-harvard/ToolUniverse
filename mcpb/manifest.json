@@ -1,0 +1,52 @@
+{
+    "manifest_version": "0.4",
+    "name": "tooluniverse",
+    "display_name": "ToolUniverse",
+    "version": "1.2.2",
+    "description": "ToolUniverse: an ecosystem for democratizing AI scientists with 2000+ scientific tools.",
+    "long_description": "ToolUniverse is an ecosystem for creating AI scientist systems from any large language model (LLM). It standardizes how LLMs interact with tools, integrating thousands of machine learning models, datasets, APIs, and scientific packages for data analysis, knowledge retrieval, and experimental design. This bundle exposes ToolUniverse capability via the Model Context Protocol (MCP), enabling AI assistants to perform complex scientific tasks.",
+    "author": {
+        "name": "ToolUniverse Team",
+        "email": "shanghuagao@gmail.com",
+        "url": "https://github.com/mims-harvard/ToolUniverse"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mims-harvard/ToolUniverse"
+    },
+    "homepage": "https://github.com/mims-harvard/ToolUniverse",
+    "documentation": "https://zitniklab.hms.harvard.edu/ToolUniverse/",
+    "support": "https://github.com/mims-harvard/ToolUniverse/issues",
+    "icon": "icon.png",
+    "server": {
+        "type": "python",
+        "entry_point": "src/run_stdio.py",
+        "mcp_config": {
+            "command": "uv",
+            "args": [
+                "run",
+                "--directory",
+                "${__dirname}",
+                "--with",
+                ".",
+                "--python",
+                "3.12",
+                "${__dirname}${/}src${/}run_stdio.py"
+            ],
+            "env": {
+                "PYTHONPATH": "${__dirname}${/}src",
+                "TOOLUNIVERSE_STDIO_MODE": "1",
+                "PYTHONIOENCODING": "utf-8"
+            }
+        }
+    },
+    "prompts_generated": true,
+    "compatibility": {
+        "platforms": ["darwin", "win32", "linux"],
+        "runtimes": {
+            "python": ">=3.10,<3.14"
+        }
+    },
+    "keywords": ["science", "tooluniverse", "bioinformatics", "mcp"],
+    "license": "MIT"
+}

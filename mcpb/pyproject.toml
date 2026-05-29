@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tooluniverse-mcpb-native"
+version = "1.2.2"
+description = "ToolUniverse MCP Server (Native MCPB bundle)"
+requires-python = ">=3.10,<3.14"
+
+# Pattern 2: DIRECT dependencies (bundled source code).
+# We don't depend on `tooluniverse` from PyPI; the source is bundled inside
+# `src/tooluniverse/` and these are its runtime deps. Keep this list in sync
+# with the root pyproject.toml `dependencies` section.
+dependencies = [
+    "requests>=2.32.0",
+    "numpy>=2.2.0",
+    "sympy>=1.12.0",
+    "graphql-core>=3.2.0",
+    "fastapi>=0.116.0",
+    "uvicorn>=0.36.0",
+    "pydantic>=2.11.0",
+    "epam.indigo>=1.34.0",
+    "networkx>=3.4.0",
+    "openai>=1.107.0",
+    "pyyaml>=6.0.0",
+    "google-genai>=1.36.0",
+    "mcp[cli]>=1.9.3",
+    "fastmcp>=2.12.3,<4.0.0",
+    "xmltodict>=1.0.0",
+    "lxml>=6.0.0",
+    "huggingface_hub>=0.34.0",
+    "jsonpath-ng>=1.6.0",
+    "rcsb-api>=1.4.0",
+    "fitz>=0.0.1.dev2",
+    "pandas>=2.2.3",
+    "setuptools>=70.0.0",
+    "pdfplumber>=0.11.0",
+    "playwright>=1.55.0",
+    "faiss-cpu==1.12.0",
+    "flask>=2.0.0",
+    "aiohttp",
+    "beautifulsoup4>=4.12.0",
+    "python-dotenv>=1.0.0",
+    "markitdown[all]>=0.1.0",
+    "psutil>=5.9.0",
+    "ddgs>=9.0.0",
+    "pip>=25.3",
+    "jsonschema>=4.23.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+tooluniverse = ["data/*", "data/packages/*"]
