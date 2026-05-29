@@ -122,37 +122,43 @@
             "ilogp": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "xlogp3": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "wlogp": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "mlogp": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "silicosit_logp": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "consensus_logp": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ],
               "description": "Consensus Log Po/w (average of all methods)"
             }
@@ -171,7 +177,8 @@
             "esol_solubility_mg_ml": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "esol_solubility_mol_l": {
@@ -197,7 +204,8 @@
             "ali_solubility_mg_ml": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "ali_solubility_mol_l": {
@@ -222,7 +230,8 @@
             "silicosit_solubility_mg_ml": {
               "type": [
                 "number",
-                "null"
+                "null",
+                "string"
               ]
             },
             "silicosit_solubility_mol_l": {
@@ -461,7 +470,8 @@
         "consensus_logp": {
           "type": [
             "number",
-            "null"
+            "null",
+            "string"
           ]
         },
         "rules": {

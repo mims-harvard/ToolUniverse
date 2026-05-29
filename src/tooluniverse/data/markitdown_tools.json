@@ -25,43 +25,22 @@
       ]
     },
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": [
-                "object",
-                "string"
-              ]
-            },
-            "metadata": {
-              "type": "object"
-            }
-          }
+      "type": "object",
+      "properties": {
+        "markdown_content": {
+          "type": "string"
         },
-        {
-          "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
-          "properties": {
-            "status": {
-              "const": "error"
-            },
-            "error": {
-              "type": "string"
-            }
-          }
+        "file_info": {
+          "type": [
+            "object",
+            "string",
+            "null"
+          ]
+        },
+        "content": {
+          "type": "string"
         }
-      ]
+      }
     },
     "test_examples": [
       {
