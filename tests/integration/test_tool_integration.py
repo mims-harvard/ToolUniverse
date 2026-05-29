@@ -21,6 +21,11 @@ from pathlib import Path
 
 from tooluniverse import ToolUniverse
 
+# Every *_real test in this module hits live external APIs and can exceed the
+# global 60s pytest timeout (pytest.ini) on slow GitHub Actions runners. Raise
+# the ceiling module-wide so the whole suite isn't whack-a-mole'd test by test.
+pytestmark = pytest.mark.timeout(180)
+
 
 @pytest.mark.integration
 class TestToolExecution:

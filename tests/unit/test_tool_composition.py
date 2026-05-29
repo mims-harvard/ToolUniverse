@@ -20,6 +20,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from tooluniverse import ToolUniverse
 
+# Every *_real test in this module hits live external APIs (UniProt, OpenAlex,
+# EuropePMC, PubTator, OpenTargets, ...). They pass locally in seconds but the
+# global 60s pytest timeout (pytest.ini) is too tight for GitHub Actions
+# runners under network load. Raise the ceiling module-wide so individual
+# tests don't have to be decorated one by one (chronic CI flake source).
+pytestmark = pytest.mark.timeout(180)
+
 
 @pytest.mark.unit
 class TestToolComposition(unittest.TestCase):
