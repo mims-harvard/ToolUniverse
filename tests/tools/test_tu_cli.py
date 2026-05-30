@@ -1834,6 +1834,34 @@ class TestRenderFunctions:
         assert len(result) == 20
         assert result.endswith("…")
 
+    @pytest.mark.unit
+    def test_render_run_envelope_error_unwraps_data_error(self):
+        """Standard envelope {status:error, data:{error:..}} renders the inner error."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {"status": "error", "data": {"error": "SSL certificate verify failed"}}
+        )
+        assert "SSL certificate verify failed" in out
+        assert "unknown error" not in out
+
+    @pytest.mark.unit
+    def test_render_run_top_level_error_still_works(self):
+        """Top-level {error: ...} (legacy shape) still renders the message."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run({"status": "error", "error": "top-level msg"})
+        assert "top-level msg" in out
+        assert "unknown error" not in out
+
+    @pytest.mark.unit
+    def test_render_run_truly_empty_error_falls_back(self):
+        """When no error message is present in either location, fall back."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run({"status": "error", "data": {}})
+        assert "unknown error" in out
+
 
 class TestResolveCategories:
     """Tests for _resolve_categories — case-insensitive category name mapping.

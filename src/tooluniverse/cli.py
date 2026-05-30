@@ -464,8 +464,16 @@ def _render_run(d: dict) -> str:
         return str(d)
     if d.get("status") != "error" and "error" not in d:
         return json.dumps(d, indent=2, ensure_ascii=False)
-    # Short, actionable error summary
-    short_err = d.get("error", "unknown error")
+    # Short, actionable error summary. The project's standard envelope nests
+    # the error message under d["data"]["error"]; older tools put it at the
+    # top level. Check both so the CLI never falls back to "unknown error"
+    # when the message is actually present.
+    nested = d.get("data") or {}
+    short_err = (
+        d.get("error")
+        or (nested.get("error") if isinstance(nested, dict) else None)
+        or "unknown error"
+    )
     lines = [f"Error: {short_err}"]
     details = d.get("error_details") or {}
 
