@@ -186,6 +186,18 @@ def run_tests(
             examples = tool.get("test_examples", [])
             schema = tool.get("return_schema")
 
+            # Skip tools that require user-supplied local files (no fixture
+            # we can ship covers the realistic use case). Tools that declare
+            # `requires_local_input: true` are still loadable and runnable;
+            # the harness just can't exercise them without real input data.
+            if tool.get("requires_local_input"):
+                if args.verbose:
+                    print(
+                        f"  ⏭️  {name}: Skipped (requires user-supplied local input file)"
+                    )
+                stats["skipped"] += 1
+                continue
+
             # Check if tool requires API keys that are not available
             required_keys = tool.get("required_api_keys", [])
             if required_keys:
@@ -208,6 +220,7 @@ def run_tests(
                 "ToolFinderLLM",
                 "ToolFinderEmbedding",
                 "ComposeTool",
+                "EmbeddingDatabase",
             ):
                 # Gemini fallback fails AgenticTool callers with
                 # 'JSON mode not supported here' — agentic framework requires

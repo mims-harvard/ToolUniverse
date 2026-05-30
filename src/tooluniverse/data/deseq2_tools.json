@@ -122,6 +122,7 @@
         }
       ]
     },
+    "requires_local_input": true,
     "test_examples": [
       {
         "operation": "deseq2",
