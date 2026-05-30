@@ -45,7 +45,7 @@
     },
     "test_examples": [
       {
-        "query": "machine learning optimization",
+        "query": "asthma",
         "limit": 1
       }
     ]
