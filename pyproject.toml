@@ -88,6 +88,7 @@ docs = [
     "sphinx-design>=0.3.0",
     "sphinx-notfound-page>=0.8",
     "sphinx-autodoc-typehints>=1.12.0",
+    "sphinx-reredirects>=0.1.5",
 ]
 embedding = [
     "sentence-transformers>=5.1.0",

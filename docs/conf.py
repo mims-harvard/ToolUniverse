@@ -29,7 +29,22 @@ extensions = [
     # "sphinx_tabs.tabs",  # Temporarily disabled due to Sphinx 9.x compatibility issue
     "sphinx_design",
     # "notfound.extension",  # Temporarily disabled due to theme compatibility issue
+    "sphinx_reredirects",
 ]
+
+# HTML redirects for paths that moved during a docs reshuffle.
+# Old path → new path. The ToolUniverse paper and external blog posts cite
+# /tutorials/<name>.html URLs from before the docs were reorganised under
+# /guide/. Without these redirects, every cited URL 404s.
+redirects = {
+    "tutorials/tooluniverse_case_study": "../guide/tooluniverse_case_study.html",
+    "tutorials/agentic_tools_tutorial": "../guide/agentic_tools_tutorial.html",
+    "tutorials/literature_search_tools_tutorial": "../guide/literature_search_tools_tutorial.html",
+    "tutorials/literature_search_web_ui_tutorial": "../guide/literature_search_web_ui_tutorial.html",
+    "tutorials/visualization_tutorial": "../guide/visualization_tutorial.html",
+    "tutorials/expert_feedback": "../guide/expert_feedback.html",
+    "tutorials/finding_tools": "../guide/finding_tools.html",
+}
 
 templates_path = ["_templates"]
 exclude_patterns = [
