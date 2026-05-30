@@ -37,13 +37,18 @@ def find_all_tool_configs(data_dir: Path) -> List[Path]:
     """Find all JSON configuration files."""
     json_files = list(data_dir.glob("*.json"))
     json_files.extend(data_dir.glob("**/*.json"))
-    
+
     # Remove duplicates and sort
     json_files = sorted(set(json_files))
-    
+
     # Filter out non-tool files if needed
     json_files = [f for f in json_files if not f.name.startswith('.')]
-    
+
+    # Skip broken_apis/ — those configs document non-functional upstream APIs
+    # and the tools are not registered at runtime, so testing them produces
+    # only false-positive "Tool not found" failures.
+    json_files = [f for f in json_files if "broken_apis" not in f.parts]
+
     return json_files
 
 

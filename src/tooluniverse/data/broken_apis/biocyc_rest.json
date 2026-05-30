@@ -1,0 +1,19 @@
+{
+  "api_name": "BioCyc / MetaCyc REST API",
+  "base_url": "https://websvc.biocyc.org/",
+  "failure_mode": "HTTP 401/403 — anonymous access removed",
+  "root_cause": "BioCyc (which hosts MetaCyc) discontinued anonymous API access. All endpoints now require a free registered account with an authentication token. Every MetaCyc tool (search_pathways, get_pathway, get_compound, get_reaction) now returns an error message instructing the user to create an account at https://biocyc.org/signup.shtml.",
+  "confirmed_broken_date": "2026-05-30",
+  "last_retry_date": "2026-05-30",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "never",
+  "workaround": "KEGG (kegg_tools.json) covers pathways and reactions with the same scope. Reactome (reactome_tools.json) covers pathways with richer hierarchy. ChEBI (chebi_tools.json) covers small-molecule compounds. The MetaCyc-specific organism-by-organism pathway curation has no free public substitute, but the cross-organism queries that account for most MetaCyc use cases are covered by KEGG/Reactome.",
+  "workaround_tool_file": "src/tooluniverse/data/kegg_tools.json",
+  "investigation_notes": [
+    "All four MetaCyc_* tools return the same error message — confirmed in tool source, not transient",
+    "biocyc.org public docs confirm anonymous access was removed; account is free but requires sign-up form completion",
+    "Adding API key support is a separate workstream — for now the tools are unusable as configured"
+  ],
+  "attempted_config_file": "src/tooluniverse/data/broken_apis/metacyc_tools.json"
+}
