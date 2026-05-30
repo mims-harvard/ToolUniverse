@@ -54,9 +54,10 @@ Check that ToolUniverse is installed correctly:
    print(f"ToolUniverse version: {tooluniverse.__version__}")
    print("✅ Installation successful!")
 
-.. success:: **Installation Complete**
- 
- You're ready to start using ToolUniverse!
+.. admonition:: Installation Complete
+   :class: tip
+
+   You're ready to start using ToolUniverse!
 
 Quick Start
 -----------

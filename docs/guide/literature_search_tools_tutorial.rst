@@ -32,56 +32,62 @@ ToolUniverse provides 15 powerful literature search tools that cover different a
 Tool Overview Table
 ~~~~~~~~~~~~~~~~~~~
 
-+------------------+------------------+------------------+------------------+
-| Tool Name | Database | Best For | Key Features |
-+==================+==================+==================+==================+
-| ArXiv_search_ | ArXiv | Preprints | Physics, Math, |
-| papers | | | CS, Biology |
-+------------------+------------------+------------------+------------------+
-| Crossref_search_ | Crossref | Scholarly | DOI metadata, |
-| works | | Articles | Rich metadata, |
-| | | | HTML cleaning |
-+------------------+------------------+------------------+------------------+
-| PubMed_search_ | PubMed | Medical/Life | Medical |
-| articles | | Sciences | literature, |
-| | | | MeSH keywords |
-+------------------+------------------+------------------+------------------+
-| SemanticScholar_ | Semantic Scholar | AI-powered | AI ranking, |
-| search_papers | | Search | Citations, |
-| | | | Rate limit |
-| | | | handling |
-+------------------+------------------+------------------+------------------+
-| openalex_ | OpenAlex | Comprehensive | Open access, |
-| literature_ | | Academic | Year filtering, |
-| search | | Search | Abstract |
-| | | | reconstruction |
-+------------------+------------------+------------------+------------------+
-| EuropePMC_ | Europe PMC | Biomedical | European |
-| search_articles | | Literature | research, |
-| | | | Core+Lite modes |
-+------------------+------------------+------------------+------------------+
-| DBLP_search_ | DBLP | Computer | CS bibliography, |
-| publications | | Science | Conference |
-| | | | papers |
-+------------------+------------------+------------------+------------------+
-| DOAJ_search_ | DOAJ | Open Access | Articles & |
-| articles | | | Journals, |
-| | | | HTML cleaning |
-+------------------+------------------+------------------+------------------+
-| BioRxiv_search_ | BioRxiv | Biology | Biology |
-| preprints | | Preprints | preprints, |
-| | | | Abstracts |
-+------------------+------------------+------------------+------------------+
-| MedRxiv_search_ | MedRxiv | Medical | Medical |
-| preprints | | Preprints | preprints, |
-| | | | Abstracts |
-+------------------+------------------+------------------+------------------+
-| HAL_search_ | HAL | French Research | French academic |
-| archive | | Archive | papers |
-+------------------+------------------+------------------+------------------+
-| Unpaywall_ | Unpaywall | Open Access | OA status |
-| check_oa_status | | Status | checking |
-+------------------+------------------+------------------+------------------+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 18 22 32
+
+   * - Tool Name
+     - Database
+     - Best For
+     - Key Features
+   * - ``ArXiv_search_papers``
+     - ArXiv
+     - Preprints
+     - Physics, Math, CS, Biology
+   * - ``Crossref_search_works``
+     - Crossref
+     - Scholarly Articles
+     - DOI metadata, Rich metadata, HTML cleaning
+   * - ``PubMed_search_articles``
+     - PubMed
+     - Medical/Life Sciences
+     - Medical literature, MeSH keywords
+   * - ``SemanticScholar_search_papers``
+     - Semantic Scholar
+     - AI-powered Search
+     - AI ranking, Citations, Rate limit handling
+   * - ``openalex_literature_search``
+     - OpenAlex
+     - Comprehensive Academic Search
+     - Open access, Year filtering, Abstract reconstruction
+   * - ``EuropePMC_search_articles``
+     - Europe PMC
+     - Biomedical Literature
+     - European research, Core+Lite modes
+   * - ``DBLP_search_publications``
+     - DBLP
+     - Computer Science
+     - CS bibliography, Conference papers
+   * - ``DOAJ_search_articles``
+     - DOAJ
+     - Open Access
+     - Articles & Journals, HTML cleaning
+   * - ``BioRxiv_search_preprints``
+     - BioRxiv
+     - Biology Preprints
+     - Biology preprints, Abstracts
+   * - ``MedRxiv_search_preprints``
+     - MedRxiv
+     - Medical Preprints
+     - Medical preprints, Abstracts
+   * - ``HAL_search_archive``
+     - HAL
+     - French Research Archive
+     - French academic papers
+   * - ``Unpaywall_check_oa_status``
+     - Unpaywall
+     - Open Access Status
+     - OA status checking
 
 Enhanced Features
 ------------------
@@ -657,40 +663,64 @@ Common Parameters
 
 Most search tools accept these common parameters:
 
-+------------------+------------------+------------------+------------------+
-| Parameter | Type | Description | Example |
-+==================+==================+==================+==================+
-| query | string | Search terms | "machine |
-| | | | learning" |
-+------------------+------------------+------------------+------------------+
-| limit | integer | Max results | 5 |
-+------------------+------------------+------------------+------------------+
-| max_results | integer | Max results | 5 |
-| | | (alternative) | |
-+------------------+------------------+------------------+------------------+
-| sort_by | string | Sort order | "relevance" |
-+------------------+------------------+------------------+------------------+
-| sort_order | string | Sort direction | "descending" |
-+------------------+------------------+------------------+------------------+
-| filter | string | Result filters | "type:journal- |
-| | | | article" |
-+------------------+------------------+------------------+------------------+
-| year_from | integer | Start year | 2020 |
-+------------------+------------------+------------------+------------------+
-| year_to | integer | End year | 2024 |
-+------------------+------------------+------------------+------------------+
-| open_access | boolean | Open access only | True |
-+------------------+------------------+------------------+------------------+
-| type | string | Content type | "articles" |
-+------------------+------------------+------------------+------------------+
-| email | string | Contact email | "user@example. |
-| | | (required) | com" |
-+------------------+------------------+------------------+------------------+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 15 35 30
+
+   * - Parameter
+     - Type
+     - Description
+     - Example
+   * - ``query``
+     - string
+     - Search terms
+     - ``"machine learning"``
+   * - ``limit``
+     - integer
+     - Max results
+     - ``5``
+   * - ``max_results``
+     - integer
+     - Max results (alternative)
+     - ``5``
+   * - ``sort_by``
+     - string
+     - Sort order
+     - ``"relevance"``
+   * - ``sort_order``
+     - string
+     - Sort direction
+     - ``"descending"``
+   * - ``filter``
+     - string
+     - Result filters
+     - ``"type:journal-article"``
+   * - ``year_from``
+     - integer
+     - Start year
+     - ``2020``
+   * - ``year_to``
+     - integer
+     - End year
+     - ``2024``
+   * - ``open_access``
+     - boolean
+     - Open access only
+     - ``True``
+   * - ``type``
+     - string
+     - Content type
+     - ``"articles"``
+   * - ``email``
+     - string
+     - Contact email (required)
+     - ``"user@example.com"``
 
 Quick Usage Examples
 ~~~~~~~~~~~~~~~~~~~~
 
 ArXiv Search:
+
 .. code-block:: python
 
     result = tu.run({
@@ -703,6 +733,7 @@ ArXiv Search:
     })
 
 Crossref Search:
+
 .. code-block:: python
 
     result = tu.run({
@@ -715,6 +746,7 @@ Crossref Search:
     })
 
 PubMed Search:
+
 .. code-block:: python
 
     result = tu.run({
@@ -726,6 +758,7 @@ PubMed Search:
     })
 
 Semantic Scholar Search:
+
 .. code-block:: python
 
     result = tu.run({
@@ -737,6 +770,7 @@ Semantic Scholar Search:
     })
 
 OpenAlex Search:
+
 .. code-block:: python
 
     result = tu.run({
@@ -750,6 +784,7 @@ OpenAlex Search:
     })
 
 Preprint Archives:
+
 .. code-block:: python
 
     # BioRxiv (Biology)
@@ -780,6 +815,7 @@ Preprint Archives:
     })
 
 Open Access Tools:
+
 .. code-block:: python
 
     # DOAJ Search
@@ -931,6 +967,7 @@ Optimized Tool Examples
 Here are examples showing the enhanced features of the optimized tools:
 
 **Europe PMC with Enhanced Data:**
+
 .. code-block:: python
 
     # Europe PMC now provides comprehensive metadata
@@ -954,6 +991,7 @@ Here are examples showing the enhanced features of the optimized tools:
         print(f"Data Quality: {paper.get('data_quality')}")
 
 **OpenAlex with Abstract Reconstruction:**
+
 .. code-block:: python
 
     # OpenAlex now reconstructs abstracts from inverted index
@@ -975,6 +1013,7 @@ Here are examples showing the enhanced features of the optimized tools:
         print(f"Keywords: {paper.get('keywords')}")
 
 **Semantic Scholar with Rate Limit Handling:**
+
 .. code-block:: python
 
     # Semantic Scholar now handles rate limits gracefully
@@ -995,6 +1034,7 @@ Here are examples showing the enhanced features of the optimized tools:
         print(f"Data Quality: {paper.get('data_quality')}")
 
 **Crossref with HTML Cleaning:**
+
 .. code-block:: python
 
     # Crossref now cleans HTML tags from abstracts
@@ -1015,6 +1055,7 @@ Here are examples showing the enhanced features of the optimized tools:
         print(f"Article Type: {paper.get('article_type')}")
 
 **Data Quality Analysis:**
+
 .. code-block:: python
 
     def analyze_data_quality(results):

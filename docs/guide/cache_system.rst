@@ -105,19 +105,28 @@ Configuration
 Use environment variables to tune cache behavior before creating a
 ``ToolUniverse`` instance:
 
-===============================  ==============================================
-Variable                         Description
-===============================  ==============================================
-``TOOLUNIVERSE_CACHE_ENABLED``   Turn caching on/off (``true`` by default)
-``TOOLUNIVERSE_CACHE_PERSIST``   Enable SQLite persistence (``true`` by default)
-``TOOLUNIVERSE_CACHE_PATH``      Full path to the SQLite file
-``TOOLUNIVERSE_CACHE_DIR``       Directory for the SQLite file (default:
-                                 ``~/.tooluniverse``) if ``CACHE_PATH`` unset
-``TOOLUNIVERSE_CACHE_MEMORY_SIZE``  Max entries in the in-memory LRU (default 256)
-``TOOLUNIVERSE_CACHE_DEFAULT_TTL``  Expiration in seconds (None disables TTL)
-``TOOLUNIVERSE_CACHE_SINGLEFLIGHT``  Deduplicate concurrent misses (``true``)
-``TOOLUNIVERSE_CACHE_ASYNC_PERSIST``  Write cache entries to SQLite on a background thread (``true``)
-===============================  ==============================================
+.. list-table::
+   :header-rows: 1
+   :widths: 40 60
+
+   * - Variable
+     - Description
+   * - ``TOOLUNIVERSE_CACHE_ENABLED``
+     - Turn caching on/off (``true`` by default)
+   * - ``TOOLUNIVERSE_CACHE_PERSIST``
+     - Enable SQLite persistence (``true`` by default)
+   * - ``TOOLUNIVERSE_CACHE_PATH``
+     - Full path to the SQLite file
+   * - ``TOOLUNIVERSE_CACHE_DIR``
+     - Directory for the SQLite file (default: ``~/.tooluniverse``) if ``CACHE_PATH`` unset
+   * - ``TOOLUNIVERSE_CACHE_MEMORY_SIZE``
+     - Max entries in the in-memory LRU (default 256)
+   * - ``TOOLUNIVERSE_CACHE_DEFAULT_TTL``
+     - Expiration in seconds (None disables TTL)
+   * - ``TOOLUNIVERSE_CACHE_SINGLEFLIGHT``
+     - Deduplicate concurrent misses (``true``)
+   * - ``TOOLUNIVERSE_CACHE_ASYNC_PERSIST``
+     - Write cache entries to SQLite on a background thread (``true``)
 
 .. seealso::
    :doc:`../reference/environment_variables` for complete environment variable reference including logging, LLM, and other configuration options.

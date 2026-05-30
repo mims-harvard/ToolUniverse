@@ -152,37 +152,37 @@ API Endpoints
 The server exposes the following REST endpoints:
 
 .. list-table:: API Endpoints Reference
- :header-rows: 1
- :widths: 20 10 40 30
+   :header-rows: 1
+   :widths: 20 10 40 30
 
- * - Endpoint
- - Method
- - Purpose
- - Client Usage
- * - ``/health``
- - GET
- - Server health check
- - ``client.health_check()``
- * - ``/api/methods``
- - GET
- - List all ToolUniverse methods
- - ``client.list_available_methods()``
- * - ``/api/call``
- - POST
- - Call any ToolUniverse method
- - ``client.method_name(**kwargs)``
- * - ``/api/reset``
- - POST
- - Reset ToolUniverse instance
- - ``client.reset_server(config)``
- * - ``/docs``
- - GET
- - Interactive Swagger UI docs
- - Open in browser
- * - ``/redoc``
- - GET
- - Alternative ReDoc docs
- - Open in browser
+   * - Endpoint
+     - Method
+     - Purpose
+     - Client Usage
+   * - ``/health``
+     - GET
+     - Server health check
+     - ``client.health_check()``
+   * - ``/api/methods``
+     - GET
+     - List all ToolUniverse methods
+     - ``client.list_available_methods()``
+   * - ``/api/call``
+     - POST
+     - Call any ToolUniverse method
+     - ``client.method_name(**kwargs)``
+   * - ``/api/reset``
+     - POST
+     - Reset ToolUniverse instance
+     - ``client.reset_server(config)``
+   * - ``/docs``
+     - GET
+     - Interactive Swagger UI docs
+     - Open in browser
+   * - ``/redoc``
+     - GET
+     - Alternative ReDoc docs
+     - Open in browser
 
 **Key distinction:**
 

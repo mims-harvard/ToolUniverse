@@ -50,21 +50,31 @@ Quick Start
 Tool Comparison
 ---------------
 
-+---------------------------+----------------------------------+---------------------------------------+
-| Tool | Data Source | Features |
-+===========================+==================================+=======================================+
-| NICE_Clinical_Guidelines | UK NICE official website | Official UK guidelines with summaries |
-+---------------------------+----------------------------------+---------------------------------------+
-| WHO_Guidelines | WHO publications database | International health guidelines |
-+---------------------------+----------------------------------+---------------------------------------+
-| PubMed_Guidelines | NCBI PubMed database | Peer-reviewed with abstracts & PMIDs |
-+---------------------------+----------------------------------+---------------------------------------+
-| EuropePMC_Guidelines | Europe PMC database | European & international research |
-+---------------------------+----------------------------------+---------------------------------------+
-| TRIP_Database | TRIP evidence database | Evidence-based medicine focus |
-+---------------------------+----------------------------------+---------------------------------------+
-| OpenAlex_Guidelines | OpenAlex scholarly database | Comprehensive with citation counts |
-+---------------------------+----------------------------------+---------------------------------------+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 30 40
+
+   * - Tool
+     - Data Source
+     - Features
+   * - ``NICE_Clinical_Guidelines``
+     - UK NICE official website
+     - Official UK guidelines with summaries
+   * - ``WHO_Guidelines``
+     - WHO publications database
+     - International health guidelines
+   * - ``PubMed_Guidelines``
+     - NCBI PubMed database
+     - Peer-reviewed with abstracts & PMIDs
+   * - ``EuropePMC_Guidelines``
+     - Europe PMC database
+     - European & international research
+   * - ``TRIP_Database``
+     - TRIP evidence database
+     - Evidence-based medicine focus
+   * - ``OpenAlex_Guidelines``
+     - OpenAlex scholarly database
+     - Comprehensive with citation counts
 
 Usage Examples
 --------------

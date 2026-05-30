@@ -30,25 +30,25 @@ Strategic Trade-offs
 Each method offers different advantages:
 
 .. list-table:: Tool Finder Comparison
- :header-rows: 1
- :widths: 20 25 25 25
+   :header-rows: 1
+   :widths: 20 25 25 25
 
- * - Method
- - Speed
- - Semantic Understanding
- - Resource Usage
- * - **Keyword Search**
- - Very Fast
- - Basic
- - Very Low
- * - **LLM Search**
- - Moderate
- - Excellent
- - High
- * - **Embedding Search**
- - Fast
- - Good
- - Moderate
+   * - Method
+     - Speed
+     - Semantic Understanding
+     - Resource Usage
+   * - **Keyword Search**
+     - Very Fast
+     - Basic
+     - Very Low
+   * - **LLM Search**
+     - Moderate
+     - Excellent
+     - High
+   * - **Embedding Search**
+     - Fast
+     - Good
+     - Moderate
 
 When to Use Each Method
 ------------------------

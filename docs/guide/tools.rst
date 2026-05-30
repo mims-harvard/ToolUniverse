@@ -58,52 +58,52 @@ Tool Categories Summary
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. list-table:: Tool Distribution by Category
- :header-rows: 1
- :widths: 25 15 15 45
+   :header-rows: 1
+   :widths: 25 15 15 45
 
- * - Category
- - Count
- - Percentage
- - Primary Use Cases
- * - APIs
- - 281
- - 48.4%
- - External data access, real-time information
- * - Software Packages
- - 164
- - 28.3%
- - Computational analysis, local processing
- * - Databases
- - 84
- - 14.5%
- - Structured data storage and retrieval
- * - AI Agents
- - 33
- - 5.7%
- - Autonomous reasoning and planning
- * - ML Models
- - 15
- - 2.6%
- - Prediction and classification tasks
- * - Expert Feedback
- - 6
- - 1.0%
- - Human validation and guidance
- * - Embedding Stores
- - 4
- - 0.7%
- - Semantic search and similarity
- * - Robotics
- - 1
- - 0.2%
- - Laboratory automation
- * - **Total**
- - **588**
- - **100%**
- - **Comprehensive scientific ecosystem**
+   * - Category
+     - Count
+     - Percentage
+     - Primary Use Cases
+   * - APIs
+     - 281
+     - 48.4%
+     - External data access, real-time information
+   * - Software Packages
+     - 164
+     - 28.3%
+     - Computational analysis, local processing
+   * - Databases
+     - 84
+     - 14.5%
+     - Structured data storage and retrieval
+   * - AI Agents
+     - 33
+     - 5.7%
+     - Autonomous reasoning and planning
+   * - ML Models
+     - 15
+     - 2.6%
+     - Prediction and classification tasks
+   * - Expert Feedback
+     - 6
+     - 1.0%
+     - Human validation and guidance
+   * - Embedding Stores
+     - 4
+     - 0.7%
+     - Semantic search and similarity
+   * - Robotics
+     - 1
+     - 0.2%
+     - Laboratory automation
+   * - **Total**
+     - **588**
+     - **100%**
+     - **Comprehensive scientific ecosystem**
 
- Molecular & Genetic Data
-----------------------------
+Molecular & Genetic Data
+------------------------
 
 UniProt - Protein Information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

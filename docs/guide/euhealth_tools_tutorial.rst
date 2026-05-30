@@ -276,5 +276,5 @@ If you later want the nitty-gritty (how we crawl, embed, index), see the develop
 
 .. note::
 
-Want to build or share your **own** searchable dataset or tool (like EUHealth)?
-See: :doc:`make_your_data_agent_searchable` - the 3-minute guide to creating and publishing your own ToolUniverse datastore.
+   Want to build or share your **own** searchable dataset or tool (like EUHealth)?
+   See: :doc:`make_your_data_agent_searchable` - the 3-minute guide to creating and publishing your own ToolUniverse datastore.

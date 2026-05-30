@@ -28,7 +28,7 @@ What you’ll do
 ---
 
 1. Install
----------
+----------
 
 .. code-block:: bash
 
@@ -66,7 +66,7 @@ run the module directly:
 ---
 
 2. Choose ONE embedding service
-----------------------------
+-------------------------------
 
 Create a file named **.env** and paste one block below, then run ``source .env``.
 
@@ -107,7 +107,7 @@ Create a file named **.env** and paste one block below, then run ``source .env``
 ---
 
 3. Build your agent-searchable collection from your raw data
-----------------------------------------------------------
+------------------------------------------------------------
 
 All you need is either a **folder of text files** or a **JSON list of documents**.
 
@@ -126,6 +126,7 @@ Each file in `./cardiology_data` automatically gets converted into a document wi
 * Basic metadata (title, path, source) which is auto-filled 
 
 **Example:**
+
 .. code-block:: text
 
 cardiology_data/
@@ -198,7 +199,7 @@ Note:
 ---
 
 4. Create the agent tool for your collection
------------------------------------------
+--------------------------------------------
 
 Now the last step is to tell ToolUniverse how agents should search your dataset by creating a small **tool JSON**.
 
@@ -239,13 +240,9 @@ If you want your tool to load automatically in all ToolUniverse or Codex session
 5. Install your tool for automatic discovery (recommended)
 -----------------------------------------------------------
 
-ToolUniverse automatically loads any tool placed in:
+ToolUniverse automatically loads any tool placed in::
 
-```
-
-~/.tooluniverse/data/user_tools/
-
-```
+   ~/.tooluniverse/data/user_tools/
 
 Install your tool with:
 
@@ -253,13 +250,9 @@ Install your tool with:
 
    tu-datastore add-tool cardiology_expert_search.json
 
-This copies your tool into the auto-load directory:
+This copies your tool into the auto-load directory::
 
-```
-
-~/.tooluniverse/data/user_tools/cardiology_expert_search.json
-
-```
+   ~/.tooluniverse/data/user_tools/cardiology_expert_search.json
 
 Optional arguments:
 
@@ -268,13 +261,9 @@ Optional arguments:
    tu-datastore add-tool cardiology_expert_search.json --name cardiology_expert_search.json
    tu-datastore add-tool cardiology_expert_search.json --overwrite # overwrites json file if exists
 
-Once installed, **any ToolUniverse or Codex session** will immediately expose your tool:
+Once installed, **any ToolUniverse or Codex session** will immediately expose your tool::
 
-```
-
-tu.tools.cardiology_expert_search(...)
-
-```
+   tu.tools.cardiology_expert_search(...)
 
 **You are done! ToolUniverse agents now have access to your data collection and associated tool to use in their work as an AI Scientist!**
 
@@ -378,11 +367,22 @@ Blends keyword and embedding scores. Documents must be relevant on BOTH dimensio
 
 **Comparison:**
 
-| Method | Strength | Use Case |
-|--------|----------|----------|
-| **Keyword** | Fast, exact | Technical queries with known terms |
-| **Embedding** | Understands meaning | Natural language, conceptual queries |
-| **Hybrid** | Both (agents use this) | Recommended for agents; combines precision + recall |
+.. list-table::
+   :header-rows: 1
+   :widths: 20 35 45
+
+   * - Method
+     - Strength
+     - Use Case
+   * - **Keyword**
+     - Fast, exact
+     - Technical queries with known terms
+   * - **Embedding**
+     - Understands meaning
+     - Natural language, conceptual queries
+   * - **Hybrid**
+     - Both (agents use this)
+     - Recommended for agents; combines precision + recall
 
 ---
 
@@ -566,16 +566,16 @@ ToolUniverse includes 8 tests under `tests/test_database_setup/`:
 * **2 core tests** (SQLite + FAISS) always run automatically and require *no* API keys.
 * The **other 6 tests** exercise real embedding pipelines (OpenAI, Azure, HF, or local). These are **skipped by default** unless you export:
 
-  ```bash
-  export EMBED_PROVIDER=azure|openai|huggingface|local
-  export EMBED_MODEL=your-model-or-deployment
-  ```
+  .. code-block:: bash
+
+     export EMBED_PROVIDER=azure|openai|huggingface|local
+     export EMBED_MODEL=your-model-or-deployment
 
 You can run all embedding-enabled tests with:
 
-```bash
-pytest -m api
-```
+.. code-block:: bash
+
+   pytest -m api
 
 These optional tests pass for all supported providers once credentials are set.
 

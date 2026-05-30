@@ -180,6 +180,7 @@ Create tests in ``tests/unit/test_my_new_tool.py``:
            assert result["result"] == ""
 
 Run tests with coverage:
+
 .. code-block:: bash
 
    pytest tests/unit/test_my_new_tool.py --cov=tooluniverse --cov-report=html
@@ -321,6 +322,7 @@ Step 10: Submit Pull Request
    git push origin feature/add-my-new-tool
 
 **PR Template:**
+
 .. code-block:: markdown
 
    ## Description

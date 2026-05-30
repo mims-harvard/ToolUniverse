@@ -20,15 +20,17 @@ Quick Start
 
 **I want to learn tool development systematically:**
 → Choose your path:
- - **Local tools**: :doc:`local_tools/local_tools_tutorial` - Python classes for API wrappers, data processing
- - **Async tools**: :doc:`async_tools_guide` - Long-running operations with automatic polling
- - **Remote tools**: :doc:`remote_tools/tutorial` - MCP servers for microservices, heavy computation
+
+- **Local tools**: :doc:`local_tools/local_tools_tutorial` - Python classes for API wrappers, data processing
+- **Async tools**: :doc:`async_tools_guide` - Long-running operations with automatic polling
+- **Remote tools**: :doc:`remote_tools/tutorial` - MCP servers for microservices, heavy computation
 
 **I want to contribute tools to the community:**
 → Choose your tool type:
- - **Local tools**: :doc:`contributing/local_tools` - Submit Python tools (requires modifying ``__init__.py``)
- - **Remote tools**: :doc:`contributing/remote_tools` - Submit MCP servers (requires deployment)
- - **Complete guide**: :doc:`contributing/index` - Full contribution guidelines with code examples
+
+- **Local tools**: :doc:`contributing/local_tools` - Submit Python tools (requires modifying ``__init__.py``)
+- **Remote tools**: :doc:`contributing/remote_tools` - Submit MCP servers (requires deployment)
+- **Complete guide**: :doc:`contributing/index` - Full contribution guidelines with code examples
 
 **I want to understand the differences:**
 → :doc:`reference/index` - Compare tool types and usage scenarios
