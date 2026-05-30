@@ -1,3 +1,5 @@
+:orphan:
+
 Documentation Sitemap
 =====================
 
@@ -73,13 +75,6 @@ Documentation Sitemap
 - :doc:`help/index` - Help
 - :doc:`expand_tooluniverse/reference/index` - Reference
 - :doc:`about/index` - About
-
- Legacy Documentation
------------------------
-
-- :doc:`old/quickstart` - Quick Start (Legacy)
-- :doc:`old/installation` - Installation (Legacy)
-- :doc:`old/getting_started` - Getting Started (Legacy)
 
 Python API Pages
 ----------------

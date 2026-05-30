@@ -131,3 +131,15 @@ Ready to start? Choose your path:
 
 .. tip::
    **Getting Started**: We recommend starting with the quick start tutorial to understand the basics, then choosing the appropriate detailed guide based on your needs. The community is here to help you succeed!
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+
+   quick_start
+   local_tools/index
+   remote_tools/index
+   contributing/index
+   reference/index
+   async_tools_guide
+   architecture

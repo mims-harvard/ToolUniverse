@@ -26,7 +26,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "myst_parser",
     "sphinx_copybutton",
-    # "sphinx_tabs.tabs",  # Temporarily disabled due to Sphinx 9.x compatibility issue
+    "sphinx_tabs.tabs",
     "sphinx_design",
     # "notfound.extension",  # Temporarily disabled due to theme compatibility issue
     "sphinx_reredirects",
@@ -76,6 +76,9 @@ exclude_patterns = [
     "tutorials/overview.md",
     "tutorials/optimization",
     "guide/ODPHPtools_tutorial.md",
+    # Internal meta-docs describing the folder structure or task list.
+    # Not user-facing; kept in-tree as a developer reference only.
+    "DOCUMENTATION_STRUCTURE.md",
 ]
 
 # -- Options for HTML output with Shibuya theme -----------------------------
