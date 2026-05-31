@@ -523,7 +523,7 @@ Key Takeaways
 4. **Simple implementation** - 380 lines, well-tested
 5. **Production ready** - All tests passing, validated with real tools
 
- When to Use
+When to Use
 --------------
 
 - **MCP integration** (automatic)
@@ -531,7 +531,7 @@ Key Takeaways
 - **External systems with name length limits**
 - **Testing and validation**
 
- When NOT to Use
+When NOT to Use
 ------------------
 
 - **Direct Python API** (no constraints)

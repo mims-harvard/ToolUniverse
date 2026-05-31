@@ -77,29 +77,34 @@ Development Workflow
 --------------------
 
 1. **Plan Your Tool**
- - Define functionality and requirements
- - Choose between local or remote implementation
- - Design API and parameter structure
+
+   - Define functionality and requirements
+   - Choose between local or remote implementation
+   - Design API and parameter structure
 
 2. **Develop Your Tool**
- - Implement core functionality
- - Add proper error handling
- - Write comprehensive tests
+
+   - Implement core functionality
+   - Add proper error handling
+   - Write comprehensive tests
 
 3. **Document Your Tool**
- - Create clear documentation
- - Provide usage examples
- - Document all parameters and outputs
+
+   - Create clear documentation
+   - Provide usage examples
+   - Document all parameters and outputs
 
 4. **Test Thoroughly**
- - Unit tests for all functionality
- - Integration tests with ToolUniverse
- - Test edge cases and error conditions
+
+   - Unit tests for all functionality
+   - Integration tests with ToolUniverse
+   - Test edge cases and error conditions
 
 5. **Submit for Review** (if contributing)
- - Follow contribution guidelines
- - Create pull request
- - Address review feedback
+
+   - Follow contribution guidelines
+   - Create pull request
+   - Address review feedback
 
 Examples
 --------

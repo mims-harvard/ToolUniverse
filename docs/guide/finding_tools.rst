@@ -80,10 +80,11 @@ How Keyword Search Works
 Keyword search uses a sophisticated text processing pipeline:
 
 1. **Query Processing**:
- - Tokenization via regular expressions
- - Removal of 45+ common English stop words
- - Suffix-based stemming using 20 morphological rules
- - Generation of n-grams (bigrams and trigrams)
+
+   - Tokenization via regular expressions
+   - Removal of 45+ common English stop words
+   - Suffix-based stemming using 20 morphological rules
+   - Generation of n-grams (bigrams and trigrams)
 
 2. **Relevance Scoring**:
 

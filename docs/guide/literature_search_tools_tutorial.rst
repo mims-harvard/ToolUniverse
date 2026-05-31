@@ -158,7 +158,7 @@ First, let's initialize ToolUniverse and load the literature search tools:
         print(f"- {tool}")
 
 Basic Usage Pattern
-------------------
+-------------------
 
 All literature search tools follow a similar usage pattern:
 
@@ -516,30 +516,35 @@ Best Practices
 --------------
 
 1. **Choose the Right Tool:**
- - Use ArXiv for preprints in physics, math, CS
- - Use PubMed for medical/life sciences
- - Use Semantic Scholar for AI-powered ranking
- - Use OpenAlex for comprehensive academic search
+
+   - Use ArXiv for preprints in physics, math, CS
+   - Use PubMed for medical/life sciences
+   - Use Semantic Scholar for AI-powered ranking
+   - Use OpenAlex for comprehensive academic search
 
 2. **Optimize Your Queries:**
- - Use specific, relevant keywords
- - Combine terms with appropriate operators
- - Use filters to narrow results
+
+   - Use specific, relevant keywords
+   - Combine terms with appropriate operators
+   - Use filters to narrow results
 
 3. **Handle Rate Limits:**
- - Some APIs have rate limits
- - Implement delays between requests if needed
- - Use error handling for 429 (Too Many Requests) errors
+
+   - Some APIs have rate limits
+   - Implement delays between requests if needed
+   - Use error handling for 429 (Too Many Requests) errors
 
 4. **Process Results Efficiently:**
- - Check result types before processing
- - Extract only needed fields
- - Implement pagination for large result sets
+
+   - Check result types before processing
+   - Extract only needed fields
+   - Implement pagination for large result sets
 
 5. **Combine Multiple Sources:**
- - Use different tools for comprehensive coverage
- - Cross-reference results for validation
- - Merge and deduplicate results
+
+   - Use different tools for comprehensive coverage
+   - Cross-reference results for validation
+   - Merge and deduplicate results
 
 Complete Example
 ----------------
@@ -634,24 +639,28 @@ Troubleshooting
 Common Issues and Solutions:
 
 1. **API Rate Limits:**
- - Some services have rate limits
- - Implement delays between requests
- - Use error handling for 429 errors
+
+   - Some services have rate limits
+   - Implement delays between requests
+   - Use error handling for 429 errors
 
 2. **Missing Results:**
- - Check query spelling and keywords
- - Try different search terms
- - Verify tool parameters
+
+   - Check query spelling and keywords
+   - Try different search terms
+   - Verify tool parameters
 
 3. **Authentication Errors:**
- - Some tools require API keys
- - Check your .env file configuration
- - Verify API key validity
+
+   - Some tools require API keys
+   - Check your .env file configuration
+   - Verify API key validity
 
 4. **Network Issues:**
- - Check internet connection
- - Implement retry logic
- - Handle timeout exceptions
+
+   - Check internet connection
+   - Implement retry logic
+   - Handle timeout exceptions
 
 For more help, see the :doc:`troubleshooting guide <../help/troubleshooting>`.
 

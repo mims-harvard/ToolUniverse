@@ -166,7 +166,7 @@ Comprehensive gene set enrichment analysis.
        }
    }
 
- Disease & Target Data
+Disease & Target Data
 ------------------------
 
 OpenTargets Platform
@@ -210,7 +210,7 @@ Disease and experimental factor ontology.
        "arguments": {"query": "diabetes"}
    }
 
- Drug & Chemical Data
+Drug & Chemical Data
 -----------------------
 
 PubChem - Chemical Information
@@ -302,7 +302,7 @@ Official FDA drug labeling information.
        "arguments": {"medicinalproduct": "metformin"}
    }
 
- Clinical Research
+Clinical Research
 --------------------
 
 ClinicalTrials.gov
@@ -328,7 +328,7 @@ Clinical trial registry and results database.
        }
    }
 
- Literature & Publications
+Literature & Publications
 -----------------------------
 
 PubTator - Biomedical Literature
@@ -400,7 +400,7 @@ Open academic publication database.
 * ``OpenAlex_get_author_info`` - Author information and metrics
 * ``OpenAlex_get_institution_data`` - Institution research data
 
- Specialized Databases
+Specialized Databases
 ------------------------
 
 Human Protein Atlas
@@ -461,7 +461,7 @@ Consumer health information.
 * ``MedlinePlus_search_conditions`` - Search medical conditions
 * ``MedlinePlus_get_drug_info`` - Consumer drug information
 
- AI-Powered Tools
+AI-Powered Tools
 --------------------
 
 Machine Learning Models (15 tools)
@@ -579,7 +579,7 @@ AI tools for discovering and combining other tools.
        }
    }
 
- Search & Integration Tools
+Search & Integration Tools
 -----------------------------
 
 Tool Finder
@@ -811,7 +811,7 @@ Tool Composition Patterns
        else:
            break
 
- Tool Performance Tips
+Tool Performance Tips
 ------------------------
 
 Optimization Strategies
@@ -966,7 +966,7 @@ Future Extensions
 - Community voting and validation
 - Maintenance and updates
 
- Next Steps
+Next Steps
 -------------
 
 Now that you know what tools are available:

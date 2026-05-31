@@ -207,11 +207,18 @@ Best Practices
 * Call ``tu.clear_cache()`` in long-running services if you need a fresh start.
 * For hands-on demos, run ``examples/cache_usage_example.py`` (basic walkthrough)
   or ``examples/cache_stress_test.py`` (randomized load test with summary stats).
-  .. code-block:: json
 
-      {
-        "name": "SlowTool",
-        "type": "SlowTool",
-        "batch_max_concurrency": 2,
-        "parameter": {"type": "object", "properties": {}}
-      }
+Per-tool Concurrency
+--------------------
+
+Set ``batch_max_concurrency`` in a tool config to cap how many concurrent
+executions of that tool run during batch jobs:
+
+.. code-block:: json
+
+   {
+     "name": "SlowTool",
+     "type": "SlowTool",
+     "batch_max_concurrency": 2,
+     "parameter": {"type": "object", "properties": {}}
+   }

@@ -172,15 +172,15 @@ Tool Finders
 ToolUniverse has **three ways** to find tools. Don't browse 1000+ tools manually—use Tool Finder!
 
 .. grid:: 1 1 2 2
- :gutter: 3
+   :gutter: 3
 
- .. grid-item-card:: Keyword Search
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Keyword Search
+      :class-card: hover-lift
+      :shadow: md
 
- **Fast text matching**
- 
- Best for: Exact terms you know
+      **Fast text matching**
+
+      Best for: Exact terms you know
 
       .. code-block:: python
 
@@ -452,61 +452,61 @@ Advanced Features
 -----------------
 
 .. grid:: 1 1 2 2
- :gutter: 3
+   :gutter: 3
 
- .. grid-item-card:: Tool Composition
- :link: tool_composition
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Tool Composition
+      :link: tool_composition
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Chain multiple tools into scientific workflows
+      Chain multiple tools into scientific workflows
 
- .. grid-item-card:: Hooks System
- :link: hooks/index
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Hooks System
+      :link: hooks/index
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Intelligent output processing and summarization
+      Intelligent output processing and summarization
 
- .. grid-item-card:: Cache System
- :link: cache_system
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: Cache System
+      :link: cache_system
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Optimize performance with smart caching
+      Optimize performance with smart caching
 
- .. grid-item-card:: HTTP API
- :link: http_api
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: HTTP API
+      :link: http_api
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Deploy ToolUniverse as a remote service
+      Deploy ToolUniverse as a remote service
 
- .. grid-item-card:: ChatGPT API
- :link: chatgpt_api
- :link-type: doc
- :class-card: hover-lift
- :shadow: md
+   .. grid-item-card:: ChatGPT API
+      :link: chatgpt_api
+      :link-type: doc
+      :class-card: hover-lift
+      :shadow: md
 
- Use ToolUniverse tools as OpenAI function calls
+      Use ToolUniverse tools as OpenAI function calls
 
 .. button-ref:: tooluniverse_case_study
- :color: primary
- :shadow:
- :expand:
+   :color: primary
+   :shadow:
+   :expand:
 
- **Complete Case Study**: Drug discovery workflow with Gemini 2.5 Pro
+   **Complete Case Study**: Drug discovery workflow with Gemini 2.5 Pro
 
-.. button-ref:: ../api/modules
- :color: secondary
- :shadow:
- :expand:
+.. button-ref:: /api/modules
+   :color: secondary
+   :shadow:
+   :expand:
 
- **API Reference**: Detailed Python API documentation
+   **API Reference**: Detailed Python API documentation
 
 .. toctree::
    :maxdepth: 2

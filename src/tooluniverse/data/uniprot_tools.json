@@ -693,11 +693,11 @@
         },
         "min_length": {
           "type": "integer",
-          "description": "Minimum sequence length. Auto-converts to 'length:[min TO *]' range query."
+          "description": "Minimum sequence length. Auto-converts to an open-ended length range query (min to unbounded)."
         },
         "max_length": {
           "type": "integer",
-          "description": "Maximum sequence length. Auto-converts to 'length:[* TO max]' range query."
+          "description": "Maximum sequence length. Auto-converts to an open-ended length range query (unbounded to max)."
         },
         "fields": {
           "type": "array",

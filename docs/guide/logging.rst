@@ -1,11 +1,11 @@
 Logging Tutorial
-=============
+================
 
 **Configure and use ToolUniverse's comprehensive logging system**
 
 ToolUniverse provides a robust logging system to help you monitor tool execution, debug issues, and track research workflows.
 
- Logging Overview
+Logging Overview
 -------------------
 
 ToolUniverse uses Python's standard logging module with enhanced formatting and emoji indicators. The logging system provides:
@@ -15,7 +15,7 @@ ToolUniverse uses Python's standard logging module with enhanced formatting and 
 * **Emoji Indicators**: Visual cues for different message types
 * **Flexible Configuration**: Environment variables, programmatic setup, and per-instance control
 
- Log Levels Explained
+Log Levels Explained
 -----------------------
 
 Understanding when to use each log level:
@@ -299,7 +299,7 @@ ToolUniverse provides convenience functions for quick logging:
    error("Tool execution failed")
    critical("System resources exhausted")
 
- Common Logging Patterns
+Common Logging Patterns
 --------------------------
 
 Research Workflow Logging
@@ -404,7 +404,7 @@ Batch Processing with Progress Tracking
        logger.info(f"📊 Batch complete: {len(results)} successful, {len(errors)} failed")
        return results, errors
 
- Best Practices
+Best Practices
 -----------------
 
 Choose Appropriate Log Levels
@@ -468,7 +468,7 @@ Include relevant details for debugging:
            logger.debug(f"Full traceback:", exc_info=True)  # Include stack trace in debug
            raise
 
- Troubleshooting Logging
+Troubleshooting Logging
 --------------------------
 
 Common Issues and Solutions
@@ -518,7 +518,7 @@ Check Current Log Level
 
    # Level numbers: DEBUG=10, INFO=20, PROGRESS=25, WARNING=30, ERROR=40, CRITICAL=50
 
- Log Output Examples
+Log Output Examples
 ---------------------
 
 Here's what different log levels look like in practice:
@@ -533,7 +533,7 @@ Here's what different log levels look like in practice:
    ❌ ERROR: OpenTargets query failed: Connection timeout
    🚨 CRITICAL: Failed to initialize tool registry
 
- Next Steps
+Next Steps
 -------------
 
 Now that you understand ToolUniverse logging:

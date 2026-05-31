@@ -63,7 +63,7 @@ Understanding the differences between local and remote tools helps you choose th
 - Tools in different programming languages
 
 Architecture Details
--------------------
+--------------------
 
 **ToolUniverse Core Components:**
 - **Tool Registry**: Manages tool discovery and registration

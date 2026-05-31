@@ -134,7 +134,7 @@ Create or edit ``src/tooluniverse/data/xxx_tools.json``:
    ]
 
 Step 5: No Modifications Needed in __init__.py!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With the new automated discovery system, **you do NOT need to modify `src/tooluniverse/__init__.py`**. 
 
@@ -223,7 +223,6 @@ Add comprehensive docstrings to your tool class:
            >>> print(result["result"])
            HELLO
        """
-```
 
 Step 9: Create Examples
 ~~~~~~~~~~~~~~~~~~~~~~~~
