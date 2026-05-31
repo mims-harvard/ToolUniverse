@@ -182,7 +182,7 @@
   },
   {
     "name": "OpenNeuro_get_dataset_snapshots",
-    "description": "Get all version snapshots of a specific dataset on OpenNeuro. Returns snapshot tags, creation dates, and summary information for all published versions of the dataset.",
+    "description": "Get all version snapshots of a specific dataset on OpenNeuro. Returns the snapshot id, tag, and creation date for every published version of the dataset. For per-snapshot summary statistics (modalities, subjects, file counts), use OpenNeuro_get_dataset, which returns the latest snapshot's summary.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -195,7 +195,7 @@
         "datasetId"
       ]
     },
-    "query_schema": "query GetSnapshots($datasetId: ID!) {\n  dataset(id: $datasetId) {\n    id\n    name\n    snapshots {\n      id\n      tag\n      created\n      size\n      summary { modalities subjects totalFiles size }\n      description { Name BIDSVersion Authors }\n    }\n  }\n}",
+    "query_schema": "query GetSnapshots($datasetId: ID!) {\n  dataset(id: $datasetId) {\n    id\n    name\n    snapshots {\n      id\n      tag\n      created\n    }\n  }\n}",
     "fields": {},
     "type": "OpenNeuroTool",
     "test_examples": [
@@ -234,9 +234,6 @@
                           },
                           "created": {
                             "type": ["string", "null"]
-                          },
-                          "summary": {
-                            "type": ["object", "null"]
                           }
                         }
                       }
