@@ -5,6 +5,13 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 import requests
 import copy
+import time
+
+# Upper bound on how long DiseaseTargetScoreTool will paginate through
+# OpenTargets associatedTargets before returning what it has so far. A
+# disease can have >10,000 associated targets; without a bound the loop
+# issues hundreds of sequential requests and can run for many minutes.
+_DISEASE_TARGET_SCORE_TIME_BUDGET_S = 25.0
 
 
 def validate_query(query_str, schema_str):
@@ -311,8 +318,17 @@ class DiseaseTargetScoreTool(GraphQLTool):
         total_fetched = 0
         total_count = None
         disease_info = None
+        truncated = False
+
+        deadline = time.monotonic() + _DISEASE_TARGET_SCORE_TIME_BUDGET_S
 
         while True:
+            # Bound total wall-clock time. A disease can have >10,000
+            # associated targets; without this the loop can run for minutes.
+            if time.monotonic() >= deadline:
+                truncated = True
+                break
+
             variables = {"efoId": efo_id, "index": page_index, "size": page_size}
 
             response_data = execute_query(
@@ -357,12 +373,18 @@ class DiseaseTargetScoreTool(GraphQLTool):
                 break
             page_index += 1
 
-        return {
-            "status": "success",
-            "data": {
-                "disease_info": disease_info,
-                "datasource": datasource_id,
-                "total_targets_with_scores": len(results),
-                "target_scores": results,
-            },
+        data = {
+            "disease_info": disease_info,
+            "datasource": datasource_id,
+            "total_targets_with_scores": len(results),
+            "target_scores": results,
         }
+        if truncated:
+            data["truncated"] = True
+            data["note"] = (
+                f"Stopped after {_DISEASE_TARGET_SCORE_TIME_BUDGET_S:.0f}s; "
+                f"scanned {total_fetched} of {total_count} associated targets. "
+                "Increase pageSize to scan more targets per request, or query a "
+                "more specific disease."
+            )
+        return {"status": "success", "data": data}
