@@ -19,10 +19,16 @@ PUBCHEM_API = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 CTD_API = "https://ctdbase.org/tools/batchQuery.go"
 
 # Regex to strip common stereochemistry prefixes so CTD can match the parent compound.
-# Example: "Beta-D-Glucose" → "Glucose", "L-Alanine" → "Alanine"
+# Example: "Beta-D-Glucose" → "Glucose", "L-Alanine" → "Alanine", "L-Lactic Acid" → "Lactic Acid"
+#
+# Each stereo descriptor must be followed by its own separator ([-\s]+). This
+# prevents over-stripping when the compound name itself starts with a stereo
+# letter: "L-Lactic Acid" must strip only "L-" (→ "Lactic Acid"), NOT "L-L"
+# (→ "actic Acid"). The trailing optional group only matches a *second*
+# descriptor that is itself separator-terminated (e.g. the "D-" in "Beta-D-").
+_STEREO_DESC = r"(?:alpha|beta|D|L|R|S|cis|trans|endo|exo)"
 _STEREO_PREFIX = re.compile(
-    r"^(alpha|beta|Alpha|Beta|D|L|R|S|cis|trans|endo|exo)[-\s]+"
-    r"(alpha|beta|Alpha|Beta|D|L|R|S|cis|trans|endo|exo)?[-\s]*",
+    rf"^{_STEREO_DESC}[-\s]+(?:{_STEREO_DESC}[-\s]+)?",
     re.IGNORECASE,
 )
 
