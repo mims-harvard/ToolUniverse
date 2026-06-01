@@ -6,11 +6,17 @@
       "type": "object",
       "properties": {
         "filter": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "OData filter string for indicator names. Examples: \"contains(IndicatorName,'malaria')\", \"contains(IndicatorName,'HIV')\", \"contains(IndicatorName,'mortality')\", \"contains(IndicatorName,'obesity')\""
         },
         "top": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of results to return. Default: 10, max: 100"
         }
       },
@@ -18,13 +24,28 @@
     },
     "fields": {
       "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
-      "params": {"$top": 10}
+      "params": {
+        "$top": 10
+      },
+      "param_mapping": {
+        "filter": "$filter",
+        "top": "$top"
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"filter": "contains(IndicatorName,'malaria')", "top": 5},
-      {"filter": "contains(IndicatorName,'HIV')", "top": 5},
-      {"filter": "contains(IndicatorName,'life expectancy')", "top": 5}
+      {
+        "filter": "contains(IndicatorName,'malaria')",
+        "top": 5
+      },
+      {
+        "filter": "contains(IndicatorName,'HIV')",
+        "top": 5
+      },
+      {
+        "filter": "contains(IndicatorName,'life expectancy')",
+        "top": 5
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -38,8 +59,14 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "IndicatorCode": {"type": "string", "description": "Unique indicator code (use in WHOGHO_get_indicator_data)"},
-                  "IndicatorName": {"type": "string", "description": "Full indicator name/description"}
+                  "IndicatorCode": {
+                    "type": "string",
+                    "description": "Unique indicator code (use in WHOGHO_get_indicator_data)"
+                  },
+                  "IndicatorName": {
+                    "type": "string",
+                    "description": "Full indicator name/description"
+                  }
                 }
               }
             }
@@ -47,8 +74,14 @@
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -64,25 +97,46 @@
           "description": "WHO GHO indicator code. Examples: 'WHOSIS_000001' (life expectancy), 'MALARIA002' (malaria cases), 'MDG_0000000026' (HIV prevalence), 'NCD_BMI_30C' (obesity), 'SDGPM25' (air pollution PM2.5), 'WHS4_100' (hospital beds)"
         },
         "filter": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "OData filter for data rows. Examples: \"SpatialDim eq 'USA'\", \"TimeDim eq 2022\", \"Dim1 eq 'SEX_FMLE' and TimeDim ge 2015\""
         },
         "top": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of data rows to return. Default: 20"
         }
       },
-      "required": ["indicator_code"]
+      "required": [
+        "indicator_code"
+      ]
     },
     "fields": {
       "endpoint": "https://ghoapi.azureedge.net/api/{indicator_code}",
-      "params": {"$top": 20}
+      "params": {
+        "$top": 20
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"indicator_code": "WHOSIS_000001", "filter": "TimeDim eq 2020", "top": 10},
-      {"indicator_code": "MALARIA002", "top": 10},
-      {"indicator_code": "NCD_BMI_30C", "filter": "SpatialDim eq 'USA'", "top": 10}
+      {
+        "indicator_code": "WHOSIS_000001",
+        "filter": "TimeDim eq 2020",
+        "top": 10
+      },
+      {
+        "indicator_code": "MALARIA002",
+        "top": 10
+      },
+      {
+        "indicator_code": "NCD_BMI_30C",
+        "filter": "SpatialDim eq 'USA'",
+        "top": 10
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -96,14 +150,61 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "IndicatorCode": {"type": ["string", "null"]},
-                  "SpatialDim": {"type": ["string", "null"], "description": "Country/region ISO code"},
-                  "TimeDim": {"type": ["integer", "null"], "description": "Year"},
-                  "Dim1": {"type": ["string", "null"], "description": "Dimension 1 (e.g., SEX_BTSX, SEX_MLE, SEX_FMLE)"},
-                  "NumericValue": {"type": ["number", "null"], "description": "Numeric data value"},
-                  "Value": {"type": ["string", "null"], "description": "Formatted value with confidence intervals"},
-                  "Low": {"type": ["number", "null"], "description": "Lower confidence interval"},
-                  "High": {"type": ["number", "null"], "description": "Upper confidence interval"}
+                  "IndicatorCode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "SpatialDim": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country/region ISO code"
+                  },
+                  "TimeDim": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Year"
+                  },
+                  "Dim1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Dimension 1 (e.g., SEX_BTSX, SEX_MLE, SEX_FMLE)"
+                  },
+                  "NumericValue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Numeric data value"
+                  },
+                  "Value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Formatted value with confidence intervals"
+                  },
+                  "Low": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Lower confidence interval"
+                  },
+                  "High": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Upper confidence interval"
+                  }
                 }
               }
             }
@@ -111,8 +212,14 @@
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

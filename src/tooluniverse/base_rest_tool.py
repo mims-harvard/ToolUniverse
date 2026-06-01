@@ -44,10 +44,13 @@ class BaseRESTTool(BaseTool):
         """
         Get parameter name mappings from argument names to API parameter names.
 
-        Override this in subclasses to provide custom mappings.
+        Reads ``fields.param_mapping`` from the tool config so pure config-driven
+        BaseRESTTool entries can rename query params without a Python subclass
+        (e.g. OData APIs needing {"filter": "$filter", "top": "$top"}).
+        Subclasses may still override to provide mappings in code.
         Example: {"limit": "rows", "query": "q"}
         """
-        return {}
+        return self.tool_config.get("fields", {}).get("param_mapping", {})
 
     def _build_url(self, args: Dict[str, Any]) -> str:
         """
