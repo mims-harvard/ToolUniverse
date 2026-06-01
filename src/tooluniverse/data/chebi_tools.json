@@ -6,8 +6,11 @@
       "type": "object",
       "properties": {
         "chebi_id": {
-          "type": "integer",
-          "description": "ChEBI numeric identifier (without the 'CHEBI:' prefix). Examples: 15365 (aspirin), 17234 (glucose), 16236 (ethanol), 15377 (water), 17790 (methanol)."
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "ChEBI identifier as a bare integer (e.g. 15365) or the 'CHEBI:15365' CURIE form returned by ChEBI_search. Examples: 15365 (aspirin), 17234 (glucose)."
         }
       },
       "required": [

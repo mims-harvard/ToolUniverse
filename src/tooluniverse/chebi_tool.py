@@ -87,6 +87,14 @@ class ChEBITool(BaseTool):
                 "error": "chebi_id parameter is required (e.g., 15365 for aspirin)",
             }
 
+        # Accept the "CHEBI:27732" CURIE form that ChEBI_search returns as
+        # chebi_accession, not just the bare integer — so the two tools chain
+        # without the caller having to strip the prefix.
+        if isinstance(chebi_id, str):
+            chebi_id = chebi_id.strip()
+            if chebi_id.upper().startswith("CHEBI:"):
+                chebi_id = chebi_id.split(":", 1)[1].strip()
+
         url = f"{CHEBI_BASE_URL}/compound/{chebi_id}/"
         response = requests.get(
             url,
