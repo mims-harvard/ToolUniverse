@@ -54,3 +54,30 @@ def test_no_param_mapping_is_unchanged():
     assert tool._get_param_mapping() == {}
     params = tool._build_params({"foo": "bar"})
     assert params["foo"] == "bar"
+
+
+@pytest.mark.unit
+def test_auth_param_overrides_default_token_when_env_set(monkeypatch):
+    # Feature-007K-01: a real env token replaces the public demo token.
+    tool = _make_tool(
+        {
+            "params": {"token": "demo"},
+            "auth_param": {"env_var": "WAQI_API_KEY", "param": "token"},
+        }
+    )
+    monkeypatch.setenv("WAQI_API_KEY", "REALKEY123")
+    params = tool._build_params({"city": "Boston"})
+    assert params["token"] == "REALKEY123"
+
+
+@pytest.mark.unit
+def test_auth_param_keeps_default_token_when_env_unset(monkeypatch):
+    tool = _make_tool(
+        {
+            "params": {"token": "demo"},
+            "auth_param": {"env_var": "WAQI_API_KEY", "param": "token"},
+        }
+    )
+    monkeypatch.delenv("WAQI_API_KEY", raising=False)
+    params = tool._build_params({"city": "Boston"})
+    assert params["token"] == "demo"
