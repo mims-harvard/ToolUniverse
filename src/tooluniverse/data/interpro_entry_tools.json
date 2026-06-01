@@ -60,9 +60,6 @@
                       "name": {
                         "type": "string"
                       },
-                      "short_name": {
-                        "type": "string"
-                      },
                       "type": {
                         "type": "string"
                       },
@@ -173,9 +170,6 @@
                         "type": "string"
                       },
                       "name": {
-                        "type": "string"
-                      },
-                      "short_name": {
                         "type": "string"
                       },
                       "type": {
