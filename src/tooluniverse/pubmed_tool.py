@@ -508,8 +508,25 @@ class PubMedRESTTool(BaseRESTTool):
                     id_list = esearch_result.get("idlist", [])
 
                     # If this is a search request (has 'query' in arguments),
-                    # fetch article summaries and return as list
-                    if "query" in arguments and id_list:
+                    # fetch article summaries and return the standard envelope.
+                    if "query" in arguments:
+                        # A search that matched nothing must still return the
+                        # same {status, data, metadata} envelope as a search
+                        # that matched — otherwise zero-hit queries fall through
+                        # to the bare-id-list path below and consumers that read
+                        # result["status"] hit a KeyError.
+                        if not id_list:
+                            return {
+                                "status": "success",
+                                "data": [],
+                                "metadata": {
+                                    "count": 0,
+                                    "total": int(esearch_result.get("count", 0)),
+                                    "query": arguments.get("query"),
+                                    "source": "PubMed",
+                                },
+                            }
+
                         summary_result = self._fetch_summaries(id_list)
 
                         if summary_result["status"] == "error":

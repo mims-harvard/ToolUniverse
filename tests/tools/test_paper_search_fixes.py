@@ -110,6 +110,54 @@ class TestPubMedPMCID(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# Feature-007F-04: a zero-hit search returns the standard envelope
+# ---------------------------------------------------------------------------
+class TestPubMedZeroHitEnvelope(unittest.TestCase):
+    """A search that matches nothing must return {status,data,metadata},
+    not a bare id list (which the framework wraps as {"result": []})."""
+
+    def _make_tool(self):
+        from tooluniverse.pubmed_tool import PubMedRESTTool
+
+        return PubMedRESTTool(
+            {
+                "name": "PubMed_search_articles",
+                "type": "PubMedRESTTool",
+                "fields": {
+                    "endpoint": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+                    "method": "GET",
+                    "db": "pubmed",
+                    "retmode": "json",
+                },
+                "parameter": {"type": "object", "properties": {}, "required": []},
+            }
+        )
+
+    def test_zero_hit_search_returns_envelope(self):
+        tool = self._make_tool()
+
+        # esearch response with an empty idlist (no matches)
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.url = "https://eutils.ncbi.nlm.nih.gov/...esearch..."
+        mock_resp.json.return_value = {
+            "esearchresult": {"idlist": [], "count": "0"}
+        }
+
+        with patch.object(tool, "_enforce_rate_limit"):
+            with patch(
+                "tooluniverse.pubmed_tool.request_with_retry", return_value=mock_resp
+            ):
+                result = tool.run({"query": "zzz_no_such_term_zzz", "limit": 2})
+
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["data"], [])
+        self.assertEqual(result["metadata"]["count"], 0)
+        self.assertEqual(result["metadata"]["total"], 0)
+
+
+# ---------------------------------------------------------------------------
 # Feature-81B-002: PubMed limit=0 honoured
 # ---------------------------------------------------------------------------
 class TestPubMedLimit(unittest.TestCase):
