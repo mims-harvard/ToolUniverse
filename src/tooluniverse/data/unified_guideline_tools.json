@@ -17,8 +17,7 @@
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
@@ -75,8 +74,7 @@
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
@@ -127,8 +125,7 @@
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
@@ -184,7 +181,6 @@
       },
       "required": [
         "query",
-        "limit",
         "search_type"
       ]
     },
@@ -236,8 +232,7 @@
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
@@ -301,8 +296,7 @@
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
@@ -563,8 +557,7 @@
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
@@ -614,8 +607,7 @@
         }
       },
       "required": [
-        "query",
-        "limit"
+        "query"
       ]
     },
     "return_schema": {
