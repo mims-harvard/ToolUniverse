@@ -161,36 +161,68 @@ class AllianceGenomeTool(BaseTool):
             url, headers={"Accept": "application/json"}, timeout=self.timeout
         )
         response.raise_for_status()
-        data = response.json()
+        payload = response.json()
 
-        species = data.get("species", {})
-        locations = data.get("genomeLocations", [])
+        # The Alliance API nests the gene record under a top-level "gene" key.
+        # Fall back to the payload itself for resilience against schema drift.
+        data = payload.get("gene") or payload
+
+        def _text(obj):
+            """Alliance wraps labels as {formatText, displayText}; unwrap them."""
+            if isinstance(obj, dict):
+                return obj.get("displayText") or obj.get("formatText")
+            return obj
+
+        taxon = data.get("taxon") or {}
+        taxon_species = taxon.get("species") or {}
+        # genomic location moved to geneGenomicLocationAssociations
+        locations = (
+            data.get("geneGenomicLocationAssociations")
+            or data.get("genomeLocations")
+            or []
+        )
         loc_info = locations[0] if locations else {}
-        xrefs = data.get("crossReferenceMap", {})
 
-        # Extract cross-references
-        other_xrefs = xrefs.get("other", [])
-        xref_list = [
-            {"name": x.get("name"), "url": x.get("crossRefCompleteUrl")}
-            for x in other_xrefs[:10]
+        synonyms = [
+            _text(s) for s in (data.get("geneSynonyms") or data.get("synonyms") or [])
         ]
+
+        # cross-references: new schema is a flat list of {referencedCurie, displayName}
+        cross_refs = data.get("crossReferences")
+        if cross_refs is None:
+            cross_refs = (data.get("crossReferenceMap") or {}).get("other", [])
+        xref_list = [
+            {
+                "name": x.get("displayName") or x.get("name"),
+                "curie": x.get("referencedCurie"),
+                "url": x.get("crossRefCompleteUrl"),
+            }
+            for x in cross_refs[:10]
+        ]
+
+        gene_type = data.get("geneType") or data.get("soTerm") or {}
 
         return {
             "status": "success",
             "data": {
-                "id": data.get("id"),
-                "symbol": data.get("symbol"),
-                "name": data.get("name"),
+                "id": data.get("primaryExternalId") or data.get("id"),
+                "symbol": _text(data.get("geneSymbol")) or data.get("symbol"),
+                "name": _text(data.get("geneFullName")) or data.get("name"),
                 "species": {
-                    "name": species.get("name"),
-                    "short_name": species.get("shortName"),
-                    "taxon_id": species.get("taxonId"),
-                    "data_provider": species.get("dataProviderShortName"),
+                    "name": taxon.get("name") or taxon_species.get("fullName"),
+                    "short_name": taxon_species.get("displayName")
+                    or taxon_species.get("abbreviation"),
+                    "taxon_id": taxon.get("curie") or taxon.get("taxonId"),
+                    "data_provider": (data.get("dataProvider") or {}).get(
+                        "abbreviation"
+                    )
+                    if isinstance(data.get("dataProvider"), dict)
+                    else data.get("dataProvider"),
                 },
                 "gene_synopsis": data.get("geneSynopsis"),
                 "automated_gene_synopsis": data.get("automatedGeneSynopsis"),
-                "synonyms": data.get("synonyms", []),
-                "so_term": data.get("soTerm", {}).get("name"),
+                "synonyms": synonyms,
+                "so_term": gene_type.get("name"),
                 "genomic_location": {
                     "chromosome": loc_info.get("chromosome"),
                     "start": loc_info.get("start"),
@@ -202,7 +234,6 @@ class AllianceGenomeTool(BaseTool):
             },
             "metadata": {
                 "query_gene_id": gene_id,
-                "data_provider": data.get("dataProvider"),
                 "source": "Alliance of Genome Resources",
             },
         }
