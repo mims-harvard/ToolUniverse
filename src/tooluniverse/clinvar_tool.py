@@ -122,7 +122,26 @@ class ClinVarRESTTool(BaseTool):
         variant_data = data.get("result", {}).get(variant_id)
 
         if not variant_data:
-            return {"error_result": result}
+            # NCBI returns HTTP 200 with an empty uids list and an inline
+            # "Invalid uid ..." message when the id is not a numeric ClinVar
+            # Variation ID (e.g. a dbSNP rsID was passed). Surface this as a
+            # real error instead of forwarding the raw success envelope.
+            ncbi_err = data.get("error") or data.get("result", {}).get("error")
+            msg = f"No ClinVar record found for variant_id '{variant_id}'."
+            if isinstance(variant_id, str) and variant_id.lower().startswith("rs"):
+                msg += (
+                    " Pass a numeric ClinVar Variation ID (e.g. 12345), not a"
+                    " dbSNP rsID."
+                )
+            if ncbi_err:
+                msg += f" NCBI: {ncbi_err}"
+            return {
+                "error_result": {
+                    "status": "error",
+                    "error": msg,
+                    "url": result.get("url"),
+                }
+            }
 
         # Check for NCBI inline error (HTTP 200 but variant not found)
         if variant_data.get("error"):

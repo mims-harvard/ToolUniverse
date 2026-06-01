@@ -290,7 +290,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/drug?name=eq.{name}"
+      "endpoint": "https://api.cpicpgx.org/v1/drug?name=eq.{name}",
+      "lowercase_params": ["name"]
     },
     "type": "BaseRESTTool",
     "test_examples": [
