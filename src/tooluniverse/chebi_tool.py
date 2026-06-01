@@ -20,6 +20,16 @@ from .tool_registry import register_tool
 
 CHEBI_BASE_URL = "https://www.ebi.ac.uk/chebi/backend/api/public"
 
+_HTML_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _strip_html(text):
+    """Remove search-highlight markup (e.g. <em>...</em>) ChEBI embeds in
+    name/synonym fields. Non-string values pass through unchanged."""
+    if isinstance(text, str):
+        return _HTML_TAG_RE.sub("", text)
+    return text
+
 
 @register_tool("ChEBITool")
 class ChEBITool(BaseTool):
@@ -111,7 +121,7 @@ class ChEBITool(BaseTool):
             if isinstance(name_list, list):
                 for entry in name_list[:10]:
                     if isinstance(entry, dict):
-                        syn = entry.get("name", "")
+                        syn = _strip_html(entry.get("name", ""))
                         if syn and syn not in synonyms:
                             synonyms.append(syn)
 
@@ -143,8 +153,8 @@ class ChEBITool(BaseTool):
         result = {
             "chebi_id": raw.get("id", chebi_id),
             "chebi_accession": raw.get("chebi_accession", f"CHEBI:{chebi_id}"),
-            "name": raw.get("name", ""),
-            "definition": raw.get("definition", None),
+            "name": _strip_html(raw.get("name", "")),
+            "definition": _strip_html(raw.get("definition", None)),
             "stars": raw.get("stars", 0),
             "formula": chem_data.get("formula", None),
             "mass": mass_val,

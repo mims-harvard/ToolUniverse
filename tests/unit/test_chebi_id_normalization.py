@@ -8,7 +8,23 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from tooluniverse.chebi_tool import ChEBITool
+from tooluniverse.chebi_tool import ChEBITool, _strip_html
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("1<em>H</em>-purin", "1H-purin"),
+        ("plain text", "plain text"),
+        ("<b>bold</b> and <i>italic</i>", "bold and italic"),
+        (None, None),
+        (42, 42),
+    ],
+)
+def test_strip_html(raw, expected):
+    # Feature-008B-03: ChEBI embeds <em> highlight tags in name/synonym fields.
+    assert _strip_html(raw) == expected
 
 
 def _make_tool():
