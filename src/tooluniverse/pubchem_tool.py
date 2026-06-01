@@ -43,10 +43,25 @@ class PubChemRESTTool(BaseTool):
         """
         url_path = self.endpoint_template
 
-        # First replace property_list (if exists and endpoint_template contains this placeholder)
-        if self.property_list and "{property_list}" in url_path:
-            prop_str = ",".join(self.property_list)
-            url_path = url_path.replace("{property_list}", prop_str)
+        # Replace {property_list}. Prefer a caller-supplied `properties`
+        # argument over the fixed config default so the caller can choose
+        # which properties to fetch — the tool is "get_compound_properties"
+        # but previously ignored the requested set and always returned the
+        # three configured defaults.
+        if "{property_list}" in url_path:
+            user_props = arguments.get("properties")
+            if user_props:
+                prop_list = (
+                    user_props
+                    if isinstance(user_props, list)
+                    else [p.strip() for p in str(user_props).split(",") if p.strip()]
+                )
+            else:
+                prop_list = self.property_list or []
+            if prop_list:
+                url_path = url_path.replace(
+                    "{property_list}", ",".join(map(str, prop_list))
+                )
 
         # Find all placeholders {xxx} in template
         placeholders = re.findall(r"\{([^{}]+)\}", url_path)

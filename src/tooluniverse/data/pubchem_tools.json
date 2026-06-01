@@ -191,6 +191,17 @@
         "cid": {
           "type": "integer",
           "description": "PubChem compound ID to query, e.g., 2244 (Aspirin)."
+        },
+        "properties": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional list of PubChem property names to retrieve (e.g. ['MolecularFormula','InChIKey','XLogP','IUPACName','MolecularWeight']). If omitted, returns a default set (MolecularWeight, IUPACName, SMILES). See PubChem PUG-REST property tables for valid names. Accepts a list or a comma-separated string."
         }
       },
       "required": [
@@ -416,7 +427,7 @@
     "fields": {
       "endpoint": "/compound/fastsimilarity_2d/smiles/{smiles}/cids/JSON",
       "use_pugview": false,
-      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity \u2265 threshold.",
+      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity ≥ threshold.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244, 2245, ...]\n  }\n}\n\nWhere: CID array contains compound IDs with similarity above specified threshold to target molecule. LLM can use this for chemical similarity analysis.",
       "property_list": []
     },
