@@ -1,0 +1,42 @@
+{
+  "skill_name": "tooluniverse-mendelian-randomization",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Is LDL cholesterol actually a causal risk factor for coronary heart disease, or is the link just an observational correlation? Give me the Mendelian randomization evidence with effect direction and instrument quality.",
+      "expected_output": "A causal verdict (YES, causal) supported by an MR estimate with beta>0 / OR>1, high MOE, and a reverse-causation (bidirectional MR) check showing no meaningful CHD->LDL effect.",
+      "files": [],
+      "assertions": [
+        "Resolves trait labels via EpiGraphDB_search_opengwas before the MR call",
+        "Calls EpiGraphDB_get_mendelian_randomization with exposure 'LDL cholesterol' and outcome 'Coronary heart disease'",
+        "Reports a positive causal effect (beta>0 / OR>1) and an OR per SD interpretation",
+        "Performs bidirectional MR (CHD -> LDL) to check reverse causation",
+        "States instrument-quality (MOE) and at least one assumption/pleiotropy caveat"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Does BMI cause type 2 diabetes, or do they just share genetics? I want a causal answer with the effect size and the main caveats.",
+      "expected_output": "A causal verdict (YES, causal, large effect) from MR with beta>0, distinguished explicitly from genetic correlation, plus a reverse-causation check and ancestry/pleiotropy caveats.",
+      "files": [],
+      "assertions": [
+        "Calls EpiGraphDB_get_mendelian_randomization for Body mass index -> Type 2 diabetes",
+        "Reports a positive, large causal effect with an odds-ratio interpretation",
+        "Explicitly distinguishes causal MR evidence from (non-causal) genetic correlation",
+        "Checks reverse causation with bidirectional MR (T2D -> BMI)",
+        "Notes European-ancestry instruments and pleiotropy as limitations"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "is high crp causally linked to stroke risk? use mendelian randomization",
+      "expected_output": "Resolves CRP and stroke to exact OpenGWAS trait labels first, runs MR, and interprets the result honestly — including the case where the exact-label MR returns empty (reads metadata.note and retries / reports inconclusive rather than asserting 'no effect').",
+      "files": [],
+      "assertions": [
+        "Resolves 'CRP' / 'C-reactive protein' and 'stroke' to exact trait labels via EpiGraphDB_search_opengwas",
+        "Does NOT report an empty MR result as 'no causal effect' — reads metadata.note and treats a label miss as inconclusive",
+        "Gives a calibrated verdict (supported / not supported / inconclusive) with caveats rather than overclaiming"
+      ]
+    }
+  ]
+}
