@@ -4,7 +4,7 @@
 
 ---
 
-## Literature Search Tools (23)
+## Literature Search Tools
 
 ### Biomedical & Life Sciences
 ```python
@@ -24,6 +24,11 @@
 'SemanticScholar_search_papers'   # 200M+ AI-ranked papers
 ```
 
+### Physics / High-Energy Physics
+```python
+'InspireHEP_search_papers'        # 1.6M+ particle/astro physics (a:/t:/j:/cn: syntax)
+```
+
 ### General Academic
 ```python
 'openalex_literature_search'      # 250M+ works across fields
@@ -41,11 +46,14 @@
 
 ### Regional/Specialized
 ```python
-'OpenAIRE_search_publications'    # EU-funded research
-'HAL_search_archive'              # French national archive
+'OpenAIRE_search_publications'    # EU-funded research (best-effort: API has been returning 400s; verify before relying on it)
+'HAL_search_archive'              # French national archive (max_results required)
 'OSF_search_preprints'            # Social science preprints
 'Zenodo_search_records'           # Datasets, software, publications
+'Figshare_search_articles'        # Datasets, figures, code, posters, theses (query param is `search_for`)
 ```
+
+> Reliability: `CORE_search_papers` needs `CORE_API_KEY` (HTTP 429 without it); `OpenAIRE_search_publications` has been returning HTTP 400 on basic queries — treat both as best-effort, not sole sources.
 
 ### Text Mining / NER
 ```python
@@ -375,14 +383,25 @@
 # ArXiv
 {'query': 'ti:"transformer" AND abs:"attention mechanism"', 'limit': 50, 'sort_by': 'submittedDate'}
 
-# DBLP
-{'query': 'graph neural network', 'max_results': 50}
+# DBLP (count param `limit` is REQUIRED, not `max_results`)
+{'query': 'graph neural network', 'limit': 50}
 
 # SemanticScholar
 {'query': 'retrieval augmented generation', 'limit': 50, 'year': '2023-2024', 'sort': 'citationCount:desc'}
 
-# OpenAlex
-{'search_keywords': 'term', 'max_results': 100, 'year_from': 2020}
+# OpenAlex (query alias `search`; count alias `per_page`)
+{'search': 'term', 'per_page': 100, 'filter': 'from_publication_date:2020-01-01'}
+
+# InspireHEP (query param is `q`, count is `size`)
+{'q': 'higgs boson', 'size': 25, 'sort': 'mostcited'}
+
+# Figshare (query param is `search_for`, not `query`)
+{'search_for': 'crispr screen dataset', 'page_size': 20}
+
+# Required count param (query alone is rejected): HAL/OpenAIRE/Fatcat/PubMed_Guidelines
+{'query': 'term', 'max_results': 20}          # HAL, Fatcat
+{'query': 'term', 'max_results': 20, 'type': 'publications'}  # OpenAIRE also needs type
+{'query': 'hypertension', 'limit': 20}        # PubMed_Guidelines_Search
 
 # With collision filter
 {'query': '"TRAG" AND immune NOT plasmid NOT conjugation', 'limit': 50}

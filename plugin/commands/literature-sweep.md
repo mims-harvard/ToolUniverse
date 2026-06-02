@@ -1,6 +1,6 @@
 ---
 name: literature-sweep
-description: Run a graded mini-review on a topic across multiple literature sources (PubMed, EuropePMC, bioRxiv, Semantic Scholar). Dedupes hits, scores relevance to the topic, returns a ranked table with citation, year, key claim, and relevance. Use when the user wants more than a raw search dump — they want a curated short-list ready to read.
+description: Run a graded mini-review on a topic across many literature sources, adaptively chosen by domain — a core multi-field set (PubMed, EuropePMC, OpenAlex, Semantic Scholar) plus domain-specific indexes (ArXiv/DBLP for CS, InspireHEP for physics, PubTator/PMC/clinical guidelines for biomedical, Crossref/CORE/DOAJ/Fatcat for broad coverage, OSF/preprints for the latest work). Dedupes hits, scores relevance to the topic, returns a ranked table with citation, year, key claim, and relevance. Use when the user wants more than a raw search dump — they want a curated short-list ready to read.
 argument-hint: "[topic, e.g. 'KRAS G12C inhibitor resistance mechanisms', 'CRISPR base editing in Friedreich ataxia']"
 ---
 
@@ -24,24 +24,63 @@ For "KRAS G12C inhibitor resistance mechanisms":
 
 State the formulations in one line before searching.
 
-### 2. Search 2-3 independent literature sources
+### 2. Search several independent literature sources (adaptive by domain)
 
-PubMed (NIH), EuropePMC, Semantic Scholar, bioRxiv each maintain their own
-indices. Run the topic across at least 2 of them so a paper missed by one
-gets picked up by another.
+ToolUniverse exposes 15+ keyword-searchable literature indexes. Each maintains
+its own coverage, so running a topic across several catches papers any single
+one misses. **Don't blindly fire all of them** — that's slow and noisy. Pick
+the always-on CORE set, then add the domain rows that match the topic.
+
+**ALWAYS run (multi-field core — 4 indexes):**
 
 ```bash
-# PubMed (peer-reviewed, mostly biomedical)
-tu run PubMed_search_articles '{"query":"KRAS G12C resistance mechanism","max_results":20}'
+# PubMed (NIH; peer-reviewed biomedical, MeSH-indexed)
+tu run PubMed_search_articles '{"query":"KRAS G12C resistance mechanism","limit":20}'
 
-# EuropePMC (broader incl. preprints, agricultural, pharm)
+# EuropePMC (broader: clinical, agricultural, pharma + preprints via SRC:PPR)
 tu run EuropePMC_search_articles '{"query":"KRAS G12C resistance mechanism","limit":20}'
 
-# Semantic Scholar (citation graph, sometimes catches non-MeSH-indexed)
-tu run semantic_scholar_search '{"query":"KRAS G12C inhibitor resistance","limit":20}'
+# OpenAlex (250M+ works, every discipline; good cross-field recall)
+tu run openalex_search_works '{"search":"KRAS G12C inhibitor resistance","per_page":20}'
+
+# Semantic Scholar (AI-ranked citation graph; catches non-MeSH-indexed work)
+tu run SemanticScholar_search_papers '{"query":"KRAS G12C inhibitor resistance","limit":20}'
 ```
 
-If a search returns <5 hits, broaden the query. If >50, narrow it.
+**THEN add domain-specific indexes when the topic matches:**
+
+| Topic signal | Add these sources | Why |
+|---|---|---|
+| Biomedical / clinical / gene·drug·disease | `PMC_search_papers` (full text), `PubTator3_LiteratureSearch` (entity & relation queries, e.g. `relations:treat\|@CHEMICAL_X\|@DISEASE_Y`) | Full-text body hits + entity-normalized recall |
+| Clinical practice / treatment guidelines | `PubMed_Guidelines_Search` | Filters to guideline / practice-guideline pub types |
+| CS / ML / AI / algorithms | `ArXiv_search_papers`, `DBLP_search_publications` | arXiv preprints + CS bibliography (often not in PubMed) |
+| Physics / HEP / astro | `InspireHEP_search_papers` | 1.6M+ particle/astro physics records |
+| Broad / cross-disciplinary / hard-to-find | `Crossref_search_works`, `CORE_search_papers`, `DOAJ_search_articles`, `Fatcat_search_scholar` | DOI registry + open-access aggregators + Internet Archive Scholar |
+| Need the very latest (preprints) | `EuropePMC_search_articles` with `SRC:PPR`, `OSF_search_preprints` | bioRxiv/medRxiv/PsyArXiv etc. before peer review |
+| Datasets / code / supplementary outputs | `Figshare_search_articles`, `Zenodo_search_records` | Research data and software with citable DOIs |
+
+Run the core 4 plus the matching domain row(s) — typically **5–8 sources total**.
+State which sources you chose (and why) in one line before searching.
+
+**Parameter gotchas** (the add-on tools don't all use `query` + `limit` — run
+`tu info <Tool>` if a call is rejected):
+- `InspireHEP_search_papers`: query param is `q`, count is `size`.
+- `Figshare_search_articles`: query param is `search_for` (not `query`).
+- OpenAlex has two tools with **different** query params: `openalex_search_works`
+  uses `search` (or `query`); `openalex_literature_search` uses `search_keywords`.
+  Passing the wrong one silently returns unfiltered (off-topic) results — pick one
+  and match its param.
+- `DBLP_search_publications`, `PubMed_Guidelines_Search`, `Fatcat_search_scholar`,
+  `HAL_search_archive`, `OpenAIRE_search_publications`: a count param is
+  **required** (`limit` or `max_results`) — passing only the query is rejected.
+  `OpenAIRE` also requires `type` (`"publications"`).
+- Preprints: append `SRC:PPR` to the EuropePMC `query` string.
+- `CORE_search_papers` is rate-limited (HTTP 429) without `CORE_API_KEY` — treat
+  as best-effort; don't rely on it as a sole source.
+
+If a search returns <5 hits, broaden the query. If >50, narrow it. If a source
+errors or needs an unconfigured API key, note it and proceed with the rest —
+never let one dead source abort the sweep.
 
 ### 3. Dedupe across sources
 
@@ -73,8 +112,8 @@ title alone — be conservative.
 
 ```
 ## Literature sweep: <topic>
-## Sources: PubMed (n=20), EuropePMC (n=20), Semantic Scholar (n=15)
-## Deduped: 38 unique papers; 14 above relevance threshold
+## Sources queried: PubMed (n=20), EuropePMC (n=20), OpenAlex (n=20), Semantic Scholar (n=15), PMC (n=12), PubTator3 (n=8)
+## Deduped: 61 raw hits → 38 unique papers; 14 above relevance threshold
 
 | # | Paper | Year | Source(s) | Score | Key claim |
 |---|---|---|---|---|---|
@@ -116,8 +155,10 @@ End with:
 
 ## Stop conditions
 
-- 2 sources both return 0 hits → topic is mis-specified or too narrow.
-  Don't fabricate; report empty and suggest broader formulations.
+- The core sources (PubMed + EuropePMC + OpenAlex) all return 0 hits → topic is
+  mis-specified or too narrow. Don't fabricate; report empty and suggest broader
+  formulations. (A domain-specific index returning 0 is normal — e.g. ArXiv on a
+  pure-clinical topic — and is not a stop condition.)
 - Dedup runs into citation cycles (same paper claimed by 5+ different
   source-IDs) → trust DOI first, then PMID, ignore the rest.
 - 50+ deduped papers above threshold → narrow the topic OR present only

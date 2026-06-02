@@ -119,15 +119,29 @@ Non-bio: skip bio tools, use ArXiv/DBLP/OSF. Cross-domain: resolve bio entities 
 **Step 2: Citation expansion**: `PubMed_get_cited_by`, `EuropePMC_get_citations/references`, `PubMed_get_related`, `SemanticScholar_get_recommendations`, `OpenCitations_get_citations`
 **Step 3: Collision-filtered broader queries**: `"[TERM]" AND ([context]) NOT [collision]`
 
-### 2.2 Literature Tools
+### 2.2 Literature Tools — core set + adaptive by domain
 
-**Biomedical**: `PubMed_search_articles`, `PMC_search_papers`, `EuropePMC_search_articles`, `PubTator3_LiteratureSearch`
-**Biology (ecology/evolution/plant)**: **EuropePMC as PRIMARY** (PubMed returns 0-1 for non-clinical biology). Also `openalex_literature_search`.
-**CS/ML**: `ArXiv_search_papers`, `DBLP_search_publications`, `SemanticScholar_search_papers`
-**General**: `openalex_literature_search`, `Crossref_search_works`, `CORE_search_papers`, `DOAJ_search_articles`
-**Preprints**: `BioRxiv_get_preprint`, `MedRxiv_get_preprint`, `OSF_search_preprints`, `EuropePMC_search_articles(source='PPR')`
-**Multi-source**: `advanced_literature_search_agent` (12+ DBs; needs Azure key -- fallback: query PubMed+ArXiv+SemanticScholar+OpenAlex individually)
+Run the **core multi-field set on every review** (catches what any single index misses), then add the domain rows that match the subject. Don't fire every source blindly — 6–10 well-chosen indexes beat 20 noisy ones.
+
+**ALWAYS run (core, all disciplines)**: `PubMed_search_articles`, `EuropePMC_search_articles`, `openalex_search_works` (query param `search`/`query`) **or** `openalex_literature_search` (query param `search_keywords`) — pick one and match its param; mixing them silently returns off-topic results — and `SemanticScholar_search_papers`
+
+**Then add by domain:**
+
+| Domain | Add these | Notes |
+|--------|-----------|-------|
+| Biomedical / clinical | `PMC_search_papers` (full text), `PubTator3_LiteratureSearch` (entity & `relations:` queries), `PubMed_Guidelines_Search` (clinical guidelines) | PubTator normalizes gene/drug/disease entities |
+| Biology (ecology/evolution/plant) | **EuropePMC as PRIMARY** + OpenAlex | PubMed returns 0–1 for non-clinical biology |
+| CS / ML / AI | `ArXiv_search_papers`, `DBLP_search_publications` | arXiv + CS bibliography |
+| Physics / HEP / astro | `InspireHEP_search_papers` | 1.6M+ particle/astro records |
+| Broad / hard-to-find / OA | `Crossref_search_works`, `CORE_search_papers`, `DOAJ_search_articles`, `Fatcat_search_scholar` | DOI registry + OA aggregators + Internet Archive Scholar |
+| Regional / EU-funded | `OpenAIRE_search_publications`, `HAL_search_archive` | EU open science + French national archive |
+| Datasets / software / outputs | `Figshare_search_articles`, `Zenodo_search_records` | Citable DOIs for data & code |
+| Preprints (latest) | `EuropePMC_search_articles(source='PPR')`, `OSF_search_preprints`, `BioRxiv_get_preprint`/`MedRxiv_get_preprint` (DOI lookup) | bioRxiv/medRxiv/PsyArXiv etc. |
+
+**Multi-source**: `advanced_literature_search_agent` (12+ DBs; needs Azure key -- fallback: query the core set individually).
 **Citation impact**: `iCite_search_publications` (RCR/APT), `iCite_get_publications` (by PMID), `scite_get_tallies` (support/contradict). PubMed-only; for CS use SemanticScholar.
+
+A domain-specific index returning 0 (e.g. ArXiv on a pure-clinical topic) is normal — only worry if the whole core set is empty.
 
 ### 2.3-2.4 Full-Text & PubMed Zero-Result Fallback
 
