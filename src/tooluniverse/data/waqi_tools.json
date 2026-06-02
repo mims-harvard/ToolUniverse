@@ -154,6 +154,15 @@
     },
     "optional_api_keys": [
       "WAQI_API_KEY"
-    ]
+    ],
+    "api_key_info": {
+      "WAQI_API_KEY": {
+        "domain": "Other",
+        "type": "secret",
+        "register_url": "https://aqicn.org/data-platform/token/",
+        "purpose": "Fetch real per-city air quality data from the World Air Quality Index API.",
+        "without": "Falls back to the public 'demo' token, which returns a fixed sample station (Shanghai) for every city. The key is free."
+      }
+    }
   }
 ]
