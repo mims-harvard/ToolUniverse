@@ -1669,8 +1669,6 @@ from .OrthoDB_get_orthologs import OrthoDB_get_orthologs
 from .OrthoDB_search_groups import OrthoDB_search_groups
 from .OutputSummarizationComposer import OutputSummarizationComposer
 from .OverallSummaryAgent import OverallSummaryAgent
-from .OxO_get_ontology_mappings import OxO_get_ontology_mappings
-from .OxO_search_ontology_mappings import OxO_search_ontology_mappings
 from .PANTHER_enrichment import PANTHER_enrichment
 from .PANTHER_gene_info import PANTHER_gene_info
 from .PANTHER_ortholog import PANTHER_ortholog
@@ -4055,8 +4053,6 @@ __all__ = [
     "OrthoDB_search_groups",
     "OutputSummarizationComposer",
     "OverallSummaryAgent",
-    "OxO_get_ontology_mappings",
-    "OxO_search_ontology_mappings",
     "PANTHER_enrichment",
     "PANTHER_gene_info",
     "PANTHER_ortholog",
