@@ -25,18 +25,22 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 MCPB_DIR = REPO_ROOT / "mcpb"
 MANIFEST = MCPB_DIR / "manifest.json"
 BUNDLE_PYPROJECT = MCPB_DIR / "pyproject.toml"
+ROOT_PYPROJECT = REPO_ROOT / "pyproject.toml"
 
 # Per the MCPB manifest schema enforced by Claude Code's plugin loader.
 VALID_SERVER_TYPES = {"python", "node", "binary"}
 
 
-def _bundle_version_from_pyproject() -> str:
+def _version_from_pyproject(path: Path) -> str:
     import re
 
-    text = BUNDLE_PYPROJECT.read_text()
-    m = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
-    assert m, "no version field in mcpb/pyproject.toml"
+    m = re.search(r'^version\s*=\s*"([^"]+)"', path.read_text(), re.MULTILINE)
+    assert m, f"no version field in {path}"
     return m.group(1)
+
+
+def _bundle_version_from_pyproject() -> str:
+    return _version_from_pyproject(BUNDLE_PYPROJECT)
 
 
 # ── Bug #1: manifest schema ──────────────────────────────────────────────────
@@ -69,6 +73,22 @@ def test_mcpb_manifest_version_matches_pyproject():
     assert manifest["version"] == _bundle_version_from_pyproject(), (
         "mcpb/manifest.json and mcpb/pyproject.toml versions drifted; "
         "bump both together when shipping a new bundle"
+    )
+
+
+def test_mcpb_version_tracks_root_pyproject():
+    """The bundle version must track the package release version.
+
+    The release bump touches the root pyproject.toml; without this guard the
+    mcpb/ files silently lag behind (as happened after the 1.2.3 bump), and the
+    published bundle ships an older version string than the package it carries.
+    """
+    bundle_version = _bundle_version_from_pyproject()
+    root_version = _version_from_pyproject(ROOT_PYPROJECT)
+    assert bundle_version == root_version, (
+        f"mcpb bundle version {bundle_version!r} != root package version "
+        f"{root_version!r}; bump mcpb/manifest.json and mcpb/pyproject.toml "
+        f"whenever the root release version changes"
     )
 
 
