@@ -1,0 +1,162 @@
+name: Weekly Tool Health Check
+
+# Runs the full tool sweep (scripts/test_all_tools.py) against the live
+# external APIs once a week. This is a CANARY, not a gate: external APIs
+# drift (endpoints move, response schemas change, tokens expire) and that
+# breaks tools silently — this surfaces it so we can fix it proactively.
+#
+# It does NOT fail the workflow on tool failures; the value is the uploaded
+# report + the job summary. API-key-gated tools are expected to "fail" in
+# CI unless the corresponding repo secret is provided (see `env:` below).
+
+on:
+  schedule:
+    # 06:00 UTC every Monday
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: "Optional category pattern to scope the run (e.g. 'uniprot'). Empty = all tools."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weekly-tool-healthcheck
+  cancel-in-progress: false
+
+jobs:
+  health-check:
+    name: Tool sweep (live APIs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 350 # under the 6h hard limit; full sweep is network-bound
+
+    # Optional API keys. Tools that need a key will be skipped/failed unless
+    # the matching repo secret exists. Add more here as needed — an unset
+    # secret resolves to an empty string and is handled gracefully.
+    env:
+      NCBI_API_KEY: ${{ secrets.NCBI_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      WAQI_API_KEY: ${{ secrets.WAQI_API_KEY }}
+      ONCOKB_API_KEY: ${{ secrets.ONCOKB_API_KEY }}
+      SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libffi-dev libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncurses5-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev libjpeg-dev libpng-dev libtiff-dev libwebp-dev libopenjp2-7-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libfontconfig1-dev libblas-dev liblapack-dev libatlas-base-dev gfortran libpoppler-cpp-dev libpoppler-dev libhdf5-dev libnetcdf-dev libgl1 libglib2.0-0 libsm6 libxext6 libxrender-dev libgomp1 libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 libgdk-pixbuf2.0-dev shared-mime-info graphviz libgraphviz-dev
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install project
+        run: uv pip install -e .[dev] --system
+
+      - name: Generate SDK
+        run: python scripts/build_tools.py
+
+      - name: Run tool sweep (live APIs, does not fail the job)
+        id: sweep
+        continue-on-error: true
+        run: |
+          PATTERN_ARG=""
+          if [ -n "${{ github.event.inputs.pattern }}" ]; then
+            PATTERN_ARG="--pattern ${{ github.event.inputs.pattern }}"
+          fi
+          # Tee stdout to a log. test_all_tools.py only writes the .md report
+          # at the very end, so if the job is killed mid-run (timeout, runner
+          # eviction) no report exists — but the live progress log still shows
+          # every category's pass/fail and is used as a fallback below.
+          set -o pipefail
+          python scripts/test_all_tools.py \
+            --skip-remote --skip-mcp --parallel \
+            --output TOOL_TEST_REPORT.md $PATTERN_ARG 2>&1 | tee sweep_output.log
+
+      - name: Build job summary
+        if: always()
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import re, pathlib
+
+          report = pathlib.Path("TOOL_TEST_REPORT.md")
+          log = pathlib.Path("sweep_output.log")
+          print("# Weekly Tool Health Check\n")
+
+          if not report.exists():
+              # The sweep did not finish (no .md report). Fall back to the live
+              # progress log so the run still reports something useful.
+              print(
+                  "Sweep did not complete — no final report (likely hit the job "
+                  "time limit or the runner was evicted). Falling back to the "
+                  "progress log.\n"
+              )
+              if not log.exists():
+                  print("No progress log either; check the run logs.")
+                  raise SystemExit(0)
+              logtext = log.read_text(errors="replace")
+              done = len(re.findall(r"\]\s+Testing\b", logtext))
+              ok = len(re.findall(r"✅\s+\d+\s+tests passed", logtext))
+              bad = sorted(set(re.findall(r"Testing (\S+)\.\.\..*?(?:❌|🔥)", logtext)))
+              print(f"- Categories started: **{done}**")
+              print(f"- Categories fully passed: **{ok}**")
+              if bad:
+                  print(f"\n## Categories with failures so far ({len(bad)})\n")
+                  print(", ".join(f"`{c}`" for c in bad))
+              raise SystemExit(0)
+
+          text = report.read_text(errors="replace")
+
+          # Headline numbers. Total is an executive-summary bullet; Passed/Failed
+          # are emoji-prefixed rows in the Overall Statistics table (the first
+          # such row is the overall one, before the per-category tables).
+          def grab_bullet(label):
+              m = re.search(rf"\*\*{re.escape(label)}\*\*:\s*([\d,]+)", text)
+              return m.group(1).replace(",", "") if m else "?"
+
+          def grab_table(label):
+              m = re.search(rf"\|[^|\n]*{re.escape(label)}[^|\n]*\|\s*([\d,]+)", text)
+              return m.group(1).replace(",", "") if m else "?"
+
+          total = grab_bullet("Total Test Examples")
+          passed = grab_table("Passed")
+          failed = grab_table("Failed")
+          print(f"- Total tests: **{total}**")
+          print(f"- Passed: **{passed}**")
+          print(f"- Failed: **{failed}**\n")
+
+          # List failing categories (### ❌ / 🔥 <name>, single trailing token).
+          fail_re = re.compile(r"^###\s+(❌|\U0001f525)\s+(\S+)\s*$", re.MULTILINE)
+          cats = sorted({m.group(2) for m in fail_re.finditer(text)})
+          if cats:
+              print(f"## Failing categories ({len(cats)})\n")
+              print(", ".join(f"`{c}`" for c in cats))
+              print(
+                  "\n> Note: API-key-gated and known-broken-upstream categories are "
+                  "expected here. Investigate new entries vs the previous week — a "
+                  "newly-failing category usually means an upstream API changed."
+              )
+          else:
+              print("All categories passed. ✅")
+          PY
+
+      - name: Upload report and log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tool-test-report
+          path: |
+            TOOL_TEST_REPORT.md
+            sweep_output.log
+          if-no-files-found: warn
+          retention-days: 90
