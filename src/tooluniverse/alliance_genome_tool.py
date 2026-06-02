@@ -252,13 +252,13 @@ class AllianceGenomeTool(BaseTool):
         limit = int(arguments.get("limit", 10))
         # When filtering by species, fetch more candidates so client-side filtering
         # still returns enough results (Alliance has no server-side species filter).
+        # The autocomplete endpoint no longer honours a `category=gene` query
+        # param (it returns zero results) and mixes gene/disease/dataset hits,
+        # so fetch a buffer unfiltered and keep gene hits client-side. The gene
+        # id is now in `curie` (was `primaryKey`).
         _SPECIES_FETCH_MULTIPLIER = 5
-        fetch_limit = (
-            min(limit * _SPECIES_FETCH_MULTIPLIER, 100)
-            if species_prefix
-            else min(limit, 50)
-        )
-        params = {"q": query, "category": "gene", "limit": fetch_limit}
+        fetch_limit = min(max(limit * _SPECIES_FETCH_MULTIPLIER, 25), 100)
+        params = {"q": query, "limit": fetch_limit}
 
         response = requests.get(
             f"{ALLIANCE_BASE}/search_autocomplete",
@@ -269,17 +269,20 @@ class AllianceGenomeTool(BaseTool):
         response.raise_for_status()
         results = response.json().get("results", [])
 
+        # Keep only gene hits (autocomplete also returns diseases, datasets, …).
+        results = [r for r in results if r.get("category") == "gene_search_result"]
+
         if species_prefix:
             results = [
-                r for r in results if r.get("primaryKey", "").startswith(species_prefix)
+                r for r in results if str(r.get("curie", "")).startswith(species_prefix)
             ]
 
         genes = [
             {
                 "symbol": r.get("symbol"),
                 "name": r.get("name"),
-                "gene_id": r.get("primaryKey"),
-                "category": r.get("category"),
+                "gene_id": r.get("curie"),
+                "category": "gene",
             }
             for r in results[:limit]
         ]
@@ -326,9 +329,17 @@ class AllianceGenomeTool(BaseTool):
         phenotypes = []
         for r in results:
             subject = r.get("subject", {})
+            # subject.geneSymbol is now a {formatText, displayText} object, not
+            # a plain `symbol` string — unwrap it (was returning null).
+            gene_symbol_obj = subject.get("geneSymbol")
+            gene_symbol = (
+                gene_symbol_obj.get("displayText") or gene_symbol_obj.get("formatText")
+                if isinstance(gene_symbol_obj, dict)
+                else subject.get("symbol")
+            )
             phenotypes.append(
                 {
-                    "gene_symbol": subject.get("symbol"),
+                    "gene_symbol": gene_symbol,
                     "gene_id": subject.get("primaryExternalId"),
                     "phenotype_statement": r.get("phenotypeStatement"),
                 }

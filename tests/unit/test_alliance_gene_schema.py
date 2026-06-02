@@ -72,3 +72,82 @@ def test_get_gene_detail_parses_nested_schema():
     assert "LFS1" in data["synonyms"]
     assert data["genomic_location"]["start"] == 7661779
     assert data["cross_references"][0]["name"] == "RGD"
+
+
+def _make_search_tool():
+    return AllianceGenomeTool(
+        {
+            "name": "Alliance_search_genes",
+            "type": "AllianceGenomeTool",
+            "fields": {"endpoint_type": "search_genes"},
+            "parameter": {"type": "object", "properties": {}},
+        }
+    )
+
+
+@pytest.mark.unit
+def test_search_genes_filters_category_and_uses_curie():
+    """Feature-008: autocomplete no longer honours category=gene and ids moved
+    to `curie`; keep gene hits client-side and read the curie."""
+    tool = _make_search_tool()
+    resp = MagicMock()
+    resp.status_code = 200
+    resp.raise_for_status.return_value = None
+    resp.json.return_value = {
+        "results": [
+            {"symbol": "TP53", "name": "TP53", "curie": "HGNC:11998",
+             "category": "gene_search_result"},
+            {"symbol": "should-drop", "curie": "DOID:1", "name": "x",
+             "category": "disease_search_result"},
+            {"symbol": "tp53", "name": "tp53", "curie": "ZFIN:ZDB-GENE-1",
+             "category": "gene_search_result"},
+        ]
+    }
+    with patch(
+        "tooluniverse.alliance_genome_tool.requests.get", return_value=resp
+    ) as mock_get:
+        result = tool.run({"query": "TP53"})
+
+    # category=gene must NOT be sent (it now returns zero results upstream)
+    assert "category" not in mock_get.call_args.kwargs.get("params", {})
+    data = result["data"]
+    assert len(data) == 2  # disease hit filtered out
+    assert data[0]["symbol"] == "TP53"
+    assert data[0]["gene_id"] == "HGNC:11998"
+
+
+@pytest.mark.unit
+def test_gene_phenotypes_unwraps_gene_symbol():
+    """Feature-008: phenotype subject.geneSymbol is now a {displayText} object."""
+    tool = AllianceGenomeTool(
+        {
+            "name": "Alliance_get_gene_phenotypes",
+            "type": "AllianceGenomeTool",
+            "fields": {"endpoint_type": "gene_phenotypes"},
+            "parameter": {"type": "object", "properties": {}},
+        }
+    )
+    resp = MagicMock()
+    resp.status_code = 200
+    resp.raise_for_status.return_value = None
+    resp.json.return_value = {
+        "total": 1,
+        "results": [
+            {
+                "phenotypeStatement": "Abnormal bleeding",
+                "subject": {
+                    "primaryExternalId": "HGNC:11998",
+                    "geneSymbol": {"formatText": "TP53", "displayText": "TP53"},
+                },
+            }
+        ],
+    }
+    with patch(
+        "tooluniverse.alliance_genome_tool.requests.get", return_value=resp
+    ):
+        result = tool.run({"gene_id": "HGNC:11998"})
+
+    pheno = result["data"][0]
+    assert pheno["gene_symbol"] == "TP53"
+    assert pheno["gene_id"] == "HGNC:11998"
+    assert pheno["phenotype_statement"] == "Abnormal bleeding"
