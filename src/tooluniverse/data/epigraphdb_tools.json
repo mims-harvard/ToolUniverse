@@ -146,17 +146,17 @@
   },
   {
     "name": "EpiGraphDB_get_genetic_correlations",
-    "description": "Get genetic correlations (rg) between a GWAS trait and all other traits in the IEU OpenGWAS database. Returns traits with significant genetic overlap. Useful for understanding shared genetic architecture between diseases. Example: 'Body mass index' shows high genetic correlation with waist circumference, diabetes.",
+    "description": "Get strong genetic correlations (|rg| > 0.8) between a GWAS trait and other traits in the IEU OpenGWAS database, indicating shared genetic architecture. NOTE: the genetic-correlation graph is sparse and matches exact, case-sensitive trait labels, so many common traits (e.g. 'Body mass index') return no rows even though they exist in OpenGWAS — an empty result means 'no strong-rg edge in the graph', not 'no shared genetics'. Genetic correlation is NOT causal evidence; use EpiGraphDB_get_mendelian_randomization for causality. Example traits with data: 'Waist circumference', 'Hip circumference', 'Body fat percentage'.",
     "parameter": {
       "type": "object",
       "properties": {
         "trait": {
           "type": "string",
-          "description": "GWAS trait name to find genetic correlations for (e.g., 'Body mass index', 'Depression', 'Type 2 diabetes')."
+          "description": "Exact, case-sensitive GWAS trait label (e.g., 'Waist circumference', 'Hip circumference'). Many labels have no node in the sparse genetic-correlation graph and return empty."
         },
         "pval_threshold": {
           "type": "number",
-          "description": "P-value threshold for genetic correlations (default 0.05).",
+          "description": "Accepted for compatibility but NOT applied — the endpoint always returns the fixed |rg| > 0.8 set.",
           "default": 0.05
         }
       },
@@ -170,12 +170,10 @@
     "type": "EpiGraphDBTool",
     "test_examples": [
       {
-        "trait": "Body mass index",
-        "pval_threshold": 0.01
+        "trait": "Waist circumference"
       },
       {
-        "trait": "Depression",
-        "pval_threshold": 0.05
+        "trait": "Hip circumference"
       }
     ],
     "return_schema": {
@@ -785,6 +783,12 @@
                   "similarity_score": {
                     "type": [
                       "number",
+                      "null"
+                    ]
+                  },
+                  "meta_node": {
+                    "type": [
+                      "string",
                       "null"
                     ]
                   }
