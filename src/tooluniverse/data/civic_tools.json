@@ -58,7 +58,10 @@
                         "description": "Gene symbol/name"
                       },
                       "description": {
-                        "type": "string",
+                        "type": [
+                          "string",
+                          "null"
+                        ],
                         "description": "Gene description"
                       },
                       "entrezId": {
@@ -336,7 +339,9 @@
         "limit": 5
       }
     ],
-    "aliases": ["CIViC_search_variants"]
+    "aliases": [
+      "CIViC_search_variants"
+    ]
   },
   {
     "name": "civic_get_evidence_item",
