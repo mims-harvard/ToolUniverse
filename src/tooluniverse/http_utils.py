@@ -37,6 +37,7 @@ def request_with_retry(
     retry_statuses: RetryStatuses = (408, 429, 500, 502, 503, 504),
     max_attempts: int = 3,
     backoff_seconds: float = 0.5,
+    max_retry_after_seconds: float = 30.0,
 ) -> requests.Response:
     """
     Make an HTTP request with small exponential backoff on transient failures.
@@ -45,8 +46,12 @@ def request_with_retry(
     - Timeouts and connection errors
     - HTTP status codes listed in *retry_statuses*
 
+    A ``Retry-After`` response header is honoured but capped at
+    *max_retry_after_seconds* — that wait happens outside the per-request
+    timeout, so an oversized value must not be allowed to hang the caller.
+
     Does NOT call ``raise_for_status()``; callers decide how to handle non-2xx.
-    Defaults: 3 attempts, 0.5 s initial backoff.
+    Defaults: 3 attempts, 0.5 s initial backoff, Retry-After capped at 30 s.
     """
     m = (method or "GET").upper()
     attempts = max(1, int(max_attempts))
@@ -72,6 +77,13 @@ def request_with_retry(
                         sleep_s = max(0.0, float(retry_after_header))
                     except (TypeError, ValueError):
                         sleep_s = backoff_seconds * (2**attempt)
+                    # Cap the honoured Retry-After: this sleep happens outside
+                    # the per-request timeout, so an oversized value (e.g. a
+                    # server returning "Retry-After: 3600") would otherwise make
+                    # the tool block far past its own timeout. If the server
+                    # wants a long wait it isn't a "transient" retry — fail fast
+                    # and let the caller retry later.
+                    sleep_s = min(sleep_s, max_retry_after_seconds)
                     sleep_s += random.uniform(0.0, backoff_seconds * 0.25)
                     time.sleep(sleep_s)
                 else:
