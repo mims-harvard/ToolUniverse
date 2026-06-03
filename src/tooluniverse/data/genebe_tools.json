@@ -1,0 +1,74 @@
+[
+  {
+    "type": "GeneBeTool",
+    "name": "GeneBe_classify_variant",
+    "description": "Classify a germline variant under the ACMG/AMP guidelines using GeneBe (genebe.net). Given chromosome, position, ref and alt alleles on genome build hg38 (default) or hg19, returns the ACMG verdict (e.g. Pathogenic), the numeric ACMG score, and the exact triggered criteria (e.g. PS3,PM1,PM2,PM5,PP2,PP3_Moderate,PP5), plus gene symbol, transcript, HGVS c./p., predicted effect, dbSNP id, gnomAD allele frequency, ClinVar classification, and an AlphaMissense score. This is an independent second opinion complementary to InterVar_classify_variant (a different group's ACMG implementation) — cross-check both for borderline variants. Public API, no key required (a free account raises the rate limit).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chr": {
+          "type": "string",
+          "description": "Chromosome, e.g. '7', 'X' (a 'chr' prefix is also accepted)."
+        },
+        "pos": {
+          "type": "integer",
+          "description": "1-based genomic position of the variant, e.g. 140753336."
+        },
+        "ref": {
+          "type": "string",
+          "description": "Reference allele, e.g. 'A'."
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternate allele, e.g. 'T'."
+        },
+        "genome": {
+          "type": "string",
+          "description": "Genome build: 'hg38' (default) / 'GRCh38' or 'hg19' / 'GRCh37'.",
+          "default": "hg38"
+        }
+      },
+      "required": ["chr", "pos", "ref", "alt"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {"type": "string"},
+                "gene_symbol": {"type": "string"},
+                "transcript": {"type": "string"},
+                "hgvs_c": {"type": "string"},
+                "hgvs_p": {"type": "string"},
+                "acmg_classification": {"type": "string"},
+                "acmg_score": {"type": "number"},
+                "acmg_criteria": {"type": "string"},
+                "clinvar_classification": {"type": "string"},
+                "alphamissense_score": {"type": "number"},
+                "dbsnp": {"type": "string"},
+                "gnomad_exomes_af": {"type": "number"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"chr": "7", "pos": 140753336, "ref": "A", "alt": "T", "genome": "hg38"}
+    ]
+  }
+]

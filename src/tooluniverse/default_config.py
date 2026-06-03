@@ -284,6 +284,8 @@ default_tool_files = {
     "ensembl": os.path.join(current_dir, "data", "ensembl_tools.json"),
     "clinvar": os.path.join(current_dir, "data", "clinvar_tools.json"),
     "intervar": os.path.join(current_dir, "data", "intervar_tools.json"),
+    # GeneBe - independent ACMG/AMP auto-classifier (+ AlphaMissense, gnomAD)
+    "genebe": os.path.join(current_dir, "data", "genebe_tools.json"),
     "cancervar": os.path.join(current_dir, "data", "cancervar_tools.json"),
     "geo": os.path.join(current_dir, "data", "geo_tools.json"),
     "dbsnp": os.path.join(current_dir, "data", "dbsnp_tools.json"),
