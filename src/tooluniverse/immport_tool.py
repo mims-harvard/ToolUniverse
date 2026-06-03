@@ -61,6 +61,12 @@ class ImmPortTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
+        # ImmPort's search API parses Lucene-style operators, so an embedded
+        # hyphen ("PD-1", "COVID-19", "CTLA-4") is read as a NOT operator and
+        # rejected with HTTP 400. Treat the input as plain keywords by turning
+        # hyphens into spaces (e.g. "PD-1" -> "PD 1").
+        query = query.replace("-", " ")
+
         condition = arguments.get("condition_or_disease")
         assay = arguments.get("assay_method")
         focus = arguments.get("research_focus")

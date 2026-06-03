@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["predict_stability"],
+          "enum": [
+            "predict_stability"
+          ],
           "description": "Operation type"
         },
         "pdb_id": {
@@ -24,21 +26,56 @@
           "description": "Single-point mutation in the format WtPosNew where Wt is the wild-type amino acid (1-letter code), Pos is the residue number, and New is the mutant amino acid (1-letter code). Examples: 'V1A' (Val1Ala), 'E346K' (Glu346Lys), 'G12D' (Gly12Asp)."
         }
       },
-      "required": ["operation", "pdb_id", "chain", "mutation"]
+      "required": [
+        "operation",
+        "pdb_id",
+        "chain",
+        "mutation"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "pdb_id": {"type": "string", "description": "PDB accession code used"},
-        "chain": {"type": "string", "description": "Chain identifier"},
-        "mutation": {"type": "string", "description": "Mutation in WtPosNew format"},
-        "wild_type": {"type": "string", "description": "Wild-type residue (3-letter code)"},
-        "mutant": {"type": "string", "description": "Mutant residue (3-letter code)"},
-        "position": {"type": "string", "description": "Residue position number"},
-        "ddg_prediction": {"type": "number", "description": "Predicted change in Gibbs free energy (ddG, kcal/mol). Positive = stabilizing, negative = destabilizing."},
-        "effect": {"type": "string", "description": "Predicted effect: 'stabilizing' or 'destabilizing'"},
-        "job_id": {"type": "string", "description": "DynaMut2 job identifier for retrieving results later"},
-        "results_page": {"type": "string", "description": "URL to the full DynaMut2 results page with visualizations"}
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB accession code used"
+        },
+        "chain": {
+          "type": "string",
+          "description": "Chain identifier"
+        },
+        "mutation": {
+          "type": "string",
+          "description": "Mutation in WtPosNew format"
+        },
+        "wild_type": {
+          "type": "string",
+          "description": "Wild-type residue (3-letter code)"
+        },
+        "mutant": {
+          "type": "string",
+          "description": "Mutant residue (3-letter code)"
+        },
+        "position": {
+          "type": "string",
+          "description": "Residue position number"
+        },
+        "ddg_prediction": {
+          "type": "number",
+          "description": "Predicted change in Gibbs free energy (ddG, kcal/mol). Positive = stabilizing, negative = destabilizing."
+        },
+        "effect": {
+          "type": "string",
+          "description": "Predicted effect: 'stabilizing' or 'destabilizing'"
+        },
+        "job_id": {
+          "type": "string",
+          "description": "DynaMut2 job identifier for retrieving results later"
+        },
+        "results_page": {
+          "type": "string",
+          "description": "URL to the full DynaMut2 results page with visualizations"
+        }
       }
     },
     "test_examples": [
@@ -53,13 +90,15 @@
   {
     "name": "DynaMut2_get_job",
     "type": "DynaMut2Tool",
-    "description": "Retrieve results for a previously submitted DynaMut2 stability prediction job. If the job is still running, returns the current status. If complete, returns the full prediction result including ddG value and effect classification. Use this to check on long-running predictions or to retrieve results you submitted earlier.",
+    "description": "Retrieve results for a previously submitted DynaMut2 stability prediction job. If the job is still running, returns the current status. If complete, returns the full prediction result including ddG value and effect classification. Use this to check on long-running predictions or to retrieve results you submitted earlier. Note: DynaMut2 jobs are ephemeral and expire, so this tool has no static test example — submit a job with DynaMut2_predict_stability first to get a live job_id.",
     "parameter": {
       "type": "object",
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_job"],
+          "enum": [
+            "get_job"
+          ],
           "description": "Operation type"
         },
         "job_id": {
@@ -67,35 +106,78 @@
           "description": "DynaMut2 job identifier returned from a previous predict_stability call."
         },
         "endpoint": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "default": "prediction_single",
           "description": "API endpoint for the job type. Default: 'prediction_single'. Other options: 'prediction_list', 'prediction_mm'."
         }
       },
-      "required": ["operation", "job_id"]
+      "required": [
+        "operation",
+        "job_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "pdb_id": {"type": "string", "description": "PDB accession code (empty for get_job since it may not be stored)"},
-        "chain": {"type": "string", "description": "Chain identifier"},
-        "mutation": {"type": "string", "description": "Mutation in WtPosNew format"},
-        "wild_type": {"type": "string", "description": "Wild-type residue (3-letter code)"},
-        "mutant": {"type": "string", "description": "Mutant residue (3-letter code)"},
-        "position": {"type": "string", "description": "Residue position number"},
-        "ddg_prediction": {"type": "number", "description": "Predicted ddG (kcal/mol). Positive = stabilizing, negative = destabilizing."},
-        "effect": {"type": "string", "description": "Predicted effect: 'stabilizing' or 'destabilizing'"},
-        "job_id": {"type": "string", "description": "DynaMut2 job identifier"},
-        "results_page": {"type": "string", "description": "URL to DynaMut2 results page"},
-        "job_status": {"type": ["string", "null"], "description": "Job status if still running (e.g., 'RUNNING')"},
-        "message": {"type": ["string", "null"], "description": "Status message if job is still running"}
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB accession code (empty for get_job since it may not be stored)"
+        },
+        "chain": {
+          "type": "string",
+          "description": "Chain identifier"
+        },
+        "mutation": {
+          "type": "string",
+          "description": "Mutation in WtPosNew format"
+        },
+        "wild_type": {
+          "type": "string",
+          "description": "Wild-type residue (3-letter code)"
+        },
+        "mutant": {
+          "type": "string",
+          "description": "Mutant residue (3-letter code)"
+        },
+        "position": {
+          "type": "string",
+          "description": "Residue position number"
+        },
+        "ddg_prediction": {
+          "type": "number",
+          "description": "Predicted ddG (kcal/mol). Positive = stabilizing, negative = destabilizing."
+        },
+        "effect": {
+          "type": "string",
+          "description": "Predicted effect: 'stabilizing' or 'destabilizing'"
+        },
+        "job_id": {
+          "type": "string",
+          "description": "DynaMut2 job identifier"
+        },
+        "results_page": {
+          "type": "string",
+          "description": "URL to DynaMut2 results page"
+        },
+        "job_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Job status if still running (e.g., 'RUNNING')"
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Status message if job is still running"
+        }
       }
     },
-    "test_examples": [
-      {
-        "operation": "get_job",
-        "job_id": "177213420956"
-      }
-    ]
+    "test_examples": []
   }
 ]
