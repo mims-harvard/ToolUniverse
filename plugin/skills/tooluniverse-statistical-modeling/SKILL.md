@@ -54,6 +54,8 @@ python skills/tooluniverse-statistical-modeling/scripts/spline_model_compare.py 
   --ns-df 4 --workdir /tmp/spline_cmp
 ```
 
+**Report the peak location (`x*`) in the units of the fitted x-variable, not a derived label.** When the model is fit on a frequency/proportion column (e.g. `Frequency_strain`, a 0–1 value), the answer to "at what ratio/frequency is the maximum" is that fraction (e.g. `0.909`), NOT the colon-ratio it was derived from (e.g. `10:1`). Convert a colon ratio `a:b` to the fraction `a/(a+b)` when the question expects a 0–1 value or the fitted x-column is a fraction.
+
 Ordinal logistic regression with interaction term (e.g. trial AE severity):
 
 ```bash
