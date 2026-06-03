@@ -19,6 +19,7 @@ STATIC_LAZY_REGISTRY = {
     "AllianceGenomeTool": "alliance_genome_tool",
     "AlphaFoldRESTTool": "alphafold_tool",
     "AlphaMissenseTool": "alphamissense_tool",
+    "AntibodyRegistryTool": "antibody_registry_tool",
     "ArXivPDFSnippetsTool": "arxiv_tool",
     "ArXivTool": "arxiv_tool",
     "ArrayExpressRESTTool": "arrayexpress_tool",

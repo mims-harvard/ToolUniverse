@@ -1,0 +1,121 @@
+[
+  {
+    "type": "AntibodyRegistryTool",
+    "name": "AntibodyRegistry_search",
+    "description": "Search the Antibody Registry (antibodyregistry.org, a SciCrunch/RRID resource of 3M+ research antibodies) by target, name, or vendor keyword. Returns matching antibodies each with its persistent RRID (e.g. AB_2298772), target (and target UniProt/Entrez id), clonality, clone id, host/source organism, conjugate, applications, vendor, catalog number, and defining citation. Use it to find a validated antibody for a protein target or to obtain the RRID a journal requires for reproducibility. For resolving a known RRID, use AntibodyRegistry_get_by_rrid instead.",
+    "fields": {"operation": "search"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Full-text search term: a target (e.g. 'GFAP', 'CD3'), antibody name, vendor, or catalog number."
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return (1-100, default 10).",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        },
+        "page": {
+          "type": "integer",
+          "description": "Result page, starting at 1 (default 1).",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rrid": {"type": "string"},
+                  "ab_id": {"type": "integer"},
+                  "abName": {"type": "string"},
+                  "abTarget": {"type": "string"},
+                  "clonality": {"type": "string"},
+                  "vendorName": {"type": "string"},
+                  "catalogNum": {"type": "string"},
+                  "definingCitation": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "GFAP", "size": 3}
+    ]
+  },
+  {
+    "type": "AntibodyRegistryTool",
+    "name": "AntibodyRegistry_get_by_rrid",
+    "description": "Resolve a research-antibody RRID (e.g. 'AB_2298772', 'RRID:AB_2298772', or the bare numeric id) to its full Antibody Registry record: name, target (with UniProt/Entrez ids), clonality, clone id, host/source organism, conjugate, isotype, applications, vendor, catalog number, and defining citation. Use it to verify or expand an antibody cited by RRID in a methods section. To discover antibodies for a target, use AntibodyRegistry_search.",
+    "fields": {"operation": "get_by_rrid"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rrid": {
+          "type": "string",
+          "description": "Antibody RRID, e.g. 'AB_2298772', 'RRID:AB_2298772', or a bare numeric id like '2298772'."
+        }
+      },
+      "required": ["rrid"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "rrid": {"type": "string"},
+                "ab_id": {"type": "integer"},
+                "abName": {"type": "string"},
+                "abTarget": {"type": "string"},
+                "clonality": {"type": "string"},
+                "vendorName": {"type": "string"},
+                "catalogNum": {"type": "string"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"rrid": "AB_10000343"}
+    ]
+  }
+]
