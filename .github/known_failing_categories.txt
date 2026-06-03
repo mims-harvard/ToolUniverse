@@ -19,7 +19,6 @@ glygen
 gprofiler
 nci_thesaurus
 ols
-tool                 # not a real category — matches every *_tools.json (sweep artifact)
 
 # --- upstream down / erroring at sweep time (sites flaky or in maintenance) ---
 flymine

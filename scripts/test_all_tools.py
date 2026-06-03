@@ -63,12 +63,15 @@ def extract_tool_patterns(config_files: List[Path]) -> Dict[str, List[Path]]:
         # Get base name without extension
         base_name = config_file.stem
         
-        # Extract pattern (typically prefix before _tools or first underscore)
+        # Extract pattern (typically the prefix before _tools).
         if '_tools' in base_name:
             pattern = base_name.replace('_tools', '')
-        elif '_' in base_name:
-            pattern = base_name.split('_')[0]
         else:
+            # Use the full stem for non-_tools files. Splitting on the first
+            # underscore produced over-broad patterns: e.g. tool_page_index.json
+            # and tool_discovery_agents.json both yielded "tool", and downstream
+            # test_new_tools.py globs *tool* — which matches every *_tools.json
+            # (500+ files) and times that "category" out on every run.
             pattern = base_name
         
         patterns[pattern].append(config_file)
