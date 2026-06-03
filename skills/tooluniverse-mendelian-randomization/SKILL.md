@@ -37,7 +37,8 @@ This skill wraps the **IEU OpenGWAS / EpiGraphDB MR-EvE** ("MR Everything-vs-Eve
 | Tool | Purpose |
 |---|---|
 | `EpiGraphDB_search_opengwas` | Resolve a free-text trait to exact OpenGWAS study IDs + labels (DO THIS FIRST) |
-| `EpiGraphDB_get_mendelian_randomization` | Pre-computed MR estimate(s) for an exposure→outcome trait pair |
+| `EpiGraphDB_get_mendelian_randomization` | Pre-computed MR estimate(s) for an exposure→outcome trait pair (curated pairs; start here) |
+| `OpenGWAS_get_mr_instruments` | Custom two-sample MR: fetch the exposure's clumped instruments + their harmonized outcome effects for *any* GWAS pair (needs a free `OPENGWAS_JWT`). Use when the pair isn't in MR-EvE |
 | `EpiGraphDB_get_genetic_correlations` | `rg` between a trait and others (shared etiology, NOT causation). **Sparse** — see Step 4 caveat |
 | `EpiGraphDB_get_drugs_for_trait` | Drugs targeting genes associated with a risk-factor trait (causal-target follow-up) |
 | `gwas_search_associations` | GWAS Catalog associations, to inspect the instruments behind a trait |
@@ -102,7 +103,8 @@ Direction, magnitude, instrument quality, and method agreement.
 
 ## Limitations (state these honestly)
 
-- **Pre-computed pairs only.** EpiGraphDB MR-EvE provides curated trait-pair results. For a bespoke analysis (your own instrument set, novel exposure, MR-PRESSO/Steiger filtering, leave-one-out), use the `TwoSampleMR` R package against OpenGWAS directly — this skill does not run that.
+- **Two MR paths, different scopes.** `EpiGraphDB_get_mendelian_randomization` returns *pre-computed* MR-EvE estimates for curated trait pairs — fast, but limited to pairs IEU already ran. For a pair that isn't covered, or for custom instruments (your own p-value/clumping thresholds), use `OpenGWAS_get_mr_instruments` (needs a free `OPENGWAS_JWT`) to assemble harmonized exposure+outcome SNP data, then compute the IVW/MR-Egger estimate yourself (e.g. IVW = Σ(βx·βy/σy²)/Σ(βx²/σy²)) or hand the `mr_input` to the `TwoSampleMR` R package. Advanced sensitivity analyses (MR-PRESSO, Steiger, leave-one-out) still need `TwoSampleMR`.
+- **Palindromic SNPs** (A/T, C/G) are not strand-resolved by `OpenGWAS_get_mr_instruments`; review or drop ambiguous ones before trusting the estimate.
 - **Horizontal pleiotropy** is the dominant threat and cannot be fully excluded from a single estimate. Method agreement reduces but does not eliminate it.
 - **Population.** Most OpenGWAS instruments are European-ancestry; effects and LD differ across ancestries. Report this.
 - **Winner's curse / weak instruments** bias toward the confounded observational estimate; lean on MOE and instrument F-statistics.

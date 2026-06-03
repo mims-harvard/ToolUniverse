@@ -733,6 +733,8 @@ default_tool_files = {
     # ClinicalTrials.gov - World's largest clinical trial registry (572,000+ trials)
     # EpiGraphDB - Mendelian Randomization, genetic correlations, drug repurposing via GWAS
     "epigraphdb": os.path.join(current_dir, "data", "epigraphdb_tools.json"),
+    # OpenGWAS (IEU) - custom two-sample MR instruments (tophits + harmonized outcome effects)
+    "opengwas": os.path.join(current_dir, "data", "opengwas_tools.json"),
     # Foldseek - Fast protein structure similarity search (AlphaFold DB, PDB)
     "foldseek": os.path.join(current_dir, "data", "foldseek_tools.json"),
     # MedGen - NCBI medical genetics (conditions, genes, HPO, OMIM aggregation)

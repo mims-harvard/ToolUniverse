@@ -176,6 +176,7 @@ STATIC_LAZY_REGISTRY = {
     "EnsemblXrefsTool": "ensembl_xrefs_tool",
     "EpiGraphDBTool": "epigraphdb_tool",
     "EpidemiologyTool": "epidemiology_tool",
+    "OpenGWASTool": "opengwas_tool",
     "EpigenomicsTool": "epigenomics_tool",
     "EuHealthDeepDiveTool": "euhealth.euhealth_tool",
     "EuHealthTopicSearchTool": "euhealth.euhealth_tool",

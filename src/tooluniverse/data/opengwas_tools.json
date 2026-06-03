@@ -1,0 +1,239 @@
+[
+  {
+    "name": "OpenGWAS_get_mr_instruments",
+    "description": "Assemble harmonized two-sample Mendelian randomization (MR) instruments from the IEU OpenGWAS database for an arbitrary exposure/outcome GWAS pair. Fetches the genome-wide significant, LD-clumped SNP instruments for the exposure (/tophits) and those SNPs' effects in the outcome GWAS (/associations), then aligns both onto a common effect allele so the result is ready to feed into an IVW or MR-Egger estimator. Use this when EpiGraphDB's pre-computed MR-EvE does not cover the trait pair, or when you need custom instruments (own p-value/clumping thresholds). Requires a free OpenGWAS JWT token. Pass OpenGWAS study IDs (e.g. 'ieu-a-2' for BMI, 'ieu-a-7' for coronary heart disease); use EpiGraphDB_search_opengwas to look IDs up by trait name.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "exposure_id": {
+          "type": "string",
+          "description": "IEU OpenGWAS study ID for the exposure (e.g. 'ieu-a-2'). Find IDs via EpiGraphDB_search_opengwas."
+        },
+        "outcome_id": {
+          "type": "string",
+          "description": "IEU OpenGWAS study ID for the outcome (e.g. 'ieu-a-7'). Optional — omit to return only the exposure instruments."
+        },
+        "pval": {
+          "type": "number",
+          "description": "Instrument p-value threshold for the exposure (default 5e-8, genome-wide significance).",
+          "default": 5e-8
+        },
+        "clump": {
+          "type": "integer",
+          "description": "1 to LD-clump instruments to independent SNPs (default), 0 to skip clumping.",
+          "default": 1
+        },
+        "r2": {
+          "type": "number",
+          "description": "LD r2 threshold for clumping (default 0.001).",
+          "default": 0.001
+        },
+        "kb": {
+          "type": "integer",
+          "description": "Clumping window in kb (default 10000).",
+          "default": 10000
+        },
+        "pop": {
+          "type": "string",
+          "description": "Reference population for LD clumping (default 'EUR').",
+          "default": "EUR"
+        }
+      },
+      "required": [
+        "exposure_id"
+      ]
+    },
+    "fields": {
+      "timeout": 60
+    },
+    "type": "OpenGWASTool",
+    "required_api_keys": [
+      "OPENGWAS_JWT"
+    ],
+    "api_key_info": {
+      "OPENGWAS_JWT": {
+        "domain": "Genetics & Variants",
+        "type": "secret",
+        "register_url": "https://api.opengwas.io",
+        "purpose": "Fetch GWAS instruments and variant associations from the IEU OpenGWAS database for custom Mendelian randomization.",
+        "without": "OpenGWAS tools are blocked without it. The token is free after registration."
+      }
+    },
+    "test_examples": [
+      {
+        "exposure_id": "ieu-a-2",
+        "outcome_id": "ieu-a-7"
+      },
+      {
+        "exposure_id": "ieu-a-300"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "instruments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rsid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ea": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "nea": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "eaf": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "beta": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "se": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "p": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "mr_input": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rsid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ea": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "exposure_beta": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "exposure_se": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "outcome_beta": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "outcome_se": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "harmonization": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "n_instruments": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "n_mr_input": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "label": [
+      "OpenGWAS",
+      "Mendelian Randomization",
+      "GWAS",
+      "Causal Inference"
+    ],
+    "metadata": {
+      "tags": [
+        "mendelian_randomization",
+        "two_sample_mr",
+        "instruments",
+        "gwas",
+        "causal_inference"
+      ],
+      "estimated_execution_time": "10-60 seconds (LD clumping is slow)"
+    }
+  }
+]

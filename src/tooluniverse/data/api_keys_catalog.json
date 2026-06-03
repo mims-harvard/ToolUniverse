@@ -305,6 +305,18 @@
     ]
   },
   {
+    "name": "OPENGWAS_JWT",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Genetics & Variants",
+    "register_url": "https://api.opengwas.io",
+    "purpose": "Fetch GWAS instruments and variant associations from the IEU OpenGWAS database for custom Mendelian randomization.",
+    "without": "OpenGWAS tools are blocked without it. The token is free after registration.",
+    "used_by": [
+      "opengwas_tools.json"
+    ]
+  },
+  {
     "name": "OPENROUTER_API_KEY",
     "requirement": "optional",
     "type": "secret",
