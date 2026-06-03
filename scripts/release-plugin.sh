@@ -61,8 +61,24 @@ for arg in "$@"; do
     esac
 done
 
-CURRENT=$(python3 -c "import json; print(json.load(open('plugin/.claude-plugin/plugin.json'))['version'])")
-echo "Current version: $CURRENT"
+# Baseline = the highest of the manifest version and any existing vX.Y.Z git tag.
+# The plugin manifest can drift BEHIND the released tag line (e.g. PyPI-driven
+# releases bump pyproject/tags but not plugin.json). Computing a patch/minor
+# bump from a stale manifest would produce a version that collides with an
+# existing tag and make `git tag` fail, breaking the auto-release chain. Taking
+# the max keeps relative bumps monotonic regardless of manifest drift.
+CURRENT=$(python3 -c "
+import json, re, subprocess
+def parse(v):
+    m = re.match(r'^(\d+)\.(\d+)\.(\d+)$', v)
+    return tuple(int(x) for x in m.groups()) if m else (0, 0, 0)
+versions = [json.load(open('plugin/.claude-plugin/plugin.json'))['version']]
+tags = subprocess.run(['git', 'tag', '--list', 'v*'],
+                      capture_output=True, text=True).stdout.split()
+versions += [t[1:] for t in tags if re.match(r'^v\d+\.\d+\.\d+$', t)]
+print(max(versions, key=parse))
+")
+echo "Current version: $CURRENT  (max of plugin.json and existing v* tags)"
 
 case "$LEVEL" in
     patch|minor|major)
@@ -94,6 +110,11 @@ if [ "$NEW" = "$CURRENT" ]; then
     exit 1
 fi
 
+if git rev-parse -q --verify "refs/tags/v$NEW" >/dev/null; then
+    echo "Error: tag v$NEW already exists. Choose a higher version." >&2
+    exit 1
+fi
+
 echo "New version:     $NEW"
 echo "Tag will be:     v$NEW"
 echo
@@ -109,10 +130,12 @@ fi
 
 if [ "$DRY_RUN" -eq 1 ]; then
     echo
-    echo "(--dry-run) Would change:"
-    echo "  plugin/.claude-plugin/plugin.json         version: $CURRENT → $NEW"
-    echo "  plugin/.claude-plugin/marketplace.json    metadata.version: $CURRENT → $NEW"
-    echo "  .claude-plugin/marketplace.json           metadata.version: $CURRENT → $NEW"
+    echo "(--dry-run) Would change (absent manifests are skipped):"
+    for f in plugin/.claude-plugin/plugin.json \
+             plugin/.claude-plugin/marketplace.json \
+             .claude-plugin/marketplace.json; do
+        [ -f "$f" ] && echo "  $f   $CURRENT → $NEW" || echo "  $f   (absent, skipped)"
+    done
     echo "  Then commit \"Release v$NEW\", tag v$NEW, push to origin/$BRANCH"
     exit 0
 fi
@@ -127,6 +150,10 @@ files = [
 ]
 for path, field in files:
     p = pathlib.Path(path)
+    if not p.exists():
+        # Not all manifests exist in every layout; skip rather than crash.
+        print(f"  skip (absent) {path}")
+        continue
     data = json.loads(p.read_text())
     if field == "version":
         data["version"] = new
@@ -137,9 +164,11 @@ for path, field in files:
 EOF
 
 echo
-git add plugin/.claude-plugin/plugin.json \
-        plugin/.claude-plugin/marketplace.json \
-        .claude-plugin/marketplace.json
+for f in plugin/.claude-plugin/plugin.json \
+         plugin/.claude-plugin/marketplace.json \
+         .claude-plugin/marketplace.json; do
+    [ -f "$f" ] && git add "$f"
+done
 git commit -m "Release v$NEW"
 git tag -a "v$NEW" -m "v$NEW"
 echo
