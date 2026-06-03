@@ -11,6 +11,30 @@ PUBCHEM_BASE_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
 # Base URL for PubChem PUG-View
 PUBCHEM_PUGVIEW_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug_view"
 
+# PubChem's /xrefs/{type} endpoint accepts only this fixed vocabulary.
+# Database-specific identifiers (ChEBI, KEGG, ChEMBL, InChIKey, ...) are NOT
+# xref types — they are embedded inside the 'RegistryID' values — so passing
+# them yields an opaque HTTP 400 "Invalid xrefs type". We validate up front.
+PUBCHEM_XREF_TYPES = frozenset(
+    {
+        "RegistryID",
+        "RN",
+        "PubMedID",
+        "MMDBID",
+        "ProteinGI",
+        "NucleotideGI",
+        "TaxonomyID",
+        "MIMID",
+        "GeneID",
+        "ProbeID",
+        "PatentID",
+        "SourceName",
+        "SourceCategory",
+        "DBURL",
+        "SBURL",
+    }
+)
+
 
 @register_tool("PubChemRESTTool")
 class PubChemRESTTool(BaseTool):
@@ -79,10 +103,23 @@ class PubChemRESTTool(BaseTool):
                 val_str = str(val)
             url_path = url_path.replace(f"{{{ph}}}", val_str)
 
-        # Handle xref_types parameter
+        # Handle xref_types parameter. Validate against PubChem's fixed
+        # vocabulary first so an invalid type returns an actionable error
+        # instead of an opaque HTTP 400 "Invalid xrefs type".
         if "xref_types" in arguments:
-            xref_list = ",".join(arguments["xref_types"])
-            url_path = url_path.replace("{xref_list}", xref_list)
+            requested = arguments["xref_types"]
+            if isinstance(requested, str):
+                requested = [t.strip() for t in requested.split(",") if t.strip()]
+            invalid = [t for t in requested if t not in PUBCHEM_XREF_TYPES]
+            if invalid:
+                raise ValueError(
+                    f"Invalid xref_types {invalid}. PubChem /xrefs accepts only: "
+                    f"{', '.join(sorted(PUBCHEM_XREF_TYPES))}. Database "
+                    "cross-references such as ChEBI, KEGG, ChEMBL and InChIKey "
+                    "are not separate xref types — they appear inside the "
+                    "'RegistryID' values, so use xref_types=['RegistryID']."
+                )
+            url_path = url_path.replace("{xref_list}", ",".join(requested))
 
         # Finally combine into complete URL
         if self.use_pugview:

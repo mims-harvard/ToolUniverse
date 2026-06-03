@@ -559,9 +559,26 @@
         },
         "xref_types": {
           "type": "array",
-          "description": "List of external database types to query, e.g., [\"RegistryID\", \"RN\", \"PubMedID\"].",
+          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types — they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
           "items": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "RegistryID",
+              "RN",
+              "PubMedID",
+              "MMDBID",
+              "ProteinGI",
+              "NucleotideGI",
+              "TaxonomyID",
+              "MIMID",
+              "GeneID",
+              "ProbeID",
+              "PatentID",
+              "SourceName",
+              "SourceCategory",
+              "DBURL",
+              "SBURL"
+            ]
           }
         }
       },
