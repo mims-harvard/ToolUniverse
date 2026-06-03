@@ -2,7 +2,7 @@
 # Rebuild plugin/skills/ as FILTERED COPIES of ../skills/ — user-facing skills only.
 #
 # Includes: tooluniverse, tooluniverse-*, setup-tooluniverse
-# Excludes (per-skill): test_*.py, *_test.py, __pycache__/, *.pyc, .pytest_cache/,
+# Excludes (per-skill): test_*.py, *_test.py, evals/, __pycache__/, *.pyc, .pytest_cache/,
 #                      .coverage*, coverage.xml, htmlcov/, .mypy_cache/, .ruff_cache/,
 #                      .DS_Store
 #
@@ -33,6 +33,7 @@ for dir in ../skills/tooluniverse ../skills/tooluniverse-* ../skills/setup-toolu
   rsync -a \
     --exclude='test_*.py' \
     --exclude='*_test.py' \
+    --exclude='evals/' \
     --exclude='__pycache__/' \
     --exclude='*.pyc' \
     --exclude='.pytest_cache/' \
