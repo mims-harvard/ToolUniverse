@@ -383,9 +383,9 @@ default_tool_files = {
     # Metabolite tools - PubChem + CTD (replaces broken HMDB API)
     "metabolite": os.path.join(current_dir, "data", "metabolite_tools.json"),
     # MetaCyc - Metabolic Pathway Database
-    # Archived at: src/tooluniverse/data/broken_apis/metacyc_tools.json
-    # BioCyc removed anonymous API access; use KEGG/Reactome/ChEBI instead.
-    # "metacyc": os.path.join(current_dir, "data", "metacyc_tools.json"),
+    # BioCyc gates its web services behind a free account; set BIOCYC_EMAIL +
+    # BIOCYC_PASSWORD to authenticate (the tool logs in for a session cookie).
+    "metacyc": os.path.join(current_dir, "data", "metacyc_tools.json"),
     # ZINC - Virtual Screening Library
     "zinc": os.path.join(current_dir, "data", "zinc_tools.json"),
     # Enamine - Make-on-Demand Compounds

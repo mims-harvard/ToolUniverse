@@ -24,6 +24,30 @@
     ]
   },
   {
+    "name": "BIOCYC_EMAIL",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Biological Pathways",
+    "register_url": "https://biocyc.org/signup.shtml",
+    "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
+    "without": "MetaCyc tools are blocked without an account (paired with the password).",
+    "used_by": [
+      "metacyc_tools.json"
+    ]
+  },
+  {
+    "name": "BIOCYC_PASSWORD",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Biological Pathways",
+    "register_url": "https://biocyc.org/signup.shtml",
+    "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
+    "without": "Required together with the BioCyc email.",
+    "used_by": [
+      "metacyc_tools.json"
+    ]
+  },
+  {
     "name": "BIOGRID_ACCESS_KEY",
     "requirement": "required",
     "type": "secret",
