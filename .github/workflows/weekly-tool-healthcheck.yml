@@ -138,14 +138,41 @@ jobs:
           # List failing categories (### ❌ / 🔥 <name>, single trailing token).
           fail_re = re.compile(r"^###\s+(❌|\U0001f525)\s+(\S+)\s*$", re.MULTILINE)
           cats = sorted({m.group(2) for m in fail_re.finditer(text)})
-          if cats:
-              print(f"## Failing categories ({len(cats)})\n")
-              print(", ".join(f"`{c}`" for c in cats))
+
+          # Diff against the known-failing baseline so the report highlights the
+          # one thing worth acting on: a category that failed but is NOT already
+          # a known/expected failure (usually an upstream API just changed).
+          baseline = set()
+          bl = pathlib.Path(".github/known_failing_categories.txt")
+          if bl.exists():
+              for line in bl.read_text().splitlines():
+                  tok = line.split("#", 1)[0].strip()
+                  if tok:
+                      baseline.add(tok)
+
+          new_fail = [c for c in cats if c not in baseline]
+          if new_fail:
+              print(f"## 🆕 NEW failing categories ({len(new_fail)}) — investigate\n")
+              print(", ".join(f"`{c}`" for c in new_fail))
               print(
-                  "\n> Note: API-key-gated and known-broken-upstream categories are "
-                  "expected here. Investigate new entries vs the previous week — a "
-                  "newly-failing category usually means an upstream API changed."
+                  "\n> These are not in `.github/known_failing_categories.txt`. A "
+                  "newly-failing category usually means an upstream API changed — "
+                  "reproduce, then fix or add it to the baseline."
               )
+          elif cats:
+              print("No new failures — every failing category is a known/expected one. ✅")
+
+          if cats:
+              print(f"\n<details><summary>All failing categories ({len(cats)})</summary>\n")
+              print(", ".join(f"`{c}`" for c in cats))
+              recovered = sorted(baseline - set(cats))
+              if recovered:
+                  print(
+                      f"\nBaseline entries that PASSED this week ({len(recovered)}, "
+                      "candidates to prune from the baseline): "
+                      + ", ".join(f"`{c}`" for c in recovered)
+                  )
+              print("\n</details>")
           else:
               print("All categories passed. ✅")
           PY
