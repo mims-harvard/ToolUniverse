@@ -24,6 +24,18 @@
     ]
   },
   {
+    "name": "BGPT_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Literature & Evidence",
+    "register_url": "https://bgpt.pro/mcp/",
+    "purpose": "BGPT paid-tier API key for structured scientific-evidence search.",
+    "without": "The first 50 results are free without a key; the key unlocks continued access after the free allowance is exhausted.",
+    "used_by": [
+      "bgpt_tools.json"
+    ]
+  },
+  {
     "name": "BIOCYC_EMAIL",
     "requirement": "required",
     "type": "secret",

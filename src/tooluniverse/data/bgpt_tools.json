@@ -1,0 +1,93 @@
+[
+  {
+    "type": "BGPTPaperEvidenceTool",
+    "name": "BGPT_search_paper_evidence",
+    "description": "Search scientific papers with BGPT and return structured, full-text-derived study evidence for critical appraisal. Unlike PubMed/EuropePMC/OpenAlex (which return titles and abstracts), each result includes methods and experimental techniques, sample size and population, results and conclusions, study context, paper limitations and biases, conflict of interest, data/code availability, software/tools used, quality scores, study blind spots, and a 'how_to_falsify' statement. Use it when an agent needs to weigh study quality and evidence before drawing a conclusion (literature review, claim interrogation, hypothesis critique, evidence-dashboard generation). Structured fields are model-generated, so treat them as an appraisal aid rather than curated ground truth. The first 50 results are free; set BGPT_API_KEY for the paid tier afterward.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Natural-language scientific search query, e.g. 'GLP-1 alcohol craving' or 'semaglutide cardiovascular outcomes'."
+        },
+        "num_results": {
+          "type": "integer",
+          "description": "Number of paper results to return (1-100, default 10).",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        },
+        "days_back": {
+          "type": "integer",
+          "description": "Optional. Restrict results to papers published within the last N days.",
+          "minimum": 1
+        },
+        "api_key": {
+          "type": "string",
+          "description": "Optional paid-tier API key, used after the free result allowance is exhausted. If omitted, the BGPT_API_KEY environment variable is used."
+        }
+      },
+      "required": ["query"]
+    },
+    "optional_api_keys": ["BGPT_API_KEY"],
+    "api_key_info": {
+      "BGPT_API_KEY": {
+        "domain": "Literature & Evidence",
+        "type": "secret",
+        "register_url": "https://bgpt.pro/mcp/",
+        "purpose": "BGPT paid-tier API key for structured scientific-evidence search.",
+        "without": "The first 50 results are free without a key; the key unlocks continued access after the free allowance is exhausted."
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "description": "Paper records with structured evidence fields.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "doi": {"type": "string"},
+                  "title": {"type": "string"},
+                  "publication_date": {"type": "string"},
+                  "publication_name": {"type": "string"},
+                  "one_sentence_summary": {"type": "string"},
+                  "results_and_conclusions": {"type": "string"},
+                  "methods_and_experimental_techniques": {"type": "string"},
+                  "sample_size_and_population": {"type": "string"},
+                  "paper_limitations_and_biases": {"type": "string"},
+                  "conflict_of_interest": {"type": "string"},
+                  "data_availability_statements": {"type": "string"},
+                  "how_to_falsify": {"type": "string"},
+                  "study_blindspots": {"type": "string"},
+                  "quality_scores": {"type": "object"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "detail": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "GLP-1 alcohol craving",
+        "num_results": 2
+      }
+    ]
+  }
+]
