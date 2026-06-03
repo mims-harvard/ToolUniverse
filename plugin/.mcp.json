@@ -2,7 +2,7 @@
   "mcpServers": {
     "tooluniverse": {
       "command": "uvx",
-      "args": ["tooluniverse"],
+      "args": ["tooluniverse@1.2.4"],
       "env": {
         "PYTHONIOENCODING": "utf-8",
         "PYTORCH_MPS_HIGH_WATERMARK_RATIO": "0.0",

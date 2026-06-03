@@ -136,6 +136,7 @@ if [ "$DRY_RUN" -eq 1 ]; then
              .claude-plugin/marketplace.json; do
         [ -f "$f" ] && echo "  $f   $CURRENT → $NEW" || echo "  $f   (absent, skipped)"
     done
+    [ -f plugin/.mcp.json ] && echo "  plugin/.mcp.json   pin tooluniverse@$NEW"
     echo "  Then commit \"Release v$NEW\", tag v$NEW, push to origin/$BRANCH"
     exit 0
 fi
@@ -161,12 +162,32 @@ for path, field in files:
         data.setdefault("metadata", {})["version"] = new
     p.write_text(json.dumps(data, indent=2) + "\n")
     print(f"  bumped {path}")
+
+# Pin the bundled MCP server to the released pip version. .mcp.json launches
+# 'uvx tooluniverse'; without a version pin uvx reuses a cached/older env, so a
+# plugin auto-update would NOT pull the matching tooluniverse from PyPI. Writing
+# the version here keeps plugin and pip package in lockstep on every release.
+mcp = pathlib.Path("plugin/.mcp.json")
+if mcp.exists():
+    m = json.loads(mcp.read_text())
+    args = m.get("mcpServers", {}).get("tooluniverse", {}).get("args", [])
+    pinned = False
+    for i, a in enumerate(args):
+        if isinstance(a, str) and a.split("@", 1)[0] == "tooluniverse":
+            args[i] = f"tooluniverse@{new}"
+            pinned = True
+    if pinned:
+        mcp.write_text(json.dumps(m, indent=2) + "\n")
+        print(f"  pinned plugin/.mcp.json -> tooluniverse@{new}")
+    else:
+        print("  warn: no 'tooluniverse' arg found in plugin/.mcp.json to pin")
 EOF
 
 echo
 for f in plugin/.claude-plugin/plugin.json \
          plugin/.claude-plugin/marketplace.json \
-         .claude-plugin/marketplace.json; do
+         .claude-plugin/marketplace.json \
+         plugin/.mcp.json; do
     [ -f "$f" ] && git add "$f"
 done
 git commit -m "Release v$NEW"
