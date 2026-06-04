@@ -382,6 +382,10 @@ default_tool_files = {
     "sabiork": os.path.join(current_dir, "data", "sabiork_tools.json"),
     # SAbDab - Structural Antibody Database
     "sabdab": os.path.join(current_dir, "data", "sabdab_tools.json"),
+    # Antibody Registry - RRID resolution + search for research antibodies
+    "antibody_registry": os.path.join(
+        current_dir, "data", "antibody_registry_tools.json"
+    ),
     # IMGT - International ImMunoGeneTics Information System
     "imgt": os.path.join(current_dir, "data", "imgt_tools.json"),
     # Metabolite tools - PubChem + CTD (replaces broken HMDB API)
