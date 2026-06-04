@@ -1,0 +1,154 @@
+[
+  {
+    "type": "PGSCatalogTool",
+    "name": "PGSCatalog_search_traits",
+    "description": "Search the PGS Catalog (pgscatalog.org, EMBL-EBI — the open database of published polygenic scores) for traits/phenotypes matching a term. Returns each matching trait's id (EFO/MONDO, e.g. 'MONDO_0004989'), label, description, and the number of polygenic scores published for it. Use this first to find the trait_id, then PGSCatalog_get_scores_by_trait to list its scores. No API key.",
+    "fields": {"operation": "search_traits"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Trait or phenotype term, e.g. 'coronary artery disease', 'type 2 diabetes', 'breast cancer'."
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "trait_id": {"type": "string"},
+                  "label": {"type": "string"},
+                  "description": {"type": "string"},
+                  "n_scores": {"type": "integer"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [{"query": "coronary artery disease"}]
+  },
+  {
+    "type": "PGSCatalogTool",
+    "name": "PGSCatalog_get_scores_by_trait",
+    "description": "List the published polygenic scores (PGS) for a trait in the PGS Catalog, given its EFO/MONDO trait id (find one with PGSCatalog_search_traits). Each score summary includes the PGS id, name, reported trait, number of variants, development method, genome build, and publication (author/journal/year/PMID/DOI) plus the scoring-file URL. Use PGSCatalog_get_score for the full record of one score. No API key.",
+    "fields": {"operation": "get_scores_by_trait"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "trait_id": {
+          "type": "string",
+          "description": "EFO or MONDO trait id, e.g. 'MONDO_0004989' (breast carcinoma) or 'EFO_0001645' (coronary artery disease)."
+        }
+      },
+      "required": ["trait_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pgs_id": {"type": "string"},
+                  "trait_reported": {"type": "string"},
+                  "variants_number": {"type": "integer"},
+                  "method_name": {"type": "string"},
+                  "publication": {"type": "object"},
+                  "scoring_file": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [{"trait_id": "MONDO_0004989"}]
+  },
+  {
+    "type": "PGSCatalogTool",
+    "name": "PGSCatalog_get_score",
+    "description": "Retrieve the full metadata for a specific polygenic score from the PGS Catalog by its PGS id (e.g. 'PGS000001'): reported and EFO/MONDO traits, number of variants, development method, genome build, weight type, publication, training samples, ancestry distribution, and the downloadable scoring-file URL. Find PGS ids with PGSCatalog_get_scores_by_trait. No API key.",
+    "fields": {"operation": "get_score"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pgs_id": {
+          "type": "string",
+          "description": "PGS Catalog score id, e.g. 'PGS000001'."
+        }
+      },
+      "required": ["pgs_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "pgs_id": {"type": "string"},
+                "name": {"type": "string"},
+                "trait_reported": {"type": "string"},
+                "trait_efo": {"type": "array"},
+                "variants_number": {"type": "integer"},
+                "method_name": {"type": "string"},
+                "genome_build": {"type": "string"},
+                "publication": {"type": "object"},
+                "ancestry_distribution": {"type": "object"},
+                "scoring_file": {"type": "string"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [{"pgs_id": "PGS000001"}]
+  }
+]

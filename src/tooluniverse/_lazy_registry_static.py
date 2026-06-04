@@ -452,6 +452,7 @@ STATIC_LAZY_REGISTRY = {
     "PagedResponse": "ols_tool",
     "PaleobiologyRESTTool": "paleobiology_tool",
     "PathwayCommonsTool": "pathwaycommons_tool",
+    "PGSCatalogTool": "pgs_catalog_tool",
     "PfamTool": "pfam_tool",
     "PharmGKBTool": "pharmgkb_tool",
     "PharmacoDBTool": "pharmacodb_tool",
