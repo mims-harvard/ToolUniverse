@@ -2,6 +2,17 @@
 
 1000+ scientific research tools for biology, chemistry, medicine, and data science.
 
+## Prerequisite: `uv`
+
+The MCP server is launched with `uvx`, so **[uv](https://docs.astral.sh/uv/) must be installed**. If it isn't, the `tooluniverse` MCP server cannot start and its tools won't appear (the plugin prints a one-line reminder on startup).
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh   # macOS/Linux
+# Windows: powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Then restart Claude Code. (No separate `tooluniverse` install needed — `uvx` fetches it on first use.)
+
 ## Install
 
 ```bash

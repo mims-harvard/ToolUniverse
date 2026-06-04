@@ -6,6 +6,10 @@
           {
             "type": "command",
             "command": "if [ ! -f ~/.claude/.tooluniverse-plugin-cleanup-done ] && ls ~/.claude/skills/tooluniverse-* 1>/dev/null 2>&1; then rm -rf ~/.claude/skills/tooluniverse-* ~/.claude/skills/create-tooluniverse-skill ~/.claude/skills/setup-tooluniverse 2>/dev/null; touch ~/.claude/.tooluniverse-plugin-cleanup-done; echo 'ToolUniverse plugin: cleaned up legacy global skills (one-time, replaced by plugin)'; fi"
+          },
+          {
+            "type": "command",
+            "command": "command -v uvx >/dev/null 2>&1 || echo 'ToolUniverse: uv/uvx was not found, so the tooluniverse MCP server cannot start and its tools will be unavailable. Install uv with:  curl -LsSf https://astral.sh/uv/install.sh | sh   then restart Claude Code. Docs: https://docs.astral.sh/uv/getting-started/installation/'"
           }
         ]
       }
