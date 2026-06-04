@@ -1,0 +1,65 @@
+[
+  {
+    "type": "RetractionCheckTool",
+    "name": "Crossref_check_retraction",
+    "description": "Check whether a published paper (by DOI) has been retracted, withdrawn, corrected, or flagged with an expression of concern, using Crossref's update metadata (sourced from the Retraction Watch database). Returns a clear is_retracted flag plus the list of notices (type, label, the notice's own DOI, and date). Use this as a research-integrity guardrail before citing a paper or relying on its claims — the literature discovery tools (PubMed, OpenAlex, Europe PMC, BGPT) return papers without retraction status. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "doi": {
+          "type": "string",
+          "description": "The DOI of the paper to check, e.g. '10.1016/S0140-6736(97)11096-0'. A full https://doi.org/ URL or a 'doi:'-prefixed value is also accepted."
+        }
+      },
+      "required": ["doi"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "doi": {"type": "string"},
+                "title": {"type": "string"},
+                "is_retracted": {"type": "boolean"},
+                "has_expression_of_concern": {"type": "boolean"},
+                "has_correction": {"type": "boolean"},
+                "notices": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {"type": "string"},
+                      "label": {"type": "string"},
+                      "notice_doi": {"type": "string"},
+                      "date": {"type": "string"},
+                      "source": {"type": "string"}
+                    }
+                  }
+                }
+              },
+              "required": ["doi", "is_retracted", "notices"]
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"doi": "10.1016/S0140-6736(97)11096-0"},
+      {"doi": "10.1038/nature12968"}
+    ]
+  }
+]

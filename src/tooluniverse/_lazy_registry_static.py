@@ -498,6 +498,7 @@ STATIC_LAZY_REGISTRY = {
     "ReactomeRESTTool": "reactome_tool",
     "RegulomeDBRESTTool": "regulomedb_tool",
     "RemoteTool": "remote_tool",
+    "RetractionCheckTool": "retraction_tool",
     "RfamTool": "rfam_tool",
     "RheaTool": "rhea_tool",
     "RxClassTool": "rxclass_tool",
