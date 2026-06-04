@@ -197,6 +197,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**pharmacokinetics**", "PK analysis", "non-compartmental", "NCA", "Cmax", "Tmax", "AUC", "half-life", "clearance", "volume of distribution", "bioavailability", "concentration-time", "plasma concentration" | `Skill(skill="tooluniverse-pharmacokinetics")` |
 | "**enzyme kinetics**", "Michaelis-Menten", "Km", "Vmax", "kcat", "turnover number", "catalytic efficiency", "specificity constant", "Lineweaver-Burk", "enzyme inhibition", "Ki", "competitive inhibitor" | `Skill(skill="tooluniverse-enzyme-kinetics")` |
 | "**primer design**", "PCR primers", "qPCR primer", "melting temperature", "Tm calculation", "annealing temperature", "GC clamp", "primer-dimer", "oligo analysis", "amplicon", "forward and reverse primer" | `Skill(skill="tooluniverse-primer-design")` |
+| "**diagnostic test**", "sensitivity specificity", "ROC curve", "AUC", "PPV", "NPV", "likelihood ratio", "Youden", "optimal cutoff", "post-test probability", "biomarker accuracy", "confusion matrix" | `Skill(skill="tooluniverse-diagnostic-test-evaluation")` |
 | "**metabolomics analysis**", "LC-MS analysis", "metabolite quantification", "metabolic flux" | `Skill(skill="tooluniverse-metabolomics-analysis")` |
 | "**functional genomics screen**", "CRISPR library", "shRNA screen", "barcode screen" | `Skill(skill="tooluniverse-functional-genomics-screens")` |
 | "**proteomics data**", "PRIDE", "MassIVE", "ProteomeXchange", "proteomics dataset" | `Skill(skill="tooluniverse-proteomics-data-retrieval")` |
