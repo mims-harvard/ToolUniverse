@@ -199,6 +199,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**primer design**", "PCR primers", "qPCR primer", "melting temperature", "Tm calculation", "annealing temperature", "GC clamp", "primer-dimer", "oligo analysis", "amplicon", "forward and reverse primer" | `Skill(skill="tooluniverse-primer-design")` |
 | "**diagnostic test**", "sensitivity specificity", "ROC curve", "AUC", "PPV", "NPV", "likelihood ratio", "Youden", "optimal cutoff", "post-test probability", "biomarker accuracy", "confusion matrix" | `Skill(skill="tooluniverse-diagnostic-test-evaluation")` |
 | "**drug synergy**", "drug combination", "Bliss independence", "Loewe additivity", "HSA synergy", "ZIP score", "combination index", "Chou-Talalay", "synergistic antagonistic", "combination therapy analysis" | `Skill(skill="tooluniverse-drug-synergy")` |
+| "**molecular cloning**", "Gibson Assembly", "Golden Gate", "Type IIS", "BsaI", "BbsI", "assembly overlap", "fragment assembly", "construct design", "domestication" | `Skill(skill="tooluniverse-molecular-cloning")` |
 | "**metabolomics analysis**", "LC-MS analysis", "metabolite quantification", "metabolic flux" | `Skill(skill="tooluniverse-metabolomics-analysis")` |
 | "**functional genomics screen**", "CRISPR library", "shRNA screen", "barcode screen" | `Skill(skill="tooluniverse-functional-genomics-screens")` |
 | "**proteomics data**", "PRIDE", "MassIVE", "ProteomeXchange", "proteomics dataset" | `Skill(skill="tooluniverse-proteomics-data-retrieval")` |
