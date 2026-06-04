@@ -22,6 +22,7 @@ STATIC_LAZY_REGISTRY = {
     "ArXivPDFSnippetsTool": "arxiv_tool",
     "ArXivTool": "arxiv_tool",
     "ArrayExpressRESTTool": "arrayexpress_tool",
+    "BGPTPaperEvidenceTool": "bgpt_tool",
     "BRENDATool": "brenda_tool",
     "BVBRCTool": "bvbrc_tool",
     "BaseMCPClient": "mcp_client_tool",
