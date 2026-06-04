@@ -261,6 +261,7 @@ STATIC_LAZY_REGISTRY = {
     "GWASSumStatsTool": "gwas_sumstats_tool",
     "GWASVariantsForTrait": "gwas_tool",
     "GenCCTool": "gencc_tool",
+    "GeneBeTool": "genebe_tool",
     "GeneOntologyTool": "gene_ontology_tool",
     "GenomeNexusTool": "genome_nexus_tool",
     "GetSPLBySetIDTool": "dailymed_tool",
