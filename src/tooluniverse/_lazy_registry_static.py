@@ -535,6 +535,7 @@ STATIC_LAZY_REGISTRY = {
     "SurvivalTool": "survival_tool",
     "SwissADMETool": "swissadme_tool",
     "SwissDockTool": "swissdock_tool",
+    "SwissLipidsTool": "swisslipids_tool",
     "SwissModelTool": "swissmodel_tool",
     "SwissTargetTool": "swiss_target_tool",
     "SynBioHubTool": "synbiohub_tool",
