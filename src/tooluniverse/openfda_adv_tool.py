@@ -158,9 +158,13 @@ class FDADrugAdverseEventTool(BaseTool):
     def _search(self, arguments):
         search_parts = []
         for param_name, value in arguments.items():
-            fda_fields = self.search_fields.get(
-                param_name, [param_name]
-            )  # Map param -> FDA field
+            # Only forward parameters defined in the search-field map; an
+            # unrecognized argument (e.g. a stray 'limit') must NOT become a
+            # bogus FDA filter like 'limit:2', which matches nothing and yields
+            # a silent empty result.
+            fda_fields = self.search_fields.get(param_name)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else param_name
 
@@ -302,8 +306,11 @@ class FDACountAdditiveReactionsTool(FDADrugAdverseEventTool):
         # Combine additional filters
         filters = []
         for k, v in arguments.items():
-            # Get FDA field name(s) from search_fields mapping
-            fda_fields = self.search_fields.get(k, [k])
+            # Get FDA field name(s) from the search-field map; skip unrecognized
+            # filters rather than forwarding them as bogus FDA constraints.
+            fda_fields = self.search_fields.get(k)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else k
 
@@ -418,9 +425,13 @@ class FDADrugAdverseEventDetailTool(BaseTool):
         # Build search query
         search_parts = []
         for param_name, value in arguments.items():
-            fda_fields = self.search_fields.get(
-                param_name, [param_name]
-            )  # Map param -> FDA field
+            # Only forward parameters defined in the search-field map; an
+            # unrecognized argument (e.g. a stray 'limit') must NOT become a
+            # bogus FDA filter like 'limit:2', which matches nothing and yields
+            # a silent empty result.
+            fda_fields = self.search_fields.get(param_name)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else param_name
 
@@ -771,9 +782,11 @@ class FDADrugInteractionDetailTool(BaseTool):
         # Build additional filters
         filter_parts = []
         for param_name, value in arguments.items():
-            fda_fields = self.search_fields.get(
-                param_name, [param_name]
-            )  # Map param -> FDA field
+            # Skip unrecognized arguments rather than forwarding them as bogus
+            # FDA filters (which silently match nothing).
+            fda_fields = self.search_fields.get(param_name)
+            if not fda_fields:
+                continue
             # Use the first field name for value mapping
             fda_field = fda_fields[0] if fda_fields else param_name
 
