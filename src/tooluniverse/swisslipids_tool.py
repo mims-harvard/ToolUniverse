@@ -126,6 +126,14 @@ class SwissLipidsTool(BaseTool):
 
         body, err = self._request(f"entity/{entity_id}")
         if err:
+            # The entity endpoint returns HTTP 500 for non-existent or malformed
+            # ids, so translate any HTTP error into an actionable not-found.
+            if "HTTP" in err.get("error", ""):
+                return {
+                    "status": "error",
+                    "error": f"No SwissLipids entry for '{entity_id}' (it may not exist "
+                    "or the id is malformed). Find valid ids with SwissLipids_search.",
+                }
             return err
         entry = body[0] if isinstance(body, list) and body else body
         if not isinstance(entry, dict) or not entry.get("entity_id"):

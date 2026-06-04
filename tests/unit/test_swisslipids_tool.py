@@ -94,6 +94,18 @@ class TestGetLipid(unittest.TestCase):
         self.assertEqual(result["status"], "error")
         self.assertIn("No SwissLipids entry", result["error"])
 
+    def test_http_500_becomes_friendly_not_found(self):
+        # the SwissLipids entity endpoint returns HTTP 500 for non-existent /
+        # malformed ids -> translate to an actionable not-found, not "HTTP 500".
+        tool = _make_tool("get_lipid")
+        with patch("tooluniverse.swisslipids_tool.requests.get") as get:
+            get.return_value = _resp(500, {})
+            result = tool.run({"entity_id": "SLM:999999999"})
+        self.assertEqual(result["status"], "error")
+        self.assertIn("No SwissLipids entry", result["error"])
+        self.assertIn("SwissLipids_search", result["error"])  # points to the fix
+        self.assertNotIn("HTTP 500", result["error"])
+
 
 if __name__ == "__main__":
     unittest.main()
