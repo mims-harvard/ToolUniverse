@@ -1,0 +1,113 @@
+[
+  {
+    "type": "SwissLipidsTool",
+    "name": "SwissLipids_search",
+    "description": "Search SwissLipids (swisslipids.org, SIB Swiss Institute of Bioinformatics) for lipids by name or shorthand abbreviation (e.g. 'PC(16:0/18:1)', 'cholesterol', 'ceramide'). Returns matching entries each with its SwissLipids id (SLM:...), name, type, and position in the lipid structural hierarchy (class / species / structural subspecies / isomeric subspecies). Complementary to the LIPID MAPS tools — an independently curated lipid database from a different organisation. Use SwissLipids_get_lipid with an SLM id for full details. No API key required.",
+    "fields": {"operation": "search"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Lipid name or shorthand abbreviation, e.g. 'PC(16:0/18:1)', 'sphingomyelin'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (1-100, default 10).",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {"type": "string"},
+                  "entity_name": {"type": "string"},
+                  "entity_type": {"type": "string"},
+                  "classification_level": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "PC(16:0/18:1)", "limit": 3}
+    ]
+  },
+  {
+    "type": "SwissLipidsTool",
+    "name": "SwissLipids_get_lipid",
+    "description": "Retrieve a full SwissLipids entry by its id (e.g. 'SLM:000000510'). Returns the lipid's name, molecular formula, monoisotopic mass, charge, a table of adduct m/z values ([M+H]+, [M-H]-, [M+Na]+, etc. — useful for matching lipidomics mass-spectrometry peaks), its structural classification, synonyms, and cross-references to ChEBI, HMDB, LIPID MAPS, Rhea, and MetaNetX. Find ids with SwissLipids_search. No API key required.",
+    "fields": {"operation": "get_lipid"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "SwissLipids id, e.g. 'SLM:000000510' (a bare number is also accepted)."
+        }
+      },
+      "required": ["entity_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "entity_id": {"type": "string"},
+                "entity_name": {"type": "string"},
+                "formula": {"type": "string"},
+                "mass": {"type": "number"},
+                "charge": {"type": "number"},
+                "adduct_mz": {"type": "object"},
+                "classification": {"type": "array"},
+                "synonyms": {"type": "array"},
+                "xrefs": {"type": "array"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"entity_id": "SLM:000000510"}
+    ]
+  }
+]
