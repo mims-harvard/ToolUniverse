@@ -160,14 +160,52 @@ claude plugin install tooluniverse@tooluniverse
 | Plugin installs but tools missing | Restart Claude Code. First launch downloads the package (~30 s). |
 | `requires-python >= 3.10` | `uv python install 3.12` |
 | Tools feel outdated | `uv cache clean tooluniverse` then restart Claude Code. |
+| New release not picked up / tools run an OLD version | Run `uv tool list \| grep tooluniverse`. If it's listed, a global `uv tool install` is **shadowing** the plugin's `uvx` (uvx prefers an installed tool over the latest published version). Fix: `uv tool uninstall tooluniverse`, then restart. Normal users without that install always get the latest automatically. |
 
 Still stuck: https://github.com/mims-harvard/ToolUniverse/issues
+
+## Automated diagnosis & repair
+
+If the table above didn't fix it, hand this skill to an agent — *"read the
+tooluniverse-claude-code-plugin skill and diagnose & fix my plugin install"* — or
+run these checks yourself in order. Each is safe and idempotent; apply the `FIX`
+for whatever fails, then restart Claude Code.
+
+```bash
+# 1. Is uv/uvx installed?  (most common cause of "no tools at all")
+command -v uvx || echo "FIX: curl -LsSf https://astral.sh/uv/install.sh | sh"
+
+# 2. Can the MCP package actually resolve + run?  (non-hanging proxy for the server)
+uvx --from tooluniverse tu --version || echo "FIX: uv/Python issue — see steps 1 and 5"
+
+# 3. Running an OLD version even after updating?  (non-obvious!)
+uv tool list | grep -q tooluniverse \
+  && echo "FIX: uv tool uninstall tooluniverse   (a global install shadows the plugin's uvx)" \
+  || echo "ok: nothing shadowing uvx"
+
+# 4. A new pip version was released but tools still stale?  force a refresh
+uv cache clean tooluniverse        # or one-shot: uvx --refresh tooluniverse --version
+
+# 5. Python too old (requires >= 3.10)?
+uv python install 3.12
+
+# 6. Global skills interfering with the plugin's routing?
+ls ~/.claude/skills/tooluniverse-* 2>/dev/null && echo "FIX: rm -rf ~/.claude/skills/tooluniverse-*"
+
+# 7. Is the plugin actually enabled?
+claude plugin list | grep tooluniverse || echo "FIX: claude plugin install tooluniverse@tooluniverse"
+```
+
+An agent can run the whole sequence, apply each `FIX`, and tell you to restart —
+you don't need to understand the internals.
 
 ## For plugin maintainers
 
 This skill documents the **user-facing** install flow. The plugin source lives at `/plugin` in the repo with its own `.claude-plugin/plugin.json` and `.mcp.json`. The root `.claude-plugin/marketplace.json` is what makes `claude plugin marketplace add mims-harvard/ToolUniverse` work directly — it lists the plugin with `"source": "./plugin"`.
 
-When cutting a release:
-1. Bump `version` in `plugin/.claude-plugin/plugin.json` and root `.claude-plugin/marketplace.json`
-2. Tag: `git tag v1.1.12 && git push origin v1.1.12`
-3. The GitHub Action (`.github/workflows/release-plugin.yml`) builds `tooluniverse-plugin-v1.1.12.zip` and attaches it to the release.
+When cutting a **plugin** release:
+- Easiest: put `[release:patch]` (or `:minor`/`:major`) in a commit message that touches `plugin/` or `.claude-plugin/` on `main`. `auto-release.yml` runs `scripts/release-plugin.sh`, which bumps `plugin/.claude-plugin/plugin.json` + root `.claude-plugin/marketplace.json`, commits, and tags; the tag push triggers `release-plugin.yml` to build the zip + GitHub Release. (Or run "Auto-release plugin" from the Actions UI.)
+- The next-version baseline is `max(plugin.json, latest vX.Y.Z tag)`, so a manifest that has drifted behind the tag line won't collide with an existing tag.
+- Plugin auto-update reaches users as soon as the version-bump commit lands on `main` (independent of the tag/zip).
+
+The **pip package** (`tooluniverse` on PyPI) is a SEPARATE release line: bump `pyproject.toml` → `publish-pypi.yml` publishes it (→ `publish-mcp-registry.yml`). Plugin and pip versions need NOT move together — `uvx tooluniverse` auto-resolves to the latest published pip version for users, so plugin-only and pip-only releases are both fine.
