@@ -18,12 +18,12 @@ Design primers for a target DNA region, get their Tm/Ta, and QC them for the sec
 
 ```bash
 tu run DNA_primer_design '{"operation":"primer_design",
-  "sequence":"ATGGCG...AACGTG",
+  "sequence":"ATGGCG...AACGTG",        # full template; must be >= target_end + flanking primer room
   "target_start":40, "target_end":125,
   "tm_target":60, "product_size_min":80, "product_size_max":140}'
 ```
 
-Returns `forward_primer` / `reverse_primer` (sequence, tm, gc_content, length, position) and `product_size`.
+Returns `forward_primer` / `reverse_primer` (sequence, tm, gc_content, length, position) and `product_size`. (`target_end` is clamped to the sequence length, so a too-short template silently shrinks the target — see the constraint quirk below.)
 
 > **Constraint quirk — read this or it will error.** `target_start..target_end` is the region the **amplicon must cover**, and the design only succeeds when that span fits inside the product-size window AND good-Tm primers can be placed flanking it. So you need roughly: `product_size_min ≤ (target span) ≤ product ≤ product_size_max`, with enough flanking sequence on both sides. Common errors and the fix:
 > - *"Target region (N bp) is smaller than product_size_min"* → your target is narrower than `product_size_min`; lower `product_size_min` or widen the target.
