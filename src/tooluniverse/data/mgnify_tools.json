@@ -108,7 +108,7 @@
       }
     },
     "test_examples": [
-      {"study_accession": "MGYS00000001", "size": 1}
+      {"study_accession": "MGYS00002012", "size": 1}
     ],
     "label": ["MGnify", "Microbiome", "Analysis"],
     "metadata": {

@@ -32,7 +32,7 @@
     "output_description": "Returns a list of matching entries from the Human Protein Atlas.",
     "test_examples": [
       {
-        "search_query": "machine learning optimization",
+        "search_query": "EGFR",
         "columns": "g,gs,gd",
         "format": "json"
       }
