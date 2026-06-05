@@ -31,7 +31,7 @@ def _http_get(
             "properties": {
                 "biome": {
                     "type": "string",
-                    "description": "Biome identifier, e.g., 'root:Host-associated'",
+                    "description": "Biome lineage identifier, e.g., 'root:Host-associated' or 'root:Host-associated:Human:Digestive system'",
                 },
                 "search": {
                     "type": "string",
@@ -46,7 +46,7 @@ def _http_get(
             },
         },
         "settings": {
-            "base_url": "https://www.ebi.ac.uk/metagenomics/api/latest",
+            "base_url": "https://www.ebi.ac.uk/metagenomics/api/v1",
             "timeout": 30,
         },
     },
@@ -57,19 +57,22 @@ class MGnifyStudiesTool:
 
     def run(self, arguments: Dict[str, Any]):
         base = self.tool_config.get("settings", {}).get(
-            "base_url", "https://www.ebi.ac.uk/metagenomics/api/latest"
+            "base_url", "https://www.ebi.ac.uk/metagenomics/api/v1"
         )
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
+        # The MGnify API (Django REST / JSON:API) filters studies by biome via the
+        # `lineage` query param and paginates with `page_size` -- NOT `biome`/`size`.
+        # Sending the wrong names returns an unfiltered/empty page silently, so map
+        # the friendly argument names onto the API's actual parameters.
         query: Dict[str, Any] = {}
-        if arguments.get("biome"):
-            query["biome"] = arguments["biome"]
+        biome = arguments.get("biome") or arguments.get("lineage")
+        if biome:
+            query["lineage"] = biome
         if arguments.get("search"):
             query["search"] = arguments["search"]
-        if arguments.get("size") is not None:
-            query["size"] = int(arguments["size"])
-        else:
-            query["size"] = 10
+        size = arguments.get("size")
+        query["page_size"] = int(size) if size is not None else 10
 
         url = f"{base}/studies?{urlencode(query)}"
         try:
@@ -125,7 +128,7 @@ class MGnifyStudiesTool:
             "required": ["study_accession"],
         },
         "settings": {
-            "base_url": "https://www.ebi.ac.uk/metagenomics/api/latest",
+            "base_url": "https://www.ebi.ac.uk/metagenomics/api/v1",
             "timeout": 30,
         },
     },
@@ -136,17 +139,16 @@ class MGnifyAnalysesTool:
 
     def run(self, arguments: Dict[str, Any]):
         base = self.tool_config.get("settings", {}).get(
-            "base_url", "https://www.ebi.ac.uk/metagenomics/api/latest"
+            "base_url", "https://www.ebi.ac.uk/metagenomics/api/v1"
         )
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
+        # MGnify paginates with `page_size`, not `size` (see MGnifyStudiesTool note).
         query: Dict[str, Any] = {
             "study_accession": arguments.get("study_accession"),
         }
-        if arguments.get("size") is not None:
-            query["size"] = int(arguments["size"])
-        else:
-            query["size"] = 10
+        size = arguments.get("size")
+        query["page_size"] = int(size) if size is not None else 10
 
         url = f"{base}/analyses?{urlencode(query)}"
         try:
