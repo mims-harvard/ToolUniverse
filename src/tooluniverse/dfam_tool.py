@@ -194,6 +194,24 @@ class DfamTool(BaseTool):
 
         url = f"{DFAM_BASE_URL}/annotations"
         response = requests.get(url, params=params, timeout=self.timeout)
+        # Dfam's genome-annotation service currently returns a server-side error
+        # ("Invalid Input - 101 - undefined", HTTP 405) for every well-formed
+        # request, while parameter validation itself passes (chrom/assembly/
+        # start/end/family/nrph are all accepted). Surface that as an actionable
+        # message rather than a bare "HTTP 405", and point at the endpoints that
+        # do work. The other Dfam tools (family search/details) are unaffected.
+        if response.status_code == 405 or "Invalid Input" in response.text[:200]:
+            return {
+                "status": "error",
+                "error": (
+                    "Dfam's genome-annotation endpoint is currently returning a "
+                    "server-side error for all region queries (the request was "
+                    "well-formed). This is a transient Dfam infrastructure issue, "
+                    "not a problem with the query. Dfam_search_families and "
+                    "Dfam_get_family still work; for genome TE annotations you can "
+                    "also use the UCSC RepeatMasker track via UCSC_get_track."
+                ),
+            }
         response.raise_for_status()
         data = response.json()
 
