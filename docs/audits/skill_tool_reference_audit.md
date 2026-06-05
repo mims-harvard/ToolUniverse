@@ -1,11 +1,11 @@
 # Skill audit: remaining tool references not in the registry
 
-Harness Rounds 015-018. **Most references resolved** (94 case/rename fixes + new
-tools built to fill real gaps: HPO phenotype->genes/diseases, GtoPdb diseases).
-The remaining items are NOT broken renames — by category they are either not tool
-calls or capabilities TU still lacks. Left as-is intentionally.
+Harness Rounds 015-019. Resolved 99 references (case/rename fixes) and built 4 new
+tools to fill real gaps (HPO phenotype->genes/diseases, GtoPdb diseases, OpenTargets
+target-info). The remaining items below are NOT broken renames — by category they are
+either not tool calls or capabilities TU still lacks. Left as-is intentionally.
 
-Remaining: 35
+Remaining: 30
 
 ## Enrichr gene-set library name (a `library` argument value, not a tool)
 
@@ -23,22 +23,17 @@ Remaining: 35
 - `get_tool_types` (1x) — devtu-docs-quality
 - `list_guidelines` (1x) — devtu-self-evolve
 
-## capability absent from TU (no equivalent tool to map to)
+## capability absent from TU (no equivalent tool; candidate for future tool-building)
 
 - `PubChem_get_drug_label_info_by_CID` (5x) — tooluniverse, tooluniverse-drug-research
 - `DepMap_get_drug_response` (3x) — tooluniverse-precision-oncology, tooluniverse-target-research
-- `OpenTargets_get_target` (3x) — tooluniverse-crispr-screen-analysis
-- `Ensembl_get_gene_info` (2x) — tooluniverse-variant-interpretation
 - `ChEMBL_get_bioactivity_by_chemblid` (2x) — tooluniverse
-- `OpenTargets_get_associated_targets` (1x) — tooluniverse-drug-repurposing
 - `FDA_get_drug_info` (1x) — devtu-create-tool
 - `FDA_get_detailed_information_about_drug` (1x) — devtu-create-tool
 - `ChEMBL_get_assays` (1x) — tooluniverse-drug-research
 - `UniProt_get_protein_features` (1x) — tooluniverse-rare-disease-diagnosis
 - `OpenTargets_diseases` (1x) — tooluniverse-rare-disease-diagnosis
 - `OpenTargets_pathways` (1x) — tooluniverse-rare-disease-diagnosis
-- `FAERS_search_by_drug` (1x) — tooluniverse-pharmacovigilance
-- `FDA_drug_search` (1x) — tooluniverse-pharmacovigilance
 
 ## pipeline-step / local-function name in a script (not a TU tool call)
 
