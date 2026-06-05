@@ -157,7 +157,7 @@ tu.tools.OpenTargets_target_disease_evidence(
 # Returns: evidence details, mutation data
 ```
 
-### clinvar_search_variants
+### ClinVar_search_variants
 **Purpose**: Search ClinVar for variants
 ```python
 tu.tools.ClinVar_search_variants(condition="breast cancer", max_results=20)
@@ -166,17 +166,17 @@ tu.tools.ClinVar_search_variants(gene="BRCA1", max_results=20)
 # Returns: variant IDs, count
 ```
 
-### clinvar_get_variant_details
+### ClinVar_get_variant_details
 **Purpose**: Get variant details by ClinVar ID
 ```python
-tu.tools.clinvar_get_variant_details(variant_id="12345")
+tu.tools.ClinVar_get_variant_details(variant_id="12345")
 # Returns: variant information
 ```
 
-### clinvar_get_clinical_significance
+### ClinVar_get_clinical_significance
 **Purpose**: Get pathogenicity classification
 ```python
-tu.tools.clinvar_get_clinical_significance(variant_id="12345")
+tu.tools.ClinVar_get_clinical_significance(variant_id="12345")
 # Returns: clinical significance data
 ```
 

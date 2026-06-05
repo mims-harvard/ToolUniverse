@@ -97,7 +97,7 @@ After disambiguation, store for downstream queries:
 - **Input**: `diseaseIds` (array of strings), `enableIndirect` (bool, default true), `size` (int, default 10)
 - **Output**: `{data: {studies: {count, rows: [{id, studyType, traitFromSource, publicationFirstAuthor, publicationDate, pubmedId, nSamples, nCases, nControls}]}}}`
 
-**clinvar_search_variants**:
+**ClinVar_search_variants**:
 - **Input**: `condition` (string) or `gene` (string), optional `max_results` (int)
 
 ### Phase 1 Workflow
@@ -318,7 +318,7 @@ drug_targets = {
 | `OpenTargets_get_evidence_by_datasource` | `efoId`, `ensemblId`, `datasourceIds[]`, `size` | Per-gene evidence |
 | `OpenTargets_search_gwas_studies_by_disease` | `diseaseIds[]`, `size` | GWAS studies |
 | `gwas_search_associations` | `disease_trait`, `size` | GWAS Catalog |
-| `clinvar_search_variants` | `condition` or `gene`, `max_results` | Rare variants |
+| `ClinVar_search_variants` | `condition` or `gene`, `max_results` | Rare variants |
 | `ExpressionAtlas_search_differential` | `condition`, `species` | DEGs |
 | `expression_atlas_disease_target_score` | `efoId`, `pageSize` (REQUIRED) | Expression scores |
 | `europepmc_disease_target_score` | `efoId`, `pageSize` (REQUIRED) | Literature scores |

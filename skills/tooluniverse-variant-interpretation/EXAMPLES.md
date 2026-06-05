@@ -228,7 +228,7 @@
 
 | Tool | Purpose | Result |
 |------|---------|--------|
-| `clinvar_search_variants` | Classification lookup | VCV000017661 |
+| `ClinVar_search_variants` | Classification lookup | VCV000017661 |
 | `gnomad_search_variants` | Population frequency | AF=0.00006 |
 | `MyVariant_query_variants` | Aggregated annotations | Complete |
 | `PubMed_search_articles` | Literature evidence | 47 relevant papers |
@@ -492,7 +492,7 @@
 
 | Tool | Purpose | Result |
 |------|---------|--------|
-| `clinvar_search_variants` | Classification | VCV000376642 (VUS) |
+| `ClinVar_search_variants` | Classification | VCV000376642 (VUS) |
 | `gnomad_search_variants` | Population freq | 0 (absent) |
 | `MyVariant_query_variants` | Predictions | All damaging |
 | `RCSBData_get_entry` | Structure | 2OCJ |

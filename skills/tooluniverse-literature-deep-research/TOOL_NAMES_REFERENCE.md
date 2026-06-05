@@ -220,8 +220,8 @@
 
 ### ClinVar
 ```python
-'clinvar_search_variants'         # Clinical variants
-'clinvar_get_variant_details'     # Variant details
+'ClinVar_search_variants'         # Clinical variants
+'ClinVar_get_variant_details'     # Variant details
 ```
 
 ### Disease
@@ -524,8 +524,8 @@
 81. `STRING_get_protein_interactions`
 
 ### Variant/Disease (17, 1 deprecated)
-82. `clinvar_get_variant_details`
-83. `clinvar_search_variants`
+82. `ClinVar_get_variant_details`
+83. `ClinVar_search_variants`
 84. `CTD_get_chemical_diseases`
 85. `CTD_get_chemical_gene_interactions`
 86. `CTD_get_disease_chemicals`

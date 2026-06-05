@@ -543,9 +543,9 @@ actives = tu.tools.PubChem_get_assay_active_compounds(aid=504526)
 
 | Tool | Parameters | Returns |
 |------|------------|---------|
-| `clinvar_search_variants` | `gene`, `condition`, `variant_id`, `max_results` | Variant search |
-| `clinvar_get_variant_details` | `variant_id` | Variant details |
-| `clinvar_get_clinical_significance` | `variant_id` | Clinical significance |
+| `ClinVar_search_variants` | `gene`, `condition`, `variant_id`, `max_results` | Variant search |
+| `ClinVar_get_variant_details` | `variant_id` | Variant details |
+| `ClinVar_get_clinical_significance` | `variant_id` | Clinical significance |
 
 ### dbSNP
 

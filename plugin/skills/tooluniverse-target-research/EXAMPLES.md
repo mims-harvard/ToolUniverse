@@ -225,7 +225,7 @@ constraints = tu.tools.gnomad_get_gene_constraints(gene_symbol='EGFR')
 disease_vars = tu.tools.UniProt_get_disease_variants_by_accession(accession='P00533')
 
 # ClinVar variants
-clinvar = tu.tools.clinvar_search_variants(gene='EGFR', max_results=100)
+clinvar = tu.tools.ClinVar_search_variants(gene='EGFR', max_results=100)
 
 # Open Targets disease associations
 diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(

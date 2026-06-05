@@ -247,7 +247,7 @@ Pre-delivery verification checklist for variant interpretation reports.
 ## Tool Verification Checklist
 
 ### Before Report Generation
-- [ ] `clinvar_search_variants` returns results or "not found"
+- [ ] `ClinVar_search_variants` returns results or "not found"
 - [ ] `gnomad_search_variants` frequency values valid
 - [ ] `MyVariant_query_variants` predictions populated
 - [ ] Structure available (PDB or AlphaFold)

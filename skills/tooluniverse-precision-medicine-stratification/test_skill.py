@@ -156,7 +156,7 @@ def test_phase2_clinvar_pathogenicity(tu):
 
     for gene, significance, desc in test_cases:
         try:
-            result = tu.tools.clinvar_search_variants(gene=gene, significance=significance, limit=10)
+            result = tu.tools.ClinVar_search_variants(gene=gene, significance=significance, limit=10)
             if isinstance(result, list):
                 has_variants = len(result) > 0
                 log_test(f"ClinVar {desc}", has_variants,
@@ -892,7 +892,7 @@ def test_integration_breast_cancer_brca1(tu):
 
     # Step 3: ClinVar pathogenic variants
     try:
-        result = tu.tools.clinvar_search_variants(gene='BRCA1', significance='pathogenic', limit=5)
+        result = tu.tools.ClinVar_search_variants(gene='BRCA1', significance='pathogenic', limit=5)
         has_pathogenic = (isinstance(result, list) and len(result) > 0) or bool(result)
         log_test("Integration BC: BRCA1 ClinVar pathogenic", has_pathogenic)
         score_components['genetic'] = 30 if has_pathogenic else 15
@@ -1003,7 +1003,7 @@ def test_integration_cvd_statin_pgx(tu):
 
     # Step 1: LDLR ClinVar check (FH screening)
     try:
-        result = tu.tools.clinvar_search_variants(gene='LDLR', significance='pathogenic', limit=5)
+        result = tu.tools.ClinVar_search_variants(gene='LDLR', significance='pathogenic', limit=5)
         # ClinVar returns either a list or {status, data: {esearchresult: {idlist: [...]}}}
         if isinstance(result, list):
             has_variants = len(result) > 0
@@ -1095,7 +1095,7 @@ def test_integration_rare_disease(tu):
 
     # Step 3: FBN1 ClinVar pathogenic
     try:
-        result = tu.tools.clinvar_search_variants(gene='FBN1', significance='pathogenic', limit=5)
+        result = tu.tools.ClinVar_search_variants(gene='FBN1', significance='pathogenic', limit=5)
         # ClinVar returns either a list or {status, data: {esearchresult: {count, idlist}}}
         if isinstance(result, list):
             has_variants = len(result) > 0

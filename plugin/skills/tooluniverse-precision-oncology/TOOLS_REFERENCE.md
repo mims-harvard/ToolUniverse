@@ -26,7 +26,7 @@ for v in variants:
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `ClinVar_search_variants` | Search variants | `query`, `gene` |
-| `clinvar_get_variant_details` | Get variant details | `variant_id` |
+| `ClinVar_get_variant_details` | Get variant details | `variant_id` |
 
 ### COSMIC - Somatic Cancer Mutations (NEW)
 

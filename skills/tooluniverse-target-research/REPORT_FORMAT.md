@@ -411,7 +411,7 @@ At the end of each major section, add a source block:
 | 5. Function | `GO_get_annotations_for_gene`, `Reactome_map_uniprot_to_pathways`, `kegg_get_gene_info` |
 | 6. Interactions | `STRING_get_protein_interactions`, `intact_get_interactions`, `intact_get_complex_details` |
 | 7. Expression | `GTEx_get_median_gene_expression`, `HPA_get_comprehensive_gene_details_by_ensembl_id`, `HPA_get_subcellular_location` |
-| 8. Variants | `gnomad_get_gene_constraints`, `clinvar_search_variants`, `OpenTargets_get_diseases_phenotypes_by_target_ensembl` |
+| 8. Variants | `gnomad_get_gene_constraints`, `ClinVar_search_variants`, `OpenTargets_get_diseases_phenotypes_by_target_ensembl` |
 | 9. Druggability | `OpenTargets_get_target_tractability_by_ensemblID`, `OpenTargets_get_associated_drugs_by_target_ensemblID`, `DGIdb_get_gene_druggability`, `ChEMBL_get_target_activities` |
 | 10. Safety | `OpenTargets_get_target_safety_profile_by_ensemblID`, `OpenTargets_get_biological_mouse_models_by_ensemblID` |
 | 11. Literature | `PubMed_search_articles`, `EuropePMC_search_articles`, `OpenTargets_get_publications_by_target_ensemblID` |

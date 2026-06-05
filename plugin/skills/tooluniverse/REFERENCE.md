@@ -44,7 +44,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 **Step 7: Get Variants & Disease**
 - `gnomad_get_gene_constraints` → Genetic constraint scores
 - `gnomad_get_gene` → Population variants
-- `clinvar_search_variants` → Clinical variants
+- `ClinVar_search_variants` → Clinical variants
 - `UniProt_get_disease_variants_by_accession` → Disease variants
 - `OpenTargets_get_diseases_phenotypes_by_target_ensembl` → Disease associations
 
@@ -125,7 +125,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 **Step 3: Get Associated Genes**
 - `OpenTargets_get_associated_targets_by_disease_efoId` → Associated genes
 - `OpenTargets_target_disease_evidence` → Evidence details
-- `clinvar_search_variants` → Pathogenic variants
+- `ClinVar_search_variants` → Pathogenic variants
 
 **Step 4: Get GWAS Associations**
 - `gwas_search_associations` → GWAS hits
@@ -184,7 +184,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `OSL_get_efo_id_by_disease_name` | `ols_search_efo_terms` | `OpenTargets_get_disease_id_description_by_name` |
-| `clinvar_search_variants` | `gnomad_get_gene` | OpenTargets variants |
+| `ClinVar_search_variants` | `gnomad_get_gene` | OpenTargets variants |
 | `gwas_search_associations` | `gwas_get_variants_for_trait` | OpenTargets GWAS |
 
 ### Clinical Tools

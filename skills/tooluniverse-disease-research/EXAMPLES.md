@@ -153,7 +153,7 @@ get_HPO_ID_by_phenotype, PubMed_search_articles
 | GCST002305 | IGAP Stage 1 | 74,046 | 2013 | GWAS Catalog |
 
 ### ClinVar Variants
-[Source: clinvar_search_variants, condition="Alzheimer"]
+[Source: ClinVar_search_variants, condition="Alzheimer"]
 
 | Variant | Gene | Clinical Significance | Review Status | Source |
 |---------|------|----------------------|---------------|--------|
@@ -161,12 +161,12 @@ get_HPO_ID_by_phenotype, PubMed_search_articles
 | NM_000021.4:c.428T>C | PSEN1 | Pathogenic | Reviewed by expert panel | ClinVar |
 | NM_000447.3:c.529A>G | PSEN2 | Pathogenic | Criteria provided | ClinVar |
 
-**Total pathogenic variants**: 487 [Source: clinvar_search_variants]
+**Total pathogenic variants**: 487 [Source: ClinVar_search_variants]
 
 **Sources Used**: OpenTargets_get_associated_targets_by_disease_efoId, 
 OpenTargets_target_disease_evidence, gwas_get_associations_for_trait, 
-gwas_get_variants_for_trait, gwas_get_studies_for_trait, clinvar_search_variants,
-clinvar_get_variant_details, clinvar_get_clinical_significance
+gwas_get_variants_for_trait, gwas_get_studies_for_trait, ClinVar_search_variants,
+ClinVar_get_variant_details, ClinVar_get_clinical_significance
 
 ---
 
@@ -393,7 +393,7 @@ FAERS_count_reactions_by_drug_event
 | 10 | OpenTargets_get_associated_targets_by_disease_efoId | efoId="EFO_0000249" | 3 | 245 |
 | 11 | gwas_get_associations_for_trait | disease_trait="Alzheimer disease", size=50 | 3 | 50 |
 | 12 | gwas_get_studies_for_trait | disease_trait="Alzheimer disease", size=30 | 3 | 28 |
-| 13 | clinvar_search_variants | condition="Alzheimer", max_results=50 | 3 | 50 |
+| 13 | ClinVar_search_variants | condition="Alzheimer", max_results=50 | 3 | 50 |
 | 14 | OpenTargets_get_associated_drugs_by_disease_efoId | efoId="EFO_0000249", size=100 | 4 | 45 |
 | 15 | search_clinical_trials | condition="Alzheimer disease", pageSize=50 | 4 | 50 |
 | 16 | Reactome_map_uniprot_to_pathways | id="P05067" (APP) | 5 | 12 |
@@ -452,7 +452,7 @@ When some tools return empty results, note this clearly:
 **No GWAS associations found** - This is a rare disease without large-scale genetic studies.
 
 ### ClinVar Variants
-[Source: clinvar_search_variants]
+[Source: ClinVar_search_variants]
 
 | Variant | Clinical Significance | Source |
 |---------|----------------------|--------|
