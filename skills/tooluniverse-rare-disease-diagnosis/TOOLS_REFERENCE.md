@@ -8,8 +8,8 @@
 |------|---------|----------------|
 | `HPO_search_terms` | Search HPO by text | `query` |
 | `HPO_get_term` | Get HPO term details | `hp_id` |
-| `HPO_get_term_genes` | Genes associated with HPO term | `hp_id` |
-| `HPO_get_term_diseases` | Diseases with HPO term | `hp_id` |
+| `HPO_get_genes_by_phenotype` | Genes associated with HPO term | `hp_id` |
+| `HPO_get_diseases_by_phenotype` | Diseases with HPO term | `hp_id` |
 
 **Example - Convert symptom to HPO**:
 ```python
@@ -647,7 +647,7 @@ def diagnose_rare_disease(tu, symptoms, patient_id):
     # Phase 2: Match diseases
     candidate_diseases = []
     for hpo in hpo_terms:
-        diseases = tu.tools.HPO_get_term_diseases(hp_id=hpo['id'])
+        diseases = tu.tools.HPO_get_diseases_by_phenotype(hp_id=hpo['id'])
         candidate_diseases.extend(diseases)
     
     # Rank by frequency

@@ -336,5 +336,212 @@
         }
       ]
     }
+  },
+  {
+    "name": "HPO_get_genes_by_phenotype",
+    "description": "Get the genes associated with an HPO phenotype term (genes in which variants cause this phenotype), from the JAX HPO network annotations. Returns NCBI gene IDs and symbols. Example: HP:0001250 (Seizure) is linked to genes such as RELN, SCN1A, and ~2000 others. Use to go from an observed patient phenotype to candidate disease genes for variant prioritization.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "term_id": {
+          "type": "string",
+          "description": "HPO term identifier (e.g., 'HP:0001250'). Must start with 'HP:' followed by 7 digits."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (1-500, default 50). Phenotype terms can be linked to thousands of genes."
+        }
+      },
+      "required": [
+        "term_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_associated_genes"
+    },
+    "type": "HPOTool",
+    "test_examples": [
+      {
+        "term_id": "HP:0001250",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Identifier (e.g. 'NCBIGene:5649' for genes, 'ORPHA:..'/'OMIM:..' for diseases)"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Name"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "term_id": {
+                  "type": "string"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HPO_get_diseases_by_phenotype",
+    "description": "Get the diseases that present with an HPO phenotype term, from the JAX HPO network annotations. Returns disease IDs (ORPHA/OMIM/DECIPHER), names, and the cross-referenced MONDO ID. Example: HP:0001250 (Seizure) is a feature of thousands of diseases. Use to build a differential diagnosis from a set of observed phenotypes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "term_id": {
+          "type": "string",
+          "description": "HPO term identifier (e.g., 'HP:0001250'). Must start with 'HP:' followed by 7 digits."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of results to return (1-500, default 50). Phenotype terms can be linked to thousands of diseases."
+        }
+      },
+      "required": [
+        "term_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_associated_diseases"
+    },
+    "type": "HPOTool",
+    "test_examples": [
+      {
+        "term_id": "HP:0001250",
+        "limit": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "diseases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Identifier (e.g. 'NCBIGene:5649' for genes, 'ORPHA:..'/'OMIM:..' for diseases)"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Name"
+                      },
+                      "mondo_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Cross-referenced MONDO disease ID"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "term_id": {
+                  "type": "string"
+                },
+                "total": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

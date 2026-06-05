@@ -17,6 +17,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 HPO_BASE_URL = "https://ontology.jax.org/api/hp"
+HPO_ANNOTATION_URL = "https://ontology.jax.org/api/network/annotation"
 
 
 @register_tool("HPOTool")
@@ -70,8 +71,59 @@ class HPOTool(BaseTool):
             return self._search_terms(arguments)
         elif self.endpoint == "get_term_hierarchy":
             return self._get_term_hierarchy(arguments)
+        elif self.endpoint == "get_associated_genes":
+            return self._get_associations(arguments, "genes")
+        elif self.endpoint == "get_associated_diseases":
+            return self._get_associations(arguments, "diseases")
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
+
+    def _get_associations(self, arguments: Dict[str, Any], kind: str) -> Dict[str, Any]:
+        """Get genes or diseases annotated to an HPO phenotype term.
+
+        Uses the JAX network-annotation endpoint, which returns the genes,
+        diseases, assays and medical actions linked to a phenotype.
+        """
+        term_id = arguments.get("term_id", "")
+        if not term_id:
+            return {
+                "status": "error",
+                "error": "term_id parameter is required (e.g., 'HP:0001250')",
+            }
+        if not str(term_id).startswith("HP:"):
+            term_id = f"HP:{term_id}"
+
+        try:
+            limit = int(arguments.get("limit", 50))
+        except (TypeError, ValueError):
+            limit = 50
+        limit = max(1, min(limit, 500))
+
+        # The annotation endpoint lives under /api/network/, not /api/hp/.
+        url = f"{HPO_ANNOTATION_URL}/{term_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        items = data.get(kind) or []
+        total = len(items)
+        trimmed = []
+        for it in items[:limit]:
+            entry = {"id": it.get("id"), "name": it.get("name")}
+            if kind == "diseases":
+                entry["mondo_id"] = it.get("mondoId")
+            trimmed.append(entry)
+
+        return {
+            "status": "success",
+            "data": {kind: trimmed},
+            "metadata": {
+                "source": "HPO (JAX Ontology) network annotation",
+                "term_id": term_id,
+                "total": total,
+                "returned": len(trimmed),
+            },
+        }
 
     def _get_term(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed information about an HPO term by its ID."""
