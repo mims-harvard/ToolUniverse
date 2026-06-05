@@ -136,7 +136,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 **Step 5: Get Treatment Options**
 - `OpenTargets_get_associated_drugs_by_disease_efoId` → Approved/trial drugs
 - `search_clinical_trials` → Clinical trials
-- `GtoPdb_list_diseases` → Guide to Pharmacology
+- `GtoPdb_search_diseases` → Guide to Pharmacology
 
 **Step 6: Get Pathways**
 - `Reactome_get_diseases` → Disease pathways

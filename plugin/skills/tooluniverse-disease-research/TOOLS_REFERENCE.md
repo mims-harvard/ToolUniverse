@@ -577,17 +577,17 @@ tu.tools.civic_search_molecular_profiles(limit=50)
 
 ## 9. Pharmacology (GtoPdb)
 
-### GtoPdb_list_diseases
+### GtoPdb_search_diseases
 **Purpose**: Search diseases
 ```python
-tu.tools.GtoPdb_list_diseases(name="diabetes", limit=20)
+tu.tools.GtoPdb_search_diseases(name="diabetes", limit=20)
 # Returns: diseases with IDs, OMIM, DOID
 ```
 
-### GtoPdb_get_disease
+### GtoPdb_search_diseases
 **Purpose**: Get disease details
 ```python
-tu.tools.GtoPdb_get_disease(disease_id=652)
+tu.tools.GtoPdb_search_diseases(disease_id=652)
 # Returns: targets, ligands, description
 ```
 

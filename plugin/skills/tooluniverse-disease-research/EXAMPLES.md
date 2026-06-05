@@ -218,7 +218,7 @@ ClinVar_get_variant_details, ClinVar_get_clinical_significance
 **Sources Used**: OpenTargets_get_associated_drugs_by_disease_efoId, 
 OpenTargets_get_drug_chembId_by_generic_name, OpenTargets_get_drug_mechanisms_of_action_by_chemblId,
 search_clinical_trials, get_clinical_trial_descriptions, get_clinical_trial_outcome_measures,
-extract_clinical_trial_outcomes, GtoPdb_list_diseases, GtoPdb_get_disease
+extract_clinical_trial_outcomes, GtoPdb_search_diseases, GtoPdb_search_diseases
 
 ---
 
@@ -331,7 +331,7 @@ openalex_search_works, europe_pmc_search_abstracts, semantic_scholar_search_pape
 ## 9. Pharmacological Targets
 
 ### Druggable Targets
-[Source: GtoPdb_list_diseases, GtoPdb_get_disease]
+[Source: GtoPdb_search_diseases, GtoPdb_search_diseases]
 
 | Target | Type | Drugs | Source |
 |--------|------|-------|--------|
@@ -341,7 +341,7 @@ openalex_search_works, europe_pmc_search_abstracts, semantic_scholar_search_pape
 | BACE1 | Enzyme | (pipeline) | GtoPdb |
 | Tau | Protein | (pipeline) | GtoPdb |
 
-**Sources Used**: GtoPdb_list_diseases, GtoPdb_get_disease, GtoPdb_search_targets,
+**Sources Used**: GtoPdb_search_diseases, GtoPdb_search_diseases, GtoPdb_search_targets,
 GtoPdb_search_targets, GtoPdb_get_target_interactions
 
 ---
@@ -402,7 +402,7 @@ FAERS_count_reactions_by_drug_event
 | 19 | PubMed_search_articles | query="Alzheimer disease", limit=100 | 6 | 100 |
 | 20 | openalex_search_works | query="Alzheimer disease", limit=50 | 6 | 50 |
 | 21 | OpenTargets_get_similar_entities_by_disease_efoId | efoId="EFO_0000249", size=20 | 7 | 15 |
-| 22 | GtoPdb_list_diseases | name="Alzheimer" | 9 | 1 |
+| 22 | GtoPdb_search_diseases | name="Alzheimer" | 9 | 1 |
 | 23 | OpenTargets_get_drug_warnings_by_chemblId | chemblId="CHEMBL4650319" | 10 | 2 |
 | 24 | extract_clinical_trial_adverse_events | nct_ids=["NCT03887455"] | 10 | 8 |
 

@@ -642,8 +642,8 @@ actives = tu.tools.PubChem_get_assay_active_compounds(aid=504526)
 | `gwas_get_studies_for_trait` | `trait` | Studies for trait |
 | `gwas_search_associations` | `query` | GWAS associations |
 | `gwas_get_associations_for_trait` | `trait` | Associations for trait |
-| `GtoPdb_list_diseases` | - | GtoPdb diseases |
-| `GtoPdb_get_disease` | `disease_id` | Disease details |
+| `GtoPdb_search_diseases` | - | GtoPdb diseases |
+| `GtoPdb_search_diseases` | `disease_id` | Disease details |
 | `Reactome_get_diseases` | - | Reactome diseases |
 | `OSL_get_efo_id_by_disease_name` | `disease_name` | EFO ID lookup |
 

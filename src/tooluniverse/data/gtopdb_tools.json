@@ -242,5 +242,102 @@
         "type": "object"
       }
     }
+  },
+ {
+  "name": "GtoPdb_search_diseases",
+  "description": "Search the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for diseases by name, and retrieve their curated disease IDs, names, synonyms, and cross-references to external databases (OMIM, Orphanet, Disease Ontology). GtoPdb links diseases to the drug targets and approved/experimental ligands relevant to them. Example: 'epilepsy' returns disease entries such as 'Epilepsy and Intellectual Disability'. No authentication required.",
+  "parameter": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Disease name to search. Examples: 'epilepsy', 'asthma', 'hypertension', 'breast cancer'."
+    },
+    "query": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+    }
+   },
+   "required": []
+  },
+  "fields": {
+   "endpoint": "https://www.guidetopharmacology.org/services/diseases",
+   "params": {}
+  },
+  "type": "GtoPdbRESTTool",
+  "test_examples": [
+   {
+    "name": "epilepsy"
+   },
+   {
+    "query": "asthma"
+   }
+  ],
+  "return_schema": {
+   "oneOf": [
+    {
+     "type": "object",
+     "properties": {
+      "data": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "diseaseId": {
+          "type": [
+           "integer",
+           "null"
+          ],
+          "description": "GtoPdb disease ID"
+         },
+         "name": {
+          "type": [
+           "string",
+           "null"
+          ],
+          "description": "Disease name"
+         },
+         "description": {
+          "type": [
+           "string",
+           "null"
+          ]
+         },
+         "synonyms": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "databaseLinks": {
+          "type": "array"
+         }
+        }
+       }
+      }
+     },
+     "required": [
+      "data"
+     ]
+    },
+    {
+     "type": "object",
+     "properties": {
+      "error": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "error"
+     ]
+    }
+   ]
   }
+ }
 ]

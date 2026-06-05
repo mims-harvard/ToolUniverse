@@ -63,8 +63,8 @@ tu.tools.get_clinical_trial_conditions_and_interventions(nct_ids=nct_list)
 tu.tools.get_clinical_trial_eligibility_criteria(nct_ids=nct_list)
 tu.tools.get_clinical_trial_outcome_measures(nct_ids=nct_list)
 tu.tools.extract_clinical_trial_outcomes(nct_ids=nct_list)
-tu.tools.GtoPdb_list_diseases(name=disease_name)
-tu.tools.GtoPdb_get_disease(disease_id=gtopdb_id)
+tu.tools.GtoPdb_search_diseases(name=disease_name)
+tu.tools.GtoPdb_search_diseases(disease_id=gtopdb_id)
 ```
 
 ---
