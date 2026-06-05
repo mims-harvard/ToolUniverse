@@ -93,7 +93,7 @@ Protein identification from MS data follows a logical chain. LOOK UP DON'T GUESS
 
 1. **Peptide mass fingerprinting (PMF)**: Intact protein digested → measured peptide masses compared against theoretical digest of all database proteins. A match requires >=4 peptides covering >=15% of the protein sequence. Single-peptide hits are unreliable (could match multiple proteins).
 2. **Tandem MS (MS/MS)**: Fragment ion spectra matched to peptide sequences via search engines (Andromeda, SEQUEST, X!Tandem). Each peptide-spectrum match (PSM) scored; only PSMs above FDR threshold count. Unique peptides (mapping to one protein) are essential — shared peptides cannot distinguish between protein isoforms.
-3. **Protein inference**: Multiple peptides → protein groups. When peptides are shared between homologs, report the protein group (not individual proteins). Use `proteins_api_search` or `uniprot_search_proteins` to resolve ambiguous protein groups.
+3. **Protein inference**: Multiple peptides → protein groups. When peptides are shared between homologs, report the protein group (not individual proteins). Use `proteins_api_search` or `UniProt_search` to resolve ambiguous protein groups.
 4. **Coverage matters**: 2+ unique peptides is the minimum for a confident protein ID. Proteins identified by a single unique peptide should be flagged as tentative.
 
 ### Post-Translational Modification (PTM) Analysis Reasoning

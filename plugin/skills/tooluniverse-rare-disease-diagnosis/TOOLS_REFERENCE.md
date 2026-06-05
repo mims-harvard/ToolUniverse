@@ -190,9 +190,9 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `OpenTargets_get_disease_info_by_efoId` | Disease details | `efoId` |
+| `OpenTargets_get_disease_description_by_efoId` | Disease details | `efoId` |
 | `OpenTargets_get_associated_targets_by_disease_efoId` | Genes for disease | `efoId` |
-| `OpenTargets_get_associated_diseases_by_target_ensemblId` | Diseases for gene | `ensemblId` |
+| `OpenTargets_get_diseases_phenotypes_by_target_ensembl` | Diseases for gene | `ensemblId` |
 
 ---
 
@@ -203,7 +203,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `MyGene_query_genes` | Search genes | `q`, `species` |
-| `MyGene_get_gene_by_id` | Gene details | `geneid` |
+| `MyGene_get_gene_annotation` | Gene details | `geneid` |
 | `ensembl_lookup_gene` | Ensembl gene info | `id`, `species` |
 
 **Parameter Note**: Use `q` not `gene` for MyGene_query_genes.
@@ -213,7 +213,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `GTEx_get_median_gene_expression` | Tissue expression | `gencode_id` |
-| `HPA_get_gene_expression` | Protein expression | `ensembl_id` |
+| `HPA_get_rna_expression_by_source` | Protein expression | `ensembl_id` |
 
 **Note**: GTEx requires versioned Ensembl ID (e.g., `ENSG00000166147.15`)
 
@@ -222,7 +222,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `gnomad_get_gene_constraints` | pLI, LOEUF scores | `gene_symbol` |
-| `ExAC_get_constraint_metrics` | Constraint data | `gene` |
+| `gnomad_get_gene_constraints` | Constraint data | `gene` |
 
 ---
 
@@ -234,7 +234,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 |------|---------|----------------|
 | `ClinVar_search_variants` | Search variants | `query` |
 | `ClinVar_get_variant_details` | Get variant details | `id` (not `variant_id`) |
-| `ClinVar_get_variant_classifications` | Classification history | `id` |
+| `ClinVar_get_clinical_significance` | Classification history | `id` |
 
 **Parameter Note**: Use `id` not `variant_id` for ClinVar lookups.
 
@@ -242,8 +242,8 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `gnomAD_get_variant_frequencies` | Allele frequencies | `variant_id` |
-| `gnomAD_get_variant_annotations` | Variant annotations | `variant_id` |
+| `gnomad_get_variant` | Allele frequencies | `variant_id` |
+| `gnomad_get_variant` | Variant annotations | `variant_id` |
 
 **Variant ID Format**: `1-55505647-G-A` (chrom-pos-ref-alt)
 
@@ -488,14 +488,14 @@ gene_info = tu.tools.kegg_get_gene_info(gene_id="hsa:2200")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `reactome_search_pathways` | Search pathways | `query` |
+| `ReactomeContent_search` | Search pathways | `query` |
 | `Reactome_get_pathway` | Pathway details | `pathway_id` |
 | `reactome_disease_target_score` | Disease-pathway links | `disease`, `target` |
 
 **Example - Get Reactome pathways**:
 ```python
 # Search for pathways
-pathways = tu.tools.reactome_search_pathways(query="TGF-beta signaling")
+pathways = tu.tools.ReactomeContent_search(query="TGF-beta signaling")
 ```
 
 ### IntAct - Protein-Protein Interactions
@@ -545,7 +545,7 @@ structure = tu.tools.NvidiaNIM_alphafold2(
 |------|---------|----------------|
 | `InterPro_get_protein_domains` | Domain architecture | `accession` |
 | `UniProt_get_protein_features` | Sequence features | `accession` |
-| `Pfam_get_domains` | Pfam domains | `uniprot_id` |
+| `Pfam_get_protein_annotations` | Pfam domains | `uniprot_id` |
 
 ---
 
@@ -676,7 +676,7 @@ def interpret_variant(tu, variant_hgvs, gene_symbol):
     evidence = {}
     
     # PM2: Population frequency
-    freq = tu.tools.gnomAD_get_variant_frequencies(variant_id=variant_hgvs)
+    freq = tu.tools.gnomad_get_variant(variant_id=variant_hgvs)
     if freq['allele_frequency'] < 0.00001:
         evidence['PM2'] = {'strength': 'Moderate', 'reason': 'Absent from gnomAD'}
     
@@ -741,20 +741,20 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 ### Expression & Regulatory
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `CELLxGENE_get_expression_data` | `GTEx_get_median_gene_expression` | `HPA_get_gene_expression` |
+| `CELLxGENE_get_expression_data` | `GTEx_get_median_gene_expression` | `HPA_get_rna_expression_by_source` |
 | `ChIPAtlas_enrichment_analysis` | `ENCODE_search_experiments` | Literature search |
 
 ### Pathway Analysis
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `kegg_get_gene_info` | `reactome_search_pathways` | `OpenTargets_pathways` |
+| `kegg_get_gene_info` | `ReactomeContent_search` | `OpenTargets_pathways` |
 | `intact_search_interactions` | `STRING_interactions` | Literature search |
 
 ### Variant Annotation
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `ClinVar_get_variant_details` | `gnomad_get_variant` | Literature search |
-| `gnomAD_get_variant_frequencies` | `gnomad_get_variant` | 1000 Genomes |
+| `gnomad_get_variant` | `gnomad_get_variant` | 1000 Genomes |
 
 ### Pathogenicity Prediction (ENHANCED)
 | Primary | Fallback 1 | Fallback 2 |
@@ -767,7 +767,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `NvidiaNIM_alphafold2` | `alphafold_get_prediction` | `NvidiaNIM_esmfold` |
-| `InterPro_get_protein_domains` | `Pfam_get_domains` | `UniProt_features` |
+| `InterPro_get_protein_domains` | `Pfam_get_protein_annotations` | `UniProt_features` |
 
 ### Literature
 | Primary | Fallback 1 | Fallback 2 |
@@ -786,7 +786,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 | `ClinVar_get_variant_details` | `variant_id=123` | `id=123` |
 | `OpenTargets_*` | `ensemblID` | `ensemblId` (camelCase) |
 | `GTEx_get_median_gene_expression` | `ensembl_id` | `gencode_id` (versioned) |
-| `gnomAD_get_variant_frequencies` | `variant="c.123A>G"` | `variant_id="1-123-A-G"` |
+| `gnomad_get_variant` | `variant="c.123A>G"` | `variant_id="1-123-A-G"` |
 
 ---
 

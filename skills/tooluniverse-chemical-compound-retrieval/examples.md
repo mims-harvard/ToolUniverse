@@ -68,7 +68,7 @@ cid_result = tu.tools.PubChem_get_CID_by_compound_name(
 cid = cid_result["data"]["cid"]
 
 # Get bioactivity
-bioactivity = tu.tools.PubChem_get_bioactivity_summary_by_CID(
+bioactivity = tu.tools.PubChem_get_compound_bioactivity(
     cid=cid
 )
 
@@ -149,7 +149,7 @@ logp = props["data"]["XLogP"]
 print(f"MW: {mw}, LogP: {logp}")
 
 # 3. Get bioactivity
-bio = tu.tools.PubChem_get_bioactivity_summary_by_CID(cid=cid)
+bio = tu.tools.PubChem_get_compound_bioactivity(cid=cid)
 print(f"Active in {bio['data']['active_assay_count']} assays")
 
 # 4. Find similar active compounds

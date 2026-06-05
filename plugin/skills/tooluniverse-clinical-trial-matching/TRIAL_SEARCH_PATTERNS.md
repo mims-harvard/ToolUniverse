@@ -61,7 +61,7 @@ def search_trials_by_intervention(tu, drug_name, disease_name=None, page_size=10
     return result.get('studies', [])
 ```
 
-### Alternative Search (clinical_trials_search)
+### Alternative Search (ClinicalTrials_search_studies)
 
 ```python
 def search_trials_alternative(tu, condition, intervention=None, limit=10):
@@ -74,7 +74,7 @@ def search_trials_alternative(tu, condition, intervention=None, limit=10):
     if intervention:
         params['intervention'] = intervention
 
-    result = tu.tools.clinical_trials_search(**params)
+    result = tu.tools.ClinicalTrials_search_studies(**params)
     return result.get('studies', [])
 ```
 
@@ -213,7 +213,7 @@ def search_expanded_access(tu, drug_name):
 - `search_clinical_trials` with disease condition
 - `search_clinical_trials` with biomarker query
 - `search_clinical_trials` with intervention query
-- `clinical_trials_search` as alternative
+- `ClinicalTrials_search_studies` as alternative
 
 **Parallel Group 3** (Phase 3 - all simultaneous):
 - `get_clinical_trial_eligibility_criteria` for all NCT IDs

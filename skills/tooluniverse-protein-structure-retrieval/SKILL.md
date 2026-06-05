@@ -133,6 +133,6 @@ Present as a **Structure Profile Report**. Hide search process. Include:
 
 **RCSB PDB**: `PDBeSearch_search_structures` (search), `get_protein_metadata_by_pdb_id` (basic info), `RCSBData_get_entry` (details), `PDBeValidation_get_quality_scores` (quality), `PDBe_KB_get_ligand_sites` (ligands), `PDBeSIFTS_get_all_structures` (homologs)
 
-**PDBe**: `pdbe_get_entry_summary` (overview), `pdbe_get_entry_molecules` (entities), `pdbe_get_experiment_info` (experimental), `PDBe_KB_get_ligand_sites` (pockets)
+**PDBe**: `pdbe_get_entry_summary` (overview), `pdbe_get_entry_molecules` (entities), `pdbe_get_entry_experiment` (experimental), `PDBe_KB_get_ligand_sites` (pockets)
 
 **AlphaFold**: `alphafold_get_prediction` (get prediction), `alphafold_get_summary` (search)

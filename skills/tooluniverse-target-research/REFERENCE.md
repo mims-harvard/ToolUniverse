@@ -76,7 +76,7 @@ Complete reference of 225+ ToolUniverse tools for target research, organized by 
 | `cBioPortal_get_genes` | `keyword` | Cancer gene search |
 | `civic_search_genes` | `gene_symbol` | CIViC gene info |
 | `gnomad_get_gene` | `gene_symbol` | gnomAD gene data |
-| `gnomad_search_variants_genes` | `query` | gnomAD gene search |
+| `gnomad_search_variants` | `query` | gnomAD gene search |
 | `gnomad_get_gene_constraints` | `gene_symbol` | Constraint scores |
 
 ## 3. Drug-Target Interactions
@@ -112,10 +112,10 @@ Complete reference of 225+ ToolUniverse tools for target research, organized by 
 |------|------------|---------|
 | `drugbank_get_targets_by_drug_name_or_drugbank_id` | `query`, `exact_match`, `limit` | Drug targets |
 | `drugbank_get_drug_name_and_description_by_target_name` | `target_name` | Drugs for target |
-| `GtoPdb_get_target` | `target_id` | GtoPdb target info |
-| `GtoPdb_get_targets` | `family_id` | List targets |
+| `GtoPdb_search_targets` | `target_id` | GtoPdb target info |
+| `GtoPdb_search_targets` | `family_id` | List targets |
 | `GtoPdb_search_ligands` | `target_id` | Target-ligand interactions |
-| `GtoPdb_search_interactions` | `query` | Interaction search |
+| `GtoPdb_get_interactions` | `query` | Interaction search |
 
 ### STITCH
 

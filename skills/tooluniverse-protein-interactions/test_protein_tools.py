@@ -314,7 +314,7 @@ def test_sasbdb_tools():
         print(f"  ❌ EXCEPTION: {type(e).__name__}: {str(e)[:200]}")
 
     # Test 3-5: Skip for now (secondary tools)
-    print("\n  (Skipping SASBDB_get_models, get_scattering_profile, download_data for initial test)")
+    print("\n  (Skipping SASBDB_get_entry, get_scattering_profile, download_data for initial test)")
 
     return True
 

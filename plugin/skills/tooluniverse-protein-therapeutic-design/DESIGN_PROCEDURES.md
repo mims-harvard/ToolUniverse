@@ -17,15 +17,15 @@ def get_target_structure(tu, target_id):
 
     # Try EMDB (cryo-EM, good for membrane proteins)
     protein_info = tu.tools.UniProt_get_entry_by_accession(accession=target_id)
-    emdb_results = tu.tools.emdb_search(query=protein_info['proteinDescription']['recommendedName']['fullName']['value'])
+    emdb_results = tu.tools.EMDB_search_structures(query=protein_info['proteinDescription']['recommendedName']['fullName']['value'])
     if emdb_results:
         best_emdb = sorted(emdb_results, key=lambda x: x.get('resolution', 99))[0]
-        emdb_details = tu.tools.emdb_get_entry(entry_id=best_emdb['emdb_id'])
+        emdb_details = tu.tools.EMDB_get_structure(entry_id=best_emdb['emdb_id'])
         if emdb_details.get('pdb_ids'):
             return {'source': 'EMDB cryo-EM', 'emdb_id': best_emdb['emdb_id'], 'pdb_id': emdb_details['pdb_ids'][0]}
 
     # Fallback: AlphaFold prediction
-    sequence = tu.tools.UniProt_get_protein_sequence(accession=target_id)
+    sequence = tu.tools.UniProt_get_sequence_by_accession(accession=target_id)
     structure = tu.tools.NvidiaNIM_alphafold2(sequence=sequence['sequence'], algorithm="mmseqs2")
     return {'source': 'AlphaFold2 (predicted)', 'structure': structure}
 ```
@@ -90,4 +90,4 @@ passes = np.mean(plddt) > 70 and ptm > 0.7
 | `NvidiaNIM_proteinmpnn` | Rosetta ProteinMPNN | Manual sequence |
 | `NvidiaNIM_esmfold` | `NvidiaNIM_alphafold2` | AlphaFold DB |
 | PDB structure | EMDB cryo-EM + PDB | `NvidiaNIM_alphafold2` |
-| `emdb_search` + PDB model | PDB_search | `NvidiaNIM_alphafold2` |
+| `EMDB_search_structures` + PDB model | PDB_search | `NvidiaNIM_alphafold2` |

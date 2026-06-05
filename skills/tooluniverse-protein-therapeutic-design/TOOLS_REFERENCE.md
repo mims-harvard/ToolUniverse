@@ -161,8 +161,8 @@ else:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `emdb_search` | Search cryo-EM maps | `query` |
-| `emdb_get_entry` | Get entry details | `entry_id` |
+| `EMDB_search_structures` | Search cryo-EM maps | `query` |
+| `EMDB_get_structure` | Get entry details | `entry_id` |
 
 **When to use EMDB**:
 - Membrane protein targets (GPCRs, ion channels)
@@ -173,12 +173,12 @@ else:
 **Example - Get cryo-EM structure for membrane target**:
 ```python
 # Search EMDB for membrane receptor
-emdb_hits = tu.tools.emdb_search(query="EGFR membrane receptor")
+emdb_hits = tu.tools.EMDB_search_structures(query="EGFR membrane receptor")
 
 if emdb_hits:
     # Get details including associated PDB models
     best_entry = emdb_hits[0]  # Often sorted by resolution
-    details = tu.tools.emdb_get_entry(entry_id=best_entry['emdb_id'])
+    details = tu.tools.EMDB_get_structure(entry_id=best_entry['emdb_id'])
     
     # Get the atomic model (PDB) for design
     if details.get('pdb_ids'):
@@ -199,7 +199,7 @@ if emdb_hits:
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `UniProt_get_protein_sequence` | Get target sequence | `accession` |
+| `UniProt_get_sequence_by_accession` | Get target sequence | `accession` |
 | `InterPro_get_protein_domains` | Get domains | `accession` |
 
 ---
@@ -213,7 +213,7 @@ def design_protein_binder(tu, target_uniprot):
     """Complete binder design pipeline."""
     
     # Phase 1: Get target
-    target_seq = tu.tools.UniProt_get_protein_sequence(
+    target_seq = tu.tools.UniProt_get_sequence_by_accession(
         accession=target_uniprot
     )
     target_structure = tu.tools.NvidiaNIM_alphafold2(
@@ -371,7 +371,7 @@ def assess_developability(sequence):
 ### Cryo-EM (Membrane Targets) (NEW)
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `emdb_search` + PDB model | PDB_search | `NvidiaNIM_alphafold2` |
+| `EMDB_search_structures` + PDB model | PDB_search | `NvidiaNIM_alphafold2` |
 
 ---
 

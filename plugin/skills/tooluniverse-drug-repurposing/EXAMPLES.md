@@ -856,7 +856,7 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
             cid=cid['data']['cid']
         )
         
-        bioactivity = tu.tools.PubChem_get_bioactivity_summary_by_CID(
+        bioactivity = tu.tools.PubChem_get_compound_bioactivity(
             cid=cid['data']['cid']
         )
         

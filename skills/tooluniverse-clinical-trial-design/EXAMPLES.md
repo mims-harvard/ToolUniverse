@@ -52,7 +52,7 @@ l858r_variants = [v for v in egfr_variants['data']
 print(f"\nEGFR L858R variants found: {len(l858r_variants)}")
 
 # 1.3: Cross-reference with population genetics
-gnomad_egfr = tu.tools.gnomAD_search_gene_variants(
+gnomad_egfr = tu.tools.gnomad_search_variants(
     gene="EGFR"
 )
 
@@ -197,7 +197,7 @@ print(f"Status: {comparator_info['data']['groups']}")
 print(f"Indications: {len(comparator_indications['data'])}")
 
 # 3.2: Get FDA approval details
-fda_approval = tu.tools.FDA_get_drug_approval_history(
+fda_approval = tu.tools.OpenFDA_get_approval_history(
     drug_name=comparator
 )
 
@@ -977,7 +977,7 @@ print(f"Status: {pembro_info['data']['groups']}")
 print(f"Indications: {len(pembro_indications['data'])}")
 
 # 2.2: Get FDA approval history
-pembro_approval = tu.tools.FDA_get_drug_approval_history(
+pembro_approval = tu.tools.OpenFDA_get_approval_history(
     drug_name=comparator
 )
 

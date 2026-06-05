@@ -19,7 +19,7 @@ Create test script BEFORE documentation. Verify all tool parameters through actu
 ### 2. Verify Tool Contracts (Always)
 
 Check params via `get_tool_info()`. Maintain corrections table. Don't trust function names.
-Example: `drugbank_get_drug_by_name(query=...)` not `name=...`
+Example: `drugbank_get_drug_basic_info_by_drug_name_or_id(query=...)` not `name=...`
 
 ### 3. Handle SOAP Tools (Always, if present)
 

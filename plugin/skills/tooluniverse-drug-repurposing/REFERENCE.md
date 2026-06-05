@@ -262,9 +262,9 @@ similar = tu.tools.PubChem_search_compounds_by_similarity(
 ```
 **Use**: Structure-based repurposing - find approved drug analogs
 
-#### PubChem_get_bioactivity_summary_by_CID
+#### PubChem_get_compound_bioactivity
 ```python
-bioactivity = tu.tools.PubChem_get_bioactivity_summary_by_CID(
+bioactivity = tu.tools.PubChem_get_compound_bioactivity(
     cid=2244
 )
 # Returns: Active/inactive assay counts

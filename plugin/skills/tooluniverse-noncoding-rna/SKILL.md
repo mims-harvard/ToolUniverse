@@ -41,7 +41,7 @@ For any ncRNA query: first identify the class from the name/sequence, then selec
 |------|---------|
 | `miRBase_search_mirna` | Search miRNAs by name, accession, or sequence |
 | `miRBase_get_mirna` | Detailed miRNA info (sequence, genomic location, family) |
-| `miRBase_get_mature_mirna` | Mature miRNA sequences and annotations |
+| `miRBase_get_mirna` | Mature miRNA sequences and annotations |
 | `PubMed_search_articles` | Search for validated miRNA targets in literature (e.g., "miR-21 target validation") |
 | `LNCipedia_search_lncrna` | Search lncRNAs by name, gene symbol, or transcript ID |
 | `LNCipedia_get_lncrna` | Detailed lncRNA transcript info (sequence, structure, conservation) |

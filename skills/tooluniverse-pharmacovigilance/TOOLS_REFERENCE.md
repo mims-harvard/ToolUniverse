@@ -8,7 +8,7 @@
 |------|---------|----------------|
 | `DailyMed_search_spls` | Search drug labels | `drug_name` |
 | `DailyMed_search_spls` | Get full label | `setid` |
-| `DailyMed_get_drug_interactions` | Drug interactions | `setid` |
+| `DailyMed_parse_drug_interactions` | Drug interactions | `setid` |
 
 **Example - Resolve drug identity**:
 ```python
@@ -37,9 +37,9 @@ label = tu.tools.DailyMed_get_spl_by_setid(setid=setid)
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `FAERS_count_reactions_by_drug_event` | AE counts for drug | `drug_name`, `limit` |
-| `FAERS_get_event_details` | Detailed event data | `drug_name`, `reaction` |
+| `FAERS_search_adverse_event_reports` | Detailed event data | `drug_name`, `reaction` |
 | `FAERS_search_by_drug` | Search all reports | `drug_name` |
-| `FAERS_get_demographics` | Patient demographics | `drug_name`, `reaction` |
+| `FAERS_stratify_by_demographics` | Patient demographics | `drug_name`, `reaction` |
 
 **Parameter Note**: Use `drug_name` not `drug`.
 
@@ -52,7 +52,7 @@ events = tu.tools.FAERS_count_reactions_by_drug_event(
 )
 
 # Get details for specific event
-details = tu.tools.FAERS_get_event_details(
+details = tu.tools.FAERS_search_adverse_event_reports(
     drug_name="metformin",
     reaction="Lactic acidosis"
 )
@@ -63,8 +63,8 @@ details = tu.tools.FAERS_get_event_details(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `OpenFDA_search_drug_events` | AE reports | `search` |
-| `OpenFDA_get_drug_recalls` | Drug recalls | `search` |
-| `OpenFDA_get_enforcement` | Enforcement actions | `search` |
+| `OpenFDA_search_drug_enforcement` | Drug recalls | `search` |
+| `OpenFDA_search_drug_enforcement` | Enforcement actions | `search` |
 
 ---
 
@@ -98,7 +98,7 @@ def extract_safety_sections(tu, setid):
 |------|---------|----------------|
 | `PharmGKB_search_drugs` | Search drug annotations | `query` |
 | `PharmGKB_get_clinical_annotations` | Clinical PGx data | `drug_id` |
-| `PharmGKB_get_drug_labels` | PGx labeling | `drug_id` |
+| `PharmGKB_get_drug_details` | PGx labeling | `drug_id` |
 | `PharmGKB_search_variants` | Relevant variants | `drug_id` |
 
 **Example - Get PGx data**:
@@ -128,8 +128,8 @@ annotations = tu.tools.PharmGKB_get_clinical_annotations(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `search_clinical_trials` | Search trials | `intervention`, `phase`, `status` |
-| `get_clinical_trial_by_nct_id` | Get trial details | `nct_id` |
-| `get_clinical_trial_results` | Get posted results | `nct_id` |
+| `ClinicalTrials_get_study` | Get trial details | `nct_id` |
+| `get_clinical_trial_outcome_measures` | Get posted results | `nct_id` |
 
 **Example - Get trial safety data**:
 ```python
@@ -144,7 +144,7 @@ trials = tu.tools.search_clinical_trials(
 # Get results for trials with posted data
 for trial in trials:
     if trial.get('has_results'):
-        results = tu.tools.get_clinical_trial_results(
+        results = tu.tools.get_clinical_trial_outcome_measures(
             nct_id=trial['nct_id']
         )
 ```
@@ -174,7 +174,7 @@ genes = tu.tools.KEGG_get_pathway_genes(pathway_id=pathways[0]['pathway_id'])
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `Reactome_search_pathway` | Search pathways | `query`, `species` |
+| `ReactomeContent_search` | Search pathways | `query`, `species` |
 | `Reactome_get_participants` | Get pathway entities | `pathway_id` |
 
 **Use**: Understand drug mechanism pathways to contextualize adverse events.
@@ -393,7 +393,7 @@ def detect_emerging_signals(tu, drug_name, threshold_prr=3.0):
     for event in events:
         if event.get('prr', 0) >= threshold_prr:
             # Get details for high-PRR events
-            details = tu.tools.FAERS_get_event_details(
+            details = tu.tools.FAERS_search_adverse_event_reports(
                 drug_name=drug_name,
                 reaction=event['reaction']
             )
@@ -418,12 +418,12 @@ def detect_emerging_signals(tu, drug_name, threshold_prr=3.0):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `FAERS_count_reactions_by_drug_event` | `OpenFDA_search_drug_events` | PubMed safety literature |
-| `FAERS_get_event_details` | OpenFDA with filters | Manual FAERS query |
+| `FAERS_search_adverse_event_reports` | OpenFDA with filters | Manual FAERS query |
 
 ### Label Alternatives
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `DailyMed_search_spls` | `OpenFDA_get_drug_labels` | FDA website |
+| `DailyMed_search_spls` | `OpenFDA_search_drug_labels` | FDA website |
 | `DailyMed_search_spls` | `FDA_drug_search` | DrugBank |
 
 ### PGx Alternatives
@@ -435,7 +435,7 @@ def detect_emerging_signals(tu, drug_name, threshold_prr=3.0):
 ### Pathway Analysis (NEW)
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `kegg_search_pathway` | `Reactome_search_pathway` | Literature search |
+| `kegg_search_pathway` | `ReactomeContent_search` | Literature search |
 
 ### Literature (NEW)
 | Primary | Fallback 1 | Fallback 2 |

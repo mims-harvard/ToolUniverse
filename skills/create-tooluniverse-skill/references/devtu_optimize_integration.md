@@ -38,7 +38,7 @@ This skill builds on principles from `devtu-optimize-skills`. This reference exp
 - Test script checks actual parameter names
 - Create parameter corrections table in SKILL.md
 - Document: "Tool function names DO NOT predict parameter names"
-- Example: `drugbank_get_drug_by_name(query=...)` not `name=...`
+- Example: `drugbank_get_drug_basic_info_by_drug_name_or_id(query=...)` not `name=...`
 
 ### 3. Handle SOAP Tools
 

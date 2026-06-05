@@ -14,7 +14,7 @@ Verified tool behaviors:
 - gwas_get_associations_for_trait: Returns error; use gwas_search_associations instead
 - cBioPortal: Has {limit} URL bug; cBioPortal_get_cancer_studies broken
 - Enrichr: Returns huge JSON string with connected_paths (107MB), not standard enrichment format
-- clinical_trials_search: Returns total_count=None; check studies list length instead
+- ClinicalTrials_search_studies: Returns total_count=None; check studies list length instead
 - fda_pharmacogenomic_biomarkers: No entry for simvastatin; SLCO1B1 not in simvastatin FDA label via this tool
 """
 
@@ -839,9 +839,9 @@ def test_phase8_clinical_trials(tu):
         except Exception as e:
             log_test(f"Clinical trials: {search['desc']}", False, str(e)[:100])
 
-    # clinical_trials_search (alternative, handles total_count=None)
+    # ClinicalTrials_search_studies (alternative, handles total_count=None)
     try:
-        result = tu.tools.clinical_trials_search(
+        result = tu.tools.ClinicalTrials_search_studies(
             action='search_studies',
             condition='breast cancer',
             intervention='olaparib',
@@ -849,13 +849,13 @@ def test_phase8_clinical_trials(tu):
         )
         if isinstance(result, dict):
             studies = result.get('studies', [])
-            log_test("clinical_trials_search: breast cancer olaparib",
+            log_test("ClinicalTrials_search_studies: breast cancer olaparib",
                     len(studies) > 0,
                     f"Found {len(studies)} studies")
         else:
-            log_test("clinical_trials_search: breast cancer olaparib", bool(result))
+            log_test("ClinicalTrials_search_studies: breast cancer olaparib", bool(result))
     except Exception as e:
-        log_test("clinical_trials_search: breast cancer olaparib", False, str(e)[:100])
+        log_test("ClinicalTrials_search_studies: breast cancer olaparib", False, str(e)[:100])
 
 
 # ============================================================

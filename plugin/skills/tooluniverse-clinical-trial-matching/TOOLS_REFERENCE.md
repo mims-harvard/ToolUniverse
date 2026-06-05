@@ -11,8 +11,8 @@ This skill uses **40+ ToolUniverse tools** across 10 categories to perform compr
 | Tool | Purpose | Key Parameters | Response |
 |------|---------|---------------|----------|
 | `search_clinical_trials` | Main trial search | `query_term` (REQ), `condition`, `intervention`, `pageSize` | `{studies, nextPageToken, total_count}` |
-| `clinical_trials_search` | Alternative search | `action="search_studies"` (REQ), `condition`, `intervention`, `limit` | `{total_count, studies}` |
-| `clinical_trials_get_details` | Full trial details | `action="get_study_details"` (REQ), `nct_id` (REQ) | Full study object |
+| `ClinicalTrials_search_studies` | Alternative search | `action="search_studies"` (REQ), `condition`, `intervention`, `limit` | `{total_count, studies}` |
+| `ClinicalTrials_get_study` | Full trial details | `action="get_study_details"` (REQ), `nct_id` (REQ) | Full study object |
 | `get_clinical_trial_eligibility_criteria` | Eligibility text | `nct_ids` (REQ array), `eligibility_criteria` (REQ) | `[{NCT ID, eligibility_criteria}]` |
 | `get_clinical_trial_locations` | Site locations | `nct_ids` (REQ array), `location` (REQ) | `[{NCT ID, locations}]` |
 | `get_clinical_trial_descriptions` | Title/summary | `nct_ids` (REQ array), `description_type` (REQ) | `[{NCT ID, brief_title, ...}]` |
@@ -94,8 +94,8 @@ This skill uses **40+ ToolUniverse tools** across 10 categories to perform compr
 
 1. **DrugBank tools**: ALL 4 parameters (`query`, `case_sensitive`, `exact_match`, `limit`) are REQUIRED
 2. **`search_clinical_trials`**: `query_term` is REQUIRED even for disease-only searches
-3. **`clinical_trials_search`**: `action` must be exactly `"search_studies"`
-4. **`clinical_trials_get_details`**: `action` must be exactly `"get_study_details"`
+3. **`ClinicalTrials_search_studies`**: `action` must be exactly `"search_studies"`
+4. **`ClinicalTrials_get_study`**: `action` must be exactly `"get_study_details"`
 5. **CIViC `civic_search_variants`**: Does NOT filter by query - returns alphabetically
 6. **CIViC `civic_get_variants_by_gene`**: Takes CIViC gene ID (integer), NOT gene symbol
 7. **OpenTargets drug lookup**: Use `drugName` (NOT `genericName`)
@@ -108,7 +108,7 @@ This skill uses **40+ ToolUniverse tools** across 10 categories to perform compr
 search_clinical_trials:
   {studies: [{NCT ID, brief_title, brief_summary, overall_status, condition: [], phase: []}], nextPageToken, total_count}
 
-clinical_trials_search:
+ClinicalTrials_search_studies:
   {total_count, studies: [{nctId, title, status, conditions: []}]}
 
 get_clinical_trial_eligibility_criteria:

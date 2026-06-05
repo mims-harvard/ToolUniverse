@@ -110,7 +110,7 @@ Call `DailyMed_get_spl_by_setid(setid=set_id, sections=[...])` in batches:
 2. `ChEMBL_search_activities(molecule_chembl_id=chembl_id, limit=100)` -> Activity records
 3. `ChEMBL_get_target(target_chembl_id)` for each unique target -> Target name, UniProt [T1]
 4. `DGIdb_get_drug_info(drugs=[drug_name])` -> Target genes, interaction types [T2]
-5. `PubChem_get_bioactivity_summary_by_CID(cid)` -> Assay summary [T2]
+5. `PubChem_get_compound_bioactivity(cid)` -> Assay summary [T2]
 
 **CRITICAL**:
 - **Avoid `ChEMBL_get_molecule_targets`** - returns unfiltered/irrelevant targets

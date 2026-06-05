@@ -127,10 +127,10 @@ tu.tools.civic_search_molecular_profiles(limit=50)
 ## Section 9: Pharmacology
 
 ```python
-tu.tools.GtoPdb_get_targets(target_type=type, limit=50)  # GPCR, ion channel, etc
-tu.tools.GtoPdb_get_target(target_id=tid)
+tu.tools.GtoPdb_search_targets(target_type=type, limit=50)  # GPCR, ion channel, etc
+tu.tools.GtoPdb_search_targets(target_id=tid)
 tu.tools.GtoPdb_get_target_interactions(target_id=tid)
-tu.tools.GtoPdb_search_interactions(approved_only=True)
+tu.tools.GtoPdb_get_interactions(approved_only=True)
 tu.tools.GtoPdb_list_ligands(ligand_type="Approved")
 ```
 

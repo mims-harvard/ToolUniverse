@@ -68,7 +68,7 @@ These ToolUniverse tools can be used to retrieve data before modeling:
 
 | Tool | Parameters | Returns |
 |------|-----------|---------|
-| `clinical_trials_search` | `action="search_studies"`, `condition`, `intervention`, `limit` | `{total_count, studies}` |
+| `ClinicalTrials_search_studies` | `action="search_studies"`, `condition`, `intervention`, `limit` | `{total_count, studies}` |
 | `get_clinical_trial_eligibility_criteria` | `nct_ids` (array), `eligibility_criteria="all"` | `[{NCT ID, eligibility_criteria}]` |
 
 ### Drug Safety / Adverse Events

@@ -178,8 +178,8 @@ Aggregate genomic data across cancer studies.
 | `cBioPortal_get_cancer_studies` | List available studies | `limit` |
 | `cBioPortal_get_mutations` | Mutations for genes | `study_id`, `gene_list` |
 | `cBioPortal_get_molecular_profiles` | Study molecular profiles | `study_id` |
-| `cBioPortal_get_sample_clinical_data` | Clinical data | `study_id`, `sample_ids` |
-| `cBioPortal_get_patient_clinical_data` | Patient clinical data | `study_id`, `patient_ids` |
+| `cBioPortal_get_clinical_data` | Clinical data | `study_id`, `sample_ids` |
+| `cBioPortal_get_clinical_data` | Patient clinical data | `study_id`, `patient_ids` |
 
 **Example - Query mutations across studies**:
 ```python
@@ -334,7 +334,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `search_clinical_trials` | Search trials | `condition`, `intervention`, `status`, `pageSize` |
-| `get_clinical_trial_by_nct_id` | Get trial details | `nct_id` |
+| `ClinicalTrials_get_study` | Get trial details | `nct_id` |
 | `get_clinical_trial_eligibility_criteria` | Eligibility | `nct_ids` (list) |
 
 **Common Status Values**: "Recruiting", "Active, not recruiting", "Completed"
@@ -348,7 +348,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `MyGene_query_genes` | Search genes | `q`, `species` |
-| `MyGene_get_gene_by_id` | Get gene info | `geneid` |
+| `MyGene_get_gene_annotation` | Get gene info | `geneid` |
 
 ### UniProt
 
@@ -356,7 +356,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 |------|---------|----------------|
 | `UniProt_search` | Search proteins | `query`, `organism` |
 | `UniProt_get_entry_by_accession` | Get protein | `accession` |
-| `UniProt_get_protein_sequence` | Get sequence | `accession` |
+| `UniProt_get_sequence_by_accession` | Get sequence | `accession` |
 
 ---
 

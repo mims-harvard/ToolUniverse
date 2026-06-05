@@ -120,7 +120,7 @@ Verified tool signatures, response structures, and troubleshooting.
 | Disease targets | OpenTargets disease targets | CTD gene-diseases | GWAS associations |
 | PPI network | STRING interactions | OpenTargets interactions | IntAct interactions |
 | Pathways | ReactomeAnalysis enrichment | enrichr enrichment | STRING functional enrichment |
-| Clinical trials | search_clinical_trials | clinical_trials_search | PubMed clinical |
+| Clinical trials | search_clinical_trials | ClinicalTrials_search_studies | PubMed clinical |
 | Safety | FAERS + FDA | OpenTargets AEs | DrugBank safety |
 | Literature | PubMed search | EuropePMC search | OpenTargets publications |
 

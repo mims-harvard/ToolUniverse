@@ -178,8 +178,8 @@
 **Tools (5)** - Use for structural analysis:
 1. `SASBDB_search_entries` - Find structural data
 2. `SASBDB_get_entry` - Get entry metadata
-3. `SASBDB_get_models` - Get structural models
-4. `SASBDB_get_scattering_profile` - Get scattering data
+3. `SASBDB_get_entry` - Get structural models
+4. `SASBDB_get_entry` - Get scattering data
 5. `SASBDB_download_data` - Download raw data
 
 ---

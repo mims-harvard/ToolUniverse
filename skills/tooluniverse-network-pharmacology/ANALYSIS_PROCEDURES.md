@@ -149,7 +149,7 @@ pharmgkb_gene = tu.tools.PharmGKB_get_gene_details(gene_symbol="PSEN1")
 
 ```python
 trials = tu.tools.search_clinical_trials(query_term="metformin", condition="Alzheimer", pageSize=20)
-trials2 = tu.tools.clinical_trials_search(query="metformin Alzheimer disease", limit=20)
+trials2 = tu.tools.ClinicalTrials_search_studies(query="metformin Alzheimer disease", limit=20)
 
 ctd_chem_diseases = tu.tools.CTD_get_chemical_diseases(input_terms="Metformin")
 
@@ -352,7 +352,7 @@ trials = tu.tools.search_clinical_trials(query_term=drug_name, condition=disease
 
 for trial in trials.get('studies', [])[:5]:
     nct_id = trial['NCT ID']
-    trial_details = tu.tools.clinical_trials_get_details(nct_id=nct_id)
+    trial_details = tu.tools.ClinicalTrials_get_study(nct_id=nct_id)
     trial_outcomes = tu.tools.extract_clinical_trial_outcomes(nct_id=nct_id)
     trial_ae = tu.tools.extract_clinical_trial_adverse_events(nct_id=nct_id)
 

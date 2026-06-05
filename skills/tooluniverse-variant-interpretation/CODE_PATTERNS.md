@@ -370,7 +370,7 @@ def comprehensive_pathogenicity_assessment(tu, variant_info):
 
 ```python
 # 1. Get protein sequence
-protein_seq = tu.tools.UniProt_get_protein_sequence(accession=uniprot_id)
+protein_seq = tu.tools.UniProt_get_sequence_by_accession(accession=uniprot_id)
 
 # 2. Get/predict structure
 try:

@@ -280,9 +280,9 @@ def test_17_search_trials_intervention():
 
 
 def test_18_alternative_search():
-    """Phase 2: Test alternative trial search (clinical_trials_search)."""
+    """Phase 2: Test alternative trial search (ClinicalTrials_search_studies)."""
     tu = load_tu()
-    result = tu.tools.clinical_trials_search(
+    result = tu.tools.ClinicalTrials_search_studies(
         action='search_studies',
         condition='non-small cell lung cancer',
         intervention='pembrolizumab',
@@ -319,7 +319,7 @@ def test_19_search_pagination():
 def test_20_get_trial_details():
     """Phase 3: Get full trial details by NCT ID."""
     tu = load_tu()
-    result = tu.tools.clinical_trials_get_details(action='get_study_details', nct_id='NCT02841579')
+    result = tu.tools.ClinicalTrials_get_study(action='get_study_details', nct_id='NCT02841579')
     assert isinstance(result, dict), f"Expected dict, got {type(result)}"
     assert 'nctId' in result, f"Missing 'nctId'. Keys: {list(result.keys())}"
     assert result.get('nctId') == 'NCT02841579', f"Wrong NCT ID: {result.get('nctId')}"
@@ -970,7 +970,7 @@ def main():
     run_test("15. Search trials: HER2+ breast", test_15_search_trials_her2_breast)
     run_test("16. Search trials: NTRK fusion basket", test_16_search_trials_ntrk_basket)
     run_test("17. Search trials: intervention (osimertinib)", test_17_search_trials_intervention)
-    run_test("18. Alternative search (clinical_trials_search)", test_18_alternative_search)
+    run_test("18. Alternative search (ClinicalTrials_search_studies)", test_18_alternative_search)
     run_test("19. Search pagination", test_19_search_pagination)
 
     # Phase 3: Trial Characterization (6 tests)

@@ -78,7 +78,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 - `ChEMBL_get_bioactivity_by_chemblid` → Bioactivity data
 - `ChEMBL_get_target` → Target proteins
 - `DGIdb_get_drug_info` → Drug-gene interactions
-- `PubChem_get_bioactivity_summary_by_CID` → PubChem bioactivity
+- `PubChem_get_compound_bioactivity` → PubChem bioactivity
 
 **Step 4: Get ADMET Predictions**
 - `ADMETAI_predict_bioavailability` → Absorption predictions
@@ -162,7 +162,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 | `PubMed_search_articles` | `EuropePMC_search_articles` | `openalex_search_works` | `SemanticScholar_search_papers` |
 | `PubMed_get_cited_by` | `EuropePMC_get_citations` | OpenAlex citations | Manual search |
 | `PubMed_get_related` | `EuropePMC_get_references` | SemanticScholar | Keyword expansion |
-| `PubMed_get_article` | `EuropePMC_get_article` | `Crossref_get_work` | - |
+| `PubMed_get_article` | `EuropePMC_search_articles` | `Crossref_get_work` | - |
 
 ### Protein/Gene Tools
 | Primary | Fallback 1 | Fallback 2 |
@@ -176,7 +176,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_molecules` + SMILES → CID | Manual search |
-| `ChEMBL_get_bioactivity_by_chemblid` | `PubChem_get_bioactivity_summary_by_CID` | - |
+| `ChEMBL_get_bioactivity_by_chemblid` | `PubChem_get_compound_bioactivity` | - |
 | `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | FDA label search |
 | `ADMETAI_predict_*` | Document "Predictions unavailable" | - |
 

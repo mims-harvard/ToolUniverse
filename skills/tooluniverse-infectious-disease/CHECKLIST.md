@@ -73,7 +73,7 @@ Pre-delivery verification checklist for outbreak intelligence reports.
 
 ### Format Examples
 ```markdown
-*Source: NCBI Taxonomy via `NCBI_Taxonomy_search` (TaxID: 2697049)*
+*Source: NCBI Taxonomy via `NCBIDatasets_suggest_taxonomy` (TaxID: 2697049)*
 *Source: UniProt via `UniProt_search` (P0DTD1)*
 *Source: NVIDIA NIM via `NvidiaNIM_alphafold2` (pLDDT: 91.2)*
 *Source: NVIDIA NIM via `NvidiaNIM_diffdock` (score: 0.92)*

@@ -8,7 +8,7 @@ Detailed procedures for each of the 6 research paths in the clinical trial desig
 
 ### Steps
 1. **Disease prevalence lookup**: Use `OpenTargets_get_disease_id_description_by_name` then `OpenTargets_get_diseases_phenotypes_by_target_ensembl`
-2. **Biomarker prevalence**: Use `ClinVar_search_variants` (gene + significance) and `gnomAD_search_gene_variants`
+2. **Biomarker prevalence**: Use `ClinVar_search_variants` (gene + significance) and `gnomad_search_variants`
 3. **Literature epidemiology**: Use `PubMed_search_articles` for prevalence, incidence, geographic distribution
 4. **Enrollment feasibility**: Use `search_clinical_trials` to find past trials and enrollment rates
 
@@ -32,7 +32,7 @@ x Eligibility factors (age, PS, prior therapy, organ function): ~60%
 ### Steps
 1. **Variant pathogenicity**: `ClinVar_get_variant_details`
 2. **Cancer-specific frequency**: `COSMIC_search_mutations`
-3. **Population genetics**: `gnomAD_get_variant_details`
+3. **Population genetics**: `gnomad_get_variant`
 4. **CDx and testing**: `PubMed_search_articles` for FDA-approved companion diagnostics, NCCN guidelines
 
 ### Testing Logistics to Assess
@@ -50,7 +50,7 @@ x Eligibility factors (age, PS, prior therapy, organ function): ~60%
 2. **Indications**: `drugbank_get_indications_by_drug_name_or_drugbank_id`
 3. **Pharmacology**: `drugbank_get_pharmacology_by_drug_name_or_drugbank_id`
 4. **Generic availability**: `FDA_OrangeBook_search_drug`
-5. **Approval details**: `FDA_get_drug_approval_history`
+5. **Approval details**: `OpenFDA_get_approval_history`
 6. **Historical controls**: `search_clinical_trials` for completed trials with SOC
 
 ### Design Options to Evaluate
@@ -65,7 +65,7 @@ x Eligibility factors (age, PS, prior therapy, organ function): ~60%
 ### Steps
 1. **Precedent trials**: `search_clinical_trials` (condition + phase + status=completed)
 2. **FDA acceptance**: `PubMed_search_articles` for accelerated approval endpoints
-3. **Approval history**: `FDA_get_drug_approval_history` for endpoints used in approvals
+3. **Approval history**: `OpenFDA_get_approval_history` for endpoints used in approvals
 
 ### Endpoint Hierarchy (Oncology)
 | Endpoint | Evidence Grade | Use Case |
@@ -111,7 +111,7 @@ x Eligibility factors (age, PS, prior therapy, organ function): ~60%
 1. **Breakthrough designations**: `PubMed_search_articles` for FDA breakthrough in indication
 2. **Orphan drug eligibility**: Calculate US prevalence (<200,000 total)
 3. **FDA guidance**: `PubMed_search_articles` for relevant FDA guidance documents
-4. **Approval precedents**: `FDA_get_drug_approval_history` for similar drugs
+4. **Approval precedents**: `OpenFDA_get_approval_history` for similar drugs
 
 ### FDA Pathway Options
 | Pathway | Criteria | Benefits |

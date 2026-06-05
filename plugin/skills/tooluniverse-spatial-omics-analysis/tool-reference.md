@@ -22,7 +22,7 @@ Critical parameter names and response formats. Referenced from SKILL.md.
 | `OpenTargets_get_associated_targets_by_disease_efoId` | disease | `efoId` | `diseaseId` | Returns nested response |
 | `DGIdb_get_gene_druggability` | genes | `genes` (array) | `gene_name` | Array of strings |
 | `DGIdb_get_drug_gene_interactions` | genes | `genes` (array) | `gene_name` | Array of strings |
-| `clinical_trials_search` | action | `action='search_studies'` | Missing action | `action` is REQUIRED |
+| `ClinicalTrials_search_studies` | action | `action='search_studies'` | Missing action | `action` is REQUIRED |
 | `ensembl_lookup_gene` | species | `species='homo_sapiens'` | No species | REQUIRED parameter |
 | GTEx tools | gencode | `gencode_id` (array) | `gene_id` | Requires versioned GENCODE ID |
 
@@ -40,7 +40,7 @@ Critical parameter names and response formats. Referenced from SKILL.md.
 | `OpenTargets_get_target_tractability_by_ensemblID` | `{data: {target: {id, tractability: [{label, modality, value}]}}}` | Check value=true |
 | `DGIdb_get_gene_druggability` | `{data: {genes: {nodes: [{name, geneCategories: [{name}]}]}}}` | GraphQL response |
 | `PubMed_search_articles` | Plain list of `[{pmid, title, authors, journal, pub_date}]` | No data wrapper |
-| `clinical_trials_search` | `{total_count, studies: [{nctId, title, status, conditions}]}` | total_count can be None |
+| `ClinicalTrials_search_studies` | `{total_count, studies: [{nctId, title, status, conditions}]}` | total_count can be None |
 
 ---
 

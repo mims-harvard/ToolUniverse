@@ -14,7 +14,7 @@ Complete reference for 50+ tools used in drug research, organized by use case.
 | 2D Image | `PubChem_get_compound_2D_image_by_CID` | - |
 | Drug-likeness | `ADMETAI_predict_physicochemical_properties` | PubChem properties |
 | Targets | `ChEMBL_get_target` | `DGIdb_get_drug_info` |
-| Bioactivity | `ChEMBL_get_activity` | `PubChem_get_bioactivity_summary_by_CID` |
+| Bioactivity | `ChEMBL_get_activity` | `PubChem_get_compound_bioactivity` |
 | Absorption | `ADMETAI_predict_bioavailability` | Literature |
 | BBB | `ADMETAI_predict_BBB_penetrance` | Literature |
 | CYP | `ADMETAI_predict_CYP_interactions` | PharmGKB |
@@ -50,7 +50,7 @@ Complete reference for 50+ tools used in drug research, organized by use case.
 | `PubChem_get_CID_by_SMILES` | Structure → CID | CID |
 | `PubChem_get_compound_properties_by_CID` | Molecular properties | MW, formula, XLogP, TPSA, HBD, HBA |
 | `PubChem_get_compound_2D_image_by_CID` | Structure image | PNG image |
-| `PubChem_get_bioactivity_summary_by_CID` | Activity overview | Active/inactive counts, assay types |
+| `PubChem_get_compound_bioactivity` | Activity overview | Active/inactive counts, assay types |
 | `PubChem_get_drug_label_info_by_CID` | FDA label info | Indications, warnings, dosing |
 | `PubChem_get_associated_patents_by_CID` | Patent data | Patent numbers, titles |
 | `PubChem_search_compounds_by_similarity` | Find analogs | Similar CIDs with scores |
@@ -492,7 +492,7 @@ ChEMBL_get_target
   ↓
 DGIdb_get_drug_info
   ↓
-PubChem_get_bioactivity_summary_by_CID
+PubChem_get_compound_bioactivity
 ```
 
 ### PATH 4: ADMET Profile
@@ -561,7 +561,7 @@ PubMed_get_cited_by (for key papers)
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_drugs` | Manual SMILES search |
-| `ChEMBL_get_activity` | `PubChem_get_bioactivity_summary_by_CID` | Literature search |
+| `ChEMBL_get_activity` | `PubChem_get_compound_bioactivity` | Literature search |
 | `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | FDA Orange Book |
 | `PharmGKB_get_dosing_guidelines` | Note "No guideline" | Literature search |
 | `FAERS_count_reactions_by_drug_event` | Note "FAERS unavailable" | Trial AE data |

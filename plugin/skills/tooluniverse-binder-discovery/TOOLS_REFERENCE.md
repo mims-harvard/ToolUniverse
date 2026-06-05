@@ -428,20 +428,20 @@ result = tu.tools.get_ligand_smiles_by_chem_comp_id(
 # Returns: SMILES, name, formula
 ```
 
-### emdb_search (NEW)
+### EMDB_search_structures (NEW)
 **Purpose**: Search EMDB for cryo-EM structures
 ```python
-result = tu.tools.emdb_search(
+result = tu.tools.EMDB_search_structures(
     query="EGFR membrane receptor"
 )
 # Returns: EMDB entries with emdb_id, resolution, title
 ```
 **When to use**: Membrane proteins (GPCRs, ion channels), large complexes, targets where conformational states matter.
 
-### emdb_get_entry (NEW)
+### EMDB_get_structure (NEW)
 **Purpose**: Get details for EMDB entry including associated PDB models
 ```python
-result = tu.tools.emdb_get_entry(
+result = tu.tools.EMDB_get_structure(
     entry_id="EMD-12345"
 )
 # Returns: entry details including pdb_ids (associated atomic models)
@@ -806,7 +806,7 @@ result = tu.tools.SemanticScholar_search_papers(
 ```
 Primary: ChEMBL_search_targets
 ├─ Success → Use target_chembl_id
-└─ Fail → GtoPdb_get_targets (for GPCR/ion channel/enzyme)
+└─ Fail → GtoPdb_search_targets (for GPCR/ion channel/enzyme)
          └─ Fail → Document "Target not in databases"
 ```
 
@@ -818,7 +818,7 @@ If target is GPCR:
     │   ├─ GPCRdb_get_structures → Active/inactive state structures
     │   ├─ GPCRdb_get_ligands → Known agonists/antagonists
     │   └─ GPCRdb_get_mutations → Mutation effects on binding
-    └─ Fail (not in GPCRdb) → Use GtoPdb_get_targets
+    └─ Fail (not in GPCRdb) → Use GtoPdb_search_targets
 ```
 
 ### Druggability Assessment
@@ -853,8 +853,8 @@ Primary: ChEMBL_search_similar_molecules
 ```
 Primary: get_protein_metadata_by_pdb_id (for each PDB)
 ├─ Success → Use experimental structure
-└─ Fail (no PDB) → emdb_search (for membrane proteins)
-         ├─ Success → Get PDB model via emdb_get_entry
+└─ Fail (no PDB) → EMDB_search_structures (for membrane proteins)
+         ├─ Success → Get PDB model via EMDB_get_structure
          └─ Fail → NvidiaNIM_alphafold2
                  └─ Fail (API error) → NvidiaNIM_esmfold
                          └─ Fail → alphafold_get_prediction (AlphaFold DB)

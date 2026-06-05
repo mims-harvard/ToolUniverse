@@ -591,17 +591,17 @@ tu.tools.GtoPdb_get_disease(disease_id=652)
 # Returns: targets, ligands, description
 ```
 
-### GtoPdb_get_targets
+### GtoPdb_search_targets
 **Purpose**: Get pharmacological targets
 ```python
-tu.tools.GtoPdb_get_targets(target_type="GPCR", limit=20)
+tu.tools.GtoPdb_search_targets(target_type="GPCR", limit=20)
 # Returns: targets with drugs, ligands
 ```
 
-### GtoPdb_get_target
+### GtoPdb_search_targets
 **Purpose**: Get target details
 ```python
-tu.tools.GtoPdb_get_target(target_id=290)
+tu.tools.GtoPdb_search_targets(target_id=290)
 # Returns: detailed target info
 ```
 
@@ -615,10 +615,10 @@ tu.tools.GtoPdb_get_target_interactions(
 # Returns: interactions with affinity
 ```
 
-### GtoPdb_search_interactions
+### GtoPdb_get_interactions
 **Purpose**: Search drug-target interactions
 ```python
-tu.tools.GtoPdb_search_interactions(
+tu.tools.GtoPdb_get_interactions(
     approved_only=True,
     limit=100
 )

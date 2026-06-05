@@ -40,7 +40,7 @@ tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
 3. ChEMBL_search_targets(query=target_name, organism="Homo sapiens")
    -> Extract: ChEMBL target ID, target type
 
-4. GtoPdb_get_targets(query=target_name)
+4. GtoPdb_search_targets(query=target_name)
    -> Extract: GtoPdb target ID (if GPCR/ion channel/enzyme)
 ```
 
@@ -283,13 +283,13 @@ def get_pubchem_assays_for_target(tu, gene_symbol):
 ```python
 def get_cryoem_structures(tu, target_name, uniprot_accession):
     """Get cryo-EM structures for membrane targets."""
-    emdb_results = tu.tools.emdb_search(
+    emdb_results = tu.tools.EMDB_search_structures(
         query=f"{target_name} membrane receptor"
     )
 
     structures = []
     for entry in emdb_results[:5]:
-        details = tu.tools.emdb_get_entry(entry_id=entry['emdb_id'])
+        details = tu.tools.EMDB_get_structure(entry_id=entry['emdb_id'])
         pdb_models = details.get('pdb_ids', [])
         structures.append({
             'emdb_id': entry['emdb_id'],
@@ -556,7 +556,7 @@ def search_binder_literature(tu, target_name, compound_scaffolds):
 ### Target ID Resolution
 ```
 Primary: ChEMBL_search_targets
--> Fail -> GtoPdb_get_targets (for GPCR/ion channel/enzyme)
+-> Fail -> GtoPdb_search_targets (for GPCR/ion channel/enzyme)
          -> Fail -> Document "Target not in databases"
 ```
 
@@ -586,7 +586,7 @@ Primary: ChEMBL_search_similar_molecules
 ### Structure Retrieval
 ```
 Primary: get_protein_metadata_by_pdb_id
--> Fail (no PDB) -> emdb_search (for membrane proteins)
+-> Fail (no PDB) -> EMDB_search_structures (for membrane proteins)
          -> Fail -> NvidiaNIM_alphafold2
                  -> Fail -> NvidiaNIM_esmfold
                          -> Fail -> alphafold_get_prediction

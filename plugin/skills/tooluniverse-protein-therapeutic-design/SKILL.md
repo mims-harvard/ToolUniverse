@@ -106,8 +106,8 @@ Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics
 | `PDBe_get_uniprot_mappings` | Find PDB structures | `uniprot_id` |
 | `RCSBData_get_entry` | Download PDB file | `pdb_id` |
 | `alphafold_get_prediction` | Get AlphaFold DB structure | `accession` |
-| `emdb_search` | Search cryo-EM maps | `query` |
-| `emdb_get_entry` | Get entry details | `entry_id` |
+| `EMDB_search_structures` | Search cryo-EM maps | `query` |
+| `EMDB_get_structure` | Get entry details | `entry_id` |
 | `UniProt_get_entry_by_accession` | Get target sequence | `accession` |
 | `InterPro_get_protein_domains` | Get domains | `accession` |
 

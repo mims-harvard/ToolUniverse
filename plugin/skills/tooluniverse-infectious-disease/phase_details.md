@@ -7,7 +7,7 @@
 ```python
 def identify_pathogen(tu, pathogen_query):
     """Classify pathogen taxonomically."""
-    taxonomy = tu.tools.NCBI_Taxonomy_search(query=pathogen_query)
+    taxonomy = tu.tools.NCBIDatasets_suggest_taxonomy(query=pathogen_query)
     return {
         'taxid': taxonomy.get('taxid'),
         'scientific_name': taxonomy.get('scientific_name'),

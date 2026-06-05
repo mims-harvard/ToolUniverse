@@ -97,9 +97,9 @@
 ### Phase 8: Clinical Trial Matching
 | Tool | Parameters | Response | Purpose |
 |------|-----------|----------|---------|
-| `clinical_trials_search` | `action='search_studies'`, `condition`, `intervention`, `limit` | `{total_count, studies}` | Trial search |
+| `ClinicalTrials_search_studies` | `action='search_studies'`, `condition`, `intervention`, `limit` | `{total_count, studies}` | Trial search |
 | `search_clinical_trials` | `query_term` (REQUIRED), `condition`, `intervention`, `pageSize` | `{studies, total_count}` | Alternative trial search |
-| `clinical_trials_get_details` | `action='get_study_details'`, `nct_id` | Full study | Trial details |
+| `ClinicalTrials_get_study` | `action='get_study_details'`, `nct_id` | Full study | Trial details |
 | `get_clinical_trial_eligibility_criteria` | `nct_ids` (array), `eligibility_criteria='all'` | Eligibility criteria | Biomarker eligibility |
 
 ## Total Tool Count

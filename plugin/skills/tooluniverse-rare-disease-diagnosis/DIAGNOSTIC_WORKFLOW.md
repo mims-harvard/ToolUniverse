@@ -415,7 +415,7 @@ def interpret_variant(tu, variant_hgvs):
 ```python
 def check_population_frequency(tu, variant_id):
     """Get gnomAD allele frequency."""
-    freq = tu.tools.gnomAD_get_variant_frequencies(variant_id=variant_id)
+    freq = tu.tools.gnomad_get_variant(variant_id=variant_id)
 
     if freq['allele_frequency'] < 0.00001:
         rarity = "Ultra-rare"

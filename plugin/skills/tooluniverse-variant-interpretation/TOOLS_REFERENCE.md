@@ -830,7 +830,7 @@ domains = tu.tools.InterPro_get_protein_domains(accession="P04637")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `PubMed_search_articles` | Search articles | `query`, `max_results` |
-| `PubMed_get_abstract` | Get abstract | `pmid` |
+| `PubMed_get_article` | Get abstract | `pmid` |
 
 **Example - Search for functional studies**:
 ```python

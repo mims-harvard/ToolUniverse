@@ -341,8 +341,8 @@ openalex_search_works, europe_pmc_search_abstracts, semantic_scholar_search_pape
 | BACE1 | Enzyme | (pipeline) | GtoPdb |
 | Tau | Protein | (pipeline) | GtoPdb |
 
-**Sources Used**: GtoPdb_list_diseases, GtoPdb_get_disease, GtoPdb_get_targets,
-GtoPdb_get_target, GtoPdb_get_target_interactions
+**Sources Used**: GtoPdb_list_diseases, GtoPdb_get_disease, GtoPdb_search_targets,
+GtoPdb_search_targets, GtoPdb_get_target_interactions
 
 ---
 

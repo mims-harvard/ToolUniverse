@@ -169,7 +169,7 @@ Additional tools: `HPA_get_biological_processes_by_gene`, `HPA_get_protein_inter
 | `OpenTargets_get_associated_drugs_by_target_ensemblID` | `ensemblId`, `size` (both REQUIRED) | Approved/clinical drugs |
 | `OpenTargets_get_drug_mechanisms_of_action_by_chemblId` | `chemblId` | Drug mechanism |
 | `OpenTargets_target_disease_evidence` | `ensemblId`, `efoId` | Target-disease evidence |
-| `clinical_trials_search` | `action='search_studies'`, `condition`, `intervention`, `limit` | Clinical trials |
+| `ClinicalTrials_search_studies` | `action='search_studies'`, `condition`, `intervention`, `limit` | Clinical trials |
 | `DGIdb_get_gene_druggability` | `genes` (array) | Druggability categories |
 | `civic_search_genes` | (no filter) | CIViC cancer evidence |
 

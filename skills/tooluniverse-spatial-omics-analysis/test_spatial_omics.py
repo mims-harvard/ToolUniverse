@@ -870,7 +870,7 @@ def test_18_clinical_trials_for_spatial_targets():
     tu.load_tools()
 
     # Search for trials targeting EGFR in breast cancer
-    result = tu.tools.clinical_trials_search(
+    result = tu.tools.ClinicalTrials_search_studies(
         action="search_studies",
         condition="breast cancer",
         intervention="EGFR",
