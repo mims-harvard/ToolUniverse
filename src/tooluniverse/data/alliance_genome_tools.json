@@ -200,13 +200,13 @@
   },
   {
     "name": "Alliance_search_genes",
-    "description": "Search for genes across all model organisms in the Alliance of Genome Resources. Searches by gene symbol, name, or keyword and returns matching genes from human, mouse, rat, zebrafish, fly, worm, yeast, and frog databases. Provides type-ahead suggestions. Example: 'insulin' returns INS (human), Ins1/Ins2 (mouse), ins (zebrafish), etc.",
+    "description": "Search for genes across all model organisms in the Alliance of Genome Resources. Matches by gene symbol or synonym (type-ahead) and returns genes from human, mouse, rat, zebrafish, fly, worm, yeast, and frog databases. Use the official gene symbol rather than a descriptive name: 'INS' returns INS (human), Ins1/Ins2 (rat), ins (zebrafish), whereas 'insulin' matches GO terms/diseases, not genes.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "Gene name, symbol, or keyword to search for. Examples: 'insulin', 'tumor protein p53', 'hedgehog', 'notch'."
+          "description": "Gene symbol or synonym to search for (not a descriptive name). Examples: 'INS', 'TP53', 'shh', 'notch1'."
         },
         "limit": {
           "type": "integer",
@@ -223,11 +223,11 @@
     "type": "AllianceGenomeTool",
     "test_examples": [
       {
-        "query": "insulin",
+        "query": "INS",
         "limit": 10
       },
       {
-        "query": "hedgehog"
+        "query": "shh"
       }
     ],
     "return_schema": {

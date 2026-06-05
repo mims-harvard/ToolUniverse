@@ -267,14 +267,19 @@ class AllianceGenomeTool(BaseTool):
             timeout=self.timeout,
         )
         response.raise_for_status()
-        results = response.json().get("results", [])
+        raw_results = response.json().get("results", [])
 
-        # Keep only gene hits (autocomplete also returns diseases, datasets, …).
-        results = [r for r in results if r.get("category") == "gene_search_result"]
+        # Keep only gene hits (autocomplete also returns diseases, GO terms,
+        # datasets, …).
+        gene_results = [
+            r for r in raw_results if r.get("category") == "gene_search_result"
+        ]
 
         if species_prefix:
-            results = [
-                r for r in results if str(r.get("curie", "")).startswith(species_prefix)
+            gene_results = [
+                r
+                for r in gene_results
+                if str(r.get("curie", "")).startswith(species_prefix)
             ]
 
         genes = [
@@ -284,7 +289,7 @@ class AllianceGenomeTool(BaseTool):
                 "gene_id": r.get("curie"),
                 "category": "gene",
             }
-            for r in results[:limit]
+            for r in gene_results[:limit]
         ]
 
         metadata: Dict[str, Any] = {
@@ -294,6 +299,24 @@ class AllianceGenomeTool(BaseTool):
         }
         if species_name:
             metadata["species"] = species_name
+
+        # Alliance's autocomplete matches gene symbols/synonyms, not descriptive
+        # gene *names*: e.g. "insulin" returns GO terms and diseases but no gene,
+        # while the symbol "INS" returns the genes. When no gene matched but other
+        # entity types did, say so instead of an indistinguishable empty result.
+        if not genes and raw_results:
+            other = sorted(
+                {
+                    str(r.get("category", "")).replace("_search_result", "")
+                    for r in raw_results
+                }
+            )
+            metadata["note"] = (
+                f"No gene matched '{query}'. The Alliance autocomplete matches gene "
+                f"symbols/synonyms rather than descriptive names, and it instead "
+                f"matched: {', '.join(c for c in other if c)}. Try the official gene "
+                "symbol (e.g. 'INS' for insulin)."
+            )
 
         return {"status": "success", "data": genes, "metadata": metadata}
 
