@@ -27,7 +27,7 @@ Insert after "When to Use This Skill" section:
 - PATH 1 (Essentiality Analysis): CRISPR dependency scores unavailable
 
 **Workaround**: This skill now uses **Open Targets Platform** as fallback:
-- Gene validation via `OpenTargets_get_target()`
+- Gene validation via `OpenTargets_get_target_info_by_ensemblID()`
 - Essentiality proxy via tractability and safety scores
 - Evidence grading reduced (★★☆ instead of ★★★)
 
@@ -94,7 +94,7 @@ def validate_gene_symbols_v2(tu, gene_list):
 
         for gene in gene_list:
             # Query Open Targets to check if gene exists
-            result = tu.tools.OpenTargets_get_target(target_id=gene)
+            result = tu.tools.OpenTargets_get_target_info_by_ensemblID(target_id=gene)
 
             if result.get('status') == 'success' and result.get('data'):
                 target_data = result.get('data', {})
@@ -128,7 +128,7 @@ def validate_gene_symbols_v2(tu, gene_list):
 
 **Proceeding with 23 valid gene symbols for analysis.**
 
-*Source: Open Targets Platform via `OpenTargets_get_target` (fallback due to DepMap API unavailability)*
+*Source: Open Targets Platform via `OpenTargets_get_target_info_by_ensemblID` (fallback due to DepMap API unavailability)*
 ```
 
 ### 3. Update PATH 1: Essentiality Analysis (Fallback)
@@ -170,7 +170,7 @@ def analyze_gene_essentiality_v2(tu, gene_list, cancer_type=None):
         print("⚠️  DepMap unavailable, using Open Targets tractability as proxy...")
 
         for gene in gene_list:
-            ot_result = tu.tools.OpenTargets_get_target(target_id=gene)
+            ot_result = tu.tools.OpenTargets_get_target_info_by_ensemblID(target_id=gene)
 
             if ot_result.get('status') == 'success' and ot_result.get('data'):
                 target_data = ot_result.get('data', {})
@@ -247,7 +247,7 @@ def classify_essentiality_open_targets(target_data):
 
 **Interpretation**: Genes with high safety liabilities when inhibited are likely essential for cell survival. However, this is an indirect proxy. **For definitive essentiality scores, DepMap CRISPR data is required.**
 
-*Source: Open Targets Platform via `OpenTargets_get_target` (fallback method)*
+*Source: Open Targets Platform via `OpenTargets_get_target_info_by_ensemblID` (fallback method)*
 
 ---
 
@@ -392,7 +392,7 @@ tu.load_tools()
 genes = ['KRAS', 'EGFR', 'TP53']
 
 for gene in genes:
-    result = tu.tools.OpenTargets_get_target(target_id=gene)
+    result = tu.tools.OpenTargets_get_target_info_by_ensemblID(target_id=gene)
     if result.get('status') == 'success':
         data = result.get('data', {})
         print(f"✅ {gene}: {data.get('approved_symbol')} - {data.get('biotype')}")

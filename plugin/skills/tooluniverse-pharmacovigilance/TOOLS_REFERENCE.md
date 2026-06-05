@@ -38,7 +38,7 @@ label = tu.tools.DailyMed_get_spl_by_setid(setid=setid)
 |------|---------|----------------|
 | `FAERS_count_reactions_by_drug_event` | AE counts for drug | `drug_name`, `limit` |
 | `FAERS_search_adverse_event_reports` | Detailed event data | `drug_name`, `reaction` |
-| `FAERS_search_by_drug` | Search all reports | `drug_name` |
+| `FAERS_search_adverse_event_reports` | Search all reports | `drug_name` |
 | `FAERS_stratify_by_demographics` | Patient demographics | `drug_name`, `reaction` |
 
 **Parameter Note**: Use `drug_name` not `drug`.
@@ -424,7 +424,7 @@ def detect_emerging_signals(tu, drug_name, threshold_prr=3.0):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `DailyMed_search_spls` | `OpenFDA_search_drug_labels` | FDA website |
-| `DailyMed_search_spls` | `FDA_drug_search` | DrugBank |
+| `DailyMed_search_spls` | `FDA_search_drug_labels` | DrugBank |
 
 ### PGx Alternatives
 | Primary | Fallback 1 | Fallback 2 |

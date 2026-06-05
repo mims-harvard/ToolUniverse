@@ -68,6 +68,19 @@ def test_opentargets_queries_use_current_schema(name, fields):
     assert _tool(name).get("test_examples"), f"{name} has no test_example"
 
 
+def test_new_target_info_tool_is_well_formed():
+    # New tool built to fill the audit gap (OpenTargets_get_target had no
+    # generic target-info tool). Query must use only current Target fields.
+    tool = _tool("OpenTargets_get_target_info_by_ensemblID")
+    query = tool.get("query_schema", "")
+    for field in ("approvedSymbol", "biotype", "functionDescriptions", "genomicLocation"):
+        assert field in query, f"target-info query missing {field!r}"
+    assert tool.get("type") == "OpenTarget"
+    assert tool["test_examples"][0]["ensemblId"].startswith("ENSG")
+    # return_schema is the standard success/error oneOf
+    assert "oneOf" in tool.get("return_schema", {})
+
+
 if __name__ == "__main__":
     import sys
 

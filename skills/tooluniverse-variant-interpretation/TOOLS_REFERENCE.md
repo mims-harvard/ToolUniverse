@@ -714,7 +714,7 @@ papers = tu.tools.SemanticScholar_search_papers(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `EnsemblVar_get_variant_consequences` | VEP annotations | `variant_id` |
-| `Ensembl_get_gene_info` | Gene details | `gene_id` |
+| `ensembl_lookup_gene` | Gene details | `gene_id` |
 
 **Example - Get VEP data**:
 ```python
@@ -1015,7 +1015,7 @@ def calculate_acmg_classification(evidence_codes):
 ### Gene Information
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `OMIM_search` | `NCBIGene_search` | `Ensembl_get_gene_info` |
+| `OMIM_search` | `NCBIGene_search` | `ensembl_lookup_gene` |
 
 ### Literature
 | Primary | Fallback 1 |

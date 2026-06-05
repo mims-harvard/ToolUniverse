@@ -13,7 +13,8 @@
         },
         "species": {
           "type": "string",
-          "description": "Species name required for gene symbols (default 'homo_sapiens'). Examples: 'homo_sapiens', 'mus_musculus', 'rattus_norvegicus'"
+          "description": "Species name required for gene symbols (default 'homo_sapiens'). Examples: 'homo_sapiens', 'mus_musculus', 'rattus_norvegicus'",
+          "default": "homo_sapiens"
         }
       },
       "required": [
@@ -136,7 +137,9 @@
         "type": "genomic"
       }
     ],
-    "aliases": ["Ensembl_get_sequence"]
+    "aliases": [
+      "Ensembl_get_sequence"
+    ]
   },
   {
     "type": "EnsemblRESTTool",
@@ -208,7 +211,9 @@
   {
     "type": "EnsemblRESTTool",
     "name": "ensembl_get_variation",
-    "aliases": ["Ensembl_get_variant_info"],
+    "aliases": [
+      "Ensembl_get_variant_info"
+    ],
     "description": "Get detailed information about a specific genetic variation by its ID (e.g., rs699). Returns variation details including alleles, frequencies, consequences, and evidence. Use ensembl_get_variants to find variant IDs in a region.",
     "endpoint": "/variation/{species}/{id}",
     "parameter": {

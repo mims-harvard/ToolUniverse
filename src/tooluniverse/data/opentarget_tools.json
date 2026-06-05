@@ -4978,5 +4978,143 @@
         }
       }
     }
+  },
+  {
+    "name": "OpenTargets_get_target_info_by_ensemblID",
+    "description": "Get core information about a drug target from Open Targets by its Ensembl gene ID: approved symbol and name, biotype, UniProt/protein cross-reference IDs, genomic location, and curated function descriptions. Use this as the primary lookup for a target before fetching its disease associations, tractability, or safety. Example: ENSG00000141510 returns TP53 (tumor protein p53), protein_coding, chr17.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ensemblId": {
+          "type": "string",
+          "description": "Ensembl gene ID of the target (e.g., 'ENSG00000141510' for TP53). Resolve a gene symbol to an Ensembl ID with OpenTargets_get_target_id_description_by_name."
+        }
+      },
+      "required": [
+        "ensemblId"
+      ]
+    },
+    "query_schema": "\n      query getTargetInfo($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          approvedName\n          biotype\n          functionDescriptions\n          proteinIds {\n            id\n            source\n          }\n          genomicLocation {\n            chromosome\n            start\n            end\n            strand\n          }\n        }\n      }\n    ",
+    "label": [
+      "OpenTarget",
+      "Target Information",
+      "GraphQL",
+      "Target"
+    ],
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "target": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "approvedSymbol": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "approvedName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "biotype": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "functionDescriptions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "proteinIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "genomicLocation": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "chromosome": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "strand": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

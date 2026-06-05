@@ -374,7 +374,7 @@ protein = tu.tools.UniProt_get_entry_by_accession(
 ### Result Limits
 
 Recommended limits by tool:
-- `OpenTargets_get_associated_targets`: 20-50 (prioritize by score)
+- `OpenTargets_get_associated_targets_by_disease_efoId`: 20-50 (prioritize by score)
 - `DGIdb_get_drug_gene_interactions`: No limit (returns all)
 - `ChEMBL_search_drugs`: 10-20
 - `PubMed_search_articles`: 50-100 for thorough analysis
