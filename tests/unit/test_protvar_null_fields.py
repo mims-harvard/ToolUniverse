@@ -22,6 +22,26 @@ def _tool():
     )
 
 
+def _map_tool():
+    from tooluniverse.protvar_tool import ProtVarMapTool
+
+    return ProtVarMapTool({"name": "ProtVar_map_variant", "type": "ProtVarTool"})
+
+
+class TestProtVarMapRemovedEndpoint(unittest.TestCase):
+    def test_404_returns_actionable_alternative(self):
+        from urllib.error import HTTPError
+
+        tool = _map_tool()
+        err = HTTPError("url", 404, "Not Found", {}, None)
+        with patch("tooluniverse.protvar_tool._post_json", side_effect=err):
+            result = tool.run({"variant": "P04637 R175H"})
+        self.assertEqual(result["status"], "error")
+        self.assertIn("no longer available", result["error"])
+        self.assertIn("ProtVar_get_function", result["error"])
+        self.assertNotIn("HTTP Error 404", result["error"])
+
+
 class TestProtVarNullFields(unittest.TestCase):
     def test_null_text_does_not_crash(self):
         tool = _tool()

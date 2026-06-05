@@ -96,6 +96,21 @@ class ProtVarMapTool:
         try:
             result = _post_json(url, [variant], timeout=timeout)
         except Exception as e:
+            status_code = getattr(e, "code", None)
+            if status_code == 404:
+                # ProtVar restructured its API and removed the batch /mappings
+                # endpoint. Be honest about it and point at the tools that still
+                # work rather than returning a bare "HTTP Error 404".
+                return {
+                    "status": "error",
+                    "error": (
+                        "ProtVar's batch variant-mapping endpoint (/mappings) is no "
+                        "longer available -- the ProtVar API was restructured. For a "
+                        "protein position use ProtVar_get_function or "
+                        "ProtVar_get_population (accession + position), which remain "
+                        "operational."
+                    ),
+                }
             return {"status": "error", "error": f"ProtVar API error: {e}"}
 
         if not result:
