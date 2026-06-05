@@ -3907,13 +3907,20 @@ class ToolUniverse:
     def _classify_exception(
         self, exception: Exception, function_name: str, arguments: dict
     ) -> ToolError:
-        """Classify exception by delegating to BaseTool."""
+        """Classify exception by delegating to BaseTool.
+
+        Not every registered tool subclasses BaseTool (some are plain classes),
+        so ``handle_error`` may be absent. Guard for it instead of raising a
+        confusing ``AttributeError: ... has no attribute 'handle_error'`` that
+        masks the tool's real exception.
+        """
         tool_instance = self._get_tool_instance(function_name, cache=True)
 
-        if tool_instance:
-            return tool_instance.handle_error(exception)
+        handler = getattr(tool_instance, "handle_error", None)
+        if callable(handler):
+            return handler(exception)
 
-        # Fallback for tool instance creation failure
+        # Fallback for tool instance creation failure or non-BaseTool tools.
         return ToolServerError(f"Unexpected error calling {function_name}: {exception}")
 
     def _create_dual_format_error(self, error: ToolError) -> dict:

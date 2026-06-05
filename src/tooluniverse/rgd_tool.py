@@ -98,28 +98,35 @@ class RGDTool(BaseTool):
         limit = arguments.get("limit", 10)
 
         # Use Alliance of Genome Resources search (aggregates RGD data)
-        # RGD's own symbol search is unreliable (returns 400 for many queries)
+        # RGD's own symbol search is unreliable (returns 400 for many queries).
+        # Note: the Alliance API no longer honours a `category=gene` query param
+        # (it returns zero results) and the gene id is now in `curie` (was
+        # `primaryKey`). Fetch unfiltered and keep RGD gene hits client-side.
         alliance_url = "https://www.alliancegenome.org/api/search"
-        params = {"q": query, "category": "gene", "limit": limit}
+        params = {"q": query, "limit": max(int(limit) * 5, 25)}
         resp = self.session.get(alliance_url, params=params, timeout=self.timeout)
         resp.raise_for_status()
         data = resp.json()
 
         genes = []
         for r in data.get("results", []):
-            pk = r.get("primaryKey", "")
+            if r.get("category") != "gene_search_result":
+                continue
+            curie = r.get("curie", "")
             # Filter to RGD entries only (rat genes)
-            if not pk.startswith("RGD:"):
+            if not curie.startswith("RGD:"):
                 continue
             genes.append(
                 {
-                    "rgd_id": pk.replace("RGD:", ""),
+                    "rgd_id": curie.replace("RGD:", ""),
                     "symbol": r.get("symbol"),
                     "name": r.get("name"),
                     "species": r.get("species", "Rattus norvegicus"),
                     "synonyms": r.get("synonyms", [])[:5],
                 }
             )
+            if len(genes) >= int(limit):
+                break
 
         return {
             "status": "success",

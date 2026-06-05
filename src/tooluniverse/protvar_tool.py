@@ -241,18 +241,26 @@ class ProtVarFunctionTool:
         except Exception as e:
             return {"status": "error", "error": f"ProtVar API error: {e}"}
 
+        if not isinstance(result, dict):
+            return {
+                "status": "error",
+                "error": f"No ProtVar function annotation for {acc} position {pos}",
+            }
+
         # Extract key information
         data = {
             "accession": result.get("accession"),
             "position": result.get("position"),
             "protein_name": result.get("name"),
-            "gene_names": result.get("geneNames", []),
+            "gene_names": result.get("geneNames") or [],
             "protein_existence": result.get("proteinExistence"),
         }
 
-        # Extract features at this position
+        # Extract features at this position. Use `or []` throughout: the upstream
+        # UniProt-derived payload may carry explicit null for an absent list,
+        # which `.get(key, [])` would not catch (it returns the null).
         features = []
-        for f in result.get("features", []):
+        for f in result.get("features") or []:
             features.append(
                 {
                     "type": f.get("type"),
@@ -266,17 +274,17 @@ class ProtVarFunctionTool:
 
         # Extract function comments
         comments = []
-        for c in result.get("comments", []):
+        for c in result.get("comments") or []:
             ctype = c.get("type")
             if ctype == "FUNCTION":
-                for t in c.get("text", []):
+                for t in c.get("text") or []:
                     comments.append({"type": ctype, "value": t.get("value")})
             elif ctype == "CATALYTIC_ACTIVITY":
-                rxn = c.get("reaction", {})
+                rxn = c.get("reaction") or {}
                 if rxn:
                     comments.append({"type": ctype, "value": rxn.get("name")})
             elif ctype in ("SUBCELLULAR_LOCATION", "DISEASE", "TISSUE_SPECIFICITY"):
-                for t in c.get("text", []):
+                for t in c.get("text") or []:
                     comments.append({"type": ctype, "value": t.get("value")})
         data["comments"] = comments
 

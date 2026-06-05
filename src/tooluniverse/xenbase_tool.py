@@ -86,8 +86,11 @@ class XenbaseTool(BaseTool):
             elif "laevis" in species_lower or "8355" in species_lower:
                 taxon_filter = "NCBITaxon:8355"
 
+        # The Alliance API no longer honours a `category=gene` query param (it
+        # returns zero results) and the gene id is now in `curie` (was
+        # `primaryKey`). Fetch unfiltered and keep Xenbase gene hits client-side.
         url = f"{ALLIANCE_BASE}/search"
-        params = {"q": query, "category": "gene", "limit": limit}
+        params = {"q": query, "limit": max(int(limit) * 5, 25)}
 
         resp = requests.get(url, params=params, timeout=self.timeout)
         resp.raise_for_status()
@@ -95,7 +98,9 @@ class XenbaseTool(BaseTool):
 
         results = []
         for r in data.get("results", []):
-            pk = r.get("primaryKey", "")
+            if r.get("category") != "gene_search_result":
+                continue
+            pk = r.get("curie", "")
             sp = r.get("species", "")
             if not pk.startswith("Xenbase:"):
                 continue
@@ -115,6 +120,8 @@ class XenbaseTool(BaseTool):
                     "synonyms": r.get("synonyms", [])[:5],
                 }
             )
+            if len(results) >= int(limit):
+                break
 
         return {
             "status": "success",
