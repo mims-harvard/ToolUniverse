@@ -1,7 +1,7 @@
 [
   {
     "name": "OMA_get_protein",
-    "description": "Get protein information from the OMA (Orthologous MAtrix) Browser by UniProt accession or OMA ID. OMA is a comprehensive orthology database covering 2,600+ complete genomes. Returns protein details including species, genomic location, OMA group membership, and Hierarchical Orthologous Group (HOG) assignment. Example: P04637 returns human TP53 with OMA ID HUMAN31534, HOG:E0739094.3a.3b.3b, and genomic locus on chromosome 17.",
+    "description": "Get protein information from the OMA (Orthologous MAtrix) Browser by UniProt accession or OMA ID. OMA is a comprehensive orthology database covering 2,600+ complete genomes. Returns protein details including species, genomic location, OMA group membership, and Hierarchical Orthologous Group (HOG) assignment. Example: P04637 returns human TP53 with OMA ID HUMAN31534, HOG:F0782425.2c.7a, and genomic locus on chromosome 17.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -258,13 +258,13 @@
   },
   {
     "name": "OMA_get_hog",
-    "description": "Get Hierarchical Orthologous Group (HOG) information from OMA. HOGs represent groups of genes that descended from a single ancestral gene within a given taxonomic range. HOGs capture the full evolutionary history of gene families including gene duplications. Example: HOG:E0739094 returns the p53 HOG at the Euteleostomi level with description 'cellular tumor antigen p53', completeness score 0.65, and child HOGs for fish, mammals, etc.",
+    "description": "Get Hierarchical Orthologous Group (HOG) information from OMA. HOGs represent groups of genes that descended from a single ancestral gene within a given taxonomic range. HOGs capture the full evolutionary history of gene families including gene duplications. Example: HOG:F0782425 returns the p53 HOG at the Euteleostomi level with description 'cellular tumor antigen p53', completeness score 0.61, and child HOGs for fish, mammals, etc.",
     "parameter": {
       "type": "object",
       "properties": {
         "hog_id": {
           "type": "string",
-          "description": "Hierarchical Orthologous Group ID. Examples: 'HOG:E0739094' (p53 family), 'HOG:E0817124' (insulin family). Use OMA_get_protein to find the HOG ID for a specific protein."
+          "description": "Hierarchical Orthologous Group ID. Examples: 'HOG:F0782425' (p53 family), 'HOG:F0798498' (insulin family). Use OMA_get_protein to find the current HOG ID for a specific protein (the 'oma_hog_id' field). Note: OMA reassigns HOG IDs between releases, so IDs from older releases may return 'no longer valid'."
         }
       },
       "required": [
@@ -277,10 +277,10 @@
     "type": "OMATool",
     "test_examples": [
       {
-        "hog_id": "HOG:E0739094"
+        "hog_id": "HOG:F0782425"
       },
       {
-        "hog_id": "HOG:E0817124"
+        "hog_id": "HOG:F0798498"
       }
     ],
     "return_schema": {

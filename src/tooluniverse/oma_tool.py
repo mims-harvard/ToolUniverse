@@ -174,11 +174,23 @@ class OMATool(BaseTool):
         if not hog_id:
             return {
                 "status": "error",
-                "error": "hog_id parameter is required (e.g. HOG:E0739094)",
+                "error": "hog_id parameter is required (e.g. HOG:F0782425)",
             }
 
         url = f"{OMA_BASE_URL}/hog/{hog_id}/"
         response = requests.get(url, timeout=self.timeout)
+        # OMA reassigns HOG IDs between releases; a retired ID returns HTTP 410.
+        # Surface an actionable message instead of a bare "HTTP error: 410".
+        if response.status_code == 410:
+            return {
+                "status": "error",
+                "error": (
+                    f"HOG ID '{hog_id}' is no longer valid -- OMA reassigns HOG IDs "
+                    "between releases (the current scheme uses an 'F' prefix, e.g. "
+                    "HOG:F0782425). Look up the protein with OMA_get_protein and use "
+                    "the 'oma_hog_id' field to get the current HOG ID."
+                ),
+            }
         response.raise_for_status()
         data = response.json()
 
