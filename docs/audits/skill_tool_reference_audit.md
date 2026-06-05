@@ -1,12 +1,11 @@
 # Skill audit: remaining tool references not in the registry
 
-Harness Rounds 015-017. **94 references already fixed** (case mismatches +
-verified renames). The remaining items below are NOT broken renames — they are,
-by category, either not tool calls at all or capabilities TU genuinely lacks.
-They are intentionally left as-is (renaming them would be wrong); listed here for
-awareness / potential future tool-building.
+Harness Rounds 015-018. **Most references resolved** (94 case/rename fixes + new
+tools built to fill real gaps: HPO phenotype->genes/diseases, GtoPdb diseases).
+The remaining items are NOT broken renames — by category they are either not tool
+calls or capabilities TU still lacks. Left as-is intentionally.
 
-Remaining: 39
+Remaining: 35
 
 ## Enrichr gene-set library name (a `library` argument value, not a tool)
 
@@ -31,14 +30,10 @@ Remaining: 39
 - `OpenTargets_get_target` (3x) — tooluniverse-crispr-screen-analysis
 - `Ensembl_get_gene_info` (2x) — tooluniverse-variant-interpretation
 - `ChEMBL_get_bioactivity_by_chemblid` (2x) — tooluniverse
-- `GtoPdb_list_diseases` (2x) — tooluniverse, tooluniverse-target-research
 - `OpenTargets_get_associated_targets` (1x) — tooluniverse-drug-repurposing
 - `FDA_get_drug_info` (1x) — devtu-create-tool
 - `FDA_get_detailed_information_about_drug` (1x) — devtu-create-tool
-- `GtoPdb_get_disease` (1x) — tooluniverse-target-research
 - `ChEMBL_get_assays` (1x) — tooluniverse-drug-research
-- `HPO_get_term_genes` (1x) — tooluniverse-rare-disease-diagnosis
-- `HPO_get_term_diseases` (1x) — tooluniverse-rare-disease-diagnosis
 - `UniProt_get_protein_features` (1x) — tooluniverse-rare-disease-diagnosis
 - `OpenTargets_diseases` (1x) — tooluniverse-rare-disease-diagnosis
 - `OpenTargets_pathways` (1x) — tooluniverse-rare-disease-diagnosis
