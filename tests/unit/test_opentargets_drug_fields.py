@@ -49,6 +49,25 @@ def test_drug_description_has_real_example():
     assert examples and examples[0].get("chemblId")
 
 
+# Every removed/renamed field must be absent from the corresponding query, and the
+# current replacement must be present. (OpenTargets GraphQL schema drift, Round 014.)
+_STALE_TO_CURRENT = {
+    "OpenTargets_get_drug_blackbox_status_by_chembl_ID": ("blackBoxWarning", "drugWarnings"),
+    "OpenTargets_get_approved_indications_by_drug_chemblId": ("approvedIndications", "indications"),
+    "OpenTargets_get_gene_ontology_terms_by_goID": ("\n          name\n", "label"),
+    "OpenTargets_get_target_gene_ontology_by_ensemblID": ("\n              name\n", "label"),
+}
+
+
+@pytest.mark.parametrize("name,fields", list(_STALE_TO_CURRENT.items()))
+def test_opentargets_queries_use_current_schema(name, fields):
+    stale, current = fields
+    query = _tool(name).get("query_schema", "")
+    assert stale not in query, f"{name} still queries removed field {stale!r}"
+    assert current in query, f"{name} missing current field {current!r}"
+    assert _tool(name).get("test_examples"), f"{name} has no test_example"
+
+
 if __name__ == "__main__":
     import sys
 

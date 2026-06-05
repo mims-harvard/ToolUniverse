@@ -176,7 +176,7 @@
   },
   {
     "name": "OpenTargets_target_disease_evidence",
-    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations \u2014 this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Accepts gene_symbol (e.g. 'TP53') and disease_name (e.g. 'Crohn disease') as alternatives to ensemblId/efoId \u2014 IDs are auto-resolved via OpenTargets search.",
+    "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations — this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Accepts gene_symbol (e.g. 'TP53') and disease_name (e.g. 'Crohn disease') as alternatives to ensemblId/efoId — IDs are auto-resolved via OpenTargets search.",
     "label": [
       "Target",
       "Disease",
@@ -991,7 +991,7 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n  query drugWithdrawnWarningData($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      name\n      id\n      blackBoxWarning\n    }\n  }\n  ",
+    "query_schema": "\n  query drugWithdrawnWarningData($chemblId: String!) {\n    drug(chemblId: $chemblId) {\n      name\n      id\n      drugWarnings {\n        warningType\n        description\n        toxicityClass\n      }\n    }\n  }\n",
     "label": [
       "Drug",
       "SafetyWarnings",
@@ -1000,7 +1000,11 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [],
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL1201585"
+      }
+    ],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -1438,7 +1442,7 @@
         "ensemblId"
       ]
     },
-    "query_schema": "\n      query targetGeneOntology($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          geneOntology {\n            aspect\n            evidence\n            geneProduct\n            source\n            term {\n              id\n              name\n            }\n          }\n        }\n      }\n    ",
+    "query_schema": "\n      query targetGeneOntology($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          geneOntology {\n            aspect\n            evidence\n            geneProduct\n            source\n            term {\n              id\n              label\n            }\n          }\n        }\n      }\n",
     "label": [
       "Target",
       "GeneOntology",
@@ -1446,7 +1450,11 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [],
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -3115,7 +3123,7 @@
         "chemblId"
       ]
     },
-    "query_schema": "\n      query retrieveMultipleDrugsInfo($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          approvedIndications\n          }\n      }\n    ",
+    "query_schema": "\n      query retrieveMultipleDrugsInfo($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          indications {\n            count\n            rows {\n              maxClinicalStage\n              disease {\n                id\n                name\n              }\n            }\n          }\n          }\n      }\n",
     "label": [
       "OpenTarget",
       "Drug",
@@ -3123,7 +3131,11 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [],
+    "test_examples": [
+      {
+        "chemblId": "CHEMBL25"
+      }
+    ],
     "return_schema": {
       "type": "object",
       "properties": {
@@ -4132,7 +4144,7 @@
         "goIds"
       ]
     },
-    "query_schema": "\n      query fetchGeneOntologyTerms($goIds: [String!]!) {\n        geneOntologyTerms(goIds: $goIds) {\n          id\n          name\n        }\n      }\n    ",
+    "query_schema": "\n      query fetchGeneOntologyTerms($goIds: [String!]!) {\n        geneOntologyTerms(goIds: $goIds) {\n          id\n          label\n        }\n      }\n",
     "label": [
       "GeneOntology",
       "Data Retrieval and Aggregation",
@@ -4140,7 +4152,13 @@
       "GraphQL"
     ],
     "type": "OpenTarget",
-    "test_examples": [],
+    "test_examples": [
+      {
+        "goIds": [
+          "GO:0006915"
+        ]
+      }
+    ],
     "return_schema": {
       "type": "object",
       "properties": {
