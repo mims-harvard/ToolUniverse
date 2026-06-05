@@ -788,10 +788,10 @@ result = tu.tools.openalex_search_works(
 ```
 **Use**: Identify high-impact papers and validate compound importance.
 
-### SemanticScholar_search
+### SemanticScholar_search_papers
 **Purpose**: AI-ranked paper search
 ```python
-result = tu.tools.SemanticScholar_search(
+result = tu.tools.SemanticScholar_search_papers(
     query="EGFR small molecule binder",
     limit=20
 )

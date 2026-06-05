@@ -282,7 +282,7 @@ These parameter names apply to **both Python SDK and MCP**:
 
 | Tool | Parameter | Correct Name | Notes |
 |------|-----------|--------------|-------|
-| drugbank_get_drug_basic_info | Drug query | `query` | All DrugBank tools use this |
+| drugbank_get_drug_basic_info_by_drug_name_or_id | Drug query | `query` | All DrugBank tools use this |
 | drugbank_get_pharmacology | Drug query | `query` | NOT `drug_name_or_drugbank_id` |
 | drugbank_get_safety | Drug query | `query` | NOT `drug_name_or_drugbank_id` |
 | OpenTargets_get_disease_id | Disease name | `disease_name` | Returns Ensembl disease IDs |

@@ -22,7 +22,7 @@ tax = tu.tools.NCBI_Taxonomy_search(query="SARS-CoV-2")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `UniProt_search` | Search proteins | `query`, `organism` |
-| `UniProt_get_protein_by_accession` | Get protein details | `accession` |
+| `UniProt_get_entry_by_accession` | Get protein details | `accession` |
 | `UniProt_get_protein_sequence` | Get sequence | `accession` |
 
 **Example - Get viral proteins**:
@@ -112,7 +112,7 @@ def assess_structure_quality(structure_result):
 |------|---------|----------------|
 | `ChEMBL_search_drugs` | Search approved drugs | `query`, `max_phase` |
 | `ChEMBL_get_molecule` | Get drug details | `molecule_chembl_id` |
-| `ChEMBL_get_drug_mechanisms_of_action` | Get MOA | `molecule_chembl_id` |
+| `ChEMBL_get_drug_mechanisms` | Get MOA | `molecule_chembl_id` |
 
 ### DrugBank Tools
 
@@ -171,8 +171,8 @@ genes = tu.tools.KEGG_get_pathway_genes(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `Reactome_search_pathway` | Search pathways | `query`, `species` |
-| `Reactome_get_pathway_participants` | Get pathway entities | `pathway_id` |
-| `Reactome_get_hierarchy` | Get pathway tree | `pathway_id` |
+| `Reactome_get_participants` | Get pathway entities | `pathway_id` |
+| `Reactome_get_pathway_hierarchy` | Get pathway tree | `pathway_id` |
 
 **Example - Host-pathogen interaction pathways**:
 ```python
@@ -192,7 +192,7 @@ pathways = tu.tools.Reactome_search_pathway(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `PubMed_search_articles` | Search articles | `query`, `limit` |
-| `PubMed_get_article_details` | Get article | `pmid` |
+| `PubMed_get_article` | Get article | `pmid` |
 
 **Example - Search outbreak literature**:
 ```python
@@ -246,7 +246,7 @@ arxiv = tu.tools.ArXiv_search_papers(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `openalex_search_works` | Search with citations | `query`, `limit` |
-| `SemanticScholar_search` | AI-ranked search | `query`, `limit` |
+| `SemanticScholar_search_papers` | AI-ranked search | `query`, `limit` |
 
 **Example - Find high-impact papers**:
 ```python
@@ -258,7 +258,7 @@ papers = tu.tools.openalex_search_works(
 # Returns: {"cited_by_count": 5234, ...}
 
 # AI-ranked papers
-ranked = tu.tools.SemanticScholar_search(
+ranked = tu.tools.SemanticScholar_search_papers(
     query="SARS-CoV-2 drug resistance",
     limit=20
 )
@@ -446,14 +446,14 @@ def transfer_knowledge(tu, novel_pathogen, reference_pathogen):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `kegg_search_pathway` | `Reactome_search_pathway` | `WikiPathways_search` |
-| `KEGG_get_pathway_genes` | `Reactome_get_pathway_participants` | Gene list extraction |
+| `KEGG_get_pathway_genes` | `Reactome_get_participants` | Gene list extraction |
 
 ### Literature (ENHANCED)
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `PubMed_search_articles` | `openalex_search_works` | Google Scholar |
 | `EuropePMC_search_articles` (source='PPR') | `web_search` (site:biorxiv.org) | ArXiv q-bio |
-| `openalex_search_works` | `SemanticScholar_search` | Manual citation |
+| `openalex_search_works` | `SemanticScholar_search_papers` | Manual citation |
 
 ---
 

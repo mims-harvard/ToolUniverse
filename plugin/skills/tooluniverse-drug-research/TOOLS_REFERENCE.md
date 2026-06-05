@@ -468,7 +468,7 @@ te_codes = tu.tools.FDA_OrangeBook_get_te_code(
 ```
 PubChem_get_CID_by_compound_name
   ↓
-ChEMBL_search_compounds
+ChEMBL_search_molecules
   ↓
 DailyMed_search_spls
   ↓
@@ -488,7 +488,7 @@ ADMETAI_predict_solubility_lipophilicity_hydration
 ```
 ChEMBL_get_bioactivity_by_chemblid
   ↓
-ChEMBL_get_target_by_chemblid
+ChEMBL_get_target
   ↓
 DGIdb_get_drug_info
   ↓

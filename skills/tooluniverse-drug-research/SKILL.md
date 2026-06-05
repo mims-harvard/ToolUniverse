@@ -81,7 +81,7 @@ Step 12: Document all sources -> Update Section 11 (Data Sources)
 1. PubChem_get_CID_by_compound_name(compound_name)
    -> Extract: CID, canonical SMILES, formula
 
-2. ChEMBL_search_compounds(query=drug_name)
+2. ChEMBL_search_molecules(query=drug_name)
    -> Extract: ChEMBL ID, pref_name
 
 3. DailyMed_search_spls(drug_name)

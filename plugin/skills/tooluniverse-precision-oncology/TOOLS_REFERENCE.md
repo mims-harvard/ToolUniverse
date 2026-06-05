@@ -305,8 +305,8 @@ cells = tu.tools.DepMap_get_cell_lines(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `OpenTargets_get_associated_drugs_by_target_ensemblID` | Drugs for target | `ensemblId` (camelCase!) |
-| `OpenTargets_get_disease_associated_targets` | Targets for disease | `efoId` |
-| `OpenTargets_get_target_tractability` | Druggability | `ensemblId` |
+| `OpenTargets_get_associated_targets_by_disease_efoId` | Targets for disease | `efoId` |
+| `OpenTargets_get_target_tractability_by_ensemblID` | Druggability | `ensemblId` |
 
 **Parameter Note**: Always use `ensemblId` (camelCase), NOT `ensemblID`.
 
@@ -355,7 +355,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `UniProt_search` | Search proteins | `query`, `organism` |
-| `UniProt_get_protein_by_accession` | Get protein | `accession` |
+| `UniProt_get_entry_by_accession` | Get protein | `accession` |
 | `UniProt_get_protein_sequence` | Get sequence | `accession` |
 
 ---
@@ -384,7 +384,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `PubMed_search_articles` | Search articles | `query`, `limit` |
-| `PubMed_get_article_details` | Get article | `pmid` |
+| `PubMed_get_article` | Get article | `pmid` |
 
 ### EuropePMC
 
@@ -453,7 +453,7 @@ pathways = tu.tools.kegg_get_gene_info(gene_id="hsa:1956")  # EGFR
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `PubMed_search_articles` | Search papers | `query`, `limit` |
-| `PubMed_get_article_details` | Get abstract | `pmid` |
+| `PubMed_get_article` | Get abstract | `pmid` |
 
 ### BioRxiv/MedRxiv - Preprints
 

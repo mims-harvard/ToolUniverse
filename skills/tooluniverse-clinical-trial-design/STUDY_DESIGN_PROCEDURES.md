@@ -49,7 +49,7 @@ x Eligibility factors (age, PS, prior therapy, organ function): ~60%
 1. **Drug info**: `drugbank_get_drug_basic_info_by_drug_name_or_id`
 2. **Indications**: `drugbank_get_indications_by_drug_name_or_drugbank_id`
 3. **Pharmacology**: `drugbank_get_pharmacology_by_drug_name_or_drugbank_id`
-4. **Generic availability**: `FDA_OrangeBook_search_drugs`
+4. **Generic availability**: `FDA_OrangeBook_search_drug`
 5. **Approval details**: `FDA_get_drug_approval_history`
 6. **Historical controls**: `search_clinical_trials` for completed trials with SOC
 

@@ -17,7 +17,7 @@ results = tu.tools.DailyMed_search_spls(drug_name="metformin")
 setid = results[0]['setid']
 
 # Get full label
-label = tu.tools.DailyMed_get_spl_by_set_id(setid=setid)
+label = tu.tools.DailyMed_get_spl_by_setid(setid=setid)
 ```
 
 ### ChEMBL Drug Tools
@@ -26,7 +26,7 @@ label = tu.tools.DailyMed_get_spl_by_set_id(setid=setid)
 |------|---------|----------------|
 | `ChEMBL_search_drugs` | Search drugs | `query` |
 | `ChEMBL_get_molecule` | Get molecule details | `molecule_chembl_id` |
-| `ChEMBL_get_drug_mechanisms_of_action` | Get MOA | `molecule_chembl_id` |
+| `ChEMBL_get_drug_mechanisms` | Get MOA | `molecule_chembl_id` |
 
 ---
 
@@ -75,7 +75,7 @@ details = tu.tools.FAERS_get_event_details(
 ```python
 def extract_safety_sections(tu, setid):
     """Extract all safety-relevant sections from label."""
-    label = tu.tools.DailyMed_get_spl_by_set_id(setid=setid)
+    label = tu.tools.DailyMed_get_spl_by_setid(setid=setid)
     
     return {
         'boxed_warning': label.get('boxed_warning'),
@@ -99,12 +99,12 @@ def extract_safety_sections(tu, setid):
 | `PharmGKB_search_drugs` | Search drug annotations | `query` |
 | `PharmGKB_get_clinical_annotations` | Clinical PGx data | `drug_id` |
 | `PharmGKB_get_drug_labels` | PGx labeling | `drug_id` |
-| `PharmGKB_get_variants` | Relevant variants | `drug_id` |
+| `PharmGKB_search_variants` | Relevant variants | `drug_id` |
 
 **Example - Get PGx data**:
 ```python
 # Search for drug
-pgx = tu.tools.PharmGKB_search_drug(query="warfarin")
+pgx = tu.tools.PharmGKB_search_drugs(query="warfarin")
 
 # Get clinical annotations
 annotations = tu.tools.PharmGKB_get_clinical_annotations(
@@ -175,7 +175,7 @@ genes = tu.tools.KEGG_get_pathway_genes(pathway_id=pathways[0]['pathway_id'])
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `Reactome_search_pathway` | Search pathways | `query`, `species` |
-| `Reactome_get_pathway_participants` | Get pathway entities | `pathway_id` |
+| `Reactome_get_participants` | Get pathway entities | `pathway_id` |
 
 **Use**: Understand drug mechanism pathways to contextualize adverse events.
 
@@ -188,7 +188,7 @@ genes = tu.tools.KEGG_get_pathway_genes(pathway_id=pathways[0]['pathway_id'])
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `PubMed_search_articles` | Search articles | `query`, `limit` |
-| `PubMed_get_article_details` | Get article | `pmid` |
+| `PubMed_get_article` | Get article | `pmid` |
 
 **Example - Search safety literature**:
 ```python
@@ -229,7 +229,7 @@ clinical_preprints = tu.tools.EuropePMC_search_articles(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `openalex_search_works` | Search with citations | `query`, `limit` |
-| `SemanticScholar_search` | AI-ranked search | `query`, `limit` |
+| `SemanticScholar_search_papers` | AI-ranked search | `query`, `limit` |
 
 **Example - Find high-impact safety papers**:
 ```python
@@ -322,12 +322,12 @@ def generate_safety_profile(tu, drug_name):
     
     # Phase 3: Label warnings
     if dailymed:
-        label = tu.tools.DailyMed_get_spl_by_set_id(
+        label = tu.tools.DailyMed_get_spl_by_setid(
             setid=dailymed[0]['setid']
         )
     
     # Phase 4: Pharmacogenomics
-    pgx = tu.tools.PharmGKB_search_drug(query=drug_name)
+    pgx = tu.tools.PharmGKB_search_drugs(query=drug_name)
     
     # Phase 5: Clinical trials
     trials = tu.tools.search_clinical_trials(
@@ -440,7 +440,7 @@ def detect_emerging_signals(tu, drug_name, threshold_prr=3.0):
 ### Literature (NEW)
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `PubMed_search_articles` | `openalex_search_works` | `SemanticScholar_search` |
+| `PubMed_search_articles` | `openalex_search_works` | `SemanticScholar_search_papers` |
 | `EuropePMC_search_articles` (source='PPR') | `web_search` (site:medrxiv.org) | Skip preprints |
 
 ---

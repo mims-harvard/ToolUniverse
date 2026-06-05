@@ -109,7 +109,7 @@ if isinstance(data, list) and len(data) > 0:
         "GtoPdb interactions list pharmacological research compounds — approved "
         "drugs for this target may not be represented. For approved drugs and "
         "clinical compounds, use ChEMBL_get_drug_mechanisms or "
-        f"ChEMBL_search_compounds with target_name='{_chembl_target}'."
+        f"ChEMBL_search_molecules with target_name='{_chembl_target}'."
     )
 ```
 
@@ -352,7 +352,7 @@ if mol_profile and therapy and not disease and len(evidence_nodes) == 0:
 
 ## DGIdb Client-Side Filtering (Feature-68A-001/002)
 
-**Tools**: DGIdb_get_interactions
+**Tools**: DGIdb_get_drug_gene_interactions
 **Pattern**: API ignores `interaction_types` and `sources` filters server-side → returns everything.
 
 **Fix**: Fetch all, filter client-side:

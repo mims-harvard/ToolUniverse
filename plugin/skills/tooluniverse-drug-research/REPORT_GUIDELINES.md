@@ -38,7 +38,7 @@ Multiple trials completed. Approved for diabetes.
 
 **For approved drugs, ALWAYS retrieve these FDA label sections early** (after getting set_id from `DailyMed_search_spls`).
 
-Call `DailyMed_get_spl_sections_by_setid(setid=set_id, sections=[...])` in batches:
+Call `DailyMed_get_spl_by_setid(setid=set_id, sections=[...])` in batches:
 
 **Phase 1 (Mechanism & Chemistry)**:
 - `mechanism_of_action` -> Section 3.1
@@ -71,8 +71,8 @@ Call `DailyMed_get_spl_sections_by_setid(setid=set_id, sections=[...])` in batch
 1. `PubChem_get_compound_properties_by_CID(cid)` -> MW, formula, XLogP, TPSA, HBD, HBA, rotatable bonds
 2. `ADMETAI_predict_physicochemical_properties(smiles=[smiles])` -> logP, Lipinski, QED, TPSA
 3. `ADMETAI_predict_solubility_lipophilicity_hydration(smiles=[smiles])` -> Solubility, Lipophilicity
-4. `DailyMed_get_spl_sections_by_setid(setid, sections=["chemistry"])` -> Salt forms, polymorphs
-5. `DailyMed_get_spl_sections_by_setid(setid, sections=["description", "inactive_ingredients"])` -> Formulation
+4. `DailyMed_get_spl_by_setid(setid, sections=["chemistry"])` -> Salt forms, polymorphs
+5. `DailyMed_get_spl_by_setid(setid, sections=["description", "inactive_ingredients"])` -> Formulation
 
 **Type Normalization**: Convert all numeric IDs to strings before API calls.
 
@@ -106,7 +106,7 @@ Call `DailyMed_get_spl_sections_by_setid(setid=set_id, sections=[...])` in batch
 **Objective**: FDA label MOA + experimental targets + selectivity.
 
 **Tool Chain**:
-1. `DailyMed_get_spl_sections_by_setid(setid, sections=["mechanism_of_action", "pharmacodynamics"])` -> Official FDA MOA [T1]
+1. `DailyMed_get_spl_by_setid(setid, sections=["mechanism_of_action", "pharmacodynamics"])` -> Official FDA MOA [T1]
 2. `ChEMBL_search_activities(molecule_chembl_id=chembl_id, limit=100)` -> Activity records
 3. `ChEMBL_get_target(target_chembl_id)` for each unique target -> Target name, UniProt [T1]
 4. `DGIdb_get_drug_info(drugs=[drug_name])` -> Target genes, interaction types [T2]
@@ -140,8 +140,8 @@ Call `DailyMed_get_spl_sections_by_setid(setid=set_id, sections=[...])` in batch
 5. `ADMETAI_predict_toxicity(smiles)` -> AMES, hERG, DILI, ClinTox, LD50
 
 **Fallback Chain** (if ADMET-AI fails):
-1. `DailyMed_get_spl_sections_by_setid(setid, sections=["clinical_pharmacology", "pharmacokinetics"])` [T1]
-2. `DailyMed_get_spl_sections_by_setid(setid, sections=["drug_interactions"])` [T1]
+1. `DailyMed_get_spl_by_setid(setid, sections=["clinical_pharmacology", "pharmacokinetics"])` [T1]
+2. `DailyMed_get_spl_by_setid(setid, sections=["drug_interactions"])` [T1]
 3. `PubMed_search_articles(query="[drug] pharmacokinetics", max_results=10)` [T2]
 
 **CRITICAL**: If ADMET-AI tools fail, automatically switch to fallback. Do NOT leave Section 4 as "predictions unavailable."
@@ -187,8 +187,8 @@ Call `DailyMed_get_spl_sections_by_setid(setid=set_id, sections=[...])` in batch
 5. `FAERS_count_patient_age_distribution(medicinalproduct)` -> Age groups [T1]
 
 **DDI & Dose Modification Chain**:
-6. `DailyMed_get_spl_sections_by_setid(setid, sections=["drug_interactions"])` -> DDI table [T1]
-7. `DailyMed_get_spl_sections_by_setid(setid, sections=["dosage_and_administration", "warnings_and_cautions"])` -> Dose mods [T1]
+6. `DailyMed_get_spl_by_setid(setid, sections=["drug_interactions"])` -> DDI table [T1]
+7. `DailyMed_get_spl_by_setid(setid, sections=["dosage_and_administration", "warnings_and_cautions"])` -> Dose mods [T1]
 8. `DailyMed_get_spl_by_setid(setid)` -> Drug-food interactions (search for grapefruit, alcohol, food, meal) [T1]
 9. `search_clinical_trials(intervention="[drug] AND combination")` -> Approved combos [T1]
 
@@ -220,7 +220,7 @@ Call `DailyMed_get_spl_sections_by_setid(setid=set_id, sections=[...])` in batch
 4. `PharmGKB_get_dosing_guidelines(gene=gene_symbol)` -> CPIC/DPWG recommendations
 
 **Fallback Chain**:
-5. `DailyMed_get_spl_sections_by_setid(setid, sections=["pharmacogenomics", "clinical_pharmacology"])` [T1]
+5. `DailyMed_get_spl_by_setid(setid, sections=["pharmacogenomics", "clinical_pharmacology"])` [T1]
 6. `PubMed_search_articles(query="[drug] pharmacogenomics", max_results=5)` [T2]
 
 ---

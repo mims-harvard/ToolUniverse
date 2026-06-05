@@ -366,7 +366,7 @@ scattering data for reanalysis.
 
 ---
 
-#### SASBDB_get_entry_data
+#### SASBDB_get_entry
 **Current Issues**:
 - What "entry data" includes unclear
 - SASBDB ID format not explained

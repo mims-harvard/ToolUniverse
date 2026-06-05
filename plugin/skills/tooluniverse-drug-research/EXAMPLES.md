@@ -20,7 +20,7 @@ Create `metformin_drug_report.md` with all section headers and `[Researching...]
 cid_result = tu.tools.PubChem_get_CID_by_compound_name(compound_name="metformin")
 # → CID: 4091
 
-chembl_result = tu.tools.ChEMBL_search_compounds(query="metformin", limit=1)
+chembl_result = tu.tools.ChEMBL_search_molecules(query="metformin", limit=1)
 # → CHEMBL1431
 
 dailymed_result = tu.tools.DailyMed_search_spls(drug_name="metformin")
@@ -71,7 +71,7 @@ solubility = tu.tools.ADMETAI_predict_solubility_lipophilicity_hydration(smiles=
 bioactivity = tu.tools.ChEMBL_get_bioactivity_by_chemblid(chembl_id="CHEMBL1431")
 # → Activity data
 
-targets = tu.tools.ChEMBL_get_target_by_chemblid(chembl_id="CHEMBL1431")
+targets = tu.tools.ChEMBL_get_target(chembl_id="CHEMBL1431")
 # → Target list with UniProt
 
 # DGIdb drug-gene interactions

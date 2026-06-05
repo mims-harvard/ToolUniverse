@@ -43,7 +43,7 @@ Testing revealed **multiple parameter name errors** that would have caused bugs 
 
 | Tool | Assumed Parameter | ACTUAL Parameter | Type | Notes |
 |------|-------------------|------------------|------|-------|
-| `SASBDB_get_entry_data` | `entry_id` | ✅ `sasbdb_id` | str | **WRONG NAME!** |
+| `SASBDB_get_entry` | `entry_id` | ✅ `sasbdb_id` | str | **WRONG NAME!** |
 | `SASBDB_search_entries` | `query` | ❓ Need to verify | ❓ | API error |
 
 **Impact**: Would have caused 1-2 bugs.

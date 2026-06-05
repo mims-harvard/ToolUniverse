@@ -83,7 +83,7 @@ Phase 0: Disambiguation (resolve to ORPHA code / HGNC symbol) -> Phase 1: Diseas
 
 Resolve user input to canonical Orphanet identifiers before doing anything else. Many disease names have subtypes or umbrella syndromes that will produce misleading results if you pick the wrong one.
 
-**Orphanet_Orphanet_search_diseases**: `name` (string REQUIRED, e.g., "Marfan syndrome"), `exact` (bool, default False), `lang` (string, default "en"). Primary tool for name-to-ORPHA-code resolution. The parameter is `name` (NOT `query`). Returns multiple matches — select the exact disease, not subtypes or umbrella syndromes. "Marfan syndrome" should resolve to ORPHAcode 558, not 284993 ("Marfan syndrome and Marfan-related disorders").
+**Orphanet_search_diseases**: `name` (string REQUIRED, e.g., "Marfan syndrome"), `exact` (bool, default False), `lang` (string, default "en"). Primary tool for name-to-ORPHA-code resolution. The parameter is `name` (NOT `query`). Returns multiple matches — select the exact disease, not subtypes or umbrella syndromes. "Marfan syndrome" should resolve to ORPHAcode 558, not 284993 ("Marfan syndrome and Marfan-related disorders").
 
 **Orphanet_search_diseases**: `query` (string REQUIRED). Fallback if the primary tool returns no results.
 
@@ -223,7 +223,7 @@ When synthesizing across phases, grade your confidence:
 
 When a primary tool fails or returns no results:
 
-- Disease lookup: try `Orphanet_search_diseases` if `Orphanet_Orphanet_search_diseases` fails
+- Disease lookup: try `Orphanet_search_diseases` if `Orphanet_search_diseases` fails
 - Gene → diseases: `GenCC_search_gene` has broader coverage than `Orphanet_get_gene_diseases`
 - Disease → genes: `GenCC_search_disease` as complement to `Orphanet_get_genes`
 - Gene-disease validity: Orphanet AssociationType + SourceOfValidation PMIDs if GenCC has no submissions
@@ -237,7 +237,7 @@ When a primary tool fails or returns no results:
 ### Full Rare Disease Investigation (disease name input)
 
 ```
-1. Orphanet_Orphanet_search_diseases(name="Marfan syndrome") -> ORPHAcode 558
+1. Orphanet_search_diseases(name="Marfan syndrome") -> ORPHAcode 558
 2. Orphanet_get_disease(orpha_code="558") -> definition, synonyms
 3. Orphanet_get_phenotypes(orpha_code="558") -> HPO phenotypes with frequencies
 4. Orphanet_get_genes(orpha_code="558") -> FBN1 (disease-causing), TGFBR1, TGFBR2
@@ -262,7 +262,7 @@ When a primary tool fails or returns no results:
 ## Common Mistakes to Avoid
 
 - Using `disease_title` in GenCC_search_disease: use `disease` instead
-- Using `query` in Orphanet_Orphanet_search_diseases: use `name`
+- Using `query` in Orphanet_search_diseases: use `name`
 - Using `query` in ClinVar_search_variants: use `gene`, `condition`, or `variant_id`
 - Assuming the first Orphanet search result is the right disease: always check for subtypes
 - Treating ClinVar VUS as pathogenic evidence

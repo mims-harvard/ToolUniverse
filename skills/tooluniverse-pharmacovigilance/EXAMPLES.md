@@ -280,8 +280,8 @@ In controlled trials, **zero cases** of lactic acidosis were observed with metfo
 |------|-------|----------------|
 | FAERS_count_reactions_by_drug_event | metformin | AE counts, PRR |
 | DailyMed_search_spls | metformin | Drug identification |
-| DailyMed_get_spl_by_set_id | [setid] | Label warnings |
-| PharmGKB_search_drug | metformin | PGx variants |
+| DailyMed_get_spl_by_setid | [setid] | Label warnings |
+| PharmGKB_search_drugs | metformin | PGx variants |
 | search_clinical_trials | metformin phase 3 | Trial safety data |
 ```
 

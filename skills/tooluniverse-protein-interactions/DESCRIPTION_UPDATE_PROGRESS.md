@@ -68,8 +68,8 @@
     - Priority: Medium
     - Updates needed: Expand SASBDB, SAXS/SANS, explain use cases
 
-12. ⏳ **SASBDB_get_entry_data**
-    - File: `/src/tooluniverse/tools/SASBDB_get_entry_data.py`
+12. ⏳ **SASBDB_get_entry**
+    - File: `/src/tooluniverse/tools/SASBDB_get_entry.py`
     - Priority: Medium
     - Updates needed: Explain entry data contents, add use cases
 
@@ -112,7 +112,7 @@ echo "=== Updating STRING tools ==="
 echo "=== Updating SASBDB tools ==="
 
 # SASBDB_search_entries
-# SASBDB_get_entry_data
+# SASBDB_get_entry
 ```
 
 ---
@@ -128,7 +128,7 @@ echo "=== Updating SASBDB tools ==="
 4. ⏳ Update STRING_get_interaction_partners
 5. ⏳ Update STRING_ppi_enrichment
 6. ⏳ Update SASBDB_search_entries
-7. ⏳ Update SASBDB_get_entry_data
+7. ⏳ Update SASBDB_get_entry
 
 ### Optional
 8. ⏳ Update STRING_get_protein_interactions (low priority, redundant)

@@ -35,7 +35,7 @@ result = tu.tools.PubChem_get_CID_by_compound_name(compound_name=name)
 # By SMILES
 result = tu.tools.PubChem_get_CID_by_SMILES(smiles=smiles)
 # Cross-reference
-chembl_result = tu.tools.ChEMBL_search_compounds(query=name, limit=5)
+chembl_result = tu.tools.ChEMBL_search_molecules(query=name, limit=5)
 ```
 
 Verify: CID + ChEMBL ID + canonical SMILES + stereochemistry + salt forms.

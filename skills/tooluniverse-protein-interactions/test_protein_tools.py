@@ -295,9 +295,9 @@ def test_sasbdb_tools():
         print(f"  ❌ EXCEPTION: {type(e).__name__}: {str(e)[:200]}")
 
     # Test 2: Get entry data
-    print("\n2. Testing SASBDB_get_entry_data...")
+    print("\n2. Testing SASBDB_get_entry...")
     try:
-        result = tu.tools.SASBDB_get_entry_data(
+        result = tu.tools.SASBDB_get_entry(
             sasbdb_id="SASDAB7"  # FIX: parameter is 'sasbdb_id', not 'entry_id'
         )
         print(f"  Type: {type(result)}")

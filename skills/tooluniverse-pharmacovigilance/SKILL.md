@@ -119,7 +119,7 @@ Rather than memorizing gene-drug pairs, apply this reasoning framework:
 3. **Check for immune-mediated risk**: If the drug is associated with severe cutaneous reactions (SJS/TEN, DRESS) or hypersensitivity syndrome, query PharmGKB for HLA associations. These are population-specific.
 4. **Use PharmGKB evidence levels to guide action**: Level 1A/1B (guideline-based) = actionable now. Level 2A/2B = may inform. Level 3 = not clinically actionable yet.
 
-Query `PharmGKB_search_drug(query=...)` and `CPIC_list_guidelines` to get current pharmacogenomic annotations rather than relying on memorized associations, which may be outdated.
+Query `PharmGKB_search_drugs(query=...)` and `CPIC_list_guidelines` to get current pharmacogenomic annotations rather than relying on memorized associations, which may be outdated.
 
 ---
 
@@ -236,13 +236,13 @@ See [SIGNAL_DETECTION.md](SIGNAL_DETECTION.md) for detailed disproportionality f
 
 ## Phase 3: Label Warning Extraction
 
-1. Get label via `DailyMed_get_spl_by_set_id(setid=...)`
+1. Get label via `DailyMed_get_spl_by_setid(setid=...)`
 2. Extract: boxed warnings, contraindications, warnings/precautions, drug interactions
 3. Categorize severity: Boxed Warning > Contraindication > Warning > Precaution
 
 ## Phase 4: Pharmacogenomic Risk
 
-1. Search `PharmGKB_search_drug(query=...)` for clinical annotations
+1. Search `PharmGKB_search_drugs(query=...)` for clinical annotations
 2. Document actionable variants with evidence levels (1A/1B/2A/2B/3)
 3. Note CPIC/DPWG guideline status
 

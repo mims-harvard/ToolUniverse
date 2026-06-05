@@ -32,7 +32,7 @@ result = tu.tools.MyVariant_query_variants(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `ClinVar_search_variants` | Search by variant | `variant`, `gene` |
-| `clinvar_get_variant` | Get by VCV ID | `variation_id` |
+| `ClinVar_get_variant_details` | Get by VCV ID | `variation_id` |
 
 **Example - Search ClinVar**:
 ```python

@@ -16,7 +16,7 @@ def get_target_structure(tu, target_id):
         return {'source': 'PDB', 'pdb_id': best_pdb['pdb_id']}
 
     # Try EMDB (cryo-EM, good for membrane proteins)
-    protein_info = tu.tools.UniProt_get_protein_by_accession(accession=target_id)
+    protein_info = tu.tools.UniProt_get_entry_by_accession(accession=target_id)
     emdb_results = tu.tools.emdb_search(query=protein_info['proteinDescription']['recommendedName']['fullName']['value'])
     if emdb_results:
         best_emdb = sorted(emdb_results, key=lambda x: x.get('resolution', 99))[0]

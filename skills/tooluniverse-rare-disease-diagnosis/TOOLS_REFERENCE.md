@@ -7,7 +7,7 @@
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `HPO_search_terms` | Search HPO by text | `query` |
-| `HPO_get_term_by_id` | Get HPO term details | `hp_id` |
+| `HPO_get_term` | Get HPO term details | `hp_id` |
 | `HPO_get_term_genes` | Genes associated with HPO term | `hp_id` |
 | `HPO_get_term_diseases` | Diseases with HPO term | `hp_id` |
 
@@ -191,7 +191,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `OpenTargets_get_disease_info_by_efoId` | Disease details | `efoId` |
-| `OpenTargets_get_disease_associated_targets` | Genes for disease | `efoId` |
+| `OpenTargets_get_associated_targets_by_disease_efoId` | Genes for disease | `efoId` |
 | `OpenTargets_get_associated_diseases_by_target_ensemblId` | Diseases for gene | `ensemblId` |
 
 ---
@@ -700,7 +700,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
     """Structural analysis for variant of uncertain significance."""
     
     # Get protein sequence
-    protein = tu.tools.UniProt_get_protein_by_accession(accession=uniprot_id)
+    protein = tu.tools.UniProt_get_entry_by_accession(accession=uniprot_id)
     sequence = protein['sequence']
     
     # Predict structure

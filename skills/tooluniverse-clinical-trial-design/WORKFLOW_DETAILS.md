@@ -85,7 +85,7 @@ soc_pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_i
 )
 
 # Step 3.2: Check FDA Orange Book for approved generics
-orange_book = tu.tools.FDA_OrangeBook_search_drugs(
+orange_book = tu.tools.FDA_OrangeBook_search_drug(
     ingredient=soc_drug
 )
 

@@ -91,7 +91,7 @@ cid_result = tu.tools.PubChem_get_CID_by_compound_name(
 )
 
 # Search in ChEMBL
-chembl_result = tu.tools.ChEMBL_search_compounds(
+chembl_result = tu.tools.ChEMBL_search_molecules(
     query="gefitinib",
     limit=5
 )
@@ -105,7 +105,7 @@ if chembl_result["data"]:
     )
     
     # Get targets
-    targets = tu.tools.ChEMBL_get_target_by_chemblid(
+    targets = tu.tools.ChEMBL_get_target(
         chembl_id=chembl_id
     )
     

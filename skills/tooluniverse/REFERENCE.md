@@ -65,7 +65,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 
 **Step 1: Resolve Compound Identity**
 - `PubChem_get_CID_by_compound_name` → Get PubChem CID
-- `ChEMBL_search_compounds` → Get ChEMBL ID
+- `ChEMBL_search_molecules` → Get ChEMBL ID
 - `DailyMed_search_spls` → Check if approved drug
 - `PharmGKB_search_drugs` → Get PharmGKB ID
 
@@ -76,7 +76,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 
 **Step 3: Get Targets & Bioactivity**
 - `ChEMBL_get_bioactivity_by_chemblid` → Bioactivity data
-- `ChEMBL_get_target_by_chemblid` → Target proteins
+- `ChEMBL_get_target` → Target proteins
 - `DGIdb_get_drug_info` → Drug-gene interactions
 - `PubChem_get_bioactivity_summary_by_CID` → PubChem bioactivity
 
@@ -168,14 +168,14 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `UniProt_get_entry_by_accession` | `proteins_api_get_protein` | NCBI protein |
-| `UniProt_search` | `proteins_api_search_proteins` | MyGene search |
+| `UniProt_search` | `proteins_api_search` | MyGene search |
 | `GTEx_get_median_gene_expression` | `HPA_get_rna_expression_by_source` | Document unavailable |
 | `alphafold_get_prediction` | `alphafold_get_summary` | PDB experimental |
 
 ### Drug/Compound Tools
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `PubChem_get_CID_by_compound_name` | `ChEMBL_search_compounds` + SMILES → CID | Manual search |
+| `PubChem_get_CID_by_compound_name` | `ChEMBL_search_molecules` + SMILES → CID | Manual search |
 | `ChEMBL_get_bioactivity_by_chemblid` | `PubChem_get_bioactivity_summary_by_CID` | - |
 | `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | FDA label search |
 | `ADMETAI_predict_*` | Document "Predictions unavailable" | - |
@@ -216,7 +216,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 |------|-----|------|
 | Name → PubChem CID | `PubChem_get_CID_by_compound_name` |
 | SMILES → PubChem CID | `PubChem_get_CID_by_SMILES` |
-| Name → ChEMBL ID | `ChEMBL_search_compounds` |
+| Name → ChEMBL ID | `ChEMBL_search_molecules` |
 | CID → Properties | `PubChem_get_compound_properties_by_CID` |
 | Name → PharmGKB ID | `PharmGKB_search_drugs` |
 
