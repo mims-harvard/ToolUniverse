@@ -285,7 +285,7 @@ When predictors disagree: if REVEL says tolerated but SIFT/PolyPhen say damaging
 
 If a primary tool fails, use these alternatives:
 - **ClinVar_search_variants returns 0 results**: Use `MyVariant_query_variants` with rsID or HGVS — the `clinvar` field in MyVariant is more reliable for variant lookup than NCBI Entrez search
-- **gnomAD_search_variants fails**: Use `EnsemblVEP_annotate_hgvs` which includes gnomAD frequency via colocated variants
+- **gnomad_search_variants fails**: Use `EnsemblVEP_annotate_hgvs` which includes gnomAD frequency via colocated variants
 - **CADD_get_variant_score fails**: CADD PHRED is also available in the `dbnsfp` block from MyVariant
 - **AlphaFold prediction unavailable** (large proteins >2700aa): Use `PDBe_get_uniprot_mappings` for experimental structures
 

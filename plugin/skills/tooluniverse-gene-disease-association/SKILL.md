@@ -67,7 +67,7 @@ tu.load_tools()
 # Gene query: resolve IDs
 gene_info = tu.tools.MyGene_query_genes(query=f"symbol:{gene_symbol}", species="human",
     fields="symbol,ensembl.gene,entrezgene,name", size=5)  # -> ensembl_id
-monarch_search = tu.tools.MonarchV3_search(query=gene_symbol, category="biolink:Gene", limit=5)  # -> HGNC CURIE
+Monarch_search = tu.tools.MonarchV3_search(query=gene_symbol, category="biolink:Gene", limit=5)  # -> HGNC CURIE
 omim_result = tu.tools.OMIM_search(query=gene_symbol, limit=5)  # -> MIM number
 gene_summary = tu.tools.Harmonizome_get_gene(gene_symbol=gene_symbol)
 

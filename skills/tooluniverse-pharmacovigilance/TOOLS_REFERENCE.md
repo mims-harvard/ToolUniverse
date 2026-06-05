@@ -167,7 +167,7 @@ for trial in trials:
 pathways = tu.tools.kegg_search_pathway(query="drug metabolism")
 
 # Get genes in pathway
-genes = tu.tools.kegg_get_pathway_genes(pathway_id=pathways[0]['pathway_id'])
+genes = tu.tools.KEGG_get_pathway_genes(pathway_id=pathways[0]['pathway_id'])
 ```
 
 ### Reactome Tools

@@ -394,7 +394,7 @@ params["genesymbol"] = _postgrest_eq(gene_symbol)
 
 ## KEGG Organism-Specific Gene Search (Feature-68B-001)
 
-**Tools**: KEGG_find_genes
+**Tools**: kegg_find_genes
 **Pattern**: `/find/genes/{keyword}` ignores organism param → returns all organisms.
 
 **Fix**: Use `/find/{organism}/{keyword}`:
@@ -509,7 +509,7 @@ except Exception:
 
 ## GEO Double-Adding Search Terms (Feature-70A-008)
 
-**Tools**: GEO_search_datasets
+**Tools**: geo_search_datasets
 **Pattern**: Code adds "methylation" to query even when it's already present.
 
 **Fix**: Check before appending:

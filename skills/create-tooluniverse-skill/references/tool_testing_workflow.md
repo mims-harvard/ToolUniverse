@@ -160,7 +160,7 @@ Document response formats:
 2. Pathway Commons returns dict with `total_hits` field
 3. Parameter: `Reactome_map_uniprot_to_pathways` uses `id` not `uniprot_id`
 4. Enrichr tool name: `enrichr_gene_enrichment_analysis` (not `enrichr_submit_genes`)
-5. GO tools: Capital `GO_search_terms` (not lowercase `go_search_terms`)
+5. GO tools: Capital `GO_search_terms` (not lowercase `GO_search_terms`)
 
 **Result**: All issues caught before documentation, 100% functional skill created
 

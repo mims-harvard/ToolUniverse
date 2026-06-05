@@ -163,49 +163,49 @@ def path_0_open_targets(tu, ids):
     results['diseases'] = diseases if diseases else {'note': 'No disease associations returned'}
 
     # 2. Tractability (Section 9)
-    tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblId(
+    tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(
         ensemblId=ensembl_id
     )
     results['tractability'] = tractability if tractability else {'note': 'No tractability data returned'}
 
     # 3. Safety Profile (Section 10)
-    safety = tu.tools.OpenTargets_get_target_safety_profile_by_ensemblId(
+    safety = tu.tools.OpenTargets_get_target_safety_profile_by_ensemblID(
         ensemblId=ensembl_id
     )
     results['safety'] = safety if safety else {'note': 'No safety liabilities identified'}
 
     # 4. Interactions (Section 6)
-    interactions = tu.tools.OpenTargets_get_target_interactions_by_ensemblId(
+    interactions = tu.tools.OpenTargets_get_target_interactions_by_ensemblID(
         ensemblId=ensembl_id
     )
     results['interactions'] = interactions if interactions else {'note': 'No interactions returned'}
 
     # 5. GO Annotations (Section 5)
-    go_terms = tu.tools.OpenTargets_get_target_gene_ontology_by_ensemblId(
+    go_terms = tu.tools.OpenTargets_get_target_gene_ontology_by_ensemblID(
         ensemblId=ensembl_id
     )
     results['go_terms'] = go_terms if go_terms else {'note': 'No GO annotations returned'}
 
     # 6. Publications (Section 11)
-    publications = tu.tools.OpenTargets_get_publications_by_target_ensemblId(
+    publications = tu.tools.OpenTargets_get_publications_by_target_ensemblID(
         ensemblId=ensembl_id
     )
     results['publications'] = publications if publications else {'note': 'No publications returned'}
 
     # 7. Mouse Models (Section 8/10)
-    mouse_models = tu.tools.OpenTargets_get_biological_mouse_models_by_ensemblId(
+    mouse_models = tu.tools.OpenTargets_get_biological_mouse_models_by_ensemblID(
         ensemblId=ensembl_id
     )
     results['mouse_models'] = mouse_models if mouse_models else {'note': 'No mouse model data returned'}
 
     # 8. Chemical Probes (Section 9)
-    probes = tu.tools.OpenTargets_get_chemical_probes_by_target_ensemblId(
+    probes = tu.tools.OpenTargets_get_chemical_probes_by_target_ensemblID(
         ensemblId=ensembl_id
     )
     results['chemical_probes'] = probes if probes else {'note': 'No chemical probes available'}
 
     # 9. Associated Drugs (Section 9)
-    drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblId(
+    drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
         ensemblId=ensembl_id
     )
     results['drugs'] = drugs if drugs else {'note': 'No approved/trial drugs found'}
@@ -221,7 +221,7 @@ Always document when a query returns empty:
 ### 9.3 Chemical Probes
 
 **Status**: No validated chemical probes available for this target.
-*Source: OpenTargets_get_chemical_probes_by_target_ensemblId returned empty*
+*Source: OpenTargets_get_chemical_probes_by_target_ensemblID returned empty*
 
 **Implication**: Tool compound development would be needed for chemical biology studies.
 ```

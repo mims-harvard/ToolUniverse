@@ -304,7 +304,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `OpenTargets_get_associated_drugs_by_target_ensemblId` | Drugs for target | `ensemblId` (camelCase!) |
+| `OpenTargets_get_associated_drugs_by_target_ensemblID` | Drugs for target | `ensemblId` (camelCase!) |
 | `OpenTargets_get_disease_associated_targets` | Targets for disease | `efoId` |
 | `OpenTargets_get_target_tractability` | Druggability | `ensemblId` |
 
@@ -495,7 +495,7 @@ gene_ids = resolve_gene(tu, "EGFR")
 civic_ev = get_civic_evidence(tu, "EGFR", "L858R")
 
 # 3. Get approved drugs
-drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblId(
+drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
     ensemblId=gene_ids['ensembl']
 )
 

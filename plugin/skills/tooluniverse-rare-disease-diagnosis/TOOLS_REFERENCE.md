@@ -221,7 +221,7 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `gnomAD_get_gene_constraints` | pLI, LOEUF scores | `gene_symbol` |
+| `gnomad_get_gene_constraints` | pLI, LOEUF scores | `gene_symbol` |
 | `ExAC_get_constraint_metrics` | Constraint data | `gene` |
 
 ---
@@ -489,7 +489,7 @@ gene_info = tu.tools.kegg_get_gene_info(gene_id="hsa:2200")
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `reactome_search_pathways` | Search pathways | `query` |
-| `reactome_get_pathway` | Pathway details | `pathway_id` |
+| `Reactome_get_pathway` | Pathway details | `pathway_id` |
 | `reactome_disease_target_score` | Disease-pathway links | `disease`, `target` |
 
 **Example - Get Reactome pathways**:
@@ -753,7 +753,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 ### Variant Annotation
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `ClinVar_get_variant_details` | `gnomAD_get_variant` | Literature search |
+| `ClinVar_get_variant_details` | `gnomad_get_variant` | Literature search |
 | `gnomAD_get_variant_frequencies` | `gnomad_get_variant` | 1000 Genomes |
 
 ### Pathogenicity Prediction (ENHANCED)

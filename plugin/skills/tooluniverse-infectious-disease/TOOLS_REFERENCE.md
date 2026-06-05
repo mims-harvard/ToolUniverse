@@ -149,7 +149,7 @@ result = tu.tools.NvidiaNIM_diffdock(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `kegg_search_pathway` | Search pathways | `query` |
-| `kegg_get_pathway_genes` | Get genes in pathway | `pathway_id` |
+| `KEGG_get_pathway_genes` | Get genes in pathway | `pathway_id` |
 | `kegg_get_gene_info` | Get gene details | `gene_id` |
 | `kegg_find_genes` | Find genes by keyword | `query`, `database` |
 
@@ -161,7 +161,7 @@ pathways = tu.tools.kegg_search_pathway(
 )
 
 # Get essential genes
-genes = tu.tools.kegg_get_pathway_genes(
+genes = tu.tools.KEGG_get_pathway_genes(
     pathway_id="ko03030"  # DNA replication
 )
 ```
@@ -446,7 +446,7 @@ def transfer_knowledge(tu, novel_pathogen, reference_pathogen):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `kegg_search_pathway` | `Reactome_search_pathway` | `WikiPathways_search` |
-| `kegg_get_pathway_genes` | `Reactome_get_pathway_participants` | Gene list extraction |
+| `KEGG_get_pathway_genes` | `Reactome_get_pathway_participants` | Gene list extraction |
 
 ### Literature (ENHANCED)
 | Primary | Fallback 1 | Fallback 2 |

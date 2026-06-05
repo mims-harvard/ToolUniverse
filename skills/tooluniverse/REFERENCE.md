@@ -22,7 +22,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 **Step 3: Get Structures**
 - `alphafold_get_prediction` → AlphaFold predicted structure
 - `get_protein_metadata_by_pdb_id` → Experimental PDB structures
-- `PDBe_get_entry_summary` → PDB entry details
+- `pdbe_get_entry_summary` → PDB entry details
 
 **Step 4: Get Function & Pathways**
 - `GO_get_annotations_for_gene` → Gene Ontology terms

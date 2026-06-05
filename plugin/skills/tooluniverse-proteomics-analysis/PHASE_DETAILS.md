@@ -39,7 +39,7 @@
 ## Phase 5: Functional Enrichment
 
 Run enrichment for significant proteins using ToolUniverse:
-- `enrichr_enrich` with libraries: `KEGG_2021_Human`, `Reactome_2022`, `GO_Biological_Process_2021`
+- `Enrichr_enrich` with libraries: `KEGG_2021_Human`, `Reactome_2022`, `GO_Biological_Process_2021`
 - Protein complex enrichment against CORUM database
 - Tissue-specific enrichment if relevant
 

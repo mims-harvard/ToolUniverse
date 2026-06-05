@@ -327,7 +327,7 @@ def get_tumor_expression_context(tu, gene_symbol, cancer_type):
 ## Phase 3: Treatment Options
 
 ### Query Order
-1. `OpenTargets_get_associated_drugs_by_target_ensemblId` -> Approved drugs
+1. `OpenTargets_get_associated_drugs_by_target_ensemblID` -> Approved drugs
 2. `DailyMed_search_spls` -> FDA label details
 3. `ChEMBL_get_drug_mechanisms_of_action_by_chemblId` -> Mechanism
 

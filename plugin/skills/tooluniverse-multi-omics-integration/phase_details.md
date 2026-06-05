@@ -175,7 +175,7 @@ def integrate_pathway_evidence(omics_results, pathway_genes):
 tu = ToolUniverse()
 all_dysregulated = set(rnaseq_degs) | set(diff_proteins) | set(methylation_dmgs)
 enrichment = tu.run_one_function({
-    "name": "enrichr_enrich",
+    "name": "Enrichr_enrich",
     "arguments": {"gene_list": ",".join(all_dysregulated), "library": "KEGG_2021_Human"}
 })
 ```

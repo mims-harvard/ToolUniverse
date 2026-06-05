@@ -166,7 +166,7 @@ def dock_candidates(tu, target_structure, candidate_smiles_list):
 def analyze_pathogen_pathways(tu, pathogen_name, pathogen_type):
     """Identify druggable metabolic pathways in pathogen."""
     pathways = tu.tools.kegg_search_pathway(query=f"{pathogen_name} metabolism")
-    essential_genes = tu.tools.kegg_get_pathway_genes(
+    essential_genes = tu.tools.KEGG_get_pathway_genes(
         pathway_id=pathways[0]['pathway_id'])
     host_pathogen = tu.tools.kegg_search_pathway(
         query=f"{pathogen_name} host interaction")

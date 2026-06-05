@@ -78,7 +78,7 @@ fasta = tu.tools.ena_get_sequence_fasta(accession=accession)
 | Primary | Fallback | Notes |
 |---------|----------|-------|
 | NCBI_get_sequence | ENA (if GenBank format) | NCBI unavailable |
-| ENA_get_entry | NCBI_get_sequence | ENA doesn't have RefSeq |
+| ena_get_entry | NCBI_get_sequence | ENA doesn't have RefSeq |
 | NCBI_search_nucleotide | Try broader keywords | No results |
 
 ---
