@@ -544,7 +544,7 @@ structure = tu.tools.NvidiaNIM_alphafold2(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `InterPro_get_protein_domains` | Domain architecture | `accession` |
-| `UniProt_get_protein_features` | Sequence features | `accession` |
+| `UniProt_get_features_by_accession` | Sequence features | `accession` |
 | `Pfam_get_protein_annotations` | Pfam domains | `uniprot_id` |
 
 ---
@@ -736,7 +736,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 | `Orphanet_search_diseases` | `OMIM_search` | `DisGeNET_search_disease` |
 | `Orphanet_get_genes` | `OMIM_get_gene_map` | `DisGeNET_get_disease_genes` |
 | `OMIM_get_clinical_synopsis` | `Orphanet_get_disease` | `OpenTargets` |
-| `DisGeNET_search_gene` | `OpenTargets_diseases` | Literature search |
+| `DisGeNET_search_gene` | `OpenTargets_get_diseases_phenotypes_by_target_ensembl` | Literature search |
 
 ### Expression & Regulatory
 | Primary | Fallback 1 | Fallback 2 |

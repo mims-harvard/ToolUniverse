@@ -271,9 +271,9 @@ bioactivity = tu.tools.PubChem_get_compound_bioactivity(
 ```
 **Use**: Evidence of biological activity
 
-#### ChEMBL_get_bioactivity_by_chemblid
+#### ChEMBL_search_activities
 ```python
-bioactivity = tu.tools.ChEMBL_get_bioactivity_by_chemblid(
+bioactivity = tu.tools.ChEMBL_search_activities(
     chembl_id="CHEMBL25"
 )
 # Returns: Detailed bioactivity data (IC50, EC50, etc.)

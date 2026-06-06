@@ -217,7 +217,10 @@ similar = tu.tools.PubChem_search_compounds_by_similarity(
     cid=cid['data']['cid'], threshold=85
 )
 for compound in similar['data']:
-    drug_info = tu.tools.PubChem_get_drug_label_info_by_CID(cid=compound['cid'])
+    # FDA labels are keyed by drug name, not CID -- resolve the name first
+    _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=compound['cid'])
+    _name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+    drug_info = tu.tools.FDA_get_drug_label(drug_name=_name)
 ```
 
 ### AI-Powered Candidate Selection

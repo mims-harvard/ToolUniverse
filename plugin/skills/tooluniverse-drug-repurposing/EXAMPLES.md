@@ -593,7 +593,10 @@ for compound in similar_compounds.get('data', [])[:20]:
     compound_cid = compound['cid']
     
     # Get drug information
-    drug_label = tu.tools.PubChem_get_drug_label_info_by_CID(cid=compound_cid)
+    # FDA labels are keyed by drug name, not CID -- resolve the name first
+    _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=compound_cid)
+    _name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+    drug_label = tu.tools.FDA_get_drug_label(drug_name=_name)
     
     if drug_label and 'data' in drug_label:
         # This is an approved drug
@@ -887,7 +890,7 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
             chembl_id=chembl_id
         )
         
-        bioactivity_chembl = tu.tools.ChEMBL_get_bioactivity_by_chemblid(
+        bioactivity_chembl = tu.tools.ChEMBL_search_activities(
             chembl_id=chembl_id
         )
         

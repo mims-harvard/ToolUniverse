@@ -32,7 +32,7 @@ Complete reference for 50+ tools used in drug research, organized by use case.
 | **🆕 FDA approvals** | **`FDA_OrangeBook_get_approval_history`** | **Timeline** |
 | **🆕 FDA patents** | **`FDA_OrangeBook_get_patent_info`** | **Patent guidance** |
 | **🆕 FDA generics** | **`FDA_OrangeBook_check_generic_availability`** | **Generic count** |
-| Label search | `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` |
+| Label search | `DailyMed_search_spls` | `FDA_get_drug_label` |
 | PGx Drug | `PharmGKB_search_drugs` | - |
 | CPIC | `PharmGKB_get_dosing_guidelines` | - |
 | Literature | `PubMed_search_articles` | `EuropePMC_search_articles` |
@@ -51,7 +51,7 @@ Complete reference for 50+ tools used in drug research, organized by use case.
 | `PubChem_get_compound_properties_by_CID` | Molecular properties | MW, formula, XLogP, TPSA, HBD, HBA |
 | `PubChem_get_compound_2D_image_by_CID` | Structure image | PNG image |
 | `PubChem_get_compound_bioactivity` | Activity overview | Active/inactive counts, assay types |
-| `PubChem_get_drug_label_info_by_CID` | FDA label info | Indications, warnings, dosing |
+| `FDA_get_drug_label` | FDA label info | Indications, warnings, dosing |
 | `PubChem_get_associated_patents_by_CID` | Patent data | Patent numbers, titles |
 | `PubChem_search_compounds_by_similarity` | Find analogs | Similar CIDs with scores |
 | `PubChem_search_compounds_by_substructure` | Substructure search | Matching CIDs |
@@ -63,7 +63,7 @@ Complete reference for 50+ tools used in drug research, organized by use case.
 | `ChEMBL_get_molecule` | Compound details | SMILES, properties, synonyms |
 | `ChEMBL_get_activity` | Activity data | IC50, Ki, EC50 values |
 | `ChEMBL_get_target` | Protein targets | Target ChEMBL IDs, UniProt |
-| `ChEMBL_get_assays` | Assay metadata | Assay types, organisms |
+| `ChEMBL_search_assays` | Assay metadata | Assay types, organisms |
 | `ChEMBL_search_targets` | Target search | Target ChEMBL IDs |
 
 ---
@@ -486,7 +486,7 @@ ADMETAI_predict_solubility_lipophilicity_hydration
 
 ### PATH 3: Targets & Bioactivity
 ```
-ChEMBL_get_bioactivity_by_chemblid
+ChEMBL_search_activities
   ↓
 ChEMBL_get_target
   ↓
@@ -562,7 +562,7 @@ PubMed_get_cited_by (for key papers)
 |---------|------------|------------|
 | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_drugs` | Manual SMILES search |
 | `ChEMBL_get_activity` | `PubChem_get_compound_bioactivity` | Literature search |
-| `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | FDA Orange Book |
+| `DailyMed_search_spls` | `FDA_get_drug_label` | FDA Orange Book |
 | `PharmGKB_get_dosing_guidelines` | Note "No guideline" | Literature search |
 | `FAERS_count_reactions_by_drug_event` | Note "FAERS unavailable" | Trial AE data |
 | `ADMETAI_*` | Note "Predictions unavailable" | Literature values |

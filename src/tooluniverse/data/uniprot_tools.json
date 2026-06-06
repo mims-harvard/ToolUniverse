@@ -2141,5 +2141,68 @@
         }
       ]
     }
+  },
+  {
+    "name": "UniProt_get_features_by_accession",
+    "description": "Extract all sequence features (domains, active/binding sites, motifs, modified residues, signal peptides, transmembrane regions, etc.) from a UniProtKB entry. Returns each feature's type, start/end positions, and description. Use to map functional/structural regions of a protein or to see what is annotated at a residue of interest. Example: P04637 (TP53) returns binding sites, the DNA-binding domain, modified residues, and more.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProtKB accession, e.g., 'P04637' (TP53) or 'P05067' (APP)."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://rest.uniprot.org/uniprotkb/{accession}.json",
+      "extract_path": "features",
+      "input_description": "Input UniProtKB accession, e.g., P04637.",
+      "output_description": "Returns a list of all sequence feature objects (type, location, description)."
+    },
+    "type": "UniProtRESTTool",
+    "test_examples": [
+      {
+        "accession": "P04637"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "location": {
+                "type": "object"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

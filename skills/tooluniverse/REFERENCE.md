@@ -75,7 +75,7 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 - `ADMETAI_predict_solubility_lipophilicity_hydration` → Solubility data
 
 **Step 3: Get Targets & Bioactivity**
-- `ChEMBL_get_bioactivity_by_chemblid` → Bioactivity data
+- `ChEMBL_search_activities` → Bioactivity data
 - `ChEMBL_get_target` → Target proteins
 - `DGIdb_get_drug_info` → Drug-gene interactions
 - `PubChem_get_compound_bioactivity` → PubChem bioactivity
@@ -176,8 +176,8 @@ Detailed tool chains, fallback strategies, and examples for comprehensive scient
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `PubChem_get_CID_by_compound_name` | `ChEMBL_search_molecules` + SMILES → CID | Manual search |
-| `ChEMBL_get_bioactivity_by_chemblid` | `PubChem_get_compound_bioactivity` | - |
-| `DailyMed_search_spls` | `PubChem_get_drug_label_info_by_CID` | FDA label search |
+| `ChEMBL_search_activities` | `PubChem_get_compound_bioactivity` | - |
+| `DailyMed_search_spls` | `FDA_get_drug_label` | FDA label search |
 | `ADMETAI_predict_*` | Document "Predictions unavailable" | - |
 
 ### Disease Tools

@@ -75,7 +75,10 @@ bioactivity = tu.tools.PubChem_get_compound_bioactivity(
 print(f"Active in {bioactivity['data']['active_assay_count']} assays")
 
 # Get drug label information
-drug_info = tu.tools.PubChem_get_drug_label_info_by_CID(cid=cid)
+# FDA labels are keyed by drug name, not CID -- resolve the name first
+_syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=cid)
+_name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+drug_info = tu.tools.FDA_get_drug_label(drug_name=_name)
 
 # Get patents
 patents = tu.tools.PubChem_get_associated_patents_by_CID(cid=cid)
@@ -100,7 +103,7 @@ if chembl_result["data"]:
     chembl_id = chembl_result["data"][0]["molecule_chembl_id"]
     
     # Get bioactivity from ChEMBL
-    activity = tu.tools.ChEMBL_get_bioactivity_by_chemblid(
+    activity = tu.tools.ChEMBL_search_activities(
         chembl_id=chembl_id
     )
     
