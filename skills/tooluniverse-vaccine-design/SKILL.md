@@ -163,13 +163,24 @@ alphafold_get_prediction(uniprot_id="[accession]")
 
 ### Phase 3: Population Coverage
 
-```python
-# Search for epitopes restricted to common HLA alleles in target population
-# NOTE: No HLA frequency tool exists in ToolUniverse. For population coverage:
-# 1. Use IEDB Analysis Resource (tools.iedb.org/population) for population coverage calculation
-# 2. Use the HLA supertype strategy (see above) to ensure broad coverage
-# 3. Search PubMed for published HLA frequency data: PubMed_search_articles(query="HLA allele frequency [population]")
+No HLA-frequency tool exists in ToolUniverse, but the coverage math is packaged in
+`scripts/population_coverage.py`. Pass the HLA alleles your selected epitopes bind
+(from the `IEDB_predict_mhci/mhcii_binding` results) and get the % of the
+population covered:
+
+```bash
+# Broad first-pass estimate (bundled average frequencies):
+python scripts/population_coverage.py --alleles "HLA-A*02:01,HLA-A*01:01,HLA-A*03:01,HLA-A*24:02,HLA-B*07:02,HLA-B*08:01,HLA-B*44:02"
+# -> {"overall_coverage": 73.6, "per_locus_coverage_pct": {"A": 62.9, "B": 28.9}, ...}
+
+# Population-SPECIFIC: supply real allele frequencies (ALLELE<TAB>FREQ) for the
+# target ethnicity from the Allele Frequency Net Database (allelefrequencies.net)
+# or the IEDB population-coverage tool (tools.iedb.org/population):
+python scripts/population_coverage.py --alleles-file covered.txt --freq-file afnd_han_chinese.tsv
 ```
+The bundled default is an approximate broad average — do NOT report it as coverage
+for a specific ethnicity; use `--freq-file` with AFND/IEDB data for that. Also use
+the HLA supertype strategy to ensure your epitope set spans the common supertypes.
 
 **Population coverage targets**:
 
