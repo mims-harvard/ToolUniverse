@@ -266,6 +266,30 @@
     ]
   },
   {
+    "name": "IUCN_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Ecology & Biodiversity",
+    "register_url": "https://api.iucnredlist.org/",
+    "purpose": "Retrieve IUCN Red List conservation status for species.",
+    "without": "The tool returns a clear error explaining how to register; no data without it.",
+    "used_by": [
+      "iucn_tools.json"
+    ]
+  },
+  {
+    "name": "LDLINK_TOKEN",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Genomics & Variants",
+    "register_url": "https://ldlink.nih.gov/?tab=apiaccess",
+    "purpose": "Compute population-specific LD proxies for a SNP.",
+    "without": "The tool returns a clear error explaining how to register; no data without it.",
+    "used_by": [
+      "ldlink_tools.json"
+    ]
+  },
+  {
     "name": "MCULE_API_KEY",
     "requirement": "optional",
     "type": "secret",
