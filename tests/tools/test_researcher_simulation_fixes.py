@@ -2438,8 +2438,10 @@ class TestFDALabelGenericNameFallback(unittest.TestCase):
         mock_get.side_effect = [not_found, found]
 
         result = tool.run({"drug_name": "tofacitinib"})
-        self.assertNotIn("error", result)
-        self.assertEqual(result["generic_name"], "TOFACITINIB CITRATE")
+        # FDALabelTool returns the standard {status, data, metadata} envelope;
+        # _get_label puts the single matched label under data.
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["data"]["generic_name"], "TOFACITINIB CITRATE")
 
         # Verify: first call was exact quoted, second was unquoted
         calls = mock_get.call_args_list
@@ -2476,9 +2478,11 @@ class TestFDALabelGenericNameFallback(unittest.TestCase):
         mock_get.side_effect = [not_found, found]
 
         result = tool.run({"drug_name": "tofacitinib"})
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["generic_name"], "TOFACITINIB CITRATE")
+        # Standard envelope: the search results list lives under data.
+        self.assertEqual(result["status"], "success")
+        self.assertIsInstance(result["data"], list)
+        self.assertEqual(len(result["data"]), 1)
+        self.assertEqual(result["data"][0]["generic_name"], "TOFACITINIB CITRATE")
 
     @patch("tooluniverse.fda_label_tool.requests.get")
     def test_exact_match_preferred(self, mock_get):

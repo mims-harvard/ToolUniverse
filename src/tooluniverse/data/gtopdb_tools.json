@@ -312,7 +312,11 @@
          "synonyms": {
           "type": "array",
           "items": {
-           "type": "string"
+           "type": [
+            "object",
+            "string"
+           ],
+           "description": "GtoPdb returns synonyms as objects like {\"name\": \"...\"}; a plain string is also accepted."
           }
          },
          "databaseLinks": {
