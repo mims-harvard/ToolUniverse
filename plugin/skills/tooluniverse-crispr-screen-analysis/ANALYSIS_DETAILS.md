@@ -190,10 +190,15 @@ def bagel_bayes_factor(lfc, sgrna_to_gene, essential_genes=None, nonessential_ge
     BAGEL-like Bayes Factor calculation for gene essentiality.
     Uses reference sets of known essential and non-essential genes.
     """
-    if essential_genes is None:
-        essential_genes = ['RPL5', 'RPS6', 'POLR2A', 'PSMC2', 'PSMD14']
-    if nonessential_genes is None:
-        nonessential_genes = ['AAVS1', 'ROSA26', 'HPRT1']
+    # Use the FULL published reference sets (CEGv2 core-essential ~684 genes,
+    # NEGv1 non-essential ~928 genes), bundled in scripts/. A 3-5 gene stub is
+    # far too small for BAGEL's likelihood estimation or the screen-QC benchmark.
+    if essential_genes is None or nonessential_genes is None:
+        from reference_gene_sets import core_essential, nonessential
+        if essential_genes is None:
+            essential_genes = core_essential()
+        if nonessential_genes is None:
+            nonessential_genes = nonessential()
 
     essential_lfc = [lfc[sg] for sg, g in sgrna_to_gene.items()
                      if g in essential_genes and sg in lfc.index]

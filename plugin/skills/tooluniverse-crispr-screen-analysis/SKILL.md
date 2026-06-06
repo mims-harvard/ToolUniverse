@@ -175,7 +175,7 @@ LOOK UP DON'T GUESS: DepMap dependency scores, known core essential gene sets (H
 
 **Synthesis questions to address in the report:**
 1. Do the top hits cluster in known pathways (Reactome/KEGG), or are they scattered -- suggesting technical noise?
-2. Are known essential genes (Hart et al. reference set) correctly identified, confirming screen quality?
+2. Are known essential genes (Hart et al. reference set) correctly identified, confirming screen quality? The full CEGv2 core-essential (~684) and NEGv1 non-essential (~928) reference sets are bundled in `scripts/` — load them with `from reference_gene_sets import core_essential, nonessential, recovery_rate`. `recovery_rate(top_depleted_genes)` gives the fraction of core-essential genes recovered (a good genome-wide screen recovers >~0.8).
 3. For drug target candidates: does DGIdb show existing compounds, and does DepMap confirm the dependency across multiple cell lines?
 
 ---
