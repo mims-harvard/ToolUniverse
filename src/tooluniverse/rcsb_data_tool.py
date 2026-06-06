@@ -62,6 +62,12 @@ class RCSBDataTool(BaseTool):
 
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate endpoint."""
+        # Accept the RCSB-native term 'entry_id' (and plain 'id') as aliases for
+        # 'pdb_id' — the REST endpoint is /core/entry/{id}, so users reach for it.
+        if not arguments.get("pdb_id"):
+            alias = arguments.get("entry_id") or arguments.get("id")
+            if alias:
+                arguments = {**arguments, "pdb_id": alias}
         if self.endpoint == "entry":
             return self._get_entry(arguments)
         elif self.endpoint == "assembly":

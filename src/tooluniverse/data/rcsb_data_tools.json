@@ -8,10 +8,23 @@
         "pdb_id": {
           "type": "string",
           "description": "PDB entry ID (4 characters). Examples: '4HHB' (hemoglobin), '1TUP' (p53-DNA complex), '1M17' (EGFR kinase), '6LU7' (SARS-CoV-2 main protease)."
+        },
+        "entry_id": {
+          "type": "string",
+          "description": "Alias for pdb_id (the RCSB-native term; the REST endpoint is /core/entry/{id}). Provide either pdb_id or entry_id."
         }
       },
-      "required": [
-        "pdb_id"
+      "anyOf": [
+        {
+          "required": [
+            "pdb_id"
+          ]
+        },
+        {
+          "required": [
+            "entry_id"
+          ]
+        }
       ]
     },
     "fields": {
