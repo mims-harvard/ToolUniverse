@@ -11,7 +11,11 @@
         },
         "gene": {
           "type": ["string", "null"],
-          "description": "Gene symbol to get targeting miRNAs for, e.g. 'TP53', 'KRAS'. Mutually exclusive with 'mirna'."
+          "description": "Gene symbol to get targeting miRNAs for, e.g. 'TP53', 'KRAS' (alias: 'gene_symbol'). Mutually exclusive with 'mirna'."
+        },
+        "assembly": {
+          "type": ["string", "null"],
+          "description": "Genome assembly to query (default 'hg38'). Use 'hg19' for the older human build."
         },
         "clip_min": {
           "type": ["integer", "null"],
