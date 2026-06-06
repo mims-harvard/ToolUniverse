@@ -747,7 +747,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 ### Pathway Analysis
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `kegg_get_gene_info` | `ReactomeContent_search` | `OpenTargets_pathways` |
+| `kegg_get_gene_info` | `ReactomeContent_search` | `KEGG_get_gene_pathways` |
 | `intact_search_interactions` | `STRING_interactions` | Literature search |
 
 ### Variant Annotation
