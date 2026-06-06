@@ -1267,7 +1267,6 @@
       "properties": {
         "species": {
           "type": "string",
-          "default": "human",
           "description": "Species name (e.g., 'human', 'homo_sapiens')."
         },
         "region": {
@@ -1354,7 +1353,6 @@
       "properties": {
         "species": {
           "type": "string",
-          "default": "human",
           "description": "Species name (e.g., 'human', 'homo_sapiens')."
         },
         "id": {
