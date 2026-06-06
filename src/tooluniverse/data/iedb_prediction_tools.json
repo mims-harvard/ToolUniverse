@@ -139,5 +139,103 @@
         }
       ]
     }
+  },
+  {
+    "name": "IEDB_predict_bcell_epitopes",
+    "description": "Predict linear B-cell (antibody) epitopes along a protein sequence using the IEDB B-cell tool (default BepiPred). Scores every residue and returns the contiguous regions predicted to be antibody-accessible epitopes, plus the per-residue scores. Use for vaccine antigen design and antibody target selection. Example: a viral surface protein sequence returns its predicted surface-exposed epitope stretches.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein amino-acid sequence (single-letter codes), e.g. an antigen of interest."
+        },
+        "method": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Prediction method: 'Bepipred' (default, BepiPred-2.0), 'Emini' (surface accessibility), 'Kolaskar-Tongaonkar' (antigenicity), 'Parker' (hydrophilicity), 'Chou-Fasman' (beta-turn)."
+        }
+      },
+      "required": [
+        "sequence"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "predict_bcell"
+    },
+    "type": "IEDBPredictionTool",
+    "test_examples": [
+      {
+        "sequence": "SLYNTVATLYGGGKLLEPVLLLVHHHQGVSKEMEKEGKISKIGPEN",
+        "method": "Bepipred"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "epitope_regions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "start": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "peptide": {
+                        "type": "string"
+                      },
+                      "mean_score": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "per_residue": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

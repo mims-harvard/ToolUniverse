@@ -44,6 +44,8 @@ class IEDBPredictionTool(BaseTool):
                 return self._predict_mhci(arguments)
             elif self.endpoint_type == "predict_mhcii":
                 return self._predict_mhcii(arguments)
+            elif self.endpoint_type == "predict_bcell":
+                return self._predict_bcell(arguments)
             return {
                 "status": "error",
                 "error": f"Unknown endpoint: {self.endpoint_type}",
@@ -56,6 +58,88 @@ class IEDBPredictionTool(BaseTool):
     def _parse_tsv(self, text: str) -> List[Dict[str, str]]:
         reader = csv.DictReader(io.StringIO(text.strip()), delimiter="\t")
         return [dict(row) for row in reader]
+
+    def _predict_bcell(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Predict linear B-cell epitopes along a protein sequence.
+
+        Uses the IEDB B-cell tool (default BepiPred), which scores every residue;
+        contiguous runs above the threshold are candidate antibody epitopes.
+        """
+        sequence = arguments.get("sequence", "")
+        method = arguments.get("method", "Bepipred")
+        if not sequence:
+            return {"status": "error", "error": "sequence is required"}
+
+        resp = requests.post(
+            f"{IEDB_TOOLS_BASE}/bcell/",
+            data={"method": method, "sequence_text": sequence},
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+        rows = self._parse_tsv(resp.text)
+
+        residues = []
+        for r in rows:
+            try:
+                score = float(r.get("Score", 0))
+            except (ValueError, TypeError):
+                score = None
+            residues.append(
+                {
+                    "position": r.get("Position"),
+                    "residue": r.get("Residue"),
+                    "score": score,
+                    "epitope": r.get("Assignment") == "E",
+                }
+            )
+
+        # Collapse the per-residue "E" assignments into contiguous epitope regions.
+        regions = []
+        start = None
+        for i, res in enumerate(residues):
+            if res["epitope"] and start is None:
+                start = i
+            elif not res["epitope"] and start is not None:
+                seg = residues[start:i]
+                regions.append(
+                    {
+                        "start": seg[0]["position"],
+                        "end": seg[-1]["position"],
+                        "peptide": "".join(s["residue"] or "" for s in seg),
+                        "mean_score": round(
+                            sum(s["score"] or 0 for s in seg) / len(seg), 4
+                        ),
+                    }
+                )
+                start = None
+        if start is not None:
+            seg = residues[start:]
+            regions.append(
+                {
+                    "start": seg[0]["position"],
+                    "end": seg[-1]["position"],
+                    "peptide": "".join(s["residue"] or "" for s in seg),
+                    "mean_score": round(
+                        sum(s["score"] or 0 for s in seg) / len(seg), 4
+                    ),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {"epitope_regions": regions, "per_residue": residues},
+            "metadata": {
+                "method": method,
+                "n_epitope_regions": len(regions),
+                "sequence_length": len(residues),
+                "source": "IEDB Analysis Resource (B-cell)",
+                "interpretation": (
+                    "Residues assigned 'E' (score above the method threshold) are "
+                    "predicted to be in a linear B-cell (antibody) epitope; "
+                    "epitope_regions are the contiguous stretches."
+                ),
+            },
+        }
 
     def _predict_mhci(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         sequence = arguments.get("sequence", "")
