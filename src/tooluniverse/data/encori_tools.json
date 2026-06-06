@@ -1,0 +1,68 @@
+[
+  {
+    "name": "ENCORI_get_miRNA_targets",
+    "description": "Look up miRNA-target interactions from ENCORI (starBase): CLIP-seq-supported and computationally predicted targets of a miRNA, or the miRNAs that target a gene. Provide 'mirna' (e.g. 'hsa-miR-21-5p') to get its target genes, OR 'gene' (e.g. 'TP53') to get targeting miRNAs. Each result reports the number of supporting CLIP experiments (experimental evidence) and which prediction programs (TargetScan, miRanda, PITA, miRmap, microT, PicTar, RNA22) call it. Fills the gap where ToolUniverse had no miRNA target-lookup tool. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "mirna": {
+          "type": ["string", "null"],
+          "description": "miRNA name to get targets for, e.g. 'hsa-miR-21-5p', 'hsa-let-7a-5p'. Mutually exclusive with 'gene'."
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Gene symbol to get targeting miRNAs for, e.g. 'TP53', 'KRAS'. Mutually exclusive with 'mirna'."
+        },
+        "clip_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of supporting CLIP-seq experiments (default 1 = require experimental support; set 0 to include prediction-only)."
+        },
+        "program_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of prediction programs that must call the interaction (default 1)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum interactions to return (1-500, default 50)."
+        }
+      },
+      "required": []
+    },
+    "fields": {},
+    "type": "ENCORITool",
+    "test_examples": [
+      {"mirna": "hsa-miR-21-5p", "limit": 10},
+      {"gene": "TP53", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mirna": {"type": "string"},
+                  "gene": {"type": "string"},
+                  "gene_id": {"type": "string"},
+                  "clip_experiments": {"type": "integer"},
+                  "predicted_by": {"type": "array", "items": {"type": "string"}},
+                  "n_programs": {"type": "integer"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  }
+]

@@ -514,6 +514,7 @@ default_tool_files = {
     # Install with: pip install tooluniverse[circuit]
     # HPO - Human Phenotype Ontology (phenotype terms, hierarchy, clinical genetics)
     "hpo": os.path.join(current_dir, "data", "hpo_tools.json"),
+    "encori": os.path.join(current_dir, "data", "encori_tools.json"),
     # Reactome Analysis Service - Pathway enrichment/overrepresentation analysis
     "reactome_analysis": os.path.join(
         current_dir, "data", "reactome_analysis_tools.json"

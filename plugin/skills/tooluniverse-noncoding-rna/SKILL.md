@@ -99,12 +99,15 @@ ncRNA classes by size and database:
 
 **For miRNAs** — the targets determine the biology:
 
-**NOTE**: There is no dedicated miRNA target lookup tool in ToolUniverse. To find miRNA targets:
+**PRIMARY TOOL**: `ENCORI_get_miRNA_targets` looks up miRNA-target interactions from ENCORI/starBase (CLIP-seq-supported + computationally predicted), no download needed:
 
-1. **Literature search** (most reliable): `PubMed_search_articles(query="miR-21 target validation luciferase")`
-2. **Cross-references**: `miRBase_get_mirna_xrefs(accession="MIMAT0000076")` — may link to external target databases
-3. **Known targets for well-studied miRNAs**: Use the reference table below, then validate via STRING/Reactome
-4. **For novel miRNAs**: Search PubMed for "[miRNA] target" and extract validated targets from papers
+1. **miRNA → targets**: `ENCORI_get_miRNA_targets(mirna="hsa-miR-21-5p", clip_min=1)` — each hit reports `clip_experiments` (CLIP-seq support; higher = stronger experimental evidence) and `predicted_by` (which programs call it). Results are ranked by CLIP support, so the top rows are the best-supported targets.
+2. **gene → miRNAs**: `ENCORI_get_miRNA_targets(gene="TP53")` — which miRNAs target a gene.
+
+Supporting/fallback approaches:
+3. **Literature** (for mechanism/validation context): `PubMed_search_articles(query="miR-21 target validation luciferase")`
+4. **Cross-references**: `miRBase_get_mirna_xrefs(accession="MIMAT0000076")`
+5. **For novel miRNAs** not in ENCORI: search PubMed for "[miRNA] target".
 
 Well-studied miRNA targets (for common oncomiRs/tumor suppressors):
 - **miR-21**: PTEN, PDCD4, TPM1, RECK, SPRY1, SPRY2, BTG2
