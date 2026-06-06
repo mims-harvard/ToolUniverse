@@ -135,7 +135,15 @@ Phase 5: Target Druggability & Recommendations
 
 **OUTPUT**: Gene validation + mutation status per cell line.
 
-**Offline DepMap analysis** (when API lacks CRISPR scores): Download `CRISPRGeneEffect.csv` + `Model.csv` from https://depmap.org/portal/download/all/. Load with pandas, find gene column (format: "KRAS (3845)"), merge with metadata, filter by lineage, sort by score. Most negative Chronos score = most dependent.
+**Per-cell-line Chronos scores** (what the API can't give you): use the bundled script `scripts/depmap_gene_dependency.py`. It pulls the current DepMap Public release (CRISPRGeneEffect.csv + Model.csv) once via the public download index, caches it, and answers the dependency question directly:
+
+```bash
+# Cell lines most dependent on a gene (optionally within a lineage)
+python scripts/depmap_gene_dependency.py gene KRAS --lineage Pancreas --top 20
+# Genes a given cell line is most dependent on
+python scripts/depmap_gene_dependency.py cell-line A375 --top 25
+```
+Output: cell line, lineage, primary disease, Chronos score (most negative = most dependent; < -0.5 ≈ dependency). For selective-dependency reasoning, compare a gene's scores across lineages.
 
 **If DepMap data is unavailable**: Use `cBioPortal_get_mutations(study_id="ccle_broad_2019", gene_list="KRAS")` for mutation data, and the Quick Reference table below for common recommendations.
 

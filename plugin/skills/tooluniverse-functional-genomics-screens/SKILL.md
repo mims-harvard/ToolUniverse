@@ -49,7 +49,13 @@ Phase 6: Prioritized Report → ranked target list with multi-dimensional scorin
 
 **Classification**: Pan-essential (>90% lines), Selectively essential (specific lineages), Context-specific (screen model only). Chronos < -0.5 = likely essential, < -1.0 = strongly essential.
 
-**DepMap limitation**: Tool returns metadata only. For actual Chronos scores, download CRISPRGeneEffect.csv from depmap.org and analyze locally. Fallback: gnomAD constraint + `PubMed_search_articles(query="[gene] CRISPR screen [cancer]")`.
+**DepMap per-cell-line Chronos scores**: `DepMap_get_gene_dependencies` returns metadata only. For the actual per-cell-line scores, use the bundled script in the cell-line-profiling skill — `tooluniverse-cell-line-profiling/scripts/depmap_gene_dependency.py` (downloads the current DepMap Public CRISPRGeneEffect.csv once, cached; queries by `gene` or `cell-line`):
+
+```bash
+python depmap_gene_dependency.py gene KRAS --lineage Lung --top 20   # most-dependent lines
+python depmap_gene_dependency.py cell-line A375 --top 25             # genes the line needs
+```
+Chronos < -0.5 ≈ dependency, < -1.0 strongly essential. Fallback if you can't run it: gnomAD constraint + `PubMed_search_articles(query="[gene] CRISPR screen [cancer]")`.
 
 ### Phase 2: Pathway & Network
 
