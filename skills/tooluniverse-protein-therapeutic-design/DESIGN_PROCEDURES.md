@@ -90,4 +90,4 @@ passes = np.mean(plddt) > 70 and ptm > 0.7
 | `NvidiaNIM_proteinmpnn` | Rosetta ProteinMPNN | Manual sequence |
 | `NvidiaNIM_esmfold` | `NvidiaNIM_alphafold2` | AlphaFold DB |
 | PDB structure | EMDB cryo-EM + PDB | `NvidiaNIM_alphafold2` |
-| `EMDB_search_structures` + PDB model | PDB_search | `NvidiaNIM_alphafold2` |
+| `EMDB_search_structures` + PDB model | PDB_search_similar_structures | `NvidiaNIM_alphafold2` |

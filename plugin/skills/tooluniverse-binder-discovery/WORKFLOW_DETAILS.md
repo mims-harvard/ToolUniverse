@@ -571,7 +571,7 @@ Primary: OpenTargets_get_target_tractability_by_ensemblID
 ```
 Primary: ChEMBL_get_target_activities
 -> Fail -> BindingDB_get_ligands_by_uniprot
-         -> Fail -> GtoPdb_get_target_interactions
+         -> Fail -> GtoPdb_get_interactions
                   -> Fail -> PubChem_search_assays_by_target_gene
                            -> Fail -> Document "No bioactivity data"
 ```

@@ -767,7 +767,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `NvidiaNIM_alphafold2` | `alphafold_get_prediction` | `NvidiaNIM_esmfold` |
-| `InterPro_get_protein_domains` | `Pfam_get_protein_annotations` | `UniProt_features` |
+| `InterPro_get_protein_domains` | `Pfam_get_protein_annotations` | `UniProt_get_features_by_accession` |
 
 ### Literature
 | Primary | Fallback 1 | Fallback 2 |

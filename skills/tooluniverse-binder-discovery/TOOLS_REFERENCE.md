@@ -273,10 +273,10 @@ result = tu.tools.ChEMBL_get_molecule(
 # Returns: molecule data including SMILES, max_phase, properties
 ```
 
-### GtoPdb_get_target_interactions
+### GtoPdb_get_interactions
 **Purpose**: Get pharmacological interactions
 ```python
-result = tu.tools.GtoPdb_get_target_interactions(
+result = tu.tools.GtoPdb_get_interactions(
     target_id="1797"  # GtoPdb target ID
 )
 # Returns: ligands with pKi, pIC50, action type
@@ -835,7 +835,7 @@ Primary: ChEMBL_get_target_activities
 ├─ Success → Use ChEMBL data
 └─ Fail → BindingDB_get_ligands_by_uniprot (NEW)
          ├─ Success → Use BindingDB data
-         └─ Fail → GtoPdb_get_target_interactions
+         └─ Fail → GtoPdb_get_interactions
                   ├─ Success → Use GtoPdb data
                   └─ Fail → PubChem_search_assays_by_target_gene (NEW)
                            └─ Fail → Document "No bioactivity data"

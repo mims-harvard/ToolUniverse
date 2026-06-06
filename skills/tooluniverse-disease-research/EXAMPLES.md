@@ -342,7 +342,7 @@ openalex_search_works, europe_pmc_search_abstracts, semantic_scholar_search_pape
 | Tau | Protein | (pipeline) | GtoPdb |
 
 **Sources Used**: GtoPdb_search_diseases, GtoPdb_search_diseases, GtoPdb_search_targets,
-GtoPdb_search_targets, GtoPdb_get_target_interactions
+GtoPdb_search_targets, GtoPdb_get_interactions
 
 ---
 

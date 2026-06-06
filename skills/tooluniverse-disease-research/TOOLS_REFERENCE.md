@@ -605,10 +605,10 @@ tu.tools.GtoPdb_search_targets(target_id=290)
 # Returns: detailed target info
 ```
 
-### GtoPdb_get_target_interactions
+### GtoPdb_get_interactions
 **Purpose**: Get target-ligand interactions
 ```python
-tu.tools.GtoPdb_get_target_interactions(
+tu.tools.GtoPdb_get_interactions(
     target_id=290,
     action_type="Agonist"
 )

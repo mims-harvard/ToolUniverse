@@ -371,7 +371,7 @@ def assess_developability(sequence):
 ### Cryo-EM (Membrane Targets) (NEW)
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `EMDB_search_structures` + PDB model | PDB_search | `NvidiaNIM_alphafold2` |
+| `EMDB_search_structures` + PDB model | PDB_search_similar_structures | `NvidiaNIM_alphafold2` |
 
 ---
 

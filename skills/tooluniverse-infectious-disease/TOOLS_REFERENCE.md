@@ -424,7 +424,7 @@ def transfer_knowledge(tu, novel_pathogen, reference_pathogen):
 ### Taxonomy
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `NCBIDatasets_suggest_taxonomy` | `UniProt_taxonomy` | Manual NCBI query |
+| `NCBIDatasets_suggest_taxonomy` | `UniProtTaxonomy_search` | Manual NCBI query |
 
 ### Structure Prediction
 | Primary | Fallback 1 | Fallback 2 |
