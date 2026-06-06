@@ -54,6 +54,7 @@ When a question involves identifying or comparing species:
 
 | Tool | Use For |
 |------|---------|
+| `IUCN_get_conservation_status` | **Red List conservation status** (CR/EN/VU/NT/LC) by scientific name — the authoritative extinction-risk source (needs a free IUCN_API_KEY) |
 | `GBIF_search_species` | Species taxonomy, occurrence data, distribution |
 | `GBIF_search_occurrences` | Where has a species been observed? |
 | `WoRMS_search_species` | Marine species taxonomy |

@@ -1,0 +1,36 @@
+[
+  {
+    "name": "LDlink_get_proxies",
+    "description": "Find variants in linkage disequilibrium (LD proxies) with a query SNP, population-specific, via NIH LDlink's LDproxy module. Essential for GWAS interpretation: a lead SNP is often just a tag for the true causal variant, so high-R2 proxies (especially in coding/regulatory regions) are better mechanistic candidates. Returns proxy rsIDs with R2, coordinates, alleles, MAF, and distance. Requires a free LDlink token (LDLINK_TOKEN env var; register at ldlink.nih.gov).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {"type": "string", "description": "Query SNP rsID, e.g. 'rs7903146'."},
+        "population": {"type": ["string", "null"], "description": "1000 Genomes population code (default 'CEU'). Examples: 'CEU' (European), 'YRI' (African), 'CHB' (East Asian), or super-populations 'EUR'/'AFR'/'EAS'/'SAS'/'AMR'."},
+        "r2_threshold": {"type": ["number", "null"], "description": "Minimum R2 to report (default 0.8; high LD)."},
+        "genome_build": {"type": ["string", "null"], "description": "'grch38' (default) or 'grch37'."},
+        "limit": {"type": ["integer", "null"], "description": "Max proxies to return (1-500, default 50)."}
+      },
+      "required": ["variant"]
+    },
+    "fields": {},
+    "type": "LDlinkTool",
+    "test_examples": [{"variant": "rs7903146", "population": "CEU"}],
+    "optional_api_keys": ["LDLINK_TOKEN"],
+    "api_key_info": {
+      "LDLINK_TOKEN": {
+        "domain": "Genomics & Variants",
+        "type": "secret",
+        "register_url": "https://ldlink.nih.gov/?tab=apiaccess",
+        "purpose": "Compute population-specific LD proxies for a SNP.",
+        "without": "The tool returns a clear error explaining how to register; no data without it."
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "properties": {"data": {"type": "array", "items": {"type": "object", "properties": {"rsid": {"type": "string"}, "r2": {"type": ["number", "null"]}, "coord": {"type": ["string", "null"]}, "alleles": {"type": ["string", "null"]}, "maf": {"type": ["string", "null"]}, "distance": {"type": ["string", "null"]}}}}, "metadata": {"type": "object"}}, "required": ["data"]},
+        {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+      ]
+    }
+  }
+]
