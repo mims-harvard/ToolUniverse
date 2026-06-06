@@ -263,7 +263,7 @@ Cancer cell line dependency data from CRISPR knockout screens.
 | `DepMap_get_cell_lines` | List cell lines with metadata | `tissue`, `cancer_type`, `page_size` |
 | `DepMap_search_cell_lines` | Search by name | `query` |
 | `DepMap_get_cell_line` | Detailed cell line info | `model_id` OR `model_name` |
-| `DepMap_get_drug_response` | Drug sensitivity data | `drug_name` |
+| Drug sensitivity (IC50/AUC) | No TU tool — run `scripts/gdsc_drug_response.py` (GDSC bulk data) | `drug` / `cell-line` / `target` |
 
 **Example - Assess target essentiality**:
 ```python

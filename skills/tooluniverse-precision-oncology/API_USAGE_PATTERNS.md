@@ -168,19 +168,32 @@ def assess_target_essentiality(tu, gene_symbol, cancer_type=None):
         }
     return dependencies
 
-def get_depmap_drug_sensitivity(tu, drug_name, cancer_type=None):
-    """Get drug sensitivity data from DepMap."""
-    drugs = tu.tools.DepMap_get_drug_response(drug_name=drug_name)
-    return drugs.get('data', {})
+def get_gdsc_drug_sensitivity(drug_name, cancer_type=None, top=20):
+    """Get cancer cell-line drug sensitivity (IC50/AUC) from GDSC.
+
+    There is NO TU tool for drug response: DepMap/GDSC drug-sensitivity is a bulk
+    download, not a REST API. Use the bundled helper, which downloads the public
+    GDSC table once (cached) and returns the most-sensitive cell lines
+    (lowest LN_IC50). The script also supports `cell-line` and `target` modes.
+    """
+    import os
+    import subprocess
+
+    here = os.path.dirname(__file__)
+    script = os.path.join(here, "scripts", "gdsc_drug_response.py")
+    cmd = ["python3", script, "drug", drug_name, "--top", str(top)]
+    if cancer_type:
+        cmd += ["--tcga", cancer_type]  # TCGA code, e.g. SKCM, LUAD, BRCA
+    return subprocess.run(cmd, capture_output=True, text=True).stdout
 ```
 
-**DepMap Tools Summary**:
-| Tool | Purpose | Key Parameters |
-|------|---------|----------------|
-| `DepMap_get_gene_dependencies` | CRISPR essentiality | `gene_symbol` |
-| `DepMap_get_cell_lines` | Cell line metadata | `cancer_type`, `tissue` |
-| `DepMap_search_cell_lines` | Search by name | `query` |
-| `DepMap_get_drug_response` | Drug sensitivity | `drug_name` |
+**DepMap / drug-sensitivity capabilities**:
+| Capability | How | Key Parameters |
+|------------|-----|----------------|
+| CRISPR essentiality | `DepMap_get_gene_dependencies` | `gene_symbol` |
+| Cell line metadata | `DepMap_get_cell_lines` | `cancer_type`, `tissue` |
+| Search cell lines | `DepMap_search_cell_lines` | `query` |
+| **Drug response (IC50 / AUC)** | **No TU tool — run `scripts/gdsc_drug_response.py`** (public GDSC bulk data; modes `drug` / `cell-line` / `target`) | drug / cell-line / gene |
 
 ### 2.5 OncoKB Actionability Assessment
 

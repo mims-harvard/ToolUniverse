@@ -180,7 +180,7 @@ CRISPR knockout essentiality data from cancer cell lines.
 | `DepMap_get_cell_lines` | `tissue`, `cancer_type`, `page_size` | Cell line metadata |
 | `DepMap_search_cell_lines` | `query` | Search cell lines |
 | `DepMap_get_cell_line` | `model_id` OR `model_name` | Detailed cell line info |
-| `DepMap_get_drug_response` | `drug_name` | Drug sensitivity data |
+| Drug sensitivity (GDSC) | `drug` / `cell-line` / `target` | No TU tool — run the precision-oncology skill's `scripts/gdsc_drug_response.py` (GDSC bulk data, IC50/AUC) |
 
 **Effect Score Interpretation**:
 | Score | Meaning |
