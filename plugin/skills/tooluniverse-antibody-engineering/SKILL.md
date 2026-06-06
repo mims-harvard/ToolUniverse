@@ -215,11 +215,10 @@ See `WORKFLOW_DETAILS.md` Phase 4 for code examples.
 **Goal**: Comprehensive developability scoring (0-100) across five dimensions.
 
 **Key steps**:
-1. **Aggregation**: Find aggregation-prone regions, calculate TANGO/AGGRESCAN scores, assess pI
+1. **Aggregation, pI, hydrophobic patches** (sequence-computable): run `scripts/developability.py --seq <VH/VL>`. It returns AGGRESCAN aggregation-prone regions (real per-residue propensity), isoelectric point, and Kyte-Doolittle hydrophobic patches.
 2. **PTM liability**: Scan for deamidation (NG/NS), isomerization (DG/DS), oxidation (Met/Trp), N-glycosylation (N-X-S/T)
-3. **Stability**: Predict thermal stability (Tm target >70C, Tonset >65C)
-4. **Expression**: Predict CHO titer and soluble fraction
-5. **Solubility**: Predict maximum formulation concentration
+3. **Stability (Tm)** and **4. Expression titer**: NOT computable from sequence alone — use external predictors (sequence→Tm/titer ML tools; report only if actually run). Do not fabricate Tm/titer numbers.
+5. **Solubility**: external solubility predictor (e.g. NetSolP)
 
 **Scoring**: Weighted average (aggregation 0.30, PTM 0.25, stability 0.20, expression 0.15, solubility 0.10).
 Tiers: T1 (>75), T2 (60-75), T3 (<60).

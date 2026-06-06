@@ -347,26 +347,33 @@ def cdr_optimization_strategies(cdr_sequence, cdr_name):
 ### 5.1 Aggregation Propensity
 
 ```python
+import json
+import subprocess
+
 def assess_aggregation(sequence):
-    """Comprehensive aggregation risk assessment."""
+    """Sequence-based developability flags via the bundled script.
 
-    aprs = find_aggregation_motifs(sequence)
-    hydrophobic_patches = identify_surface_hydrophobic(sequence)
-    charge_patches = identify_charge_clusters(sequence)
-    tango_score = predict_tango_score(sequence)
-    aggrescan_score = predict_aggrescan(sequence)
-    pi = calculate_isoelectric_point(sequence)
-
-    return {
-        'apr_count': len(aprs),
-        'apr_regions': aprs,
-        'hydrophobic_patches': hydrophobic_patches,
-        'tango_score': tango_score,
-        'aggrescan_score': aggrescan_score,
-        'pi': pi,
-        'overall_risk': categorize_risk(tango_score, aggrescan_score, len(aprs))
-    }
+    scripts/developability.py implements the parts that ARE computable from
+    sequence: AGGRESCAN aggregation-prone regions (real per-residue propensity
+    scale), isoelectric point, and Kyte-Doolittle hydrophobic patches.
+    """
+    out = subprocess.run(
+        ["python3", "scripts/developability.py", "--seq", sequence],
+        capture_output=True, text=True,
+    )
+    return json.loads(out.stdout)
 ```
+
+> **Honesty note**: earlier drafts called `predict_tango_score()` /
+> `predict_aggrescan()` / `predict_binding_energy_change()` /
+> `predict_thermal_stability()` / `predict_expression()` — these were never
+> defined. Aggregation, pI, and hydrophobic patches are now real via
+> `scripts/developability.py` (AGGRESCAN). The rest are NOT computable from
+> sequence and must use external tools, do not fabricate them:
+> - **Affinity-maturation binding ΔΔG** → model the Fv:antigen complex
+>   (e.g. NvidiaNIM/AlphaFold), then FoldX or Rosetta Flex ddG on interface mutants.
+> - **Thermal stability (Tm)** and **expression titer** → sequence→property ML
+>   predictors (e.g. NetSolP for solubility); report them only if you actually run such a tool.
 
 ### 5.2 PTM Site Identification
 
