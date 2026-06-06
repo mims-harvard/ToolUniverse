@@ -199,20 +199,25 @@ Compute from Phase 2 data:
 
 **Step 3.2**: Network proximity calculation.
 
-```
-Network Proximity Z-score:
-1. Collect drug target set T_d and disease gene set G_d
-2. For each pair (t, g): find shortest path d(t,g) in PPI network
-3. Compute closest proximity: d_c = mean of min distances
-4. Compare against random: Z = (d_c - mean_random) / sd_random
-5. Score: Z < -2 (35pts), Z < -1 (20pts), Z < -0.5 (10pts), else 0pts
+The true Guney/Barabasi proximity Z-score needs the full interactome plus a
+degree-matched random null — graph computation, not a REST call. Use the bundled
+script `scripts/network_proximity.py` (downloads STRING v12 high-confidence human
+PPI once, cached; computes closest-distance d_c and the degree-matched-null Z):
 
-Practical computation from STRING/OpenTargets PPI data:
-- Count direct interactions between drug targets and disease genes
-- Count shared PPI partners (second-degree connections)
-- Calculate overlap coefficient = shared_partners / min(degree_t, degree_d)
-- Use shared pathways as additional proximity metric
+```bash
+python scripts/network_proximity.py \
+    --targets EGFR,ERBB2,MET \
+    --disease TP53,KRAS,STK11,KEAP1,ALK \
+    --n-rand 1000
+# -> {"d_c":..., "z_score": -2.07, "empirical_p":..., "interpretation": "..."}
 ```
+Score: Z < -2 (35pts), Z < -1 (20pts), Z < -0.5 (10pts), else 0pts (Z < -0.15 is
+the Guney significance threshold). Use `--n-rand 1000` for a stable empirical p.
+
+Quick approximation (only if you cannot run the script): count direct
+target–disease interactions + shared PPI partners (overlap coefficient =
+shared_partners / min(degree_t, degree_d)). This is a proxy, NOT the Z-score —
+do not report it as the Guney proximity statistic.
 
 **Step 3.3**: Functional enrichment analysis.
 
