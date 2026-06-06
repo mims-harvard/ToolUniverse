@@ -61,6 +61,8 @@ LOOK UP DON'T GUESS: effect sizes, p-values, allele frequencies, and LD structur
 
 **Outcome**: Quantitative assessment of effect size consistency with heterogeneity interpretation
 
+> **Honesty rule (important)**: A real inverse-variance meta-analysis needs each study's **beta + 95% CI**. `python_implementation.py` parses these from the GWAS Catalog `beta`/`or_value` + `range` fields and only then pools effect sizes and computes Cochran's-Q I². When the matched associations don't report usable effect sizes (common), it returns `method="descriptive"`, `combined_beta=None`, `heterogeneity_i2=None`, and `combined_p_value` = the **smallest reported p (not a pooled p)** — do NOT present a descriptive result as a formal meta-analysis or invent an I².
+
 ### 3. Replication Analysis
 **Scenario**: "Which findings from the discovery cohort replicated in the independent sample?"
 

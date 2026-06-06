@@ -15,6 +15,74 @@ import re
 from collections import defaultdict
 
 
+def _norm_cdf(x: float) -> float:
+    """Standard-normal CDF (no scipy dependency)."""
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
+
+def _chi2_sf(stat: float, df: int) -> Optional[float]:
+    """Chi-square survival function (heterogeneity p). Uses scipy if available."""
+    if df <= 0 or stat <= 0:
+        return None
+    try:
+        from scipy.stats import chi2  # type: ignore
+
+        return float(chi2.sf(stat, df))
+    except Exception:
+        return None  # honest: don't fabricate a p-value without the right function
+
+
+# Match a CI like "[0.03-0.07]", "[1.05-1.12]", or negative "[-0.07--0.03]".
+# First bound has no internal '-'; the literal '-' is the separator; the upper
+# bound may itself be negative.
+_RANGE_RE = re.compile(r"\[?\s*(-?[0-9.eE+]+)-(-?[0-9.eE+]+)\s*\]?")
+
+
+def _effect_size(assoc: Dict) -> Tuple[Optional[float], Optional[float]]:
+    """Recover (beta, SE) from a GWAS Catalog association dict.
+
+    Effect is expressed on a beta (per-allele) scale; an odds ratio is converted
+    to log(OR). SE is derived from the 95% CI 'range' string. Returns (None, None)
+    when no usable effect size + interval is present (the honest, common case).
+    """
+    beta = None
+    log_scale = False
+    raw_beta = assoc.get("beta")
+    try:
+        if raw_beta not in (None, "", "NR"):
+            beta = float(raw_beta)
+    except (ValueError, TypeError):
+        beta = None
+    if beta is None:
+        orv = assoc.get("or_value") or assoc.get("or_per_copy_num")
+        try:
+            if orv not in (None, "", "NR") and float(orv) > 0:
+                beta = math.log(float(orv))
+                log_scale = True
+        except (ValueError, TypeError):
+            beta = None
+    if beta is None:
+        return None, None
+
+    # CI 'range' like "[1.05-1.12]" or "[0.03-0.07]" -> two bounds -> SE.
+    m = _RANGE_RE.search(str(assoc.get("range", "")))
+    if not m:
+        return None, None
+    try:
+        lo, hi = sorted((float(m.group(1)), float(m.group(2))))
+    except (ValueError, TypeError):
+        return None, None
+    if log_scale:
+        if lo <= 0 or hi <= 0:
+            return None, None
+        se = (math.log(hi) - math.log(lo)) / (2.0 * 1.96)
+    else:
+        se = (hi - lo) / (2.0 * 1.96)
+    if se <= 0:
+        return None, None
+    return beta, se
+
+
 @dataclass
 class StudyMetadata:
     """Metadata for a GWAS study."""
@@ -101,10 +169,14 @@ class MetaAnalysisResult:
     combined_beta: Optional[float]
     combined_se: Optional[float]
     combined_p_value: Optional[float]
-    heterogeneity_i2: float
+    heterogeneity_i2: Optional[float]
     heterogeneity_p: Optional[float]
     studies: List[str]
     forest_plot_data: List[Dict]
+    # How combined_* were derived. "descriptive" = no formal effect-size pooling
+    # was possible (studies lacked usable beta + CI), so combined_p is just the
+    # smallest reported p (NOT a meta-analytic p) and I² is None.
+    method: str = "descriptive"
 
     @property
     def is_significant(self) -> bool:
@@ -112,8 +184,10 @@ class MetaAnalysisResult:
         return self.combined_p_value is not None and self.combined_p_value < 5e-8
 
     @property
-    def heterogeneity_level(self) -> str:
-        """Interpret heterogeneity I² statistic."""
+    def heterogeneity_level(self) -> Optional[str]:
+        """Interpret heterogeneity I² statistic (None if I² not computable)."""
+        if self.heterogeneity_i2 is None:
+            return None
         if self.heterogeneity_i2 < 25:
             return "low"
         elif self.heterogeneity_i2 < 50:
@@ -128,12 +202,17 @@ class MetaAnalysisResult:
         """Provide interpretation guidance."""
         parts = []
         if self.is_significant:
-            parts.append(f"Genome-wide significant (p={self.combined_p_value:.2e})")
-        parts.append(f"{self.heterogeneity_level.capitalize()} heterogeneity (I²={self.heterogeneity_i2:.1f}%)")
-
-        if self.heterogeneity_i2 > 50:
-            parts.append("Consider ancestry-specific or random-effects analysis")
-
+            label = "Smallest reported" if self.method == "descriptive" else "Pooled (genome-wide significant)"
+            parts.append(f"{label} p={self.combined_p_value:.2e}")
+        if self.heterogeneity_i2 is None:
+            parts.append(
+                "I² not computed: the available associations lack per-study beta + CI, "
+                "so no formal effect-size meta-analysis was done (descriptive summary only)"
+            )
+        else:
+            parts.append(f"{self.heterogeneity_level.capitalize()} heterogeneity (I²={self.heterogeneity_i2:.1f}%)")
+            if self.heterogeneity_i2 > 50:
+                parts.append("Consider ancestry-specific or random-effects analysis")
         return ". ".join(parts)
 
 
@@ -396,43 +475,59 @@ def meta_analyze_locus(
             forest_plot_data=[]
         )
 
-    # Calculate heterogeneity (I² statistic)
-    # Simplified calculation based on p-value variance
     p_values = [a.get('p_value', 1.0) for a in relevant_assocs]
-    log_p_values = [-math.log10(max(p, 1e-300)) for p in p_values]
-
-    # Calculate variance of log p-values as proxy for heterogeneity
-    mean_log_p = sum(log_p_values) / len(log_p_values)
-    variance = sum((x - mean_log_p)**2 for x in log_p_values) / len(log_p_values)
-
-    # Convert to I² (percentage of variance due to heterogeneity)
-    # I² = (Q - df) / Q * 100, approximated here
-    i2 = min(100.0, variance * 10)  # Simplified approximation
-
-    # Use minimum p-value as combined (fixed-effect approximation)
-    combined_p = min(p_values)
-
-    # Prepare forest plot data
-    forest_data = []
-    for assoc in relevant_assocs:
-        forest_data.append({
-            "study": assoc.get('accession_id', 'Unknown'),
-            "p_value": assoc.get('p_value', 1.0),
-            "mapped_genes": assoc.get('mapped_genes', [])
-        })
-
     studies = [a.get('accession_id', 'Unknown') for a in relevant_assocs]
+
+    # Try to recover per-study effect sizes (beta + SE) so we can do a REAL
+    # inverse-variance meta-analysis. GWAS Catalog associations report beta or OR
+    # plus a 95% CI 'range' string; SE = (CI_width) / (2 * 1.96), in log space for ORs.
+    pairs = []  # (beta_on_log_or_unit_scale, se)
+    forest_data = []
+    for a in relevant_assocs:
+        beta, se = _effect_size(a)
+        forest_data.append({
+            "study": a.get('accession_id', 'Unknown'),
+            "p_value": a.get('p_value', 1.0),
+            "beta": beta,
+            "se": se,
+            "mapped_genes": a.get('mapped_genes', []),
+        })
+        if beta is not None and se is not None and se > 0:
+            pairs.append((beta, se))
+
+    if len(pairs) >= 2:
+        # Inverse-variance fixed-effect pooling + Cochran's Q heterogeneity.
+        weights = [1.0 / (se * se) for _, se in pairs]
+        sw = sum(weights)
+        combined_beta = sum(w * b for (b, _), w in zip(pairs, weights)) / sw
+        combined_se = math.sqrt(1.0 / sw)
+        z = combined_beta / combined_se
+        combined_p = 2.0 * (1.0 - _norm_cdf(abs(z)))
+        q = sum(w * (b - combined_beta) ** 2 for (b, _), w in zip(pairs, weights))
+        df = len(pairs) - 1
+        i2 = max(0.0, (q - df) / q * 100.0) if q > 0 else 0.0
+        het_p = _chi2_sf(q, df)
+        method = f"inverse-variance fixed-effect ({len(pairs)} studies with effect sizes)"
+    else:
+        # Honest fallback: effect sizes unavailable -> NO pooling, NO fabricated I².
+        combined_beta = None
+        combined_se = None
+        combined_p = min(p_values)  # smallest reported p, NOT a meta-analytic p
+        i2 = None
+        het_p = None
+        method = "descriptive"
 
     return MetaAnalysisResult(
         locus=rs_id,
         n_studies=len(relevant_assocs),
-        combined_beta=None,
-        combined_se=None,
+        combined_beta=combined_beta,
+        combined_se=combined_se,
         combined_p_value=combined_p,
         heterogeneity_i2=i2,
-        heterogeneity_p=None,
+        heterogeneity_p=het_p,
         studies=studies,
-        forest_plot_data=forest_data
+        forest_plot_data=forest_data,
+        method=method,
     )
 
 
