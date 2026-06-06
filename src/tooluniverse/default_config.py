@@ -741,6 +741,8 @@ default_tool_files = {
     "bioportal": os.path.join(current_dir, "data", "bioportal_tools.json"),
     # FinnGen - Finnish population genomics (486K participants, 2470 phenotypes)
     "finngen": os.path.join(current_dir, "data", "finngen_tools.json"),
+    # PheWAS - cross-biobank phenome-wide association (BioBank Japan, UKB-TOPMed, TPMI, Genebass)
+    "pheweb_phewas": os.path.join(current_dir, "data", "pheweb_phewas_tools.json"),
     # FlyBase - Drosophila melanogaster genetics (via Alliance of Genome Resources)
     "flybase": os.path.join(current_dir, "data", "flybase_tools.json"),
     # ZFIN - Zebrafish Information Network (via Alliance of Genome Resources)

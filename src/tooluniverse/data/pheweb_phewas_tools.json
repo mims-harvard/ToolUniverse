@@ -1,0 +1,318 @@
+[
+  {
+    "name": "BioBankJapan_phewas_by_variant",
+    "description": "Phenome-wide association study (PheWAS) lookup for a single variant in BioBank Japan (BBJ), the largest Japanese-ancestry biobank. Returns every phenotype associated with the variant (the inverse of a GWAS), sorted by p-value. Accepts an rsID (auto-resolved to GRCh37 via Ensembl) or an explicit chr:pos:ref:alt variant in GRCh37. Use for cross-ancestry replication of a genetic association in an East Asian (Japanese) population.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID, e.g. 'rs7903146'. Auto-resolved to GRCh37 coordinates via Ensembl. Provide this OR 'variant'."
+        },
+        "variant": {
+          "type": "string",
+          "description": "Variant in chr:pos:ref:alt or chr-pos-ref-alt format, in GRCh37, e.g. '10:114758349:C:T'. Provide this OR 'rsid'. A bare rsID is also accepted here."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of phenotype associations to return (sorted by ascending p-value).",
+          "default": 20
+        },
+        "max_pval": {
+          "type": ["number", "null"],
+          "description": "Optional: only return associations with p-value <= this threshold (e.g. 5e-8 for genome-wide significance)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "biobank": "bbj"
+    },
+    "type": "PheWebPheWASTool",
+    "test_examples": [
+      {"rsid": "rs7903146", "max_pval": 5e-8},
+      {"variant": "10:114758349:C:T", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {"type": "string"},
+                "rsids": {"type": ["string", "null"]},
+                "nearest_genes": {"type": ["string", "null"]},
+                "associations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phenocode": {"type": ["string", "null"]},
+                      "phenostring": {"type": ["string", "null"]},
+                      "category": {"type": ["string", "null"]},
+                      "pval": {"type": ["number", "null"]},
+                      "beta": {"type": ["number", "null"]},
+                      "sebeta": {"type": ["number", "null"]},
+                      "af": {"type": ["number", "null"]},
+                      "num_cases": {"type": ["number", "null"]},
+                      "num_controls": {"type": ["number", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "UKBTOPMed_phewas_by_variant",
+    "description": "Phenome-wide association study (PheWAS) lookup for a single variant in the UKB-TOPMed PheWeb (UK Biobank, ~400K European-ancestry samples, 1,400+ phecode phenotypes). Returns every phenotype associated with the variant, sorted by p-value. Accepts an rsID (auto-resolved to GRCh38 via Ensembl) or an explicit chr:pos:ref:alt variant in GRCh38. Use for variant pleiotropy assessment and replication in a European population.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID, e.g. 'rs7903146'. Auto-resolved to GRCh38 coordinates via Ensembl. Provide this OR 'variant'."
+        },
+        "variant": {
+          "type": "string",
+          "description": "Variant in chr:pos:ref:alt or chr-pos-ref-alt format, in GRCh38, e.g. '10:112998590:C:T'. Provide this OR 'rsid'. A bare rsID is also accepted here."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of phenotype associations to return (sorted by ascending p-value).",
+          "default": 20
+        },
+        "max_pval": {
+          "type": ["number", "null"],
+          "description": "Optional: only return associations with p-value <= this threshold (e.g. 5e-8 for genome-wide significance)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "biobank": "ukb_topmed"
+    },
+    "type": "PheWebPheWASTool",
+    "test_examples": [
+      {"rsid": "rs7903146", "max_pval": 5e-8},
+      {"variant": "10:112998590:C:T", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {"type": "string"},
+                "rsids": {"type": ["string", "null"]},
+                "nearest_genes": {"type": ["string", "null"]},
+                "associations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phenocode": {"type": ["string", "null"]},
+                      "phenostring": {"type": ["string", "null"]},
+                      "category": {"type": ["string", "null"]},
+                      "pval": {"type": ["number", "null"]},
+                      "beta": {"type": ["number", "null"]},
+                      "sebeta": {"type": ["number", "null"]},
+                      "af": {"type": ["number", "null"]},
+                      "num_cases": {"type": ["number", "null"]},
+                      "num_controls": {"type": ["number", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TPMI_phewas_by_variant",
+    "description": "Phenome-wide association study (PheWAS) lookup for a single variant in the Taiwan Precision Medicine Initiative (TPMI) PheWeb, a large Taiwanese (Han Chinese) biobank. Returns every phenotype associated with the variant, sorted by p-value. Accepts an rsID (auto-resolved to GRCh38 via Ensembl) or an explicit chr:pos:ref:alt variant in GRCh38. Use for cross-ancestry replication in an East Asian (Han Chinese) population.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID, e.g. 'rs7903146'. Auto-resolved to GRCh38 coordinates via Ensembl. Provide this OR 'variant'."
+        },
+        "variant": {
+          "type": "string",
+          "description": "Variant in chr:pos:ref:alt or chr-pos-ref-alt format, in GRCh38, e.g. '10:112998590:C:T'. Provide this OR 'rsid'. A bare rsID is also accepted here."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of phenotype associations to return (sorted by ascending p-value).",
+          "default": 20
+        },
+        "max_pval": {
+          "type": ["number", "null"],
+          "description": "Optional: only return associations with p-value <= this threshold (e.g. 5e-8 for genome-wide significance)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "biobank": "tpmi"
+    },
+    "type": "PheWebPheWASTool",
+    "test_examples": [
+      {"rsid": "rs7903146", "limit": 10},
+      {"variant": "10:112998590:C:T", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {"type": "string"},
+                "rsids": {"type": ["string", "null"]},
+                "nearest_genes": {"type": ["string", "null"]},
+                "associations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phenocode": {"type": ["string", "null"]},
+                      "phenostring": {"type": ["string", "null"]},
+                      "category": {"type": ["string", "null"]},
+                      "pval": {"type": ["number", "null"]},
+                      "beta": {"type": ["number", "null"]},
+                      "sebeta": {"type": ["number", "null"]},
+                      "af": {"type": ["number", "null"]},
+                      "num_cases": {"type": ["number", "null"]},
+                      "num_controls": {"type": ["number", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Genebass_gene_burden_phewas",
+    "description": "Exome-wide gene-level burden PheWAS from Genebass (UK Biobank ~394K exomes, SAIGE-GENE+). Given one gene, returns its rare-variant burden association across ~4,500 phenotypes (GRCh38), sorted by p-value. Aggregates rare coding variants into a single gene-level test, complementing single-variant PheWAS. Accepts an Ensembl gene ID (ENSG...) or a gene symbol (auto-resolved via Ensembl). Choose a burden_set: pLoF (predicted loss-of-function, default), missense|LC, or synonymous.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Ensembl gene ID (e.g. 'ENSG00000148737') or gene symbol (e.g. 'TCF7L2'). Symbols are auto-resolved via Ensembl."
+        },
+        "burden_set": {
+          "type": "string",
+          "description": "Variant category aggregated in the burden test. One of: 'pLoF' (default), 'missense|LC', 'synonymous'. Aliases accepted: lof/plof -> pLoF, missense -> missense|LC.",
+          "default": "pLoF"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of phenotype associations to return (sorted by ascending burden p-value).",
+          "default": 25
+        },
+        "max_pval": {
+          "type": ["number", "null"],
+          "description": "Optional: only return associations with burden p-value <= this threshold (e.g. 2.5e-6 for exome-wide significance)."
+        }
+      },
+      "required": ["gene"]
+    },
+    "type": "GenebassTool",
+    "test_examples": [
+      {"gene": "TCF7L2", "burden_set": "pLoF", "limit": 10},
+      {"gene": "ENSG00000148737", "burden_set": "missense|LC", "max_pval": 2.5e-6}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_id": {"type": "string"},
+                "gene_symbol": {"type": ["string", "null"]},
+                "burden_set": {"type": "string"},
+                "associations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phenocode": {"type": ["string", "null"]},
+                      "description": {"type": ["string", "null"]},
+                      "trait_type": {"type": ["string", "null"]},
+                      "pval": {"type": ["number", "null"]},
+                      "pval_skat": {"type": ["number", "null"]},
+                      "beta": {"type": ["number", "null"]},
+                      "total_variants": {"type": ["number", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  }
+]
