@@ -84,13 +84,13 @@
               "type": "integer"
             },
             "previous_page": {
-              "type": "string"
+              "type": ["string", "integer", "null"]
             },
             "previous_page_url": {
               "type": "string"
             },
             "next_page": {
-              "type": "string"
+              "type": ["string", "integer", "null"]
             }
           }
         }
