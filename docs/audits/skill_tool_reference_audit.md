@@ -1,11 +1,12 @@
 # Skill audit: remaining tool references not in the registry
 
-Harness Rounds 015-019. Resolved 99 references (case/rename fixes) and built 4 new
-tools to fill real gaps (HPO phenotype->genes/diseases, GtoPdb diseases, OpenTargets
-target-info). The remaining items below are NOT broken renames — by category they are
-either not tool calls or capabilities TU still lacks. Left as-is intentionally.
+Harness Rounds 015-020. Resolved 105 references and built 5 gap-filling tools (HPO
+phenotype->genes/diseases, GtoPdb diseases, OpenTargets target-info, UniProt features).
+Every remaining item is NOT an actionable rename or buildable tool: they are non-tool
+tokens (pipeline/function names, gene-set library values, dev-SDK references) or a
+capability backed by bulk-download data rather than an API.
 
-Remaining: 30
+Remaining: 24
 
 ## Enrichr gene-set library name (a `library` argument value, not a tool)
 
@@ -23,17 +24,14 @@ Remaining: 30
 - `get_tool_types` (1x) — devtu-docs-quality
 - `list_guidelines` (1x) — devtu-self-evolve
 
-## capability absent from TU (no equivalent tool; candidate for future tool-building)
+## capability absent from TU
 
-- `PubChem_get_drug_label_info_by_CID` (5x) — tooluniverse, tooluniverse-drug-research
-- `DepMap_get_drug_response` (3x) — tooluniverse-precision-oncology, tooluniverse-target-research
-- `ChEMBL_get_bioactivity_by_chemblid` (2x) — tooluniverse
 - `FDA_get_drug_info` (1x) — devtu-create-tool
 - `FDA_get_detailed_information_about_drug` (1x) — devtu-create-tool
-- `ChEMBL_get_assays` (1x) — tooluniverse-drug-research
-- `UniProt_get_protein_features` (1x) — tooluniverse-rare-disease-diagnosis
-- `OpenTargets_diseases` (1x) — tooluniverse-rare-disease-diagnosis
-- `OpenTargets_pathways` (1x) — tooluniverse-rare-disease-diagnosis
+
+## needs bulk data, not a REST API (GDSC drug sensitivity is download-only)
+
+- `DepMap_get_drug_response` (3x) — tooluniverse-precision-oncology, tooluniverse-target-research
 
 ## pipeline-step / local-function name in a script (not a TU tool call)
 
