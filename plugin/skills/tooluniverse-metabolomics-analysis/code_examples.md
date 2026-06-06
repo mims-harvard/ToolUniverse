@@ -31,19 +31,23 @@ def identify_metabolites(feature_data, mass_list, rt_list=None):
 
     identified_metabolites = []
     for i, mass in enumerate(mass_list):
+        # Mass-based annotation via Metabolomics Workbench. NOTE: `mass` is the
+        # observed m/z and the result `data` is a TSV string (parse it); set
+        # `adduct` to your ionization mode (M+H positive, M-H negative).
         hmdb_result = tu.run_one_function({
-            "name": "hmdb_search_by_mass",
-            "arguments": {"mass": mass, "mass_tolerance": 0.005}
+            "name": "MetabolomicsWorkbench_search_by_mz",
+            "arguments": {"mz_value": mass, "adduct": "M+H", "tolerance": 0.005}
         })
-        if hmdb_result and 'data' in hmdb_result:
-            matches = hmdb_result['data']
-            identified_metabolites.append({
-                'feature_id': i,
-                'metabolite_name': matches[0]['name'],
-                'hmdb_id': matches[0]['accession'],
-                'formula': matches[0]['chemical_formula'],
-                'confidence': calculate_confidence(matches[0])
-            })
+        if hmdb_result and hmdb_result.get('status') == 'success':
+            rows = _parse_tsv(hmdb_result['data'])  # split TSV into list[dict]
+            if rows:
+                identified_metabolites.append({
+                    'feature_id': i,
+                    'metabolite_name': rows[0].get('Name'),
+                    'formula': rows[0].get('Formula'),
+                    'matched_mz': rows[0].get('Matched m/z'),
+                    'confidence': calculate_confidence(rows[0])
+                })
     return identified_metabolites
 ```
 
@@ -213,18 +217,11 @@ def pathway_enrichment_metabolites(metabolite_list, organism='human'):
     from tooluniverse import ToolUniverse
     tu = ToolUniverse()
 
-    kegg_ids = []
-    for metabolite in metabolite_list:
-        result = tu.run_one_function({
-            "name": "kegg_find_compound",
-            "arguments": {"query": metabolite}
-        })
-        if result and 'data' in result:
-            kegg_ids.append(result['data'][0]['entry_id'])
-
+    # Metabolite-set pathway enrichment takes metabolite NAMES directly (it
+    # resolves them to KEGG internally) -- no separate ID lookup needed.
     enrichment = tu.run_one_function({
-        "name": "kegg_enrich_pathway",
-        "arguments": {"compound_list": ",".join(kegg_ids), "organism": organism}
+        "name": "MetaboAnalyst_pathway_enrichment",
+        "arguments": {"metabolites": metabolite_list, "organism": organism}
     })
     return enrichment
 ```
