@@ -25,9 +25,7 @@
           "default": 5
         }
       },
-      "required": [
-        "limit"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://api.fda.gov/drug/label.json",
@@ -367,9 +365,7 @@
           "default": 20
         }
       },
-      "required": [
-        "limit"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://api.fda.gov/drug/label.json",

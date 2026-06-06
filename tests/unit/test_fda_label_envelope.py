@@ -67,6 +67,27 @@ def test_search_missing_args_is_error_envelope():
     assert "drug_name" in out["error"]
 
 
+def test_limit_is_optional_with_default():
+    """`limit` must NOT be required: it has default=5 in code/schema, so the
+    natural call FDA_search_drug_labels(drug_name=...) (no limit) must validate
+    and run, not be rejected for a missing 'limit' property."""
+    import json
+    import os
+
+    here = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    cfg_path = os.path.join(
+        here, "src", "tooluniverse", "data", "openfda_label_tools.json"
+    )
+    cfgs = json.load(open(cfg_path))
+    by_name = {t["name"]: t for t in cfgs}
+    for name in ("FDA_search_drug_labels", "FDA_list_drug_classes"):
+        required = by_name[name]["parameter"].get("required", [])
+        assert "limit" not in required, f"{name} must not require 'limit'"
+        assert by_name[name]["parameter"]["properties"]["limit"].get("default") == (
+            5 if name == "FDA_search_drug_labels" else 20
+        )
+
+
 def test_list_classes_returns_standard_envelope():
     raw = {"results": [{"term": "Cephalosporin", "count": 12}]}
     tool = FDALabelTool(_cfg("list_classes"))
