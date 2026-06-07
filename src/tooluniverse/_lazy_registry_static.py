@@ -128,6 +128,8 @@ STATIC_LAZY_REGISTRY = {
     "DrugSynergyTool": "drug_synergy_tool",
     "DynaMut2Tool": "dynamut2_tool",
     "DynamicPackageDiscovery": "package_discovery_tool",
+    "EBIMSATool": "ebi_alignment_tool",
+    "EBIPhylogenyTool": "ebi_alignment_tool",
     "EBIProteinsCoordinatesTool": "ebi_proteins_coordinates_tool",
     "EBIProteinsEpitopeTool": "ebi_proteins_epitope_tool",
     "EBIProteinsExtTool": "ebi_proteins_ext_tool",

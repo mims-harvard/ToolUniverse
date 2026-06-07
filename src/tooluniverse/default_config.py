@@ -154,6 +154,8 @@ default_tool_files = {
     # New database tools
     "interpro": os.path.join(current_dir, "data", "interpro_tools.json"),
     "ebi_search": os.path.join(current_dir, "data", "ebi_search_tools.json"),
+    # EBI Job Dispatcher - de novo MSA (Clustal Omega/MUSCLE/MAFFT) + phylogeny
+    "ebi_alignment": os.path.join(current_dir, "data", "ebi_alignment_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),

@@ -1,0 +1,122 @@
+[
+  {
+    "name": "EBI_msa_align",
+    "description": "Multiple sequence alignment (MSA) of user-provided sequences via EMBL-EBI Job Dispatcher. Unlike pre-computed alignment lookups (Rfam, Ensembl Compara), this aligns YOUR OWN protein/DNA/RNA sequences de novo. Submit >=2 sequences in FASTA, pick an aligner (clustalo [default], muscle, mafft, kalign, tcoffee), and get back the alignment in FASTA and Clustal formats plus a guide tree. Job-based: submits and polls to completion (typically seconds to ~2 min). Use for aligning homologs, building an MSA before phylogenetics, conservation analysis, or designing primers/probes against conserved regions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequences": {
+          "type": "string",
+          "description": "Two or more sequences in FASTA format (each starting with '>'). Example: '>seq1\\nMVLSPADK...\\n>seq2\\nMVHLTPEE...'"
+        },
+        "method": {
+          "type": "string",
+          "description": "Alignment program: 'clustalo' (Clustal Omega, default, scales to many sequences), 'muscle', 'mafft', 'kalign', or 'tcoffee'.",
+          "default": "clustalo"
+        },
+        "sequence_type": {
+          "type": "string",
+          "description": "Sequence molecule type: 'protein' (default), 'dna', or 'rna'. Ignored by muscle (auto-detected).",
+          "default": "protein"
+        }
+      },
+      "required": ["sequences"]
+    },
+    "type": "EBIMSATool",
+    "test_examples": [
+      {"sequences": ">s1\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHF\n>s2\nMVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLST\n>s3\nMVLSAADKNNVKGIFTKIAGHAEEYGAETLERMFITYPPTKTYFPHF", "method": "clustalo", "sequence_type": "protein"},
+      {"sequences": ">a\nATGGCGCTGTGGATGCGCCTG\n>b\nATGGCGCTGTGGATGCGTCTC\n>c\nATGGCACTGTGGATGCGCCTG", "method": "mafft", "sequence_type": "dna"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "method": {"type": "string"},
+                "num_sequences": {"type": "integer"},
+                "aligned_fasta": {"type": ["string", "null"]},
+                "alignment_clustal": {"type": ["string", "null"]},
+                "guide_tree_newick": {"type": ["string", "null"]}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBI_build_phylogenetic_tree",
+    "description": "Build a phylogenetic tree from a multiple sequence alignment via EMBL-EBI simple_phylogeny. Takes an ALIGNED FASTA (for example the aligned_fasta output of EBI_msa_align) and returns a Newick tree by neighbour-joining (default) or UPGMA, optionally with Kimura distance correction and gap-column exclusion. Job-based: submits and polls to completion. Use after EBI_msa_align to infer evolutionary relationships among sequences; for raw unaligned sequences, run EBI_msa_align first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aligned_sequences": {
+          "type": "string",
+          "description": "Aligned sequences in FASTA format (>=2 records, equal length with gaps as '-'). Typically the aligned_fasta from EBI_msa_align."
+        },
+        "clustering": {
+          "type": "string",
+          "description": "Tree-building method: 'Neighbour-joining' (default) or 'UPGMA'.",
+          "default": "Neighbour-joining"
+        },
+        "distance_correction": {
+          "type": "boolean",
+          "description": "Apply Kimura distance correction for multiple substitutions (recommended for divergent sequences).",
+          "default": false
+        },
+        "exclude_gaps": {
+          "type": "boolean",
+          "description": "Exclude alignment columns containing any gap before computing distances.",
+          "default": false
+        }
+      },
+      "required": ["aligned_sequences"]
+    },
+    "type": "EBIPhylogenyTool",
+    "test_examples": [
+      {"aligned_sequences": ">s1\n-MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHF-----\n>s2\nMVHLTPEEKSAVTALWGKVN--VDEVGGEALGRLLVVYPWTQRFFESFGDLST\n>s3\n-MVLSAADKNNVKGIFTKIAGHAEEYGAETLERMFITYPPTKTYFPHF-----", "clustering": "Neighbour-joining"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "newick": {"type": "string"},
+                "num_taxa": {"type": "integer"},
+                "clustering": {"type": "string"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  }
+]

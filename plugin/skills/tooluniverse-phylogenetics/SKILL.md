@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-phylogenetics
-description: Phylogenetic analysis — tree analysis, treeness, saturation (PhyKIT), parsimony-informative sites, alignment gap analysis, MAFFT alignment, DVMC, long-branch detection, BUSCO orthologs. Uses PhyKIT, Biopython, DendroPy. Use for phylogenetic tree QC, multi-gene phylogenomics, evolutionary-rate analysis, and comparative-genomics studies.
+description: Phylogenetic analysis — de novo multiple sequence alignment (Clustal Omega/MUSCLE/MAFFT via EBI_msa_align) and neighbour-joining/UPGMA tree building (EBI_build_phylogenetic_tree) from your own sequences, plus tree analysis, treeness, saturation (PhyKIT), parsimony-informative sites, alignment gap analysis, DVMC, long-branch detection, BUSCO orthologs. Uses PhyKIT, Biopython, DendroPy. Use to align a set of sequences, build a tree from sequences or an alignment, or for phylogenetic tree QC, multi-gene phylogenomics, evolutionary-rate analysis, and comparative-genomics studies.
 disable-model-invocation: true
 ---
 
@@ -175,7 +175,9 @@ When uncertain about any scientific fact, SEARCH databases first.
 
 FASTA/PHYLIP/Nexus/Newick files; treeness, RCV, DVMC, evolutionary rate, parsimony sites, tree length, bootstrap; group comparisons (Mann-Whitney U); tree construction (NJ/UPGMA/parsimony); Robinson-Foulds distance.
 
-**NOT for**: MSA generation (MUSCLE/MAFFT), ML trees (IQ-TREE/RAxML), Bayesian (MrBayes/BEAST).
+**De novo alignment / tree from your own sequences:** to align raw sequences (not pre-computed files), call `EBI_msa_align` (Clustal Omega / MUSCLE / MAFFT / Kalign / T-Coffee via EMBL-EBI), then pass its `data.aligned_fasta` string as the `aligned_sequences` argument of `EBI_build_phylogenetic_tree` (note the arg name differs from the output key) for a neighbour-joining or UPGMA tree (Newick). Feed that Newick / alignment straight into the PhyKIT metrics below.
+
+**Still NOT for**: maximum-likelihood trees (IQ-TREE/RAxML) or Bayesian inference (MrBayes/BEAST) — `EBI_build_phylogenetic_tree` only does distance-based NJ/UPGMA. For publication ML/Bayesian phylogenies, run dedicated tooling; use the pre-computed `scogs_*` trees when available.
 
 ---
 
