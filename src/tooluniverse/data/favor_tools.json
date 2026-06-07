@@ -1,0 +1,57 @@
+[
+    {
+        "name": "FAVOR_annotate_variant",
+        "description": "Comprehensive functional annotation of a single GRCh38 variant via FAVOR (Functional Annotation of Variants Online Resource, Harvard). One call returns: allele frequencies (BRAVO/TOPMed, gnomAD by ancestry, 1000 Genomes), gene and consequence (GENCODE category, exonic effect, protein variant, HGVS), deleteriousness scores (CADD, SIFT, PolyPhen-2, AlphaMissense, MetaSVM, MutationTaster/Assessor, FATHMM-XF, Grantham, LINSIGHT, FunSeq), conservation (GERP, phyloP mammalian/primate/vertebrate, phastCons), ClinVar clinical significance/disease, and regulatory/epigenomic context (CAGE promoter/enhancer, GeneHancer, ENCODE DNase, ReMap TF overlap). Use for variant interpretation across both coding and non-coding regions in one step. Input is a GRCh38 (hg38) coordinate string; resolve rsIDs to GRCh38 coordinates first if needed. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variant": {
+                    "type": "string",
+                    "description": "GRCh38 SNV/indel as chr-pos-ref-alt. Accepts '19-44908822-C-T', 'chr19:44908822:C:T', etc."
+                }
+            },
+            "required": ["variant"]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "FAVORVariantAnnotationTool",
+        "test_examples": [
+            {"variant": "19-44908822-C-T"},
+            {"variant": "chr1:55039974:G:T"},
+            {"variant": "7-117559590-ATCT-A"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "FAVOR functional annotation (curated groups + full all_annotations passthrough)",
+                    "properties": {
+                        "status": {"type": "string"},
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "found": {"type": "boolean"},
+                                "variant": {"type": "object", "description": "Identity: variant_vcf, rsid, chromosome, position, HGVS genomic"},
+                                "gene_consequence": {"type": "object", "description": "Gene, GENCODE category, exonic effect, protein variant, HGVS c/p"},
+                                "allele_frequency": {"type": "object", "description": "BRAVO/TOPMed, gnomAD by ancestry, 1000 Genomes frequencies"},
+                                "deleteriousness": {"type": "object", "description": "CADD, SIFT, PolyPhen, AlphaMissense, MetaSVM and other pathogenicity scores"},
+                                "conservation": {"type": "object", "description": "GERP, phyloP, phastCons conservation scores"},
+                                "clinical": {"type": "object", "description": "ClinVar significance, disease, review status"},
+                                "regulatory": {"type": "object", "description": "CAGE, GeneHancer, ENCODE, ReMap regulatory context"},
+                                "all_annotations": {"type": "object", "description": "Full ~180-field FAVOR record"}
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["status", "data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {"error": {"type": "string"}},
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

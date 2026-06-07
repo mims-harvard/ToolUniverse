@@ -816,6 +816,8 @@ default_tool_files = {
     "idr": os.path.join(current_dir, "data", "idr_tools.json"),
     # OpenFDA - FDA drug labels, adverse events, and NDC directory
     "openfda": os.path.join(current_dir, "data", "openfda_tools.json"),
+    "opsin": os.path.join(current_dir, "data", "opsin_tools.json"),
+    "favor": os.path.join(current_dir, "data", "favor_tools.json"),
     # KLIFS - Kinase-Ligand Interaction Fingerprints and Structures
     "klifs": os.path.join(current_dir, "data", "klifs_tools.json"),
     # GeneNetwork - systems genetics QTL and gene expression for genetic crosses

@@ -1,0 +1,53 @@
+[
+    {
+        "name": "OPSIN_name_to_structure",
+        "description": "Convert a systematic (IUPAC) chemical name into a chemical structure using OPSIN, a deterministic grammar-based name parser hosted by EMBL-EBI. Returns SMILES, standard InChI, and standard InChIKey. Unlike a database name-lookup (e.g. Cactus/PubChem), OPSIN parses the name itself, so it resolves novel or uncommon systematic names that are absent from compound databases. Input must be a systematic/IUPAC name (e.g. '2-acetoxybenzoic acid', 'ethyl 4-aminobenzoate'); trade names and trivial names (e.g. 'aspirin', 'Tylenol') are not parseable and return parsed=false. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Systematic/IUPAC chemical name to convert (e.g. '2-acetoxybenzoic acid', 'N-(4-hydroxyphenyl)acetamide')."
+                }
+            },
+            "required": ["name"]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "OPSINNameToStructureTool",
+        "test_examples": [
+            {"name": "2-acetoxybenzoic acid"},
+            {"name": "ethyl 4-aminobenzoate"},
+            {"name": "N-(4-hydroxyphenyl)acetamide"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Parsed structure (or parsed=false when the name is not a systematic name)",
+                    "properties": {
+                        "status": {"type": "string"},
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "name": {"type": "string", "description": "Input name"},
+                                "parsed": {"type": "boolean", "description": "Whether OPSIN could parse the name"},
+                                "smiles": {"type": ["string", "null"], "description": "SMILES string"},
+                                "inchi": {"type": ["string", "null"], "description": "Standard InChI"},
+                                "inchikey": {"type": ["string", "null"], "description": "Standard InChIKey"}
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["status", "data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {"error": {"type": "string"}},
+                    "required": ["error"]
+                }
+            ]
+        }
+    }
+]

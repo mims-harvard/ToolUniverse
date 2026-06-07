@@ -1,0 +1,40 @@
+{
+  "skill_name": "tooluniverse-product-safety-surveillance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Is ketorolac injection currently in shortage in the US? And more generally, what injectable drugs are on current shortage right now?",
+      "expected_output": "A drug-shortage retrieval via OpenFDA_search_drug_shortages confirming ketorolac tromethamine injection is on a Current shortage (status field = Current, with availability and shortage_reason), plus the total count of current injectable shortages, with the no-causation/spontaneous-data caveat.",
+      "assertions": [
+        {"text": "Calls OpenFDA_search_drug_shortages with a query scoping injectables and current status (e.g. dosage_form:Injection AND status:Current)", "passed": null, "evidence": ""},
+        {"text": "Returns and reports the shortage 'status' field (Current/Resolved) for the matched record(s)", "passed": null, "evidence": ""},
+        {"text": "Reports shortage_reason / availability and the total hit count from meta.results.total, not an asserted incidence", "passed": null, "evidence": ""},
+        {"text": "Does NOT attempt drug-AE disproportionality (PRR/ROR) — stays within shortage retrieval", "passed": null, "evidence": ""}
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "What device recalls has Medtronic issued, and are any of them still open? Also are there MAUDE reports of deaths involving pacemakers?",
+      "expected_output": "A device-safety retrieval: OpenFDA_search_device_recalls for the firm reporting recall_status (e.g. Terminated/Open) and root cause, plus OpenFDA_search_device_adverse_events for pacemaker + event_type:Death reporting the MAUDE death count, with the duplicate-report and no-causation caveats.",
+      "assertions": [
+        {"text": "Calls OpenFDA_search_device_recalls with recalling_firm:Medtronic and reports the recall_status field", "passed": null, "evidence": ""},
+        {"text": "Calls OpenFDA_search_device_adverse_events with device.generic_name:pacemaker AND event_type:Death (space-separated AND, not +AND+)", "passed": null, "evidence": ""},
+        {"text": "Interprets event_type Death/Injury/Malfunction correctly and notes MAUDE duplicate reports + no causation", "passed": null, "evidence": ""}
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "My dog had a bad reaction after carprofen. Are there veterinary adverse-event reports for carprofen in dogs, and what signs are reported? Separately, are there any CAERS adverse-event reports implicating cosmetics?",
+      "expected_output": "A multi-product retrieval: OpenFDA_search_animalvet_adverse_events for carprofen in dogs returning VeDDRA reaction terms and a total count, plus OpenFDA_search_food_adverse_events for cosmetics returning CAERS outcomes/role, with the voluntary-report and reporting-bias caveats.",
+      "assertions": [
+        {"text": "Calls OpenFDA_search_animalvet_adverse_events with drug.active_ingredients.name:carprofen AND animal.species:Dog", "passed": null, "evidence": ""},
+        {"text": "Reports VeDDRA reaction.veddra_term_name signs and the total report count for the vet query", "passed": null, "evidence": ""},
+        {"text": "Calls OpenFDA_search_food_adverse_events with products.industry_name:Cosmetics and reports CAERS outcomes / SUSPECT role", "passed": null, "evidence": ""},
+        {"text": "States the spontaneous/voluntary-report limitation (no incidence, reporting bias) for both product classes", "passed": null, "evidence": ""}
+      ],
+      "files": []
+    }
+  ]
+}
