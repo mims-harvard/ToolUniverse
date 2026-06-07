@@ -1,0 +1,34 @@
+[
+    {
+        "name": "USDA_plants_get_profile",
+        "description": "Get a USDA PLANTS Database profile for a plant by its PLANTS symbol (e.g. 'ABBA' = balsam fir): scientific name, common name, taxonomic group/rank, duration (annual/perennial), growth habits (tree/shrub/forb), native status, synonyms, and US distribution FIPS codes. Authoritative US plant taxonomy. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": "string", "description": "USDA PLANTS symbol, e.g. 'ABBA' (balsam fir), 'ACRU' (red maple), 'QUAL' (white oak)."}
+        }, "required": ["symbol"]},
+        "fields": {"timeout": 30},
+        "type": "USDAPlantsProfileTool",
+        "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Plant profile", "properties": {
+                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    },
+    {
+        "name": "USDA_plants_get_characteristics",
+        "description": "Get the USDA PLANTS morphology/physiology, growth-requirement, and reproduction characteristics for a plant by its PLANTS symbol (e.g. 'ABBA'). Returns a list of characteristic name/value/category entries (e.g. active growth period, shade tolerance, drought tolerance, mature height, bloom period). Resolves the symbol to the plant id automatically. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": "string", "description": "USDA PLANTS symbol, e.g. 'ABBA', 'ACRU'."}
+        }, "required": ["symbol"]},
+        "fields": {"timeout": 30},
+        "type": "USDAPlantsCharacteristicsTool",
+        "test_examples": [{"symbol": "ABBA"}, {"symbol": "ACRU"}, {"symbol": "QUAL"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Plant characteristics", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]

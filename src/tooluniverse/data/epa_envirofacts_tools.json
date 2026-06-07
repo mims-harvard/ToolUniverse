@@ -1,0 +1,38 @@
+[
+    {
+        "name": "EPA_search_tri_facilities",
+        "description": "Search EPA Toxics Release Inventory (TRI) facilities by US state (and optional city) via the EPA Envirofacts REST service. Returns regulated facilities that report toxic chemical releases: facility id/name, address, county, ZIP, EPA region, and closed status. Use for environmental-justice screening, locating industrial pollution sources, and facility lookups. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "state": {"type": "string", "description": "2-letter US state code, e.g. 'CA', 'TX'."},
+            "city": {"type": ["string", "null"], "description": "Optional city name filter, e.g. 'Los Angeles'."},
+            "limit": {"type": ["integer", "null"], "description": "Max facilities (default 10, max 100)."}
+        }, "required": ["state"]},
+        "fields": {"timeout": 30},
+        "type": "EPATRIFacilitiesTool",
+        "test_examples": [{"state": "CA", "city": "Sacramento", "limit": 5}, {"state": "TX", "limit": 3}, {"state": "NY", "limit": 3}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "TRI facilities", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    },
+    {
+        "name": "EPA_search_frs_facilities",
+        "description": "Search the EPA Facility Registry Service (FRS) — EPA's integrated registry of regulated facility sites — by US state (and optional city) via the Envirofacts REST service. Returns facility name, standardized address, city/state, registry id, and federal/tribal flags. Broader than TRI (covers facilities across many EPA programs). No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "state": {"type": "string", "description": "2-letter US state code, e.g. 'MA', 'CA'."},
+            "city": {"type": ["string", "null"], "description": "Optional city name filter."},
+            "limit": {"type": ["integer", "null"], "description": "Max facilities (default 10, max 100)."}
+        }, "required": ["state"]},
+        "fields": {"timeout": 30},
+        "type": "EPAFRSFacilitiesTool",
+        "test_examples": [{"state": "MA", "limit": 5}, {"state": "CA", "city": "Oakland", "limit": 3}, {"state": "WA", "limit": 3}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "FRS facility sites", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]

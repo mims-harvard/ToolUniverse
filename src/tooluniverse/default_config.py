@@ -824,6 +824,8 @@ default_tool_files = {
     "classyfire": os.path.join(current_dir, "data", "classyfire_tools.json"),
     "npatlas": os.path.join(current_dir, "data", "npatlas_tools.json"),
     "isrctn": os.path.join(current_dir, "data", "isrctn_tools.json"),
+    "epa_envirofacts": os.path.join(current_dir, "data", "epa_envirofacts_tools.json"),
+    "usda_plants": os.path.join(current_dir, "data", "usda_plants_tools.json"),
     # KLIFS - Kinase-Ligand Interaction Fingerprints and Structures
     "klifs": os.path.join(current_dir, "data", "klifs_tools.json"),
     # GeneNetwork - systems genetics QTL and gene expression for genetic crosses
