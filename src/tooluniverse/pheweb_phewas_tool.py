@@ -210,16 +210,38 @@ class PheWebPheWASTool(BaseTool):
         # null/empty body for absent variants, so select by presence of phenos.
         canonical = candidates[0]
         data = None
+        candidate_errors: List[str] = []
         for cand in candidates:
-            resp = self._get(f"{self.cfg['base_url']}/api/variant/{cand}")
-            if resp.status_code == 404:
+            try:
+                resp = self._get(f"{self.cfg['base_url']}/api/variant/{cand}")
+                if resp.status_code == 404:
+                    continue
+                resp.raise_for_status()
+                payload = resp.json()
+            except requests.exceptions.RequestException as e:
+                # A transient failure (e.g. 500/502) on one candidate must not
+                # abort the lookup; a later candidate may still resolve.
+                candidate_errors.append(f"{cand}: {str(e)}")
                 continue
-            resp.raise_for_status()
-            payload = resp.json()
             if isinstance(payload, dict) and payload.get("phenos"):
                 canonical = cand
                 data = payload
                 break
+
+        # Only surface an error if every candidate failed to fetch (none reached
+        # a usable 200/404 response).
+        if (
+            data is None
+            and candidate_errors
+            and len(candidate_errors) == len(candidates)
+        ):
+            return {
+                "status": "error",
+                "error": (
+                    f"{self.cfg['label']} PheWAS lookup failed for all candidates: "
+                    + "; ".join(candidate_errors)
+                ),
+            }
 
         if data is None:
             tried = ", ".join(candidates)
@@ -370,7 +392,11 @@ class GenebassTool(BaseTool):
         self._desc_cache: Optional[Dict[str, str]] = None
 
     def _phenotype_descriptions(self) -> Dict[str, str]:
-        """Map Genebass analysis_id -> human-readable phenotype description (cached)."""
+        """Map the composite phenotype key to its human-readable description (cached).
+
+        Keyed by _genebass_pheno_key (trait_type-phenocode-pheno_sex-coding-modifier),
+        matching the key built from each /phewas row so descriptions can be joined.
+        """
         if self._desc_cache is not None:
             return self._desc_cache
         cache: Dict[str, str] = {}

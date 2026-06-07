@@ -311,7 +311,7 @@ When parsing PhyKIT stdout for batch metrics, the **column you want** depends on
 
 | Command | Output columns | Column to take |
 |---------|---------------|----------------|
-| `phykit saturation` | `slope <TAB> 1-slope` | **col 2** (`1-slope`) — proportion of evolutionary signal retained |
+| `phykit saturation` | `saturation_value <TAB> abs(saturation-1)` | **col 1** is the "saturation value" (1 = no saturation; closer to 1 = less saturated). **col 2** = `\|saturation - 1\|` (distance from no-saturation; higher = MORE saturated, less signal retained). Use col 1 for "saturation value" questions; col 2 for "distance from saturation" |
 | `phykit toverr` (a.k.a. `treeness_over_rcv`) | `treeness/RCV <TAB> treeness <TAB> RCV` | **col 1** (treeness/RCV ratio) |
 | `phykit long_branch_score -v` (verbose) | `taxon <TAB> score` per line | aggregate scores per tree (mean) |
 | `phykit long_branch_score` (no -v) | `mean <TAB> median <TAB> 25%ile <TAB> 75%ile <TAB> min <TAB> max <TAB> std <TAB> var <TAB> n` | **col 1** (mean) for "mean LB score" |
@@ -319,12 +319,14 @@ When parsing PhyKIT stdout for batch metrics, the **column you want** depends on
 
 **Rule of thumb**: phykit `toverr` and `saturation` produce *multi-column lines per alignment*. Don't grep the value that "looks like the answer" — count columns from the header in `phykit <metric> --help`. If your batch median is wildly off the published number (e.g., median treeness/RCV ≈ 0.20 when expected ≈ 0.26), you almost certainly picked the wrong column.
 
-Preferred: don't parse phykit output by hand — call the `phykit_batch_analysis` tool, which already returns the correct column for each metric:
+Preferred: don't parse phykit output by hand — call the `phykit_batch_analysis` tool, which already returns the correct column for each metric. Supported `function` values are `treeness`, `saturation`, `dvmc`, `long_branch_score`, `total_tree_length`, `parsimony_informative`:
 
 ```bash
 tu run phykit_batch_analysis '{"operation":"batch","function":"saturation","directory":"./alignments","extension":".fa","tree_directory":"./trees","tree_extension":".treefile"}'
-tu run phykit_batch_analysis '{"operation":"batch","function":"treeness_over_rcv","directory":"./alignments","extension":".fa","tree_directory":"./trees","tree_extension":".treefile"}'
+tu run phykit_batch_analysis '{"operation":"batch","function":"treeness","directory":"./alignments","extension":".fa","tree_directory":"./trees","tree_extension":".treefile"}'
 ```
+
+For `treeness_over_rcv` (toverr / treeness/RCV ratio) the tool has no matching `function`; use the bundled `scogs_*.py` scripts below, which compute it directly.
 
 Sanity targets for biological scogs trees: median saturation ~0.4–0.7, median treeness/RCV ~0.2–0.4, median treeness ~0.05–0.15. Values an order of magnitude off these mean wrong column.
 

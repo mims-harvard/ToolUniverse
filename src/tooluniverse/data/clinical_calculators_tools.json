@@ -94,8 +94,8 @@
       "bilirubin": {"type": "number", "description": "Total bilirubin in mg/dL"},
       "albumin": {"type": "number", "description": "Serum albumin in g/dL"},
       "inr": {"type": "number", "description": "INR (prothrombin time ratio)"},
-      "ascites": {"type": "string", "description": "Ascites: 'none', 'mild', or 'moderate'/'severe'", "default": "none"},
-      "encephalopathy": {"type": "string", "description": "Hepatic encephalopathy: 'none', 'grade1-2', or 'grade3-4'", "default": "none"}
+      "ascites": {"type": "string", "enum": ["none", "absent", "mild", "slight", "moderate", "severe"], "description": "Ascites severity. Accepted: 'none'/'absent' (1 pt), 'mild'/'slight' (2 pts), 'moderate'/'severe' (3 pts). Unrecognized values are rejected (no silent best-case default).", "default": "none"},
+      "encephalopathy": {"type": "string", "enum": ["none", "absent", "grade1", "grade2", "grade1-2", "grade3", "grade4", "grade3-4"], "description": "Hepatic encephalopathy grade. Accepted: 'none'/'absent' (1 pt), 'grade1-2' (2 pts), 'grade3-4' (3 pts). Unrecognized values are rejected (no silent best-case default).", "default": "none"}
     }, "required": ["bilirubin", "albumin", "inr"]},
     "fields": {"calculator": "child_pugh"},
     "type": "ClinicalCalculatorTool",

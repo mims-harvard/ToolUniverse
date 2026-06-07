@@ -86,6 +86,30 @@ def test_child_pugh_decompensated_is_class_c():
     assert out["data"]["child_pugh_class"] == "C"
 
 
+def test_child_pugh_rejects_unknown_ascites():
+    # An unrecognized severity must error, not silently score the best case (1 pt).
+    out = _tool("child_pugh").run({"bilirubin": 1.0, "albumin": 4.0, "inr": 1.0,
+                                   "ascites": "tense"})
+    assert out["status"] == "error"
+    assert "ascites" in out["error"]
+
+
+def test_child_pugh_rejects_unknown_encephalopathy():
+    out = _tool("child_pugh").run({"bilirubin": 1.0, "albumin": 4.0, "inr": 1.0,
+                                   "encephalopathy": "comatose"})
+    assert out["status"] == "error"
+    assert "encephalopathy" in out["error"]
+
+
+def test_child_pugh_accepts_synonyms():
+    # 'absent'/'slight' are accepted aliases for none/mild.
+    out = _tool("child_pugh").run({"bilirubin": 1.0, "albumin": 4.0, "inr": 1.0,
+                                   "ascites": "slight", "encephalopathy": "absent"})
+    assert out["status"] == "success"
+    assert out["data"]["components"]["Ascites"] == 2
+    assert out["data"]["components"]["Encephalopathy"] == 1
+
+
 def test_wells_dvt_alternative_dx_subtracts():
     out = _tool("wells_dvt").run({"active_cancer": True, "leg_swollen": True, "alternative_diagnosis": True})
     assert out["data"]["score"] == 0  # 1 + 1 - 2

@@ -12,6 +12,8 @@ APIs cannot exercise deterministically:
 import ssl
 from unittest.mock import MagicMock, patch
 
+import requests
+
 from tooluniverse.pheweb_phewas_tool import (
     PheWebPheWASTool,
     GenebassTool,
@@ -133,6 +135,55 @@ def test_associations_sorted_and_pval_filtered():
         out = tool.run({"variant": "1:1:A:T", "max_pval": 5e-8})
     assoc = out["data"]["associations"]
     assert [a["phenocode"] for a in assoc] == ["b"]  # only B passes 5e-8
+
+
+def test_all_candidates_failing_returns_error():
+    """If every candidate fetch raises a transient error, surface an error
+    envelope rather than the misleading 'variant not present' success."""
+    tool = PheWebPheWASTool(_pheweb_cfg("ukb_topmed"))
+    with patch.object(tool, "_get",
+                      side_effect=requests.exceptions.RequestException("503 boom")):
+        out = tool.run({"variant": "10:112998590:C:T"})
+    assert out["status"] == "error"
+    assert "failed for all candidates" in out["error"]
+    assert "503 boom" in out["error"]
+
+
+def test_transient_failure_on_one_allele_still_resolves():
+    """A 5xx on the first multi-allelic candidate must not abort the lookup;
+    a later candidate that resolves should still yield a success."""
+    tool = PheWebPheWASTool(_pheweb_cfg("ukb_topmed"))
+    ensembl = _resp(
+        200,
+        {
+            "mappings": [
+                {
+                    "assembly_name": "GRCh38",
+                    "seq_region_name": "10",
+                    "start": 112998590,
+                    "allele_string": "C/G/T",
+                }
+            ]
+        },
+    )
+    ct_hit = _resp(
+        200,
+        {
+            "rsids": "rs7903146",
+            "nearest_genes": "TCF7L2",
+            "phenos": [
+                {"phenocode": "250.2", "phenostring": "Type 2 diabetes",
+                 "pval": 1e-134, "beta": 0.3},
+            ],
+        },
+    )
+    # First candidate raises transiently, second resolves.
+    with patch("tooluniverse.pheweb_phewas_tool.requests.get", return_value=ensembl), \
+         patch.object(tool, "_get",
+                      side_effect=[requests.exceptions.RequestException("502"), ct_hit]):
+        out = tool.run({"rsid": "rs7903146"})
+    assert out["status"] == "success"
+    assert out["data"]["nearest_genes"] == "TCF7L2"
 
 
 # --------------------------------------------------------------------------- #

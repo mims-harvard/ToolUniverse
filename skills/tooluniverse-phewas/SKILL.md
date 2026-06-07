@@ -20,12 +20,14 @@ This skill orchestrates one variant/gene across four ancestries plus a gene-burd
 | `TPMI_phewas_by_variant` | TPMI | Taiwanese (Han) | GRCh38 | per-phenotype assoc (ICD-based) |
 | `Genebass_gene_burden_phewas` | Genebass (UKB exomes) | European | GRCh38 | gene-level rare-variant burden |
 
-All five accept an **rsID** and resolve coordinates themselves (PheWeb tools via Ensembl, picking the correct allele for multi-allelic SNPs; the build difference between BBJ-GRCh37 and the others is handled internally — just pass the rsID). You normally do **not** need to hand-convert coordinates.
+The **four `*_phewas_by_variant` tools** (UKB-TOPMed, BBJ, TPMI) and **`Genebass_gene_burden_phewas`** accept an **rsID** (Genebass also accepts a gene symbol) and resolve coordinates themselves via Ensembl, picking the correct allele for multi-allelic SNPs; the build difference between BBJ-GRCh37 and the others is handled internally — just pass the rsID. You normally do **not** need to hand-convert coordinates for these.
+
+**`FinnGen_get_variant_finemapping` is the exception**: it does NOT accept an rsID. It requires an explicit GRCh38 `variant` string in `chr:pos:ref:alt` format (e.g. `"10:112998590:C:T"`). Resolve the rsID to GRCh38 coordinates first — the simplest way is to read the `variant`/`rsids` field returned by the UKB-TOPMed (GRCh38) call, then pass that coordinate string to FinnGen.
 
 ## Workflow
 
 ### Step 1 — Decide variant-level vs gene-level
-- **Have an rsID / specific variant** → variant-level panel (the four `*_phewas_by_variant` + FinnGen). This is the common case.
+- **Have an rsID / specific variant** → variant-level panel (the four `*_phewas_by_variant` + FinnGen). This is the common case. Pass the rsID directly to the four `*_phewas_by_variant` tools; for `FinnGen_get_variant_finemapping` you must supply an explicit GRCh38 `chr:pos:ref:alt` string (resolve the rsID first — see "The biobank panel" note above).
 - **Have a gene and care about rare coding burden** (e.g. "what does loss-of-function of PCSK9 do?") → `Genebass_gene_burden_phewas` with `burden_set: "pLoF"`. Add the variant panel too if a specific common variant is also of interest.
 
 ### Step 2 — Query the panel in parallel

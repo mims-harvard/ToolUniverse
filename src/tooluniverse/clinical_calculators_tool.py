@@ -156,16 +156,34 @@ def _child_pugh(a: Dict[str, Any]) -> Dict[str, Any]:
     bili_pts = _grade3(bili, 2.0, 3.0)
     alb_pts = _albumin_pts(alb)
     inr_pts = _grade3(inr, 1.7, 2.3)
-    ascites_pts = {"none": 1, "mild": 2, "moderate": 3, "severe": 3}.get(ascites, 1)
-    enceph_pts = {
+    ascites_map = {
         "none": 1,
+        "absent": 1,
+        "mild": 2,
+        "slight": 2,
+        "moderate": 3,
+        "severe": 3,
+    }
+    enceph_map = {
+        "none": 1,
+        "absent": 1,
         "grade1-2": 2,
         "grade1": 2,
         "grade2": 2,
         "grade3-4": 3,
         "grade3": 3,
         "grade4": 3,
-    }.get(enceph, 1)
+    }
+    if ascites not in ascites_map:
+        raise ValueError(
+            f"'ascites' must be one of {sorted(ascites_map)}, got {ascites!r}"
+        )
+    if enceph not in enceph_map:
+        raise ValueError(
+            f"'encephalopathy' must be one of {sorted(enceph_map)}, got {enceph!r}"
+        )
+    ascites_pts = ascites_map[ascites]
+    enceph_pts = enceph_map[enceph]
 
     comp = {
         "Bilirubin": bili_pts,
