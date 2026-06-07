@@ -826,6 +826,10 @@ default_tool_files = {
     "isrctn": os.path.join(current_dir, "data", "isrctn_tools.json"),
     "epa_envirofacts": os.path.join(current_dir, "data", "epa_envirofacts_tools.json"),
     "usda_plants": os.path.join(current_dir, "data", "usda_plants_tools.json"),
+    "allen_cell_types": os.path.join(
+        current_dir, "data", "allen_cell_types_tools.json"
+    ),
+    "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
     # KLIFS - Kinase-Ligand Interaction Fingerprints and Structures
     "klifs": os.path.join(current_dir, "data", "klifs_tools.json"),
     # GeneNetwork - systems genetics QTL and gene expression for genetic crosses
@@ -959,8 +963,6 @@ default_tool_files = {
     "opencitations": os.path.join(current_dir, "data", "opencitations_tools.json"),
     # Wikidata Entity API - search and retrieve Wikidata items/entities by ID
     "wikidata_entity": os.path.join(current_dir, "data", "wikidata_entity_tools.json"),
-    # iDigBio - Integrated Digitized Biocollections (130M+ natural history specimens)
-    "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
     # ELIXIR TeSS - Bioinformatics training materials and events aggregator
     "elixir_tess": os.path.join(current_dir, "data", "elixir_tess_tools.json"),
     # Wikimedia Stats - Wikipedia page views and top articles analytics

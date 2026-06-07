@@ -1,0 +1,20 @@
+[
+    {
+        "name": "AllenCellTypes_search_specimens",
+        "description": "Search the Allen Cell Types Database for individual neuron specimens characterized by electrophysiology and morphology (human and mouse). Filter by donor species ('Homo Sapiens' or 'Mus musculus') and/or brain structure. Returns per-neuron records: donor species/sex/age/disease state, brain structure, transgenic line, and key electrophysiology features (average firing rate, input resistance, membrane tau, upstroke/downstroke ratio) plus whether a morphological reconstruction exists. Distinct from gene-expression atlas tools. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "species": {"type": ["string", "null"], "description": "Donor species: 'Homo Sapiens' or 'Mus musculus'."},
+            "structure": {"type": ["string", "null"], "description": "Brain structure name substring, e.g. 'frontal gyrus', 'visual cortex'."},
+            "limit": {"type": ["integer", "null"], "description": "Max specimens (default 20, max 100)."}
+        }, "required": []},
+        "fields": {"timeout": 30},
+        "type": "AllenCellTypesSpecimensTool",
+        "test_examples": [{"species": "Homo Sapiens", "limit": 5}, {"species": "Mus musculus", "limit": 3}, {"structure": "frontal gyrus", "limit": 3}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Cell-type specimens", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]
