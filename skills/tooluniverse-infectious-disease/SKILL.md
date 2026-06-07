@@ -137,6 +137,8 @@ Classify via NCBI Taxonomy (query param). Identify related pathogens with existi
 
 **Genome assembly availability and QC**: After classifying the pathogen, use `NCBIDatasets_list_genomes_by_taxon` (params `taxon` as tax_id, `limit`, `reference_only`) to find the reference genome, `NCBIDatasets_get_genome_assembly` (param `accession`, e.g. "GCF_000005845.2") for assembly metrics (length, N50, GC%, contig/chromosome counts), and `NCBIDatasets_get_sequence_reports` (param `accession`) to map replicons (chromosomes/plasmids with RefSeq/GenBank accessions). For the full assembly-QC-to-characterization workflow, see the `tooluniverse-microbial-genome-characterization` skill.
 
+**Open pathogen genomic surveillance**: For the priority pathogens covered by Pathoplexus (west-nile, ebola-zaire, ebola-sudan, cchf, mpox), use `Pathoplexus_count_sequences` (params `organism`, `group_by` e.g. `geoLocCountry` or lineage) to gauge sequencing volume and geographic/lineage spread, and `Pathoplexus_get_mutations` (params `organism`, `min_proportion` e.g. 0.95) to pull characteristic high-prevalence mutations for the circulating population. Use early to quantify outbreak footprint and flag conserved mutations before target selection.
+
 **Knowledge transfer principle**: Drugs effective against related pathogens are the highest-priority repurposing candidates. A protease inhibitor for SARS-CoV-1 is immediately relevant to SARS-CoV-2. Look up the related pathogen's approved drugs in ChEMBL before generating candidates from first principles.
 
 ### Phase 2: Target Identification

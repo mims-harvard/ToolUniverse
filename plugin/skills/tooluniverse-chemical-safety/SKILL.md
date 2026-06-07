@@ -131,6 +131,11 @@ See **phase-procedures-detailed.md** for complete tool parameters, decision logi
 - `AOPWiki_list_aops` (`keyword`: str) — search for relevant AOPs by chemical/mechanism
 - `AOPWiki_get_aop` (`aop_id`: int) — full AOP detail: MIE, key events, adverse outcome
 
+### Phase 3.7: Environmental Exposure Context (US facilities)
+> Use for exposure/environmental-justice screening — locate regulated facilities near a community before assessing population-level exposure.
+- `EPA_search_tri_facilities` (`state`, `city`, `limit`) — Toxics Release Inventory facilities reporting toxic chemical releases
+- `EPA_search_frs_facilities` (`state`, `city`, `limit`) — Facility Registry Service (all EPA-regulated facilities) for broader siting/permitting context
+
 ### Phase 4: Regulatory Safety (for pharmaceuticals only)
 > **Environmental chemicals**: Skip Phases 4-5 (no FDA labels/DrugBank). Use CTD + PubChemTox + AOPWiki instead.
 

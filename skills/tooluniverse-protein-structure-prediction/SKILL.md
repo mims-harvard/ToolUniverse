@@ -173,6 +173,11 @@ Retrieve sequence from `UniProt_get_entry_by_accession`:
 - `qualifier`: UniProt accession
 - Returns: functional region annotations overlaid on structure (binding sites, active sites)
 
+**AlphaFill_get_transplants** (optional, ligands/cofactors):
+- `uniprot`: UniProt accession (e.g., `"P00520"` ABL1)
+- Returns: ligands, cofactors, and ions transplanted onto the AlphaFold model by homology, with per-transplant local RMSD and source PDB IDs
+- When to use it: the apo AlphaFold model omits bound ligands/metals; run this to recover the likely cofactor/ligand/ion environment (e.g., ABL1 → STI/imatinib) for structure-guided binding-site interpretation
+
 ### Workflow
 
 1. Call `alphafold_get_prediction` and `alphafold_get_summary`

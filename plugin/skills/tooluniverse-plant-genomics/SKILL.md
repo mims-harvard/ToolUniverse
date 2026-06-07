@@ -44,6 +44,8 @@ Plant genomes are large (wheat is ~17 Gb, vs. 3 Gb for human) and often polyploi
 | `PlantReactome_get_pathway` | Get pathway details (genes, reactions, species) |
 | `PlantReactome_list_species` | List all species covered by PlantReactome |
 | `POWO_search_plants` | Search Plants of the World Online (taxonomy, distribution) |
+| `USDA_plants_get_profile` | US plant profile by PLANTS symbol (e.g., `symbol="ABBA"`) — taxonomy, growth habit, duration, native status; use for North American flora |
+| `USDA_plants_get_characteristics` | Morphology/physiology trait records for a PLANTS symbol — use when a question needs growth-form or physiological traits |
 | `ensembl_lookup_gene` | Gene lookup — use with plant species (e.g., `species="arabidopsis_thaliana"`) |
 | `kegg_search_pathway` | Search KEGG pathways (use plant organism codes: ath, osa, zma) |
 | `KEGG_get_pathway_genes` | Get genes in a plant pathway (e.g., `pathway_id="ath00941"` for flavonoid in Arabidopsis) |

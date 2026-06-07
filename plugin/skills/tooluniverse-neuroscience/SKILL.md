@@ -154,6 +154,7 @@ Brain region functions, boundaries, and connectivity are precise anatomical fact
 | `PubMed_search_articles` | Neuroanatomy facts, clinical neurology, circuit studies | `query`, `limit` |
 | `EuropePMC_search_articles` | Broader literature including preprints | `query`, `limit` |
 | `WormBase_get_gene` | C. elegans neurons, connectome, gene expression | `query` |
+| `AllenCellTypes_search_specimens` | Single-neuron electrophysiology + morphology specimens (firing rate, input resistance, tau, reconstructions); filter by species/brain region | `species` (e.g. `"Homo Sapiens"`, `"Mus musculus"`), `brain_structure`, `limit` |
 | `Alliance_search_genes` | Cross-species gene search (mouse, fly, fish, worm) | `query` |
 | `UniProt_search` | Neural proteins (ion channels, receptors, disease genes) | `query`, `organism` |
 | `proteins_api_search` | Protein features, domains, variants | `query` |

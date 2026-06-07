@@ -57,6 +57,8 @@ When a question involves identifying or comparing species:
 | `IUCN_get_conservation_status` | **Red List conservation status** (CR/EN/VU/NT/LC) by scientific name — the authoritative extinction-risk source (needs a free IUCN_API_KEY) |
 | `GBIF_search_species` | Species taxonomy, occurrence data, distribution |
 | `GBIF_search_occurrences` | Where has a species been observed? |
+| `iDigBio_search_records` | Search 130M+ digitized museum/herbarium specimen records (Darwin Core) by `genus`/`scientificname`/locality — use to complement GBIF with physical-specimen provenance |
+| `iDigBio_get_record` | Full Darwin Core detail for one specimen by `uuid` (from `iDigBio_search_records`) |
 | `WoRMS_search_species` | Marine species taxonomy |
 | `ensembl_get_taxonomy` | Taxonomic classification |
 | `NCBIDatasets_get_taxonomy` | NCBI taxonomy lookup |
