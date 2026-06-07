@@ -143,6 +143,8 @@ Phenotype ontologies by species: Human = HP (HPO), Mouse = MP (Mammalian Phenoty
 
 From the gene tree, assess: (1) how many species contain a member of this gene family; (2) when gene duplication events occurred (ancient vs. recent); (3) whether the gene family expanded in particular lineages. A gene present in a single copy across all vertebrates (deep conservation, no duplication) is likely under strong selective constraint.
 
+**Genome-assembly context for a comparison species**: When a species' ortholog calls look incomplete or you need the underlying reference assembly, use `NCBIDatasets_list_genomes_by_taxon` (params `taxon` as tax_id, `limit`, `reference_only`) to find the reference genome, `NCBIDatasets_get_genome_assembly` (param `accession`) for assembly metrics (contiguity/N50/completeness — a fragmented assembly can cause spurious "missing ortholog" calls), and `NCBIDatasets_get_sequence_reports` (param `accession`) for the chromosome/scaffold replicon map. For a full assembly-QC workflow on microbial genomes, see the `tooluniverse-microbial-genome-characterization` skill.
+
 ---
 
 ## Synthesis Questions
@@ -159,7 +161,7 @@ When interpreting the assembled evidence, work through these questions:
 
 ## Fallback Strategies
 
-- **Ortholog not found in Ensembl Compara**: Try `ensembl_get_homology`, then `OpenTargets_get_target_homologues_by_ensemblID`, then BLAST as last resort
+- **Ortholog not found in Ensembl Compara**: Try `ensembl_get_homology`, then `OpenTargets_get_target_homologues_by_ensemblID`, then BLAST as last resort. If a species is absent from Compara, confirm a reference assembly exists via `NCBIDatasets_list_genomes_by_taxon` and check its contiguity with `NCBIDatasets_get_genome_assembly` before concluding the gene is truly absent
 - **Sequence retrieval fails**: Use `ensembl_get_homology` with `sequence="cdna"` as alternative to NCBI
 - **UniProt returns empty with reviewed:true**: Try without that filter; organism may have only TrEMBL entries
 - **Monarch returns no data**: Use `MonarchV3_get_associations` with `category="biolink:GeneToPhenotypicFeatureAssociation"` as alternative

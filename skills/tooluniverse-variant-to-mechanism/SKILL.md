@@ -87,6 +87,12 @@ myvar = tu.tools.MyVariant_query_variants(
 # Step 3: Confirm gene context
 gwas_snp = tu.tools.gwas_search_snps(rs_id="rs7903146")
 # Returns: SNP location, mapped genes, functional class
+
+# Optional one-call shortcut (when a GRCh38 coordinate is available):
+favor = tu.tools.FAVOR_annotate_variant(variant="19-44908822-C-T")
+# Returns freq (BRAVO/gnomAD-by-ancestry/1000G) + CADD/SIFT/PolyPhen/AlphaMissense
+# + conservation + ClinVar + regulatory annotation in a single call — a fast way to
+# populate most of Phase 1 (and the regulatory block of Phase 2) before drilling in.
 ```
 
 ---

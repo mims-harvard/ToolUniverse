@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-chemical-compound-retrieval
-description: Retrieve chemical compound data from PubChem and ChEMBL with disambiguation, cross-referencing, and stereochemistry handling. Use for resolving compound names to SMILES/InChI/CID/ChEMBL IDs, fetching molecular properties, distinguishing isomers/stereo forms, and cross-validating identity across databases. Always use English compound names; flags ambiguous queries (e.g., Vitamin D has multiple forms).
+description: Retrieve chemical compound data from PubChem and ChEMBL with disambiguation, cross-referencing, and stereochemistry handling. Use for resolving compound names to SMILES/InChI/CID/ChEMBL IDs (including OPSIN deterministic IUPAC-name-to-structure parsing), fetching molecular properties, distinguishing isomers/stereo forms, and cross-validating identity across databases. Always use English compound names; flags ambiguous queries (e.g., Vitamin D has multiple forms).
 disable-model-invocation: true
 ---
 
@@ -32,6 +32,11 @@ Phase 3: Report compound profile
 ```python
 # By name
 result = tu.tools.PubChem_get_CID_by_compound_name(compound_name=name)
+# By SYSTEMATIC (IUPAC) name -> structure, deterministic parser (no DB lookup)
+opsin = tu.tools.OPSIN_name_to_structure(name="2-acetoxybenzoic acid")
+# Returns {parsed, smiles, inchi, inchikey}; use the SMILES/InChIKey to anchor a
+# PubChem_get_CID_by_SMILES lookup. Trade/trivial names give parsed=false -> fall
+# back to PubChem_get_CID_by_compound_name for those.
 # By SMILES
 result = tu.tools.PubChem_get_CID_by_SMILES(smiles=smiles)
 # Cross-reference
@@ -58,6 +63,7 @@ Compound Profile with: Identity (CID, ChEMBL ID, IUPAC, SMILES), Chemical Proper
 
 | Primary | Fallback |
 |---------|----------|
+| PubChem name lookup (systematic name) | `OPSIN_name_to_structure` → SMILES/InChIKey → PubChem_get_CID_by_SMILES |
 | PubChem name lookup | ChEMBL search → SMILES → PubChem_get_CID_by_SMILES |
 | ChEMBL bioactivity | PubChem bioassay summary |
 | Drug label | Note "unavailable" |
@@ -88,3 +94,5 @@ Always verify novel SMILES: `python3 src/tooluniverse/tools/smiles_verifier.py -
 **PubChem**: `PubChem_get_CID_by_compound_name`, `PubChem_get_CID_by_SMILES`, `PubChem_get_compound_properties_by_CID`, `PubChem_get_compound_2D_image_by_CID`, `PubChemBioAssay_get_assay_summary`, `PubChemTox_get_acute_effects`, `PubChem_get_associated_patents_by_CID`, `PubChem_search_compounds_by_similarity`, `PubChem_search_compounds_by_substructure`
 
 **ChEMBL**: `ChEMBL_search_drugs`, `ChEMBL_get_molecule`, `ChEMBL_get_activity`, `ChEMBL_get_target`, `ChEMBL_search_targets`, `ChEMBL_search_assays`
+
+**Name parsing**: `OPSIN_name_to_structure` (param `name`) — deterministic IUPAC/systematic-name → SMILES/InChI/InChIKey parser; the go-to for resolving a systematic name to structure without a DB round-trip. Trade/trivial names return `parsed=false` (use PubChem name lookup for those).

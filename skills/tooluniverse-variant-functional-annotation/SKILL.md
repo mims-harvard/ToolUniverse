@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-variant-functional-annotation
-description: Functional annotation of protein variants — ProtVar structural/functional context, ClinVar clinical classifications, gnomAD population frequencies, CADD deleteriousness, ClinGen gene-disease validity. Use for variant annotation pipelines, missense effect prediction, and protein-level variant interpretation with functional context.
+description: Functional annotation of protein variants — ProtVar structural/functional context, ClinVar clinical classifications, gnomAD population frequencies, CADD deleteriousness, ClinGen gene-disease validity, plus FAVOR one-call comprehensive GRCh38 annotation. Use for variant annotation pipelines, missense effect prediction, and protein-level variant interpretation with functional context.
 disable-model-invocation: true
 ---
 
@@ -115,6 +115,12 @@ Accepted input forms: HGVS coding (`NM_000546.6:c.524G>A`), HGVS protein (`NP_00
 
 ---
 
+## Phase 1a: One-Call Comprehensive Annotation (FAVOR)
+
+When the variant is available as a GRCh38 genomic coordinate, `FAVOR_annotate_variant(variant="chr-pos-ref-alt", e.g. "19-44908822-C-T")` returns frequency (BRAVO/TOPMed, gnomAD-by-ancestry, 1000G), deleteriousness (CADD, SIFT, PolyPhen, AlphaMissense), conservation, ClinVar, and regulatory annotation in a single call. Use it as the fast first pass to populate most report fields, then drill into ProtVar/gnomAD/CADD for residue-level or fallback detail. Requires a GRCh38 genomic notation (no protein-only or rsID-only input).
+
+---
+
 ## Phase 1: ProtVar Protein-Level Annotation
 
 `ProtVar_map_variant` takes `hgvs`, `genomic` (chr:pos:ref:alt), or `protein_variant` (GENE pAA#AA) — at least one is required. Extract `accession` (UniProt ID) and `position` from the result.
@@ -217,6 +223,7 @@ If ClinVar is unavailable, use `OpenCRAVAT_annotate_variant` with `annotators="c
 - `CADD_get_variant_score` unavailable → use OpenCRAVAT `cadd_exome` annotator
 - `ClinVar_search_variants` returns empty → use OpenCRAVAT `clinvar` annotator
 - `ClinGen_search_gene_validity` returns no data → note gene-disease relationship not curated by ClinGen
+- Individual annotation tools time out or you have a GRCh38 coordinate → `FAVOR_annotate_variant` returns frequency + CADD/SIFT/PolyPhen/AlphaMissense + conservation + ClinVar + regulatory in one call
 
 ---
 

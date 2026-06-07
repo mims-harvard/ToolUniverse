@@ -49,12 +49,14 @@ Phase 6: ACMG CLASSIFICATION      → Evidence codes, classification, recommenda
 
 ## Phase 1: Variant Identity
 
-Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIGene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`
+Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIGene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`, `Tark_get_mane_transcripts`, `Tark_get_transcript`
 
 **VariantValidator_gene2transcripts**: Look up MANE Select and MANE Plus Clinical transcripts for a gene. Use this to identify the correct canonical transcript before variant annotation.
 - Parameters: `gene_symbol` (e.g. "TP53"), `transcript_set` ("mane" | "refseq" | "ensembl" | "all"), `genome_build` ("GRCh38" default)
 - Returns: Array of `{current_symbol, transcripts: [{reference, annotations: {mane_select, mane_plus_clinical}}]}`
 - Aliases: `gene` and `gene_name` also accepted for `gene_symbol`
+
+**Tark_get_mane_transcripts**: Lightweight MANE Select / MANE Plus Clinical lookup from Ensembl Tark with the ENST↔RefSeq pairing (e.g. `gene="BRCA2"` → ENST00000380152.8 / NM_000059.4). Use as a quick cross-check of the canonical transcript namespace alongside VariantValidator, or to translate an ENST↔NM accession. `Tark_get_transcript` (param `stable_id`, e.g. "ENST00000380152") returns the archived transcript record (assembly, biotype, coordinates, per-release versions) when you need to resolve a specific transcript version.
 
 **VariantValidator_validate_variant**: Validate HGVS variant descriptions and get normalized notation with genomic/transcript/protein consequences.
 - Parameters: `genome_build` ("GRCh37" | "GRCh38"), `variant_description` (HGVS, e.g. "NM_007294.4:c.5266dup"), `select_transcripts` (transcript or "all")
