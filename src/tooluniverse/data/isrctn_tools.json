@@ -1,0 +1,146 @@
+[
+    {
+        "name": "ISRCTN_search_trials",
+        "description": "Search the ISRCTN clinical trial registry \u2014 a WHO-primary registry (UK-based, international scope) \u2014 by free text. Returns matching trials with ISRCTN id, title, scientific title, acronym, study hypothesis, primary study design, end date, and cross-reference ids (DOI, EudraCT, ClinicalTrials.gov). A third trial source alongside ClinicalTrials.gov and EU CTIS. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Free-text search, e.g. 'cystic fibrosis', 'diabetes prevention'."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Max trials to return (default 10, max 100)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "ISRCTNSearchTool",
+        "test_examples": [
+            {
+                "query": "cystic fibrosis",
+                "limit": 5
+            },
+            {
+                "query": "diabetes prevention",
+                "limit": 3
+            },
+            {
+                "query": "breast cancer",
+                "limit": 3
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Matching ISRCTN trials",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "description": "Includes total_available"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "ISRCTN_get_trial",
+        "description": "Retrieve a single ISRCTN clinical trial by its ISRCTN id (e.g. 'ISRCTN12336055'). Returns title, scientific title, acronym, study hypothesis, primary study design, end date, and cross-reference ids (DOI, EudraCT, ClinicalTrials.gov). No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "isrctn_id": {
+                    "type": "string",
+                    "description": "ISRCTN id, e.g. 'ISRCTN12336055' (the 'ISRCTN' prefix is optional)."
+                }
+            },
+            "required": [
+                "isrctn_id"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "ISRCTNGetTrialTool",
+        "test_examples": [
+            {
+                "isrctn_id": "ISRCTN12336055"
+            },
+            {
+                "isrctn_id": "ISRCTN30134752"
+            },
+            {
+                "isrctn_id": "18761383"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Single ISRCTN trial",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    }
+]

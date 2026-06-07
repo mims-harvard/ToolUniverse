@@ -1,0 +1,38 @@
+[
+    {
+        "name": "NPAtlas_search_compounds",
+        "description": "Search the Natural Products Atlas (NPAtlas) for microbial (bacterial/fungal) natural products by compound name, InChIKey, molecular formula, or SMILES. Returns matching compounds with NPAID, name, molecular formula/weight, exact mass, InChIKey, SMILES, and source organism. Use to find characterized microbial natural products and their producing organisms. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "name": {"type": ["string", "null"], "description": "Compound name substring, e.g. 'penicillin'."},
+            "inchikey": {"type": ["string", "null"], "description": "Full or partial InChIKey."},
+            "formula": {"type": ["string", "null"], "description": "Molecular formula, e.g. 'C19H37NO5'."},
+            "smiles": {"type": ["string", "null"], "description": "SMILES for structure search."},
+            "limit": {"type": ["integer", "null"], "description": "Max results (default 10, max 100)."}
+        }, "required": []},
+        "fields": {"timeout": 30},
+        "type": "NPAtlasSearchTool",
+        "test_examples": [{"name": "penicillin", "limit": 3}, {"formula": "C19H37NO5"}, {"name": "curvularide"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Matching natural products", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    },
+    {
+        "name": "NPAtlas_get_compound",
+        "description": "Get the full NPAtlas record for a microbial natural product by its NPAID (e.g. 'NPA000001'): name, molecular formula/weight, exact mass, InChIKey/InChI, SMILES, source organism, the originating literature reference (title/DOI/journal/year), synonyms, and external database ids. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "npaid": {"type": "string", "description": "NPAtlas compound id, e.g. 'NPA000001'."}
+        }, "required": ["npaid"]},
+        "fields": {"timeout": 30},
+        "type": "NPAtlasCompoundTool",
+        "test_examples": [{"npaid": "NPA000001"}, {"npaid": "NPA019568"}, {"npaid": "NPA020973"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Full compound record", "properties": {
+                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]
