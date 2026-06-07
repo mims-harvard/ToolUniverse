@@ -228,6 +228,7 @@ STATIC_LAZY_REGISTRY = {
     "FooDBCompoundTool": "foodb_tool",
     "TogoIDConvertTool": "togoid_tool",
     "TogoIDDatasetsTool": "togoid_tool",
+    "AlphaFillTransplantsTool": "alphafill_tool",
     "FDALabelTool": "fda_label_tool",
     "FDAOrangeBookTool": "fda_orange_book_tool",
     "FDAPharmacogenomicBiomarkersTool": "fda_pharmacogenomic_biomarkers_tool",

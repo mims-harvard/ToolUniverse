@@ -1,0 +1,18 @@
+[
+    {
+        "name": "AlphaFill_get_transplants",
+        "description": "Get the ligands, cofactors, and ions that AlphaFill transplants into a protein's AlphaFold model, by UniProt accession. AlphaFold predicts apo (ligand-free) structures; AlphaFill adds small molecules by homology to experimental PDB structures. Returns the distinct transplanted compounds (PDB chemical-component codes), how many homologous hits support each, the best local fit RMSD (lower = better), and the source PDB entries. Use to hypothesize cofactor/metal/ligand/drug binding for a protein whose only structure is an AlphaFold model. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "uniprot": {"type": "string", "description": "UniProt accession, e.g. 'P00520' (ABL1), 'P00533' (EGFR), 'P24941' (CDK2)."}
+        }, "required": ["uniprot"]},
+        "fields": {"timeout": 30},
+        "type": "AlphaFillTransplantsTool",
+        "test_examples": [{"uniprot": "P00520"}, {"uniprot": "P24941"}, {"uniprot": "P00533"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "AlphaFill transplanted ligands", "properties": {
+                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]
