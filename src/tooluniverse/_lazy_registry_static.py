@@ -221,6 +221,8 @@ STATIC_LAZY_REGISTRY = {
     "AllenCellTypesSpecimensTool": "allen_cell_types_tool",
     "iDigBioSearchTool": "idigbio_tool",
     "iDigBioRecordTool": "idigbio_tool",
+    "PathoplexusCountTool": "pathoplexus_tool",
+    "PathoplexusMutationsTool": "pathoplexus_tool",
     "FDALabelTool": "fda_label_tool",
     "FDAOrangeBookTool": "fda_orange_book_tool",
     "FDAPharmacogenomicBiomarkersTool": "fda_pharmacogenomic_biomarkers_tool",

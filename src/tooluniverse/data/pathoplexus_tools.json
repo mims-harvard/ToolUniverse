@@ -1,0 +1,202 @@
+[
+    {
+        "name": "Pathoplexus_count_sequences",
+        "description": "Count and aggregate open pathogen genome sequences in Pathoplexus (LAPIS) for genomic-epidemiology surveillance of emerging pathogens. Returns sequence counts for an organism, optionally filtered by country and lineage and grouped by a metadata field (e.g. geoLocCountry, lineage, sampleCollectionDate) to see geographic/temporal distribution. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf' (Crimean-Congo hemorrhagic fever), 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
+                },
+                "country": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by country (geoLocCountry), e.g. 'USA'."
+                },
+                "lineage": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by lineage."
+                },
+                "group_by": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Metadata field to group counts by, e.g. 'geoLocCountry', 'lineage', 'sampleCollectionDate'."
+                }
+            },
+            "required": [
+                "organism"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "PathoplexusCountTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "group_by": "geoLocCountry"
+            },
+            {
+                "organism": "mpox",
+                "country": "USA"
+            },
+            {
+                "organism": "cchf",
+                "group_by": "geoLocCountry"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Aggregated sequence counts",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Pathoplexus_get_mutations",
+        "description": "Get characteristic amino-acid (default) or nucleotide mutations for a Pathoplexus organism above a proportion threshold, optionally filtered by country/lineage \u2014 for surveillance of mutation prevalence in emerging pathogens. Returns each mutation with gene, position, from/to residue, proportion (fraction of sequences carrying it), count, and coverage. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug, e.g. 'west-nile', 'mpox'."
+                },
+                "country": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by country (geoLocCountry)."
+                },
+                "lineage": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Filter by lineage."
+                },
+                "min_proportion": {
+                    "type": [
+                        "number",
+                        "null"
+                    ],
+                    "description": "Minimum proportion of sequences carrying the mutation (default 0.8)."
+                },
+                "mutation_type": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "'aminoAcid' (default) or 'nucleotide'."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Max mutations (default 50, max 500)."
+                }
+            },
+            "required": [
+                "organism"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "PathoplexusMutationsTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "country": "USA",
+                "min_proportion": 0.9
+            },
+            {
+                "organism": "mpox",
+                "min_proportion": 0.95
+            },
+            {
+                "organism": "ebola-zaire",
+                "min_proportion": 0.9,
+                "limit": 10
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Characteristic mutations",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    }
+]

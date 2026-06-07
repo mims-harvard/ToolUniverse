@@ -830,6 +830,7 @@ default_tool_files = {
         current_dir, "data", "allen_cell_types_tools.json"
     ),
     "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
+    "pathoplexus": os.path.join(current_dir, "data", "pathoplexus_tools.json"),
     # KLIFS - Kinase-Ligand Interaction Fingerprints and Structures
     "klifs": os.path.join(current_dir, "data", "klifs_tools.json"),
     # GeneNetwork - systems genetics QTL and gene expression for genetic crosses
