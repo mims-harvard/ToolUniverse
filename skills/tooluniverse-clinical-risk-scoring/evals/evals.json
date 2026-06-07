@@ -1,0 +1,43 @@
+{
+  "skill_name": "tooluniverse-clinical-risk-scoring",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have a 76-year-old woman with non-valvular atrial fibrillation, hypertension, and type 2 diabetes. She takes a daily NSAID, has no prior stroke or bleeding, controlled BP, and stable INR. What is her stroke risk, and should she be anticoagulated given her bleeding risk?",
+      "expected_output": "CHA2DS2-VASc = 5 (Age>=75 2, Hypertension 1, Diabetes 1, Female 1) -> oral anticoagulation recommended. HAS-BLED = 3 (high) driven by hypertension, age>65, and NSAID use. Conclusion: anticoagulate; the high HAS-BLED flags MODIFIABLE factors (stop NSAID, control BP) rather than contraindicating anticoagulation. Includes decision-support caveat.",
+      "files": [],
+      "assertions": [
+        "Recognizes AF scenario and runs BOTH ClinicalCalc_CHA2DS2_VASc AND ClinicalCalc_HAS_BLED",
+        "Reports CHA2DS2-VASc score of 5 and that >=3 in a woman means anticoagulation recommended",
+        "Reports HAS-BLED score of 3 as high bleeding risk",
+        "Explains the high HAS-BLED is driven by modifiable factors and does NOT by itself withhold anticoagulation",
+        "States the decision-support / not-a-substitute-for-judgment limitation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Cirrhosis patient: total bilirubin 3.5 mg/dL, albumin 2.5 g/dL, INR 2.4, moderate ascites, grade 1-2 encephalopathy. Separately their creatinine is 2.0, bilirubin 5.0, INR 2.0, sodium 128, not on dialysis. Give me the Child-Pugh class and the MELD-Na, and tell me what they mean for surgical risk and transplant priority.",
+      "expected_output": "Child-Pugh = 14, class C (decompensated, very high surgical/anesthetic risk). MELD-Na = 31 (very high 90-day mortality, high transplant-allocation priority). Together: avoid elective surgery, urgent hepatology/transplant evaluation.",
+      "files": [],
+      "assertions": [
+        "Runs BOTH ClinicalCalc_Child_Pugh AND ClinicalCalc_MELD_Na",
+        "Reports Child-Pugh score 14 and class C (decompensated)",
+        "Reports MELD-Na 31 as very high 90-day mortality / high transplant priority",
+        "Explains Child-Pugh anchors surgical/chronic severity while MELD-Na drives short-term mortality and transplant listing",
+        "Notes these apply to chronic liver disease (limitation)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "A 60-year-old man, non-smoker... actually he's a current smoker with diabetes, on BP medication, total cholesterol 240, HDL 40, systolic BP 140, and he is African American. What is his 10-year cardiovascular risk and does he need a statin?",
+      "expected_output": "ASCVD 10-year risk = 47.2% -> high (>=20%) -> high-intensity statin recommended (with shared decision-making). Notes the Pooled Cohort Equations are validated for ages 40-79.",
+      "files": [],
+      "assertions": [
+        "Runs ClinicalCalc_ASCVD_risk with age 60, total_cholesterol 240, hdl 40, systolic_bp 140, bp_treated true, smoker true, diabetes true, race black, female false",
+        "Reports a 10-year ASCVD risk of about 46.8 percent",
+        "Classifies as high risk (>=20%) and recommends high-intensity statin",
+        "States the ASCVD validity limitation (ages 40-79, specific coefficient sets, primary prevention)"
+      ]
+    }
+  ]
+}
