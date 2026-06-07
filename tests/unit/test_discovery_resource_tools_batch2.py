@@ -132,3 +132,41 @@ def test_ctis_get_404_is_empty_success():
         out = CTISGetTrialTool(_cfg("CTIS_get_trial", "CTISGetTrialTool")).run({"ct_number": "0000-000000-00-00"})
     assert out["status"] == "success"
     assert out["data"] == {}
+
+
+# --------------------------- ClassyFire --------------------------- #
+from tooluniverse.classyfire_tool import ClassyFireTool  # noqa: E402
+
+
+def test_classyfire_requires_inchikey():
+    out = ClassyFireTool(_cfg("ClassyFire_classify_by_inchikey", "ClassyFireTool")).run({})
+    assert out["status"] == "error"
+    assert "inchikey" in out["error"]
+
+
+def test_classyfire_curates_taxonomy():
+    rec = {"inchikey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N", "smiles": "CC(=O)Oc1ccccc1C(=O)O",
+           "kingdom": {"name": "Organic compounds", "chemont_id": "CHEMONTID:0000000"},
+           "superclass": {"name": "Benzenoids"}, "class": {"name": "Benzene and substituted derivatives"},
+           "subclass": {"name": "Benzoic acids and derivatives"},
+           "direct_parent": {"name": "Acylsalicylic acids"},
+           "intermediate_nodes": [{"name": "Salicylic acid and derivatives"}],
+           "molecular_framework": "Aromatic homomonocyclic compounds",
+           "substituents": ["Benzoic acid", "Phenol ester"], "description": "Aspirin..."}
+    with patch("tooluniverse.classyfire_tool.requests.get", return_value=_resp(200, rec)):
+        out = ClassyFireTool(_cfg("ClassyFire_classify_by_inchikey", "ClassyFireTool")).run(
+            {"inchikey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"})
+    assert out["status"] == "success"
+    d = out["data"]
+    assert d["classified"] is True
+    assert d["superclass"] == "Benzenoids"
+    assert d["direct_parent"] == "Acylsalicylic acids"
+    assert d["intermediate_nodes"] == ["Salicylic acid and derivatives"]
+
+
+def test_classyfire_404_is_unclassified_success():
+    with patch("tooluniverse.classyfire_tool.requests.get", return_value=_resp(404, None)):
+        out = ClassyFireTool(_cfg("ClassyFire_classify_by_inchikey", "ClassyFireTool")).run(
+            {"inchikey": "AAAAAAAAAAAAAA-BBBBBBBBBB-C"})
+    assert out["status"] == "success"
+    assert out["data"]["classified"] is False

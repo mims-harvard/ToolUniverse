@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-clinical-trial-matching
-description: AI-driven patient-to-trial matching for precision oncology and rare-disease care. Transforms a patient's molecular profile (mutations, biomarkers, expression) and clinical state into ranked clinical-trial recommendations with evidence tiers. Searches ClinicalTrials.gov plus cross-references CIViC, OpenTargets, ChEMBL, and FDA labels. Use for matching patients to trials by genotype, biomarker-driven trial selection, and trial-eligibility scoring.
+description: AI-driven patient-to-trial matching for precision oncology and rare-disease care. Transforms a patient's molecular profile (mutations, biomarkers, expression) and clinical state into ranked clinical-trial recommendations with evidence tiers. Searches ClinicalTrials.gov AND the EU CTIS register (European/EEA trials) plus cross-references CIViC, OpenTargets, ChEMBL, and FDA labels. Use for matching patients to trials by genotype, biomarker-driven trial selection, trial-eligibility scoring, and finding trials in both the US and Europe.
 disable-model-invocation: true
 ---
 
@@ -129,9 +129,13 @@ Phase 10: Report Synthesis
 
 | Tool | Key Parameters | Notes |
 |------|---------------|-------|
-| `search_clinical_trials` | `query_term` (REQ), `condition`, `intervention`, `pageSize` | Main search |
+| `search_clinical_trials` | `query_term` (REQ), `condition`, `intervention`, `pageSize` | Main search (ClinicalTrials.gov, U.S./global) |
 | `search_clinical_trials` | `action="search_studies"` (REQ), `condition`, `intervention`, `limit` | Alternative search |
 | `get_clinical_trial_descriptions` | `action="get_study_details"` (REQ), `nct_id` (REQ) | Full trial details |
+| `CTIS_search_trials` | `query` (REQ), `limit`, `page` | **EU/EEA trials** (EU CTIS register, since 2022) — complements ClinicalTrials.gov |
+| `CTIS_get_trial` | `ct_number` (REQ, e.g. `2022-503001-38-01`) | Full EU trial detail (Part I/II, member states, results) |
+
+**Geographic coverage**: ClinicalTrials.gov is U.S.-centric but global; many EU/EEA-only trials appear *only* in the EU CTIS register. For a patient who could enroll in Europe — or any comprehensive search — query **both** `search_clinical_trials` and `CTIS_search_trials` and merge results (dedupe is rarely needed; the two registers list largely disjoint trials). CTIS returns `ct_number`s, not NCT ids, so feed those to `CTIS_get_trial` (not the `get_clinical_trial_*` batch tools).
 
 ### Batch Trial Detail Tools (all take `nct_ids` array)
 

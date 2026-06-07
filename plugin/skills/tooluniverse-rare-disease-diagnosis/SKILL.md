@@ -58,10 +58,10 @@ Apply these strategies to form a 3-5 candidate differential, then use tools to c
 Phase 0: Clinical Reasoning → 3-5 candidate differential
 Phase 1: Phenotype → HPO terms (HPO_search_terms), core vs variable, onset, family history
 Phase 2: Disease Matching → Orphanet_search_diseases, OMIM_search, DisGeNET_search_gene
-Phase 3: Gene Panel → ClinGen validation, GTEx expression, prioritization scoring
+Phase 3: Gene Panel → MARRVEL_get_gene (aggregated IDs) + MARRVEL_get_omim_phenotypes (OMIM disease+inheritance), ClinGen validation, GTEx expression, prioritization scoring
 Phase 3.5: Expression Context → CELLxGENE, ChIPAtlas for tissue/cell-type confirmation
 Phase 3.6: Pathway Analysis → KEGG, IntAct for convergent pathways
-Phase 4: Variant Interpretation → ClinVar, gnomAD frequency, CADD/AlphaMissense/EVE/SpliceAI, ACMG criteria
+Phase 4: Variant Interpretation → FAVOR_annotate_variant (one-call: freq + CADD/SIFT/PolyPhen/AlphaMissense + ClinVar + conservation), then ClinVar, gnomAD frequency, EVE/SpliceAI, ACMG criteria
 Phase 5: Structure Analysis → AlphaFold2, InterPro domains (for VUS)
 Phase 6: Literature → PubMed, BioRxiv/MedRxiv, OpenAlex
 Phase 7: Report Synthesis → Prioritized differential with next steps
@@ -71,9 +71,9 @@ Phase 7: Report Synthesis → Prioritized differential with next steps
 
 **Phase 2 - Disease Matching**: `Orphanet_search_diseases(operation="search_diseases", query=keyword)` then `Orphanet_get_genes(operation="get_genes", orpha_code=code)`. Score overlap: Excellent >80%, Good 60-80%, Possible 40-60%.
 
-**Phase 3 - Gene Panel**: ClinGen classification drives inclusion (Definitive/Strong/Moderate = include; Limited = flag; Disputed/Refuted = exclude). Scoring: Tier 1 (top disease gene +5), Tier 2 (multi-disease +3), Tier 3 (ClinGen Definitive +3), Tier 4 (tissue expression +2), Tier 5 (pLI >0.9 +1).
+**Phase 3 - Gene Panel**: For each candidate gene, `MARRVEL_get_gene(symbol)` resolves OMIM/HGNC/Ensembl/Entrez/UniProt IDs in one call, and `MARRVEL_get_omim_phenotypes(symbol)` lists the Mendelian diseases linked to the gene with mode of inheritance — use the inheritance pattern to filter candidates against the pedigree (e.g. drop AR genes for a clearly dominant pedigree). Then ClinGen classification drives inclusion (Definitive/Strong/Moderate = include; Limited = flag; Disputed/Refuted = exclude). Scoring: Tier 1 (top disease gene +5), Tier 2 (multi-disease +3), Tier 3 (ClinGen Definitive +3), Tier 4 (tissue expression +2), Tier 5 (pLI >0.9 +1).
 
-**Phase 4 - Variants**: gnomAD frequency classes: ultra-rare <0.00001, rare <0.0001, low-freq <0.01. ACMG: PVS1 (null), PS1 (same AA), PM2 (absent pop), PP3 (computational), BA1 (>5% AF). 2+ concordant predictors strengthen PP3.
+**Phase 4 - Variants**: Start with `FAVOR_annotate_variant("chr-pos-ref-alt")` (GRCh38) for a single-call snapshot — population frequencies (gnomAD by ancestry, BRAVO), GENCODE consequence, CADD/SIFT/PolyPhen-2/AlphaMissense scores, conservation, and ClinVar significance — then drill into ClinVar/gnomAD/EVE/SpliceAI for detail. gnomAD frequency classes: ultra-rare <0.00001, rare <0.0001, low-freq <0.01. ACMG: PVS1 (null), PS1 (same AA), PM2 (absent pop), PP3 (computational), BA1 (>5% AF). 2+ concordant predictors strengthen PP3.
 
 ---
 
@@ -93,6 +93,8 @@ Phase 7: Report Synthesis → Prioritized differential with next steps
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `get_joint_associated_diseases_by_HPO_ID_list` | `Orphanet_search_diseases` | PubMed phenotype search |
+| `MARRVEL_get_omim_phenotypes` | `OMIM_search` | Orphanet gene-disease |
+| `FAVOR_annotate_variant` | `ClinVar_get_variant_details` | `gnomad_get_variant` |
 | `ClinVar_get_variant_details` | `gnomad_get_variant` | VEP annotation |
 | `GTEx_get_expression_summary` | `HPA_search_genes_by_query` | Tissue-specific literature |
 

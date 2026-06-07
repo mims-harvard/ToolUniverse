@@ -1,0 +1,35 @@
+[
+    {
+        "name": "ClassyFire_classify_by_inchikey",
+        "description": "Classify a chemical structure into the ClassyFire ChemOnt chemical taxonomy by its InChIKey. Returns the hierarchical classification (kingdom -> superclass -> class -> subclass -> direct parent), intermediate ontology nodes, molecular framework, structural substituents, and a textual description. Use to assign a compound to a standardized chemical class for grouping, filtering, or annotation. Requires a full InChIKey (compute it from a structure via OPSIN/PubChem/RDKit first). Only previously-classified structures are available through this instant cache lookup. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "inchikey": {"type": "string", "description": "Full 27-character InChIKey, e.g. 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (aspirin)."}
+        }, "required": ["inchikey"]},
+        "fields": {"timeout": 30},
+        "type": "ClassyFireTool",
+        "test_examples": [
+            {"inchikey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"},
+            {"inchikey": "RYYVLZVUVIJVGH-UHFFFAOYSA-N"},
+            {"inchikey": "ATUOYWHBWRKTHZ-UHFFFAOYSA-N"}
+        ],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "ChemOnt classification", "properties": {
+                "status": {"type": "string"},
+                "data": {"type": "object", "properties": {
+                    "inchikey": {"type": "string"},
+                    "classified": {"type": "boolean"},
+                    "kingdom": {"type": ["string", "null"]},
+                    "superclass": {"type": ["string", "null"]},
+                    "class": {"type": ["string", "null"]},
+                    "subclass": {"type": ["string", "null"]},
+                    "direct_parent": {"type": ["string", "null"]},
+                    "molecular_framework": {"type": ["string", "null"]},
+                    "substituents": {"type": "array"},
+                    "description": {"type": ["string", "null"]}
+                }},
+                "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]

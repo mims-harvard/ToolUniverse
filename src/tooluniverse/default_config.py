@@ -821,6 +821,7 @@ default_tool_files = {
     "tark": os.path.join(current_dir, "data", "tark_tools.json"),
     "marrvel": os.path.join(current_dir, "data", "marrvel_tools.json"),
     "ctis": os.path.join(current_dir, "data", "ctis_tools.json"),
+    "classyfire": os.path.join(current_dir, "data", "classyfire_tools.json"),
     # KLIFS - Kinase-Ligand Interaction Fingerprints and Structures
     "klifs": os.path.join(current_dir, "data", "klifs_tools.json"),
     # GeneNetwork - systems genetics QTL and gene expression for genetic crosses
