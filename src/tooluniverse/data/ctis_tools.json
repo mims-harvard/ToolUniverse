@@ -1,0 +1,153 @@
+[
+    {
+        "name": "CTIS_search_trials",
+        "description": "Search the EU Clinical Trials Information System (CTIS) \u2014 the European clinical-trials register under the Clinical Trials Regulation (since 2022), complementing ClinicalTrials.gov. Free-text search returns matching authorized trials with CT number, title, status, conditions, therapeutic areas, phase, sponsor, participating countries, enrollment, and dates. Use to find EU/EEA clinical trials for a condition, drug, or sponsor. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Free-text search, e.g. 'breast cancer', 'pembrolizumab', 'cystic fibrosis'."
+                },
+                "limit": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Results per page (default 10, max 100)."
+                },
+                "page": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "description": "Page number (default 1)."
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "CTISSearchTrialsTool",
+        "test_examples": [
+            {
+                "query": "breast cancer",
+                "limit": 5
+            },
+            {
+                "query": "cystic fibrosis",
+                "limit": 3
+            },
+            {
+                "query": "pembrolizumab",
+                "limit": 3
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Matching CTIS trials",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        },
+                        "metadata": {
+                            "type": "object",
+                            "description": "Includes total_records"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "CTIS_get_trial",
+        "description": "Retrieve a single EU CTIS clinical trial by its CT number (format like '2022-503001-38-01'). Returns the trial's status, key dates, trial region, the authorized application (Part I/II details, member states concerned, EudraCT link), events, and results availability. Use after CTIS_search_trials to get full detail on a specific EU trial. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ct_number": {
+                    "type": "string",
+                    "description": "CTIS CT number, e.g. '2022-503001-38-01'."
+                }
+            },
+            "required": [
+                "ct_number"
+            ]
+        },
+        "fields": {
+            "timeout": 30
+        },
+        "type": "CTISGetTrialTool",
+        "test_examples": [
+            {
+                "ct_number": "2022-503001-38-01"
+            },
+            {
+                "ct_number": "2022-501024-20-00"
+            },
+            {
+                "ct_number": "2024-514022-23-00"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Full CTIS trial record",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    }
+]

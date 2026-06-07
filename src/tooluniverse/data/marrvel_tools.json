@@ -1,0 +1,34 @@
+[
+    {
+        "name": "MARRVEL_get_gene",
+        "description": "Get aggregated identity and annotation for a human gene by symbol from MARRVEL: cross-references (OMIM, HGNC, Ensembl, Entrez, UniProt), chromosome/cytogenetic location, gene type, aliases, previous symbols, and the Entrez gene summary. Use as a one-call gene-identity resolver in rare-disease / Mendelian variant triage workflows. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": "string", "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."}
+        }, "required": ["symbol"]},
+        "fields": {"timeout": 30},
+        "type": "MARRVELGeneTool",
+        "test_examples": [{"symbol": "CFTR"}, {"symbol": "BRCA1"}, {"symbol": "TP53"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Aggregated gene record", "properties": {
+                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    },
+    {
+        "name": "MARRVEL_get_omim_phenotypes",
+        "description": "Get OMIM phenotype/disease associations for a human gene by symbol via MARRVEL: each association's phenotype name, gene and phenotype MIM numbers, mode of inheritance, and phenotypic series. Use to enumerate the Mendelian diseases linked to a gene and their inheritance patterns. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": "string", "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."}
+        }, "required": ["symbol"]},
+        "fields": {"timeout": 30},
+        "type": "MARRVELOmimTool",
+        "test_examples": [{"symbol": "CFTR"}, {"symbol": "FBN1"}, {"symbol": "LMNA"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "OMIM phenotype list", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]

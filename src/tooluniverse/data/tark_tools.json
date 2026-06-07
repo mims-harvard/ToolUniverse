@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Tark_get_mane_transcripts",
+        "description": "Look up the MANE (Matched Annotation from NCBI and EMBL-EBI) transcript(s) for a gene, mapping the Ensembl transcript (ENST) to its equivalent RefSeq transcript (NM_). Returns MANE Select and, where defined, MANE Plus Clinical pairings from the Ensembl Tark transcript archive. Query by HGNC gene symbol, an Ensembl transcript id, or a RefSeq transcript id (versions optional — they are matched on the base id). Use to find the clinically-recommended representative transcript for a gene and to convert between RefSeq and Ensembl transcript namespaces. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene": {"type": ["string", "null"], "description": "HGNC gene symbol, e.g. 'BRCA2', 'CFTR'."},
+                "ensembl_id": {"type": ["string", "null"], "description": "Ensembl transcript id, e.g. 'ENST00000380152' (version optional)."},
+                "refseq_id": {"type": ["string", "null"], "description": "RefSeq transcript id, e.g. 'NM_000059' (version optional)."}
+            },
+            "required": []
+        },
+        "fields": {"timeout": 30},
+        "type": "TarkManeTranscriptsTool",
+        "test_examples": [
+            {"gene": "BRCA2"},
+            {"gene": "CFTR"},
+            {"refseq_id": "NM_000059"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {"type": "object", "description": "MANE transcript pairings", "properties": {
+                    "status": {"type": "string"},
+                    "data": {"type": "array", "items": {"type": "object", "properties": {
+                        "gene": {"type": "string"},
+                        "mane_type": {"type": "string", "description": "MANE SELECT or MANE PLUS CLINICAL"},
+                        "ensembl_transcript": {"type": "string", "description": "Versioned ENST id"},
+                        "refseq_transcript": {"type": "string", "description": "Versioned RefSeq NM id"}
+                    }}},
+                    "metadata": {"type": "object"}
+                }, "required": ["status", "data"]},
+                {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+            ]
+        }
+    },
+    {
+        "name": "Tark_get_transcript",
+        "description": "Get the archived transcript record for an Ensembl transcript id (ENST) from the Ensembl Tark transcript archive: assembly, biotype, genomic location (region/start/end/strand), the transcript sequence checksum, and the Ensembl release versions in which the transcript appears. Use to resolve transcript versions and verify transcript identity/equivalence across releases. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "stable_id": {"type": "string", "description": "Ensembl transcript stable id, e.g. 'ENST00000380152' (version optional)."}
+            },
+            "required": ["stable_id"]
+        },
+        "fields": {"timeout": 30},
+        "type": "TarkTranscriptTool",
+        "test_examples": [
+            {"stable_id": "ENST00000380152"},
+            {"stable_id": "ENST00000357654"},
+            {"stable_id": "ENST00000003084"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {"type": "object", "description": "Transcript archive records", "properties": {
+                    "status": {"type": "string"},
+                    "data": {"type": "array", "items": {"type": "object"}},
+                    "metadata": {"type": "object"}
+                }, "required": ["status", "data"]},
+                {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+            ]
+        }
+    }
+]
