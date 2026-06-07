@@ -71,8 +71,13 @@ The best human evidence for aging genes comes from longevity GWAS and centenaria
 
 Important caveat: many FOXO3 longevity studies (Willcox 2008, Flachsbart 2009) used targeted genotyping rather than GWAS arrays, so they do not appear in the GWAS Catalog. Always supplement GWAS Catalog queries with PubMed literature searches for centenarian studies.
 
+**Start gene-centric questions with Open Genes** — a manually-curated aging-gene database that already aggregates the experimental evidence per gene (lifespan-change studies, longevity associations, age-related expression changes, progeria associations) plus the aging mechanism(s) and functional cluster(s). `OpenGenes_get_gene(symbol="FOXO3")` returns the aging mechanisms, curator confidence level, and an `evidence_counts` summary (e.g. FOXO3 → 58 longevity-association studies) — use it to triage whether a gene is an established aging gene and by what mechanism before drilling into GWAS/OpenTargets/PubMed. `OpenGenes_search_genes` browses the full catalog (~2400 genes). It catches the targeted-genotyping FOXO3 evidence that the GWAS Catalog misses.
+
 ```python
-# Best for gene-centric analysis
+# Aging-evidence triage FIRST — mechanisms + curated study counts per gene
+OpenGenes_get_gene(symbol="FOXO3")
+
+# Best for gene-centric GWAS analysis
 gwas_get_snps_for_gene(gene_symbol="FOXO3")
 
 # For trait queries — note "longevity" is not a standard EFO term; try "lifespan" or specific diseases

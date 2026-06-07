@@ -56,6 +56,16 @@ For variants:
 - rsID → ClinVar/dbSNP → `tu run ClinVar_search_variants '{"query":"<rsid>"}'`
 - HGVS → ClinVar → same tool
 
+**Broad cross-namespace fallback — TogoID.** When the specific resolvers above don't
+cover the exact pair, `TogoID_convert` links 117 ID datasets (genes, proteins,
+transcripts, compounds, diseases, pathways, variants, cell lines, organisms) with a
+single call. Pass the source ID(s), `source`, and `target` dataset names:
+- `tu run TogoID_convert '{"ids":"ENSG00000139618","source":"ensembl_gene","target":"uniprot"}'`
+- `tu run TogoID_convert '{"ids":"2244","source":"pubchem_compound","target":"chebi"}'`
+- `tu run TogoID_list_datasets '{"category":"Gene"}'` to discover valid dataset names.
+TogoID converts only between *directly-related* datasets (it returns "no route" for
+unrelated pairs like ncbigene↔chebi); if that happens, hop via an intermediate.
+
 Don't know the right resolver? Run `find_tools("<input namespace> to <target>")`
 ONCE, pick the most relevant hit, run it. If 0 hits, mark that conversion as
 "no tool" in the output.

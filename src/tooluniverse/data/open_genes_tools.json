@@ -1,0 +1,35 @@
+[
+    {
+        "name": "OpenGenes_get_gene",
+        "description": "Get the aging/longevity profile of a human gene by symbol from Open Genes, a manually-curated aging-gene database. Returns the gene's aging mechanisms (e.g. INS/IGF-1 pathway dysregulation), functional clusters, associated disease categories, curator confidence level, expression change with age, and an evidence-count summary across study types (lifespan-increase studies, longevity associations, age-related changes, progeria associations, interventions). Use to assess whether and how a gene is implicated in aging. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "symbol": {"type": "string", "description": "Human gene symbol, e.g. 'GHR', 'FOXO3', 'TP53', 'SIRT1'."}
+        }, "required": ["symbol"]},
+        "fields": {"timeout": 30},
+        "type": "OpenGenesGeneTool",
+        "test_examples": [{"symbol": "GHR"}, {"symbol": "FOXO3"}, {"symbol": "TP53"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Aging gene profile", "properties": {
+                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    },
+    {
+        "name": "OpenGenes_search_genes",
+        "description": "Browse the Open Genes catalog of human aging/longevity genes (paginated). Returns a page of aging-gene summaries (symbol, name, aging mechanisms, functional clusters, confidence level, expression change) plus the total count of curated aging genes. Use to enumerate aging-associated genes or sample the catalog. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "limit": {"type": ["integer", "null"], "description": "Genes per page (default 20, max 100)."},
+            "page": {"type": ["integer", "null"], "description": "Page number (default 1)."}
+        }, "required": []},
+        "fields": {"timeout": 30},
+        "type": "OpenGenesSearchTool",
+        "test_examples": [{"limit": 5}, {"limit": 3, "page": 2}, {"limit": 10}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Aging gene catalog page", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]

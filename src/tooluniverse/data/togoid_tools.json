@@ -1,0 +1,40 @@
+[
+    {
+        "name": "TogoID_convert",
+        "description": "Convert biological identifiers between databases using TogoID (DBCLS), which links 117 ID types (genes, proteins, transcripts, compounds, diseases, pathways, variants, cell lines, organisms, etc.). Provide the source ID(s), the source dataset name, and the target dataset name. Works for directly-related dataset pairs (e.g. ensembl_gene->uniprot, ncbigene->hgnc, pubchem_compound->chebi, uniprot->pdb); unrelated pairs return a 'no route' error — convert via an intermediate. Call TogoID_list_datasets for the exact dataset names. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "ids": {"type": "string", "description": "Source identifier(s), comma-separated, in the source dataset's native format (e.g. 'ENSG00000139618', '675', '2244')."},
+            "source": {"type": "string", "description": "Source TogoID dataset name, e.g. 'ensembl_gene', 'ncbigene', 'uniprot', 'pubchem_compound', 'hgnc'."},
+            "target": {"type": "string", "description": "Target TogoID dataset name, e.g. 'uniprot', 'hgnc', 'chebi', 'pdb', 'ensembl_transcript'."}
+        }, "required": ["ids", "source", "target"]},
+        "fields": {"timeout": 30},
+        "type": "TogoIDConvertTool",
+        "test_examples": [
+            {"ids": "ENSG00000139618", "source": "ensembl_gene", "target": "uniprot"},
+            {"ids": "675", "source": "ncbigene", "target": "hgnc"},
+            {"ids": "2244", "source": "pubchem_compound", "target": "chebi"}
+        ],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Converted identifiers", "properties": {
+                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    },
+    {
+        "name": "TogoID_list_datasets",
+        "description": "List the biological identifier datasets TogoID can convert between (117 types across categories such as Gene, Protein, Transcript, Compound, Disease, Phenotype, Drug, Pathway, Variant, CellLine, Organism). Returns each dataset's name (use as source/target in TogoID_convert), human label, and category. Optionally filter by category. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "category": {"type": ["string", "null"], "description": "Optional category filter, e.g. 'Gene', 'Protein', 'Compound', 'Disease', 'Pathway', 'Variant'."}
+        }, "required": []},
+        "fields": {"timeout": 30},
+        "type": "TogoIDDatasetsTool",
+        "test_examples": [{"category": "Compound"}, {"category": "Gene"}, {}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Supported ID datasets", "properties": {
+                "status": {"type": "string"}, "data": {"type": "array", "items": {"type": "object"}}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]

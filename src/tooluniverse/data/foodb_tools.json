@@ -1,0 +1,18 @@
+[
+    {
+        "name": "FooDB_get_compound",
+        "description": "Get a food constituent/chemical from FooDB (the largest food-chemical database) by its FooDB compound id (e.g. 'FDB000004'). Returns name, description of food occurrence, CAS number, molecular formula, SMILES/InChI/InChIKey, logP, solubility, and cross-references (HMDB, KEGG, PubChem, ChEBI). Complements nutrient databases (USDA FoodData Central) by covering the phytochemicals/metabolites that make up food. Use for food-metabolomics and to bridge a FooDB id to structure and other databases. FooDB has no name-search API; query by FDB id. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "fdb_id": {"type": "string", "description": "FooDB compound id, e.g. 'FDB000004'."}
+        }, "required": ["fdb_id"]},
+        "fields": {"timeout": 30},
+        "type": "FooDBCompoundTool",
+        "test_examples": [{"fdb_id": "FDB000004"}, {"fdb_id": "FDB000013"}, {"fdb_id": "FDB000211"}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "FooDB compound", "properties": {
+                "status": {"type": "string"}, "data": {"type": "object"}, "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    }
+]
