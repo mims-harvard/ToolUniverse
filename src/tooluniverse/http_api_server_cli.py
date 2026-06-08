@@ -133,6 +133,12 @@ Note:
     try:
         import uvicorn
 
+        from .server_security import enforce_bind_security
+
+        # Refuse to expose the server on a non-loopback interface unless a
+        # TOOLUNIVERSE_API_TOKEN is configured to require Bearer authentication.
+        enforce_bind_security(args.host)
+
         # Use import string when workers > 1 (required by uvicorn)
         if args.workers > 1 and not args.reload:
             app_import = "tooluniverse.http_api_server:app"

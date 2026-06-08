@@ -25,7 +25,7 @@ server = SMCP(
 )
 server.run_simple(
     transport="http",
-    host="0.0.0.0",
+    host="127.0.0.1",
     port=7000
 )
 ```
@@ -414,6 +414,28 @@ class SMCP(FastMCP):
         # Filter out SMCP-specific kwargs before passing to FastMCP
         fastmcp_kwargs = kwargs.copy()
         fastmcp_kwargs.pop("tooluniverse", None)  # Remove if accidentally passed
+
+        # Require Bearer-token authentication on HTTP transports when a token is
+        # configured. This server can execute arbitrary tools (including the
+        # Python code executor), so it must not be reachable unauthenticated over
+        # the network. The bind guard in run()/run_simple() refuses to expose the
+        # server on a non-loopback host unless this token is set.
+        from .server_security import get_api_token
+
+        _api_token = get_api_token()
+        if _api_token and "auth" not in fastmcp_kwargs:
+            try:
+                from fastmcp.server.auth import StaticTokenVerifier
+
+                fastmcp_kwargs["auth"] = StaticTokenVerifier(
+                    tokens={_api_token: {"client_id": "tooluniverse", "scopes": []}}
+                )
+            except Exception as exc:  # pragma: no cover - depends on fastmcp version
+                raise RuntimeError(
+                    "TOOLUNIVERSE_API_TOKEN is set but Bearer-token authentication "
+                    "could not be configured on this FastMCP version. Refusing to "
+                    f"start an unauthenticated server. Original error: {exc}"
+                )
 
         # Initialize FastMCP with default settings optimized for scientific use
         super().__init__(name=name or "SMCP Server", **fastmcp_kwargs)
@@ -1407,10 +1429,17 @@ class SMCP(FastMCP):
         """
         # Save transport information for banner display
         transport = kwargs.get("transport", args[0] if args else "unknown")
-        host = kwargs.get("host", "0.0.0.0")
+        host = kwargs.get("host", "127.0.0.1")
         port = kwargs.get("port", 7000)
 
         self._transport_type = transport
+
+        # Refuse to expose an HTTP/SSE server on a non-loopback interface unless
+        # a TOOLUNIVERSE_API_TOKEN is set (which also enables Bearer auth above).
+        if transport in ("streamable-http", "http", "sse"):
+            from .server_security import enforce_bind_security
+
+            enforce_bind_security(host)
 
         # Build server URL based on transport
         if transport == "streamable-http" or transport == "http":
@@ -1441,7 +1470,7 @@ class SMCP(FastMCP):
     def run_simple(
         self,
         transport: Literal["stdio", "http", "sse"] = "http",
-        host: str = "0.0.0.0",
+        host: str = "127.0.0.1",
         port: int = 7000,
         **kwargs,
     ):

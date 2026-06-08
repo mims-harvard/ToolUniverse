@@ -762,8 +762,10 @@ Examples:
     )
     parser.add_argument(
         "--host",
-        default="0.0.0.0",
-        help="Host to bind to for HTTP/SSE transport (default: 0.0.0.0)",
+        default="127.0.0.1",
+        help="Host to bind to for HTTP/SSE transport (default: 127.0.0.1). "
+        "Binding to a non-loopback address (e.g. 0.0.0.0) requires setting "
+        "TOOLUNIVERSE_API_TOKEN to enable Bearer-token authentication.",
     )
     parser.add_argument(
         "--port",
