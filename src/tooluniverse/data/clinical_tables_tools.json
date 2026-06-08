@@ -1,0 +1,265 @@
+[
+  {
+    "name": "RxTerms_search_drugs",
+    "description": "Drug-name autocomplete via the NLM Clinical Table Search Service (RxTerms). Given a partial or full drug name, returns matching prescribable drug display names along with their available strengths and dose forms (e.g. '500 mg Tab') and the corresponding RxNorm RxCUI identifiers. RxTerms is the consumer-/prescriber-friendly drug terminology derived from RxNorm. Use for medication entry, dose-form lookup, and resolving a drug name to RxCUIs for downstream RxNorm/interaction queries. No API key required.",
+    "type": "ClinicalTablesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Drug name or prefix to search, e.g. 'metformin', 'atorvas', 'insulin aspart'."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of matches to return (default 20, max 500).",
+          "default": 20
+        }
+      },
+      "required": [
+        "terms"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total_count": {
+              "type": "integer",
+              "description": "Total number of matches available on the server."
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of matches returned in this response."
+            },
+            "search_terms": {
+              "type": "string"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "RxTerms display-name code."
+                  },
+                  "DISPLAY_NAME": {
+                    "type": "string"
+                  },
+                  "STRENGTHS_AND_FORMS": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "RXCUIS": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "arguments": {
+          "terms": "metformin",
+          "max_results": 5
+        }
+      }
+    ]
+  },
+  {
+    "name": "HealthConditions_search",
+    "description": "Health-condition / problem-list autocomplete via the NLM Clinical Table Search Service (conditions table). Given a partial or full condition name, returns matching clinical conditions with their formal primary name, a consumer-friendly name, and a crosswalk to ICD-10-CM and ICD-9-CM codes. Use to map free-text symptoms or problems to standardized conditions and billing codes, or to build a patient problem list. No API key required.",
+    "type": "ClinicalTablesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Condition name or prefix to search, e.g. 'diabetes', 'high blood pressure', 'asthma'."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of matches to return (default 20, max 500).",
+          "default": 20
+        }
+      },
+      "required": [
+        "terms"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total_count": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "search_terms": {
+              "type": "string"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Clinical Tables internal condition key_id."
+                  },
+                  "primary_name": {
+                    "type": "string"
+                  },
+                  "consumer_name": {
+                    "type": "string"
+                  },
+                  "icd10cm_codes": {
+                    "type": "string"
+                  },
+                  "term_icd9_code": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "arguments": {
+          "terms": "diabetes",
+          "max_results": 5
+        }
+      }
+    ]
+  },
+  {
+    "name": "DiseaseNames_search",
+    "description": "Disease-name autocomplete via the NLM Clinical Table Search Service (disease_names table). Given a partial or full disease name, returns matching disease names with their UMLS Concept Unique Identifier (CUI) in the code field. Sourced from UMLS/MedlinePlus disease vocabulary. Use to normalize a free-text disease mention to a canonical disease name and UMLS CUI for cross-vocabulary linking. No API key required.",
+    "type": "ClinicalTablesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Disease name or prefix to search, e.g. 'cystic fibrosis', 'lupus', 'sickle cell'."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of matches to return (default 20, max 500).",
+          "default": 20
+        }
+      },
+      "required": [
+        "terms"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total_count": {
+              "type": "integer"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "search_terms": {
+              "type": "string"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "UMLS Concept Unique Identifier (CUI)."
+                  },
+                  "primary_name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "results"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "arguments": {
+          "terms": "cystic fibrosis",
+          "max_results": 5
+        }
+      }
+    ]
+  }
+]

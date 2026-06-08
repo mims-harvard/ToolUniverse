@@ -360,6 +360,7 @@ STATIC_LAZY_REGISTRY = {
     "LDlinkTool": "ldlink_tool",
     "LINCSSignatureTool": "lincs_tool",
     "LOINCTool": "loinc_tool",
+    "ClinicalTablesTool": "clinical_tables_tool",
     "LOVDTool": "lovd_tool",
     "LensTool": "lens_tool",
     "LipidMapsTool": "lipidmaps_tool",
