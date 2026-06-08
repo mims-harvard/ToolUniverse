@@ -136,6 +136,99 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
         return super().run(variables)
 
 
+@register_tool("gnomADGetVariantPopulations")
+class gnomADGetVariantPopulations(gnomADGraphQLTool):
+    """
+    Get per-ancestry (population-stratified) allele frequencies for a variant.
+
+    The gnomAD API returns per-population `ac` and `an` only; this tool computes
+    `af = ac / an` (guarding `an == 0` -> `af = None`) and separates the rows by
+    genome vs exome callset.
+    """
+
+    def __init__(self, tool_config):
+        super().__init__(tool_config)
+        if not self.query_schema:
+            self.query_schema = (
+                "query($variantId: String!, $dataset: DatasetId!) { "
+                "variant(variantId: $variantId, dataset: $dataset) { "
+                "variant_id chrom pos ref alt rsid "
+                "genome { ac an populations { id ac an } } "
+                "exome { ac an populations { id ac an } } } }"
+            )
+
+    @staticmethod
+    def _compute_af(ac, an):
+        """Return ac/an, or None when an is missing/zero."""
+        if not an:  # covers None and 0
+            return None
+        return ac / an
+
+    def _build_callset(self, callset):
+        """Build a callset summary (overall af + per-population rows)."""
+        if not callset:
+            return None
+        populations = []
+        for pop in callset.get("populations") or []:
+            ac = pop.get("ac")
+            an = pop.get("an")
+            populations.append(
+                {
+                    "id": pop.get("id"),
+                    "ac": ac,
+                    "an": an,
+                    "af": self._compute_af(ac, an),
+                }
+            )
+        return {
+            "ac": callset.get("ac"),
+            "an": callset.get("an"),
+            "af": self._compute_af(callset.get("ac"), callset.get("an")),
+            "populations": populations,
+        }
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Fetch a variant's per-ancestry allele frequencies."""
+        arguments = arguments or {}
+        variant_id = arguments.get("variant_id")
+        if not variant_id:
+            return {"status": "error", "error": "variant_id is required", "data": None}
+
+        dataset = arguments.get("dataset") or "gnomad_r4"
+        graphql_args = {"variantId": variant_id, "dataset": dataset}
+
+        result = super().run(graphql_args)
+        if result.get("status") != "success":
+            return result
+
+        variant = (result.get("data") or {}).get("variant")
+        if not variant:
+            return {
+                "status": "error",
+                "error": f"No variant found for variant_id '{variant_id}' in dataset '{dataset}'",
+                "url": result.get("url"),
+                "data": None,
+            }
+
+        data = {
+            "variant_id": variant.get("variant_id"),
+            "chrom": variant.get("chrom"),
+            "pos": variant.get("pos"),
+            "ref": variant.get("ref"),
+            "alt": variant.get("alt"),
+            "rsid": variant.get("rsid"),
+            "dataset": dataset,
+            "genome": self._build_callset(variant.get("genome")),
+            "exome": self._build_callset(variant.get("exome")),
+        }
+
+        return {
+            "status": "success",
+            "data": data,
+            "url": result.get("url"),
+        }
+
+
 @register_tool("gnomADGetGeneConstraints")
 class gnomADGetGeneConstraints(gnomADGraphQLTool):
     """Get gene constraint metrics from gnomAD."""

@@ -87,8 +87,97 @@ class EpiGraphDBTool(BaseRESTTool):
             return self._get_gene_drugs(arguments)
         elif op == "opengwas_search":
             return self._search_opengwas(arguments)
+        elif op == "literature_evidence":
+            return self._get_literature_evidence(arguments)
         else:
             return {"status": "error", "error": f"Unknown operation: {op}"}
+
+    @staticmethod
+    def _split_triple(name: str, predicate: str) -> tuple:
+        """Split a SemMedDB triple 'name' into (subject, object).
+
+        EpiGraphDB returns the triple as a single string like
+        'troglitazone INHIBITS Leptin|LEP' plus a separate 'predicate' field.
+        Split on the predicate token (surrounded by spaces) to recover the
+        subject and object. Fall back to (name, None) when the split fails.
+        """
+        if predicate and name:
+            sep = f" {predicate} "
+            if sep in name:
+                subject, _, obj = name.partition(sep)
+                return subject.strip(), obj.strip()
+        return name, None
+
+    def _get_literature_evidence(self, arguments: dict) -> dict:
+        """Get SemMedDB literature triple evidence supporting a GWAS trait.
+
+        Surfaces the literature/support-path evidence (SemMedDB
+        subject-predicate-object triples linked to a GWAS trait via mined
+        PubMed articles), complementing the MR/gene-drug evidence paths.
+        """
+        trait = arguments.get("trait", "").strip()
+        if not trait:
+            return {
+                "status": "error",
+                "error": "trait parameter is required (e.g., 'body mass index')",
+            }
+
+        pval_threshold = float(arguments.get("pval_threshold", 1e-8))
+        params = {"trait": trait, "pval_threshold": pval_threshold}
+        resp = requests.get(
+            f"{EPIGRAPHDB_BASE}/literature/gwas",
+            params=params,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+        results = resp.json().get("results", [])
+
+        rows = []
+        for r in results[:100]:
+            triple = r.get("triple", {})
+            gwas = r.get("gwas", {})
+            lit = r.get("lit", {})
+            predicate = triple.get("predicate")
+            subject, obj = self._split_triple(triple.get("name", ""), predicate)
+            rows.append(
+                {
+                    "triple_subject": subject,
+                    "triple_predicate": predicate,
+                    "triple_object": obj,
+                    "pubmed_id": lit.get("id"),
+                    "gwas_trait": gwas.get("trait"),
+                }
+            )
+
+        metadata = {
+            "trait": trait,
+            "pval_threshold": pval_threshold,
+            "source": "EpiGraphDB / SemMedDB",
+            "description": (
+                "SemMedDB literature triples (subject-predicate-object) mined "
+                "from PubMed and linked to GWAS hits for the trait. Each row "
+                "cites a supporting article (pubmed_id). This is the "
+                "literature/support-path evidence, complementing MR and "
+                "gene-drug evidence."
+            ),
+        }
+        if not results:
+            metadata["note"] = (
+                f"No SemMedDB literature triples for '{trait}' at "
+                f"pval_threshold={pval_threshold}. The trait is matched "
+                "case-insensitively as a substring of GWAS labels; try a "
+                "broader trait name or a less stringent pval_threshold."
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "literature_triples": rows,
+                "total_count": len(results),
+            },
+            "metadata": metadata,
+        }
 
     @staticmethod
     def _casing_variants(trait: str) -> list:

@@ -350,5 +350,101 @@
         }
       ]
     }
+  },
+  {
+    "name": "ChEBI_get_ontology_parents",
+    "description": "Get the ontology parents (is-a / has-role ancestors) of a ChEBI compound, navigating UPWARD in the chemical classification hierarchy (the symmetric counterpart of ChEBI_get_ontology_children). ChEBI uses a rich ontology with relationships like 'is a', 'has role', 'has functional parent', and 'is conjugate base/acid of'. Example: CHEBI:15377 (water) parents include 'mononuclear parent hydride' and 'inorganic hydroxy compound' (is a), and 'human metabolite', 'amphiprotic solvent' (has role).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chebi_id": {
+          "type": "integer",
+          "description": "ChEBI numeric identifier (without 'CHEBI:' prefix). Examples: 15377 (water), 15365 (aspirin), 17234 (glucose)."
+        }
+      },
+      "required": [
+        "chebi_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "ontology_parents"
+    },
+    "type": "ChEBITool",
+    "test_examples": [
+      {
+        "chebi_id": 15377
+      },
+      {
+        "chebi_id": 15365
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "chebi_id": {
+                  "type": "integer"
+                },
+                "chebi_accession": {
+                  "type": "string"
+                },
+                "relation_count": {
+                  "type": "integer"
+                },
+                "relations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "relation_type": {
+                        "type": "string"
+                      },
+                      "parent_id": {
+                        "type": "integer"
+                      },
+                      "parent_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

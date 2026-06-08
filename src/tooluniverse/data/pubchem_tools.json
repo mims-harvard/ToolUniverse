@@ -427,7 +427,7 @@
     "fields": {
       "endpoint": "/compound/fastsimilarity_2d/smiles/{smiles}/cids/JSON",
       "use_pugview": false,
-      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity ≥ threshold.",
+      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity \u2265 threshold.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244, 2245, ...]\n  }\n}\n\nWhere: CID array contains compound IDs with similarity above specified threshold to target molecule. LLM can use this for chemical similarity analysis.",
       "property_list": []
     },
@@ -559,7 +559,7 @@
         },
         "xref_types": {
           "type": "array",
-          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types — they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
+          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types \u2014 they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
           "items": {
             "type": "string",
             "enum": [
@@ -1032,6 +1032,141 @@
           }
         }
       }
+    }
+  },
+  {
+    "name": "PubChem_get_substance_by_SID",
+    "description": "Retrieve a PubChem SUBSTANCE (SID, depositor-level) record by its Substance ID. Unlike the CID/compound tools, this returns the raw depositor submission: the source/depositor name, the depositor's own source identifier, deposited synonyms, comments (often SMILES/InChI), cross-references (registry IDs, patents), and the list of linked compound CIDs that PubChem standardized this substance into. Returns found=false when the SID does not exist.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sid": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "PubChem Substance ID (SID), a positive integer, e.g., 223766453."
+        }
+      },
+      "required": [
+        "sid"
+      ]
+    },
+    "fields": {
+      "endpoint": "/substance/sid/{sid}/JSON",
+      "use_pugview": false,
+      "substance_record": true,
+      "input_description": "Input is a PubChem Substance ID (sid). The tool fetches the raw PC_Substances record plus the linked compound CIDs.",
+      "output_description": "Returns {status, found, data, metadata}. On found=true, data has: sid, source_name (depositor source id), source_id (depositor's own record id), synonyms (list), comment (list, often SMILES/InChI), registry_ids (list), xrefs (raw list), linked_cids (list of CIDs). On a non-existent SID, found=false."
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "sid": 223766453
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful substance lookup.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "found": {
+              "type": "boolean"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "sid": {
+                  "type": [
+                    "integer",
+                    "string"
+                  ]
+                },
+                "source_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_id": {
+                  "type": [
+                    "string",
+                    "integer",
+                    "null"
+                  ]
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "comment": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "registry_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "xrefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "linked_cids": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "found",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error during substance lookup.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
     }
   }
 ]

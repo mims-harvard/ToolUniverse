@@ -212,5 +212,159 @@
         }
       ]
     }
+  },
+  {
+    "name": "ProteomeXchange_get_spectrum_by_usi",
+    "description": "Retrieve a single mass spectrum (PSM) from ProteomeXchange by Universal Spectrum Identifier (USI) via the PROXI v0.1 interface. Unlike the dataset-level tools, this returns spectrum/peak-level data: scan number, charge state, precursor m/z, peptide sequence, all CV-term attributes, and the peak list (m/z + intensity pairs, capped to the first 200 peaks). A USI has the form 'mzspec:<PXD accession>:<file>:scan:<scan>:<peptide>/<charge>'. Use ProteomeXchange_get_dataset or ProteomeXchange_search_datasets first to find dataset accessions and construct USIs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "usi": {
+          "type": "string",
+          "description": "Universal Spectrum Identifier. Example: 'mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/2'."
+        },
+        "resultType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Level of detail returned by PROXI: 'full' (default, includes peak arrays) or 'compact'."
+        }
+      },
+      "required": [
+        "usi"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_spectrum_by_usi"
+    },
+    "type": "ProteomeXchangeTool",
+    "test_examples": [
+      {
+        "usi": "mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/2"
+      },
+      {
+        "usi": "mzspec:PXD000561:Adult_Frontalcortex_bRP_Elite_85_f09:scan:17555:VLHPLEGAVVIIFK/2",
+        "resultType": "full"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "usi": {
+                  "type": "string"
+                },
+                "scan_number": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "charge": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "precursor_mz": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "peptide_sequence": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "attributes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "value": {}
+                    }
+                  }
+                },
+                "total_peaks": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "returned_peaks": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "peaks_truncated": {
+                  "type": "boolean"
+                },
+                "peaks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "mz": {
+                        "type": [
+                          "number",
+                          "integer"
+                        ]
+                      },
+                      "intensity": {
+                        "type": [
+                          "number",
+                          "integer"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

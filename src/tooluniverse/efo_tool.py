@@ -147,7 +147,7 @@ class OLSRESTTool(BaseTool):
                 }
                 return {"status": "success", "data": result}
 
-            if kind in {"term", "children"}:
+            if kind in {"term", "children", "descendants"}:
                 if not ontology_id:
                     return {
                         "status": "error",
@@ -192,13 +192,14 @@ class OLSRESTTool(BaseTool):
                     result = {"status": "success", "url": resp.url, "term": term}
                     return {"status": "success", "data": result}
 
-                # children
+                # children (direct subclasses) or descendants (full subtree)
                 size = arguments.get("size", 20)
                 params = {"size": size}
+                endpoint = "descendants" if kind == "descendants" else "children"
                 resp = request_with_retry(
                     requests,
                     "GET",
-                    f"{term_url}/children",
+                    f"{term_url}/{endpoint}",
                     params=params,
                     timeout=timeout_s,
                 )
@@ -211,7 +212,7 @@ class OLSRESTTool(BaseTool):
                         "detail": resp.text[:2000],
                     }
                 j = resp.json()
-                children = ((j.get("_embedded") or {}).get("terms")) or []
+                rows = ((j.get("_embedded") or {}).get("terms")) or []
                 out = [
                     {
                         "iri": c.get("iri"),
@@ -219,8 +220,18 @@ class OLSRESTTool(BaseTool):
                         "short_form": c.get("short_form"),
                         "label": c.get("label"),
                     }
-                    for c in children
+                    for c in rows
                 ]
+                if kind == "descendants":
+                    total = (j.get("page") or {}).get("totalElements")
+                    result = {
+                        "status": "success",
+                        "url": resp.url,
+                        "count": len(out),
+                        "total": total,
+                        "descendants": out,
+                    }
+                    return {"status": "success", "data": result}
                 result = {
                     "status": "success",
                     "url": resp.url,

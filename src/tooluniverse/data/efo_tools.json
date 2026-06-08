@@ -180,6 +180,64 @@
   },
   {
     "type": "OLSRESTTool",
+    "name": "ols_get_efo_term_descendants",
+    "description": "List transitive DESCENDANTS of an EFO term (the full subtree, not just direct children). Provide `iri` or `obo_id`.\n\nDescendants returns every term beneath the given node, so it is far larger than `ols_get_efo_term_children` (e.g. EFO:0001444 has 360 children but ~25021 descendants). The `total` field is the full subtree size (page.totalElements); `descendants` holds up to `size` rows.\n\nKnown limitation: EFO disease terms (e.g. EFO:0000400) route their subclasses through MONDO IRIs, so both children and descendants return 0 for those. This tool adds value on native EFO branches (measurement, organism-part, experimental-factor). Tip: use `ols_search_efo_terms` first, then pass the returned `obo_id` or `iri`.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "iri": {"type": "string", "description": "Term IRI returned by `ols_search_efo_terms`."},
+        "obo_id": {"type": "string", "description": "OBO ID like 'EFO:0001444' (will be converted to an EFO IRI)."},
+        "size": {"type": "integer", "description": "Maximum number of descendant rows to return (the full subtree size is reported separately in `total`).", "default": 20}
+      },
+      "oneOf": [{"required": ["iri"]}, {"required": ["obo_id"]}]
+    },
+    "test_examples": [
+      {"obo_id": "EFO:0001444", "size": 5}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "url": {"type": "string"},
+            "count": {"type": "integer"},
+            "total": {"type": ["integer", "null"]},
+            "descendants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "iri": {"type": ["string", "null"]},
+                  "obo_id": {"type": ["string", "null"]},
+                  "short_form": {"type": ["string", "null"]},
+                  "label": {"type": ["string", "null"]}
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "required": ["status", "descendants"],
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "url": {"type": "string"},
+            "error": {"type": "string"},
+            "detail": {},
+            "status_code": {"type": "integer"}
+          },
+          "required": ["status", "error"],
+          "additionalProperties": true
+        }
+      ]
+    },
+    "fields": {"kind": "descendants", "ontology_id": "efo"}
+  },
+  {
+    "type": "OLSRESTTool",
     "name": "ols_get_efo_ontology_info",
     "description": "Get metadata about the EFO ontology itself (version, status, number of terms, title/description).",
     "parameter": {"type": "object", "properties": {}, "required": []},

@@ -82,6 +82,8 @@ class ChEBITool(BaseTool):
             return self._search(arguments)
         elif self.endpoint_type == "ontology_children":
             return self._ontology_children(arguments)
+        elif self.endpoint_type == "ontology_parents":
+            return self._ontology_parents(arguments)
         else:
             return {
                 "status": "error",
@@ -287,5 +289,55 @@ class ChEBITool(BaseTool):
                 "source": "ChEBI",
                 "query": str(chebi_id),
                 "endpoint": "ontology/children",
+            },
+        }
+
+    def _ontology_parents(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get ontology parents (is-a / has-role ancestors) of a ChEBI compound."""
+        chebi_id = arguments.get("chebi_id", None)
+        if chebi_id is None:
+            return {
+                "status": "error",
+                "error": "chebi_id parameter is required (e.g., 15377 for water)",
+            }
+
+        url = f"{CHEBI_BASE_URL}/ontology/parents/{chebi_id}/"
+        response = requests.get(
+            url,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        # Parents are the targets of outgoing_relations (the symmetric
+        # counterpart of the children tool's incoming_relations).
+        relations = []
+        ontology = raw.get("ontology_relations", {})
+        outgoing = ontology.get("outgoing_relations", [])
+        if isinstance(outgoing, list):
+            for rel in outgoing:
+                relations.append(
+                    {
+                        "relation_type": rel.get("relation_type", ""),
+                        "parent_id": rel.get("final_id", 0),
+                        "parent_name": _strip_html(rel.get("final_name", "")),
+                    }
+                )
+
+        result = {
+            "chebi_id": raw.get("id", chebi_id),
+            "chebi_accession": raw.get("chebi_accession", f"CHEBI:{chebi_id}"),
+            "relation_count": len(relations),
+            "relations": relations,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "ChEBI",
+                "query": str(chebi_id),
+                "endpoint": "ontology/parents",
             },
         }

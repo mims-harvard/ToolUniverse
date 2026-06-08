@@ -1,0 +1,315 @@
+[
+    {
+        "type": "IPDIMGTHLATool",
+        "name": "IPD_search_hla_alleles",
+        "description": "Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring (e.g. 'A*01:01', 'DRB1*15', 'B*07'). Returns matching alleles with their IPD accession (e.g. HLA00001) and full allele name. Use this to resolve an HLA type or partial type into specific allele accessions for follow-up detail lookups. Keyless EMBL-EBI API.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "HLA allele name or partial name to search (e.g. 'A*01:01', 'DRB1*15:01', 'B*07'). The filter expression is built for you."
+                },
+                "match": {
+                    "type": "string",
+                    "enum": [
+                        "startsWith",
+                        "contains",
+                        "eq"
+                    ],
+                    "description": "How to match the name: 'startsWith' (default, prefix match), 'contains' (substring), or 'eq' (exact full name).",
+                    "default": "startsWith"
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of alleles to return (default 10, max 100).",
+                    "default": 10
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "label": [
+            "IPD-IMGT/HLA",
+            "HLA",
+            "MHC",
+            "allele",
+            "immunogenetics",
+            "EMBL-EBI"
+        ],
+        "test_examples": [
+            {
+                "name": "A*01:01",
+                "limit": 3
+            },
+            {
+                "name": "DRB1*15:01",
+                "match": "startsWith",
+                "limit": 5
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "alleles": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {
+                                                "type": "string"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "count": {
+                                    "type": "integer"
+                                },
+                                "total": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ]
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "type": "IPDIMGTHLATool",
+        "name": "IPD_get_hla_allele",
+        "description": "Fetch the full IPD-IMGT/HLA record for a single HLA allele by its IPD accession (e.g. 'HLA00001'). Returns the complete record including allele name, locus, class, sequence, confirmation status, citations, CWD (common/well-documented) status, release history, and cross-references. Use IPD_search_hla_alleles first to obtain an accession. Keyless EMBL-EBI API.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "IPD-IMGT/HLA allele accession (e.g. 'HLA00001'). Obtain via IPD_search_hla_alleles."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "label": [
+            "IPD-IMGT/HLA",
+            "HLA",
+            "MHC",
+            "allele",
+            "sequence",
+            "EMBL-EBI"
+        ],
+        "test_examples": [
+            {
+                "accession": "HLA00001"
+            },
+            {
+                "accession": "HLA01244"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "locus": {
+                                    "type": "string"
+                                },
+                                "class": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "type": "IPDIMGTHLATool",
+        "name": "IPD_search_cells",
+        "description": "Search IPD cell lines (HLA reference cells with their HLA typing) by a field value. By default searches the cell's primary name; set 'field' to search other fields such as 'lab_of_origin'. Returns matching cells with their IPD cell id and primary name. Useful for finding HLA-typed reference cell lines. Keyless EMBL-EBI API.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Text to search for (e.g. a cell primary name, or a lab name when field='lab_of_origin'). The filter expression is built for you."
+                },
+                "field": {
+                    "type": "string",
+                    "description": "Cell field to search (default 'primary_name'). Other useful fields include 'lab_of_origin'.",
+                    "default": "primary_name"
+                },
+                "match": {
+                    "type": "string",
+                    "enum": [
+                        "startsWith",
+                        "contains",
+                        "eq"
+                    ],
+                    "description": "How to match: 'contains' (default, substring), 'startsWith' (prefix), or 'eq' (exact).",
+                    "default": "contains"
+                },
+                "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of cells to return (default 10, max 100).",
+                    "default": 10
+                }
+            },
+            "required": [
+                "query"
+            ]
+        },
+        "label": [
+            "IPD-IMGT/HLA",
+            "HLA",
+            "cell line",
+            "reference cell",
+            "immunogenetics",
+            "EMBL-EBI"
+        ],
+        "test_examples": [
+            {
+                "query": "Roche",
+                "field": "lab_of_origin",
+                "limit": 3
+            },
+            {
+                "query": "10839496",
+                "field": "primary_name",
+                "match": "eq"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "cells": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "cellid": {
+                                                "type": "string"
+                                            },
+                                            "primary_name": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "count": {
+                                    "type": "integer"
+                                },
+                                "total": {
+                                    "type": [
+                                        "integer",
+                                        "null"
+                                    ]
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string"
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "error"
+                    ]
+                }
+            ]
+        }
+    }
+]

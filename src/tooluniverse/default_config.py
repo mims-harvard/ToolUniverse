@@ -120,6 +120,7 @@ default_tool_files = {
     "rxnorm_extended": os.path.join(current_dir, "data", "rxnorm_extended_tools.json"),
     "loinc": os.path.join(current_dir, "data", "loinc_tools.json"),
     "clinical_tables": os.path.join(current_dir, "data", "clinical_tables_tools.json"),
+    "ipd_imgt_hla": os.path.join(current_dir, "data", "ipd_imgt_hla_tools.json"),
     "uniprot": os.path.join(current_dir, "data", "uniprot_tools.json"),
     "cellosaurus": os.path.join(current_dir, "data", "cellosaurus_tools.json"),
     # 'software': os.path.join(current_dir, 'data', 'software_tools.json'),

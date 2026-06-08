@@ -56,6 +56,11 @@ class PubChemRESTTool(BaseTool):
         self.param_schema = tool_config["parameter"]["properties"]
         self.use_pugview = tool_config["fields"].get("use_pugview", False)
         self.output_format = tool_config["fields"].get("return_format", None)
+        # When set, run() parses the raw PC_Substances record into a flat
+        # depositor-level summary and (optionally) merges linked compound CIDs,
+        # rather than returning the raw PUG payload. Keyed off a fields flag so
+        # this stays within the existing PubChemRESTTool type — no new class.
+        self.substance_record = tool_config["fields"].get("substance_record", False)
 
     def _build_url(self, arguments: dict) -> str:
         """
@@ -141,7 +146,145 @@ class PubChemRESTTool(BaseTool):
 
         return full_url
 
+    @staticmethod
+    def _parse_substance_payload(payload: dict) -> dict:
+        """Flatten one raw PC_Substances entry into a depositor-level summary.
+
+        Returns the parsed record dict (without linked CIDs), or None when the
+        payload contains no substance entry.
+        """
+        substances = (payload or {}).get("PC_Substances") or []
+        if not substances:
+            return None
+        rec = substances[0]
+
+        sid = (rec.get("sid") or {}).get("id")
+
+        # source.db.name is the depositor's source identifier; source_id.str /
+        # source_id.id is that depositor's own record id for the substance.
+        db = (rec.get("source") or {}).get("db") or {}
+        source_id_obj = db.get("source_id") or {}
+        source_id = source_id_obj.get("str")
+        if source_id is None:
+            source_id = source_id_obj.get("id")
+
+        # xref entries are heterogeneous (regid / patent / dburl / ...); surface
+        # them as-is plus a flat list of registry ids for convenience.
+        xrefs = rec.get("xref") or []
+        registry_ids = [
+            x["regid"] for x in xrefs if isinstance(x, dict) and "regid" in x
+        ]
+
+        return {
+            "sid": sid,
+            "source_name": db.get("name"),
+            "source_id": source_id,
+            "synonyms": rec.get("synonyms") or [],
+            "comment": rec.get("comment") or [],
+            "registry_ids": registry_ids,
+            "xrefs": xrefs,
+        }
+
+    def _run_substance_record(self, arguments: dict) -> dict:
+        """Fetch and parse a PubChem SUBSTANCE (SID) record, merging linked CIDs."""
+        sid = arguments.get("sid")
+        if sid is None or str(sid).strip() == "":
+            return {"status": "error", "error": "Parameter 'sid' is required."}
+        sid = str(sid).strip()
+        if not sid.isdigit():
+            return {
+                "status": "error",
+                "error": f"Invalid 'sid' {sid!r}: a PubChem SID must be a positive integer.",
+            }
+
+        base = f"{PUBCHEM_BASE_URL}/substance/sid/{sid}"
+
+        # 1. Main substance record
+        try:
+            resp = requests.get(f"{base}/JSON", timeout=30)
+        except requests.Timeout:
+            return {
+                "status": "error",
+                "error": "Request to PubChem PUG-REST timed out, retry later.",
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"Failed to request PubChem PUG-REST: {str(e)}",
+            }
+
+        if resp.status_code == 404:
+            return {
+                "status": "success",
+                "found": False,
+                "data": {"sid": sid},
+                "metadata": {
+                    "note": f"No PubChem substance record found for SID {sid}."
+                },
+            }
+        if resp.status_code != 200:
+            detail = resp.text
+            try:
+                fault = resp.json().get("Fault")
+                if fault:
+                    detail = fault.get("Message", detail)
+            except Exception:
+                pass
+            return {
+                "status": "error",
+                "error": f"PubChem API returned HTTP {resp.status_code}",
+                "detail": detail,
+            }
+
+        try:
+            payload = resp.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "error": "PubChem substance response could not be parsed as JSON.",
+            }
+
+        record = self._parse_substance_payload(payload)
+        if record is None:
+            return {
+                "status": "success",
+                "found": False,
+                "data": {"sid": sid},
+                "metadata": {
+                    "note": f"No PubChem substance record found for SID {sid}."
+                },
+            }
+
+        # 2. Linked compound CIDs (best-effort — never fail the whole call on this)
+        linked_cids = []
+        try:
+            cresp = requests.get(f"{base}/cids/JSON", timeout=30)
+            if cresp.status_code == 200:
+                info = cresp.json().get("InformationList", {}).get("Information") or [
+                    {}
+                ]
+                linked_cids = info[0].get("CID") or []
+        except Exception:
+            linked_cids = []
+        record["linked_cids"] = linked_cids
+
+        return {
+            "status": "success",
+            "found": True,
+            "data": record,
+            "metadata": {
+                "sid": int(sid),
+                "source_url": f"{base}/JSON",
+                "linked_cid_count": len(linked_cids),
+            },
+        }
+
     def run(self, arguments: dict):
+        # Substance (SID, depositor-level) record lookup is handled separately:
+        # it parses the raw PC_Substances payload and merges linked CIDs.
+        if self.substance_record:
+            return self._run_substance_record(arguments)
+
         # compound_name alias for name (more intuitive param name)
         if "name" not in arguments and "compound_name" in arguments:
             arguments["name"] = arguments["compound_name"]

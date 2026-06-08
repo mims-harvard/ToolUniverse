@@ -830,5 +830,119 @@
       ],
       "estimated_execution_time": "< 3 seconds"
     }
+  },
+  {
+    "name": "EpiGraphDB_get_literature_evidence",
+    "description": "Get SemMedDB literature triple evidence supporting a GWAS trait via EpiGraphDB. Returns subject-predicate-object triples (e.g. 'troglitazone INHIBITS Leptin|LEP') mined from PubMed and linked to GWAS hits for the trait, each citing a supporting article (pubmed_id). This is the literature/support-path evidence, complementing the Mendelian Randomization and gene-drug evidence paths. Example: trait='body mass index' returns SemMedDB triples around leptin, insulin, and related entities with PubMed citations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "description": "GWAS trait name (e.g., 'body mass index', 'LDL cholesterol', 'coronary heart disease'). Matched case-insensitively as a substring of GWAS labels."
+        },
+        "pval_threshold": {
+          "type": "number",
+          "description": "GWAS p-value threshold for the trait's GWAS hits (default 1e-8).",
+          "default": 1e-08
+        }
+      },
+      "required": [
+        "trait"
+      ]
+    },
+    "fields": {
+      "operation": "literature_evidence"
+    },
+    "type": "EpiGraphDBTool",
+    "test_examples": [
+      {
+        "trait": "body mass index"
+      },
+      {
+        "trait": "body mass index",
+        "pval_threshold": 1e-08
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "literature_triples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "triple_subject": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "triple_predicate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "triple_object": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pubmed_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gwas_trait": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "EpiGraphDB",
+      "SemMedDB",
+      "Literature",
+      "GWAS"
+    ],
+    "metadata": {
+      "tags": [
+        "literature_evidence",
+        "semmeddb",
+        "gwas",
+        "triple",
+        "pubmed"
+      ],
+      "estimated_execution_time": "5-15 seconds"
+    }
   }
 ]

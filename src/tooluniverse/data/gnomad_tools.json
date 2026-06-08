@@ -705,6 +705,233 @@
     ]
   },
   {
+    "type": "gnomADGetVariantPopulations",
+    "name": "gnomad_get_variant_populations",
+    "description": "Get per-ancestry (population-stratified) allele frequencies for a variant from gnomAD by `variant_id` (format like '1-55051215-G-GA'). Unlike `gnomad_get_variant` (aggregate AF only), this returns per-ancestry rows (`amr`, `nfe`, `fin`, `afr`, `eas`, `sas`, `asj`, `ami`, `mid`, `remaining`, plus `_XX`/`_XY` sex splits) with computed `af = ac / an` (af is null when an = 0), separated into `genome` and `exome` callsets. `dataset` defaults to `gnomad_r4`. Use `gnomad_search_variants` to find a `variant_id` from an rsID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "Variant ID (format 'chrom-pos-ref-alt', e.g., '1-55051215-G-GA')."
+        },
+        "dataset": {
+          "type": "string",
+          "default": "gnomad_r4",
+          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://gnomad.broadinstitute.org/api",
+      "return_format": "JSON",
+      "query_schema": "query($variantId: String!, $dataset: DatasetId!) { variant(variantId: $variantId, dataset: $dataset) { variant_id chrom pos ref alt rsid genome { ac an populations { id ac an } } exome { ac an populations { id ac an } } } }"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant_id": {
+                  "type": "string"
+                },
+                "chrom": {
+                  "type": "string"
+                },
+                "pos": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "ref": {
+                  "type": "string"
+                },
+                "alt": {
+                  "type": "string"
+                },
+                "rsid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "dataset": {
+                  "type": "string"
+                },
+                "genome": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "ac": {
+                      "type": [
+                        "integer",
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "an": {
+                      "type": [
+                        "integer",
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "af": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "populations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "ac": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "an": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "af": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "exome": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "ac": {
+                      "type": [
+                        "integer",
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "an": {
+                      "type": [
+                        "integer",
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "af": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "populations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "ac": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "an": {
+                            "type": [
+                              "integer",
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "af": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "variant_id": "1-55051215-G-GA",
+        "dataset": "gnomad_r4"
+      }
+    ],
+    "metadata": {
+      "tags": [
+        "variant",
+        "allele frequency",
+        "population",
+        "ancestry",
+        "gnomAD"
+      ],
+      "difficulty_level": "intermediate",
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_region",
     "description": "Get basic regional information from gnomAD by genomic interval. Returns genes overlapping the region and a list of `variant_id` values in the region for the selected dataset. Use those IDs with `gnomad_get_variant`. Keep regions small to avoid large payloads.",
