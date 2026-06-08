@@ -15,8 +15,7 @@ the same workspace-isolation guarantees, and a parseable ranked-table output.
 
 Run-if-available preflight (NEVER fabricates results)
 -----------------------------------------------------
-Like the openai ngs-analysis wrappers, this script PREFLIGHTS its external
-dependencies before doing any work:
+This script PREFLIGHTS its external dependencies before doing any work:
   - `Rscript` must be on PATH,
   - the requested method's Bioconductor packages must be installed
     (edgeR + limma for --method edger; limma + edgeR for --method limma —

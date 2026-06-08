@@ -76,13 +76,21 @@ class OLSRESTTool(BaseTool):
 
     @staticmethod
     def _obo_id_to_efo_iri(obo_id: str) -> str:
-        # Common EFO IDs come as "EFO:0000400" from search results.
-        # Convert to IRI used by term endpoints.
-        if ":" in obo_id:
-            prefix, num = obo_id.split(":", 1)
-            if prefix.upper() == "EFO":
-                return f"http://www.ebi.ac.uk/efo/EFO_{num}"
-        return obo_id
+        # CURIEs like "EFO:0000400" or "MONDO:0004993" come from search results.
+        # Convert to the IRI used by the OLS term endpoints. EFO terms live under
+        # the EBI namespace; everything else EFO imports (MONDO, HP, GO, Orphanet,
+        # ...) lives under its native OBO/ORDO namespace — mapping only EFO: meant
+        # non-EFO disease terms (now predominantly MONDO) silently returned nothing.
+        if ":" not in obo_id:
+            return obo_id
+        prefix, num = obo_id.split(":", 1)
+        p = prefix.upper()
+        if p == "EFO":
+            return f"http://www.ebi.ac.uk/efo/EFO_{num}"
+        if p in ("ORPHA", "ORPHANET"):
+            return f"http://www.orpha.net/ORDO/Orphanet_{num}"
+        # MONDO, HP, GO, CHEBI, UBERON, CL, NCIT, DOID, ... use the OBO PURL base.
+        return f"http://purl.obolibrary.org/obo/{p}_{num}"
 
     def _resolve_term_iri(
         self, *, iri: Optional[str] = None, obo_id: Optional[str] = None
@@ -231,6 +239,18 @@ class OLSRESTTool(BaseTool):
                         "total": total,
                         "descendants": out,
                     }
+                    # A zero subtree is ambiguous: the term may be a leaf, obsolete,
+                    # or (for disease terms) routed through a non-EFO ontology where
+                    # OLS does not expose descendants here. Flag it so callers don't
+                    # read "no subtypes" into what is really "no descendants exposed".
+                    if not total:
+                        result["note"] = (
+                            "No descendants returned. The term may be a leaf or "
+                            "obsolete, or its subclasses live in another ontology "
+                            "(e.g. EFO disease terms whose children are MONDO/Orphanet "
+                            "nodes). Verify the term is current and try its native "
+                            "ontology if this is a disease class."
+                        )
                     return {"status": "success", "data": result}
                 result = {
                     "status": "success",

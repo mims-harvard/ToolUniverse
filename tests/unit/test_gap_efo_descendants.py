@@ -157,3 +157,46 @@ def test_requires_iri_or_obo_id():
     assert result["status"] == "error"
     assert "iri" in result["error"] and "obo_id" in result["error"]
     m.assert_not_called()
+
+
+def test_non_efo_prefix_resolves_to_obo_iri():
+    """MONDO/HP/etc. CURIEs must map to their native OBO IRI, not a broken
+    EFO_-prefixed one (regression: disease terms are MONDO and returned 0)."""
+    captured = {}
+
+    def fake_request(_req, _method, url, params=None, timeout=None):
+        captured["url"] = url
+        return _ok_response(url, {"_embedded": {"terms": []}, "page": {"totalElements": 773}})
+
+    with patch("tooluniverse.efo_tool.request_with_retry", side_effect=fake_request):
+        _make_tool().run({"obo_id": "MONDO:0004993", "size": 1})
+
+    # purl.obolibrary.org/obo/MONDO_0004993, double-encoded -> %252Fobo%252FMONDO_0004993
+    assert "purl.obolibrary.org" in captured["url"]
+    assert "MONDO_0004993" in captured["url"]
+    assert "EFO_MONDO" not in captured["url"]  # the old broken behavior
+
+
+def test_orphanet_prefix_resolves_to_ordo_iri():
+    captured = {}
+
+    def fake_request(_req, _method, url, params=None, timeout=None):
+        captured["url"] = url
+        return _ok_response(url, {"_embedded": {"terms": []}, "page": {"totalElements": 1}})
+
+    with patch("tooluniverse.efo_tool.request_with_retry", side_effect=fake_request):
+        _make_tool().run({"obo_id": "Orphanet:558"})
+    assert "orpha.net" in captured["url"] and "Orphanet_558" in captured["url"]
+
+
+def test_zero_total_adds_disambiguation_note():
+    """A zero subtree must carry a note so it isn't read as 'no subtypes'."""
+    def fake_request(_req, _method, url, params=None, timeout=None):
+        return _ok_response(url, {"_embedded": {"terms": []}, "page": {"totalElements": 0}})
+
+    with patch("tooluniverse.efo_tool.request_with_retry", side_effect=fake_request):
+        result = _make_tool().run({"obo_id": "EFO:0000311"})
+    assert result["status"] == "success"
+    assert result["data"]["total"] == 0
+    assert "note" in result["data"]
+    assert "obsolete" in result["data"]["note"].lower()

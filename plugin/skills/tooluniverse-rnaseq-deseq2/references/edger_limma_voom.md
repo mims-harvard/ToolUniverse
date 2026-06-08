@@ -2,7 +2,7 @@
 
 DESeq2 is this skill's default route, but edgeR and limma-voom are the two
 other standard bulk RNA-seq differential-expression frameworks. Published
-pipelines (and the openai ngs-analysis reference) route across all three.
+pipelines routinely route across all three.
 This doc gives the concrete R command sequences, the input/output contracts,
 and how to read each framework's output relative to DESeq2's.
 
