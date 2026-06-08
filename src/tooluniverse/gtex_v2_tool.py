@@ -73,9 +73,13 @@ class GTExV2Tool(BaseTool):
                 }
 
         if "gencode_id" not in arguments:
-            arguments["gencode_id"] = arguments.get("gene_symbol") or arguments.get(
+            # Only inject when a gene symbol is actually present; injecting None
+            # breaks handlers that iterate gencode_id (e.g. variant-only eQTL queries).
+            resolved_symbol = arguments.get("gene_symbol") or arguments.get(
                 "geneSymbol"
             )
+            if resolved_symbol:
+                arguments["gencode_id"] = resolved_symbol
         if "dataset_id" not in arguments and "datasetId" in arguments:
             arguments["dataset_id"] = arguments["datasetId"]
 
@@ -322,9 +326,10 @@ class GTExV2Tool(BaseTool):
 
     def _get_single_tissue_eqtls(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get significant single-tissue eQTLs."""
-        gencode_ids = arguments.get("gencode_id", [])
-        variant_ids = arguments.get("variant_id", [])
-        tissue_ids = arguments.get("tissue_site_detail_id", [])
+        # `or []` (not a default arg) so an explicit None never reaches the loops below.
+        gencode_ids = arguments.get("gencode_id") or []
+        variant_ids = arguments.get("variant_id") or []
+        tissue_ids = arguments.get("tissue_site_detail_id") or []
         # Feature-69A-002: gtex_v10 returns empty for eQTL endpoints; use gtex_v8
         dataset_id = arguments.get("dataset_id", "gtex_v8")
 
