@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-rnaseq-deseq2
-description: RNA-seq differential expression analysis with DESeq2 — DEG lists, fold changes, dispersion estimation, design formulas including covariates, multi-condition contrasts, and Venn-set operations across groups. Use when you have a count matrix + metadata, want to find DEGs, or need dispersion/PCA/clustering analysis. Includes RULE ZERO precedence (read executed.ipynb if present).
+description: RNA-seq differential expression analysis with DESeq2, edgeR, and limma-voom — DEG lists, fold changes, dispersion estimation, design formulas including covariates, multi-condition contrasts, and Venn-set operations across groups. Routes across DESeq2 (default), edgeR (QL-F / exact test for small replicate counts), and limma-voom (large n / complex designs). Use when you have a count matrix + metadata, want to find DEGs, or need dispersion/PCA/clustering analysis. Includes RULE ZERO precedence (read executed.ipynb if present).
 disable-model-invocation: true
 ---
 
@@ -63,6 +63,46 @@ python scripts/r_deseq2_wrapper.py \
 
 This automatically prints all 3-way Venn region sizes plus several
 candidate denominators (`/|A|`, `/|A∩B|`, `/|A∪B∪C|`).
+
+### `scripts/r_edger_limma_wrapper.py` — edgeR / limma-voom alternative DE routes
+
+Runs **edgeR** (QL-F) or **limma-voom** as an alternative to DESeq2, with the
+same workspace-isolation and parseable output as `r_deseq2_wrapper.py`. It is a
+**run-if-available** wrapper: it PREFLIGHTS that `Rscript` and the Bioconductor
+packages (edgeR + limma) are installed; if anything is missing it prints a clear
+install plan and **exits 0 without fabricating results**. Use it when the
+question names edgeR or limma-voom, or to cross-check a DESeq2 DEG count.
+
+```bash
+# edgeR QL-F (use --method limma for limma-voom; --design "~batch + condition" for covariates)
+python scripts/r_edger_limma_wrapper.py \
+    --count-matrix <data-folder>/counts.csv \
+    --sample-metadata <data-folder>/meta.csv \
+    --design "~condition" --contrast "condition,treated,control" \
+    --method edger --workdir /tmp/edger_run
+```
+
+The `SIG_*` lines mirror the DESeq2 wrapper exactly (padj_only / padjlfc /
+strict), so DEG counts are directly comparable; a `# TABLE` line points to the
+ranked CSV. See [edger_limma_voom.md](references/edger_limma_voom.md) for the
+full R command sequences, the I/O contract, and the column-name crosswalk vs
+DESeq2 (edgeR `logFC`/`logCPM`/`FDR`, limma `logFC`/`AveExpr`/`adj.P.Val`).
+
+### Choosing DESeq2 vs edgeR vs limma-voom
+
+All three are valid; pick by sample size, design complexity, and what the
+authoritative pipeline used. Reasoned defaults, not hard rules:
+
+| Situation | Prefer | Why |
+|---|---|---|
+| Standard 2-group, modest n, default ask | **DESeq2** | Most widely-published reference; shrinkage + independent filtering tuned for small n. This skill's default. |
+| Very small replicate counts (n=2-3/group), simple 2-group | **edgeR** (exact test / QL-F) | Empirical-Bayes dispersion moderation is robust at tiny n; QL-F controls FDR well. |
+| Large n, complex/multi-factor designs, many contrasts, or speed matters | **limma-voom** | Fast, flexible per-gene linear model; `voom` weights handle heteroscedasticity; `duplicateCorrelation` for repeated measures; extends to interactions. |
+
+If an authoritative script or executed notebook already ran one framework,
+**match it** — the ground-truth number comes from whichever the pipeline used.
+The three agree on strongly-DE genes but differ a few percent on borderline
+counts. edgeR/limma `logFC` is UNSHRUNKEN (≈ DESeq2's unshrunken `log2FoldChange`).
 
 ### `scripts/multi_strain_venn.py` — Venn from existing DEG CSVs
 
@@ -350,11 +390,13 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 - [worked_examples.md](references/worked_examples.md) - All 10 question patterns
 - [troubleshooting.md](references/troubleshooting.md) - Common issues and debugging
 - [r_clusterprofiler_guide.md](references/r_clusterprofiler_guide.md) - R clusterProfiler via rpy2
+- [edger_limma_voom.md](references/edger_limma_voom.md) - edgeR / limma-voom DE routes: command sequences, contracts, column crosswalk
 
 ## Utility Scripts
 
 Primary deterministic scripts (covered above):
 - [r_deseq2_wrapper.py](scripts/r_deseq2_wrapper.py) - R DESeq2 multi-contrast + Venn + per-gene LFC
+- [r_edger_limma_wrapper.py](scripts/r_edger_limma_wrapper.py) - edgeR / limma-voom DE (run-if-available; preflights Rscript + edgeR/limma)
 - [multi_strain_venn.py](scripts/multi_strain_venn.py) - Venn-style overlap percentages from DEG CSVs
 - [gene_length_correlation.py](scripts/gene_length_correlation.py) - Length vs expression Pearson r (all variants)
 - [pca_variance.py](scripts/pca_variance.py) - % variance per PC across all common PCA variants

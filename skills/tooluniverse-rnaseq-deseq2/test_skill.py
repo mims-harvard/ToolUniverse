@@ -1378,6 +1378,7 @@ def run_all_tests():
         scripts_dir = os.path.join(skill_dir, "scripts")
         required = [
             "r_deseq2_wrapper.py",
+            "r_edger_limma_wrapper.py",
             "multi_strain_venn.py",
             "gene_length_correlation.py",
             "pca_variance.py",
@@ -1397,6 +1398,56 @@ def run_all_tests():
                        "" if r.returncode == 0 else r.stderr[:200])
 
     test_23_bundled_scripts_exist()
+
+    def test_24_edger_limma_preflight():
+        """Test 24: edgeR/limma wrapper preflights cleanly when Rscript or the
+        Bioconductor packages are absent — it must emit an install plan and
+        exit 0 (NOT crash, NOT fabricate results)."""
+        print("\n--- Test 24: edgeR/limma run-if-available preflight ---")
+        import subprocess
+        skill_dir = os.path.dirname(os.path.abspath(__file__))
+        wrapper = os.path.join(skill_dir, "scripts", "r_edger_limma_wrapper.py")
+
+        if not os.path.exists(wrapper):
+            record("edgeR/limma preflight", False, f"missing wrapper: {wrapper}")
+            return
+
+        # Force the "tool unavailable" branch by pointing PATH at an empty
+        # directory so shutil.which cannot find Rscript. The wrapper should
+        # report the missing deps and exit 0 with an install plan rather than
+        # crashing. Input files do not even need to exist — preflight runs
+        # before any file access. We launch via sys.executable (absolute) so
+        # the emptied PATH does not also hide the Python interpreter.
+        empty_path_dir = tempfile.mkdtemp(prefix="el_emptypath_")
+        env = dict(os.environ)
+        env["PATH"] = empty_path_dir  # no Rscript discoverable
+        r = subprocess.run(
+            [sys.executable, wrapper,
+             "--count-matrix", "/nonexistent/counts.csv",
+             "--sample-metadata", "/nonexistent/meta.csv",
+             "--design", "~condition",
+             "--contrast", "condition,treated,control",
+             "--method", "edger",
+             "--workdir", tempfile.mkdtemp(prefix="el_preflight_")],
+            capture_output=True, text=True, timeout=60, env=env,
+        )
+        # Must exit 0 (clean, expected "not available" outcome).
+        record("edgeR/limma preflight exits 0 when tools absent",
+               r.returncode == 0,
+               f"returncode={r.returncode} stderr={r.stderr[:200]}")
+        # Must emit an install plan, not a results table, not a traceback.
+        out = r.stdout
+        record("edgeR/limma preflight emits install plan",
+               "PREFLIGHT" in out and "install" in out.lower(),
+               f"stdout head: {out[:200]}")
+        record("edgeR/limma preflight does NOT fabricate results",
+               "SIG_" not in out and "# CONTRAST" not in out,
+               "wrapper printed result-like lines without R packages present")
+        record("edgeR/limma preflight does NOT traceback",
+               "Traceback" not in r.stderr,
+               f"stderr: {r.stderr[:200]}")
+
+    test_24_edger_limma_preflight()
 
     # Summary
     total = PASS_COUNT + FAIL_COUNT
