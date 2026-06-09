@@ -65,6 +65,8 @@ class PDBeSIFTSTool(BaseTool):
             return self._get_pdb_to_uniprot(arguments)
         elif self.endpoint == "uniprot_to_pdb":
             return self._get_uniprot_to_pdb(arguments)
+        elif self.endpoint == "scop":
+            return self._get_scop_mapping(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -161,6 +163,79 @@ class PDBeSIFTSTool(BaseTool):
             },
             "metadata": {
                 "source": "PDBe SIFTS - PDB to UniProt Mapping",
+                "pdb_id": pdb_id,
+            },
+        }
+
+    def _get_scop_mapping(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get SCOP structural classification mapping for a PDB entry.
+
+        SCOP (Structural Classification of Proteins) hierarchy: class > fold >
+        superfamily > family, with per-chain residue-range mappings.
+        """
+        pdb_id = arguments.get("pdb_id", "")
+        if not pdb_id:
+            return {
+                "status": "error",
+                "error": "pdb_id parameter is required (e.g., 1cbs)",
+            }
+
+        pdb_id = pdb_id.lower()
+        url = f"{PDBE_API_BASE_URL}/mappings/scop/{pdb_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        scop_data = data.get(pdb_id, {}).get("SCOP", {})
+
+        domains = []
+        for sunid, info in scop_data.items():
+            class_info = info.get("class", {}) or {}
+            fold_info = info.get("fold", {}) or {}
+            superfamily_info = info.get("superfamily", {}) or {}
+
+            mappings = []
+            for m in info.get("mappings", []):
+                start = m.get("start", {}) or {}
+                end = m.get("end", {}) or {}
+                mappings.append(
+                    {
+                        "chain_id": m.get("chain_id"),
+                        "struct_asym_id": m.get("struct_asym_id"),
+                        "entity_id": m.get("entity_id"),
+                        "scop_id": m.get("scop_id"),
+                        "start_residue": start.get("residue_number"),
+                        "end_residue": end.get("residue_number"),
+                        "start_author_residue": start.get("author_residue_number"),
+                        "end_author_residue": end.get("author_residue_number"),
+                    }
+                )
+
+            domains.append(
+                {
+                    "scop_sunid": sunid,
+                    "sccs": info.get("sccs"),
+                    "description": info.get("description"),
+                    "identifier": info.get("identifier"),
+                    "class": class_info.get("description"),
+                    "class_sunid": class_info.get("sunid"),
+                    "fold": fold_info.get("description"),
+                    "fold_sunid": fold_info.get("sunid"),
+                    "superfamily": superfamily_info.get("description"),
+                    "superfamily_sunid": superfamily_info.get("sunid"),
+                    "mappings": mappings,
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "pdb_id": pdb_id,
+                "scop_domains": domains,
+                "total_domains": len(domains),
+            },
+            "metadata": {
+                "source": "PDBe SIFTS - SCOP Mapping",
                 "pdb_id": pdb_id,
             },
         }

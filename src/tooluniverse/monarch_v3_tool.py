@@ -77,6 +77,7 @@ class MonarchV3Tool(BaseTool):
             "histopheno": self._histopheno,
             "mappings": self._get_mappings,
             "semsim_search": self._semsim_search,
+            "semsim_compare": self._semsim_compare,
         }
         handler = handlers.get(self.endpoint)
         if handler:
@@ -522,5 +523,96 @@ class MonarchV3Tool(BaseTool):
                 "query_phenotypes": phenotypes,
                 "group": group,
                 "total_results": len(results),
+            },
+        }
+
+    @staticmethod
+    def _normalize_termset(value: Any) -> list:
+        """Accept a list of HPO CURIEs or a comma-separated string."""
+        if isinstance(value, str):
+            return [t.strip() for t in value.split(",") if t.strip()]
+        if isinstance(value, list):
+            return [str(t).strip() for t in value if str(t).strip()]
+        return []
+
+    @staticmethod
+    def _flatten_best_matches(matches: Any) -> list:
+        """Flatten a best-matches mapping into a simple list of pairs."""
+        flat = []
+        if not isinstance(matches, dict):
+            return flat
+        for entry in matches.values():
+            if not isinstance(entry, dict):
+                continue
+            sim = entry.get("similarity") or {}
+            flat.append(
+                {
+                    "query_phenotype": entry.get("match_source"),
+                    "query_label": entry.get("match_source_label"),
+                    "matched_phenotype": entry.get("match_target"),
+                    "matched_label": entry.get("match_target_label"),
+                    "score": entry.get("score"),
+                    "ancestor_id": sim.get("ancestor_id"),
+                    "ancestor_label": sim.get("ancestor_label"),
+                    "jaccard_similarity": sim.get("jaccard_similarity"),
+                    "phenodigm_score": sim.get("phenodigm_score"),
+                }
+            )
+        return flat
+
+    def _semsim_compare(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Compare two explicit phenotype profiles (HPO term sets) pairwise.
+
+        Computes semantic similarity (Phenodigm / Jaccard / information
+        content) between a subject term set and an object term set, returning
+        the overall scores and the per-term best matches in each direction.
+        """
+        subjects = self._normalize_termset(
+            arguments.get("subjects") or arguments.get("subject_terms")
+        )
+        objects = self._normalize_termset(
+            arguments.get("objects") or arguments.get("object_terms")
+        )
+        if not subjects:
+            return {
+                "status": "error",
+                "error": (
+                    "subjects is required: a list of HPO CURIEs "
+                    "(e.g., ['HP:0001250', 'HP:0004322'])"
+                ),
+            }
+        if not objects:
+            return {
+                "status": "error",
+                "error": (
+                    "objects is required: a list of HPO CURIEs "
+                    "(e.g., ['HP:0001263', 'HP:0000252'])"
+                ),
+            }
+
+        subject_path = ",".join(subjects)
+        object_path = ",".join(objects)
+        url = f"{MONARCH_BASE_URL}/semsim/compare/{subject_path}/{object_path}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        return {
+            "status": "success",
+            "data": {
+                "average_score": data.get("average_score"),
+                "best_score": data.get("best_score"),
+                "metric": data.get("metric"),
+                "subject_best_matches": self._flatten_best_matches(
+                    data.get("subject_best_matches")
+                ),
+                "object_best_matches": self._flatten_best_matches(
+                    data.get("object_best_matches")
+                ),
+            },
+            "metadata": {
+                "source": "Monarch Initiative V3 - Semantic Similarity Compare",
+                "subjects": subjects,
+                "objects": objects,
             },
         }

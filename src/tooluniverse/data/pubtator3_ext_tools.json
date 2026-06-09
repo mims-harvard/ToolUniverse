@@ -1,5 +1,127 @@
 [
   {
+    "name": "PubTator3_GetEntityRelations",
+    "description": "Query the NCBI PubTator3 relation knowledge graph for a normalized biomedical entity and return RANKED relation edges aggregated across all of PubMed. Given a single entity (e1), returns every related entity with the relation type (associate, cause, treat, prevent, inhibit, stimulate, interact, compare, drug_interact, negative_correlate, positive_correlate, etc.), the source/target entities, and the aggregate publication count supporting each edge. Edges are returned ranked by supporting publication count (highest first). This answers 'what is entity X related to, ranked by literature evidence' as a graph query, distinct from returning the articles themselves. Optionally pass a relation type and/or a second entity (e2) to query a specific pair (e.g. does chemical A treat disease B). Entities must use PubTator's normalized @TYPE_Name format, e.g. @GENE_BRAF, @DISEASE_Melanoma, @CHEMICAL_Doxorubicin. Use PubTator3_EntityAutocomplete to resolve free text into these normalized identifiers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "e1": {
+          "type": "string",
+          "description": "Primary normalized PubTator entity in @TYPE_Name format. Examples: '@GENE_BRAF', '@DISEASE_Melanoma', '@CHEMICAL_Doxorubicin', '@CHEMICAL_Vemurafenib'. Required."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional relation type filter to restrict edges. Examples: 'treat', 'cause', 'associate', 'prevent', 'inhibit', 'stimulate', 'interact', 'compare', 'drug_interact', 'negative_correlate', 'positive_correlate'. Omit to return all relation types."
+        },
+        "e2": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional second normalized PubTator entity (@TYPE_Name) to query a specific pair relationship between e1 and e2, e.g. e1='@CHEMICAL_Doxorubicin', type='treat', e2='@DISEASE_Neoplasms'. Omit for a one-entity neighborhood query."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": 50,
+          "description": "Maximum number of top-ranked relation edges to return (client-side truncation; the API may return thousands of edges). Default 50."
+        }
+      },
+      "required": [
+        "e1"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ncbi.nlm.nih.gov/research/pubtator3-api/relations",
+      "client_side_limit": true
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "e1": "@GENE_BRAF",
+        "limit": 5
+      },
+      {
+        "e1": "@CHEMICAL_Doxorubicin",
+        "type": "treat",
+        "e2": "@DISEASE_Neoplasms"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Ranked relation edges for the queried entity from the PubTator3 knowledge graph.",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "description": "Relation edges ranked by supporting publication count (highest first).",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Relation type (e.g. associate, cause, treat, inhibit, negative_correlate)."
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "Source entity in @TYPE_Name format."
+                  },
+                  "target": {
+                    "type": "string",
+                    "description": "Target entity in @TYPE_Name format."
+                  },
+                  "publications": {
+                    "type": "integer",
+                    "description": "Aggregate number of PubMed publications supporting this edge."
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer"
+            },
+            "total_before_limit": {
+              "type": "integer"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ]
+  },
+  {
     "name": "PubTator3_get_annotations",
     "description": "Extract biomedical entity annotations from PubMed articles using NCBI PubTator3. Given one or more PubMed IDs (PMIDs), returns text-mined entities including genes, diseases, chemicals, species, mutations, and cell lines with their normalized identifiers (NCBI Gene ID, MeSH, NCBI Taxonomy, etc.) and text positions. Useful for extracting structured biomedical knowledge from literature. Provide PMIDs as a comma-separated string.",
     "parameter": {

@@ -44,6 +44,8 @@ class SCExpressionAtlasTool(BaseTool):
                 return self._list_experiments(arguments)
             elif self.operation == "search_gene":
                 return self._search_gene(arguments)
+            elif self.operation == "cluster_marker_genes":
+                return self._cluster_marker_genes(arguments)
             return {
                 "status": "error",
                 "error": f"Unknown operation: {self.operation}",
@@ -116,6 +118,90 @@ class SCExpressionAtlasTool(BaseTool):
                 "total_matching": total,
                 "returned": len(results),
                 "source": "EBI Single Cell Expression Atlas",
+            },
+        }
+
+    def _cluster_marker_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get computed marker genes per cell cluster (or per cell type).
+
+        marker_type:
+        - "clusters" (default): top marker genes per cell cluster at clustering
+          resolution k. Requires `k`. Route: /marker-genes/clusters?k={k}
+        - "cell_types": marker genes per inferred cell type for an organism part.
+          Requires `organism_part`. Route: /marker-genes/cell-types?organismPart=...
+        """
+        accession = arguments.get("experiment_accession", "")
+        if not accession:
+            return {
+                "status": "error",
+                "error": "experiment_accession is required (e.g., 'E-MTAB-5061'). "
+                "Use SCXA_list_experiments to find accessions.",
+            }
+
+        marker_type = arguments.get("marker_type", "clusters")
+
+        if marker_type == "cell_types":
+            organism_part = arguments.get("organism_part")
+            if not organism_part:
+                return {
+                    "status": "error",
+                    "error": "organism_part is required for marker_type='cell_types' "
+                    "(e.g., 'pancreas', 'lung').",
+                }
+            url = f"{SCXA_BASE_URL}/experiments/{accession}/marker-genes/cell-types"
+            params = {"organismPart": organism_part}
+        else:
+            k = arguments.get("k")
+            if k is None:
+                return {
+                    "status": "error",
+                    "error": "k (clustering resolution / number of clusters) is "
+                    "required for marker_type='clusters' (e.g., 8).",
+                }
+            url = f"{SCXA_BASE_URL}/experiments/{accession}/marker-genes/clusters"
+            params = {"k": k}
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        raw = response.json()
+
+        # The cell-types route returns a dict {"error": ...} when a required
+        # param is missing; the clusters route returns a flat list of rows.
+        if isinstance(raw, dict) and "error" in raw:
+            return {
+                "status": "error",
+                "error": f"SCXA marker-genes error: {raw.get('error')}",
+            }
+
+        rows = raw if isinstance(raw, list) else []
+        limit = arguments.get("limit")
+        if isinstance(limit, int) and limit > 0:
+            rows = rows[:limit]
+
+        markers = [
+            {
+                "gene_name": r.get("geneName"),
+                "cell_group_value": r.get("cellGroupValue"),
+                "cell_group_value_where_marker": r.get("cellGroupValueWhereMarker"),
+                "value": r.get("value"),
+                "p_value": r.get("pValue"),
+                "expression_unit": r.get("expressionUnit"),
+            }
+            for r in rows
+        ]
+
+        return {
+            "status": "success",
+            "data": markers,
+            "metadata": {
+                "source": "EBI Single Cell Expression Atlas",
+                "experiment_accession": accession,
+                "marker_type": marker_type,
+                "k": arguments.get("k") if marker_type != "cell_types" else None,
+                "organism_part": arguments.get("organism_part")
+                if marker_type == "cell_types"
+                else None,
+                "num_markers": len(markers),
             },
         }
 

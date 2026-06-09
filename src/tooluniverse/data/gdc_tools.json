@@ -462,6 +462,100 @@
     }
   },
   {
+    "name": "GDC_get_mutation_frequency_by_project",
+    "type": "GDCMutationFreqByProjectTool",
+    "description": "Get per-project (per-cancer-type) somatic mutation frequency for a gene from NCI GDC. For each TCGA/GDC project, returns the numerator (mutated case count) AND denominator (total case count), enabling true per-cancer mutation rates. Answers 'In which cancer types is this gene most frequently mutated?' Example: gene KRAS returns CPTAC-3 mutated=510/total=3521, ALCHEMIST-ALCH mutated=391/total=3038.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'KRAS', 'TP53', 'EGFR')"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol alias — alternative to gene_symbol"
+        },
+        "size": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Maximum number of projects to return (default 100)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "source": {"type": "string"},
+            "endpoint": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene": {"type": "string"},
+                "project_count": {"type": "integer"},
+                "total_mutated_cases": {"type": "integer"},
+                "total_cases": {"type": "integer"},
+                "projects": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "project_id": {"type": ["string", "null"]},
+                      "mutated_case_count": {"type": "integer"},
+                      "total_case_count": {"type": "integer"},
+                      "frequency": {"type": ["number", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "gene_symbol": "KRAS",
+        "size": 5
+      },
+      {
+        "gene_symbol": "TP53",
+        "size": 5
+      }
+    ],
+    "label": [
+      "GDC",
+      "Frequency",
+      "Per-Project",
+      "TCGA"
+    ],
+    "metadata": {
+      "tags": [
+        "mutation_frequency",
+        "per_cancer",
+        "per_project",
+        "somatic",
+        "oncogenomics"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
     "name": "GDC_get_clinical_data",
     "type": "GDCClinicalDataTool",
     "description": "Get detailed clinical data for cancer cases from NCI GDC/TCGA. Returns demographics (gender, race, vital_status, age_at_index), diagnoses (primary_diagnosis, tumor_stage, age_at_diagnosis, days_to_last_follow_up), and treatments (therapeutic_agents, treatment_type). Filter by project, primary_site, disease_type, or vital_status.",

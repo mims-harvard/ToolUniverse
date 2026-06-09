@@ -70,5 +70,99 @@
     "test_examples": [
       {"chr": "7", "pos": 140753336, "ref": "A", "alt": "T", "genome": "hg38"}
     ]
+  },
+  {
+    "type": "GeneBeTool",
+    "name": "GeneBe_classify_variants_batch",
+    "description": "Batch-classify up to 1000 germline variants under the ACMG/AMP guidelines in a single GeneBe (genebe.net) request. Provide 'variants' as a JSON array of objects, each with chr, pos, ref, alt on genome build hg38 (default) or hg19. For every variant GeneBe returns the full ACMG output: the verdict (e.g. Pathogenic), the numeric ACMG score, the exact triggered criteria (e.g. PS3,PM1,PM2,PM5,PP2,PP3_Moderate,PP5), per-gene HGVS c./p. (acmg_by_gene), AlphaMissense score/prediction, gnomAD allele frequency, and ClinVar classification. Use this instead of calling GeneBe_classify_variant once per variant when you have many variants. Public API, no key required (a free account raises the rate limit). Example: [{\"chr\":\"7\",\"pos\":140753336,\"ref\":\"A\",\"alt\":\"T\"},{\"chr\":\"22\",\"pos\":28695868,\"ref\":\"AG\",\"alt\":\"A\"}] returns BRAF p.Val600Glu Pathogenic score 14 plus the second variant.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variants": {
+          "type": "array",
+          "description": "List of variants to classify (max 1000). Each item is an object with chr, pos, ref, alt.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chr": {"type": "string", "description": "Chromosome, e.g. '7', 'X' (a 'chr' prefix is also accepted)."},
+              "pos": {"type": "integer", "description": "1-based genomic position, e.g. 140753336."},
+              "ref": {"type": "string", "description": "Reference allele, e.g. 'A'."},
+              "alt": {"type": "string", "description": "Alternate allele, e.g. 'T'."}
+            },
+            "required": ["chr", "pos", "ref", "alt"]
+          }
+        },
+        "genome": {
+          "type": "string",
+          "description": "Genome build for ALL variants in the batch: 'hg38' (default) / 'GRCh38' or 'hg19' / 'GRCh37'.",
+          "default": "hg38"
+        }
+      },
+      "required": ["variants"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "variants": {
+                  "type": "array",
+                  "description": "Per-variant ACMG classification, one entry per submitted variant.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "chr": {"type": "string"},
+                      "pos": {"type": "integer"},
+                      "ref": {"type": "string"},
+                      "alt": {"type": "string"},
+                      "gene_symbol": {"type": ["string", "null"]},
+                      "transcript": {"type": ["string", "null"]},
+                      "hgvs_c": {"type": ["string", "null"]},
+                      "hgvs_p": {"type": ["string", "null"]},
+                      "acmg_classification": {"type": ["string", "null"]},
+                      "acmg_score": {"type": ["number", "null"]},
+                      "acmg_criteria": {"type": ["string", "null"]},
+                      "acmg_by_gene": {
+                        "type": ["array", "null"],
+                        "description": "Per-gene ACMG verdict, score, criteria, and HGVS c./p.",
+                        "items": {"type": "object"}
+                      },
+                      "clinvar_classification": {"type": ["string", "null"]},
+                      "alphamissense_score": {"type": ["number", "null"]},
+                      "gnomad_exomes_af": {"type": ["number", "null"]},
+                      "dbsnp": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              },
+              "required": ["variants"]
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "variants": [
+          {"chr": "7", "pos": 140753336, "ref": "A", "alt": "T"},
+          {"chr": "22", "pos": 28695868, "ref": "AG", "alt": "A"}
+        ],
+        "genome": "hg38"
+      }
+    ]
   }
 ]

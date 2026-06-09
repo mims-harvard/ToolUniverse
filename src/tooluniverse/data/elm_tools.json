@@ -117,5 +117,83 @@
         "max_results": 10
       }
     ]
+  },
+  {
+    "name": "ELM_get_interaction_domains",
+    "type": "ELMTool",
+    "description": "Get the ELM motif-to-interaction-domain mapping: for each Short Linear Motif (SLiM) class, the protein domain (with Pfam accession) that recognizes/binds the motif. SLiMs (3-11 residue motifs) are bound by globular domains on partner proteins; this mapping links each ELM class to the Pfam domain family of its binding partner, enabling reconstruction of the domain-motif interaction network. Returns ~409 motif-to-domain mapping records across all ELM classes. Filter by a specific elm_identifier or a free-text query (Pfam accession, domain name/description). Example: CLV_NRD_NRD_1 -> PF00675 'Peptidase_M16' (Insulinase); CLV_PCSK_FUR_1 -> PF00082 'Peptidase_S8' (Subtilase family); DEG_APCC_DBOX_1 -> PF00400 'WD40'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_interaction_domains"],
+          "description": "Operation type"
+        },
+        "elm_identifier": {
+          "type": ["string", "null"],
+          "description": "Filter to a single ELM class identifier (e.g., 'CLV_NRD_NRD_1', 'LIG_SH3_1'). Omit to return all mappings."
+        },
+        "query": {
+          "type": ["string", "null"],
+          "description": "Free-text filter matched against ELM identifier, Pfam accession, domain name, and description (e.g., 'WD40', 'PF00082', 'kinase', 'SH3')."
+        },
+        "max_results": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 100,
+          "description": "Maximum mappings to return (default: 100, max: 500 covers all 427 mappings)"
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "elm_identifier": {"type": "string", "description": "ELM motif class identifier (e.g., CLV_NRD_NRD_1)"},
+                  "pfam_accession": {"type": "string", "description": "Pfam accession of the recognizing domain (e.g., PF00675)"},
+                  "interaction_domain_description": {"type": "string", "description": "Short domain name (e.g., Peptidase_M16)"},
+                  "interaction_domain_name": {"type": "string", "description": "Full domain name (e.g., Insulinase (Peptidase family M16))"}
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_mappings": {"type": "integer"},
+                "returned": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_interaction_domains"
+      },
+      {
+        "operation": "get_interaction_domains",
+        "elm_identifier": "CLV_NRD_NRD_1"
+      }
+    ]
   }
 ]

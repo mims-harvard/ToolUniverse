@@ -340,5 +340,59 @@
         "file_match": true
       }
     ]
+  },
+  {
+    "type": "MetaboLightsRESTTool",
+    "name": "metabolights_get_reference_compound",
+    "description": "Retrieve a record from the MetaboLights Reference Compound database (the curated metabolite/compound catalogue, accessions MTBLC*). Pass a compound_id like 'MTBLC10' to get that compound's name, description, molecular formula, InChI, InChIKey, ChEBI ID, IUPAC names, study status, species (metSpecies), cross-references, and boolean flags for available data (hasNMR, hasMS, hasPathways, hasReactions, hasSpecies, hasLiterature). Example: MTBLC10 -> {name:'(+)-Atherospermoline', formula:'C36H38N2O6', chebiId:'CHEBI:10', inchikey:'XGEAUXVPBXUBKN-NSOVKSMOSA-N'}. This is distinct from study metadata (metabolights_get_study). To enumerate all reference-compound accessions, set list=true (returns the full MTBLC* id list).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "compound_id": {
+          "type": "string",
+          "description": "MetaboLights reference-compound accession, e.g. 'MTBLC10'. Always starts with 'MTBLC'. Required unless list=true."
+        },
+        "list": {
+          "type": "boolean",
+          "description": "If true, return the full list of all reference-compound accessions (MTBLC*) instead of a single record. Default false.",
+          "default": false
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/metabolights/ws/compounds/{compound_id}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": ["object", "array"],
+              "description": "Reference compound record (object) with name, formula, inchi, inchikey, chebiId, metSpecies, hasNMR, hasMS, hasPathways flags; or the full list of MTBLC* accessions (array) when list=true."
+            },
+            "url": {"type": "string"},
+            "count": {"type": "integer"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "compound_id": "MTBLC10"
+      }
+    ]
   }
 ]

@@ -1,6 +1,115 @@
 [
   {
     "type": "EnsemblRESTTool",
+    "name": "Ensembl_get_transcript_haplotypes",
+    "description": "Get population protein and CDS haplotypes for a transcript from the Ensembl REST API (transcript_haplotypes endpoint). Returns the real observed haplotypes across 1000 Genomes phase 3 populations, each with per-population frequencies, contributing variants, sequence diffs, an indel flag, and observed counts/frequency, plus total_population_counts and total_haplotype_count. Use this to assess how a coding transcript varies across human populations. Example: ENST00000288602 (BRAF) returns 11 protein_haplotypes and 26 cds_haplotypes; the most common protein haplotype has 1000GENOMES:phase_3 population frequencies up to ~0.99.",
+    "endpoint": "/transcript_haplotypes/{species}/{id}",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ensembl transcript stable ID. Examples: 'ENST00000288602' (BRAF), 'ENST00000269305' (TP53), 'ENST00000357654' (BRCA1)."
+        },
+        "species": {
+          "type": "string",
+          "default": "human",
+          "description": "Species name (default 'human'). Use 'human' or 'homo_sapiens'."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "transcript_id": {
+                  "type": "string"
+                },
+                "total_haplotype_count": {
+                  "type": "integer"
+                },
+                "protein_haplotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer"
+                      },
+                      "frequency": {
+                        "type": "number"
+                      },
+                      "has_indel": {},
+                      "population_frequencies": {
+                        "type": "object"
+                      },
+                      "population_counts": {
+                        "type": "object"
+                      },
+                      "contributing_variants": {
+                        "type": "array"
+                      }
+                    }
+                  }
+                },
+                "cds_haplotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "total_population_counts": {
+                  "type": "object"
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "id": "ENST00000288602",
+        "species": "human"
+      }
+    ]
+  },
+  {
+    "type": "EnsemblRESTTool",
     "name": "ensembl_lookup_gene",
     "description": "Lookup gene information by Ensembl gene ID or symbol. Returns gene details including location, description, and external references. Supports both stable IDs (e.g., ENSG00000139618) and gene symbols (e.g., BRCA1). For gene symbols, species parameter is required.",
     "endpoint": "/lookup/symbol/{species}/{gene_id}",

@@ -109,5 +109,58 @@
     "test_examples": [
       {"entity_id": "SLM:000000510"}
     ]
+  },
+  {
+    "type": "SwissLipidsTool",
+    "name": "SwissLipids_get_children",
+    "description": "List the direct children of a SwissLipids hierarchy node, i.e. descend the lipid structural classification tree one level (category -> class -> species -> structural subspecies -> isomeric subspecies). Pass the parent's SwissLipids id (e.g. 'SLM:000001193', the Glycerophospholipids category) and receive its immediate child entities, each with its SLM id, name, type, formula, mass, and InChIKey. Useful for browsing or enumerating all lipids under a class. Find parent ids with SwissLipids_search. No API key required.",
+    "fields": {"operation": "get_children"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "SwissLipids id of the parent node whose direct children to list, e.g. 'SLM:000001193' (a bare number is also accepted)."
+        }
+      },
+      "required": ["entity_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {"type": "string"},
+                  "entity_name": {"type": ["string", "null"]},
+                  "entity_type": {"type": ["string", "null"]},
+                  "formula": {"type": ["string", "null"]},
+                  "mass": {"type": ["string", "null"]},
+                  "inchikey": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"entity_id": "SLM:000001193"}
+    ]
   }
 ]

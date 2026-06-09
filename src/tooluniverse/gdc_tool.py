@@ -668,6 +668,133 @@ class GDCMutationFrequencyTool:
 
 
 @register_tool(
+    "GDCMutationFreqByProjectTool",
+    config={
+        "name": "GDC_get_mutation_frequency_by_project",
+        "type": "GDCMutationFreqByProjectTool",
+        "description": (
+            "Get per-project (per-cancer-type) somatic mutation frequency for a gene from NCI GDC. "
+            "For each TCGA/GDC project, returns the numerator (mutated case count) AND denominator "
+            "(total case count), enabling true per-cancer mutation rates. "
+            "Answers 'In which cancer types is this gene most frequently mutated?'"
+        ),
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene_symbol": {
+                    "type": "string",
+                    "description": "Gene symbol (e.g., 'KRAS', 'TP53', 'EGFR')",
+                },
+                "gene": {
+                    "type": "string",
+                    "description": "Gene symbol alias — alternative to gene_symbol",
+                },
+                "size": {
+                    "type": "integer",
+                    "default": 100,
+                    "minimum": 1,
+                    "maximum": 200,
+                    "description": "Maximum number of projects to return (default 100)",
+                },
+            },
+            "required": [],
+        },
+        "settings": {"base_url": "https://api.gdc.cancer.gov", "timeout": 30},
+    },
+)
+class GDCMutationFreqByProjectTool:
+    """Per-project somatic mutation frequency (mutated cases / total cases) for a gene."""
+
+    def __init__(self, tool_config=None):
+        self.tool_config = tool_config or {}
+
+    def run(self, arguments: Dict[str, Any]):
+        base = self.tool_config.get("settings", {}).get(
+            "base_url", "https://api.gdc.cancer.gov"
+        )
+        timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
+
+        gene_symbol = arguments.get("gene_symbol") or arguments.get("gene")
+        if not gene_symbol:
+            return {
+                "status": "error",
+                "error": "gene_symbol parameter is required",
+                "source": "GDC",
+            }
+
+        size = arguments.get("size", 100)
+        try:
+            size = max(1, min(int(size), 200))
+        except (TypeError, ValueError):
+            size = 100
+
+        filters = json.dumps(
+            {
+                "op": "in",
+                "content": {"field": "genes.symbol", "value": [gene_symbol]},
+            }
+        )
+        query = {"size": 0, "filters": filters}
+        url = f"{base}/analysis/mutated_cases_count_by_project?{urlencode(query)}"
+
+        try:
+            raw = _http_get(
+                url, headers={"Accept": "application/json"}, timeout=timeout
+            )
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": str(e),
+                "source": "GDC",
+                "endpoint": "mutated_cases_count_by_project",
+            }
+
+        buckets = (
+            raw.get("aggregations", {}).get("projects", {}).get("buckets", []) or []
+        )
+
+        projects = []
+        for b in buckets:
+            mutated = b.get("doc_count", 0) or 0
+            case_summary = b.get("case_summary", {}) or {}
+            total = case_summary.get("doc_count", 0) or 0
+            freq = round(mutated / total, 4) if total else None
+            projects.append(
+                {
+                    "project_id": b.get("key"),
+                    "mutated_case_count": mutated,
+                    "total_case_count": total,
+                    "frequency": freq,
+                }
+            )
+
+        # Sort by mutation frequency (descending), then by mutated count.
+        projects.sort(
+            key=lambda p: (
+                p["frequency"] if p["frequency"] is not None else -1,
+                p["mutated_case_count"],
+            ),
+            reverse=True,
+        )
+
+        total_mutated = sum(p["mutated_case_count"] for p in projects)
+        total_cases = sum(p["total_case_count"] for p in projects)
+
+        return {
+            "status": "success",
+            "source": "GDC",
+            "endpoint": "mutated_cases_count_by_project",
+            "data": {
+                "gene": gene_symbol,
+                "project_count": len(projects),
+                "total_mutated_cases": total_mutated,
+                "total_cases": total_cases,
+                "projects": projects[:size],
+            },
+        }
+
+
+@register_tool(
     "GDCClinicalDataTool",
     config={
         "name": "GDC_get_clinical_data",

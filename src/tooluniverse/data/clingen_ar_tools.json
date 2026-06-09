@@ -188,5 +188,112 @@
         }
       ]
     }
+  },
+  {
+    "name": "ClinGenAR_lookup_by_external_id",
+    "description": "Reverse-lookup the ClinGen Allele Registry by an external identifier. Given a dbSNP rsID (dbsnp_rs) or a ClinVar VariationID (clinvar_variation_id), resolves it to the canonical ClinGen allele (CA id) and returns ALL cross-references (ClinVar alleles/variations, dbSNP, COSMIC, gnomAD, MyVariantInfo) plus the community standard HGVS title and genomic allele HGVS. This complements ClinGenAR_lookup_allele (which takes an HGVS expression): use this when you start from an rsID or ClinVar variation id instead of HGVS. Example: dbsnp_rs=113488022 -> CA123643, 'NM_004333.6(BRAF):c.1799T>A (p.Val600Glu)', incl COSM476; clinvar_variation_id=13961 resolves to the same CA123643 record. Public API, no key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dbsnp_rs": {
+          "type": ["string", "integer", "null"],
+          "description": "dbSNP rsID to resolve. The 'rs' prefix is optional (e.g. 113488022 or 'rs113488022'). Mutually exclusive with clinvar_variation_id."
+        },
+        "clinvar_variation_id": {
+          "type": ["string", "integer", "null"],
+          "description": "ClinVar VariationID to resolve (e.g. 13961). Mutually exclusive with dbsnp_rs."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "lookup_by_external_id"
+    },
+    "type": "ClinGenARTool",
+    "test_examples": [
+      {
+        "dbsnp_rs": "113488022"
+      },
+      {
+        "clinvar_variation_id": "13961"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "The external-id query that was resolved (e.g. 'dbSNP.rs=113488022')"
+                },
+                "allele_count": {
+                  "type": "integer",
+                  "description": "Number of matching canonical alleles"
+                },
+                "alleles": {
+                  "type": "array",
+                  "description": "Matching canonical alleles, each with CA id and cross-references",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "allele_id": {
+                        "type": ["string", "null"],
+                        "description": "ClinGen canonical allele ID (e.g. CA123643)"
+                      },
+                      "allele_url": {
+                        "type": ["string", "null"]
+                      },
+                      "community_standard_title": {
+                        "type": ["string", "null"],
+                        "description": "Standardized HGVS title"
+                      },
+                      "external_records": {
+                        "type": "object",
+                        "description": "Cross-references (ClinVarAlleles, ClinVarVariations, dbSNP, COSMIC, gnomAD, MyVariantInfo)"
+                      },
+                      "genomic_alleles": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "hgvs": {"type": ["string", "null"]},
+                            "reference_genome": {"type": ["string", "null"]}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "query": {"type": "string"}
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

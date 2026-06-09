@@ -543,5 +543,228 @@
         }
       ]
     }
+  },
+  {
+    "name": "HPO_get_disease_annotations",
+    "description": "Get the full curated HPO annotation profile for a disease, keyed by a disease ID (OMIM / ORPHA / DECIPHER), from the JAX HPO network annotations. Returns three things: (1) medical_actions \u2014 MAxO curated treatments / management actions, each with TREATS / PREVENTS relations and the specific phenotypes they target; (2) categories \u2014 the disease's phenotypes grouped by body system (e.g., Cardiovascular, Nervous System, Eye), each with frequency / onset; (3) genes \u2014 the causative genes (NCBI gene IDs and symbols). Use to retrieve evidence-based management options and the organ-system phenotype breakdown for a known disease. Example: OMIM:154700 (Marfan syndrome) returns 3 medical actions including MAXO:0000653 'angiotensin receptor blocker therapy' (PREVENTS/TREATS aortic root aneurysm), 13 body systems, and gene NCBIGene:2200 (FBN1). Other examples: OMIM:277900 (Wilson disease) \u2192 copper chelator / zinc therapy; OMIM:261600 (phenylketonuria) \u2192 dietary phenylalanine avoidance.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "disease_id": {
+          "type": "string",
+          "description": "Disease identifier as an OMIM, ORPHA, or DECIPHER CURIE (e.g., 'OMIM:154700' for Marfan syndrome, 'OMIM:277900' for Wilson disease, 'ORPHA:558')."
+        }
+      },
+      "required": [
+        "disease_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_disease_annotations"
+    },
+    "type": "HPOTool",
+    "test_examples": [
+      {
+        "disease_id": "OMIM:154700"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "disease": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "mondo_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "medical_actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "MAxO action CURIE (e.g., 'MAXO:0000653')."
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "relations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Action relations, e.g. ['PREVENTS', 'TREATS']."
+                      },
+                      "targets": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        },
+                        "description": "Targeted HPO phenotypes."
+                      }
+                    }
+                  }
+                },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "body_system": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "phenotype_count": {
+                        "type": "integer"
+                      },
+                      "phenotypes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "frequency": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "onset": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "disease_id": {
+                  "type": "string"
+                },
+                "total_medical_actions": {
+                  "type": "integer"
+                },
+                "total_body_systems": {
+                  "type": "integer"
+                },
+                "total_phenotypes": {
+                  "type": "integer"
+                },
+                "total_genes": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

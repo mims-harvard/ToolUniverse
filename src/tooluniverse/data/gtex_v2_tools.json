@@ -2401,5 +2401,736 @@
         "gencode_id": "ENSG00000141510.16"
       }
     ]
+  },
+  {
+    "name": "GTEx_get_single_tissue_sqtls",
+    "type": "GTExV2Tool",
+    "description": "Get GTEx single-tissue splicing QTLs (sQTLs) and sGenes - a molecular layer distinct from eQTLs that captures genetic regulation of alternative splicing. result_type='sqtl' (default) returns significant single-tissue sQTL associations for a gene/tissue (variant, pValue, nes, and phenotypeId which encodes the LeafCutter intron-excision cluster, e.g. chr5:96900189:96901506:clu_31758). result_type='sgene' returns genes with at least one significant sQTL in a tissue, with qValue. Based on gtex_v8. Example: ERAP2 (ENSG00000164308.16) in Whole_Blood -> rs72772072 / chr5_96659855_A_G_b38, pValue 1.2e-06, nes 0.439.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_single_tissue_sqtls"
+          ],
+          "description": "Operation type"
+        },
+        "result_type": {
+          "type": "string",
+          "enum": [
+            "sqtl",
+            "sgene"
+          ],
+          "default": "sqtl",
+          "description": "'sqtl' for single-tissue sQTL associations (default), 'sgene' for genes with significant sQTLs in a tissue."
+        },
+        "gencode_id": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene identifier(s) for sqtl mode: gene symbol (e.g. 'ERAP2'), Ensembl ID, or versioned GENCODE ID (e.g. 'ENSG00000164308.16'). Auto-resolved."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias for gencode_id."
+        },
+        "variant_id": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional GTEx variant ID(s) to filter sqtl results (e.g. 'chr5_96659855_A_G_b38')."
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tissue ID(s) (e.g. ['Whole_Blood']). Recommended for both modes. See GTEx_get_tissue_sites."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number (0-based)"
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250,
+          "description": "Results per page"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "variantId": {
+                    "type": "string"
+                  },
+                  "snpId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gencodeId": {
+                    "type": "string"
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tissueSiteDetailId": {
+                    "type": "string"
+                  },
+                  "pValue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "nes": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "qValue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "phenotypeId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "paging_info": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_single_tissue_sqtls",
+        "gencode_id": "ENSG00000164308.16",
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ],
+        "items_per_page": 5
+      },
+      {
+        "operation": "get_single_tissue_sqtls",
+        "result_type": "sgene",
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ],
+        "items_per_page": 5
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_median_transcript_expression",
+    "type": "GTExV2Tool",
+    "description": "Get GTEx transcript/isoform-level median expression: per-transcript (ENST) median TPM across tissues, enabling isoform-usage and transcript-switching analysis that gene-level expression cannot reveal. Based on gtex_v8. Example: BRCA1 (ENSG00000012048.20) in Whole_Blood -> transcript ENST00000352993.7 median 0.37 TPM, ENST00000354071.7 median 0.0, ENST00000357654.7 median 0.07.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_median_transcript_expression"
+          ],
+          "description": "Operation type"
+        },
+        "gencode_id": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene identifier(s): gene symbol (e.g. 'BRCA1'), Ensembl ID, or versioned GENCODE ID (e.g. 'ENSG00000012048.20'). Auto-resolved."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias for gencode_id."
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional tissue ID(s) to filter (e.g. ['Whole_Blood']). Omit for all tissues. See GTEx_get_tissue_sites."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number (0-based)"
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250,
+          "description": "Results per page"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "transcriptId": {
+                    "type": "string"
+                  },
+                  "median": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "tissueSiteDetailId": {
+                    "type": "string"
+                  },
+                  "gencodeId": {
+                    "type": "string"
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "paging_info": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_median_transcript_expression",
+        "gencode_id": "ENSG00000012048.20",
+        "tissue_site_detail_id": [
+          "Whole_Blood"
+        ],
+        "items_per_page": 3
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_single_nucleus_expression",
+    "type": "GTExV2Tool",
+    "description": "Get GTEx single-nucleus (snRNA-seq) gene expression resolved by cell type from the snRNA-seq pilot dataset (bulk-tissue GTEx cannot resolve cell types). result_type='detail' (default) returns per-cell-type mean/median (with and without zeros), cell counts, and number of zeros for a gene. result_type='summary' returns a tissue x cell-type cell-count summary (numCells per cell type). Uses datasetId gtex_snrnaseq_pilot. Example: BRCA1 (ENSG00000012048.20) Muscle_Skeletal -> Myocyte (NMJ-rich) count 6 meanWithoutZeros 1.455; Endothelial cell (vascular) count 38 meanWithoutZeros 2.264.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_single_nucleus_expression"
+          ],
+          "description": "Operation type"
+        },
+        "result_type": {
+          "type": "string",
+          "enum": [
+            "detail",
+            "summary"
+          ],
+          "default": "detail",
+          "description": "'detail' for per-cell-type expression stats (default), 'summary' for tissue x cell-type cell-count summary."
+        },
+        "gencode_id": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene identifier(s): gene symbol (e.g. 'BRCA1'), Ensembl ID, or versioned GENCODE ID (e.g. 'ENSG00000012048.20'). Auto-resolved."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias for gencode_id."
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional tissue ID(s) (e.g. ['Muscle_Skeletal']). Omit for all snRNA-seq tissues."
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_snrnaseq_pilot",
+          "description": "GTEx dataset version (default gtex_snrnaseq_pilot; snRNA-seq data only exists in the pilot dataset)."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number (0-based)"
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250,
+          "description": "Results per page"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tissueSiteDetailId": {
+                    "type": "string"
+                  },
+                  "gencodeId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "datasetId": {
+                    "type": "string"
+                  },
+                  "cellType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "numCells": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "cellTypes": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "cellType": {
+                          "type": "string"
+                        },
+                        "count": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "meanWithZeros": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "meanWithoutZeros": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "medianWithZeros": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "medianWithoutZeros": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "numZeros": {
+                          "type": [
+                            "integer",
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "paging_info": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_single_nucleus_expression",
+        "gencode_id": "ENSG00000012048.20",
+        "tissue_site_detail_id": [
+          "Muscle_Skeletal"
+        ]
+      },
+      {
+        "operation": "get_single_nucleus_expression",
+        "result_type": "summary",
+        "gencode_id": "ENSG00000012048.20",
+        "tissue_site_detail_id": [
+          "Muscle_Skeletal"
+        ],
+        "items_per_page": 5
+      }
+    ]
+  },
+  {
+    "name": "GTEx_get_finemapping_and_independent_eqtl",
+    "type": "GTExV2Tool",
+    "description": "Get GTEx statistical fine-mapping credible sets and conditionally-independent eQTLs - identifying likely causal variants and multiple independent regulatory signals per gene beyond the marginal single-tissue eQTL list. result_type='finemapping' (default) returns DAP-G credible sets with per-variant PIP (posterior inclusion probability) and setId. result_type='independent' returns rank-ordered conditionally-independent (secondary) eQTL signals. Based on gtex_v8. Example: ERAP2 (ENSG00000164308.16) Adipose_Subcutaneous -> method DAP-G, variant chr5_96916728_G_A_b38, pip 0.9468, setId 1; independent -> rs2927608 rank 1 pValue 2.88e-123 nes 1.076.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_finemapping_and_independent_eqtl"
+          ],
+          "description": "Operation type"
+        },
+        "result_type": {
+          "type": "string",
+          "enum": [
+            "finemapping",
+            "independent"
+          ],
+          "default": "finemapping",
+          "description": "'finemapping' for DAP-G credible sets with PIP (default), 'independent' for rank-ordered conditionally-independent eQTL signals."
+        },
+        "gencode_id": {
+          "type": [
+            "string",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Gene identifier: gene symbol (e.g. 'ERAP2'), Ensembl ID, or versioned GENCODE ID (e.g. 'ENSG00000164308.16'). Auto-resolved."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol alias for gencode_id."
+        },
+        "tissue_site_detail_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional tissue ID(s) to filter (e.g. ['Adipose_Subcutaneous']). Omit for all tissues."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number (0-based)"
+        },
+        "items_per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "default": 250,
+          "description": "Results per page"
+        },
+        "dataset_id": {
+          "type": "string",
+          "enum": [
+            "gtex_v8",
+            "gtex_v10",
+            "gtex_snrnaseq_pilot"
+          ],
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gencodeId": {
+                    "type": "string"
+                  },
+                  "geneSymbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "variantId": {
+                    "type": "string"
+                  },
+                  "snpId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tissueSiteDetailId": {
+                    "type": "string"
+                  },
+                  "method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pip": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "setId": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "setSize": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "rank": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "pValue": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "nes": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "maf": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "paging_info": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_finemapping_and_independent_eqtl",
+        "gencode_id": "ENSG00000164308.16",
+        "items_per_page": 3
+      },
+      {
+        "operation": "get_finemapping_and_independent_eqtl",
+        "result_type": "independent",
+        "gencode_id": "ENSG00000164308.16",
+        "items_per_page": 3
+      }
+    ]
   }
 ]

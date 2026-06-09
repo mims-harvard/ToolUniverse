@@ -499,5 +499,85 @@
     "test_examples": [
       {"institution_id": "I136199984"}
     ]
+  },
+  {
+    "type": "OpenAlexRESTTool",
+    "name": "openalex_search_sources",
+    "description": "Search OpenAlex sources (journals, conferences, repositories) by name or ISSN and return JOURNAL-LEVEL BIBLIOMETRIC IMPACT METRICS for each match: the Source ID (S...), display name, ISSN-L and ISSNs, host organization (publisher), works_count, cited_by_count, open-access status (is_oa), and summary_stats containing h_index, i10_index, and 2yr_mean_citedness (an impact-factor-like 2-year mean citedness). Use this to look up the impact/standing of a journal by name (e.g. 'nature', 'lancet') or to resolve an ISSN to its OpenAlex Source ID, then optionally fetch the full record with openalex_get_source. Results are returned newest/most-relevant first; pass relevance_score sorting via OpenAlex defaults.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Source/journal name or ISSN to search for. Examples: \"nature\", \"the lancet\", \"0028-0836\"."
+        },
+        "per_page": {
+          "type": "integer",
+          "description": "Results per page (OpenAlex max 200).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page number (1-indexed).",
+          "default": 1,
+          "minimum": 1
+        },
+        "mailto": {
+          "type": "string",
+          "description": "Optional contact email for OpenAlex polite pool."
+        }
+      },
+      "required": ["search"]
+    },
+    "fields": {
+      "path": "/sources",
+      "path_params": [],
+      "param_map": {
+        "per_page": "per-page"
+      }
+    },
+    "return_schema": {
+      "type": ["object", "null"],
+      "description": "OpenAlex sources search response. results[].summary_stats contains h_index, i10_index, and 2yr_mean_citedness.",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {"search": "nature", "per_page": 3},
+      {"search": "lancet", "per_page": 3}
+    ]
+  },
+  {
+    "type": "OpenAlexRESTTool",
+    "name": "openalex_get_source",
+    "description": "Fetch the full OpenAlex source (journal) record by Source ID (S...) or by ISSN, returning journal-level bibliometric impact metrics: display name, ISSN-L and ISSNs, host organization (publisher), works_count, cited_by_count, is_oa / is_in_doaj open-access status, apc (article processing charges), and summary_stats with h_index, i10_index, and 2yr_mean_citedness (an impact-factor-like 2-year mean citedness). Resolve a journal name to its Source ID first using openalex_search_sources. You may also pass an ISSN directly as the source_id (OpenAlex accepts issn:0028-0836).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "description": "OpenAlex Source ID (e.g. 'S137773608'), a full OpenAlex URL, or an ISSN expression (e.g. 'issn:0028-0836')."
+        },
+        "mailto": {
+          "type": "string",
+          "description": "Optional contact email for OpenAlex polite pool."
+        }
+      },
+      "required": ["source_id"]
+    },
+    "fields": {
+      "path": "/sources/{source_id}",
+      "path_params": ["source_id"]
+    },
+    "return_schema": {
+      "type": ["object", "null"],
+      "description": "OpenAlex source record. summary_stats contains h_index, i10_index, and 2yr_mean_citedness.",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {"source_id": "S137773608"},
+      {"source_id": "S49861241"}
+    ]
   }
 ]

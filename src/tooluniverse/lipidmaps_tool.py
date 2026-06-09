@@ -146,14 +146,47 @@ class LipidMapsTool(BaseTool):
             # Not JSON - return raw text (some endpoints return TSV)
             return {"status": "success", "data": raw_text}
 
+    # Cross-reference / structure input items accepted by the LMSD compound
+    # route. Lets a single tool resolve any external metabolite/lipid id to a
+    # LIPID MAPS record by passing xref_type (e.g. kegg_id, hmdb_id).
+    _XREF_INPUT_ITEMS = {
+        "kegg_id",
+        "hmdb_id",
+        "chebi_id",
+        "pubchem_cid",
+        "inchi_key",
+        "lipidbank_id",
+        "lm_id",
+        "abbrev",
+        "abbrev_chains",
+        "formula",
+        "smiles",
+        "inchi",
+    }
+
     def _query_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Query compound/lipid information from LMSD."""
         input_value = arguments.get("input_value", "")
         output_item = arguments.get("output_item", "all")
         if not input_value:
             return {"status": "error", "error": "input_value parameter is required"}
+
+        # Allow the input item (the LMSD lookup key) to be overridden per call
+        # via xref_type / input_item, falling back to the config default. This
+        # powers the cross-reference lookup tool without a new tool class.
+        input_item = (
+            arguments.get("xref_type") or arguments.get("input_item") or self.input_item
+        )
+        input_item = str(input_item).strip()
+        if input_item not in self._XREF_INPUT_ITEMS:
+            return {
+                "status": "error",
+                "error": f"Unsupported xref_type '{input_item}'. Supported: "
+                + ", ".join(sorted(self._XREF_INPUT_ITEMS)),
+            }
+
         return self._make_request(
-            f"compound/{self.input_item}/{input_value}/{output_item}/json"
+            f"compound/{input_item}/{input_value}/{output_item}/json"
         )
 
     def _query_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

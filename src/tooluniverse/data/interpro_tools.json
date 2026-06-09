@@ -262,6 +262,128 @@
   },
   {
     "type": "InterProRESTTool",
+    "name": "InterPro_get_residue_annotations",
+    "description": "Get InterPro residue-level functional site annotations for a protein by UniProt accession. Returns specific residue positions for binding sites, active sites, conserved residues, and PTM/modified residues (e.g., from PIRSR, CDD member-database site rules) - distinct from domain/region architecture. The response is keyed by member-database signature accession; each entry has 'locations' with a 'description' (e.g., 'BINDING: ATP', 'ACT_SITE: Proton acceptor.') and 'fragments' listing the exact residue start/end and the residue letter(s). Example: P00533 (EGFR) returns ~75 residue-site entries, e.g. PIRSR000617-2 BINDING ATP at K745 and R841, PIRSR638784-1 ACT_SITE Proton acceptor at D855. Use to pinpoint catalytic and ligand-contacting residues at single-residue resolution.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_id": {
+          "type": "string",
+          "description": "UniProt accession (e.g., 'P00533' EGFR, 'P04637' TP53, 'P00519' ABL1)"
+        }
+      },
+      "required": [
+        "protein_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/interpro/api/protein/uniprot/{protein_id}/?residues&format=json",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Object keyed by member-database signature accession (e.g., 'PIRSR000617-2').",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "source_database": {
+                    "type": "string"
+                  },
+                  "locations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Site type and label, e.g. 'BINDING: ATP' or 'ACT_SITE: Proton acceptor.'"
+                        },
+                        "fragments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "number"
+                                ]
+                              },
+                              "residues": {
+                                "type": "string",
+                                "description": "Residue letter(s) at this position"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "protein_id": "P00533"
+      }
+    ]
+  },
+  {
+    "type": "InterProRESTTool",
     "name": "InterPro_search_domains",
     "description": "Search InterPro database for protein domains and families by name or accession. Returns matching domain entries with metadata.",
     "parameter": {

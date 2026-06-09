@@ -588,5 +588,93 @@
         "setting": "platinum"
       }
     ]
+  },
+  {
+    "name": "ProteinsPlus_protonate_structure",
+    "description": "Add hydrogens and optimize protonation states of a protein-ligand complex using ProtoSS (Protonation Structure Solver) on ProteinsPlus. ProtoSS places hydrogen atoms, assigns tautomers and protonation states, and optimizes the hydrogen-bond network of the protein and any co-crystallized ligands. Protonation is the standard prerequisite step before molecular docking, interaction-fingerprint analysis, or binding-energy calculations, because raw PDB structures lack hydrogen positions. Input a PDB ID (or raw PDB content). Returns URLs to the protonated protein (PDB), protonated ligand(s) (SDF), and a log file. Example: pdbCode '1cbs' returns protein=.../1cbs.pdb (protonated), ligands=.../1cbs.sdf, log=.../1cbs_log.txt.",
+    "type": "ProteinsPlusRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (e.g., '1cbs', '1KZK', '4HHB'). Use either pdb_id or pdb_content, not both."
+        },
+        "pdb_content": {
+          "type": "string",
+          "description": "Raw PDB file content as a string (multi-line text). Use either pdb_id or pdb_content, not both."
+        },
+        "ligand_content": {
+          "type": "string",
+          "description": "Optional raw ligand SDF content to protonate alongside the protein. Only used with pdb_content uploads."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/protoss_rest",
+      "method": "POST",
+      "is_async": true,
+      "poll_interval": 10,
+      "max_wait_time": 600
+    },
+    "execution": {
+      "taskSupport": "required"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "protein": {
+                  "type": "string",
+                  "description": "URL to the protonated protein structure (PDB format)"
+                },
+                "ligands": {
+                  "type": "string",
+                  "description": "URL to the protonated ligand(s) (SDF format)"
+                },
+                "log": {
+                  "type": "string",
+                  "description": "URL to the ProtoSS log file"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1cbs"
+      }
+    ]
   }
 ]

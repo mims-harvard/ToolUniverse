@@ -40,9 +40,11 @@ class SwissLipidsTool(BaseTool):
             return self._search(arguments)
         if operation == "get_lipid":
             return self._get_lipid(arguments)
+        if operation == "get_children":
+            return self._get_children(arguments)
         return {
             "status": "error",
-            "error": f"Unknown operation: {operation}. Supported: search, get_lipid.",
+            "error": f"Unknown operation: {operation}. Supported: search, get_lipid, get_children.",
         }
 
     def _request(self, path: str, params: Dict[str, Any] | None = None):
@@ -172,4 +174,62 @@ class SwissLipidsTool(BaseTool):
                 "xrefs": xrefs,
             },
             "metadata": {"source": "SwissLipids (swisslipids.org, SIB)"},
+        }
+
+    def _get_children(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List the direct children of a SwissLipids hierarchy node.
+
+        Descends the lipid structural hierarchy (category -> class -> species ->
+        subspecies). The /children endpoint returns a list of single-key dicts
+        ({"SLM:...": {entity record}}); this flattens them into a list of
+        child entities.
+        """
+        entity_id = arguments.get("entity_id") or arguments.get("slm_id")
+        if not entity_id or not str(entity_id).strip():
+            return {
+                "status": "error",
+                "error": "Parameter 'entity_id' is required (a SwissLipids id, e.g. "
+                "'SLM:000001193'). Find ids with SwissLipids_search.",
+            }
+        entity_id = str(entity_id).strip()
+        if not entity_id.upper().startswith("SLM:"):
+            entity_id = f"SLM:{entity_id}"
+
+        body, err = self._request("children", {"entity_id": entity_id})
+        if err:
+            if "HTTP" in err.get("error", ""):
+                return {
+                    "status": "error",
+                    "error": f"No SwissLipids children for '{entity_id}' (the id may not "
+                    "exist or be malformed). Find valid ids with SwissLipids_search.",
+                }
+            return err
+
+        children: List[Dict[str, Any]] = []
+        # /children returns a list of {"SLM:...": {record}} single-key dicts.
+        records = body if isinstance(body, list) else [body]
+        for item in records:
+            if not isinstance(item, dict):
+                continue
+            for child in item.values():
+                if isinstance(child, dict) and child.get("entity_id"):
+                    children.append(
+                        {
+                            "entity_id": child.get("entity_id"),
+                            "entity_name": child.get("entity_name"),
+                            "entity_type": child.get("entity_type"),
+                            "formula": child.get("formula"),
+                            "mass": child.get("mass"),
+                            "inchikey": child.get("inchikey"),
+                        }
+                    )
+
+        return {
+            "status": "success",
+            "data": children,
+            "metadata": {
+                "source": "SwissLipids (swisslipids.org, SIB)",
+                "parent_id": entity_id,
+                "child_count": len(children),
+            },
         }

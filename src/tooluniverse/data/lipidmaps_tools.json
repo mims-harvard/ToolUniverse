@@ -288,5 +288,73 @@
         }
       }
     }
+  },
+  {
+    "name": "LipidMaps_get_compound_by_xref",
+    "description": "Look up a LIPID MAPS Structure Database (LMSD) record from an external cross-reference identifier, resolving any common metabolite/lipid ID to its LIPID MAPS lm_id plus all of its cross-references. Set xref_type to the namespace of input_value: 'kegg_id', 'hmdb_id', 'chebi_id', 'pubchem_cid', 'inchi_key', or 'abbrev_chains' (a structure-resolved lipid abbreviation such as 'PC(16:0/18:1)'). Examples: kegg_id 'C00157' -> lm_id LMGP01010000 (PC), hmdb_id HMDB00564, chebi_id 57643; hmdb_id 'HMDB0000564' -> lm_id LMGP01010564 (PC 16:0/16:0); abbrev_chains 'PC(16:0/18:1)' -> lm_id LMGP01010005. Sends a browser User-Agent so the JSON route passes Cloudflare.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_value": {
+          "type": "string",
+          "description": "The cross-reference identifier value to resolve, e.g. 'C00157' (KEGG), 'HMDB0000564' (HMDB), '57643' (ChEBI), or 'PC(16:0/18:1)' (abbrev_chains)."
+        },
+        "xref_type": {
+          "type": "string",
+          "description": "Namespace of input_value. One of: 'kegg_id', 'hmdb_id', 'chebi_id', 'pubchem_cid', 'inchi_key', 'abbrev_chains'.",
+          "enum": ["kegg_id", "hmdb_id", "chebi_id", "pubchem_cid", "inchi_key", "abbrev_chains"],
+          "default": "kegg_id"
+        },
+        "output_item": {
+          "type": "string",
+          "description": "Type of output. Options: 'all' (complete record with all cross-refs), 'name', 'formula', 'exactmass', 'smiles', 'classification'.",
+          "default": "all"
+        }
+      },
+      "required": ["input_value"]
+    },
+    "fields": {
+      "context": "compound",
+      "input_item": "kegg_id"
+    },
+    "type": "LipidMapsTool",
+    "test_examples": [
+      {
+        "input_value": "C00157",
+        "xref_type": "kegg_id"
+      },
+      {
+        "input_value": "HMDB0000564",
+        "xref_type": "hmdb_id"
+      },
+      {
+        "input_value": "PC(16:0/18:1)",
+        "xref_type": "abbrev_chains"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": ["object", "array"],
+              "description": "LMSD record (single object) or list of records with lm_id, name, formula, exactmass, and cross-references (kegg_id, hmdb_id, chebi_id, pubchem_cid)."
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
   }
 ]

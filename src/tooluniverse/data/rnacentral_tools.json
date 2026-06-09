@@ -95,5 +95,72 @@
       "tags": ["rna", "accession", "annotation"],
       "estimated_execution_time": "< 2 seconds"
     }
+  },
+  {
+    "name": "RNAcentral_get_xrefs_and_pubs",
+    "type": "RNAcentralGetTool",
+    "description": "Get the resolved per-source cross-references AND literature for an RNAcentral entry in one call. Returns the full xref list (with database name, taxid, accession id, NCBI gene id, miRBase mature/precursor products, Ensembl/GENCODE transcript ids, RefSeq, etc.) under data.xrefs, and the publications list (title, authors, PMID, DOI) under data.publications. Use after RNAcentral_search or RNAcentral_get_by_accession to map an URS id to external databases and supporting papers. Example: URS000063A371 returns 8 xrefs (database=Rfam, taxid=7955, accession id 'CR381647.10:84955..85035:rfam') and 8 publications (e.g. PMID 12844358, DOI 10.1186/gb-2003-4-7-r42).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "RNAcentral URS identifier (e.g., 'URS000063A371', 'URS000075C808')."
+        }
+      },
+      "required": ["accession"]
+    },
+    "fields": {
+      "endpoint": "https://rnacentral.org/api/v1/rna/{accession}/[xrefs,publications]",
+      "sub_resources": ["xrefs", "publications"],
+      "format": "json"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "accession": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "xrefs": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "results": {"type": "array", "items": {"type": "object"}}
+                  }
+                },
+                "publications": {
+                  "type": "object",
+                  "properties": {
+                    "count": {"type": "integer"},
+                    "results": {"type": "array", "items": {"type": "object"}}
+                  }
+                }
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "URS000063A371"}
+    ],
+    "label": ["RNAcentral", "ncRNA", "CrossReference"],
+    "metadata": {
+      "tags": ["rna", "xrefs", "publications", "annotation"],
+      "estimated_execution_time": "< 3 seconds"
+    }
   }
 ]

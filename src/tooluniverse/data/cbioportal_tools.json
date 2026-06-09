@@ -92,6 +92,70 @@
   },
   {
     "type": "CBioPortalRESTTool",
+    "name": "cBioPortal_get_copy_number_alterations",
+    "description": "Get discrete copy-number alteration (CNA) calls per sample from GISTIC profiles for a gene in a cancer study. Returns per-sample alteration values: -2 (deep deletion), -1 (shallow loss), 0 (neutral), 1 (gain), 2 (amplification), plus a count breakdown by category. Use alteration_type to filter to a single category (AMP, GAIN, DIPLOID, HETLOSS, HOMDEL) or ALL for every altered sample. Example: ERBB2 (entrez 2064) AMP in brca_tcga_pan_can_atlas_2018 returns 123 amplified samples.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "study_id": {"type": "string", "description": "Cancer study ID (e.g., 'brca_tcga_pan_can_atlas_2018'). The discrete GISTIC profile is resolved automatically."},
+        "gene_list": {"type": "string", "description": "Comma-separated gene symbols (e.g., 'ERBB2' or 'TP53,ERBB2')"},
+        "gene": {"type": "string", "description": "Alias for gene_list: comma-separated gene symbols"},
+        "alteration_type": {"type": "string", "description": "CNA category filter: 'AMP' (amplification), 'GAIN', 'DIPLOID', 'HETLOSS' (shallow loss), 'HOMDEL' (deep deletion), or 'ALL' for every altered sample (default 'ALL').", "enum": ["AMP", "GAIN", "DIPLOID", "HETLOSS", "HOMDEL", "ALL"], "default": "ALL"},
+        "sample_list_id": {"type": "string", "description": "Optional sample list ID. Defaults to '{study_id}_all'."},
+        "molecular_profile_id": {"type": "string", "description": "Optional explicit GISTIC molecular profile ID (overrides auto-resolution)."}
+      },
+      "required": ["study_id", "gene_list"]
+    },
+    "fields": {
+      "endpoint": "https://www.cbioportal.org/api/molecular-profiles/{study_id}_gistic/discrete-copy-number/fetch",
+      "return_format": "JSON",
+      "method": "POST"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "count": {"type": "integer"},
+            "molecular_profile_id": {"type": "string"},
+            "entrez_gene_ids": {"type": "array", "items": {"type": "integer"}},
+            "alteration_type": {"type": "string"},
+            "alteration_counts": {"type": "object"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sampleId": {"type": "string"},
+                  "patientId": {"type": "string"},
+                  "entrezGeneId": {"type": "integer"},
+                  "studyId": {"type": "string"},
+                  "molecularProfileId": {"type": "string"},
+                  "alteration": {"type": "integer"}
+                }
+              }
+            }
+          },
+          "required": ["status", "data", "count"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"study_id": "brca_tcga_pan_can_atlas_2018", "gene_list": "ERBB2", "alteration_type": "AMP"},
+      {"study_id": "brca_tcga_pan_can_atlas_2018", "gene_list": "TP53", "alteration_type": "ALL"}
+    ]
+  },
+  {
+    "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_molecular_profiles",
     "description": "Get molecular profiles for a cancer study. Molecular profiles include mutation data, copy number alterations, mRNA expression, etc.",
     "parameter": {

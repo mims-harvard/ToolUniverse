@@ -10,32 +10,60 @@
           "description": "Official gene symbol (case-insensitive). Examples: 'TP53', 'BRCA1', 'EGFR', 'KRAS', 'CDK2'."
         }
       },
-      "required": ["gene_symbol"]
+      "required": [
+        "gene_symbol"
+      ]
     },
     "fields": {
       "endpoint": "get_gene"
     },
     "type": "HarmonizomeTool",
     "test_examples": [
-      {"gene_symbol": "TP53"},
-      {"gene_symbol": "BRCA1"}
+      {
+        "gene_symbol": "TP53"
+      },
+      {
+        "gene_symbol": "BRCA1"
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "symbol": {"type": "string"},
-        "name": {"type": "string"},
-        "ncbi_entrez_gene_id": {"type": "integer"},
-        "ncbi_entrez_gene_url": {"type": "string"},
-        "description": {"type": ["string", "null"]},
-        "synonyms": {"type": "array", "items": {"type": "string"}},
+        "symbol": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "ncbi_entrez_gene_id": {
+          "type": "integer"
+        },
+        "ncbi_entrez_gene_url": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "synonyms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "proteins": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "symbol": {"type": "string"},
-              "href": {"type": "string"}
+              "symbol": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              }
             }
           }
         }
@@ -54,14 +82,20 @@
       "endpoint": "list_datasets"
     },
     "type": "HarmonizomeTool",
-    "test_examples": [{}],
+    "test_examples": [
+      {}
+    ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "name": {"type": "string"},
-          "href": {"type": "string"}
+          "name": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
         }
       }
     }
@@ -81,37 +115,91 @@
           "description": "Maximum number of gene set names to return (default: 50)."
         }
       },
-      "required": ["dataset_name"]
+      "required": [
+        "dataset_name"
+      ]
     },
     "fields": {
       "endpoint": "get_dataset"
     },
     "type": "HarmonizomeTool",
     "test_examples": [
-      {"dataset_name": "CTD Gene-Disease Associations"},
-      {"dataset_name": "KEGG Pathways", "gene_set_limit": 10}
+      {
+        "dataset_name": "CTD Gene-Disease Associations"
+      },
+      {
+        "dataset_name": "KEGG Pathways",
+        "gene_set_limit": 10
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
-        "name": {"type": ["string", "null"]},
-        "description": {"type": ["string", "null"]},
-        "association": {"type": ["string", "null"]},
-        "measurement": {"type": ["string", "null"]},
-        "attribute_type": {"type": ["string", "null"]},
-        "attribute_group": {"type": ["string", "null"]},
-        "dataset_group": {"type": ["string", "null"]},
-        "pubmed_ids": {"type": "array", "items": {"type": ["integer", "string"]}},
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "association": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "measurement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "attribute_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "attribute_group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dataset_group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pubmed_ids": {
+          "type": "array",
+          "items": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          }
+        },
         "gene_sets": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "name": {"type": "string"}
+              "name": {
+                "type": "string"
+              }
             }
           }
         },
-        "total_gene_sets": {"type": "integer"}
+        "total_gene_sets": {
+          "type": "integer"
+        }
       }
     }
   },
@@ -134,15 +222,24 @@
           "description": "Maximum results to return (default: 20)."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "search"
     },
     "type": "HarmonizomeTool",
     "test_examples": [
-      {"query": "TP53", "entity_type": "gene"},
-      {"query": "expression", "entity_type": "dataset", "limit": 5}
+      {
+        "query": "TP53",
+        "entity_type": "gene"
+      },
+      {
+        "query": "expression",
+        "entity_type": "dataset",
+        "limit": 5
+      }
     ],
     "return_schema": {
       "type": "array",
@@ -164,25 +261,235 @@
           "description": "Maximum results to return (default: 20)."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "search_genes"
     },
     "type": "HarmonizomeTool",
     "test_examples": [
-      {"query": "kinase"},
-      {"query": "tumor suppressor", "limit": 10}
+      {
+        "query": "kinase"
+      },
+      {
+        "query": "tumor suppressor",
+        "limit": 10
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "symbol": {"type": "string"},
-          "href": {"type": "string"}
+          "symbol": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
         }
       }
+    }
+  },
+  {
+    "name": "Harmonizome_get_gene_set_members",
+    "description": "Retrieve the actual Harmonizome association payload (which Harmonizome_get_dataset and Harmonizome_get_gene deliberately omit). mode='gene_set' (default) returns the member genes of a curated attribute set with thresholdValue + standardizedValue - requires `attribute` (e.g. 'heart') and `dataset` (e.g. 'GTEx Tissue Gene Expression Profiles'). mode='gene' returns the full per-gene association table across all datasets - requires `gene_symbol` (e.g. 'DTD2'). Example: gene_set heart / GTEx Tissue Gene Expression Profiles -> 6473 members incl. {gene: DTD2, threshold_value: -1.0, standardized_value: -1.05248}. gene DTD2 -> 3787 associations across datasets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "gene_set",
+            "gene"
+          ],
+          "default": "gene_set",
+          "description": "'gene_set' for member genes of an attribute set (requires attribute + dataset); 'gene' for a gene's full association table (requires gene_symbol)."
+        },
+        "attribute": {
+          "type": "string",
+          "description": "Attribute/gene-set name for mode='gene_set' (e.g. 'heart', 'liver', a cell type or disease). Spaces are auto-encoded."
+        },
+        "dataset": {
+          "type": "string",
+          "description": "Dataset name for mode='gene_set' (e.g. 'GTEx Tissue Gene Expression Profiles'). Use Harmonizome_list_datasets to find names."
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol for mode='gene' (e.g. 'DTD2', 'TP53')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of association rows to return (default 100). Sets can have thousands of members.",
+          "default": 100
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "get_gene_set_members"
+    },
+    "type": "HarmonizomeTool",
+    "test_examples": [
+      {
+        "mode": "gene_set",
+        "attribute": "heart",
+        "dataset": "GTEx Tissue Gene Expression Profiles",
+        "limit": 5
+      },
+      {
+        "mode": "gene",
+        "gene_symbol": "DTD2",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "attribute": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "dataset": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ncbi_entrez_gene_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "members": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_href": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "threshold_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "standardized_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "associations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene_set": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_set_href": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "threshold_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "standardized_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "label": [
+      "Harmonizome",
+      "Gene Set",
+      "Gene Association"
+    ],
+    "metadata": {
+      "tags": [
+        "gene_set",
+        "expression",
+        "association",
+        "harmonizome"
+      ],
+      "estimated_execution_time": "< 10 seconds"
     }
   }
 ]

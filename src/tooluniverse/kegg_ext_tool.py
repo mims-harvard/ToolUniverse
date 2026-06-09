@@ -88,6 +88,8 @@ class KEGGExtTool(BaseTool):
             return self._get_pathway_genes(arguments)
         elif self.endpoint == "get_compound":
             return self._get_compound(arguments)
+        elif self.endpoint == "find_compound":
+            return self._find_compound(arguments)
         elif self.endpoint == "list_brite":
             return self._list_brite(arguments)
         elif self.endpoint == "get_brite_hierarchy":
@@ -370,6 +372,98 @@ class KEGGExtTool(BaseTool):
             "metadata": {
                 "source": "KEGG REST API",
                 "compound_id": compound_id,
+            },
+        }
+
+    def _find_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search the KEGG COMPOUND database (metabolite identification).
+
+        Inverse of get_compound: starting from an MS peak mass, a molecular
+        weight range, a molecular formula, or a name keyword, return candidate
+        KEGG compound IDs. Uses the KEGG /find/compound endpoint.
+
+        Supported query fields (provide exactly one):
+          - exact_mass: monoisotopic mass, single value (e.g. 174.05) or a
+            range "300-310" (.../find/compound/<value>/exact_mass)
+          - mol_weight: average molecular weight, single value or range
+            (.../find/compound/<value>/mol_weight)
+          - formula: molecular formula (.../find/compound/<formula>/formula)
+          - name / query: name or keyword (.../find/compound/<keyword>)
+        """
+        exact_mass = arguments.get("exact_mass")
+        mol_weight = arguments.get("mol_weight")
+        formula = arguments.get("formula")
+        keyword = arguments.get("name") or arguments.get("query")
+
+        provided = [
+            label
+            for label, val in (
+                ("exact_mass", exact_mass),
+                ("mol_weight", mol_weight),
+                ("formula", formula),
+                ("name", keyword),
+            )
+            if val is not None and str(val).strip() != ""
+        ]
+        if not provided:
+            return {
+                "status": "error",
+                "error": "One search field is required: exact_mass (e.g. 174.05 or '300-310'), "
+                "mol_weight (e.g. '300-310'), formula (e.g. 'C6H12O6'), or name (e.g. 'caffeine').",
+            }
+        if len(provided) > 1:
+            return {
+                "status": "error",
+                "error": f"Provide exactly one search field, got {len(provided)}: "
+                f"{', '.join(provided)}. exact_mass, mol_weight, formula and name are mutually exclusive.",
+            }
+
+        search_field = provided[0]
+        if search_field == "exact_mass":
+            value = str(exact_mass).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}/exact_mass"
+        elif search_field == "mol_weight":
+            value = str(mol_weight).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}/mol_weight"
+        elif search_field == "formula":
+            value = str(formula).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}/formula"
+        else:
+            value = str(keyword).strip()
+            url = f"{KEGG_BASE_URL}/find/compound/{value}"
+
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+
+        compounds = []
+        for line in response.text.strip().split("\n"):
+            if not line.strip():
+                continue
+            parts = line.split("\t", 1)
+            cid = parts[0].strip().replace("cpd:", "")
+            description = parts[1].strip() if len(parts) > 1 else ""
+            compounds.append({"compound_id": cid, "description": description})
+
+        max_results = arguments.get("max_results")
+        if max_results is not None:
+            try:
+                compounds = compounds[: int(max_results)]
+            except (TypeError, ValueError):
+                pass
+
+        return {
+            "status": "success",
+            "data": {
+                "search_field": search_field,
+                "query": value,
+                "count": len(compounds),
+                "compounds": compounds,
+            },
+            "metadata": {
+                "source": "KEGG COMPOUND (find)",
+                "search_field": search_field,
+                "query": value,
+                "total": len(compounds),
             },
         }
 

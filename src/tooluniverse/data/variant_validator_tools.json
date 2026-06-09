@@ -180,5 +180,97 @@
         }
       ]
     }
+  },
+  {
+    "name": "VariantValidator_format_genomic_to_transcripts",
+    "description": "Project a genomic variant onto EVERY overlapping RefSeq transcript in one call using the VariantValidator VariantFormatter endpoint. Given a genomic-level variant (g.HGVS like 'NC_000017.11:g.50198002C>A' or a pseudo-VCF string like '17-50198002-C-A') on GRCh37 or GRCh38, returns the per-transcript coding (c.) HGVS, predicted protein (p.) consequence in three- and single-letter codes, gene info (HGNC id + symbol), the pseudo-VCF representation, and MANE Select / RefSeq Select flags for each transcript. Use this when you need all transcript projections for a genomic variant; the standard VariantValidator_validate_variant endpoint no longer accepts select_transcripts='all' for genomic input (it returns HTTP 404 directing callers to VariantFormatter), so this is the only way to reach this capability in ToolUniverse. Public API, no key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genome_build": {
+          "type": "string",
+          "description": "Reference genome assembly: 'GRCh37' (hg19) or 'GRCh38' (hg38).",
+          "default": "GRCh38"
+        },
+        "variant_description": {
+          "type": "string",
+          "description": "Genomic-level variant description. Accepts genomic HGVS (e.g. 'NC_000017.11:g.50198002C>A') or a pseudo-VCF string (e.g. '17-50198002-C-A')."
+        }
+      },
+      "required": ["variant_description"]
+    },
+    "fields": {
+      "endpoint": "https://rest.variantvalidator.org/VariantFormatter/variantformatter/{genome_build}/{variant_description}/refseq/all/False",
+      "headers": {"Accept": "application/json"}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"genome_build": "GRCh38", "variant_description": "NC_000017.11:g.50198002C>A"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "VariantFormatter result. The top-level key is the submitted genomic variant; under it a nested key (the normalized g.HGVS) holds 'hgvs_t_and_p' (per-transcript projections keyed by RefSeq transcript accession), 'p_vcf', and 'selected_build'. A 'metadata' key carries VariantFormatter/VariantValidator versions.",
+          "properties": {
+            "metadata": {
+              "type": ["object", "null"],
+              "properties": {
+                "variantformatter_version": {"type": ["string", "null"]},
+                "variantvalidator_version": {"type": ["string", "null"]},
+                "vvdb_version": {"type": ["string", "null"]}
+              }
+            }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "description": "Per-variant block. Inner key is the normalized g.HGVS.",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "g_hgvs": {"type": ["string", "null"], "description": "Normalized genomic HGVS"},
+                "p_vcf": {"type": ["string", "null"], "description": "Pseudo-VCF chrom:pos:ref:alt"},
+                "selected_build": {"type": ["string", "null"]},
+                "genomic_variant_error": {"type": ["string", "null"]},
+                "hgvs_t_and_p": {
+                  "type": ["object", "null"],
+                  "description": "Per-transcript projections keyed by RefSeq transcript accession (e.g. NM_000088.4)",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "t_hgvs": {"type": ["string", "null"], "description": "Transcript coding HGVS (c.)"},
+                      "p_hgvs_tlc": {"type": ["string", "null"], "description": "Protein HGVS, three-letter code"},
+                      "p_hgvs_slc": {"type": ["string", "null"], "description": "Protein HGVS, single-letter code"},
+                      "gene_info": {
+                        "type": ["object", "null"],
+                        "properties": {
+                          "hgnc_id": {"type": ["string", "null"]},
+                          "symbol": {"type": ["string", "null"]}
+                        }
+                      },
+                      "select_status": {
+                        "type": ["object", "null"],
+                        "properties": {
+                          "mane_select": {"type": ["boolean", "null"]},
+                          "refseq_select": {"type": ["boolean", "null"]}
+                        }
+                      },
+                      "transcript_variant_error": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

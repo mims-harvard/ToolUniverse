@@ -240,5 +240,104 @@
                 }
             ]
         }
+    },
+    {
+        "name": "KEGG_find_compound",
+        "description": "Search the KEGG COMPOUND database for candidate metabolites by exact (monoisotopic) mass, average molecular weight, molecular formula, or name keyword. This is the inverse of KEGG_get_compound: given an MS peak mass or a molecular formula, it returns the candidate KEGG compound IDs to identify. Provide exactly one of: exact_mass, mol_weight, formula, or name (they are mutually exclusive). exact_mass and mol_weight accept a single value (e.g. 174.05) or a range 'low-high' (e.g. '300-310'). Examples: exact_mass 174.05 -> C00493, C04236, C16588, C17696, C18307, C18312, C21281; formula 'C6H12O6' -> C00031 (glucose), C00095 (fructose), C00124 (galactose), ...; name 'caffeine' -> C07481.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "exact_mass": {
+                    "type": ["string", "number", "null"],
+                    "description": "Monoisotopic / exact mass to search by. Single value (e.g. 174.05) or a range as 'low-high' (e.g. '174-175'). Mutually exclusive with mol_weight, formula, name."
+                },
+                "mol_weight": {
+                    "type": ["string", "number", "null"],
+                    "description": "Average molecular weight to search by. Single value or a range as 'low-high' (e.g. '300-310'). Mutually exclusive with exact_mass, formula, name."
+                },
+                "formula": {
+                    "type": ["string", "null"],
+                    "description": "Molecular formula to search by, e.g. 'C6H12O6'. Mutually exclusive with exact_mass, mol_weight, name."
+                },
+                "name": {
+                    "type": ["string", "null"],
+                    "description": "Compound name or keyword to search by, e.g. 'caffeine', 'glucose'. Mutually exclusive with exact_mass, mol_weight, formula."
+                },
+                "query": {
+                    "type": ["string", "null"],
+                    "description": "Alias for 'name': compound name or keyword to search by."
+                },
+                "max_results": {
+                    "type": ["integer", "null"],
+                    "description": "Optional cap on the number of returned candidate compounds."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "find_compound"
+        },
+        "type": "KEGGExtTool",
+        "test_examples": [
+            {
+                "exact_mass": "174.05"
+            },
+            {
+                "formula": "C6H12O6"
+            },
+            {
+                "name": "caffeine"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "search_field": {
+                                    "type": "string",
+                                    "description": "Which field was searched: exact_mass, mol_weight, formula, or name"
+                                },
+                                "query": {
+                                    "type": "string",
+                                    "description": "The submitted query value"
+                                },
+                                "count": {
+                                    "type": "integer",
+                                    "description": "Number of candidate compounds returned"
+                                },
+                                "compounds": {
+                                    "type": "array",
+                                    "description": "Candidate KEGG compounds",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "compound_id": {"type": "string"},
+                                            "description": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
     }
 ]

@@ -100,6 +100,15 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
                 }
             }
 
+        if endpoint == "/protoss_rest":
+            if "pdb_content" in arguments and arguments["pdb_content"]:
+                protoss = {"pdbData": arguments["pdb_content"]}
+            else:
+                protoss = {"pdbCode": arguments.get("pdb_id", "")}
+            if arguments.get("ligand_content"):
+                protoss["ligandData"] = arguments["ligand_content"]
+            return {"protoss": protoss}
+
         if endpoint == "/poseview_rest":
             return {
                 "poseview": {

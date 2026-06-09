@@ -32,6 +32,14 @@ class MetaboLightsRESTTool(BaseTool):
         endpoint_template = self.tool_config["fields"].get("endpoint", "")
         tool_name = self.tool_config.get("name", "")
 
+        # Reference-compound tool: route to the /compounds/list endpoint when
+        # list=true, otherwise to the single-compound record endpoint.
+        if tool_name == "metabolights_get_reference_compound":
+            if args.get("list"):
+                return f"{self.base_url}/compounds/list"
+            compound_id = str(args.get("compound_id", "")).strip()
+            return f"{self.base_url}/compounds/{compound_id}"
+
         if endpoint_template:
             url = endpoint_template
             for k, v in args.items():
@@ -210,6 +218,17 @@ class MetaboLightsRESTTool(BaseTool):
         """Execute the MetaboLights API call"""
         tool_name = self.tool_config.get("name", "")
 
+        if tool_name == "metabolights_get_reference_compound":
+            if (
+                not arguments.get("list")
+                and not str(arguments.get("compound_id", "")).strip()
+            ):
+                return {
+                    "status": "error",
+                    "error": "compound_id is required (e.g. 'MTBLC10'), or set list=true "
+                    "to retrieve all reference-compound accessions.",
+                }
+
         try:
             url = self._build_url(arguments)
             params = self._build_params(arguments)
@@ -282,6 +301,23 @@ class MetaboLightsRESTTool(BaseTool):
 
             response.raise_for_status()
             data = response.json()
+
+            # The compounds endpoints wrap their payload in {"content": ...,
+            # "message": ..., "err": ...}. For a single reference compound
+            # (MTBLC*) content is a dict; for the /compounds/list route it is a
+            # list. Unwrap content directly so callers get the record/list.
+            if (
+                tool_name == "metabolights_get_reference_compound"
+                and isinstance(data, dict)
+                and "content" in data
+            ):
+                content = data["content"]
+                return {
+                    "status": "success",
+                    "data": content,
+                    "url": response.url,
+                    "count": len(content) if isinstance(content, list) else 1,
+                }
 
             # Extract arrays from dict wrappers for protocols, factors, data-files endpoints
             # These endpoints return {'protocols': [...]}, {'factors': [...]}, {'files': [...]}

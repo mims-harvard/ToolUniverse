@@ -39,20 +39,55 @@
       "items": {
         "type": "object",
         "properties": {
-          "accession": {"type": "string"},
-          "description": {"type": "string"},
-          "species": {"type": "string"},
-          "technology": {"type": "array", "items": {"type": "string"}},
-          "num_cells": {"type": "integer"},
-          "experimental_factors": {"type": "array", "items": {"type": "string"}},
-          "experiment_type": {"type": "string"},
-          "last_updated": {"type": ["string", "null"]}
+          "accession": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "species": {
+            "type": "string"
+          },
+          "technology": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "num_cells": {
+            "type": "integer"
+          },
+          "experimental_factors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "experiment_type": {
+            "type": "string"
+          },
+          "last_updated": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
-    "label": ["Single Cell Expression Atlas", "scRNA-seq", "Cell Type"],
+    "label": [
+      "Single Cell Expression Atlas",
+      "scRNA-seq",
+      "Cell Type"
+    ],
     "metadata": {
-      "tags": ["single_cell", "rna_seq", "cell_type", "expression", "experiment_discovery"],
+      "tags": [
+        "single_cell",
+        "rna_seq",
+        "cell_type",
+        "expression",
+        "experiment_discovery"
+      ],
       "estimated_execution_time": "< 5 seconds"
     }
   },
@@ -71,7 +106,9 @@
           "description": "Species name to filter (e.g., 'Homo sapiens', 'Mus musculus'). Optional."
         }
       },
-      "required": ["gene"]
+      "required": [
+        "gene"
+      ]
     },
     "fields": {
       "operation": "search_gene"
@@ -91,21 +128,212 @@
       "items": {
         "type": "object",
         "properties": {
-          "accession": {"type": "string"},
-          "description": {"type": "string"},
-          "species": {"type": "string"},
-          "num_cells": {"type": "integer"},
-          "technology": {"type": ["array", "null"], "items": {"type": "string"}},
-          "experimental_factors": {"type": ["array", "null"], "items": {"type": "string"}},
-          "pubmed_ids": {"type": ["array", "null"]},
-          "dois": {"type": ["array", "null"]}
+          "accession": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "species": {
+            "type": "string"
+          },
+          "num_cells": {
+            "type": "integer"
+          },
+          "technology": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "experimental_factors": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "pubmed_ids": {
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "dois": {
+            "type": [
+              "array",
+              "null"
+            ]
+          }
         }
       }
     },
-    "label": ["Single Cell Expression Atlas", "Gene Expression", "scRNA-seq"],
+    "label": [
+      "Single Cell Expression Atlas",
+      "Gene Expression",
+      "scRNA-seq"
+    ],
     "metadata": {
-      "tags": ["single_cell", "gene_expression", "scRNA_seq", "cell_type", "gene_search"],
+      "tags": [
+        "single_cell",
+        "gene_expression",
+        "scRNA_seq",
+        "cell_type",
+        "gene_search"
+      ],
       "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "SCXA_get_cluster_marker_genes",
+    "description": "Get EBI Single Cell Expression Atlas computed marker genes per cell cluster (or per cell type) for an experiment - results that SCXA_list_experiments and SCXA_search_gene cannot retrieve. marker_type='clusters' (default): top marker genes per cell cluster at clustering resolution k (requires `k`); each row has geneName, the cell-group it marks, expression value, p-value, and unit (CPM). marker_type='cell_types': marker genes for inferred cell types (requires `organism_part`). Example: E-MTAB-5061 k=8 -> rows like {gene_name: ENSG00000224981, cell_group_value_where_marker: '1', p_value: 4.37e-71, expression_unit: CPM}. E-ENAD-13 k=4 -> Olfm4 p_value 3.0e-179.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "experiment_accession": {
+          "type": "string",
+          "description": "SCXA experiment accession (e.g. 'E-MTAB-5061', 'E-ENAD-13', 'E-CURD-4'). Use SCXA_list_experiments to find accessions."
+        },
+        "marker_type": {
+          "type": "string",
+          "enum": [
+            "clusters",
+            "cell_types"
+          ],
+          "default": "clusters",
+          "description": "'clusters' for marker genes per cluster at resolution k (default); 'cell_types' for marker genes per inferred cell type (requires organism_part)."
+        },
+        "k": {
+          "type": "integer",
+          "description": "Clustering resolution / number of clusters for marker_type='clusters' (e.g. 8, 4, 6). Required for clusters mode.",
+          "minimum": 1
+        },
+        "organism_part": {
+          "type": "string",
+          "description": "Organism part for marker_type='cell_types' (e.g. 'pancreas', 'lung'). Required for cell_types mode."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Optional maximum number of marker rows to return.",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "experiment_accession"
+      ]
+    },
+    "fields": {
+      "operation": "cluster_marker_genes"
+    },
+    "type": "SCExpressionAtlasTool",
+    "test_examples": [
+      {
+        "experiment_accession": "E-MTAB-5061",
+        "k": 8,
+        "limit": 20
+      },
+      {
+        "experiment_accession": "E-ENAD-13",
+        "k": 4,
+        "limit": 20
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cell_group_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cell_group_value_where_marker": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "expression_unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "label": [
+      "Single Cell Expression Atlas",
+      "Marker Genes",
+      "Cluster"
+    ],
+    "metadata": {
+      "tags": [
+        "single_cell",
+        "marker_genes",
+        "cluster",
+        "cell_type",
+        "scRNA_seq"
+      ],
+      "estimated_execution_time": "< 15 seconds"
     }
   }
 ]

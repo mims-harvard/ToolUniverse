@@ -75,8 +75,121 @@ class HPOTool(BaseTool):
             return self._get_associations(arguments, "genes")
         elif self.endpoint == "get_associated_diseases":
             return self._get_associations(arguments, "diseases")
+        elif self.endpoint == "get_disease_annotations":
+            return self._get_disease_annotations(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
+
+    def _get_disease_annotations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the full HPO annotation profile for a disease.
+
+        Uses the JAX network-annotation endpoint keyed by a disease ID
+        (OMIM/ORPHA/DECIPHER). Returns curated MAxO medical actions
+        (treatments / management with TREATS / PREVENTS relations and the
+        phenotypes they target), phenotypes grouped by body system, and
+        associated genes.
+        """
+        disease_id = arguments.get("disease_id") or arguments.get("id", "")
+        disease_id = str(disease_id).strip()
+        if not disease_id:
+            return {
+                "status": "error",
+                "error": (
+                    "disease_id parameter is required "
+                    "(e.g., 'OMIM:154700', 'ORPHA:558', 'DECIPHER:...')"
+                ),
+            }
+
+        url = f"{HPO_ANNOTATION_URL}/{disease_id}"
+        response = requests.get(url, timeout=self.timeout)
+        if response.status_code == 404:
+            return {
+                "status": "error",
+                "error": (
+                    f"No HPO disease annotation found for '{disease_id}'. "
+                    "Use an OMIM / ORPHA / DECIPHER disease ID "
+                    "(e.g., 'OMIM:154700')."
+                ),
+            }
+        response.raise_for_status()
+        data = response.json()
+
+        # --- Medical actions (MAxO curated treatments / management) ---
+        medical_actions = []
+        for ma in data.get("medicalActions") or []:
+            if not isinstance(ma, dict):
+                continue
+            targets = []
+            for t in ma.get("targets") or []:
+                if isinstance(t, dict):
+                    targets.append({"id": t.get("id"), "name": t.get("name")})
+            medical_actions.append(
+                {
+                    "id": ma.get("id"),
+                    "name": ma.get("name"),
+                    "relations": ma.get("relations") or [],
+                    "targets": targets,
+                }
+            )
+
+        # --- Phenotypes grouped by body system ---
+        categories = []
+        raw_categories = data.get("categories") or {}
+        if isinstance(raw_categories, dict):
+            for system, phenotypes in raw_categories.items():
+                pheno_list = []
+                if isinstance(phenotypes, list):
+                    for p in phenotypes:
+                        if isinstance(p, dict):
+                            meta = p.get("metadata") or {}
+                            pheno_list.append(
+                                {
+                                    "id": p.get("id"),
+                                    "name": p.get("name"),
+                                    "frequency": meta.get("frequency") or None,
+                                    "onset": meta.get("onset") or None,
+                                }
+                            )
+                categories.append(
+                    {
+                        "body_system": system,
+                        "phenotype_count": len(pheno_list),
+                        "phenotypes": pheno_list,
+                    }
+                )
+            categories.sort(key=lambda c: c["phenotype_count"], reverse=True)
+
+        # --- Associated genes ---
+        genes = []
+        for g in data.get("genes") or []:
+            if isinstance(g, dict):
+                genes.append({"id": g.get("id"), "name": g.get("name")})
+
+        disease = data.get("disease") or {}
+        total_phenotypes = sum(c["phenotype_count"] for c in categories)
+
+        return {
+            "status": "success",
+            "data": {
+                "disease": {
+                    "id": disease.get("id"),
+                    "name": disease.get("name"),
+                    "mondo_id": disease.get("mondoId"),
+                    "description": disease.get("description"),
+                },
+                "medical_actions": medical_actions,
+                "categories": categories,
+                "genes": genes,
+            },
+            "metadata": {
+                "source": "HPO (JAX Ontology) network annotation",
+                "disease_id": disease.get("id") or disease_id,
+                "total_medical_actions": len(medical_actions),
+                "total_body_systems": len(categories),
+                "total_phenotypes": total_phenotypes,
+                "total_genes": len(genes),
+            },
+        }
 
     def _get_associations(self, arguments: Dict[str, Any], kind: str) -> Dict[str, Any]:
         """Get genes or diseases annotated to an HPO phenotype term.

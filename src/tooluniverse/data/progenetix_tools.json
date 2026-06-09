@@ -295,5 +295,86 @@
         }
       }
     }
+  },
+  {
+    "name": "Progenetix_get_cnv_frequencies",
+    "description": "Get the genome-wide aggregate CNV frequency profile for a cancer type from Progenetix — the signature Progenetix output. For each genomic interval bin (cytoband), returns the gain frequency and loss frequency aggregated across all samples of a Progenetix collation, selected by NCIt code. Example: NCIT:C4017 (Breast Ductal Carcinoma) returns sampleCount 13869 across 3106 interval bins; NCIT:C3058 (Glioblastoma) bin 1p36.33 has gain_frequency 4.258 and loss_frequency 5.278.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "filters": {
+          "type": "string",
+          "description": "NCIt ontology code identifying the cancer-type collation. Examples: 'NCIT:C4017' (Breast Ductal Carcinoma), 'NCIT:C3058' (Glioblastoma), 'NCIT:C9145' (AML), 'NCIT:C3224' (Melanoma), 'NCIT:C4872' (Lung Adenocarcinoma)."
+        },
+        "dataset_ids": {
+          "type": "string",
+          "default": "progenetix",
+          "description": "Progenetix dataset to query (default 'progenetix')."
+        },
+        "max_intervals": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Optional cap on the number of interval bins returned (default: all ~3000 bins)."
+        }
+      },
+      "required": ["filters"]
+    },
+    "fields": {
+      "endpoint": "interval_frequencies"
+    },
+    "type": "ProgenetixTool",
+    "test_examples": [
+      {"filters": "NCIT:C4017", "max_intervals": 5},
+      {"filters": "NCIT:C3058", "max_intervals": 5}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "filters": {"type": "string"},
+                "label": {"type": ["string", "null"]},
+                "group_id": {"type": ["string", "null"]},
+                "dataset_id": {"type": ["string", "null"]},
+                "sample_count": {"type": "integer"},
+                "interval_count": {"type": "integer"},
+                "returned_interval_count": {"type": "integer"},
+                "intervals": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "no": {"type": ["integer", "null"]},
+                      "reference_name": {"type": ["string", "null"]},
+                      "cytobands": {"type": ["string", "null"]},
+                      "start": {"type": ["integer", "null"]},
+                      "end": {"type": ["integer", "null"]},
+                      "size": {"type": ["integer", "null"]},
+                      "gain_frequency": {"type": ["number", "null"]},
+                      "loss_frequency": {"type": ["number", "null"]},
+                      "gain_hlfrequency": {"type": ["number", "null"]},
+                      "loss_hlfrequency": {"type": ["number", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
   }
 ]
