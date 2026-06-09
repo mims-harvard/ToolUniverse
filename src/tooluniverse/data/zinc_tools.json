@@ -1,113 +1,8 @@
 [
   {
-    "name": "ZINC_search_compounds",
-    "type": "ZincTool",
-    "description": "Search the ZINC database for commercially available compounds by name or keyword. Returns ZINC IDs, SMILES structures, and molecular properties (MW, LogP, HBD, HBA, rotatable bonds). ZINC contains 750M+ purchasable compounds for virtual screening and drug discovery. Optionally filter by purchasability tier (in-stock, for-sale, on-demand, agent). Use this as the first step in a virtual screening workflow. Note: ZINC15 server is intermittently unreachable (RemoteDisconnected) as of 2026-05; test_examples cleared - tool is functional when upstream responds.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "operation": {
-          "type": "string",
-          "enum": [
-            "search_compounds"
-          ],
-          "description": "Operation type"
-        },
-        "query": {
-          "type": "string",
-          "description": "Search query: drug name (aspirin, ibuprofen, metformin), keyword, or partial name"
-        },
-        "count": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 10,
-          "description": "Maximum number of results to return (default: 10, max: 100)"
-        },
-        "purchasability": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "enum": [
-            "in-stock",
-            "for-sale",
-            "on-demand",
-            "agent",
-            null
-          ],
-          "description": "Filter by purchasability tier. in-stock = ready to ship, for-sale = from vendor, on-demand = custom synthesis, agent = via broker"
-        }
-      },
-      "required": [
-        "operation",
-        "query"
-      ]
-    },
-    "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "zinc_id": {
-            "type": "string",
-            "description": "ZINC compound identifier (e.g., ZINC000000000053)"
-          },
-          "smiles": {
-            "type": "string",
-            "description": "Canonical SMILES structure"
-          },
-          "mwt": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Molecular weight (Da)"
-          },
-          "logp": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Calculated LogP (octanol-water partition)"
-          },
-          "hbd": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond donors"
-          },
-          "hba": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond acceptors"
-          },
-          "rb": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Rotatable bonds"
-          },
-          "net_charge": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Net formal charge"
-          }
-        }
-      }
-    },
-    "test_examples": []
-  },
-  {
     "name": "ZINC_get_compound",
     "type": "ZincTool",
-    "description": "Get detailed information for a ZINC compound by its ID, including SMILES structure, molecular properties (MW, LogP, HBD, HBA, rotatable bonds), and vendor/catalog availability. Returns the list of vendors with purchasability tiers and the best available tier. Use after ZINC_search_compounds to get full details. Note: ZINC15 server is intermittently unreachable (RemoteDisconnected) as of 2026-05; test_examples cleared - tool is functional when upstream responds.",
+    "description": "Get the structure and computed properties for a ZINC22 compound by its ZINC ID, via the CartBlanche22 API (https://cartblanche22.docking.org/substance/{id}.json). Returns SMILES, molecular formula, molecular weight (mwt), calculated LogP, heavy/hetero atom counts, ring count, InChI, InChIKey, source database (zinc20/zinc22), and the number of vendor catalogs offering it (n_catalogs). Use ZINC_get_purchasable for the full vendor/price list, or ZINC_search_by_smiles to find a ZINC ID from a structure. Replaces the retired zinc15.docking.org service.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -120,7 +15,7 @@
         },
         "zinc_id": {
           "type": "string",
-          "description": "ZINC compound identifier, e.g., ZINC000000000053 (aspirin), ZINC000000001084 (caffeine), ZINC000000113398 (ibuprofen)"
+          "description": "ZINC compound identifier, e.g., ZINC000000000053 (aspirin). Both zinc20 numeric IDs (ZINC000000000053) and zinc22 alphanumeric IDs (e.g. ZINC6m0000002gSu) are accepted; a bare numeric/code is auto-prefixed with 'ZINC'."
         }
       },
       "required": [
@@ -129,116 +24,286 @@
       ]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "zinc_id": {
-          "type": "string",
-          "description": "ZINC compound identifier"
-        },
-        "smiles": {
-          "type": "string",
-          "description": "Canonical SMILES structure"
-        },
-        "mwt": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "Molecular weight (Da)"
-        },
-        "logp": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "Calculated LogP"
-        },
-        "hbd": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Hydrogen bond donors"
-        },
-        "hba": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Hydrogen bond acceptors"
-        },
-        "rb": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Rotatable bonds"
-        },
-        "net_charge": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Net formal charge"
-        },
-        "desolv_apol": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "Apolar desolvation energy (kcal/mol)"
-        },
-        "desolv_pol": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "description": "Polar desolvation energy (kcal/mol)"
-        },
-        "vendors": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "catalog_name": {
-                "type": "string",
-                "description": "Vendor/catalog full name"
-              },
-              "short_name": {
-                "type": "string",
-                "description": "Vendor short identifier"
-              },
-              "purchasability": {
-                "type": "string",
-                "description": "Tier: In-Stock, For-Sale, On-Demand, Agent, Annotated"
-              },
-              "is_building_block": {
-                "type": "boolean",
-                "description": "Whether compound is a building block"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "zinc_id": {
+                  "type": "string",
+                  "description": "ZINC compound identifier"
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Canonical SMILES structure"
+                },
+                "formula": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Molecular formula"
+                },
+                "mwt": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Molecular weight (Da)"
+                },
+                "logp": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Calculated LogP (octanol-water partition)"
+                },
+                "heavy_atoms": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of heavy (non-hydrogen) atoms"
+                },
+                "hetero_atoms": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of heteroatoms"
+                },
+                "rings": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of rings"
+                },
+                "inchi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "InChI string"
+                },
+                "inchikey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "InChIKey hash"
+                },
+                "database": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Source database (zinc20 or zinc22)"
+                },
+                "n_catalogs": {
+                  "type": "integer",
+                  "description": "Number of vendor catalogs offering this compound"
+                }
               }
             }
           },
-          "description": "List of vendors offering this compound"
+          "required": [
+            "status",
+            "data"
+          ]
         },
-        "vendor_count": {
-          "type": "integer",
-          "description": "Number of vendors offering this compound"
-        },
-        "best_purchasability": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Best available purchasability tier"
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
         }
-      }
+      ]
     },
-    "test_examples": []
+    "test_examples": [
+      {
+        "operation": "get_compound",
+        "zinc_id": "ZINC000000000053"
+      }
+    ]
+  },
+  {
+    "name": "ZINC_get_purchasable",
+    "type": "ZincTool",
+    "description": "Get the vendor/catalog purchasability and price list for a ZINC22 compound by its ZINC ID, via the CartBlanche22 API (the `catalogs` array of /substance/{id}.json). Returns each catalog's name, supplier code, price, quantity, unit, shipping estimate, purchasable flag, and order URL, plus a total vendor_count. Use this to check commercial availability of a known compound for virtual screening. Find a ZINC ID first with ZINC_search_by_smiles. Replaces the retired zinc15.docking.org service.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_purchasable"
+          ],
+          "description": "Operation type"
+        },
+        "zinc_id": {
+          "type": "string",
+          "description": "ZINC compound identifier, e.g., ZINC000000000053 (aspirin). zinc20 numeric and zinc22 alphanumeric IDs are both accepted."
+        }
+      },
+      "required": [
+        "operation",
+        "zinc_id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "zinc_id": {
+                  "type": "string",
+                  "description": "ZINC compound identifier"
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Canonical SMILES structure"
+                },
+                "vendor_count": {
+                  "type": "integer",
+                  "description": "Number of vendor catalog entries"
+                },
+                "vendors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "catalog_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Vendor/catalog name"
+                      },
+                      "supplier_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Vendor's internal product/supplier code"
+                      },
+                      "price": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Quoted price"
+                      },
+                      "quantity": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Quantity for the quoted price"
+                      },
+                      "unit": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Unit for the quantity (e.g., mg)"
+                      },
+                      "shipping": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Estimated shipping time"
+                      },
+                      "purchasable": {
+                        "type": "boolean",
+                        "description": "Whether this catalog entry is purchasable"
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Vendor order URL template (if available)"
+                      }
+                    }
+                  },
+                  "description": "List of vendor/catalog entries offering this compound"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_purchasable",
+        "zinc_id": "ZINC000000000053"
+      }
+    ]
   },
   {
     "name": "ZINC_search_by_smiles",
     "type": "ZincTool",
-    "description": "Search the ZINC database by SMILES structure string. Finds exact or similar compounds matching the given SMILES. Useful for finding purchasable analogs of a lead compound or checking if a specific structure is commercially available. Returns ZINC IDs, SMILES, and molecular properties. Note: ZINC15 server is intermittently unreachable (RemoteDisconnected) as of 2026-05; test_examples cleared - tool is functional when upstream responds.",
+    "description": "Structure-search the ZINC22 (and legacy ZINC20) database by SMILES via the CartBlanche22 async structure-search API. Submits the query, polls for completion (within 30s), and returns matching compounds with zinc_id, SMILES, the matched substructure SMILES, formula, MW, LogP, InChIKey, source database, and vendor-catalog count. Use dist=0 (default) for exact matches and a small positive dist (e.g. 1-4) for graph-edit-distance similarity; adist is the anonymized (atom-type-agnostic) distance. Returns the ZINC IDs you then feed to ZINC_get_compound / ZINC_get_purchasable. Replaces the retired zinc15.docking.org service.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -251,14 +316,33 @@
         },
         "smiles": {
           "type": "string",
-          "description": "SMILES string to search for. Examples: CC(=O)Oc1ccccc1C(=O)O (aspirin), Cn1c(=O)c2c(ncn2C)n(C)c1=O (caffeine), c1ccccc1 (benzene)"
+          "description": "SMILES string to search for. Examples: c1ccccc1 (benzene), CC(=O)Oc1ccccc1C(=O)O (aspirin), CCO (ethanol)"
+        },
+        "dist": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12,
+          "default": 0,
+          "description": "Graph-edit-distance for similarity search. 0 = exact match; higher = more permissive (more, less similar hits)."
+        },
+        "adist": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12,
+          "default": 0,
+          "description": "Anonymized (atom-type-agnostic) graph-edit-distance. 0 = exact on the anonymized graph."
+        },
+        "database": {
+          "type": "string",
+          "default": "zinc20,zinc22",
+          "description": "Comma-separated databases to search: zinc20, zinc22, or both (default)."
         },
         "count": {
           "type": "integer",
           "minimum": 1,
           "maximum": 100,
           "default": 10,
-          "description": "Maximum number of results (default: 10, max: 100)"
+          "description": "Maximum number of results to return (default: 10, max: 100)"
         }
       },
       "required": [
@@ -267,172 +351,196 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "zinc_id": {
-            "type": "string",
-            "description": "ZINC compound identifier"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "zinc_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ZINC compound identifier"
+                  },
+                  "smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Canonical SMILES of the hit"
+                  },
+                  "matched_smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The matched substructure/query SMILES"
+                  },
+                  "formula": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Molecular formula"
+                  },
+                  "mwt": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Molecular weight (Da)"
+                  },
+                  "logp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Calculated LogP"
+                  },
+                  "inchikey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey hash"
+                  },
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source database (zinc20 or zinc22)"
+                  },
+                  "n_catalogs": {
+                    "type": "integer",
+                    "description": "Number of vendor catalogs offering this hit"
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of matches returned"
+            }
           },
-          "smiles": {
-            "type": "string",
-            "description": "Canonical SMILES structure"
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
           },
-          "mwt": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Molecular weight (Da)"
-          },
-          "logp": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Calculated LogP"
-          },
-          "hbd": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond donors"
-          },
-          "hba": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond acceptors"
-          },
-          "rb": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Rotatable bonds"
-          },
-          "net_charge": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Net formal charge"
-          }
+          "required": [
+            "status",
+            "error"
+          ]
         }
-      }
+      ]
     },
-    "test_examples": []
+    "test_examples": [
+      {
+        "operation": "search_by_smiles",
+        "smiles": "c1ccccc1",
+        "dist": 2,
+        "database": "zinc22",
+        "count": 5
+      }
+    ]
   },
   {
-    "name": "ZINC_get_purchasable",
+    "name": "ZINC_search_compounds",
     "type": "ZincTool",
-    "description": "Browse ZINC compounds by purchasability tier. Returns compounds available at a specific availability level with SMILES and molecular properties. Tiers: in-stock (ready to ship), for-sale (from vendor), on-demand (custom synthesis), agent (via broker), world (all purchasable), fda (FDA-approved). Use to find readily available compounds for screening. Note: ZINC15 server is intermittently unreachable (RemoteDisconnected) as of 2026-05; test_examples cleared - tool is functional when upstream responds.",
+    "description": "NOT SUPPORTED by ZINC22 (CartBlanche22): free-text / compound-name search. ZINC has always been structure- and ID-centric and CartBlanche22 offers no name search endpoint. This operation returns a clean error directing you to ZINC_search_by_smiles (structure search by SMILES) or ZINC_get_compound / ZINC_get_purchasable (lookup by a known ZINC ID). To go from a drug name to a structure, resolve the name to a SMILES first (e.g. via PubChem) and then use ZINC_search_by_smiles.",
     "parameter": {
       "type": "object",
       "properties": {
         "operation": {
           "type": "string",
           "enum": [
-            "get_purchasable"
+            "search_compounds"
           ],
           "description": "Operation type"
         },
-        "tier": {
+        "query": {
           "type": "string",
-          "enum": [
-            "in-stock",
-            "for-sale",
-            "on-demand",
-            "agent",
-            "world",
-            "fda"
-          ],
-          "description": "Purchasability tier. in-stock = ready to ship, for-sale = from vendor, on-demand = custom synthesis, agent = via broker, world = all purchasable, fda = FDA-approved drugs"
-        },
-        "count": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 10,
-          "description": "Maximum number of results (default: 10, max: 100)"
+          "description": "Drug name or keyword (NOTE: name search is not supported by CartBlanche22; this returns a clean error pointing to ZINC_search_by_smiles)"
         }
       },
       "required": [
-        "operation",
-        "tier"
+        "operation"
       ]
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "zinc_id": {
-            "type": "string",
-            "description": "ZINC compound identifier"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array"
+            }
           },
-          "smiles": {
-            "type": "string",
-            "description": "Canonical SMILES structure"
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "supported_search": {
+              "type": "string"
+            }
           },
-          "tier": {
-            "type": "string",
-            "description": "Purchasability tier"
-          },
-          "mwt": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Molecular weight (Da)"
-          },
-          "logp": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Calculated LogP"
-          },
-          "hbd": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond donors"
-          },
-          "hba": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond acceptors"
-          },
-          "rb": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Rotatable bonds"
-          },
-          "net_charge": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Net formal charge"
-          }
+          "required": [
+            "status",
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": []
   },
   {
     "name": "ZINC_search_by_properties",
     "type": "ZincTool",
-    "description": "Filter ZINC compounds by molecular properties (Lipinski Rule of Five, Veber rules). Specify ranges for molecular weight, LogP, hydrogen bond donors/acceptors, and rotatable bonds. Optionally restrict to a purchasability tier. Useful for finding drug-like compounds: Lipinski (MW<500, LogP<5, HBD<5, HBA<10), fragment-like (MW<250, LogP<3), or lead-like (MW 250-350, LogP 1-3). Note: ZINC15 server is intermittently unreachable (RemoteDisconnected) as of 2026-05; test_examples cleared - tool is functional when upstream responds.",
+    "description": "NOT SUPPORTED by ZINC22 (CartBlanche22): molecular-property-range search (filtering by MW / LogP / HBD / HBA / rotatable-bond ranges). CartBlanche22 only offers structure search (SMILES/SMARTS), ZINC-ID lookup, and supplier lookup; it has no property-range query endpoint. This operation returns a clean error directing you to ZINC_search_by_smiles, after which you can read each hit's MW/LogP via ZINC_get_compound and filter client-side.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -448,70 +556,28 @@
             "number",
             "null"
           ],
-          "description": "Minimum molecular weight in Da (e.g., 150 for fragments, 250 for leads)"
+          "description": "Minimum molecular weight (NOTE: property-range search is not supported by CartBlanche22; this returns a clean error)"
         },
         "mwt_max": {
           "type": [
             "number",
             "null"
           ],
-          "description": "Maximum molecular weight in Da (e.g., 500 for Lipinski, 250 for fragments)"
+          "description": "Maximum molecular weight (not supported; see error)"
         },
         "logp_min": {
           "type": [
             "number",
             "null"
           ],
-          "description": "Minimum LogP (e.g., -1 for hydrophilic compounds)"
+          "description": "Minimum LogP (not supported; see error)"
         },
         "logp_max": {
           "type": [
             "number",
             "null"
           ],
-          "description": "Maximum LogP (e.g., 5 for Lipinski rule, 3 for lead-like)"
-        },
-        "hbd_max": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Maximum hydrogen bond donors (e.g., 5 for Lipinski)"
-        },
-        "hba_max": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Maximum hydrogen bond acceptors (e.g., 10 for Lipinski)"
-        },
-        "rb_max": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Maximum rotatable bonds (e.g., 10 for Veber rule)"
-        },
-        "purchasability": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "enum": [
-            "in-stock",
-            "for-sale",
-            "on-demand",
-            "agent",
-            null
-          ],
-          "description": "Restrict to a purchasability tier"
-        },
-        "count": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 20,
-          "description": "Maximum number of results (default: 20, max: 100)"
+          "description": "Maximum LogP (not supported; see error)"
         }
       },
       "required": [
@@ -519,62 +585,47 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "zinc_id": {
-            "type": "string",
-            "description": "ZINC compound identifier"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array"
+            }
           },
-          "smiles": {
-            "type": "string",
-            "description": "Canonical SMILES structure"
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "supported_search": {
+              "type": "string"
+            }
           },
-          "mwt": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Molecular weight (Da)"
-          },
-          "logp": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "description": "Calculated LogP"
-          },
-          "hbd": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond donors"
-          },
-          "hba": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Hydrogen bond acceptors"
-          },
-          "rb": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Rotatable bonds"
-          },
-          "net_charge": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Net formal charge"
-          }
+          "required": [
+            "status",
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": []
   }
