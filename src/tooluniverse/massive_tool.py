@@ -39,6 +39,8 @@ class MassIVETool(BaseTool):
             return self._search_datasets(arguments)
         if op == "get_dataset":
             return self._get_dataset(arguments)
+        if op == "get_protein_identifications":
+            return self._get_protein_identifications(arguments)
         return {"status": "error", "error": f"Unknown operation: {op}"}
 
     def _extract_all_cv_values(self, cv_list):
@@ -169,3 +171,113 @@ class MassIVETool(BaseTool):
         result["modifications"] = modifications
 
         return {"status": "success", "data": result}
+
+    def _proxi_get(self, path: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """GET a MassIVE ProXI endpoint, returning a {ok,data}/{ok,error} dict."""
+        try:
+            resp = requests.get(
+                f"{MASSIVE_BASE_URL}/{path}",
+                params=params,
+                timeout=self.timeout,
+            )
+            resp.raise_for_status()
+            return {"ok": True, "data": resp.json()}
+        except requests.exceptions.RequestException as e:
+            return {"ok": False, "error": f"MassIVE API error: {e}"}
+        except ValueError:
+            return {"ok": False, "error": "Invalid JSON response from MassIVE"}
+
+    @staticmethod
+    def _to_int(value):
+        """Best-effort convert a string count to int; leave as-is on failure."""
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return value
+
+    def _get_protein_identifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Identification-level access to MassIVE via ProXI.
+
+        Three sub-modes (auto-selected by which argument is present):
+          - per-dataset proteins:  accession=PXD000561 -> protein summaries
+          - cross-dataset protein:  protein_accession=A2M_MOUSE -> dataset counts
+          - peptide-spectrum matches: result_type='psms' with a dataset accession
+        """
+        accession = arguments.get("accession")
+        protein_accession = arguments.get("protein_accession")
+        result_type = arguments.get("result_type", "proteins")
+
+        if not accession and not protein_accession:
+            return {
+                "status": "error",
+                "error": (
+                    "Provide 'accession' (dataset, e.g. 'PXD000561') for per-dataset "
+                    "identifications, or 'protein_accession' (e.g. 'A2M_MOUSE') for a "
+                    "cross-dataset protein lookup."
+                ),
+            }
+
+        params: Dict[str, Any] = {"resultType": "compact"}
+        if accession:
+            params["accession"] = accession
+        if protein_accession:
+            params["proteinAccession"] = protein_accession
+
+        endpoint = "psms" if result_type == "psms" else "proteins"
+        result = self._proxi_get(endpoint, params)
+        if not result["ok"]:
+            return {"status": "error", "error": result["error"]}
+
+        data = result["data"]
+        if not isinstance(data, list):
+            return {
+                "status": "error",
+                "error": f"Unexpected response type: {type(data).__name__}",
+            }
+
+        if endpoint == "psms":
+            psms = []
+            for item in data:
+                if isinstance(item, dict):
+                    psms.append(
+                        {
+                            "peptideSequence": item.get("peptideSequence", ""),
+                            "charge": self._to_int(item.get("charge")),
+                            "usi": item.get("usi", ""),
+                        }
+                    )
+            return {
+                "status": "success",
+                "data": {
+                    "result_type": "psms",
+                    "accession": accession,
+                    "protein_accession": protein_accession,
+                    "count": len(psms),
+                    "psms": psms,
+                },
+            }
+
+        proteins = []
+        for item in data:
+            if isinstance(item, dict):
+                proteins.append(
+                    {
+                        "proteinAccession": item.get("proteinAccession", ""),
+                        "countPSM": self._to_int(item.get("countPSM")),
+                        "countPeptides": self._to_int(item.get("countPeptides")),
+                        "countPeptidoforms": self._to_int(
+                            item.get("countPeptidoforms")
+                        ),
+                        "countDatasets": self._to_int(item.get("countDatasets")),
+                    }
+                )
+        return {
+            "status": "success",
+            "data": {
+                "result_type": "proteins",
+                "accession": accession,
+                "protein_accession": protein_accession,
+                "count": len(proteins),
+                "proteins": proteins,
+            },
+        }

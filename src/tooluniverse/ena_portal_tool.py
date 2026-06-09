@@ -85,6 +85,8 @@ class ENAPortalTool(BaseTool):
             return self._search_studies(arguments)
         elif self.endpoint_type == "search_samples":
             return self._search_samples(arguments)
+        elif self.endpoint_type == "search_runs":
+            return self._search_runs(arguments)
         elif self.endpoint_type == "count":
             return self._count(arguments)
         else:
@@ -195,6 +197,67 @@ class ENAPortalTool(BaseTool):
                 "query": query,
                 "returned": len(results),
                 "endpoint": "search/sample",
+            },
+        }
+
+    def _search_runs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search ENA sequencing runs (read_run) and return FASTQ download URLs.
+
+        Unlike study/sample search, the run domain is what gives downloadable
+        FASTQ links (fastq_ftp/submitted_ftp/sra_ftp). The query is typically a
+        taxonomy expression, e.g. tax_eq(1280) (Staphylococcus aureus) or
+        tax_tree(562), optionally combined with library_strategy="WGS".
+        """
+        raw_query = arguments.get("query", "")
+        if not raw_query:
+            return {
+                "status": "error",
+                "error": (
+                    "query parameter is required (e.g., 'tax_eq(1280)' or "
+                    "'tax_tree(562) AND library_strategy=\"WGS\"')"
+                ),
+            }
+        query = _normalize_ena_query(raw_query)
+
+        limit = min(arguments.get("limit", 10), 100)
+        fields = arguments.get(
+            "fields",
+            "run_accession,fastq_ftp,submitted_ftp,sra_ftp,fastq_md5,fastq_bytes,"
+            "library_strategy,instrument_platform,read_count,scientific_name",
+        )
+
+        params = {
+            "result": "read_run",
+            "query": query,
+            "limit": limit,
+            "format": "json",
+            "fields": fields,
+        }
+
+        response = requests.get(
+            f"{ENA_PORTAL_BASE_URL}/search",
+            params=params,
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        if isinstance(raw, dict) and "message" in raw:
+            return {
+                "status": "error",
+                "error": f"ENA Portal API error: {raw['message']}",
+            }
+
+        results = list(raw[:limit]) if isinstance(raw, list) else []
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "ENA Portal API",
+                "query": query,
+                "returned": len(results),
+                "endpoint": "search/read_run",
             },
         }
 

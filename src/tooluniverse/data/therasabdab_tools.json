@@ -118,5 +118,87 @@
             "tags": ["target", "competitive_analysis", "antibody"],
             "estimated_execution_time": "< 5 seconds"
         }
+    },
+    {
+        "name": "TheraSAbDab_get_therapeutic_sequences",
+        "description": "Get the full curated record for a clinical/approved therapeutic antibody from Thera-SAbDab by WHO INN name. Returns the VH/VL amino-acid sequences (heavy1/light1, plus heavy2/light2 for bispecifics), isotype, target antigen, PDB structural coverage at 100%/99%/95-98% sequence identity (struc100/struc99/struc95to98 as 'pdbid:chains'), originator companies, and approved/active/discontinued conditions. Use for antibody sequence retrieval and developability analysis. No authentication required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "WHO INN of the therapeutic antibody (e.g., 'adalimumab', 'abciximab', 'pembrolizumab'). Aliases: inn, query."
+                },
+                "inn": {
+                    "type": "string",
+                    "description": "Alias for name."
+                },
+                "query": {
+                    "type": "string",
+                    "description": "Alias for name."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "operation": "get_therapeutic_sequences"
+        },
+        "type": "TheraSAbDabTool",
+        "test_examples": [
+            {"name": "abciximab"},
+            {"name": "adalimumab"}
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "const": "success"},
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "query": {"type": "string"},
+                                "matched": {"type": ["string", "null"]},
+                                "therapeutic": {
+                                    "type": "object",
+                                    "properties": {
+                                        "inn_name": {"type": ["string", "null"]},
+                                        "format": {"type": ["string", "null"]},
+                                        "isotype": {"type": ["string", "null"]},
+                                        "target": {"type": ["string", "null"]},
+                                        "heavy1": {"type": ["string", "null"]},
+                                        "light1": {"type": ["string", "null"]},
+                                        "heavy2": {"type": ["string", "null"]},
+                                        "light2": {"type": ["string", "null"]},
+                                        "struc100": {"type": ["string", "null"]},
+                                        "struc99": {"type": ["string", "null"]},
+                                        "struc95to98": {"type": ["string", "null"]},
+                                        "companies": {"type": ["string", "null"]},
+                                        "conditions_approved": {"type": ["string", "null"]}
+                                    }
+                                },
+                                "match_count": {"type": "integer"}
+                            },
+                            "required": ["query", "therapeutic"]
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["status", "data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "const": "error"},
+                        "error": {"type": "string"}
+                    },
+                    "required": ["status", "error"]
+                }
+            ]
+        },
+        "label": ["TheraSAbDab", "Sequence", "Antibody"],
+        "metadata": {
+            "tags": ["therapeutic_antibody", "sequence", "biologics", "inn"],
+            "estimated_execution_time": "< 10 seconds"
+        }
     }
 ]

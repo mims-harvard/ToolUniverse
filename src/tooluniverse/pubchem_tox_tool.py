@@ -71,6 +71,10 @@ class PubChemToxTool(BaseTool):
             return self._get_ghs_classification(arguments)
         elif self.endpoint == "toxicity_values":
             return self._get_toxicity_values(arguments)
+        elif self.endpoint == "ecotoxicity_values":
+            return self._get_ecotoxicity_values(arguments)
+        elif self.endpoint == "human_toxicity_values":
+            return self._get_human_toxicity_values(arguments)
         elif self.endpoint == "carcinogen_classification":
             return self._get_carcinogen_classification(arguments)
         elif self.endpoint == "target_organs":
@@ -199,6 +203,61 @@ class PubChemToxTool(BaseTool):
             },
             "metadata": {
                 "source": "PubChem PUG View (Non-Human Toxicity Values)",
+                "cid": cid,
+            },
+        }
+
+    def _get_ecotoxicity_values(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get aquatic/environmental ecotoxicity values (LC50/EC50 for fish,
+        crustaceans, protozoa, etc.) from the 'Ecotoxicity Values' heading."""
+        cid = self._resolve_cid(arguments)
+
+        data = self._get_pugview_data(cid, "Ecotoxicity Values")
+        record = data.get("Record", {})
+        title = record.get("RecordTitle", "")
+
+        sections = record.get("Section", [])
+        raw_info = self._extract_info_from_sections(sections, "Ecotoxicity Values")
+        eco_values = [item["value"] for item in raw_info if item.get("value")]
+
+        return {
+            "status": "success",
+            "data": {
+                "cid": cid,
+                "compound_name": title,
+                "ecotoxicity_values_count": len(eco_values),
+                "ecotoxicity_values": eco_values[:30],
+            },
+            "metadata": {
+                "source": "PubChem PUG View (Ecotoxicity Values)",
+                "cid": cid,
+            },
+        }
+
+    def _get_human_toxicity_values(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get human toxicity values (lethal oral doses, IDLH air
+        concentrations, fatal exposure thresholds) from the
+        'Human Toxicity Values' heading."""
+        cid = self._resolve_cid(arguments)
+
+        data = self._get_pugview_data(cid, "Human Toxicity Values")
+        record = data.get("Record", {})
+        title = record.get("RecordTitle", "")
+
+        sections = record.get("Section", [])
+        raw_info = self._extract_info_from_sections(sections, "Human Toxicity Values")
+        human_values = [item["value"] for item in raw_info if item.get("value")]
+
+        return {
+            "status": "success",
+            "data": {
+                "cid": cid,
+                "compound_name": title,
+                "human_toxicity_values_count": len(human_values),
+                "human_toxicity_values": human_values[:30],
+            },
+            "metadata": {
+                "source": "PubChem PUG View (Human Toxicity Values)",
                 "cid": cid,
             },
         }

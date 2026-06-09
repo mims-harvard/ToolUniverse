@@ -72,6 +72,8 @@ class EnsemblLDTool(BaseTool):
             return self._ld_variants(arguments)
         elif self.endpoint_type == "ld_pairwise":
             return self._ld_pairwise(arguments)
+        elif self.endpoint_type == "ld_region":
+            return self._ld_region(arguments)
         else:
             return {
                 "status": "error",
@@ -152,6 +154,95 @@ class EnsemblLDTool(BaseTool):
                 "source": "Ensembl REST API",
                 "query": f"{variant_id} in {population}",
                 "endpoint": "ld",
+            },
+        }
+
+    def _ld_region(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get all pairwise LD in a chromosomal region for one population.
+
+        Returns every r2/D' pair among the variants that fall inside the
+        requested window — the LD matrix used as input to fine-mapping and
+        LD-aware clumping. The window must be <= 1 Mb (Ensembl limit).
+        """
+        region = arguments.get("region", "")
+        population = arguments.get("population", "")
+        r2_threshold = arguments.get("r2_threshold", None)
+        d_prime_threshold = arguments.get("d_prime_threshold", None)
+
+        if not region or not str(region).strip():
+            return {
+                "status": "error",
+                "error": "region parameter is required (e.g., '6:25837556..25840000').",
+            }
+        if not population:
+            return {
+                "status": "error",
+                "error": "population parameter is required (e.g., '1000GENOMES:phase_3:CEU')",
+            }
+
+        region = str(region).strip()
+        url = f"{ENSEMBL_BASE_URL}/ld/human/region/{region}/{population}"
+        params = {"content-type": "application/json"}
+        if r2_threshold is not None:
+            params["r2"] = r2_threshold
+        if d_prime_threshold is not None:
+            params["d_prime"] = d_prime_threshold
+
+        response = requests.get(
+            url, params=params, headers=ENSEMBL_HEADERS, timeout=self.timeout
+        )
+        if response.status_code == 400:
+            return {
+                "status": "error",
+                "error": (
+                    "Ensembl rejected the LD region request (HTTP 400). The window "
+                    "may exceed the 1 Mb limit or the region/population format is "
+                    "invalid. Use 'chr:start..end' (e.g. '6:25837556..25840000') and "
+                    "'1000GENOMES:phase_3:<POP>'."
+                ),
+            }
+        response.raise_for_status()
+        raw = response.json()
+
+        if not isinstance(raw, list):
+            raw = []
+
+        ld_pairs = []
+        for entry in raw:
+            try:
+                r2_val = float(entry.get("r2", 0))
+                dp_val = float(entry.get("d_prime", 0))
+            except (ValueError, TypeError):
+                r2_val = 0.0
+                dp_val = 0.0
+
+            ld_pairs.append(
+                {
+                    "variant1": entry.get("variation1", ""),
+                    "variant2": entry.get("variation2", ""),
+                    "r2": r2_val,
+                    "d_prime": dp_val,
+                    "population_name": entry.get("population_name", population),
+                }
+            )
+
+        # Sort by r2 descending so the strongest pairs come first
+        ld_pairs.sort(key=lambda x: x["r2"], reverse=True)
+
+        result = {
+            "region": region,
+            "population": population,
+            "ld_count": len(ld_pairs),
+            "ld_pairs": ld_pairs,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "Ensembl REST API",
+                "query": f"region {region} in {population}",
+                "endpoint": "ld/region",
             },
         }
 

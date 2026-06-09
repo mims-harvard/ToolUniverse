@@ -225,5 +225,124 @@
         }
       ]
     }
+  },
+  {
+    "name": "EnsemblLD_get_ld_region",
+    "description": "Get region-wide pairwise linkage disequilibrium (LD) from the Ensembl REST API: every r-squared and D' pair among ALL variants inside a chromosomal window for one 1000 Genomes Phase 3 population. This is the LD matrix used as input to statistical fine-mapping (e.g. SuSiE, FINEMAP) and LD-aware clumping at a GWAS locus. The window must be <= 1 Mb (Ensembl limit). Region format: 'chr:start..end'. Example: region '6:25837556..25840000' in CEU returns 4 LD pairs, e.g. rs62394274/rs62394275 with r2=1.0 and d_prime=1.0.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Chromosomal window as 'chr:start..end' (1-based, GRCh38), max 1 Mb. Example: '6:25837556..25840000'."
+        },
+        "population": {
+          "type": "string",
+          "description": "1000 Genomes population. Format: '1000GENOMES:phase_3:<POP>'. Common populations: 'CEU' (CEPH Utah), 'YRI' (Yoruba), 'CHB' (Han Chinese Beijing), 'GBR' (British), 'JPT' (Japanese Tokyo), 'KHV' (Kinh Vietnamese). Example: '1000GENOMES:phase_3:CEU'."
+        },
+        "r2_threshold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum r-squared threshold to report. Set higher (e.g., 0.8) for strong LD only."
+        },
+        "d_prime_threshold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum D' threshold to report. Set e.g., 0.8 for high D' only."
+        }
+      },
+      "required": [
+        "region",
+        "population"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "ld_region"
+    },
+    "type": "EnsemblLDTool",
+    "test_examples": [
+      {
+        "region": "6:25837556..25840000",
+        "population": "1000GENOMES:phase_3:CEU"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "region": {
+                  "type": "string"
+                },
+                "population": {
+                  "type": "string"
+                },
+                "ld_count": {
+                  "type": "integer"
+                },
+                "ld_pairs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant1": {
+                        "type": "string"
+                      },
+                      "variant2": {
+                        "type": "string"
+                      },
+                      "r2": {
+                        "type": "number"
+                      },
+                      "d_prime": {
+                        "type": "number"
+                      },
+                      "population_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

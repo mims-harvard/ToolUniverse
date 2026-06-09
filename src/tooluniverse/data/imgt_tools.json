@@ -47,6 +47,106 @@
     ]
   },
   {
+    "name": "IMGT_get_germline_gene_fasta",
+    "description": "Retrieve IMGT germline immunoglobulin (IG) / T-cell-receptor (TR) gene reference sequences in FASTA from IMGT/GENE-DB for a given gene type and species. Returns labeled FASTA records (V/D/J-REGION) e.g. '>AB019441|IGHV(II)-1-1*01|Homo sapiens|...'. Use for antibody/TCR repertoire reference sets and germline alignment. gene_type is an IG/TR locus (IGHV, IGHD, IGHJ, IGKV, IGLV, TRAV, TRBV, TRBD, TRBJ, ...). No authentication required.",
+    "type": "IMGTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_germline_fasta"
+        },
+        "gene_type": {
+          "type": "string",
+          "description": "IG/TR gene type/locus: IGHV, IGHD, IGHJ, IGKV, IGLV, TRAV, TRBV, TRBD, TRBJ, etc. (alias: gene, query)"
+        },
+        "gene": {
+          "type": "string",
+          "description": "Alias for gene_type."
+        },
+        "species": {
+          "type": "string",
+          "description": "Species name (default: Homo sapiens). Examples: 'Mus musculus', 'Homo sapiens'.",
+          "default": "Homo sapiens"
+        },
+        "label": {
+          "type": "string",
+          "description": "IMGT GENElect label controlling the region set (default '7.2' = all V/D/J-REGION reference alleles).",
+          "default": "7.2"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_type": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "fasta": {
+                  "type": "string"
+                },
+                "record_count": {
+                  "type": "integer"
+                },
+                "first_records": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["gene_type", "fasta", "record_count"]
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "gene_type": "IGHV",
+        "species": "Homo sapiens"
+      },
+      {
+        "gene_type": "TRBV",
+        "species": "Homo sapiens"
+      }
+    ]
+  },
+  {
     "name": "IMGT_search_genes",
     "description": "Search IMGT for immunoglobulin/TCR germline genes. Filter by gene type (IGHV, IGKV, TRAV, etc.) and species. Returns search URLs and gene type information for navigating IMGT GENE-DB.",
     "type": "IMGTTool",

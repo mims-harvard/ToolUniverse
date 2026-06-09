@@ -46,6 +46,8 @@ class IEDBPredictionTool(BaseTool):
                 return self._predict_mhcii(arguments)
             elif self.endpoint_type == "predict_bcell":
                 return self._predict_bcell(arguments)
+            elif self.endpoint_type == "predict_processing":
+                return self._predict_processing(arguments)
             return {
                 "status": "error",
                 "error": f"Unknown endpoint: {self.endpoint_type}",
@@ -137,6 +139,83 @@ class IEDBPredictionTool(BaseTool):
                     "Residues assigned 'E' (score above the method threshold) are "
                     "predicted to be in a linear B-cell (antibody) epitope; "
                     "epitope_regions are the contiguous stretches."
+                ),
+            },
+        }
+
+    def _predict_processing(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Predict MHC class I antigen processing (proteasome + TAP + MHC-I).
+
+        The IEDB processing tool chains proteasomal cleavage and TAP transport
+        predictions with MHC-I binding to score peptides for natural processing
+        and presentation, rather than raw binding alone. Returns per-peptide
+        proteasome_score, tap_score, mhc_score, processing_score, total_score
+        and ic50_score.
+        """
+        sequence = arguments.get("sequence") or arguments.get("sequence_text", "")
+        allele = arguments.get("allele", "HLA-A*02:01")
+        method = arguments.get("method", "netmhcpan")
+        length = arguments.get("length", 9)
+
+        if not sequence:
+            return {"status": "error", "error": "sequence is required"}
+
+        data = {
+            "method": method,
+            "sequence_text": sequence,
+            "allele": allele,
+            "length": str(length),
+        }
+
+        resp = requests.post(
+            f"{IEDB_TOOLS_BASE}/processing/",
+            data=data,
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+
+        results = self._parse_tsv(resp.text)
+
+        # Cast numeric columns; sort by total_score descending (higher = more
+        # likely to be naturally processed and presented).
+        numeric_cols = (
+            "proteasome_score",
+            "tap_score",
+            "mhc_score",
+            "processing_score",
+            "total_score",
+            "ic50_score",
+        )
+        for r in results:
+            for col in numeric_cols:
+                if col in r:
+                    try:
+                        r[col] = float(r[col])
+                    except (ValueError, TypeError):
+                        pass
+
+        results.sort(
+            key=lambda x: x.get("total_score")
+            if isinstance(x.get("total_score"), (int, float))
+            else float("-inf"),
+            reverse=True,
+        )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "method": method,
+                "allele": allele,
+                "length": length,
+                "n_peptides": len(results),
+                "source": "IEDB Analysis Resource (processing)",
+                "interpretation": (
+                    "processing_score = proteasome + TAP component; "
+                    "total_score = processing_score + mhc_score (binding). "
+                    "Higher total_score = more likely naturally processed and "
+                    "presented to CD8+ T cells. ic50_score is predicted MHC-I "
+                    "binding affinity (nM, lower = stronger binder)."
                 ),
             },
         }

@@ -554,5 +554,161 @@
       "tags": ["interpro", "protein_domains", "functional_annotation", "microbiome", "metagenomics"],
       "estimated_execution_time": "< 5 seconds"
     }
+  },
+  {
+    "name": "MGnify_get_samples",
+    "description": "List biological SAMPLES in MGnify (EBI Metagenomics) with full geographic/host/environment provenance. Returns each sample's accession, BioSample id, latitude, longitude, geo-loc-name, collection-date, host-tax-id, species, and ENVO environment biome/feature/material - the sample-level metadata table that the study, analysis, genome, and biome tools never expose. Pass a single 'sample_accession' (e.g. 'SRS10016989') to fetch one sample, or omit it to page through samples optionally filtered by 'study_accession' or 'biome'. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sample_accession": {
+          "type": ["string", "null"],
+          "description": "Fetch a single sample by its MGnify/ENA accession (e.g., 'SRS10016989'). If provided, study_accession/biome/page are ignored."
+        },
+        "study_accession": {
+          "type": ["string", "null"],
+          "description": "Filter samples belonging to a study (e.g., 'MGYS00002008')."
+        },
+        "biome": {
+          "type": ["string", "null"],
+          "description": "Filter by biome name lineage (e.g., 'root:Host-associated:Human:Digestive system')."
+        },
+        "page": {
+          "type": ["integer", "null"],
+          "description": "Page number (default 1)."
+        },
+        "page_size": {
+          "type": ["integer", "null"],
+          "description": "Samples per page (default 25, max 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "sample",
+      "query_mode": "list"
+    },
+    "type": "MGnifyExpandedTool",
+    "test_examples": [
+      {
+        "page_size": 2
+      },
+      {
+        "sample_accession": "SRS10016989"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sample_accession": {"type": "string"},
+                  "biosample": {"type": ["string", "null"]},
+                  "latitude": {"type": ["number", "string", "null"]},
+                  "longitude": {"type": ["number", "string", "null"]},
+                  "geo_loc_name": {"type": ["string", "null"]},
+                  "collection_date": {"type": ["string", "null"]},
+                  "host_tax_id": {"type": ["string", "integer", "null"]},
+                  "environment_biome": {"type": ["string", "null"]},
+                  "environment_feature": {"type": ["string", "null"]},
+                  "environment_material": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["MGnify", "Microbiome", "Samples", "Metadata"],
+    "metadata": {
+      "tags": ["samples", "sample_metadata", "geography", "host", "environment", "microbiome", "metagenomics"],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "MGnify_list_analysis_downloads",
+    "description": "List the downloadable result files produced by a MGnify analysis. Returns each output file's id, label/description, file format, compression, group type, and a direct download URL - covering taxonomy and functional outputs such as predicted CDS (.faa), predicted ORF (.ffn), processed contigs (.fasta), combined eggNOG/InterPro/antiSMASH annotation GFF, eggNOG (emapper) TSV, and Diamond TSV. The parsed-annotation tools (taxonomy, GO, InterPro) summarize content but cannot enumerate or point to the actual files; this tool does. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "analysis_id": {
+          "type": "string",
+          "description": "MGnify analysis accession (e.g., 'MGYA00585482'). Find IDs via MGnify_list_analyses."
+        },
+        "page_size": {
+          "type": ["integer", "null"],
+          "description": "Number of download entries to return (default 100, max 100)."
+        }
+      },
+      "required": ["analysis_id"]
+    },
+    "fields": {
+      "endpoint_type": "analysis",
+      "query_mode": "downloads"
+    },
+    "type": "MGnifyExpandedTool",
+    "test_examples": [
+      {
+        "analysis_id": "MGYA00585482"
+      },
+      {
+        "analysis_id": "MGYA00585482",
+        "page_size": 10
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file_id": {"type": "string"},
+                  "label": {"type": ["string", "null"]},
+                  "description": {"type": ["string", "null"]},
+                  "file_format": {"type": ["string", "null"]},
+                  "compression": {"type": ["boolean", "string", "null"]},
+                  "group_type": {"type": ["string", "null"]},
+                  "download_url": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "label": ["MGnify", "Microbiome", "Downloads", "Files"],
+    "metadata": {
+      "tags": ["downloads", "files", "predicted_cds", "eggnog", "interpro", "diamond", "microbiome", "metagenomics"],
+      "estimated_execution_time": "< 5 seconds"
+    }
   }
 ]

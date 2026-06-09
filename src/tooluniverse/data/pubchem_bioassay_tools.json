@@ -416,5 +416,113 @@
         }
       ]
     }
+  },
+  {
+    "name": "PubChemBioAssay_get_concise_activity_table",
+    "description": "Get the assay-wide concise bioactivity table for a PubChem BioAssay (AID). Returns ONE row per tested compound across ALL compounds screened in the assay (not just the active CID list, and not SID-limited like dose-response data), with per-compound columns including SID, CID, Activity Outcome (Active/Inactive/Inconclusive), Activity Value [uM] / potency, Activity Name, Target Accession, and Target GeneID. Useful for retrieving the full screening matrix of a high-throughput assay. Example: AID 504832 (malaria qHTS) returns 305,803 rows (e.g. SID 842131 / CID 6602565 'Active' at 6.5733 uM). Large assays can return hundreds of thousands of rows; the response always reports total_rows and caps the row payload at max_rows (default 1000).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "integer",
+          "description": "PubChem BioAssay ID (AID). Examples: 504832 (malaria qHTS, 305803 rows), 1259393 (TSHR counter screen)."
+        },
+        "max_rows": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of compound rows to return in the payload (default 1000, max 100000). total_rows always reports the true full count regardless of this cap."
+        }
+      },
+      "required": [
+        "aid"
+      ]
+    },
+    "fields": {
+      "endpoint": "concise_activity_table"
+    },
+    "type": "PubChemBioAssayTool",
+    "test_examples": [
+      {
+        "aid": 1259393,
+        "max_rows": 50
+      },
+      {
+        "aid": 504832,
+        "max_rows": 20
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "aid": {
+                  "type": ["integer", "string"],
+                  "description": "Assay ID"
+                },
+                "columns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Column headers (AID, SID, CID, Activity Outcome, Target Accession, Target GeneID, Activity Value [uM], Activity Name, ...)"
+                },
+                "total_rows": {
+                  "type": "integer",
+                  "description": "Total number of compound rows in the assay (full count, not capped)"
+                },
+                "returned_rows": {
+                  "type": "integer",
+                  "description": "Number of rows actually returned in this payload"
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Per-compound rows keyed by column header. Each row maps each column name to its cell value (SID, CID, Activity Outcome, Activity Value [uM], etc.)."
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "aid": {
+                  "type": "string"
+                },
+                "total_rows": {
+                  "type": "integer"
+                },
+                "returned_rows": {
+                  "type": "integer"
+                },
+                "truncated": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

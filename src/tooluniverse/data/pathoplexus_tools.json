@@ -198,5 +198,155 @@
                 }
             ]
         }
+    },
+    {
+        "name": "Pathoplexus_get_sequence_details",
+        "description": "List the individual sequence records (not aggregated counts) behind a Pathoplexus organism, from the LAPIS /details endpoint. Returns a per-sequence metadata table — accession, country (geoLocCountry), collection date (sampleCollectionDate), host, lineage, clade and any other requested fields — so you can enumerate the actual surveilled genomes rather than only their totals. Optionally filter by country and lineage and select which fields to return. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
+                },
+                "country": {
+                    "type": ["string", "null"],
+                    "description": "Filter by country (geoLocCountry), e.g. 'USA'."
+                },
+                "lineage": {
+                    "type": ["string", "null"],
+                    "description": "Filter by lineage."
+                },
+                "fields": {
+                    "type": ["string", "null"],
+                    "description": "Comma-separated metadata fields to return, e.g. 'accession,geoLocCountry,sampleCollectionDate,lineage'. Omit to return all available fields."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Max sequence rows (default 50, max 1000)."
+                },
+                "offset": {
+                    "type": ["integer", "null"],
+                    "description": "Row offset for pagination (default 0)."
+                }
+            },
+            "required": ["organism"]
+        },
+        "fields": {
+            "timeout": 30,
+            "mode": "details"
+        },
+        "type": "PathoplexusCountTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "fields": "accession,geoLocCountry,sampleCollectionDate,lineage",
+                "limit": 2
+            },
+            {
+                "organism": "mpox",
+                "limit": 3
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Per-sequence metadata rows",
+                    "properties": {
+                        "status": {"type": "string"},
+                        "data": {
+                            "type": "array",
+                            "items": {"type": "object"}
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["status", "data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
+    },
+    {
+        "name": "Pathoplexus_get_sequences_fasta",
+        "description": "Download the actual genome sequences (FASTA) from Pathoplexus/LAPIS for a surveilled pathogen. Returns unaligned (default) or aligned nucleotide or amino-acid sequences as FASTA text, optionally filtered by country and lineage. This is the only way in ToolUniverse to retrieve the nucleotide/protein sequence of Pathoplexus genomes — the other tools expose only counts and mutations. Known organisms: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "organism": {
+                    "type": "string",
+                    "description": "Pathoplexus organism slug: 'west-nile', 'ebola-zaire', 'ebola-sudan', 'cchf', 'mpox'."
+                },
+                "country": {
+                    "type": ["string", "null"],
+                    "description": "Filter by country (geoLocCountry), e.g. 'USA'."
+                },
+                "lineage": {
+                    "type": ["string", "null"],
+                    "description": "Filter by lineage."
+                },
+                "sequence_type": {
+                    "type": ["string", "null"],
+                    "description": "'nucleotide' (default) or 'aminoAcid'."
+                },
+                "aligned": {
+                    "type": ["boolean", "null"],
+                    "description": "Return aligned sequences instead of unaligned (default false)."
+                },
+                "limit": {
+                    "type": ["integer", "null"],
+                    "description": "Number of sequences to download (default 1, max 100)."
+                }
+            },
+            "required": ["organism"]
+        },
+        "fields": {
+            "timeout": 30,
+            "mode": "fasta"
+        },
+        "type": "PathoplexusCountTool",
+        "test_examples": [
+            {
+                "organism": "west-nile",
+                "limit": 1
+            },
+            {
+                "organism": "mpox",
+                "limit": 1
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "FASTA sequence payload",
+                    "properties": {
+                        "status": {"type": "string"},
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "fasta": {"type": "string"},
+                                "num_records": {"type": "integer"}
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    },
+                    "required": ["status", "data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {"type": "string"}
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
     }
 ]

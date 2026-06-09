@@ -237,5 +237,114 @@
         }
       ]
     }
+  },
+  {
+    "name": "IEDB_predict_antigen_processing",
+    "description": "Predict MHC class I antigen processing using the IEDB Analysis Resource processing tool. Unlike raw binding prediction, this chains proteasomal cleavage + TAP transport + MHC-I binding into a combined processing_score and total_score, predicting peptides that are naturally processed and presented to CD8+ T cells. Given a protein sequence and HLA allele, returns per-peptide proteasome_score, tap_score, mhc_score, processing_score, total_score and ic50_score (nM). Use for neoantigen and epitope prioritization beyond binding affinity. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence (single-letter amino acids), e.g. 'SLYNTVATLYCVHQRIDV'. Aliases: sequence_text."
+        },
+        "sequence_text": {
+          "type": "string",
+          "description": "Alias for sequence."
+        },
+        "allele": {
+          "type": "string",
+          "description": "MHC class I allele. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H-2-Kd'. Default: HLA-A*02:01",
+          "default": "HLA-A*02:01"
+        },
+        "method": {
+          "type": "string",
+          "description": "MHC-I binding method used in the chain: 'netmhcpan' (default), 'ann', 'smm', 'comblib_sidney2008'.",
+          "default": "netmhcpan"
+        },
+        "length": {
+          "type": "integer",
+          "description": "Peptide length (8-14 for MHC-I, typically 9).",
+          "default": 9
+        }
+      },
+      "required": [
+        "sequence"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "predict_processing"
+    },
+    "type": "IEDBPredictionTool",
+    "test_examples": [
+      {
+        "sequence": "SLYNTVATLYCVHQRIDV",
+        "allele": "HLA-A*02:01",
+        "length": 9
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "peptide": {
+                    "type": "string"
+                  },
+                  "proteasome_score": {
+                    "type": ["number", "string"]
+                  },
+                  "tap_score": {
+                    "type": ["number", "string"]
+                  },
+                  "mhc_score": {
+                    "type": ["number", "string"]
+                  },
+                  "processing_score": {
+                    "type": ["number", "string"]
+                  },
+                  "total_score": {
+                    "type": ["number", "string"]
+                  },
+                  "ic50_score": {
+                    "type": ["number", "string"]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

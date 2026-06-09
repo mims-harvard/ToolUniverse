@@ -41,6 +41,18 @@ class _PathoplexusBase(BaseTool):
         resp.raise_for_status()
         return resp.json()
 
+    def _get_text(
+        self, organism: str, endpoint: str, params: Dict[str, Any], accept: str
+    ) -> str:
+        resp = requests.get(
+            f"{LAPIS_BASE}/{organism}/sample/{endpoint}",
+            params=params,
+            headers={"Accept": accept},
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+        return resp.text
+
     @staticmethod
     def _common_filters(arguments: Dict[str, Any]) -> Dict[str, Any]:
         params: Dict[str, Any] = {}
@@ -55,9 +67,25 @@ class _PathoplexusBase(BaseTool):
 
 @register_tool("PathoplexusCountTool")
 class PathoplexusCountTool(_PathoplexusBase):
-    """Aggregated sequence counts for a Pathoplexus organism."""
+    """Pathoplexus organism queries.
+
+    The ``fields.mode`` config selects the LAPIS endpoint:
+      - ``"aggregated"`` (default): aggregated sequence counts (original behavior)
+      - ``"details"``: per-sequence metadata table (accession, country, date, ...)
+      - ``"fasta"``: download unaligned/aligned nucleotide or amino-acid FASTA
+    All modes are served by this one registered class so no new registration is
+    needed; the original aggregated behavior is unchanged when ``mode`` is absent.
+    """
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        mode = (self.tool_config.get("fields", {}) or {}).get("mode", "aggregated")
+        if mode == "details":
+            return self._run_details(arguments)
+        if mode == "fasta":
+            return self._run_fasta(arguments)
+        return self._run_aggregated(arguments)
+
+    def _run_aggregated(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         organism = _organism(arguments)
         if not organism:
             return {
@@ -102,6 +130,129 @@ class PathoplexusCountTool(_PathoplexusBase):
                 "grouped_by": group_by or None,
                 "filters": filters or None,
                 "returned": len(rows),
+                "source": "Pathoplexus (LAPIS)",
+            },
+        }
+
+    def _run_details(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        organism = _organism(arguments)
+        if not organism:
+            return {
+                "status": "error",
+                "error": "'organism' is required (e.g. 'west-nile', 'mpox', 'ebola-zaire', 'cchf')",
+            }
+        filters = self._common_filters(arguments)
+        params = dict(filters)
+
+        fields = (arguments.get("fields") or "").strip()
+        if fields:
+            params["fields"] = [f.strip() for f in fields.split(",") if f.strip()]
+
+        try:
+            params["limit"] = max(1, min(int(arguments.get("limit") or 50), 1000))
+        except (TypeError, ValueError):
+            params["limit"] = 50
+        try:
+            offset = int(arguments.get("offset") or 0)
+            if offset > 0:
+                params["offset"] = offset
+        except (TypeError, ValueError):
+            pass
+
+        try:
+            payload = self._get(organism, "details", params)
+        except requests.exceptions.Timeout:
+            return {
+                "status": "error",
+                "error": f"Pathoplexus request timed out after {self.timeout}s",
+            }
+        except requests.exceptions.HTTPError as e:
+            return {
+                "status": "error",
+                "error": f"Pathoplexus HTTP {e.response.status_code} — check the organism slug and field names",
+            }
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"Pathoplexus request failed: {e}"}
+        except ValueError:
+            return {
+                "status": "error",
+                "error": "Pathoplexus returned a non-JSON response",
+            }
+
+        rows = payload.get("data", []) if isinstance(payload, dict) else []
+        return {
+            "status": "success",
+            "data": rows,
+            "metadata": {
+                "organism": organism,
+                "filters": filters or None,
+                "returned": len(rows),
+                "limit": params["limit"],
+                "source": "Pathoplexus (LAPIS)",
+            },
+        }
+
+    def _run_fasta(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        organism = _organism(arguments)
+        if not organism:
+            return {
+                "status": "error",
+                "error": "'organism' is required (e.g. 'west-nile', 'mpox', 'ebola-zaire', 'cchf')",
+            }
+        filters = self._common_filters(arguments)
+        params = dict(filters)
+        params["dataFormat"] = "FASTA"
+
+        try:
+            params["limit"] = max(1, min(int(arguments.get("limit") or 1), 100))
+        except (TypeError, ValueError):
+            params["limit"] = 1
+
+        seq_type = (arguments.get("sequence_type") or "nucleotide").strip().lower()
+        aligned = bool(arguments.get("aligned"))
+        if seq_type.startswith("amino") or seq_type in ("aa", "protein"):
+            endpoint = (
+                "alignedAminoAcidSequences"
+                if aligned
+                else "unalignedAminoAcidSequences"
+            )
+        else:
+            endpoint = (
+                "alignedNucleotideSequences"
+                if aligned
+                else "unalignedNucleotideSequences"
+            )
+
+        try:
+            text = self._get_text(organism, endpoint, params, "text/x-fasta")
+        except requests.exceptions.Timeout:
+            return {
+                "status": "error",
+                "error": f"Pathoplexus request timed out after {self.timeout}s",
+            }
+        except requests.exceptions.HTTPError as e:
+            return {
+                "status": "error",
+                "error": f"Pathoplexus HTTP {e.response.status_code} — check the organism slug and filter fields",
+            }
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"Pathoplexus request failed: {e}"}
+
+        if not text or not text.lstrip().startswith(">"):
+            return {
+                "status": "error",
+                "error": "Pathoplexus returned no FASTA records for this query",
+            }
+
+        n_records = text.count(">")
+        return {
+            "status": "success",
+            "data": {"fasta": text, "num_records": n_records},
+            "metadata": {
+                "organism": organism,
+                "endpoint": endpoint,
+                "filters": filters or None,
+                "returned": n_records,
                 "source": "Pathoplexus (LAPIS)",
             },
         }

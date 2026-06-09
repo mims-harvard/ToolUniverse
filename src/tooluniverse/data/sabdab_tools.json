@@ -83,6 +83,131 @@
     ]
   },
   {
+    "name": "SAbDab_get_structure_summary",
+    "description": "Get per-structure curated antibody annotations from SAbDab for a PDB ID. Returns the SAbDab summary TSV row(s): antigen name/type/species, heavy/light chain species and IMGT V-gene subclass, resolution, experimental method, R-free / R-factor, scFv and engineered flags, and (when curated) binding affinity Kd, delta_G, affinity method, temperature and PMID. Use for antibody-antigen complex characterization. Pass a 4-character PDB ID (e.g., 7d6i, 3hfm). No authentication required.",
+    "type": "SAbDabTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_structure_summary"
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "4-character PDB ID of an antibody structure (e.g., '7d6i', '3hfm'). Aliases: pdb_code, pdb."
+        },
+        "pdb_code": {
+          "type": "string",
+          "description": "Alias for pdb_id."
+        },
+        "pdb": {
+          "type": "string",
+          "description": "Alias for pdb_id."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "pdb_id": {
+                  "type": "string"
+                },
+                "antigen_name": {
+                  "type": ["string", "null"]
+                },
+                "antigen_species": {
+                  "type": ["string", "null"]
+                },
+                "heavy_species": {
+                  "type": ["string", "null"]
+                },
+                "light_species": {
+                  "type": ["string", "null"]
+                },
+                "resolution": {
+                  "type": ["number", "string", "null"]
+                },
+                "method": {
+                  "type": ["string", "null"]
+                },
+                "r_free": {
+                  "type": ["number", "string", "null"]
+                },
+                "r_factor": {
+                  "type": ["number", "string", "null"]
+                },
+                "heavy_subclass": {
+                  "type": ["string", "null"]
+                },
+                "light_subclass": {
+                  "type": ["string", "null"]
+                },
+                "scfv": {
+                  "type": ["boolean", "null"]
+                },
+                "engineered": {
+                  "type": ["boolean", "null"]
+                },
+                "affinity": {
+                  "type": ["number", "string", "null"]
+                },
+                "delta_g": {
+                  "type": ["number", "string", "null"]
+                },
+                "pmid": {
+                  "type": ["integer", "string", "null"]
+                },
+                "chains": {
+                  "type": "array"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              },
+              "required": ["pdb_id", "chains", "count"]
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "7d6i"
+      },
+      {
+        "pdb_id": "3hfm"
+      }
+    ]
+  },
+  {
     "name": "SAbDab_get_summary",
     "description": "Get SAbDab database summary and statistics. Returns information about database content, features, and access URLs. Good starting point for exploring antibody structural data.",
     "type": "SAbDabTool",

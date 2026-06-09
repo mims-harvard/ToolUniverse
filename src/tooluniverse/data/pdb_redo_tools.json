@@ -163,5 +163,134 @@
         "pdb_id": "6lu7"
       }
     ]
+  },
+  {
+    "name": "PDB_REDO_get_version_info",
+    "type": "BaseRESTTool",
+    "description": "Get PDB-REDO re-refinement version and provenance metadata for a PDB entry. This is the versions.json file, separate from the quality-metrics data.json: it reports the pdb-redo pipeline version used, the mmCIF coordinate revision (major/minor), the reflections revision, whether coordinates or reflections were edited, Foldit-player provenance (foldit_used, foldit_id, foldit_player), and the version/used flag of every supporting crystallographic program (mtzdmp, WHAT_CHECK, refmac, etc.). Use lowercase PDB IDs. Only X-ray structures present in PDB-REDO have version info.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry ID in lowercase. Examples: '1cbs', '6lu7', '2hhb'. Not all PDB entries have PDB-REDO data (mainly X-ray crystal structures)."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://pdb-redo.eu/db/{pdb_id}/versions.json",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Standard envelope; data has 'data' (provenance) and 'software' (program versions) sections",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "description": "Provenance metadata",
+                  "properties": {
+                    "PDBID": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "coordinates_revision_major_mmCIF": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Major coordinate revision number (mmCIF)"
+                    },
+                    "coordinates_revision_minor_mmCIF": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Minor coordinate revision number (mmCIF)"
+                    },
+                    "coordinates_edited": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "reflections_revision": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reflections_edited": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "foldit_used": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "foldit_id": {
+                      "type": [
+                        "string",
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "foldit_player": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "software": {
+                  "type": "object",
+                  "description": "Per-program version and 'used' flag (key 'pdb-redo' carries the pipeline version, e.g. '8.21')"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1cbs"
+      },
+      {
+        "pdb_id": "6lu7"
+      }
+    ]
   }
 ]

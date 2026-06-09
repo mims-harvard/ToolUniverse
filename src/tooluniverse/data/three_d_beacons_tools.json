@@ -195,5 +195,122 @@
                 }
             ]
         }
+    },
+    {
+        "name": "ThreeDBeacons_get_annotations",
+        "description": "Get residue-level structural and functional annotations mapped onto a protein's 3D models from the 3D Beacons Hub, with the exact residue and region lists plus source/evidence. This is distinct from the model-list summary: it returns features such as DOMAIN, BINDING, ACT_SITE, METAL, DISULFID, MOD_RES, HELIX, STRAND, INTERFACE, CHANNEL, each carrying a description (with InterPro IDs where applicable), source_name (e.g. InterPro), evidence level (e.g. COMPUTATIONAL/PREDICTED), the list of residue numbers, and start/end regions. Example: P38398 (BRCA1) type=DOMAIN returns the 'BRCA1-associated (IPR031099)' domain over residues 7-99.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "accession": {
+                    "type": "string",
+                    "description": "UniProt protein accession. Examples: 'P38398' (BRCA1), 'P04637' (TP53), 'P00533' (EGFR)."
+                },
+                "type": {
+                    "type": ["string", "null"],
+                    "description": "Filter to one annotation type. Valid values: CARBOHYD, DOMAIN, ACT_SITE, METAL, BINDING, NON_STD, MOD_RES, DISULFID, MUTAGEN, HELIX, STRAND, DISORDERED, INTERFACE, CHANNEL. Omit to return all annotation types."
+                },
+                "provider": {
+                    "type": ["string", "null"],
+                    "description": "Optional model provider to source annotations from: 'pdbe' or 'alphafold'."
+                }
+            },
+            "required": [
+                "accession"
+            ]
+        },
+        "fields": {
+            "endpoint": "annotations"
+        },
+        "type": "ThreeDBeaconsTool",
+        "test_examples": [
+            {
+                "accession": "P38398",
+                "type": "DOMAIN"
+            },
+            {
+                "accession": "P04637",
+                "type": "BINDING"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accession": {
+                                    "type": "string",
+                                    "description": "UniProt accession queried"
+                                },
+                                "id": {
+                                    "type": ["string", "null"],
+                                    "description": "3D Beacons annotation record identifier"
+                                },
+                                "sequence_length": {
+                                    "type": ["integer", "null"],
+                                    "description": "Length of the annotated sequence"
+                                },
+                                "type_filter": {
+                                    "type": ["string", "null"],
+                                    "description": "Annotation type filter applied, if any"
+                                },
+                                "annotation_count": {
+                                    "type": "integer",
+                                    "description": "Number of annotation entries returned"
+                                },
+                                "annotations": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": ["string", "null"],
+                                                "description": "Annotation type (DOMAIN, BINDING, ACT_SITE, etc.)"
+                                            },
+                                            "description": {
+                                                "type": ["string", "null"],
+                                                "description": "Human-readable description (may include InterPro IDs)"
+                                            },
+                                            "source_name": {
+                                                "type": ["string", "null"],
+                                                "description": "Annotation source (e.g. InterPro, UniProt)"
+                                            },
+                                            "evidence": {
+                                                "type": ["string", "null"],
+                                                "description": "Evidence level (e.g. COMPUTATIONAL/PREDICTED, EXPERIMENTAL)"
+                                            },
+                                            "residues": {
+                                                "type": ["array", "null"],
+                                                "description": "List of residue numbers covered by the annotation"
+                                            },
+                                            "regions": {
+                                                "type": ["array", "null"],
+                                                "description": "List of {start, end} region objects"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    "required": ["data"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": ["error"]
+                }
+            ]
+        }
     }
 ]

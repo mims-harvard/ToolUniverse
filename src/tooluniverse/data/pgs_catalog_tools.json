@@ -150,5 +150,84 @@
       ]
     },
     "test_examples": [{"pgs_id": "PGS000001"}]
+  },
+  {
+    "type": "PGSCatalogTool",
+    "name": "PGSCatalog_get_performance_metrics",
+    "description": "Retrieve the published validation/evaluation performance metrics for a polygenic score from the PGS Catalog by its PGS id (e.g. 'PGS000001'). Returns one record per evaluation sample set, each with: effect sizes (Odds Ratio OR, Hazard Ratio HR, beta), classification accuracy (AUROC, Concordance/C-index), and other metrics (R2, top-vs-bottom quantile OR) — each as an estimate with 95% CI (ci_lower/ci_upper) — plus the evaluation cohort ancestry (ancestry_broad/free/country) and sample size (sample_number, cases, controls), covariates, and source publication. Use this to judge how well a score predicts and in which ancestries it was validated. Find PGS ids with PGSCatalog_get_scores_by_trait. No API key.",
+    "fields": {"operation": "get_performance_metrics"},
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pgs_id": {
+          "type": "string",
+          "description": "PGS Catalog score id, e.g. 'PGS000001' or 'PGS000004'."
+        }
+      },
+      "required": ["pgs_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ppm_id": {"type": "string"},
+                  "pgs_id": {"type": "string"},
+                  "phenotyping_reported": {"type": ["string", "null"]},
+                  "covariates": {"type": ["string", "null"]},
+                  "effect_sizes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name_short": {"type": ["string", "null"]},
+                        "name_long": {"type": ["string", "null"]},
+                        "estimate": {"type": ["number", "null"]},
+                        "ci_lower": {"type": ["number", "null"]},
+                        "ci_upper": {"type": ["number", "null"]}
+                      }
+                    }
+                  },
+                  "classification_accuracy": {"type": "array"},
+                  "other_metrics": {"type": "array"},
+                  "evaluation_sampleset_id": {"type": ["string", "null"]},
+                  "evaluation_samples": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "sample_number": {"type": ["integer", "null"]},
+                        "sample_cases": {"type": ["integer", "null"]},
+                        "sample_controls": {"type": ["integer", "null"]},
+                        "ancestry_broad": {"type": ["string", "null"]},
+                        "ancestry_country": {"type": ["string", "null"]}
+                      }
+                    }
+                  },
+                  "publication": {"type": "object"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [{"pgs_id": "PGS000001"}]
   }
 ]

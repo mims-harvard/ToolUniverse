@@ -69,6 +69,8 @@ class UniChemTool(BaseTool):
             return self._search_compound(arguments)
         elif self.endpoint_type == "list_sources":
             return self._list_sources(arguments)
+        elif self.endpoint_type == "connectivity_search":
+            return self._connectivity_search(arguments)
         else:
             return {
                 "status": "error",
@@ -165,6 +167,82 @@ class UniChemTool(BaseTool):
                 "source": "UniChem",
                 "query": compound,
                 "endpoint": "compounds",
+            },
+        }
+
+    def _connectivity_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Connectivity (cross-source) search.
+
+        Finds all compounds across the 40+ UniChem source databases that
+        share the same connectivity layer as the query (i.e. salts,
+        stereoisomers, tautomers, charge/protonation/isotope variants).
+        Each returned source entry carries a per-match ``comparison`` object
+        describing how that match differs from the query (charge, stereo
+        double bond, isotope, protonation, heavy atoms, etc.).
+        """
+        compound = arguments.get("compound", "")
+        search_type = arguments.get("type", "inchikey")
+
+        if not compound:
+            return {
+                "status": "error",
+                "error": "compound parameter is required (e.g., InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N')",
+            }
+
+        payload = {"compound": compound, "type": search_type}
+        source_id = arguments.get("sourceID", None)
+        if source_id is not None:
+            payload["sourceID"] = source_id
+
+        url = f"{UNICHEM_BASE_URL}/connectivity"
+        response = requests.post(
+            url,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        searched = raw.get("searchedCompound", {})
+        searched_info = {
+            "inchi": searched.get("inchi") if isinstance(searched, dict) else None,
+            "inchikey": (
+                searched.get("standardInchiKey") if isinstance(searched, dict) else None
+            ),
+            "uci": searched.get("uci") if isinstance(searched, dict) else None,
+        }
+
+        matches = []
+        for s in raw.get("sources", []):
+            matches.append(
+                {
+                    "source_id": s.get("id"),
+                    "source_name": s.get("shortName", ""),
+                    "source_long_name": s.get("longName", ""),
+                    "compound_id": s.get("compoundId", ""),
+                    "type_of_search": s.get("typeOfSearch"),
+                    "url": s.get("url", None),
+                    "comparison": s.get("comparison", {}),
+                }
+            )
+
+        result = {
+            "response": raw.get("response"),
+            "searched_compound": searched_info,
+            "total_compounds": raw.get("totalCompounds"),
+            "total_sources": raw.get("totalSources"),
+            "match_count": len(matches),
+            "matches": matches,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "UniChem",
+                "query": compound,
+                "endpoint": "connectivity",
             },
         }
 

@@ -227,5 +227,86 @@
         "accession": "PXD012345"
       }
     ]
+  },
+  {
+    "type": "PRIDERESTTool",
+    "name": "PRIDE_get_projects_for_protein",
+    "description": "Reverse lookup: list every PRIDE Archive project (PXD accession) that identified a given protein, keyed by UniProt accession. PRIDE's other tools are project-centric (search/get/files) and cannot answer 'which proteomics datasets contain protein X' - this tool fills that gap. Given a UniProt accession (e.g., 'P38398' for BRCA1, 'P04637' for TP53), returns the protein accession and the full list of PXD project accessions where it was reported. Use the returned PXD IDs with PRIDE_get_project or PRIDE_get_project_files for details.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt protein accession (e.g., 'P38398' for BRCA1, 'P04637' for TP53, 'P00533' for EGFR). Returns every PRIDE project that identified this protein."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/pride/ws/archive/v2/proteins/{accession}",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful protein-to-projects reverse lookup.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["success"]
+            },
+            "data": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "proteinAccession": {
+                  "type": "string",
+                  "description": "UniProt accession queried (echoed back by PRIDE)"
+                },
+                "projects": {
+                  "type": "array",
+                  "description": "List of PRIDE project accessions (PXD######) that identified this protein",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error envelope returned on failure.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["error"]
+            },
+            "error": {
+              "type": "string"
+            },
+            "url": {
+              "type": ["string", "null"]
+            }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "P38398"
+      },
+      {
+        "accession": "P04637"
+      }
+    ]
   }
 ]

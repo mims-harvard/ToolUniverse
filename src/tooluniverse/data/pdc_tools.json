@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_studies"],
+          "enum": [
+            "search_studies"
+          ],
           "description": "Operation type"
         },
         "query": {
@@ -16,25 +18,49 @@
           "description": "Search keyword for studies. Can be disease name (Breast, Lung, Renal), program name (CPTAC, HTAN), or fraction type (Proteome, Phosphoproteome, Acetylome)."
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "operation",
+        "query"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "query": {"type": "string", "description": "The search query used"},
+        "query": {
+          "type": "string",
+          "description": "The search query used"
+        },
         "studies": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "study_id": {"type": "string", "description": "PDC internal UUID for the study"},
-              "name": {"type": "string", "description": "Full study name"},
-              "pdc_study_id": {"type": "string", "description": "PDC accession number (e.g., PDC000127)"},
-              "submitter_id_name": {"type": ["string", "null"], "description": "Submitter-provided study name"}
+              "study_id": {
+                "type": "string",
+                "description": "PDC internal UUID for the study"
+              },
+              "name": {
+                "type": "string",
+                "description": "Full study name"
+              },
+              "pdc_study_id": {
+                "type": "string",
+                "description": "PDC accession number (e.g., PDC000127)"
+              },
+              "submitter_id_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Submitter-provided study name"
+              }
             }
           }
         },
-        "num_results": {"type": "integer", "description": "Number of matching studies"}
+        "num_results": {
+          "type": "integer",
+          "description": "Number of matching studies"
+        }
       }
     },
     "test_examples": [
@@ -53,7 +79,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_gene_protein"],
+          "enum": [
+            "get_gene_protein"
+          ],
           "description": "Operation type"
         },
         "gene_name": {
@@ -61,39 +89,80 @@
           "description": "Gene symbol to look up (e.g., 'TP53', 'EGFR', 'BRCA1', 'MYC')"
         }
       },
-      "required": ["operation", "gene_name"]
+      "required": [
+        "operation",
+        "gene_name"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "gene_id": {"type": "string", "description": "PDC internal gene UUID"},
-        "gene_name": {"type": "string", "description": "Gene symbol"},
-        "ncbi_gene_id": {"type": "string", "description": "NCBI Gene ID"},
-        "authority": {"type": "string", "description": "HGNC authority code"},
-        "description": {"type": "string", "description": "Gene description"},
-        "organism": {"type": "string", "description": "Species"},
+        "gene_id": {
+          "type": "string",
+          "description": "PDC internal gene UUID"
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol"
+        },
+        "ncbi_gene_id": {
+          "type": "string",
+          "description": "NCBI Gene ID"
+        },
+        "authority": {
+          "type": "string",
+          "description": "HGNC authority code"
+        },
+        "description": {
+          "type": "string",
+          "description": "Gene description"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Species"
+        },
         "proteins": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "List of protein accessions (UniProt, RefSeq, Ensembl)"
         },
-        "num_proteins": {"type": "integer", "description": "Number of protein accessions"},
+        "num_proteins": {
+          "type": "integer",
+          "description": "Number of protein accessions"
+        },
         "spectral_counts": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "study_id": {"type": "string"},
-              "pdc_study_id": {"type": "string"},
-              "project_id": {"type": "string"},
-              "spectral_count": {"type": "integer"},
-              "distinct_peptide": {"type": "integer"},
-              "unshared_peptide": {"type": "integer"}
+              "study_id": {
+                "type": "string"
+              },
+              "pdc_study_id": {
+                "type": "string"
+              },
+              "project_id": {
+                "type": "string"
+              },
+              "spectral_count": {
+                "type": "integer"
+              },
+              "distinct_peptide": {
+                "type": "integer"
+              },
+              "unshared_peptide": {
+                "type": "integer"
+              }
             }
           },
           "description": "Spectral count data per study"
         },
-        "num_studies": {"type": "integer", "description": "Number of studies with data for this gene"}
+        "num_studies": {
+          "type": "integer",
+          "description": "Number of studies with data for this gene"
+        }
       }
     },
     "test_examples": [
@@ -112,11 +181,15 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["list_programs"],
+          "enum": [
+            "list_programs"
+          ],
           "description": "Operation type"
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -126,22 +199,37 @@
           "items": {
             "type": "object",
             "properties": {
-              "program_id": {"type": "string", "description": "Program UUID"},
-              "name": {"type": "string", "description": "Program name (e.g., Clinical Proteomic Tumor Analysis Consortium)"},
+              "program_id": {
+                "type": "string",
+                "description": "Program UUID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Program name (e.g., Clinical Proteomic Tumor Analysis Consortium)"
+              },
               "projects": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "project_id": {"type": "string", "description": "Project UUID"},
-                    "name": {"type": "string", "description": "Project name"}
+                    "project_id": {
+                      "type": "string",
+                      "description": "Project UUID"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Project name"
+                    }
                   }
                 }
               }
             }
           }
         },
-        "num_programs": {"type": "integer", "description": "Total number of programs"}
+        "num_programs": {
+          "type": "integer",
+          "description": "Total number of programs"
+        }
       }
     },
     "test_examples": [
@@ -159,7 +247,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_study_summary"],
+          "enum": [
+            "get_study_summary"
+          ],
           "description": "Operation type"
         },
         "pdc_study_id": {
@@ -167,31 +257,103 @@
           "description": "PDC study accession number (e.g., 'PDC000127', 'PDC000120', 'PDC000173')"
         }
       },
-      "required": ["operation", "pdc_study_id"]
+      "required": [
+        "operation",
+        "pdc_study_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "study_id": {"type": "string", "description": "PDC internal UUID"},
-        "study_name": {"type": "string", "description": "Full study name"},
-        "pdc_study_id": {"type": "string", "description": "PDC accession number"},
-        "disease_type": {"type": ["string", "null"], "description": "Disease types (semicolon-separated if multiple)"},
-        "primary_site": {"type": ["string", "null"], "description": "Primary anatomical sites"},
-        "analytical_fraction": {"type": ["string", "null"], "description": "Proteomics fraction analyzed (Proteome, Phosphoproteome, etc.)"},
-        "experiment_type": {"type": ["string", "null"], "description": "Mass spec experiment type (TMT10, TMT11, iTRAQ, LFQ, etc.)"},
-        "cases_count": {"type": ["integer", "null"], "description": "Number of cases/patients in the study"},
-        "aliquots_count": {"type": ["integer", "null"], "description": "Number of aliquots analyzed"},
-        "program_name": {"type": ["string", "null"], "description": "Parent program name"},
-        "project_name": {"type": ["string", "null"], "description": "Parent project name"},
-        "embargo_date": {"type": ["string", "null"], "description": "Data embargo date if applicable"},
+        "study_id": {
+          "type": "string",
+          "description": "PDC internal UUID"
+        },
+        "study_name": {
+          "type": "string",
+          "description": "Full study name"
+        },
+        "pdc_study_id": {
+          "type": "string",
+          "description": "PDC accession number"
+        },
+        "disease_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Disease types (semicolon-separated if multiple)"
+        },
+        "primary_site": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Primary anatomical sites"
+        },
+        "analytical_fraction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Proteomics fraction analyzed (Proteome, Phosphoproteome, etc.)"
+        },
+        "experiment_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Mass spec experiment type (TMT10, TMT11, iTRAQ, LFQ, etc.)"
+        },
+        "cases_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of cases/patients in the study"
+        },
+        "aliquots_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of aliquots analyzed"
+        },
+        "program_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Parent program name"
+        },
+        "project_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Parent project name"
+        },
+        "embargo_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Data embargo date if applicable"
+        },
         "file_counts": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "data_category": {"type": "string"},
-              "file_type": {"type": "string"},
-              "files_count": {"type": "integer"}
+              "data_category": {
+                "type": "string"
+              },
+              "file_type": {
+                "type": "string"
+              },
+              "files_count": {
+                "type": "integer"
+              }
             }
           },
           "description": "File counts by data category and type"
@@ -214,7 +376,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_clinical_data"],
+          "enum": [
+            "get_clinical_data"
+          ],
           "description": "Operation type"
         },
         "pdc_study_id": {
@@ -230,39 +394,84 @@
           "description": "Number of records to return (default: 20, max varies by study)"
         }
       },
-      "required": ["operation", "pdc_study_id"]
+      "required": [
+        "operation",
+        "pdc_study_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "pdc_study_id": {"type": "string", "description": "PDC study accession queried"},
-        "total_cases": {"type": "integer", "description": "Total number of cases in the study"},
-        "offset": {"type": "integer", "description": "Current pagination offset"},
-        "limit": {"type": "integer", "description": "Requested page size"},
+        "pdc_study_id": {
+          "type": "string",
+          "description": "PDC study accession queried"
+        },
+        "total_cases": {
+          "type": "integer",
+          "description": "Total number of cases in the study"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Current pagination offset"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Requested page size"
+        },
         "cases": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "case_id": {"type": "string", "description": "Case UUID"},
-              "case_submitter_id": {"type": "string", "description": "Submitter case identifier (e.g., C3L-00791)"},
-              "disease_type": {"type": "string", "description": "Disease classification"},
-              "primary_site": {"type": "string", "description": "Anatomical site"},
+              "case_id": {
+                "type": "string",
+                "description": "Case UUID"
+              },
+              "case_submitter_id": {
+                "type": "string",
+                "description": "Submitter case identifier (e.g., C3L-00791)"
+              },
+              "disease_type": {
+                "type": "string",
+                "description": "Disease classification"
+              },
+              "primary_site": {
+                "type": "string",
+                "description": "Anatomical site"
+              },
               "demographics": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "gender": {"type": ["string", "null"]},
-                    "ethnicity": {"type": ["string", "null"]},
-                    "race": {"type": ["string", "null"]}
+                    "gender": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ethnicity": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "race": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
                   }
                 }
               }
             }
           }
         },
-        "num_returned": {"type": "integer", "description": "Number of cases returned in this page"}
+        "num_returned": {
+          "type": "integer",
+          "description": "Number of cases returned in this page"
+        }
       }
     },
     "test_examples": [
@@ -270,6 +479,144 @@
         "operation": "get_clinical_data",
         "pdc_study_id": "PDC000127",
         "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "PDC_get_quant_data_matrix",
+    "type": "PDCTool",
+    "description": "Get the quantitative protein abundance matrix (gene x aliquot/case) for a CPTAC/PDC study - the core quantitative CPTAC output (log2 ratios / abundance values), NOT spectral counts. PDC's other tools return study metadata, programs, clinical data, and per-gene spectral counts (presence evidence) only. Given a PDC study ID (e.g. 'PDC000127' for CPTAC CCRCC) and a data_type (e.g. 'log2_ratio'), returns the column header of aliquot identifiers and per-gene quantitative value rows. The full matrix can be thousands of genes x hundreds of aliquots; gene rows are truncated to max_genes (default 50) while the aliquot header is always returned in full. Find study IDs with PDC_search_studies or PDC_get_study_summary.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_quant_data_matrix"
+          ],
+          "description": "Operation type"
+        },
+        "pdc_study_id": {
+          "type": "string",
+          "description": "PDC study identifier (e.g. 'PDC000127' for CPTAC CCRCC Discovery Study - Proteome)."
+        },
+        "data_type": {
+          "type": "string",
+          "default": "log2_ratio",
+          "description": "Quantitation data type. Common values: 'log2_ratio' (default), 'unshared_log2_ratio', 'precursor_area', 'unshared_precursor_area'."
+        },
+        "max_genes": {
+          "type": "integer",
+          "default": 50,
+          "description": "Maximum number of gene rows to return (the aliquot column header is always returned in full). Default 50. Use a larger value to retrieve more of the matrix."
+        }
+      },
+      "required": [
+        "operation",
+        "pdc_study_id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful quantitative matrix retrieval.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "pdc_study_id": {
+                  "type": "string"
+                },
+                "data_type": {
+                  "type": "string"
+                },
+                "num_genes": {
+                  "type": "integer",
+                  "description": "Total gene rows in the full matrix"
+                },
+                "num_aliquots": {
+                  "type": "integer",
+                  "description": "Number of aliquot/case columns"
+                },
+                "header": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Full matrix header row: [row-label, aliquot_1, aliquot_2, ...]"
+                },
+                "aliquots": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Aliquot/case identifiers (header without the leading label cell)"
+                },
+                "matrix": {
+                  "type": "array",
+                  "items": {
+                    "type": "array"
+                  },
+                  "description": "Gene rows (truncated to max_genes); each row is [gene_symbol, value_1, value_2, ...]"
+                },
+                "num_genes_returned": {
+                  "type": "integer"
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True if num_genes exceeded max_genes"
+                },
+                "max_genes": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "pdc_study_id",
+                "num_genes",
+                "num_aliquots",
+                "matrix"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error envelope returned on failure.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_quant_data_matrix",
+        "pdc_study_id": "PDC000127",
+        "data_type": "log2_ratio",
+        "max_genes": 5
       }
     ]
   }

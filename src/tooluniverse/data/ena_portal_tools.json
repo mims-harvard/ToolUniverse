@@ -303,5 +303,115 @@
         }
       ]
     }
+  },
+  {
+    "name": "ENAPortal_search_runs_fastq",
+    "description": "Search the European Nucleotide Archive (ENA) for sequencing RUNS (read_run) by taxonomy and library strategy, returning ready-to-use FASTQ download URLs. Unlike the study/sample searches, this hits the read_run result domain, which is the only one that exposes downloadable read files (fastq_ftp, submitted_ftp, sra_ftp) plus checksums (fastq_md5), sizes (fastq_bytes), library_strategy and instrument_platform. Use ENA query syntax: 'tax_eq(TAXID)' for an exact species (e.g., tax_eq(1280) = Staphylococcus aureus), 'tax_tree(TAXID)' to include descendants, optionally combined with 'library_strategy=\"WGS\"'. Returns each run with FTP URLs you can wget/curl directly. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "ENA read_run query. Examples: 'tax_eq(1280)' (S. aureus, exact), 'tax_tree(590)' (Salmonella incl. descendants), 'tax_eq(1280) AND library_strategy=\"WGS\"'. Plain keywords are auto-wrapped as description=\"...\"."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum runs to return (1-100, default 10)."
+        },
+        "fields": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated ENA run fields. Default: 'run_accession,fastq_ftp,submitted_ftp,sra_ftp,fastq_md5,fastq_bytes,library_strategy,instrument_platform,read_count,scientific_name'."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "search_runs"
+    },
+    "type": "ENAPortalTool",
+    "test_examples": [
+      {
+        "query": "tax_eq(1280)",
+        "limit": 3
+      },
+      {
+        "query": "tax_tree(562) AND library_strategy=\"WGS\"",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "run_accession": {
+                    "type": "string"
+                  },
+                  "fastq_ftp": {
+                    "type": "string"
+                  },
+                  "submitted_ftp": {
+                    "type": "string"
+                  },
+                  "sra_ftp": {
+                    "type": "string"
+                  },
+                  "library_strategy": {
+                    "type": "string"
+                  },
+                  "instrument_platform": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

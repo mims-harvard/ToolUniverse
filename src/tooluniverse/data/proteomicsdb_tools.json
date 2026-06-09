@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_protein_expression"],
+          "enum": [
+            "get_protein_expression"
+          ],
           "description": "Operation type"
         },
         "uniprot_id": {
@@ -17,39 +19,105 @@
         },
         "tissue_category": {
           "type": "string",
-          "enum": ["tissue", "cell line", "cell_line", "fluid", "all"],
+          "enum": [
+            "tissue",
+            "cell line",
+            "cell_line",
+            "fluid",
+            "all"
+          ],
           "description": "Filter by biological source category. 'tissue' for normal tissues, 'cell line' for cell lines, 'fluid' for body fluids, 'all' for everything. Default: all."
         },
         "calculation_method": {
           "type": "string",
-          "enum": ["iBAQ", "TOP3"],
+          "enum": [
+            "iBAQ",
+            "TOP3"
+          ],
           "description": "Protein quantification method. iBAQ (intensity-Based Absolute Quantification) or TOP3 (sum of top 3 peptide intensities). Default: iBAQ."
         }
       },
-      "required": ["operation", "uniprot_id"]
+      "required": [
+        "operation",
+        "uniprot_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "uniprot_id": {"type": "string", "description": "UniProt accession queried"},
-        "protein_name": {"type": "string", "description": "Full protein name"},
-        "gene_name": {"type": "string", "description": "Gene symbol"},
-        "calculation_method": {"type": "string", "description": "Quantification method used"},
-        "tissue_category": {"type": "string", "description": "Tissue category filter applied"},
-        "num_tissues": {"type": "integer", "description": "Number of tissues/sources with expression data"},
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession queried"
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Full protein name"
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol"
+        },
+        "calculation_method": {
+          "type": "string",
+          "description": "Quantification method used"
+        },
+        "tissue_category": {
+          "type": "string",
+          "description": "Tissue category filter applied"
+        },
+        "num_tissues": {
+          "type": "integer",
+          "description": "Number of tissues/sources with expression data"
+        },
         "expression_records": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "tissue_id": {"type": "string", "description": "BTO ontology tissue identifier"},
-              "tissue_name": {"type": "string", "description": "Tissue or cell line name"},
-              "tissue_group": {"type": "string", "description": "Anatomical grouping (e.g., brain, liver, kidney)"},
-              "tissue_category": {"type": "string", "description": "Category: tissue, cell line, or fluid"},
-              "expression_value": {"type": ["number", "null"], "description": "Log10 normalized intensity (main value)"},
-              "median_expression": {"type": ["number", "null"], "description": "Median log10 normalized intensity"},
-              "min_expression": {"type": ["number", "null"], "description": "Minimum log10 normalized intensity"},
-              "max_expression": {"type": ["number", "null"], "description": "Maximum log10 normalized intensity"}
+              "tissue_id": {
+                "type": "string",
+                "description": "BTO ontology tissue identifier"
+              },
+              "tissue_name": {
+                "type": "string",
+                "description": "Tissue or cell line name"
+              },
+              "tissue_group": {
+                "type": "string",
+                "description": "Anatomical grouping (e.g., brain, liver, kidney)"
+              },
+              "tissue_category": {
+                "type": "string",
+                "description": "Category: tissue, cell line, or fluid"
+              },
+              "expression_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Log10 normalized intensity (main value)"
+              },
+              "median_expression": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Median log10 normalized intensity"
+              },
+              "min_expression": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Minimum log10 normalized intensity"
+              },
+              "max_expression": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Maximum log10 normalized intensity"
+              }
             }
           },
           "description": "Expression records sorted by expression value descending"
@@ -78,7 +146,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_proteins"],
+          "enum": [
+            "search_proteins"
+          ],
           "description": "Operation type"
         },
         "query": {
@@ -94,26 +164,62 @@
           "description": "Maximum number of results to return (default: 20, max: 100)"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "operation",
+        "query"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "query": {"type": "string", "description": "Search query used"},
-        "organism_id": {"type": "integer", "description": "Organism taxonomy ID filter"},
-        "num_results": {"type": "integer", "description": "Number of unique proteins found"},
+        "query": {
+          "type": "string",
+          "description": "Search query used"
+        },
+        "organism_id": {
+          "type": "integer",
+          "description": "Organism taxonomy ID filter"
+        },
+        "num_results": {
+          "type": "integer",
+          "description": "Number of unique proteins found"
+        },
         "proteins": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "protein_id": {"type": "integer", "description": "ProteomicsDB internal protein ID"},
-              "uniprot_id": {"type": "string", "description": "UniProt accession (e.g., P04637, P04637-2 for isoforms)"},
-              "entry_name": {"type": "string", "description": "UniProt entry name (e.g., P53_HUMAN)"},
-              "protein_name": {"type": "string", "description": "Full protein name"},
-              "gene_name": {"type": "string", "description": "Gene symbol"},
-              "organism_id": {"type": "integer", "description": "NCBI taxonomy ID"},
-              "mass_da": {"type": ["number", "null"], "description": "Molecular mass in Daltons"}
+              "protein_id": {
+                "type": "integer",
+                "description": "ProteomicsDB internal protein ID"
+              },
+              "uniprot_id": {
+                "type": "string",
+                "description": "UniProt accession (e.g., P04637, P04637-2 for isoforms)"
+              },
+              "entry_name": {
+                "type": "string",
+                "description": "UniProt entry name (e.g., P53_HUMAN)"
+              },
+              "protein_name": {
+                "type": "string",
+                "description": "Full protein name"
+              },
+              "gene_name": {
+                "type": "string",
+                "description": "Gene symbol"
+              },
+              "organism_id": {
+                "type": "integer",
+                "description": "NCBI taxonomy ID"
+              },
+              "mass_da": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Molecular mass in Daltons"
+              }
             }
           }
         }
@@ -139,7 +245,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_expression_summary"],
+          "enum": [
+            "get_expression_summary"
+          ],
           "description": "Operation type"
         },
         "uniprot_id": {
@@ -151,32 +259,87 @@
           "description": "Number of top tissues to return, ranked by expression level (default: 10)"
         }
       },
-      "required": ["operation", "uniprot_id"]
+      "required": [
+        "operation",
+        "uniprot_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "uniprot_id": {"type": "string", "description": "UniProt accession queried"},
-        "protein_name": {"type": "string", "description": "Full protein name"},
-        "gene_name": {"type": "string", "description": "Gene symbol"},
-        "total_sources": {"type": "integer", "description": "Total number of biological sources with data"},
-        "tissue_count": {"type": "integer", "description": "Number of tissues with expression data"},
-        "cell_line_count": {"type": "integer", "description": "Number of cell lines with expression data"},
-        "fluid_count": {"type": "integer", "description": "Number of body fluids with expression data"},
-        "top_n": {"type": "integer", "description": "Number of top sources returned"},
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession queried"
+        },
+        "protein_name": {
+          "type": "string",
+          "description": "Full protein name"
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Gene symbol"
+        },
+        "total_sources": {
+          "type": "integer",
+          "description": "Total number of biological sources with data"
+        },
+        "tissue_count": {
+          "type": "integer",
+          "description": "Number of tissues with expression data"
+        },
+        "cell_line_count": {
+          "type": "integer",
+          "description": "Number of cell lines with expression data"
+        },
+        "fluid_count": {
+          "type": "integer",
+          "description": "Number of body fluids with expression data"
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "Number of top sources returned"
+        },
         "top_expression": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "tissue_id": {"type": "string"},
-              "tissue_name": {"type": "string"},
-              "tissue_group": {"type": "string"},
-              "tissue_category": {"type": "string"},
-              "expression_value": {"type": ["number", "null"]},
-              "median_expression": {"type": ["number", "null"]},
-              "min_expression": {"type": ["number", "null"]},
-              "max_expression": {"type": ["number", "null"]}
+              "tissue_id": {
+                "type": "string"
+              },
+              "tissue_name": {
+                "type": "string"
+              },
+              "tissue_group": {
+                "type": "string"
+              },
+              "tissue_category": {
+                "type": "string"
+              },
+              "expression_value": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "median_expression": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "min_expression": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "max_expression": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
             }
           },
           "description": "Top tissues/cell lines by expression level"
@@ -204,22 +367,40 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["list_tissues"],
+          "enum": [
+            "list_tissues"
+          ],
           "description": "Operation type"
         },
         "tissue_category": {
           "type": "string",
-          "enum": ["tissue", "cell line", "cell_line", "fluid"],
+          "enum": [
+            "tissue",
+            "cell line",
+            "cell_line",
+            "fluid"
+          ],
           "description": "Filter by biological source category. Optional - omit to list all categories."
         }
       },
-      "required": ["operation"]
+      "required": [
+        "operation"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "filter_category": {"type": ["string", "null"], "description": "Category filter applied (null if none)"},
-        "total_sources": {"type": "integer", "description": "Total number of sources returned"},
+        "filter_category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Category filter applied (null if none)"
+        },
+        "total_sources": {
+          "type": "integer",
+          "description": "Total number of sources returned"
+        },
         "category_counts": {
           "type": "object",
           "description": "Count of sources per category"
@@ -229,10 +410,22 @@
           "items": {
             "type": "object",
             "properties": {
-              "tissue_id": {"type": "string", "description": "BTO tissue ontology ID"},
-              "name": {"type": "string", "description": "Tissue/cell line/fluid name"},
-              "category": {"type": "string", "description": "Category: tissue, cell line, or fluid"},
-              "group": {"type": "string", "description": "Anatomical grouping (e.g., brain, liver)"}
+              "tissue_id": {
+                "type": "string",
+                "description": "BTO tissue ontology ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Tissue/cell line/fluid name"
+              },
+              "category": {
+                "type": "string",
+                "description": "Category: tissue, cell line, or fluid"
+              },
+              "group": {
+                "type": "string",
+                "description": "Anatomical grouping (e.g., brain, liver)"
+              }
             }
           }
         }
@@ -242,6 +435,204 @@
       {
         "operation": "list_tissues",
         "tissue_category": "fluid"
+      }
+    ]
+  },
+  {
+    "name": "ProteomicsDB_get_peptides_for_protein",
+    "type": "ProteomicsDBTool",
+    "description": "Get peptide-level mass spectrometry identification evidence for a protein from ProteomicsDB. Given a UniProt accession (e.g. 'P00533' for EGFR), returns per-peptide records: peptide sequence, uniqueness (is_unique), peptide and protein q-values (FDR), peptide score, search engine, sequence start/end positions, and the source experiment / project / PubMed ID. This is identification-level evidence that the tissue-level expression tools (ProteomicsDB_get_protein_expression) do not provide. Use ProteomicsDB_search_proteins to find the correct UniProt accession first.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_peptides_for_protein"
+          ],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession for the protein (e.g. 'P00533' for EGFR, 'P04637' for TP53)."
+        },
+        "max_results": {
+          "type": "integer",
+          "default": 50,
+          "description": "Maximum number of peptide identification rows to return (default 50)."
+        }
+      },
+      "required": [
+        "operation",
+        "uniprot_id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful peptide-level evidence retrieval.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_id": {
+                  "type": "string"
+                },
+                "gene_name": {
+                  "type": "string"
+                },
+                "protein_name": {
+                  "type": "string"
+                },
+                "entry_name": {
+                  "type": "string"
+                },
+                "num_peptides": {
+                  "type": "integer"
+                },
+                "peptides": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "peptide_sequence": {
+                        "type": "string"
+                      },
+                      "peptide_mass": {
+                        "type": [
+                          "number",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "is_unique": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "is_unique_to_protein": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "peptide_q_value": {
+                        "type": [
+                          "number",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "protein_q_value": {
+                        "type": [
+                          "number",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "peptide_score": {
+                        "type": [
+                          "number",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "search_engine": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "start_position": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "end_position": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "experiment_id": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "experiment_name": {
+                        "type": "string"
+                      },
+                      "project_name": {
+                        "type": "string"
+                      },
+                      "project_description": {
+                        "type": "string"
+                      },
+                      "pubmed_id": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "uniprot_id",
+                "num_peptides",
+                "peptides"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error envelope returned on failure.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_peptides_for_protein",
+        "uniprot_id": "P00533",
+        "max_results": 5
       }
     ]
   }

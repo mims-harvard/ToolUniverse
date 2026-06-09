@@ -73,6 +73,8 @@ class MGnifyExpandedTool(BaseTool):
             "analysis/taxonomy": self._analysis_taxonomy,
             "analysis/go_terms": self._analysis_go_terms,
             "analysis/interpro": self._analysis_interpro,
+            "analysis/downloads": self._analysis_downloads,
+            "sample/list": self._sample_list,
         }
         handler = dispatch_map.get(key)
         if handler is None:
@@ -265,6 +267,145 @@ class MGnifyExpandedTool(BaseTool):
                 "source": "MGnify",
                 "query": study_accession,
                 "endpoint": "studies/detail",
+            },
+        }
+
+    def _sample_list(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List MGnify biological samples with full geographic/host/environment metadata.
+
+        Provides per-sample provenance (latitude, longitude, collection-date,
+        geo-loc-name, biosample, host-tax-id, environment biome/feature/material)
+        that the study/analysis/genome tools never surface. A single sample can
+        be fetched with sample_accession; otherwise a filterable page is returned.
+        """
+        sample_accession = (arguments.get("sample_accession") or "").strip()
+
+        if sample_accession:
+            url = f"{MGNIFY_BASE_URL}/samples/{sample_accession}"
+            response = requests.get(
+                url, params={"format": "json"}, timeout=self.timeout
+            )
+            response.raise_for_status()
+            raw = response.json()
+            results = [self._format_sample(raw.get("data", {}))]
+            return {
+                "status": "success",
+                "data": results,
+                "metadata": {
+                    "source": "MGnify",
+                    "query": sample_accession,
+                    "returned": len(results),
+                    "endpoint": "samples/detail",
+                },
+            }
+
+        params = {"format": "json"}
+        page = arguments.get("page", 1)
+        page_size = min(arguments.get("page_size", 25), 100)
+        params["page"] = page
+        params["page_size"] = page_size
+
+        study = (arguments.get("study_accession") or "").strip()
+        if study:
+            params["study_accession"] = study
+        biome = (arguments.get("biome") or "").strip()
+        if biome:
+            params["biome_name"] = biome
+
+        url = f"{MGNIFY_BASE_URL}/samples"
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        raw = response.json()
+
+        results = [self._format_sample(item) for item in raw.get("data", [])]
+        pagination = raw.get("meta", {}).get("pagination", {})
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "total_results": pagination.get("count", len(results)),
+                "page": pagination.get("page", page),
+                "pages": pagination.get("pages"),
+                "source": "MGnify",
+                "endpoint": "samples",
+            },
+        }
+
+    @staticmethod
+    def _format_sample(item: Dict[str, Any]) -> Dict[str, Any]:
+        """Flatten a MGnify sample JSON:API record into a metadata row."""
+        attrs = item.get("attributes", {}) if isinstance(item, dict) else {}
+        return {
+            "sample_accession": item.get("id"),
+            "biosample": attrs.get("biosample"),
+            "sample_name": attrs.get("sample-name"),
+            "sample_alias": attrs.get("sample-alias"),
+            "sample_desc": attrs.get("sample-desc"),
+            "latitude": attrs.get("latitude"),
+            "longitude": attrs.get("longitude"),
+            "geo_loc_name": attrs.get("geo-loc-name"),
+            "collection_date": attrs.get("collection-date"),
+            "host_tax_id": attrs.get("host-tax-id"),
+            "species": attrs.get("species"),
+            "environment_biome": attrs.get("environment-biome"),
+            "environment_feature": attrs.get("environment-feature"),
+            "environment_material": attrs.get("environment-material"),
+            "last_update": attrs.get("last-update"),
+        }
+
+    def _analysis_downloads(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List downloadable result files for a MGnify analysis.
+
+        Enumerates the taxonomy/functional outputs (predicted CDS FASTA, eggNOG /
+        InterPro / antiSMASH GFF, Diamond TSV, etc.) with their format, description
+        and direct download URL — which the parsed-annotation tools cannot do.
+        """
+        analysis_id = (arguments.get("analysis_id") or "").strip()
+        if not analysis_id:
+            return {
+                "status": "error",
+                "error": "analysis_id is required (e.g., MGYA00585482)",
+            }
+
+        page_size = min(arguments.get("page_size", 100), 100)
+        url = f"{MGNIFY_BASE_URL}/analyses/{analysis_id}/downloads"
+        response = requests.get(
+            url,
+            params={"format": "json", "page_size": page_size},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        raw = response.json()
+
+        results = []
+        for item in raw.get("data", []):
+            attrs = item.get("attributes", {})
+            fmt = attrs.get("file-format") or {}
+            desc = attrs.get("description") or {}
+            results.append(
+                {
+                    "file_id": item.get("id"),
+                    "alias": attrs.get("alias"),
+                    "label": desc.get("label"),
+                    "description": desc.get("description"),
+                    "file_format": fmt.get("name"),
+                    "compression": fmt.get("compression"),
+                    "group_type": attrs.get("group-type"),
+                    "download_url": (item.get("links") or {}).get("self"),
+                }
+            )
+
+        pagination = raw.get("meta", {}).get("pagination", {})
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "analysis_id": analysis_id,
+                "total_results": pagination.get("count", len(results)),
+                "returned": len(results),
+                "source": "MGnify",
+                "endpoint": "analyses/downloads",
             },
         }
 
