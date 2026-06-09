@@ -421,5 +421,362 @@
       },
       "additionalProperties": true
     }
+  },
+  {
+    "name": "PharmGKB_get_drug_label_annotations",
+    "description": "Get regulatory drug-label pharmacogenomic annotations from PharmGKB/ClinPGx. By default lists FDA label annotations (id + name), capped by 'limit'. Pass source to switch agency (FDA, EMA, HCSC, PMDA). Pass label_id (e.g., 'PA166114907' for bosutinib) for one full annotation including biomarkerStatus, alternateDrugAvailable, dosingInformation, cancerGenome, and source literature. Keyless.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "label_id": {
+          "type": "string",
+          "description": "PharmGKB Label Annotation ID (e.g., 'PA166114907' for the FDA bosutinib label). When provided, returns the full single annotation and ignores 'source'/'limit'."
+        },
+        "source": {
+          "type": "string",
+          "description": "Regulatory agency for the listing mode. One of FDA, EMA, HCSC, PMDA. Defaults to FDA. Ignored when label_id is given.",
+          "enum": [
+            "FDA",
+            "EMA",
+            "HCSC",
+            "PMDA"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of label annotations to return in listing mode (default 50, max 500)."
+        },
+        "id": {
+          "type": "string",
+          "description": "Alias for label_id."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "drug_label_annotations"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "label_id": "PA166114907"
+      },
+      {
+        "source": "FDA",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "description": "A single label annotation object (when label_id is given) or an array of {objCls, id, name} listings.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "objCls": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "biomarkerStatus": {
+                      "type": "string"
+                    },
+                    "alternateDrugAvailable": {
+                      "type": "boolean"
+                    },
+                    "dosingInformation": {
+                      "type": "boolean"
+                    },
+                    "cancerGenome": {
+                      "type": "boolean"
+                    },
+                    "indication": {
+                      "type": "boolean"
+                    },
+                    "labelDocumentAvailable": {
+                      "type": "boolean"
+                    },
+                    "literature": {
+                      "type": "array"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "objCls": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                }
+              ]
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PharmGKB_get_pathway",
+    "description": "Get a curated pharmacogenomic pathway from PharmGKB/ClinPGx by pathway ID (e.g., 'PA145011113' = 'Warfarin Pathway, Pharmacokinetics'). Returns name, authors, biopaxLink, and a full HTML description of the pharmacokinetic/pharmacodynamic pathway. Keyless. Lookup by ID is required (name-based listing is unreliable upstream).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pathway_id": {
+          "type": "string",
+          "description": "PharmGKB Pathway Accession ID (e.g., 'PA145011113' for the Warfarin Pharmacokinetics pathway). Browse https://www.pharmgkb.org/pathways to find IDs."
+        },
+        "id": {
+          "type": "string",
+          "description": "Alias for pathway_id."
+        }
+      },
+      "required": [
+        "pathway_id"
+      ]
+    },
+    "fields": {
+      "operation": "pathway"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "pathway_id": "PA145011113"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "objCls": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "authors": {
+                  "type": "string"
+                },
+                "biopaxLink": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PharmGKB_get_variant_annotations",
+    "description": "Get variant-level literature annotations from PharmGKB/ClinPGx, filtered by gene or chemical PharmGKB Accession ID. Provide gene_id (e.g., 'PA126' for CYP2C9) OR chemical_id (e.g., 'PA451906' for warfarin). Each annotation gives allele/genotype, phenotype category, drug context, significance, and source literature. Results are capped by 'limit'. Keyless. Resolve gene/drug names to PA IDs first via PharmGKB_search_genes / PharmGKB_search_drugs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "PharmGKB Gene Accession ID (e.g., 'PA126' for CYP2C9). Queried via location.genes.accessionId. Provide either gene_id or chemical_id."
+        },
+        "chemical_id": {
+          "type": "string",
+          "description": "PharmGKB Chemical/drug Accession ID (e.g., 'PA451906' for warfarin). Queried via relatedChemicals.accessionId. Provide either gene_id or chemical_id."
+        },
+        "drug_id": {
+          "type": "string",
+          "description": "Alias for chemical_id."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of variant annotations to return (default 50, max 500). CYP2C9 alone has over 1000 annotations."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "variant_annotations"
+    },
+    "type": "PharmGKBTool",
+    "test_examples": [
+      {
+        "gene_id": "PA126",
+        "limit": 5
+      },
+      {
+        "chemical_id": "PA451906",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "objCls": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "accessionId": {
+                    "type": "string"
+                  },
+                  "alleleGenotype": {
+                    "type": "string"
+                  },
+                  "comparison": {
+                    "type": "string"
+                  },
+                  "significance": {
+                    "type": "string"
+                  },
+                  "sentence": {
+                    "type": "string"
+                  },
+                  "phenotypeCategories": {
+                    "type": "array"
+                  },
+                  "relatedChemicals": {
+                    "type": "array"
+                  },
+                  "literature": {
+                    "type": "object"
+                  }
+                },
+                "additionalProperties": true
+              }
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

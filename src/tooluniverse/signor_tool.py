@@ -312,12 +312,85 @@ class SIGNORTool(BaseTool):
             },
         }
 
+    def _connect_proteins(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the causal sub-network connecting a set of proteins.
+
+        Uses SIGNOR's ``type=connect`` mode, which returns the curated causal
+        relationships linking the supplied protein set via shortest signaling
+        paths. Accepts a list of UniProt accessions and an optional path depth
+        (``level`` 1-3, default 2).
+        """
+        proteins = params.get("proteins") or params.get("uniprot_ids") or []
+        if isinstance(proteins, str):
+            # Allow a delimited string in addition to a list
+            proteins = [p.strip() for p in proteins.replace("+", ",").split(",")]
+        proteins = [str(p).strip() for p in proteins if str(p).strip()]
+        if len(proteins) < 2:
+            return {
+                "status": "error",
+                "error": "At least two UniProt accessions are required in 'proteins' "
+                "(e.g., ['P29317', 'Q06124', 'P04049']).",
+            }
+
+        try:
+            level = int(params.get("level", 2))
+        except (TypeError, ValueError):
+            level = 2
+        if level not in (1, 2, 3):
+            return {
+                "status": "error",
+                "error": f"Invalid level {level}; must be 1, 2, or 3.",
+            }
+
+        limit = params.get("limit", 200)
+        proteins_param = ",".join(proteins)
+
+        resp = self.session.get(
+            SIGNOR_DATA_URL,
+            params={"type": "connect", "proteins": proteins_param, "level": level},
+            timeout=30,
+        )
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"SIGNOR connect request failed: HTTP {resp.status_code}",
+            }
+
+        text = resp.text.strip()
+        if not text or text.startswith("<!") or text == "No result found.":
+            return {
+                "status": "error",
+                "error": f"No connecting sub-network found for {proteins} at level {level}. "
+                "SIGNOR requires UniProt accessions (e.g., P04637 for TP53) and the "
+                "proteins must share curated signaling paths.",
+            }
+
+        rows = _parse_tsv(text, DATA_COLUMNS, has_header=False)
+        interactions = [_format_interaction(row) for row in rows[:limit]]
+        return {
+            "status": "success",
+            "data": interactions,
+            "metadata": {
+                "proteins": proteins,
+                "level": level,
+                "total_interactions": len(rows),
+                "returned": len(interactions),
+            },
+        }
+
     def run(self, params: Dict[str, Any]) -> Dict[str, Any]:
         operation = self.tool_config.get("fields", {}).get("operation", "")
-        if operation == "get_interactions":
-            return self._get_interactions(params)
-        if operation == "list_pathways":
-            return self._list_pathways(params)
-        if operation == "get_pathway":
-            return self._get_pathway(params)
+        try:
+            if operation == "get_interactions":
+                return self._get_interactions(params)
+            if operation == "list_pathways":
+                return self._list_pathways(params)
+            if operation == "get_pathway":
+                return self._get_pathway(params)
+            if operation == "connect_proteins":
+                return self._connect_proteins(params)
+        except requests.exceptions.RequestException as exc:
+            return {"status": "error", "error": f"SIGNOR request error: {exc}"}
+        except Exception as exc:  # noqa: BLE001 - run() must never raise
+            return {"status": "error", "error": f"SIGNOR tool error: {exc}"}
         return {"status": "error", "error": f"Unknown operation: {operation}"}

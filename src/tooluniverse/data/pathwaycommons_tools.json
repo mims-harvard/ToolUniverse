@@ -311,5 +311,175 @@
     "fields": {
       "operation": "get_neighborhood"
     }
+  },
+  {
+    "name": "PathwayCommons_paths_between",
+    "type": "PathwayCommonsTool",
+    "description": "Find mechanistic interaction paths connecting a set of genes/proteins in Pathway Commons (PC2 kind=PATHSBETWEEN across 22 integrated databases: Reactome, KEGG, WikiPathways, PID, BioGRID, IntAct, etc.). Given two or more gene symbols, returns the directed/undirected interaction edges that link them, parsed from SIF triples into {source, relation, target}. Relations include in-complex-with, controls-state-change-of, controls-phosphorylation-of, controls-expression-of, chemical-affects, used-to-produce. Use to reveal how a gene set is mechanistically connected (e.g. a DNA-repair module BRCA1/BRCA2/TP53). Requires at least 2 distinct genes. Note: an uncached query can be slow; if it times out, retry (results are cached server-side).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "description": "Two or more gene symbols / identifiers to connect, e.g. [\"BRCA1\", \"BRCA2\", \"TP53\"]. A comma-separated string is also accepted."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 3,
+          "default": 1,
+          "description": "Path length limit (graph search distance). Default 1 (direct mechanistic links). Higher values include longer indirect paths and much more data."
+        },
+        "datasource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by data source: reactome, kegg, biogrid, intact, hprd, pid, corum, ctd, drugbank"
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 2000,
+          "default": 200,
+          "description": "Maximum number of edges to return (default: 200)"
+        }
+      },
+      "required": [
+        "genes"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Cleaned, de-duplicated input gene set"
+                },
+                "edges": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "description": "Entity A (left side of SIF triple)"
+                      },
+                      "relation": {
+                        "type": "string",
+                        "description": "Interaction relation, e.g. in-complex-with"
+                      },
+                      "target": {
+                        "type": "string",
+                        "description": "Entity B (right side of SIF triple)"
+                      }
+                    }
+                  },
+                  "description": "Mechanistic interaction edges connecting the gene set"
+                },
+                "relation_counts": {
+                  "type": "object",
+                  "description": "Count of each relation type among returned edges"
+                },
+                "entity_count": {
+                  "type": "integer",
+                  "description": "Number of distinct entities across all edges"
+                },
+                "note": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Explanatory note when no paths are found, else null"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "total_edges": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "limit": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "paths_between",
+        "genes": [
+          "BRCA1",
+          "BRCA2",
+          "TP53"
+        ],
+        "max_results": 50
+      }
+    ],
+    "fields": {
+      "operation": "paths_between"
+    }
   }
 ]

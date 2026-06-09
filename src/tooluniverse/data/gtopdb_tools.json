@@ -380,5 +380,277 @@
     }
    ]
   }
+ },
+ {
+  "name": "GtoPdb_get_ligand_properties",
+  "description": "Get the chemical structure and computed molecular properties of a ligand from the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) by its ligand ID. Merges two keyless endpoints into one record: structure (canonical SMILES, InChI, InChIKey, IUPAC name) and molecularProperties (molecular weight, logP, hydrogen-bond donors/acceptors, rotatable bonds, topological polar surface area, Lipinski rule-of-five violation count). Use GtoPdb_search_ligands first to find a ligand_id (e.g., aspirin = 4139). No authentication required.",
+  "parameter": {
+   "type": "object",
+   "properties": {
+    "ligand_id": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "description": "GtoPdb ligand ID. Get from GtoPdb_search_ligands. Examples: 4139 (aspirin), 1 (a-bungarotoxin). Alias: ligandId also accepted."
+    },
+    "ligandId": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "description": "Alias for ligand_id. GtoPdb ligand ID."
+    }
+   },
+   "required": []
+  },
+  "fields": {
+   "endpoint": "https://www.guidetopharmacology.org/services/ligands/ligandProperties",
+   "params": {}
+  },
+  "type": "GtoPdbRESTTool",
+  "test_examples": [
+   {
+    "ligand_id": 4139
+   },
+   {
+    "ligandId": 4139
+   }
+  ],
+  "return_schema": {
+   "oneOf": [
+    {
+     "type": "object",
+     "properties": {
+      "status": {
+       "type": "string",
+       "enum": [
+        "success"
+       ]
+      },
+      "data": {
+       "type": "object",
+       "properties": {
+        "ligandId": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "ligandName": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "iupacName": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "smiles": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "inchi": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "inchiKey": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "molecularProperties": {
+         "type": [
+          "object",
+          "null"
+         ],
+         "properties": {
+          "molecularWeight": {
+           "type": [
+            "number",
+            "null"
+           ]
+          },
+          "logP": {
+           "type": [
+            "number",
+            "null"
+           ]
+          },
+          "hydrogenBondDonors": {
+           "type": [
+            "integer",
+            "null"
+           ]
+          },
+          "hydrogenBondAcceptors": {
+           "type": [
+            "integer",
+            "null"
+           ]
+          },
+          "rotatableBonds": {
+           "type": [
+            "integer",
+            "null"
+           ]
+          },
+          "topologicalPolarSurfaceArea": {
+           "type": [
+            "number",
+            "null"
+           ]
+          },
+          "lipinskisRuleOfFive": {
+           "type": [
+            "integer",
+            "null"
+           ]
+          }
+         }
+        }
+       }
+      }
+     },
+     "required": [
+      "status",
+      "data"
+     ]
+    },
+    {
+     "type": "object",
+     "properties": {
+      "status": {
+       "type": "string",
+       "enum": [
+        "error"
+       ]
+      },
+      "error": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "status",
+      "error"
+     ]
+    }
+   ]
+  }
+ },
+ {
+  "name": "GtoPdb_get_disease_associations",
+  "description": "Get curated disease-to-target and disease-to-ligand associations from the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for a given disease ID. Merges two keyless endpoints into one record: diseaseTargets (drug targets linked to the disease, with roles, references, and ligand-target interactions) and diseaseLigands (approved/experimental ligands linked to the disease, with approval status and clinical-use notes). An empty list is a valid result (some diseases have targets but no curated ligands). Use GtoPdb_search_diseases first to find a disease_id (e.g., non-allergic asthma = 1161). No authentication required.",
+  "parameter": {
+   "type": "object",
+   "properties": {
+    "disease_id": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "description": "GtoPdb disease ID. Get from GtoPdb_search_diseases. Examples: 1161 (non-allergic asthma), 34 (acute myeloid leukemia). Alias: diseaseId also accepted."
+    },
+    "diseaseId": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "description": "Alias for disease_id. GtoPdb disease ID."
+    }
+   },
+   "required": []
+  },
+  "fields": {
+   "endpoint": "https://www.guidetopharmacology.org/services/diseases/diseaseAssociations",
+   "params": {}
+  },
+  "type": "GtoPdbRESTTool",
+  "test_examples": [
+   {
+    "disease_id": 1161
+   },
+   {
+    "disease_id": 34
+   }
+  ],
+  "return_schema": {
+   "oneOf": [
+    {
+     "type": "object",
+     "properties": {
+      "status": {
+       "type": "string",
+       "enum": [
+        "success"
+       ]
+      },
+      "data": {
+       "type": "object",
+       "properties": {
+        "diseaseId": {
+         "type": [
+          "integer",
+          "null"
+         ]
+        },
+        "diseaseTargets": {
+         "type": "array",
+         "items": {
+          "type": "object"
+         }
+        },
+        "diseaseLigands": {
+         "type": "array",
+         "items": {
+          "type": "object"
+         }
+        }
+       },
+       "required": [
+        "diseaseTargets",
+        "diseaseLigands"
+       ]
+      },
+      "target_count": {
+       "type": "integer"
+      },
+      "ligand_count": {
+       "type": "integer"
+      }
+     },
+     "required": [
+      "status",
+      "data"
+     ]
+    },
+    {
+     "type": "object",
+     "properties": {
+      "status": {
+       "type": "string",
+       "enum": [
+        "error"
+       ]
+      },
+      "error": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "status",
+      "error"
+     ]
+    }
+   ]
+  }
  }
 ]

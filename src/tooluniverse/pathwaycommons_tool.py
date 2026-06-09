@@ -53,6 +53,7 @@ class PathwayCommonsTool(BaseTool):
             "search": self._search,
             "get_pathway": self._get_pathway,
             "get_neighborhood": self._get_neighborhood,
+            "paths_between": self._paths_between,
         }
 
         handler = handlers.get(operation)
@@ -288,6 +289,141 @@ class PathwayCommonsTool(BaseTool):
                 "gene": gene,
                 "total_interactions": len(interactions),
                 "returned": min(len(interactions), max_return),
+                "limit": limit,
+            },
+        }
+
+    @staticmethod
+    def _parse_sif_edges(text: str) -> list:
+        """Parse Pathway Commons SIF output into {source, relation, target} edges.
+
+        SIF format is tab-separated triples: "ENTITY_A <relation> ENTITY_B"
+        (e.g. "BRCA1 in-complex-with BARD1"). No header line. Lines with fewer
+        than 3 tab-separated fields are skipped.
+        """
+        edges = []
+        for line in text.split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            fields = line.split("\t")
+            if len(fields) < 3:
+                continue
+            edges.append(
+                {
+                    "source": fields[0],
+                    "relation": fields[1],
+                    "target": fields[2],
+                }
+            )
+        return edges
+
+    def _paths_between(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Find mechanistic interaction paths connecting a set of genes.
+
+        Uses the PC2 /graph endpoint with kind=PATHSBETWEEN, sending one
+        ``source=`` parameter per gene and parsing the SIF response into edges.
+        Requires at least two distinct genes.
+        """
+        genes = arguments.get("genes")
+        if genes is None:
+            # Tolerate a comma-separated string as a convenience.
+            single = arguments.get("source")
+            if isinstance(single, str):
+                genes = [g.strip() for g in single.split(",")]
+
+        if isinstance(genes, str):
+            genes = [g.strip() for g in genes.split(",")]
+
+        if not isinstance(genes, list):
+            return {
+                "status": "error",
+                "error": "Missing required parameter: genes (list of gene symbols/identifiers)",
+            }
+
+        # Clean: drop blanks and de-duplicate while preserving order.
+        seen = set()
+        clean_genes = []
+        for g in genes:
+            if not isinstance(g, str):
+                continue
+            g = g.strip()
+            if not g or g.upper() in seen:
+                continue
+            seen.add(g.upper())
+            clean_genes.append(g)
+
+        if len(clean_genes) < 2:
+            return {
+                "status": "error",
+                "error": "paths_between requires at least 2 distinct genes; got {}".format(
+                    len(clean_genes)
+                ),
+            }
+
+        # requests serializes a list value into repeated key=value pairs,
+        # i.e. one source= per gene, which is the correct PATHSBETWEEN form.
+        params = {
+            "source": clean_genes,
+            "kind": "PATHSBETWEEN",
+            "format": "SIF",
+        }
+        limit = arguments.get("limit")
+        if limit is not None:
+            params["limit"] = limit
+
+        datasource = arguments.get("datasource")
+        if datasource:
+            params["datasource"] = datasource
+
+        # PATHSBETWEEN graph queries are heavier than search; allow a longer
+        # per-request budget but cap at 30s to satisfy the contract.
+        response = self.session.get(
+            "{}/graph".format(PC2_BASE_URL), params=params, timeout=30
+        )
+
+        if response.status_code != 200:
+            return {
+                "status": "error",
+                "error": "PathwayCommons graph returned HTTP {}".format(
+                    response.status_code
+                ),
+            }
+
+        text = response.text.strip()
+        edges = self._parse_sif_edges(text)
+
+        max_return = arguments.get("max_results", 200)
+        relation_counts = {}
+        entities = set()
+        for edge in edges:
+            relation_counts[edge["relation"]] = (
+                relation_counts.get(edge["relation"], 0) + 1
+            )
+            entities.add(edge["source"])
+            entities.add(edge["target"])
+
+        note = None
+        if not edges:
+            note = (
+                "No mechanistic paths found connecting the given genes. "
+                "Check gene symbols (HGNC) and that at least two are present "
+                "in Pathway Commons."
+            )
+
+        return {
+            "status": "success",
+            "data": {
+                "genes": clean_genes,
+                "edges": edges[:max_return],
+                "relation_counts": relation_counts,
+                "entity_count": len(entities),
+                "note": note,
+            },
+            "metadata": {
+                "genes": clean_genes,
+                "total_edges": len(edges),
+                "returned": min(len(edges), max_return),
                 "limit": limit,
             },
         }

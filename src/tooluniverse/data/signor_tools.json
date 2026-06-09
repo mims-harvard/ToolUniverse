@@ -238,5 +238,174 @@
         }
       }
     }
+  },
+  {
+    "name": "SIGNOR_connect_proteins",
+    "description": "Find the curated causal signaling sub-network that connects a set of proteins in the SIGNOR database. Given two or more UniProt accessions, returns the causal relationships (effect, mechanism, direction, literature) linking the protein set via shortest signaling paths. Use UniProt IDs (e.g., P29317 for EPHA2, P15056 for BRAF, P04049 for RAF1, Q06124 for PTPN11). 'level' controls how many intermediate steps are allowed (1 = direct links only, 2 = one intermediate, 3 = two intermediates).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "proteins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of two or more UniProt accessions to connect (e.g., ['P29317', 'Q06124', 'P04049', 'P15056']). SIGNOR requires UniProt IDs, not gene symbols."
+        },
+        "level": {
+          "type": "integer",
+          "description": "Path depth for connecting the proteins: 1 (direct interactions only), 2 (allow one intermediate node), or 3 (allow two intermediate nodes).",
+          "default": 2,
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of interactions to return.",
+          "default": 200
+        }
+      },
+      "required": [
+        "proteins"
+      ]
+    },
+    "fields": {
+      "operation": "connect_proteins"
+    },
+    "type": "SIGNORTool",
+    "test_examples": [
+      {
+        "proteins": [
+          "P29317",
+          "Q06124",
+          "P04049",
+          "P15056"
+        ],
+        "level": 2
+      },
+      {
+        "proteins": [
+          "P15056",
+          "P04049"
+        ],
+        "level": 1
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_entity": {
+                    "type": "string"
+                  },
+                  "source_type": {
+                    "type": "string"
+                  },
+                  "source_id": {
+                    "type": "string"
+                  },
+                  "target_entity": {
+                    "type": "string"
+                  },
+                  "target_type": {
+                    "type": "string"
+                  },
+                  "target_id": {
+                    "type": "string"
+                  },
+                  "effect": {
+                    "type": "string"
+                  },
+                  "mechanism": {
+                    "type": "string"
+                  },
+                  "residue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "direct": {
+                    "type": "boolean"
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "signor_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "proteins": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "level": {
+                  "type": "integer"
+                },
+                "total_interactions": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]
