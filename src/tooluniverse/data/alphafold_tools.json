@@ -602,6 +602,10 @@
         }
       }
     },
-    "test_examples": []
+    "test_examples": [
+      {
+        "qualifier": "P00533"
+      }
+    ]
   }
 ]

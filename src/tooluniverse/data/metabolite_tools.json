@@ -217,6 +217,80 @@
       },
       "required": ["query"]
     },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful search result",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "The search query that was submitted"
+                },
+                "results": {
+                  "type": "array",
+                  "description": "Matching compounds from PubChem",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pubchem_cid": {
+                        "type": ["integer", "null"]
+                      },
+                      "name": {
+                        "type": ["string", "null"]
+                      },
+                      "formula": {
+                        "type": ["string", "null"]
+                      },
+                      "molecular_weight": {
+                        "type": ["string", "null"]
+                      },
+                      "smiles": {
+                        "type": ["string", "null"]
+                      }
+                    }
+                  }
+                },
+                "count": {
+                  "type": "integer",
+                  "description": "Number of compounds returned"
+                }
+              },
+              "required": ["query", "results", "count"]
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
     "test_examples": [{"query": "glucose"}]
   },
   {
@@ -241,6 +315,72 @@
       },
       "required": []
     },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Compound information",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "pubchem_cid": {
+                  "type": ["integer", "null"]
+                },
+                "name": {
+                  "type": ["string", "null"]
+                },
+                "iupac_name": {
+                  "type": ["string", "null"]
+                },
+                "formula": {
+                  "type": ["string", "null"]
+                },
+                "molecular_weight": {
+                  "type": ["string", "null"]
+                },
+                "smiles": {
+                  "type": ["string", "null"]
+                },
+                "inchikey": {
+                  "type": ["string", "null"]
+                }
+              },
+              "required": ["pubchem_cid"]
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "pubchem_url": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
     "test_examples": [{"hmdb_id": "HMDB0000122"}]
   },
   {
@@ -264,6 +404,95 @@
         }
       },
       "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Disease associations for the metabolite",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "identifier": {
+                  "type": "string",
+                  "description": "The identifier that was submitted"
+                },
+                "compound_name": {
+                  "type": "string",
+                  "description": "Canonical compound name resolved via PubChem"
+                },
+                "pubchem_cid": {
+                  "type": ["integer", "null"]
+                },
+                "ctd_query_term": {
+                  "type": "string",
+                  "description": "The name variant used to query CTD"
+                },
+                "disease_count": {
+                  "type": "integer"
+                },
+                "diseases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "disease_name": {
+                        "type": ["string", "null"]
+                      },
+                      "disease_id": {
+                        "type": ["string", "null"]
+                      },
+                      "disease_categories": {
+                        "type": ["string", "array", "null"]
+                      },
+                      "direct_evidence": {
+                        "type": ["string", "null"]
+                      },
+                      "pubmed_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": ["identifier", "compound_name", "disease_count", "diseases"]
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "pubchem_url": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
     },
     "test_examples": [{"hmdb_id": "HMDB0000122", "limit": 5}]
   }

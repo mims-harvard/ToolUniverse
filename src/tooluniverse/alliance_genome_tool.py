@@ -594,45 +594,59 @@ class AllianceGenomeTool(BaseTool):
         }
 
     def _get_gene_expression_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get expression summary (ribbon) for a gene."""
+        """Get expression annotations for a gene.
+
+        Alliance retired the per-gene ``/gene/{id}/expression-summary`` ribbon
+        endpoint (now 404). Expression is served from ``POST /api/expression``
+        with a bare JSON array of gene curies; it returns per-annotation records
+        (developmental stage + anatomical location).
+        """
         gene_id = self._normalize_gene_id(arguments.get("gene_id", ""))
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
-        url = f"{ALLIANCE_BASE}/gene/{gene_id}/expression-summary"
-        response = requests.get(
-            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        try:
+            limit = int(arguments.get("limit", 50))
+        except (TypeError, ValueError):
+            limit = 50
+        limit = max(1, min(limit, 100))
+
+        url = f"{ALLIANCE_BASE}/expression"
+        response = requests.post(
+            url,
+            json=[gene_id],
+            params={"limit": limit},
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            timeout=self.timeout,
         )
         response.raise_for_status()
         data = response.json()
 
-        total_annotations = data.get("totalAnnotations", 0)
-        groups = data.get("groups", [])
-        expression_groups = []
-        for g in groups:
-            terms = []
-            for t in g.get("terms", []):
-                if t.get("numberOfAnnotations", 0) > 0:
-                    terms.append(
-                        {
-                            "id": t.get("id"),
-                            "name": t.get("name"),
-                            "annotation_count": t.get("numberOfAnnotations"),
-                        }
-                    )
-            expression_groups.append(
+        results = data.get("results", []) or []
+        annotations = []
+        for r in results:
+            ann = r.get("geneExpressionAnnotation", r) if isinstance(r, dict) else {}
+            provider = ann.get("dataProvider") or {}
+            evidence = ann.get("evidenceItem") or {}
+            annotations.append(
                 {
-                    "group_name": g.get("name"),
-                    "total_annotations": g.get("totalAnnotations", 0),
-                    "terms": terms,
+                    "stage": ann.get("whenExpressedStageName"),
+                    "location": ann.get("whereExpressedStatement"),
+                    "data_provider": provider.get("abbreviation")
+                    if isinstance(provider, dict)
+                    else provider,
+                    "reference": evidence.get("curie")
+                    if isinstance(evidence, dict)
+                    else None,
                 }
             )
 
         return {
             "status": "success",
             "data": {
-                "total_annotations": total_annotations,
-                "expression_groups": expression_groups,
+                "total_annotations": data.get("total", len(annotations)),
+                "returned": len(annotations),
+                "annotations": annotations,
             },
             "metadata": {
                 "query_gene_id": gene_id,

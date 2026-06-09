@@ -510,13 +510,18 @@
   },
   {
     "name": "FlyBase_get_gene_expression",
-    "description": "Get expression summary for a Drosophila gene from the Alliance of Genome Resources. Returns a ribbon summary of expression across anatomical systems (nervous system, integumental system, reproductive system, etc.) with annotation counts. Useful for understanding where a fly gene is expressed. Example: 'FB:FBgn0000490' (dpp) shows expression in alimentary system (43 annotations), integumental system (56), respiratory system (32).",
+    "description": "Get expression annotations for a Drosophila gene from the Alliance of Genome Resources. Returns per-annotation records of developmental stage (whenExpressed) and anatomical location (whereExpressed) for the gene, plus the total annotation count. Example: 'FB:FBgn0000490' (dpp) has 317 expression annotations such as 'embryonic stage 14' in 'abdominal transverse muscle cell'. Useful for understanding when and where a fly gene is expressed.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_id": {
           "type": "string",
-          "description": "FlyBase gene ID with 'FB:' prefix. Examples: 'FB:FBgn0000490' (dpp), 'FB:FBgn0003996' (white/w), 'FB:FBgn0004647' (Notch/N)."
+          "description": "FlyBase gene ID, with or without the 'FB:' prefix. Examples: 'FB:FBgn0000490' (dpp), 'FB:FBgn0003996' (white/w), 'FB:FBgn0004647' (Notch/N)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Max annotations to return (default 50, max 100).",
+          "default": 50
         }
       },
       "required": [
@@ -527,54 +532,60 @@
       "endpoint_type": "gene_expression_summary"
     },
     "type": "AllianceGenomeTool",
-    "test_examples": [],
+    "test_examples": [
+      {
+        "description": "Expression annotations for dpp (decapentaplegic)",
+        "arguments": {
+          "gene_id": "FB:FBgn0000490",
+          "limit": 5
+        }
+      }
+    ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
+            "status": {
+              "type": "string"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "total_annotations": {
                   "type": "integer"
                 },
-                "expression_groups": {
+                "returned": {
+                  "type": "integer"
+                },
+                "annotations": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "group_name": {
+                      "stage": {
                         "type": [
                           "string",
                           "null"
                         ]
                       },
-                      "total_annotations": {
-                        "type": "integer"
+                      "location": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
-                      "terms": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "name": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "annotation_count": {
-                              "type": "integer"
-                            }
-                          }
-                        }
+                      "data_provider": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     }
                   }
@@ -600,6 +611,9 @@
         {
           "type": "object",
           "properties": {
+            "status": {
+              "type": "string"
+            },
             "error": {
               "type": "string"
             }

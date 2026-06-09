@@ -645,7 +645,20 @@
     },
     "input_description": "Input an Ensembl Gene ID and a list of tissue names. The tool will perform intelligent tissue name matching.",
     "output_description": "Returns a dictionary mapping queried tissue names to their expression data, including matched tissue name, expression value in nTPM, and categorized expression level (Very high/High/Medium/Low/Very low). Also provides a sample of available tissues for reference.",
-    "test_examples": [],
+    "test_examples": [
+      {
+        "ensembl_id": "ENSG00000254647",
+        "tissue_names": [
+          "pancreas"
+        ]
+      },
+      {
+        "ensembl_id": "ENSG00000146648",
+        "tissue_names": [
+          "placenta"
+        ]
+      }
+    ],
     "return_schema": {
       "type": "object",
       "properties": {

@@ -116,6 +116,13 @@
         }
       ]
     },
-    "test_examples": []
+    "test_examples": [
+      {
+        "file": "/tmp/tu_variants_demo.csv",
+        "vaf_threshold": 0.3,
+        "annotation": "synonymous_variant",
+        "header_rows": 1
+      }
+    ]
   }
 ]

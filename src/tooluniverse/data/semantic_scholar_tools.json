@@ -281,6 +281,14 @@
     },
     "optional_api_keys": [
       "SEMANTIC_SCHOLAR_API_KEY"
+    ],
+    "test_examples": [
+      {
+        "open_access_pdf_url": "https://genomebiology.biomedcentral.com/counter/pdf/10.1186/s13059-014-0550-8",
+        "terms": ["dispersion", "negative binomial"],
+        "max_snippets_per_term": 1,
+        "window_chars": 140
+      }
     ]
   }
 ]

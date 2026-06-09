@@ -617,13 +617,18 @@
   },
   {
     "name": "ZFIN_get_gene_expression",
-    "description": "Get expression summary for a zebrafish gene from the Alliance of Genome Resources. Returns a ribbon summary of expression across anatomical systems (nervous system, renal system, sensory system, etc.) with annotation counts. Zebrafish is a premier model for studying vertebrate development and expression. Example: 'ZFIN:ZDB-GENE-990415-8' (pax2a) shows 1092 annotations including nervous system (216), renal system (60), sensory system (25).",
+    "description": "Get expression annotations for a zebrafish gene from the Alliance of Genome Resources. Returns per-annotation records of developmental stage (whenExpressed) and anatomical location (whereExpressed) for the gene, plus the total annotation count. Example: 'ZFIN:ZDB-GENE-980526-166' (shha) has hundreds of annotations across developmental stages. Zebrafish is a premier model for vertebrate development.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_id": {
           "type": "string",
-          "description": "ZFIN gene ID with 'ZFIN:' prefix. Examples: 'ZFIN:ZDB-GENE-990415-8' (pax2a), 'ZFIN:ZDB-GENE-980526-166' (shha), 'ZFIN:ZDB-GENE-990415-72' (tp53)."
+          "description": "ZFIN gene ID, with or without the 'ZFIN:' prefix. Examples: 'ZFIN:ZDB-GENE-990415-8' (pax2a), 'ZFIN:ZDB-GENE-980526-166' (shha), 'ZFIN:ZDB-GENE-990415-72' (tp53)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Max annotations to return (default 50, max 100).",
+          "default": 50
         }
       },
       "required": [
@@ -634,54 +639,60 @@
       "endpoint_type": "gene_expression_summary"
     },
     "type": "AllianceGenomeTool",
-    "test_examples": [],
+    "test_examples": [
+      {
+        "description": "Expression annotations for shha (sonic hedgehog a)",
+        "arguments": {
+          "gene_id": "ZFIN:ZDB-GENE-980526-166",
+          "limit": 5
+        }
+      }
+    ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
+            "status": {
+              "type": "string"
+            },
             "data": {
               "type": "object",
               "properties": {
                 "total_annotations": {
                   "type": "integer"
                 },
-                "expression_groups": {
+                "returned": {
+                  "type": "integer"
+                },
+                "annotations": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "group_name": {
+                      "stage": {
                         "type": [
                           "string",
                           "null"
                         ]
                       },
-                      "total_annotations": {
-                        "type": "integer"
+                      "location": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
-                      "terms": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "name": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "annotation_count": {
-                              "type": "integer"
-                            }
-                          }
-                        }
+                      "data_provider": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     }
                   }
@@ -707,6 +718,9 @@
         {
           "type": "object",
           "properties": {
+            "status": {
+              "type": "string"
+            },
             "error": {
               "type": "string"
             }

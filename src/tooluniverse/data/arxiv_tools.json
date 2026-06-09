@@ -200,6 +200,14 @@
           "description": "Error message (only present if status is error)"
         }
       }
-    }
+    },
+    "test_examples": [
+      {
+        "arxiv_id": "1706.03762",
+        "terms": ["attention", "BLEU"],
+        "max_snippets_per_term": 1,
+        "window_chars": 120
+      }
+    ]
   }
 ]
