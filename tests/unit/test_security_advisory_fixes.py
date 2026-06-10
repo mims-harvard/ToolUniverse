@@ -250,3 +250,71 @@ def test_http_api_open_when_no_token(monkeypatch):
     client = fastapi_testclient.TestClient(http_api_server.app)
     # No 401 — the middleware is a no-op without a configured token.
     assert client.get("/health").status_code == 200
+
+
+# --------------------------------------------------------------------------- #
+# Client can authenticate against a token-protected server
+# --------------------------------------------------------------------------- #
+
+
+def test_client_sends_bearer_token_from_arg():
+    from tooluniverse.http_client import ToolUniverseClient
+
+    client = ToolUniverseClient("http://x:8080", api_token="abc")
+    assert client.session.headers.get("Authorization") == "Bearer abc"
+
+
+def test_client_reads_token_from_env(monkeypatch):
+    monkeypatch.setenv(ss.API_TOKEN_ENV, "envtok")
+    from tooluniverse.http_client import ToolUniverseClient
+
+    client = ToolUniverseClient("http://x:8080")
+    assert client.session.headers.get("Authorization") == "Bearer envtok"
+
+
+def test_client_no_auth_header_without_token(monkeypatch):
+    monkeypatch.delenv(ss.API_TOKEN_ENV, raising=False)
+    from tooluniverse.http_client import ToolUniverseClient
+
+    client = ToolUniverseClient("http://x:8080")
+    assert "Authorization" not in client.session.headers
+
+
+# --------------------------------------------------------------------------- #
+# Tool Graph Web UI: loopback + debugger guards
+# --------------------------------------------------------------------------- #
+
+
+def _graph_ui(tmp_path):
+    pytest.importorskip("flask")
+    from tooluniverse.tool_graph_web_ui import ToolGraphWebUI
+
+    graph_file = tmp_path / "graph.json"
+    graph_file.write_text('{"nodes": [], "edges": []}')
+    return ToolGraphWebUI(str(graph_file))
+
+
+def test_graph_ui_refuses_remote_bind_without_token(tmp_path, monkeypatch):
+    monkeypatch.delenv(ss.API_TOKEN_ENV, raising=False)
+    ui = _graph_ui(tmp_path)
+    monkeypatch.setattr(ui.app, "run", lambda **kw: None)  # must not be reached
+    with pytest.raises(RuntimeError):
+        ui.run(host="0.0.0.0")
+
+
+def test_graph_ui_refuses_remote_debugger_even_with_token(tmp_path, monkeypatch):
+    monkeypatch.setenv(ss.API_TOKEN_ENV, "tok")
+    ui = _graph_ui(tmp_path)
+    monkeypatch.setattr(ui.app, "run", lambda **kw: None)
+    with pytest.raises(RuntimeError):
+        ui.run(host="0.0.0.0", debug=True)
+
+
+def test_graph_ui_loopback_default_runs(tmp_path, monkeypatch):
+    monkeypatch.delenv(ss.API_TOKEN_ENV, raising=False)
+    ui = _graph_ui(tmp_path)
+    called = {}
+    monkeypatch.setattr(ui.app, "run", lambda **kw: called.update(kw))
+    ui.run()  # defaults: host=127.0.0.1, debug=False
+    assert called["host"] == "127.0.0.1"
+    assert called["debug"] is False

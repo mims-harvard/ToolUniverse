@@ -8,7 +8,16 @@ Uses Python introspection to automatically discover methods - no manual updates 
 When you add/modify methods in ToolUniverse, they automatically work over HTTP.
 
 Usage:
-    python -m tooluniverse.http_api_server --host 0.0.0.0 --port 8080
+    # Loopback only (default, no authentication needed):
+    python -m tooluniverse.http_api_server
+
+    # Network exposure requires a Bearer token (see TOOLUNIVERSE_API_TOKEN);
+    # binding to a non-loopback host without it is refused:
+    TOOLUNIVERSE_API_TOKEN=secret TOOLUNIVERSE_HTTP_HOST=0.0.0.0 \
+        python -m tooluniverse.http_api_server
+
+    # Or use the CLI entry point for more options:
+    tooluniverse-http-api --host 0.0.0.0 --port 8080
 """
 
 import asyncio
