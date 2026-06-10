@@ -312,5 +312,224 @@
         }
       ]
     }
+  },
+  {
+    "name": "NCIThesaurus_get_parents",
+    "description": "Get the direct parent concepts (upward hierarchy / broader categories) of an NCI Thesaurus concept code. The NCIt get_children tool only walks down the tree; this walks UP toward superconcepts and drug-class parents. Returns the immediate parents in the NCIt polyhierarchy. No API key required. Example: C1647 (Trastuzumab) has parent C155711 (Anti-HER2 Monoclonal Antibody).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "NCI Thesaurus concept code to get parents for. Examples: 'C1647' (Trastuzumab), 'C3224' (Melanoma), 'C4872' (Breast Carcinoma)."
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_parents"
+    },
+    "type": "NCIThesaurusTool",
+    "test_examples": [
+      {
+        "code": "C1647"
+      },
+      {
+        "code": "C4872"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Parent concept code"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Parent concept name (broader category)"
+                  },
+                  "leaf": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the parent is a leaf node"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "child_code": {
+                  "type": "string"
+                },
+                "total_parents": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCIThesaurus_get_concept_maps",
+    "description": "Get cross-vocabulary maps for an NCI Thesaurus concept: code mappings to MedDRA, SNOMED-CT, GDC, ICD and other terminologies. The NCIt get_concept tool returns only definition/synonyms/properties and never the maps array; this bridges NCIt codes to drug-safety and clinical vocabularies. No API key required. Example: C4872 (Breast Carcinoma) maps to MedDRA LLT 10006187 and GDC; C1647 (Trastuzumab) maps to GDC therapeutic_agents.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "NCI Thesaurus concept code to get cross-vocabulary maps for. Examples: 'C4872' (Breast Carcinoma), 'C1647' (Trastuzumab), 'C3224' (Melanoma)."
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_maps"
+    },
+    "type": "NCIThesaurusTool",
+    "test_examples": [
+      {
+        "code": "C4872"
+      },
+      {
+        "code": "C1647"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "NCI concept code"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Concept preferred name"
+                },
+                "maps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Map relationship type (e.g., 'Has Synonym')"
+                      },
+                      "target_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Name of the mapped target term"
+                      },
+                      "target_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Code in the target terminology (e.g., MedDRA 10006187)"
+                      },
+                      "target_term_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Target term type (e.g., LLT, PT)"
+                      },
+                      "target_terminology": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Target terminology name (MedDRA, SNOMED, GDC, ICD)"
+                      },
+                      "target_terminology_version": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Version of the target terminology"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "total_maps": {
+                  "type": "integer"
+                },
+                "target_terminologies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

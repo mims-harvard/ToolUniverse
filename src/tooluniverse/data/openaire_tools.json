@@ -113,5 +113,95 @@
         "type": "software"
       }
     ]
+  },
+  {
+    "type": "OpenAIRETool",
+    "name": "OpenAIRE_search_projects",
+    "description": "Search OpenAIRE for funded research projects / grants (EU Horizon 2020, Horizon Europe, ERC, and many national funders such as NHMRC, NSF, Wellcome). Returns per-project: grant code, acronym, title, funder name/shortname, funding stream (e.g. 'Project Grants', 'H2020-EU.1.1.'), start/end dates, funded amount, total cost, currency, and website. Use for: grant discovery, funder/portfolio analysis, mapping topics to funded projects. Searches across project titles, acronyms, and keywords.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keyword(s) to search project titles, acronyms, and metadata (e.g., 'cancer', 'machine learning', 'graphene')."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of projects to return on this page. Default 10, maximum 100. (total_results reports the full match count across all pages.)",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "type": {
+          "type": "string",
+          "description": "Must be 'projects' for this tool.",
+          "default": "projects",
+          "enum": ["projects"]
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "status": {"type": "string"},
+                "query": {"type": "string"},
+                "type": {"type": "string"},
+                "total_results": {"type": ["integer", "number"]},
+                "returned": {"type": "integer"},
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "code": {"type": ["string", "null"]},
+                      "acronym": {"type": ["string", "null"]},
+                      "title": {"type": ["string", "null"]},
+                      "funder": {"type": ["string", "null"]},
+                      "funder_shortname": {"type": ["string", "null"]},
+                      "funding_stream": {"type": ["string", "null"]},
+                      "start_date": {"type": ["string", "null"]},
+                      "end_date": {"type": ["string", "null"]},
+                      "funded_amount": {"type": ["string", "number", "null"]},
+                      "total_cost": {"type": ["string", "number", "null"]},
+                      "currency": {"type": ["string", "null"]},
+                      "website": {"type": ["string", "null"]}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["status", "error"],
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "cancer",
+        "max_results": 1,
+        "type": "projects"
+      },
+      {
+        "query": "graphene",
+        "max_results": 2,
+        "type": "projects"
+      }
+    ]
   }
 ]

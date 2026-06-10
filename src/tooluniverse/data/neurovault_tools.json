@@ -605,5 +605,240 @@
         }
       ]
     }
+  },
+  {
+    "name": "NeuroVault_list_atlases",
+    "description": "List labeled anatomical brain atlas maps (parcellation/label images) hosted on NeuroVault. Each atlas is a label image (NIfTI) paired with a label-description file (XML/text) that names each parcel/region. Returns metadata including name, the .nii.gz file URL, the label_description_file URL, and the parent collection. Use limit and offset for pagination. NeuroVault hosts 18 atlases. Example: returns atlases like 'Thalamus maxprob thr25 2mm'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of atlases to return per page (default 10, max 100). Example: 10"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of atlases to skip for pagination (default 0)."
+        },
+        "format": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Response format. Must be 'json'. Default: 'json'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://neurovault.org/api/atlases/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "limit": 5
+      },
+      {
+        "limit": 3,
+        "offset": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paginated list of NeuroVault atlas maps",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "description": "Total number of atlases available"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Atlas image ID"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Atlas name"
+                  },
+                  "file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL to the label image NIfTI file (.nii.gz)"
+                  },
+                  "label_description_file": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL to the label-description file (XML/text) naming each parcel"
+                  },
+                  "collection": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the parent collection"
+                  },
+                  "collection_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroVault_get_atlas",
+    "description": "Get detailed metadata for a single labeled anatomical brain atlas map in NeuroVault by its atlas ID. Returns the atlas name, the label image NIfTI file URL (.nii.gz), the label_description_file URL (XML/text naming each parcel/region), the parent collection, and acquisition metadata. Get an atlas ID from NeuroVault_list_atlases. Example: id=14228 returns 'Thalamus maxprob thr25 2mm', file Thalamus-maxprob-thr25-2mm.nii.gz, label_description_file Thalamus-maxprob-thr25-2mm.xml, collection 1056.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "atlas_id": {
+          "type": "integer",
+          "description": "NeuroVault atlas image ID. Get one from NeuroVault_list_atlases. Example: 14228 (Thalamus maxprob thr25 2mm)."
+        }
+      },
+      "required": [
+        "atlas_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://neurovault.org/api/atlases/{atlas_id}/",
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "atlas_id": 14228
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Detailed atlas metadata",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Atlas image ID"
+            },
+            "name": {
+              "type": "string",
+              "description": "Atlas name"
+            },
+            "file": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL to the label image NIfTI file (.nii.gz)"
+            },
+            "label_description_file": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL to the label-description file (XML/text) naming each parcel/region"
+            },
+            "collection": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the parent collection"
+            },
+            "collection_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "target_template_image": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "add_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

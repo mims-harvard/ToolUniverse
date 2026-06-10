@@ -35,9 +35,19 @@
     },
     "type": "HuBMAPTool",
     "test_examples": [
-      {"organ": "LK", "limit": 3},
-      {"dataset_type": "RNAseq", "organ": "SP", "limit": 3},
-      {"query": "kidney", "limit": 3}
+      {
+        "organ": "LK",
+        "limit": 3
+      },
+      {
+        "dataset_type": "RNAseq",
+        "organ": "SP",
+        "limit": 3
+      },
+      {
+        "query": "kidney",
+        "limit": 3
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -47,38 +57,104 @@
             "data": {
               "type": "object",
               "properties": {
-                "total": {"type": "integer"},
-                "returned": {"type": "integer"},
+                "total": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
                 "datasets": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "hubmap_id": {"type": ["string", "null"]},
-                      "title": {"type": ["string", "null"]},
-                      "dataset_type": {"type": ["string", "null"]},
-                      "organ": {"type": ["string", "null"]},
-                      "status": {"type": ["string", "null"]},
-                      "group_name": {"type": ["string", "null"]},
-                      "anatomy": {"type": ["string", "null"]},
-                      "doi_url": {"type": ["string", "null"]},
-                      "data_types": {"type": ["array", "null"]},
-                      "donor_sex": {"type": ["string", "null"]},
-                      "donor_age": {"type": ["number", "string", "null"]}
+                      "hubmap_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dataset_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "organ": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "group_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "anatomy": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "doi_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "data_types": {
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      },
+                      "donor_sex": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "donor_age": {
+                        "type": [
+                          "number",
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -106,31 +182,64 @@
             "data": {
               "type": "object",
               "properties": {
-                "total": {"type": "integer"},
+                "total": {
+                  "type": "integer"
+                },
                 "organs": {
                   "type": "array",
                   "items": {
                     "type": "object",
                     "properties": {
-                      "code": {"type": ["string", "null"]},
-                      "term": {"type": ["string", "null"]},
-                      "organ_uberon": {"type": ["string", "null"]},
-                      "organ_cui": {"type": ["string", "null"]},
-                      "rui_supported": {"type": ["boolean", "null"]}
+                      "code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "term": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "organ_uberon": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "organ_cui": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "rui_supported": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -146,14 +255,18 @@
           "description": "HuBMAP dataset identifier (e.g., 'HBM626.FHJD.938')"
         }
       },
-      "required": ["hubmap_id"]
+      "required": [
+        "hubmap_id"
+      ]
     },
     "fields": {
       "operation": "get_dataset"
     },
     "type": "HuBMAPTool",
     "test_examples": [
-      {"hubmap_id": "HBM626.FHJD.938"}
+      {
+        "hubmap_id": "HBM626.FHJD.938"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -163,33 +276,235 @@
             "data": {
               "type": "object",
               "properties": {
-                "hubmap_id": {"type": ["string", "null"]},
-                "entity_type": {"type": ["string", "null"]},
-                "dataset_type": {"type": ["string", "null"]},
-                "status": {"type": ["string", "null"]},
-                "title": {"type": ["string", "null"]},
-                "description": {"type": ["string", "null"]},
-                "organ": {"type": ["string", "null"]},
-                "group_name": {"type": ["string", "null"]},
-                "data_types": {"type": ["array", "null"]},
-                "doi_url": {"type": ["string", "null"]},
-                "dbgap_study_url": {"type": ["string", "null"]},
-                "contains_human_genetic_sequences": {"type": ["boolean", "null"]},
-                "data_access_level": {"type": ["string", "null"]},
-                "created_timestamp": {"type": ["integer", "null"]},
-                "contacts": {"type": "array"},
-                "contributors": {"type": "array"}
+                "hubmap_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "entity_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "dataset_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "organ": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "group_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "data_types": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "doi_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "dbgap_study_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "contains_human_genetic_sequences": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "data_access_level": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "created_timestamp": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "contacts": {
+                  "type": "array"
+                },
+                "contributors": {
+                  "type": "array"
+                }
               }
             },
-            "metadata": {"type": "object"}
+            "metadata": {
+              "type": "object"
+            }
           }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "HuBMAP_get_dataset_provenance",
+    "description": "Retrieve a HuBMAP dataset's biological provenance lineage: the ordered chain of ancestor entities from which the dataset was derived. The lineage runs Dataset -> Sample(s) (anatomical granularity section -> block -> organ) -> Donor, each entry giving entity_type, hubmap_id, uuid, sample_category, organ, and dataset_type. This answers 'which donor, organ, and tissue blocks/sections produced this dataset?'. Provide the dataset UUID (32-char hex) or HuBMAP ID; obtain these from HuBMAP_search_datasets or HuBMAP_get_dataset. Example: uuid b1ca0a28b39e5ee6a252403e03247db6 returns 5 ancestors: Dataset HBM386.RVHN.555, Sample HBM522.MQPX.944 (section), Sample HBM364.WDPC.959 (block), Sample HBM865.MWHF.489 (organ, LK), Donor HBM758.JRSC.348.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "HuBMAP dataset UUID (32-char hex, e.g. 'b1ca0a28b39e5ee6a252403e03247db6') or HuBMAP ID (e.g. 'HBM329.JZJG.469'). Obtain from HuBMAP_search_datasets."
+        }
+      },
+      "required": [
+        "uuid"
+      ]
+    },
+    "fields": {
+      "operation": "get_provenance"
+    },
+    "type": "HuBMAPTool",
+    "test_examples": [
+      {
+        "uuid": "b1ca0a28b39e5ee6a252403e03247db6"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "uuid": {
+                  "type": "string"
+                },
+                "ancestor_count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "lineage": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "entity_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "hubmap_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "uuid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "sample_category": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "organ": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dataset_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "group_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
         }
       ]
     }

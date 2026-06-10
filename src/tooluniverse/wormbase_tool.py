@@ -111,6 +111,12 @@ class WormBaseTool(BaseTool):
             return self._gene_phenotypes(arguments)
         elif self.endpoint_type == "gene_expression":
             return self._gene_expression(arguments)
+        elif self.endpoint_type == "gene_orthologs":
+            return self._gene_orthologs(arguments)
+        elif self.endpoint_type == "gene_interactions":
+            return self._gene_interactions(arguments)
+        elif self.endpoint_type == "gene_human_diseases":
+            return self._gene_human_diseases(arguments)
         else:
             return {
                 "status": "error",
@@ -404,5 +410,223 @@ class WormBaseTool(BaseTool):
                 "source": "WormBase",
                 "query": gene_id,
                 "endpoint": "gene_expression",
+            },
+        }
+
+    @staticmethod
+    def _parse_ortholog_entries(entries, limit):
+        """Parse a list of homology-widget ortholog/paralog entries."""
+        parsed = []
+        if not isinstance(entries, list):
+            return parsed
+        for e in entries[:limit]:
+            if not isinstance(e, dict):
+                continue
+            ortholog = e.get("ortholog") or {}
+            species = e.get("species") or {}
+            methods = e.get("method") or []
+            method_labels = [
+                m.get("label")
+                for m in methods
+                if isinstance(m, dict) and m.get("label")
+            ]
+            genus = species.get("genus") or ""
+            sp = species.get("species") or ""
+            parsed.append(
+                {
+                    "ortholog_id": ortholog.get("id")
+                    if isinstance(ortholog, dict)
+                    else None,
+                    "ortholog_label": ortholog.get("label")
+                    if isinstance(ortholog, dict)
+                    else str(ortholog),
+                    "species": f"{genus}. {sp}".strip(". ").strip(),
+                    "methods": method_labels,
+                }
+            )
+        return parsed
+
+    def _gene_orthologs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get orthologs/homologs of a C. elegans gene across species."""
+        gene_input = arguments.get("gene_id", "")
+        if not gene_input:
+            return {
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
+            }
+        gene_id = _resolve_wbgene_id(gene_input)
+
+        url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/homology"
+        response = requests.get(
+            url,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        fields = response.json().get("fields", {})
+
+        other = fields.get("other_orthologs", {}).get("data")
+        nematode = fields.get("nematode_orthologs", {}).get("data")
+        paralogs = fields.get("paralogs", {}).get("data")
+
+        result = {
+            "wormbase_id": gene_id,
+            "cross_species_ortholog_count": len(other)
+            if isinstance(other, list)
+            else 0,
+            "cross_species_orthologs": self._parse_ortholog_entries(other, 50),
+            "nematode_ortholog_count": len(nematode)
+            if isinstance(nematode, list)
+            else 0,
+            "nematode_orthologs": self._parse_ortholog_entries(nematode, 50),
+            "paralog_count": len(paralogs) if isinstance(paralogs, list) else 0,
+            "paralogs": self._parse_ortholog_entries(paralogs, 30),
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "WormBase",
+                "query": gene_id,
+                "endpoint": "gene_homology",
+            },
+        }
+
+    def _gene_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get physical and genetic interactions for a C. elegans gene."""
+        gene_input = arguments.get("gene_id", "")
+        if not gene_input:
+            return {
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
+            }
+        gene_id = _resolve_wbgene_id(gene_input)
+
+        url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/interactions"
+        response = requests.get(
+            url,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        fields = response.json().get("fields", {})
+
+        edges_container = fields.get("interactions", {}).get("data") or {}
+        edges = (
+            edges_container.get("edges") if isinstance(edges_container, dict) else None
+        ) or []
+
+        physical = []
+        genetic = []
+        for edge in edges:
+            if not isinstance(edge, dict):
+                continue
+            effector = edge.get("effector") or {}
+            affected = edge.get("affected") or {}
+            citations = edge.get("citations") or []
+            int_type = edge.get("type") or ""
+            entry = {
+                "interactor_1": effector.get("label")
+                if isinstance(effector, dict)
+                else None,
+                "interactor_1_id": effector.get("id")
+                if isinstance(effector, dict)
+                else None,
+                "interactor_2": affected.get("label")
+                if isinstance(affected, dict)
+                else None,
+                "interactor_2_id": affected.get("id")
+                if isinstance(affected, dict)
+                else None,
+                "interaction_type": int_type,
+                "citation": citations[0].get("label")
+                if citations and isinstance(citations[0], dict)
+                else None,
+            }
+            # WormBase interaction types are prefixed, e.g. "physical:protein-DNA",
+            # "genetic:other", or "gi-module-three:diverging" (a genetic module).
+            lt = int_type.lower()
+            if lt.startswith("genetic") or lt.startswith("gi-"):
+                genetic.append(entry)
+            else:
+                physical.append(entry)
+
+        result = {
+            "wormbase_id": gene_id,
+            "total_interactions": len(edges),
+            "physical_count": len(physical),
+            "physical_interactions": physical[:150],
+            "genetic_count": len(genetic),
+            "genetic_interactions": genetic[:150],
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "WormBase",
+                "query": gene_id,
+                "endpoint": "gene_interactions",
+            },
+        }
+
+    def _gene_human_diseases(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get human disease models (DOID) for a C. elegans gene by orthology."""
+        gene_input = arguments.get("gene_id", "")
+        if not gene_input:
+            return {
+                "status": "error",
+                "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
+            }
+        gene_id = _resolve_wbgene_id(gene_input)
+
+        url = f"{WORMBASE_BASE_URL}/field/gene/{gene_id}/human_diseases"
+        response = requests.get(
+            url,
+            headers={"Accept": "application/json"},
+            timeout=self.timeout,
+        )
+        response.raise_for_status()
+        data = response.json().get("human_diseases", {}).get("data") or {}
+
+        diseases = []
+        if isinstance(data, dict):
+            for key in ("potential_model", "experimental_model", "disease_model"):
+                entries = data.get(key)
+                if not isinstance(entries, list):
+                    continue
+                for d in entries:
+                    if not isinstance(d, dict):
+                        continue
+                    ev = d.get("ev") or {}
+                    evidence_notes = []
+                    if isinstance(ev, dict):
+                        for vals in ev.values():
+                            if isinstance(vals, list):
+                                evidence_notes.extend(str(v) for v in vals)
+                    diseases.append(
+                        {
+                            "disease_id": d.get("id"),
+                            "disease_name": d.get("label"),
+                            "model_type": key,
+                            "evidence": evidence_notes,
+                        }
+                    )
+
+        result = {
+            "wormbase_id": gene_id,
+            "human_gene_ids": data.get("gene") if isinstance(data, dict) else None,
+            "disease_count": len(diseases),
+            "diseases": diseases,
+        }
+
+        return {
+            "status": "success",
+            "data": result,
+            "metadata": {
+                "source": "WormBase",
+                "query": gene_id,
+                "endpoint": "gene_human_diseases",
             },
         }

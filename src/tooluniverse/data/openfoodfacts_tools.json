@@ -19137,5 +19137,185 @@
         }
       ]
     }
+  },
+  {
+    "name": "OpenFoodFacts_filter_products_by_tags",
+    "description": "Structured / faceted product search of the Open Food Facts database via the v2 search API. Filter products by controlled-vocabulary tag fields rather than free text: additives_tags (e.g. 'en:e322' = lecithin), allergens_tags (e.g. 'en:peanuts'), categories_tags_en (e.g. 'Sodas'), brands_tags, nutrition_grades_tags (Nutri-Score a-e), labels_tags (e.g. 'en:organic'), and countries_tags (e.g. 'en:france'). This answers queries the legacy name/brand search cannot, such as 'all products containing additive E322', 'all peanut-allergen products', or 'category Sodas with Nutri-Score a'. Multiple tag filters combine with AND. Use the 'fields' parameter to control which product fields are returned. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "additives_tags": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by food-additive tag, e.g. 'en:e322' (lecithin), 'en:e330' (citric acid). Find tags via the product profile additives_tags field."
+        },
+        "allergens_tags": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by allergen tag, e.g. 'en:peanuts', 'en:milk', 'en:gluten'."
+        },
+        "categories_tags_en": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by English category name, e.g. 'Sodas', 'Breakfast cereals', 'Olive oils'."
+        },
+        "brands_tags": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by brand tag, e.g. 'coca-cola', 'nestle'."
+        },
+        "nutrition_grades_tags": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by Nutri-Score grade: 'a', 'b', 'c', 'd', or 'e'."
+        },
+        "labels_tags": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by label tag, e.g. 'en:organic', 'en:vegan', 'en:gluten-free', 'en:fair-trade'."
+        },
+        "countries_tags": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter by country tag, e.g. 'en:france', 'en:united-states'."
+        },
+        "fields": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated list of product fields to return. Default: product_name,code,brands,categories_tags_en,nutrition_grades,additives_tags,allergens_tags,labels_tags,nutriments"
+        },
+        "page_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results per page (1-100). Default: 20"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination. Default: 1"
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://world.openfoodfacts.org/api/v2/search",
+      "params": {
+        "fields": "product_name,code,brands,categories_tags_en,nutrition_grades,additives_tags,allergens_tags,labels_tags,nutriments",
+        "page_size": 20
+      },
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 (research; https://github.com/mims-harvard/ToolUniverse)"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "allergens_tags": "en:peanuts",
+        "page_size": 2
+      },
+      {
+        "categories_tags_en": "Sodas",
+        "page_size": 2
+      },
+      {
+        "additives_tags": "en:e322",
+        "nutrition_grades_tags": "a",
+        "page_size": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "page": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "page_count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "page_size": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "skip": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

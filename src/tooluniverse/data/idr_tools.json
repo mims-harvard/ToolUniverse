@@ -975,5 +975,238 @@
         }
       ]
     }
+  },
+  {
+    "name": "IDR_list_dataset_images",
+    "description": "List the individual images contained in a specific IDR (Image Data Resource) dataset, drilling down from the dataset level to the per-image level. Each IDR dataset (a collection of related microscopy images, e.g. one experimental plate or condition) contains many images; this tool returns their image IDs and names. Use the returned image IDs to fetch per-image map annotations (IDR_get_image_map_annotations), thumbnails, or pixel data. Obtain dataset IDs first from IDR_get_study_datasets. Supports limit/offset pagination; meta.totalCount gives the total number of images in the dataset.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_id": {
+          "type": "integer",
+          "description": "IDR dataset ID (e.g. 51). Obtain from IDR_get_study_datasets."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of images to return (default 25, max 1000)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for pagination."
+        }
+      },
+      "required": [
+        "dataset_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/datasets/{dataset_id}/images/"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "dataset_id": 51,
+        "limit": 5
+      },
+      {
+        "dataset_id": 51,
+        "limit": 10,
+        "offset": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "@type": {
+                        "type": "string"
+                      },
+                      "@id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "Name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "offset": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "limit": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "maxLimit": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "totalCount": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "IDR_get_image_map_annotations",
+    "description": "Fetch the map (key-value) annotations attached to a specific IDR image. Map annotations carry the experimental metadata that scientists query IDR for: Gene Symbol, Gene Identifier (Ensembl), Cell Line, Antibody / Antibody Target, Phenotype, organism, and assay-specific keys. Returns a list of annotations, each with a 'values' array of [key, value] pairs. Obtain image IDs first from IDR_list_dataset_images. Example: image 1884807 returns 6 map annotations including Cell Line=HeLa, Gene Symbol=CDK5RAP2, Gene Identifier=ENSG00000136861, Antibody Target=CDK5RAP2-C.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "integer",
+          "description": "IDR image ID (e.g. 1884807). Obtain from IDR_list_dataset_images."
+        }
+      },
+      "required": [
+        "image"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://idr.openmicroscopy.org/webclient/api/annotations/",
+      "params": {
+        "type": "map"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "image": 1884807
+      },
+      {
+        "image": 1884808
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "annotations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "ns": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "experimenters": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

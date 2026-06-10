@@ -39,6 +39,8 @@ class AllenBrainTool(BaseTool):
                 return self._get_expression_data(arguments)
             elif query_type == "structure_lookup":
                 return self._get_structure_by_id(arguments)
+            elif query_type == "structure_unionize":
+                return self._get_structure_unionize(arguments)
             else:
                 return {"status": "error", "error": f"Unknown query type: {query_type}"}
 
@@ -165,6 +167,47 @@ class AllenBrainTool(BaseTool):
                 "total_including_failed": len(all_records),
                 "gene_acronym": gene_acronym,
                 "product_id": product_id,
+            },
+        }
+
+    def _get_structure_unionize(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get quantified per-structure expression values for an ISH dataset.
+
+        Queries the StructureUnionize model, which aggregates ISH expression
+        signal over every annotated brain structure for one SectionDataSet,
+        yielding numeric spatial expression: expression_energy,
+        expression_density, sum_expressing_pixels, plus the structure record.
+        """
+        section_data_set_id = arguments.get("section_data_set_id")
+        if section_data_set_id is None:
+            return {
+                "status": "error",
+                "error": "section_data_set_id is required",
+            }
+
+        num_rows = arguments.get("num_rows", 50)
+        include_structure = arguments.get("include_structure", True)
+
+        criteria = (
+            f"model::StructureUnionize,"
+            f"rma::criteria,"
+            f"[section_data_set_id$eq{section_data_set_id}]"
+        )
+        include = "structure" if include_structure else None
+
+        result = self._make_rma_query(criteria, num_rows=num_rows, include=include)
+        if not result.get("success"):
+            return {"status": "error", "error": "Allen Brain Atlas query failed"}
+
+        records = result.get("msg", [])
+        return {
+            "status": "success",
+            "data": records,
+            "metadata": {
+                "total_results": result.get("total_rows", len(records)),
+                "num_rows": result.get("num_rows", num_rows),
+                "start_row": result.get("start_row", 0),
+                "section_data_set_id": section_data_set_id,
             },
         }
 

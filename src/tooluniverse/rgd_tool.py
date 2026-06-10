@@ -51,6 +51,8 @@ class RGDTool(BaseTool):
                 "search_genes": self._search_genes,
                 "get_annotations": self._get_annotations,
                 "get_orthologs": self._get_orthologs,
+                "get_qtls_in_region": self._get_qtls_in_region,
+                "resolve_symbol_or_region": self._resolve_symbol_or_region,
             }
             handler = handlers.get(self.endpoint_type)
             if not handler:
@@ -253,4 +255,174 @@ class RGDTool(BaseTool):
                 "ortholog_count": len(orthologs),
                 "source": "RGD",
             },
+        }
+
+    # RGD species type keys for the assembly map_key argument.
+    _SPECIES_BY_MAP_KEY = {
+        360: "rat (rn7, GRCr8)",
+        372: "rat (rn7, mRatBN7.2)",
+        38: "human (GRCh38)",
+        17: "human (GRCh37)",
+        35: "mouse (GRCm39)",
+        18: "mouse (GRCm38)",
+    }
+
+    def _get_qtls_in_region(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get QTLs overlapping a genomic region (RGD flagship data type)."""
+        chromosome = arguments.get("chromosome")
+        start = arguments.get("start")
+        stop = arguments.get("stop")
+        map_key = arguments.get("map_key")
+        missing = [
+            k
+            for k, v in (
+                ("chromosome", chromosome),
+                ("start", start),
+                ("stop", stop),
+                ("map_key", map_key),
+            )
+            if v in (None, "")
+        ]
+        if missing:
+            return {
+                "status": "error",
+                "error": (
+                    "chromosome, start, stop, and map_key are all required "
+                    "(e.g., chromosome='10', start=1, stop=50000000, map_key=360 for rat rn7)"
+                ),
+            }
+
+        chromosome = str(chromosome).replace("chr", "")
+        url = f"{RGD_BASE}/qtls/{chromosome}/{int(start)}/{int(stop)}/{int(map_key)}"
+        resp = self.session.get(url, timeout=self.timeout)
+        resp.raise_for_status()
+        data = resp.json()
+        if not isinstance(data, list):
+            data = [data] if data else []
+
+        qtls = []
+        for q in data[:100]:
+            qtls.append(
+                {
+                    "rgd_id": q.get("rgdId"),
+                    "symbol": q.get("symbol"),
+                    "name": q.get("name"),
+                    "chromosome": q.get("chromosome"),
+                    "lod": q.get("lod"),
+                    "p_value": q.get("pvalue"),
+                    "variance": q.get("variance"),
+                    "inheritance_type": q.get("inheritanceType"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": qtls,
+            "metadata": {
+                "chromosome": chromosome,
+                "start": int(start),
+                "stop": int(stop),
+                "map_key": int(map_key),
+                "assembly": self._SPECIES_BY_MAP_KEY.get(int(map_key), str(map_key)),
+                "total_qtls": len(data),
+                "returned": len(qtls),
+                "source": "RGD",
+            },
+        }
+
+    def _resolve_symbol_or_region(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve a rat gene symbol to its RGD record, or list genes in a region.
+
+        Two modes:
+        - symbol + species_type_key  -> /genes/{symbol}/{speciesTypeKey}
+        - chromosome + start + stop + map_key -> /genes/mapped/{chr}/{start}/{stop}/{mapKey}
+        """
+        symbol = arguments.get("symbol") or arguments.get("gene_symbol")
+        chromosome = arguments.get("chromosome")
+
+        if symbol:
+            species_type_key = int(arguments.get("species_type_key", 3))
+            url = f"{RGD_BASE}/genes/{symbol}/{species_type_key}"
+            resp = self.session.get(url, timeout=self.timeout)
+            resp.raise_for_status()
+            data = resp.json()
+            if isinstance(data, list):
+                data = data[0] if data else {}
+            return {
+                "status": "success",
+                "data": {
+                    "key": data.get("key"),
+                    "rgd_id": data.get("rgdId"),
+                    "symbol": data.get("symbol"),
+                    "name": data.get("name"),
+                    "type": data.get("type"),
+                    "description": data.get("description"),
+                    "so_acc_id": data.get("soAccId"),
+                    "species_type_key": data.get("speciesTypeKey"),
+                },
+                "metadata": {
+                    "mode": "symbol",
+                    "query": symbol,
+                    "species_type_key": species_type_key,
+                    "source": "RGD",
+                },
+            }
+
+        if chromosome is not None:
+            start = arguments.get("start")
+            stop = arguments.get("stop")
+            map_key = arguments.get("map_key")
+            if start in (None, "") or stop in (None, "") or map_key in (None, ""):
+                return {
+                    "status": "error",
+                    "error": "Region mode requires chromosome, start, stop, and map_key.",
+                }
+            chrom = str(chromosome).replace("chr", "")
+            url = (
+                f"{RGD_BASE}/genes/mapped/{chrom}/"
+                f"{int(start)}/{int(stop)}/{int(map_key)}"
+            )
+            resp = self.session.get(url, timeout=self.timeout)
+            resp.raise_for_status()
+            data = resp.json()
+            if not isinstance(data, list):
+                data = [data] if data else []
+
+            genes = []
+            for entry in data[:100]:
+                gene = entry.get("gene") or {}
+                genes.append(
+                    {
+                        "rgd_id": gene.get("rgdId"),
+                        "symbol": gene.get("symbol"),
+                        "name": gene.get("name"),
+                        "type": gene.get("type"),
+                        "chromosome": entry.get("chromosome"),
+                        "start": entry.get("start"),
+                        "stop": entry.get("stop"),
+                        "strand": entry.get("strand"),
+                    }
+                )
+
+            return {
+                "status": "success",
+                "data": genes,
+                "metadata": {
+                    "mode": "region",
+                    "chromosome": chrom,
+                    "start": int(start),
+                    "stop": int(stop),
+                    "map_key": int(map_key),
+                    "total_genes": len(data),
+                    "returned": len(genes),
+                    "source": "RGD",
+                },
+            }
+
+        return {
+            "status": "error",
+            "error": (
+                "Provide either 'symbol' (rat gene symbol) or a region "
+                "('chromosome' + 'start' + 'stop' + 'map_key')."
+            ),
         }

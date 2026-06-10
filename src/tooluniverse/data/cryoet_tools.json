@@ -771,5 +771,394 @@
         "run_id": 3430
       }
     ]
+  },
+  {
+    "name": "CryoET_list_tiltseries",
+    "type": "CryoETTool",
+    "required_packages": [
+      "requests"
+    ],
+    "description": "List tilt-series RAW ACQUISITION metadata from the CZ BioHub CryoET Data Portal. A tilt-series is the set of projection images acquired at incremental stage tilts, the raw input later reconstructed into a tomogram. This is distinct from CryoET_list_tomograms (the downstream reconstructions). Returns, per tilt-series: microscope manufacturer/model, acceleration voltage (V), spherical aberration constant, tilt range (tiltMin/tiltMax) and tiltStep (degrees), tilt axis, total electron flux/dose, camera model/manufacturer, acquisition software, binning, pixel spacing, alignment status, and the raw MRC file URL (httpsMrcFile). Optionally filter by run_id. Example: id 8009 (runId 8260) = TFS Krios, 300000 V, tilt -65..65 step 1.0, totalFlux 120.0, camera K2, software UCSFTomo.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "list_tiltseries"
+          ],
+          "default": "list_tiltseries"
+        },
+        "run_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional: filter to tilt-series of a single run (e.g. 8260). Obtain from CryoET_list_runs."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of tilt-series to return (default: 10).",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of tilt-series to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "run_id": {
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
+                },
+                "count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "tiltseries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "runId": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "microscopeManufacturer": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "microscopeModel": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "accelerationVoltage": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "sphericalAberrationConstant": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "tiltMin": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "tiltMax": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "tiltStep": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "tiltAxis": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "totalFlux": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "cameraModel": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "cameraManufacturer": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dataAcquisitionSoftware": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "binningFromFrames": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "pixelSpacing": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "isAligned": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "httpsMrcFile": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "s3MrcFile": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "httpsOmezarrDir": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_tiltseries",
+        "limit": 1
+      },
+      {
+        "operation": "list_tiltseries",
+        "run_id": 8260,
+        "limit": 2
+      }
+    ]
+  },
+  {
+    "name": "CryoET_list_depositions",
+    "type": "CryoETTool",
+    "required_packages": [
+      "requests"
+    ],
+    "description": "Browse depositions from the CZ BioHub CryoET Data Portal. A deposition is the top-level submission unit that bundles a set of datasets, runs, tomograms, and annotations under one author submission, and carries cross-database links (e.g. EMDB entries) in relatedDatabaseEntries. The portal UI is organized by deposition, so this is the natural entry point for browsing what has been submitted. Returns, per deposition: id, title, description, deposition/release/lastModified dates, relatedDatabaseEntries (comma-separated EMDB/other IDs), publications, and a key photo URL. Optionally filter by deposition_id. Example: id 10014 'Dolichospermum flos-aquae ... by Przemek Dutka', relatedDatabaseEntries 'EMD-29922,EMD-29923,EMD-29924,EMD-29925'; id 10019 Bacillus subtilis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Operation type",
+          "enum": [
+            "list_depositions"
+          ],
+          "default": "list_depositions"
+        },
+        "deposition_id": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional: fetch a single deposition by numeric ID (e.g. 10014)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of depositions to return (default: 10).",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of depositions to skip for pagination (default: 0).",
+          "default": 0
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "depositions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "depositionDate": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "releaseDate": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "lastModifiedDate": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "relatedDatabaseEntries": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "depositionPublications": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "keyPhotoUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "list_depositions",
+        "limit": 2
+      },
+      {
+        "operation": "list_depositions",
+        "deposition_id": 10014
+      }
+    ]
   }
 ]

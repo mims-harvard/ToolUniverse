@@ -81,14 +81,80 @@ class SearchSPLTool(BaseTool):
 class GetSPLBySetIDTool(BaseTool):
     """
     Get complete SPL label based on SPL Set ID, returns content in XML or JSON format.
+
+    When configured with a ``resource`` field (e.g. 'media' or 'history'), fetches
+    the corresponding DailyMed JSON sub-resource for the Set ID instead of the
+    full SPL XML document.
     """
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
         # Different suffixes for XML and JSON
         self.endpoint_template = f"{DAILYMED_BASE}/spls/{{setid}}.{{fmt}}"
+        # Optional sub-resource (media / history) served as JSON
+        self.resource = tool_config.get("fields", {}).get("resource")
 
     def run(self, arguments):
+        if self.resource in ("media", "history"):
+            return self._get_resource(arguments)
+        return self._get_full_spl(arguments)
+
+    def _get_resource(self, arguments):
+        """Fetch a JSON sub-resource (media or history) for an SPL Set ID."""
+        setid = arguments.get("setid")
+        if not setid or not str(setid).strip():
+            return {"status": "error", "error": "setid parameter is required"}
+
+        url = f"{DAILYMED_BASE}/spls/{str(setid).strip()}/{self.resource}.json"
+        try:
+            resp = requests.get(url, timeout=30)
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"Failed to request DailyMed {self.resource}: {str(e)}",
+            }
+
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"SPL {self.resource} not found for Set ID={setid}.",
+            }
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"DailyMed API access failed, HTTP {resp.status_code}",
+            }
+
+        try:
+            result = resp.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "error": f"Unable to parse DailyMed {self.resource} JSON.",
+            }
+
+        data = result.get("data", {})
+        if self.resource == "media":
+            payload = {
+                "setid": data.get("setid", str(setid).strip()),
+                "title": data.get("title"),
+                "spl_version": data.get("spl_version"),
+                "media": data.get("media", []) or [],
+            }
+        else:  # history
+            payload = {
+                "setid": (data.get("spl") or {}).get("setid", str(setid).strip()),
+                "title": (data.get("spl") or {}).get("title"),
+                "history": data.get("history", []) or [],
+            }
+
+        return {
+            "status": "success",
+            "data": payload,
+            "metadata": result.get("metadata", {}),
+        }
+
+    def _get_full_spl(self, arguments):
         setid = arguments.get("setid")
         fmt = arguments.get("format", "xml")
 

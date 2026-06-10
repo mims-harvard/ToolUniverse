@@ -365,5 +365,174 @@
     "test_examples": [
       {}
     ]
+  },
+  {
+    "type": "CrossrefRESTTool",
+    "name": "Crossref_search_members",
+    "description": "Search Crossref members (publishers / depositing organizations) by name. Returns each member's numeric Crossref member id, primary name, location, and DOI-coverage analytics: counts of current, backfile, and total DOIs, plus per-year DOI breakdowns and prefixes. Use this to find a publisher's member id (for Crossref_get_member), compare publisher output, or analyze DOI/journal coverage. Example: query 'plos' -> member id 340 'Public Library of Science (PLoS)'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Publisher / member name to search (e.g., 'plos', 'elsevier', 'springer', 'wiley')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of members to return. Max 100 per request.",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.crossref.org/members",
+      "method": "GET"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Array of Crossref member (publisher) objects.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Numeric Crossref member id"
+              },
+              "primary-name": {
+                "type": "string"
+              },
+              "location": {
+                "type": "string"
+              },
+              "counts": {
+                "type": "object",
+                "description": "current-dois, backfile-dois, total-dois"
+              },
+              "breakdowns": {
+                "type": "object",
+                "description": "dois-by-issued-year"
+              },
+              "prefixes": {
+                "type": "array"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "plos",
+        "limit": 2
+      },
+      {
+        "query": "elsevier",
+        "limit": 2
+      }
+    ]
+  },
+  {
+    "type": "CrossrefRESTTool",
+    "name": "Crossref_get_member",
+    "description": "Get a specific Crossref member (publisher) by its numeric member id, with full DOI-coverage analytics: primary name, location, counts of current/backfile/total DOIs, per-year DOI breakdowns (dois-by-issued-year), DOI prefixes, and deposit/coverage flags. Use this to audit a publisher's DOI output over time or verify member metadata. Find ids with Crossref_search_members. Example: member id 78 -> 'Elsevier BV', total-dois 24961410.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "member_id": {
+          "type": "string",
+          "description": "Numeric Crossref member id (e.g., '78' for Elsevier BV, '340' for PLOS). Find ids using Crossref_search_members."
+        }
+      },
+      "required": [
+        "member_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.crossref.org/members/{member_id}",
+      "method": "GET"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Crossref member (publisher) metadata with DOI-coverage analytics.",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "primary-name": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "counts": {
+              "type": "object",
+              "description": "current-dois, backfile-dois, total-dois"
+            },
+            "breakdowns": {
+              "type": "object",
+              "description": "dois-by-issued-year"
+            },
+            "prefixes": {
+              "type": "array"
+            },
+            "flags": {
+              "type": "object"
+            },
+            "coverage": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "member_id": "78"
+      },
+      {
+        "member_id": "340"
+      }
+    ]
   }
 ]

@@ -633,5 +633,444 @@
         }
       ]
     }
+  },
+  {
+    "name": "Alliance_get_gene_orthologs",
+    "description": "Get orthologs and paralogs of a gene across model organisms via the Alliance of Genome Resources (used by MGI, Xenbase, and other members). Returns the stringent ortholog set with per-ortholog disease/expression annotation flags and prediction methods, plus the paralog set. Gene IDs use member prefixes (MGI:, HGNC:, RGD:, ZFIN:, FB:, WB:, SGD:, Xenbase:); bare WBGene/FBgn/MGI numeric IDs are auto-prefixed. Example: MGI:97490 (Pax6) returns gene_to_gene_orthology orthologs (e.g. Drosophila ey) and paralogs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Alliance gene ID with member prefix, e.g. 'MGI:97490' (Pax6), 'HGNC:8620', 'RGD:3889', 'Xenbase:XB-GENE-865965'."
+        },
+        "stringency": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ortholog stringency filter: 'stringent' (default), 'moderate', or 'all'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max results per category (default 20, max 100)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_orthologs_paralogs"
+    },
+    "type": "AllianceGenomeTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "MGI:97490"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "ortholog_count": {
+                  "type": "integer"
+                },
+                "orthologs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ortholog_gene_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ortholog_symbol": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ortholog_species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "stringency": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "has_disease_annotations": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "has_expression_annotations": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "methods": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "paralog_count": {
+                  "type": "integer"
+                },
+                "paralogs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "stringency": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Alliance_get_molecular_interactions",
+    "description": "Get molecular (physical) interactions for a gene via the Alliance of Genome Resources (mouse/MGI, frog/Xenbase, and other members). Returns interactor gene IDs/symbols/species, interaction type, and supporting evidence references (PubMed / member curie). Gene IDs use member prefixes. Example: MGI:97490 (Pax6) returns gene_molecular_interaction records with evidence references such as MGI:6822438 (PMID:22863532).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Alliance gene ID with member prefix, e.g. 'MGI:97490' (Pax6), 'HGNC:8620'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max results (default 20, max 100)."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number (default 1)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_molecular_interactions"
+    },
+    "type": "AllianceGenomeTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "MGI:97490",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "subject_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subject_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "references": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "Alliance_get_alleles_and_models",
+    "description": "Get alleles/variants and affected genomic models (mutant strains) for a gene via the Alliance of Genome Resources (mouse/MGI, frog/Xenbase, and other members). Returns allele/variant records with HGVS genomic locations and disease/phenotype flags, plus affected genomic models (genotypes/strains). Example: MGI:97490 (Pax6) returns variant_summary records such as rs231853465 (NC_000068.8:g.105516528T>C) and models such as AffectedGenomicModel MGI:2680573.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Alliance gene ID with member prefix, e.g. 'MGI:97490' (Pax6), 'HGNC:8620'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max results per category (default 20, max 100)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_alleles_and_models"
+    },
+    "type": "AllianceGenomeTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "MGI:97490",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "allele_count": {
+                  "type": "integer"
+                },
+                "alleles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "allele_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "symbol": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "category": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "alteration_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "has_disease": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "has_phenotype": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "variant_locations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "model_count": {
+                  "type": "integer"
+                },
+                "models": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "model_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "model_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "subtype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "data_provider": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query_gene_id": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

@@ -141,5 +141,130 @@
         "orcid": "0000-0002-1825-0097"
       }
     ]
+  },
+  {
+    "name": "ORCID_get_fundings",
+    "type": "ORCIDTool",
+    "description": "Get the funding/grant records attached to an ORCID researcher's profile. Returns each grant's title, funder organization (with country), award/funding type, start/end dates, external identifiers, and URL. Use for: profiling a researcher's grant history, identifying funders, linking grants to a person. ORCID iDs have format XXXX-XXXX-XXXX-XXXX (e.g., 0000-0001-5109-3700).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_fundings"],
+          "description": "Operation type"
+        },
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
+        }
+      },
+      "required": ["operation", "orcid"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "data"],
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "put_code": {"type": ["integer", "string", "null"]},
+                  "title": {"type": ["string", "null"]},
+                  "type": {"type": ["string", "null"]},
+                  "organization": {"type": ["string", "null"]},
+                  "organization_country": {"type": ["string", "null"]},
+                  "start_date": {"type": ["object", "null"]},
+                  "end_date": {"type": ["object", "null"]},
+                  "url": {"type": ["string", "null"]},
+                  "external_ids": {"type": "array"}
+                }
+              }
+            },
+            "num_fundings": {"type": "integer"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["status", "error"],
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_fundings",
+        "orcid": "0000-0001-5109-3700"
+      }
+    ]
+  },
+  {
+    "name": "ORCID_get_peer_reviews",
+    "type": "ORCIDTool",
+    "description": "Get the peer-review activity attached to an ORCID researcher's profile. Peer review is a recognized research-contribution type. Returns each review's reviewer role, review type, convening organization (the venue/journal/funder the review was done for, with country), review-group id, completion date, and URL. Use for: assessing reviewing/editorial service, profiling a researcher's contributions. ORCID iDs have format XXXX-XXXX-XXXX-XXXX (e.g., 0000-0001-5109-3700).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_peer_reviews"],
+          "description": "Operation type"
+        },
+        "orcid": {
+          "type": "string",
+          "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
+        }
+      },
+      "required": ["operation", "orcid"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status", "data"],
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "put_code": {"type": ["integer", "string", "null"]},
+                  "reviewer_role": {"type": ["string", "null"]},
+                  "review_type": {"type": ["string", "null"]},
+                  "review_group_id": {"type": ["string", "null"]},
+                  "convening_organization": {"type": ["string", "null"]},
+                  "convening_organization_country": {"type": ["string", "null"]},
+                  "completion_date": {"type": ["object", "null"]},
+                  "review_url": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "num_peer_reviews": {"type": "integer"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["status", "error"],
+          "properties": {
+            "status": {"const": "error"},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_peer_reviews",
+        "orcid": "0000-0001-5109-3700"
+      }
+    ]
   }
 ]

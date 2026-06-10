@@ -112,5 +112,67 @@
       "tags": ["toxicology", "adverse outcome pathway", "regulatory", "stressor"],
       "estimated_execution_time": "2-3 seconds"
     }
+  },
+  {
+    "name": "AOPWiki_get_key_event",
+    "type": "AOPWikiDetailTool",
+    "description": "Get one AOP-Wiki Key Event (KE) by its numeric event id, including the machine-readable ontology annotations in its event_components. Each component maps the event to GO / Protein-Ontology / ChEBI terms via process (e.g. 'aryl hydrocarbon receptor activity', GO:0004874), object (e.g. 'aryl hydrocarbon receptor', PR:000003858), and action (e.g. 'increased'), plus the biological_organization level (Molecular, Cellular, Tissue, Organ, Individual, Population). Enables cross-database linking and mechanistic toxicology reasoning. Find event ids in the molecular_initiating_events / key_events / adverse_outcomes lists returned by AOPWiki_get_aop. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "event_id": {
+          "type": "integer",
+          "description": "AOP-Wiki Key Event numeric id, e.g. 18 ('Activation, AhR'). Obtain ids from AOPWiki_get_aop."
+        }
+      },
+      "required": ["event_id"]
+    },
+    "settings": {"base_url": "https://aopwiki.org", "timeout": 30, "endpoint_kind": "event"},
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Key Event with ontology-annotated event components",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {"type": ["integer", "null"]},
+                "title": {"type": ["string", "null"]},
+                "short_name": {"type": ["string", "null"]},
+                "biological_organization": {"type": ["string", "null"]},
+                "event_components": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {"type": ["integer", "null"]},
+                      "process": {"type": ["object", "null"]},
+                      "object": {"type": ["object", "null"]},
+                      "action": {"type": ["object", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"event_id": 18}
+    ],
+    "label": ["AOPWiki", "Toxicology", "Key Event", "Ontology"],
+    "metadata": {
+      "tags": ["toxicology", "adverse outcome pathway", "key event", "ontology", "regulatory"],
+      "estimated_execution_time": "2-3 seconds"
+    }
   }
 ]

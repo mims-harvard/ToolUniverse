@@ -403,5 +403,383 @@
         }
       ]
     }
+  },
+  {
+    "name": "WormBase_get_orthologs",
+    "description": "Get orthologs and homologs of a C. elegans gene across species from WormBase (Inparanoid/EnsEMBL-Compara/OrthoFinder etc.), plus nematode orthologs and within-worm paralogs. Accepts a WBGene ID or gene name (auto-resolved). Example: WBGene00006818 (unc-86) returns cross-species orthologs like zebrafish pou4f4 and nematode orthologs like CSP40.g8217 (c_tribulationis).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "WBGene identifier or gene name. Examples: 'WBGene00006818', 'unc-86'."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_orthologs"
+    },
+    "type": "WormBaseTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "WBGene00006818"
+      },
+      {
+        "gene_id": "unc-86"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "wormbase_id": {
+                  "type": "string"
+                },
+                "cross_species_ortholog_count": {
+                  "type": "integer"
+                },
+                "cross_species_orthologs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ortholog_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ortholog_label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "methods": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "nematode_ortholog_count": {
+                  "type": "integer"
+                },
+                "nematode_orthologs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "paralog_count": {
+                  "type": "integer"
+                },
+                "paralogs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "WormBase_get_interactions",
+    "description": "Get physical and genetic interactions for a C. elegans gene from WormBase, split into physical and genetic lists with interactor names, IDs, interaction type, and citation. Accepts a WBGene ID or gene name. Example: WBGene00006818 (unc-86) has a physical interactor die-1 (WBGene00000995) and a genetic interactor ttx-3 (WBGene00006654).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "WBGene identifier or gene name. Examples: 'WBGene00006818', 'unc-86'."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_interactions"
+    },
+    "type": "WormBaseTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "WBGene00006818"
+      },
+      {
+        "gene_id": "unc-86"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "wormbase_id": {
+                  "type": "string"
+                },
+                "total_interactions": {
+                  "type": "integer"
+                },
+                "physical_count": {
+                  "type": "integer"
+                },
+                "physical_interactions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "interactor_1": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "interactor_1_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "interactor_2": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "interactor_2_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "interaction_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "citation": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "genetic_count": {
+                  "type": "integer"
+                },
+                "genetic_interactions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "WormBase_get_human_diseases",
+    "description": "Get human disease models (Disease Ontology / DOID) for a C. elegans gene from WormBase, inferred by orthology to human disease genes. Accepts a WBGene ID or gene name. Example: WBGene00006818 (unc-86) is a potential model for DOID:0110546 'autosomal dominant nonsyndromic deafness 15', inferred by orthology to human HGNC:9220.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "WBGene identifier or gene name. Examples: 'WBGene00006818', 'unc-86'."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_human_diseases"
+    },
+    "type": "WormBaseTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "WBGene00006818"
+      },
+      {
+        "gene_id": "unc-86"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "wormbase_id": {
+                  "type": "string"
+                },
+                "human_gene_ids": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "disease_count": {
+                  "type": "integer"
+                },
+                "diseases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "disease_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "disease_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "model_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "evidence": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

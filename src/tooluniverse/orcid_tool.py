@@ -47,6 +47,8 @@ class ORCIDTool(BaseTool):
             "get_works": self._get_works,
             "search_researchers": self._search_researchers,
             "get_employments": self._get_employments,
+            "get_fundings": self._get_fundings,
+            "get_peer_reviews": self._get_peer_reviews,
         }
 
         handler = operation_handlers.get(operation)
@@ -232,4 +234,100 @@ class ORCIDTool(BaseTool):
             "status": "success",
             "data": employments,
             "num_employments": len(employments),
+        }
+
+    def _get_fundings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        orcid = arguments.get("orcid")
+        if not orcid:
+            return {"status": "error", "error": "orcid is required"}
+
+        result = self._make_request(f"{orcid}/fundings")
+        if not result["ok"]:
+            return {
+                "status": "error",
+                "error": result["error"],
+                "detail": result.get("detail", ""),
+            }
+
+        data = result["data"]
+        groups = data.get("group", [])
+
+        fundings = []
+        for group in groups:
+            summaries = group.get("funding-summary", [])
+            if not summaries:
+                continue
+            s = summaries[0]
+            org = s.get("organization", {}) or {}
+            fundings.append(
+                {
+                    "put_code": s.get("put-code"),
+                    "title": (s.get("title", {}) or {}).get("title", {}).get("value"),
+                    "type": s.get("type"),
+                    "organization": org.get("name"),
+                    "organization_country": (org.get("address", {}) or {}).get(
+                        "country"
+                    ),
+                    "start_date": s.get("start-date"),
+                    "end_date": s.get("end-date"),
+                    "url": (s.get("url", {}) or {}).get("value")
+                    if s.get("url")
+                    else None,
+                    "external_ids": (s.get("external-ids", {}) or {}).get(
+                        "external-id", []
+                    ),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": fundings,
+            "num_fundings": len(fundings),
+        }
+
+    def _get_peer_reviews(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        orcid = arguments.get("orcid")
+        if not orcid:
+            return {"status": "error", "error": "orcid is required"}
+
+        result = self._make_request(f"{orcid}/peer-reviews")
+        if not result["ok"]:
+            return {
+                "status": "error",
+                "error": result["error"],
+                "detail": result.get("detail", ""),
+            }
+
+        data = result["data"]
+        groups = data.get("group", [])
+
+        reviews = []
+        for group in groups:
+            for sub in group.get("peer-review-group", []):
+                summaries = sub.get("peer-review-summary", [])
+                if not summaries:
+                    continue
+                s = summaries[0]
+                conv = s.get("convening-organization", {}) or {}
+                reviews.append(
+                    {
+                        "put_code": s.get("put-code"),
+                        "reviewer_role": s.get("reviewer-role"),
+                        "review_type": s.get("review-type"),
+                        "review_group_id": s.get("review-group-id"),
+                        "convening_organization": conv.get("name"),
+                        "convening_organization_country": (
+                            conv.get("address", {}) or {}
+                        ).get("country"),
+                        "completion_date": s.get("completion-date"),
+                        "review_url": (s.get("review-url", {}) or {}).get("value")
+                        if s.get("review-url")
+                        else None,
+                    }
+                )
+
+        return {
+            "status": "success",
+            "data": reviews,
+            "num_peer_reviews": len(reviews),
         }

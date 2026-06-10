@@ -50,11 +50,16 @@ class CryoETTool(BaseTool):
                 return self._list_tomograms(arguments)
             elif operation == "list_annotations":
                 return self._list_annotations(arguments)
+            elif operation == "list_tiltseries":
+                return self._list_tiltseries(arguments)
+            elif operation == "list_depositions":
+                return self._list_depositions(arguments)
             else:
                 return {
                     "status": "error",
                     "error": f"Unknown operation: {operation!r}. Valid operations: "
-                    "list_datasets, get_dataset, list_runs, list_tomograms, list_annotations",
+                    "list_datasets, get_dataset, list_runs, list_tomograms, "
+                    "list_annotations, list_tiltseries, list_depositions",
                 }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -76,9 +81,7 @@ class CryoETTool(BaseTool):
             if tissue:
                 where_parts.append(f'tissueName: {{_ilike: "%{tissue}%"}}')
 
-            where_clause = (
-                "{" + ", ".join(where_parts) + "}" if where_parts else "null"
-            )
+            where_clause = "{" + ", ".join(where_parts) + "}" if where_parts else "null"
             where_arg = f"where: {where_clause}, " if where_parts else ""
 
             query = f"""
@@ -338,6 +341,108 @@ class CryoETTool(BaseTool):
                     "run_id": run_id,
                     "count": len(annotations),
                     "annotations": annotations,
+                },
+            }
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    # ------------------------------------------------------------------ #
+    # list_tiltseries
+    # ------------------------------------------------------------------ #
+    def _list_tiltseries(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List tilt-series raw acquisition metadata, optionally filtered by run."""
+        try:
+            run_id = arguments.get("run_id")
+            limit = int(arguments.get("limit", 10))
+            offset = int(arguments.get("offset", 0))
+
+            where_arg = ""
+            if run_id is not None:
+                where_arg = f"where: {{runId: {{_eq: {int(run_id)}}}}}, "
+
+            query = f"""
+            {{
+              tiltseries(
+                {where_arg}limitOffset: {{limit: {limit}, offset: {offset}}}
+              ) {{
+                id
+                runId
+                microscopeManufacturer
+                microscopeModel
+                accelerationVoltage
+                sphericalAberrationConstant
+                tiltMin
+                tiltMax
+                tiltStep
+                tiltAxis
+                totalFlux
+                cameraModel
+                cameraManufacturer
+                dataAcquisitionSoftware
+                binningFromFrames
+                pixelSpacing
+                isAligned
+                httpsMrcFile
+                s3MrcFile
+                httpsOmezarrDir
+              }}
+            }}
+            """
+            result = _gql(query)
+            if "errors" in result:
+                return {"status": "error", "error": str(result["errors"])}
+            tiltseries = result.get("data", {}).get("tiltseries", [])
+            return {
+                "status": "success",
+                "data": {
+                    "run_id": int(run_id) if run_id is not None else None,
+                    "count": len(tiltseries),
+                    "tiltseries": tiltseries,
+                },
+            }
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    # ------------------------------------------------------------------ #
+    # list_depositions
+    # ------------------------------------------------------------------ #
+    def _list_depositions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Browse top-level depositions, optionally filtered by deposition id."""
+        try:
+            deposition_id = arguments.get("deposition_id")
+            limit = int(arguments.get("limit", 10))
+            offset = int(arguments.get("offset", 0))
+
+            where_arg = ""
+            if deposition_id is not None:
+                where_arg = f"where: {{id: {{_eq: {int(deposition_id)}}}}}, "
+
+            query = f"""
+            {{
+              depositions(
+                {where_arg}limitOffset: {{limit: {limit}, offset: {offset}}}
+              ) {{
+                id
+                title
+                description
+                depositionDate
+                releaseDate
+                lastModifiedDate
+                relatedDatabaseEntries
+                depositionPublications
+                keyPhotoUrl
+              }}
+            }}
+            """
+            result = _gql(query)
+            if "errors" in result:
+                return {"status": "error", "error": str(result["errors"])}
+            depositions = result.get("data", {}).get("depositions", [])
+            return {
+                "status": "success",
+                "data": {
+                    "count": len(depositions),
+                    "depositions": depositions,
                 },
             }
         except Exception as e:

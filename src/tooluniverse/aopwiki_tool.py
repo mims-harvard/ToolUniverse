@@ -108,12 +108,70 @@ class AOPWikiDetailTool:
         self.tool_config = tool_config or {}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        settings = self.tool_config.get("settings", {})
+        base = settings.get("base_url", _BASE)
+        timeout = int(settings.get("timeout", 30))
+
+        # A config can set settings.endpoint_kind = "event" to fetch a single
+        # AOP-Wiki Key Event (/events/{id}.json) with its ontology-annotated
+        # event_components, instead of the default whole-AOP detail.
+        if settings.get("endpoint_kind") == "event":
+            return self._run_event(arguments, base, timeout)
+        return self._run_aop(arguments, base, timeout)
+
+    def _run_event(
+        self, arguments: Dict[str, Any], base: str, timeout: int
+    ) -> Dict[str, Any]:
+        event_id = arguments.get("event_id")
+        if event_id is None:
+            return {"status": "error", "error": "event_id is required"}
+
+        try:
+            result = _get_json(f"{base}/events/{event_id}.json", timeout=timeout)
+        except Exception as e:
+            return {"status": "error", "error": f"AOPWiki API error: {e}"}
+
+        if not isinstance(result, dict) or result.get("status") in (404, 500):
+            return {
+                "status": "error",
+                "error": f"Key Event {event_id} not found or server error",
+            }
+
+        def _term(node):
+            if not isinstance(node, dict):
+                return None
+            return {"term": node.get("term"), "source_id": node.get("source_id")}
+
+        components = []
+        for comp in result.get("event_components", []) or []:
+            if not isinstance(comp, dict):
+                continue
+            components.append(
+                {
+                    "id": comp.get("id"),
+                    "process": _term(comp.get("process")),
+                    "object": _term(comp.get("object")),
+                    "action": _term(comp.get("action")),
+                }
+            )
+
+        data = {
+            "id": result.get("id"),
+            "title": result.get("title"),
+            "short_name": result.get("short_name"),
+            "biological_organization": result.get("biological_organization"),
+            "created_at": result.get("created_at"),
+            "updated_at": result.get("updated_at"),
+            "event_components": components,
+        }
+        return {"status": "success", "data": data}
+
+    def _run_aop(
+        self, arguments: Dict[str, Any], base: str, timeout: int
+    ) -> Dict[str, Any]:
         aop_id = arguments.get("aop_id")
         if aop_id is None:
             return {"status": "error", "error": "aop_id is required"}
-
-        base = self.tool_config.get("settings", {}).get("base_url", _BASE)
-        timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
         try:
             result = _get_json(f"{base}/aops/{aop_id}.json", timeout=timeout)

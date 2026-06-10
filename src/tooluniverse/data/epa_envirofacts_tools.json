@@ -34,5 +34,31 @@
             }, "required": ["status", "data"]},
             {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
         ]}
+    },
+    {
+        "name": "EPA_get_tri_facility_chemical_releases",
+        "description": "Get the per-chemical, per-year EPA Toxics Release Inventory (TRI) reporting forms submitted by ONE facility, via the EPA Envirofacts tri_reporting_form table. Given a TRI facility id (find one with EPA_search_tri_facilities), returns the actual reporting forms the facility filed: TRI chemical id, CAS chemical name (e.g. 'Lead', 'Zinc compounds'), reporting year, form type, max-amount-on-site code, production ratio, and trade-secret/federal-facility flags. Unlike the facility-search tools, this reveals WHAT a facility reports releasing each year. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "tri_facility_id": {"type": "string", "description": "EPA TRI facility identifier, e.g. '15902CCKRN75BRI'. Obtain from EPA_search_tri_facilities."},
+            "limit": {"type": ["integer", "null"], "description": "Max reporting forms to return (default 10, max 100)."}
+        }, "required": ["tri_facility_id"]},
+        "fields": {"timeout": 30, "table": "tri_reporting_form", "lookup_column": "tri_facility_id", "lookup_param": "tri_facility_id", "row_kind": "reporting_form"},
+        "type": "EPATRIFacilitiesTool",
+        "test_examples": [{"tri_facility_id": "15902CCKRN75BRI", "limit": 3}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "TRI reporting forms for one facility", "properties": {
+                "status": {"type": "string"},
+                "data": {"type": "array", "items": {"type": "object", "properties": {
+                    "tri_facility_id": {"type": ["string", "null"]},
+                    "tri_chem_id": {"type": ["string", "null"]},
+                    "chemical_name": {"type": ["string", "null"]},
+                    "reporting_year": {"type": ["string", "null"]},
+                    "form_type": {"type": ["string", "null"]},
+                    "max_amount_code": {"type": ["string", "null"]}
+                }}},
+                "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        ]}
     }
 ]

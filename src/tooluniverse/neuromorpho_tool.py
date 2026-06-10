@@ -54,6 +54,12 @@ class NeuroMorphoTool(BaseTool):
                 return self._get_morphometry(arguments)
             elif endpoint == "neuron" and mode == "fields":
                 return self._get_field_values(arguments)
+            elif endpoint == "literature" and mode == "search":
+                return self._search_literature(arguments)
+            elif endpoint == "literature" and mode == "id":
+                return self._get_literature_by_id(arguments)
+            elif endpoint == "pvec":
+                return self._get_persistence_vector(arguments)
             else:
                 return {
                     "status": "error",
@@ -171,6 +177,92 @@ class NeuroMorphoTool(BaseTool):
             "status": "success",
             "data": data,
             "metadata": {"total_results": 1},
+        }
+
+    def _search_literature(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search source-publication (literature) records by field criteria.
+
+        Searchable fields include neuroscience-specific ones such as
+        brainRegion, cellType, tracingSystem, species, journal, doi, pmid.
+        """
+        query_field = arguments.get("query_field", "brainRegion")
+        query_value = arguments.get("query_value", "")
+        page = arguments.get("page", 0)
+        size = arguments.get("size", 20)
+
+        if not query_value:
+            return {"status": "error", "error": "query_value parameter is required"}
+
+        # Clamp size to API max
+        size = min(size, 500)
+
+        url = f"{NEUROMORPHO_BASE_URL}/literature/select"
+        params = {
+            "q": f"{query_field}:{query_value}",
+            "page": page,
+            "size": size,
+        }
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        articles = data.get("_embedded", {}).get("publicationResources", [])
+        page_info = data.get("page", {})
+
+        return {
+            "status": "success",
+            "data": articles,
+            "metadata": {
+                "total_results": page_info.get("totalElements", len(articles)),
+                "total_pages": page_info.get("totalPages", 1),
+                "current_page": page_info.get("number", page),
+                "page_size": page_info.get("size", size),
+            },
+        }
+
+    def _get_literature_by_id(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a single source-publication record by NeuroMorpho article_id."""
+        article_id = arguments.get("article_id")
+        if not article_id:
+            return {"status": "error", "error": "article_id is required"}
+
+        url = f"{NEUROMORPHO_BASE_URL}/literature/id/{article_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {"total_results": 1},
+        }
+
+    def _get_persistence_vector(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the persistence vector (TMD signature) for a neuron.
+
+        The persistence vector is a 100-coefficient Topological Morphology
+        Descriptor shape signature with a scaling factor, used for ML
+        clustering/classification of dendritic morphology.
+        """
+        neuron_id = arguments.get("neuron_id")
+        if neuron_id is None:
+            return {"status": "error", "error": "neuron_id is required"}
+
+        url = f"{NEUROMORPHO_BASE_URL}/pvec/id/{neuron_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        coefficients = data.get("coefficients") or []
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {
+                "total_results": 1,
+                "neuron_id": data.get("neuron_id", neuron_id),
+                "num_coefficients": len(coefficients),
+            },
         }
 
     def _get_field_values(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

@@ -51,10 +51,13 @@ class OpenAIRETool(BaseTool):
                 },
             }
 
+        # OpenAIRE's legacy `query` param now returns HTTP 400; the current
+        # search API (publications, datasets, software, projects) uses
+        # `keywords` for free-text search.
         params = {
             "format": "json",
             "size": max(1, min(max_results, 100)),
-            "query": query,
+            "keywords": query,
         }
         try:
             resp = requests.get(endpoint, params=params, timeout=20)
@@ -86,14 +89,24 @@ class OpenAIRETool(BaseTool):
                 },
             }
 
-        results = self._normalize(data, prod_type)
+        if prod_type == "projects":
+            results = self._normalize_projects(data)
+        else:
+            results = self._normalize(data, prod_type)
+
+        # Total reported by OpenAIRE (across all pages), not just this page
+        total_results = self._total_from_header(data)
+        if total_results is None:
+            total_results = len(results)
+
         return {
             "status": "success",
             "data": {
                 "status": "success",
                 "query": query,
                 "type": prod_type,
-                "total_results": len(results),
+                "total_results": total_results,
+                "returned": len(results),
                 "results": results,
             },
         }
@@ -105,7 +118,89 @@ class OpenAIRETool(BaseTool):
             return "https://api.openaire.eu/search/datasets"
         if prod_type == "software":
             return "https://api.openaire.eu/search/software"
+        if prod_type == "projects":
+            return "https://api.openaire.eu/search/projects"
         return None
+
+    @staticmethod
+    def _total_from_header(data):
+        """Extract the total result count from the OpenAIRE response header."""
+        try:
+            total = data.get("response", {}).get("header", {}).get("total")
+            if isinstance(total, dict):
+                total = total.get("$")
+            return int(total) if total is not None else None
+        except (ValueError, TypeError, AttributeError):
+            return None
+
+    @staticmethod
+    def _scalar(value):
+        """OpenAIRE wraps scalars as {'$': value}; unwrap to the plain value."""
+        if isinstance(value, dict):
+            return value.get("$")
+        if isinstance(value, list):
+            for item in value:
+                unwrapped = OpenAIRETool._scalar(item)
+                if unwrapped is not None:
+                    return unwrapped
+            return None
+        return value
+
+    def _normalize_projects(self, data):
+        """Normalize OpenAIRE funded-project / grant search results."""
+        results = []
+        try:
+            items = data.get("response", {}).get("results", {}).get("result", [])
+        except Exception:
+            items = []
+        if isinstance(items, dict):
+            items = [items]
+
+        for it in items:
+            metadata = it.get("metadata", {}) if isinstance(it, dict) else {}
+            project = metadata.get("oaf:entity", {}).get("oaf:project", {})
+            if not isinstance(project, dict):
+                continue
+
+            # Funder + funding stream live in the fundingtree
+            funding_tree = project.get("fundingtree", {})
+            if isinstance(funding_tree, list):
+                funding_tree = funding_tree[0] if funding_tree else {}
+            funder = (
+                funding_tree.get("funder", {}) if isinstance(funding_tree, dict) else {}
+            )
+            level0 = (
+                funding_tree.get("funding_level_0", {})
+                if isinstance(funding_tree, dict)
+                else {}
+            )
+
+            results.append(
+                {
+                    "code": self._scalar(project.get("code")),
+                    "acronym": self._scalar(project.get("acronym")),
+                    "title": self._scalar(project.get("title")),
+                    "funder": self._scalar(funder.get("name"))
+                    if isinstance(funder, dict)
+                    else None,
+                    "funder_shortname": self._scalar(funder.get("shortname"))
+                    if isinstance(funder, dict)
+                    else None,
+                    "funding_stream": self._scalar(level0.get("name"))
+                    if isinstance(level0, dict)
+                    else None,
+                    "start_date": self._scalar(project.get("startdate")),
+                    "end_date": self._scalar(project.get("enddate")),
+                    "funded_amount": self._scalar(project.get("fundedamount")),
+                    "total_cost": self._scalar(project.get("totalcost")),
+                    "currency": self._scalar(project.get("currency")),
+                    "website": self._scalar(project.get("websiteurl")),
+                    "type": "projects",
+                    "source": "OpenAIRE",
+                }
+            )
+
+        return results
 
     def _normalize(self, data, prod_type):
         results = []

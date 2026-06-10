@@ -371,5 +371,409 @@
         }
       ]
     }
+  },
+  {
+    "name": "PomBase_get_orthologs",
+    "description": "Get human and S. cerevisiae orthologs of a fission-yeast (S. pombe) gene from PomBase. Returns ortholog IDs with taxon (9606=human via HGNC, 4932=budding yeast via systematic name). Example: SPBC11B10.09 (cdc2) returns human CDKs HGNC:1722/1771/1772 (taxon 9606) and S. cerevisiae CDC28 / YBR160W (taxon 4932).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "PomBase systematic ID. Examples: 'SPBC11B10.09' (cdc2), 'SPAC1006.03c' (red1)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_orthologs"
+    },
+    "type": "PomBaseTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "SPBC11B10.09"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "systematic_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ortholog_count": {
+                  "type": "integer"
+                },
+                "orthologs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ortholog_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ortholog_taxon_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "ortholog_species": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PomBase_get_interactions",
+    "description": "Get physical and genetic interactions for a fission-yeast (S. pombe) gene from PomBase, each with evidence method, reference (PMID), throughput, and source database. Example: SPBC11B10.09 (cdc2) has ~100 physical interactions (e.g. SPAC1006.03c/red1 via Affinity Capture-MS, PMID:24713849, BIOGRID) and ~118 genetic interactions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "PomBase systematic ID. Examples: 'SPBC11B10.09' (cdc2)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_interactions"
+    },
+    "type": "PomBaseTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "SPBC11B10.09"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "systematic_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "physical_interaction_count": {
+                  "type": "integer"
+                },
+                "physical_interactions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "interactor_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "interactor_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "evidence": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "throughput": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "genetic_interaction_count": {
+                  "type": "integer"
+                },
+                "genetic_interactions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "interactor_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "interactor_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "interaction_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "throughput": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PomBase_get_go_annotations",
+    "description": "Get Gene Ontology annotations (biological_process / molecular_function / cellular_component) for a fission-yeast (S. pombe) gene from PomBase, with per-aspect counts and resolved term names. Example: SPBC11B10.09 (cdc2) returns BP terms like GO:0000082 'G1/S transition of mitotic cell cycle', plus MF and CC terms.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "PomBase systematic ID. Examples: 'SPBC11B10.09' (cdc2)."
+        }
+      },
+      "required": [
+        "gene_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "gene_go_annotations"
+    },
+    "type": "PomBaseTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "gene_id": "SPBC11B10.09"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "systematic_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "aspect_counts": {
+                  "type": "object"
+                },
+                "go_term_count": {
+                  "type": "integer"
+                },
+                "go_terms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "term_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "aspect": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "aspect_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "is_not": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

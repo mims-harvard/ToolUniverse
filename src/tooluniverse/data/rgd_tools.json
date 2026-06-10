@@ -235,5 +235,262 @@
         }
       ]
     }
+  },
+  {
+    "name": "RGD_get_qtls_in_region",
+    "description": "Get QTLs (Quantitative Trait Loci) overlapping a genomic region from the Rat Genome Database (RGD's flagship data type). Returns QTL symbol, name, RGD ID, LOD score, p-value, and inheritance type. Requires a chromosome, start/stop coordinates, and a map_key identifying the assembly (e.g., 360 for rat rn7/GRCr8, 38 for human GRCh38, 35 for mouse GRCm39). Example: chromosome='10', start=1, stop=50000000, map_key=360 returns QTL Uae41 'Urinary albumin excretion QTL 41' lod=5.26 rgdId=7387235.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chromosome": {
+          "type": "string",
+          "description": "Chromosome name, e.g. '10' or 'chr10'."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Region start coordinate (1-based)."
+        },
+        "stop": {
+          "type": "integer",
+          "description": "Region stop coordinate."
+        },
+        "map_key": {
+          "type": "integer",
+          "description": "Assembly map key. 360=rat rn7/GRCr8, 372=rat mRatBN7.2, 38=human GRCh38, 17=human GRCh37, 35=mouse GRCm39, 18=mouse GRCm38."
+        }
+      },
+      "required": [
+        "chromosome",
+        "start",
+        "stop",
+        "map_key"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_qtls_in_region"
+    },
+    "type": "RGDTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "chromosome": "10",
+        "start": 1,
+        "stop": 50000000,
+        "map_key": 360
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rgd_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chromosome": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "lod": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "p_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "variance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "inheritance_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "chromosome": {
+                  "type": "string"
+                },
+                "start": {
+                  "type": "integer"
+                },
+                "stop": {
+                  "type": "integer"
+                },
+                "map_key": {
+                  "type": "integer"
+                },
+                "assembly": {
+                  "type": "string"
+                },
+                "total_qtls": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "RGD_resolve_symbol_or_region",
+    "description": "Resolve a rat gene symbol to its native RGD record/ID, or list genes overlapping a genomic region. Symbol mode: provide 'symbol' (and optional species_type_key, default 3=rat) -> returns RGD key, rgd_id, name, type. Region mode: provide chromosome + start + stop + map_key -> returns genes in that interval. Example: symbol='Tp53' returns key=1887 rgd_id=3889 name='tumor protein p53'; region chromosome='10', start=1, stop=5000000, map_key=360 returns Mir484 rgdId=2325341.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Rat gene symbol, e.g. 'Tp53'. Use this for symbol mode."
+        },
+        "species_type_key": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Species type key for symbol mode (default 3=rat, 1=human, 2=mouse)."
+        },
+        "chromosome": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Chromosome for region mode, e.g. '10'."
+        },
+        "start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Region start (region mode)."
+        },
+        "stop": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Region stop (region mode)."
+        },
+        "map_key": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Assembly map key for region mode (e.g. 360 for rat rn7)."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint_type": "resolve_symbol_or_region"
+    },
+    "type": "RGDTool",
+    "timeout": 30,
+    "test_examples": [
+      {
+        "symbol": "Tp53"
+      },
+      {
+        "chromosome": "10",
+        "start": 1,
+        "stop": 5000000,
+        "map_key": 360
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "description": "Gene record (symbol mode) or list of genes in region (region mode)."
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

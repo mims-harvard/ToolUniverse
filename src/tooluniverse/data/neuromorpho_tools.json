@@ -499,5 +499,371 @@
         }
       ]
     }
+  },
+  {
+    "name": "NeuroMorpho_search_literature",
+    "description": "Search source-publication (literature) records linked to NeuroMorpho neuron reconstructions, searchable by neuroscience-specific fields. Each record gives DOI, PMID, journal, title, authors, plus the species, brainRegion, cellType, and tracingSystem of the reconstructions described. Use this to find the publications behind morphologies for a given brain region or cell type. Example: query_field='brainRegion', query_value='hippocampus' returns 128 articles (e.g. DOI 10.1084/jem.20151776).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query_field": {
+          "type": "string",
+          "description": "Field to search. Neuroscience-specific options: 'brainRegion', 'cellType', 'tracingSystem', 'species'. Also: 'journal', 'doi', 'pmid', 'authors', 'title'. Default: 'brainRegion'.",
+          "default": "brainRegion"
+        },
+        "query_value": {
+          "type": "string",
+          "description": "Value to match for the chosen field. Examples: 'hippocampus' (brainRegion), 'pyramidal' (cellType), 'mouse' (species), 'Neurolucida' (tracingSystem)."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for pagination (0-indexed). Default: 0."
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of articles per page (max 500). Default: 20."
+        }
+      },
+      "required": [
+        "query_value"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "literature",
+      "query_mode": "search"
+    },
+    "type": "NeuroMorphoTool",
+    "test_examples": [
+      {
+        "query_field": "brainRegion",
+        "query_value": "hippocampus",
+        "size": 2
+      },
+      {
+        "query_field": "species",
+        "query_value": "frog",
+        "size": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paginated list of source-publication records",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "article_id": {
+                    "type": "string",
+                    "description": "NeuroMorpho internal article ID (use with NeuroMorpho_get_literature)"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "authors": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "brainRegion": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "cellType": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "tracingSystem": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "total_pages": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroMorpho_get_literature",
+    "description": "Get a single source-publication (literature) record by its NeuroMorpho article_id. Returns the full record: DOI, PMID, journal, title, authors, plus the species, brainRegion, cellType, and tracingSystem of the linked reconstructions. Get an article_id from NeuroMorpho_search_literature. Example: article_id='56e9c892e4b0355017b2fa0f' returns DOI 10.1023/A:1005260824715, journal 'Neurophysiology', species ['frog'], brainRegion ['Motor cortex'].",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "article_id": {
+          "type": "string",
+          "description": "NeuroMorpho internal article ID from NeuroMorpho_search_literature. Example: '56e9c892e4b0355017b2fa0f'."
+        }
+      },
+      "required": [
+        "article_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "literature",
+      "query_mode": "id"
+    },
+    "type": "NeuroMorphoTool",
+    "test_examples": [
+      {
+        "article_id": "56e9c892e4b0355017b2fa0f"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "A single source-publication record",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "article_id": {
+                  "type": "string"
+                },
+                "doi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "pmid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "journal": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "species": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "brainRegion": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "cellType": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "tracingSystem": {
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NeuroMorpho_get_persistence_vector",
+    "description": "Get the persistence vector (Topological Morphology Descriptor, TMD) for a NeuroMorpho neuron by its numeric neuron_id. Returns a 100-coefficient shape signature plus a scaling_factor, used as a feature vector for ML clustering and classification of dendritic/neuronal morphology. Get a neuron_id from NeuroMorpho_search_neurons or NeuroMorpho_get_neuron. Example: neuron_id=1 returns scaling_factor 244.928 and a 100-element coefficients array (3276.79, 3356.89, ...).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "neuron_id": {
+          "type": "integer",
+          "description": "NeuroMorpho numeric neuron ID. Get one from NeuroMorpho_search_neurons. Example: 1."
+        }
+      },
+      "required": [
+        "neuron_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "pvec",
+      "query_mode": "id"
+    },
+    "type": "NeuroMorphoTool",
+    "test_examples": [
+      {
+        "neuron_id": 1
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Persistence vector (TMD shape signature) for the neuron",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "neuron_id": {
+                  "type": "integer"
+                },
+                "scaling_factor": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Scaling factor applied to the persistence diagram"
+                },
+                "distance": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "coefficients": {
+                  "type": "array",
+                  "description": "100-element persistence vector (TMD shape signature)",
+                  "items": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total_results": {
+                  "type": "integer"
+                },
+                "num_coefficients": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

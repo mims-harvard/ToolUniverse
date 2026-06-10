@@ -366,5 +366,159 @@
         }
       ]
     }
+  },
+  {
+    "name": "BioImageArchive_list_study_files",
+    "description": "List the file/image manifest of a BioImage Archive study, giving per-file download paths and per-image experimental annotations. Unlike BioImageArchive_get_study (which returns study-level metadata), this returns the actual files: image Name, relative download path (append to the study's FTP/HTTPS root), file size, and any annotation columns the submitters attached to each image (e.g. staining, cells, treatment, channels, timepoint). Use limit/offset to page through large manifests; metadata.records_total gives the full file count. Example: S-BIAD144 has 223 files; the first is 'experimentA_01_WT_PDMP.czi' (path experiments/experimentA_01_WT_PDMP.czi) with annotations staining='click chemistry and IF', cells='WT', treatment='20 uM PDMP', Channel_1='pacSph', Channel_2='Lamp1'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "BioImage Archive study accession. Format S-BIAD#### / S-BSST#### (e.g. 'S-BIAD144'). Obtain from BioImageArchive_search_studies."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of files to return (default 25, max 500)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of files to skip for pagination (default 0)."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "action": "list_study_files"
+    },
+    "type": "BioImageArchiveTool",
+    "test_examples": [
+      {
+        "accession": "S-BIAD144",
+        "limit": 5
+      },
+      {
+        "accession": "S-BIAD144",
+        "limit": 3,
+        "offset": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "path": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "size": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "section": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotations": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "accession": {
+                  "type": "string"
+                },
+                "records_total": {
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
+                },
+                "returned": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "offset": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "limit": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]
