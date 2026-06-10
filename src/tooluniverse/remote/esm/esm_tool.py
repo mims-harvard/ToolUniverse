@@ -84,7 +84,9 @@ def compute_embedding(sequence: str):
     },
     mcp_config={
         "server_name": "ESM Embedding MCP Server",
-        "host": "0.0.0.0",
+        # Loopback by default; remote exposure requires TOOLUNIVERSE_API_TOKEN
+        # (enforced by the SMCP bind guard at server start).
+        "host": "127.0.0.1",
         "port": 8008,
         "transport": "http",
     },

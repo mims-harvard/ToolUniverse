@@ -207,7 +207,9 @@ executor = ThreadPoolExecutor(max_workers=4)
     },
     mcp_config={
         "server_name": "Human Expert Consultation Server",
-        "host": "0.0.0.0",
+        # Loopback by default; remote exposure requires TOOLUNIVERSE_API_TOKEN
+        # (enforced by the SMCP bind guard at server start).
+        "host": "127.0.0.1",
         "port": 9876,
     },
 )
