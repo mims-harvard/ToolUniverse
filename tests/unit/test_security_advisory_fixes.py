@@ -100,6 +100,69 @@ def test_legitimate_code_still_runs(code, expected):
 
 
 # --------------------------------------------------------------------------- #
+# Path 4: module-pivot / FFI sandbox escape must be blocked
+#
+# The allowed scientific modules transitively expose dangerous stdlib modules as
+# plain, non-dunder attributes (numpy.ctypeslib -> ctypes -> CDLL -> native code,
+# matplotlib.os / .subprocess, random._os, collections._sys, enum's `bltns` alias
+# of builtins -> getattr). None require a dunder, a forbidden import, or a
+# forbidden call, so they bypassed the earlier checks. They are now blocked by the
+# DANGEROUS_ATTRIBUTE_NAMES denylist (normalized: leading underscores stripped,
+# lower-cased), which is sound because getattr/globals/vars/eval/exec are withheld
+# so attribute access is only ever the literal obj.name the AST can see.
+# --------------------------------------------------------------------------- #
+
+
+MODULE_PIVOT_ESCAPES = [
+    # ctypes -> native code execution (the confirmed RCE)
+    "libc = numpy.ctypeslib.ctypes.CDLL(None)\nresult = libc.getpid()",
+    # os / subprocess reached straight off matplotlib
+    "result = matplotlib.os.system('id')",
+    "result = matplotlib.subprocess.check_output(['id'])",
+    # os reached via random's private alias (underscore-normalized to 'os')
+    "result = random._os.system('id')",
+    # sys reached via collections' private alias
+    "result = collections._sys.modules",
+    # builtins reached via the enum module's `bltns` alias, then getattr back
+    "result = re.enum.bltns.getattr([], 'append')",
+]
+
+
+@pytest.mark.parametrize("code", MODULE_PIVOT_ESCAPES)
+def test_module_pivot_escape_blocked(code):
+    result = _run(code)
+    assert result["status"] == "error", f"escape not blocked: {code!r}"
+    assert "Forbidden" in result["data"]["error"]
+
+
+@pytest.mark.parametrize(
+    "code,expected",
+    [
+        # legit numeric attrs that resemble nothing dangerous keep working
+        ("import numpy as np\nresult = int(np.random.RandomState(0).randint(5, 6))", 5),
+        ("import numpy as np\nresult = float(np.trace(np.eye(3)))", 3.0),
+        ("import numpy as np\nresult = float(np.trace(np.linalg.inv(np.eye(2))))", 2.0),
+    ],
+)
+def test_numeric_attributes_not_false_positived(code, expected):
+    result = _run(code)
+    assert result["status"] == "success", result["data"].get("error")
+    assert result["data"]["result"] == expected
+
+
+def test_dangerous_attribute_normalization():
+    """Underscore/case-alias forms normalize to the same denied name; legit
+    numeric attribute names are not flagged."""
+    is_bad = BasePythonExecutor._is_dangerous_attribute
+    assert is_bad("os") and is_bad("_os") and is_bad("__os")  # noqa: PT018
+    assert is_bad("CDLL") and is_bad("ctypeslib") and is_bad("bltns")  # noqa: PT018
+    assert not is_bad("random")  # numpy.random
+    assert not is_bad("signal")  # scipy.signal
+    assert not is_bad("trace")  # numpy.trace
+    assert not is_bad("compile")  # re.compile (handled separately as a call)
+
+
+# --------------------------------------------------------------------------- #
 # server_security helpers
 # --------------------------------------------------------------------------- #
 
