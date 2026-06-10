@@ -9,6 +9,8 @@ This module provides a reusable base class for REST API tools that handles:
 """
 
 import os
+import csv
+import io
 import requests
 import urllib.parse
 from typing import Any, Dict, Optional, Callable
@@ -165,6 +167,34 @@ class BaseRESTTool(BaseTool):
         Returns:
             Processed response dictionary
         """
+        fields = self.tool_config.get("fields", {})
+
+        # Some endpoints return CSV/TSV downloads rather than JSON. When
+        # ``fields.parse_csv`` is set, parse the delimited text into a list of
+        # dict records (one per data row, keyed by header) so consuming agents
+        # get structured data instead of an opaque string blob.
+        if fields.get("parse_csv"):
+            text = response.text
+            content_type = response.headers.get("content-type", "")
+            if "text/html" in content_type or text.strip().startswith(
+                ("<html", "<!DOCTYPE", "<HTML")
+            ):
+                return {
+                    "status": "error",
+                    "error": f"{self.api_name}: server returned an HTML page instead of CSV data. The requested resource may not exist.",
+                    "url": url,
+                }
+            delimiter = fields.get("csv_delimiter", ",")
+            reader = csv.DictReader(io.StringIO(text), delimiter=delimiter)
+            records = [dict(row) for row in reader]
+            return {
+                "status": "success",
+                "data": records,
+                "url": url,
+                "count": len(records),
+                "columns": list(reader.fieldnames or []),
+            }
+
         try:
             data = response.json()
         except Exception:

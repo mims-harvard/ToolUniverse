@@ -309,5 +309,254 @@
         }
       ]
     }
+  },
+  {
+    "name": "MaveDB_get_mapped_variants",
+    "description": "Get genomically-mapped variant coordinates (GA4GH VRS Allele + ClinGen Allele ID) for a MaveDB score set. Each MAVE variant is mapped to a postMapped VRS Allele carrying a genomic SequenceLocation (chromosome + start/end on the reference assembly, e.g. NC_000013.11 for chr13) plus the ClinGen canonical Allele ID (e.g. CA387754009), which links the functional score to ClinVar, dbSNP, and gnomAD. Intronic or unmappable variants have post_mapped=null and an error_message. Use this to translate raw MAVE scores into genome coordinates for downstream variant annotation. Obtain the URN from MaveDB_search_score_sets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "urn": {
+          "type": "string",
+          "description": "MaveDB score set URN (e.g., 'urn:mavedb:00001263-a-2' for BRCA2 SGE). Obtain from MaveDB_search_score_sets."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of mapped variants to return (client-side truncation). Set to 0 or null to return all (the API returns the full list in one call).",
+          "default": 0
+        }
+      },
+      "required": ["urn"]
+    },
+    "fields": {
+      "operation": "get_mapped_variants"
+    },
+    "type": "MaveDBTool",
+    "test_examples": [
+      {
+        "urn": "urn:mavedb:00001263-a-2",
+        "limit": 50
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "urn": {"type": "string"},
+                "total_mapped_variants": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "truncated": {"type": "boolean"},
+                "n_with_genomic_location": {"type": "integer"},
+                "n_with_clingen_allele_id": {"type": "integer"},
+                "mapped_variants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "variant_urn": {"type": ["string", "null"]},
+                      "clingen_allele_id": {"type": ["string", "null"]},
+                      "alignment_level": {"type": ["string", "null"]},
+                      "vrs_version": {"type": ["string", "null"]},
+                      "current": {"type": ["boolean", "null"]},
+                      "error_message": {"type": ["string", "null"]},
+                      "post_mapped": {
+                        "type": ["object", "null"],
+                        "properties": {
+                          "vrs_id": {"type": ["string", "null"]},
+                          "sequence_reference_label": {"type": ["string", "null"]},
+                          "refget_accession": {"type": ["string", "null"]},
+                          "start": {"type": ["integer", "null"]},
+                          "end": {"type": ["integer", "null"]},
+                          "state_sequence": {"type": ["string", "null"]},
+                          "hgvs_expressions": {"type": ["array", "null"], "items": {"type": "string"}}
+                        }
+                      },
+                      "pre_mapped": {"type": ["object", "null"]}
+                    }
+                  }
+                }
+              },
+              "required": ["urn", "mapped_variants"]
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MaveDB_get_clinical_controls",
+    "description": "Get clinical-control variants (ClinVar pathogenic/benign/VUS) that overlap a MaveDB score set, used to calibrate MAVE functional scores into clinically-interpretable thresholds. Returns ClinVar entries with dbIdentifier, gene symbol, clinical significance (e.g. 'Uncertain significance', 'Pathogenic'), review status, ClinVar version (e.g. '01_2025'), and the MaveDB variant URN(s) sharing the same genomic coordinate. Optionally filter by clinical_significance. This is the reference set for building functional-score evidence (e.g. ACMG PS3/BS3). Obtain the URN from MaveDB_search_score_sets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "urn": {
+          "type": "string",
+          "description": "MaveDB score set URN (e.g., 'urn:mavedb:00001263-a-2' for BRCA2 SGE). Obtain from MaveDB_search_score_sets."
+        },
+        "clinical_significance": {
+          "type": ["string", "null"],
+          "description": "Optional exact-match filter on ClinVar clinical significance (case-insensitive), e.g. 'Pathogenic', 'Benign', 'Uncertain significance'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of clinical controls to return (client-side truncation). Set to 0 or null to return all.",
+          "default": 0
+        }
+      },
+      "required": ["urn"]
+    },
+    "fields": {
+      "operation": "get_clinical_controls"
+    },
+    "type": "MaveDBTool",
+    "test_examples": [
+      {
+        "urn": "urn:mavedb:00001263-a-2",
+        "limit": 50
+      },
+      {
+        "urn": "urn:mavedb:00001263-a-2",
+        "clinical_significance": "Pathogenic",
+        "limit": 20
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "urn": {"type": "string"},
+                "total_clinical_controls": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "truncated": {"type": "boolean"},
+                "significance_filter": {"type": ["string", "null"]},
+                "significance_breakdown": {"type": "object"},
+                "clinical_controls": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "db_name": {"type": ["string", "null"]},
+                      "db_identifier": {"type": ["string", "null"]},
+                      "db_version": {"type": ["string", "null"]},
+                      "gene_symbol": {"type": ["string", "null"]},
+                      "clinical_significance": {"type": ["string", "null"]},
+                      "clinical_review_status": {"type": ["string", "null"]},
+                      "mapped_variant_urns": {"type": "array", "items": {"type": "string"}}
+                    }
+                  }
+                }
+              },
+              "required": ["urn", "clinical_controls"]
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MaveDB_get_gnomad_variants",
+    "description": "Get gnomAD population-frequency variants observed within a MaveDB score set. Returns gnomAD variants with dbIdentifier (e.g. '13-32319097-A-C'), gnomAD version (e.g. 'v4.1'), allele count, allele number, and allele frequency, each linked to the MaveDB mapped variant via a genomic VRS Allele. Cross-reference allele frequency with the measured MAVE functional score: rare variants with strong functional impact are candidate disease alleles. Obtain the URN from MaveDB_search_score_sets.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "urn": {
+          "type": "string",
+          "description": "MaveDB score set URN (e.g., 'urn:mavedb:00001263-a-2' for BRCA2 SGE). Obtain from MaveDB_search_score_sets."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of gnomAD variants to return (client-side truncation). Set to 0 or null to return all.",
+          "default": 0
+        }
+      },
+      "required": ["urn"]
+    },
+    "fields": {
+      "operation": "get_gnomad_variants"
+    },
+    "type": "MaveDBTool",
+    "test_examples": [
+      {
+        "urn": "urn:mavedb:00001263-a-2"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "urn": {"type": "string"},
+                "total_gnomad_variants": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "truncated": {"type": "boolean"},
+                "gnomad_variants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "db_name": {"type": ["string", "null"]},
+                      "db_identifier": {"type": ["string", "null"]},
+                      "db_version": {"type": ["string", "null"]},
+                      "allele_count": {"type": ["integer", "null"]},
+                      "allele_number": {"type": ["integer", "null"]},
+                      "allele_frequency": {"type": ["number", "null"]},
+                      "mapped_genomic_alleles": {
+                        "type": "array",
+                        "items": {"type": "object"}
+                      }
+                    }
+                  }
+                }
+              },
+              "required": ["urn", "gnomad_variants"]
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
   }
 ]

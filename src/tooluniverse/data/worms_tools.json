@@ -55,5 +55,223 @@
       {"query": "Actinia equina", "limit": 5},
       {"query": "Scleractinia", "limit": 10}
     ]
+  },
+  {
+    "type": "WoRMSRESTTool",
+    "name": "WoRMS_get_classification",
+    "description": "Get the full taxonomic classification tree (ranked lineage) for a marine taxon from the World Register of Marine Species (WoRMS) by its AphiaID. Returns a nested hierarchy from the top rank (Biota/Kingdom) down to the queried taxon, with the AphiaID, rank, and scientific name at each level (e.g. Kingdom -> Phylum -> ... -> Species). This is the canonical post-resolution enrichment used after finding an AphiaID with WoRMS_search_species. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea, common sole). Obtain from WoRMS_search_species."}
+      },
+      "required": ["AphiaID"]
+    },
+    "fields": {
+      "operation": "classification",
+      "endpoint": "https://www.marinespecies.org/rest/AphiaClassificationByAphiaID/{AphiaID}",
+      "return_format": "JSON"
+    },
+    "test_examples": [
+      {"AphiaID": 127160},
+      {"AphiaID": 126436}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Nested classification tree",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "description": "Recursive classification node",
+              "properties": {
+                "AphiaID": {"type": "integer"},
+                "rank": {"type": "string"},
+                "scientificname": {"type": "string"},
+                "child": {"type": ["object", "null"]}
+              }
+            },
+            "url": {"type": "string"},
+            "AphiaID": {"type": "integer"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "type": "WoRMSRESTTool",
+    "name": "WoRMS_get_vernaculars",
+    "description": "Get the vernacular (common) names for a marine taxon from the World Register of Marine Species (WoRMS) by its AphiaID, with ISO language codes and language names. Returns multilingual common names (e.g. 'common sole'/English, 'Dover sole'/English, 'gewone tong'/Dutch) not available from the scientific name search. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+      },
+      "required": ["AphiaID"]
+    },
+    "fields": {
+      "operation": "vernaculars",
+      "endpoint": "https://www.marinespecies.org/rest/AphiaVernacularsByAphiaID/{AphiaID}",
+      "return_format": "JSON"
+    },
+    "test_examples": [
+      {"AphiaID": 127160},
+      {"AphiaID": 126436}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Vernacular (common) names with language codes",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "vernacular": {"type": "string"},
+                  "language_code": {"type": ["string", "null"]},
+                  "language": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "url": {"type": "string"},
+            "count": {"type": "integer"},
+            "AphiaID": {"type": "integer"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "type": "WoRMSRESTTool",
+    "name": "WoRMS_get_distribution",
+    "description": "Get the marine geographic distribution of a taxon from the World Register of Marine Species (WoRMS) by its AphiaID. Returns localities mapped to MarineRegions MRGID identifiers, with record status, establishment means (native/introduced), invasiveness, and occurrence status. This is curated marine biogeography not present in GBIF occurrence records. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+      },
+      "required": ["AphiaID"]
+    },
+    "fields": {
+      "operation": "distributions",
+      "endpoint": "https://www.marinespecies.org/rest/AphiaDistributionsByAphiaID/{AphiaID}",
+      "return_format": "JSON"
+    },
+    "test_examples": [
+      {"AphiaID": 127160},
+      {"AphiaID": 126436}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Marine distribution localities",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "locality": {"type": ["string", "null"]},
+                  "locationID": {"type": ["string", "null"]},
+                  "higherGeography": {"type": ["string", "null"]},
+                  "higherGeographyID": {"type": ["string", "null"]},
+                  "recordStatus": {"type": ["string", "null"]},
+                  "establishmentMeans": {"type": ["string", "null"]},
+                  "invasiveness": {"type": ["string", "null"]},
+                  "occurrence": {"type": ["string", "null"]},
+                  "decimalLatitude": {"type": ["number", "null"]},
+                  "decimalLongitude": {"type": ["number", "null"]}
+                }
+              }
+            },
+            "url": {"type": "string"},
+            "count": {"type": "integer"},
+            "AphiaID": {"type": "integer"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "type": "WoRMSRESTTool",
+    "name": "WoRMS_get_synonyms",
+    "description": "Get the taxonomic synonyms (unaccepted names) for a marine taxon from the World Register of Marine Species (WoRMS) by its AphiaID. Returns names that resolve to the same valid AphiaID, each with its status (e.g. 'unaccepted'), unaccept reason, authority, and the valid_AphiaID/valid_name they map to. The name search returns only the matched record, not its full synonymy. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the accepted taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+      },
+      "required": ["AphiaID"]
+    },
+    "fields": {
+      "operation": "synonyms",
+      "endpoint": "https://www.marinespecies.org/rest/AphiaSynonymsByAphiaID/{AphiaID}",
+      "return_format": "JSON"
+    },
+    "test_examples": [
+      {"AphiaID": 127160},
+      {"AphiaID": 126436}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Taxonomic synonyms",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "AphiaID": {"type": "integer"},
+                  "scientificname": {"type": "string"},
+                  "authority": {"type": ["string", "null"]},
+                  "status": {"type": "string"},
+                  "unacceptreason": {"type": ["string", "null"]},
+                  "rank": {"type": "string"},
+                  "valid_AphiaID": {"type": "integer"},
+                  "valid_name": {"type": "string"}
+                }
+              }
+            },
+            "url": {"type": "string"},
+            "count": {"type": "integer"},
+            "AphiaID": {"type": "integer"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

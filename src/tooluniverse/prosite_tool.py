@@ -31,10 +31,12 @@ class PROSITETool(BaseTool):
     """
     Tool for querying the PROSITE protein motif/domain database.
 
-    Supports three operations:
+    Supports four operations:
     - get_entry: Retrieve a PROSITE entry by accession (parses text format)
     - search: Search PROSITE entries by keyword (via InterPro API)
     - scan_sequence: Scan a protein sequence for PROSITE pattern matches
+    - find_proteins_with_motif: Reverse scan - given a PROSITE signature
+      accession, return all UniProtKB/Swiss-Prot proteins containing that motif
     """
 
     PROSITE_BASE_URL = "https://prosite.expasy.org"
@@ -56,6 +58,8 @@ class PROSITETool(BaseTool):
                 return self._search(arguments)
             elif self.endpoint == "scan_sequence":
                 return self._scan_sequence(arguments)
+            elif self.endpoint == "find_proteins_with_motif":
+                return self._find_proteins_with_motif(arguments)
             else:
                 return {
                     "status": "error",
@@ -70,6 +74,16 @@ class PROSITETool(BaseTool):
             return {
                 "status": "error",
                 "error": "Failed to connect to PROSITE/InterPro API",
+            }
+        except requests.exceptions.ChunkedEncodingError:
+            return {
+                "status": "error",
+                "error": (
+                    "PROSITE scan response was truncated. This usually happens for "
+                    "very frequent low-information signatures (SKIP-FLAG=TRUE, e.g. "
+                    "PS00005, PS00008) scanned across the whole proteome. Try a more "
+                    "specific signature accession."
+                ),
             }
         except Exception as e:
             return {"status": "error", "error": f"PROSITE API error: {str(e)}"}
@@ -322,5 +336,110 @@ class PROSITETool(BaseTool):
                 "sequence_length": len(seq_clean),
                 "total_matches": data.get("n_match", len(matches)),
                 "skip_frequent_patterns": skip,
+            },
+        }
+
+    def _find_proteins_with_motif(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Reverse motif scan: given a PROSITE signature accession, return all
+        UniProtKB/Swiss-Prot proteins that contain that motif, with positions.
+
+        This is the inverse of the forward scan (protein -> its motifs): it
+        enumerates the proteome occurrences of a single signature.
+        """
+        signature = (
+            arguments.get("signature_ac")
+            or arguments.get("accession")
+            or arguments.get("sig")
+            or ""
+        ).strip()
+        if not signature:
+            return {
+                "status": "error",
+                "error": (
+                    "signature_ac parameter is required "
+                    "(PROSITE signature accession, e.g., PS00029)"
+                ),
+            }
+
+        sig_upper = signature.upper()
+        if not sig_upper.startswith("PS"):
+            return {
+                "status": "error",
+                "error": (
+                    f"Invalid PROSITE signature accession: {signature}. "
+                    "Must start with 'PS' (e.g., PS00029)"
+                ),
+            }
+
+        # Default Swiss-Prot; allow callers to widen to TrEMBL if desired.
+        db = arguments.get("db", "sprot")
+        if db not in ("sprot", "trembl", "uniprot"):
+            db = "sprot"
+
+        max_results = arguments.get("max_results", 50)
+        try:
+            max_results = int(max_results)
+        except (TypeError, ValueError):
+            max_results = 50
+        max_results = min(max(1, max_results), 1000)
+
+        # SKIP-FLAG=TRUE signatures (PS00005, PS00008, ...) are skipped by default
+        # by ScanProsite and return no hits unless overridden. skip_frequent=False
+        # sends skip=no so those very frequent patterns are included.
+        skip_frequent = arguments.get("skip_frequent", True)
+
+        post_data = {
+            "sig": sig_upper,
+            "db": db,
+            "output": "json",
+            "skip": "yes" if skip_frequent else "no",
+        }
+
+        response = requests.post(
+            self.SCANPROSITE_URL, data=post_data, timeout=self.timeout
+        )
+        response.raise_for_status()
+
+        content = response.text
+        if content.strip().startswith("<!DOCTYPE") or content.strip().startswith(
+            "<html"
+        ):
+            return {
+                "status": "error",
+                "error": (
+                    f"ScanProsite returned an HTML page for signature {sig_upper}. "
+                    "The signature accession may be invalid."
+                ),
+            }
+
+        data = response.json()
+        matchset = data.get("matchset", []) or []
+
+        proteins = []
+        for m in matchset[:max_results]:
+            proteins.append(
+                {
+                    "sequence_ac": m.get("sequence_ac"),
+                    "sequence_id": m.get("sequence_id"),
+                    "sequence_db": m.get("sequence_db"),
+                    "start": m.get("start"),
+                    "stop": m.get("stop"),
+                    "signature_ac": m.get("signature_ac"),
+                    "signature_id": m.get("signature_id"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": proteins,
+            "metadata": {
+                "source": "ScanProsite (ExPASy/SIB)",
+                "signature_ac": sig_upper,
+                "database": db,
+                "total_matches": data.get("n_match", len(matchset)),
+                "total_sequences": data.get("n_seq"),
+                "capped": bool(data.get("capped", 0)),
+                "returned": len(proteins),
+                "skip_frequent_patterns": skip_frequent,
             },
         }

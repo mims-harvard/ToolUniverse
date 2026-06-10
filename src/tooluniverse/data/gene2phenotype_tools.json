@@ -396,5 +396,127 @@
         }
       ]
     }
+  },
+  {
+    "name": "G2P_download_panel",
+    "description": "Download the FULL content of a Gene2Phenotype (G2P) clinical panel as structured gene-disease records. Unlike G2P_get_panel (which returns only summary counts), this returns EVERY curated gene-disease entry in the panel with: G2P stable id, gene symbol, HGNC id, gene MIM, disease name, disease MIM, disease MONDO id, allelic requirement (inheritance), confidence (definitive/strong/moderate/limited), variant consequence, variant types, molecular mechanism, phenotypes (HPA/HP terms), supporting publications (PubMed IDs), panels, and review dates. Use this to enumerate all genes in a panel or to build clinical gene lists. Panels: DD (developmental disorders, ~2856 records), Cancer (~125 records), Skeletal, Eye, Cardiac, Ear, Skin, Hearing loss, Mitochondrial.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "panel": {
+          "type": "string",
+          "description": "Panel name (case-insensitive). Examples: 'Cancer', 'DD' (developmental disorders), 'Skeletal', 'Eye', 'Cardiac', 'Ear', 'Skin'."
+        }
+      },
+      "required": [
+        "panel"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/gene2phenotype/api/panel/{panel}/download/",
+      "parse_csv": true
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "panel": "Cancer"
+      },
+      {
+        "panel": "DD"
+      },
+      {
+        "panel": "Eye"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Full panel content: one record per curated gene-disease entry",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of gene-disease records in the panel"
+            },
+            "columns": {
+              "type": "array",
+              "description": "CSV column headers present in each record",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data": {
+              "type": "array",
+              "description": "Array of gene-disease records",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "g2p id": {
+                    "type": "string",
+                    "description": "G2P stable identifier (e.g., 'G2P00027')"
+                  },
+                  "gene symbol": {
+                    "type": "string"
+                  },
+                  "hgnc id": {
+                    "type": "string"
+                  },
+                  "disease name": {
+                    "type": "string"
+                  },
+                  "disease MONDO": {
+                    "type": "string",
+                    "description": "MONDO disease ontology ID"
+                  },
+                  "allelic requirement": {
+                    "type": "string",
+                    "description": "Inheritance pattern (e.g., biallelic_autosomal)"
+                  },
+                  "confidence": {
+                    "type": "string",
+                    "description": "Evidence confidence (definitive/strong/moderate/limited)"
+                  },
+                  "variant consequence": {
+                    "type": "string"
+                  },
+                  "molecular mechanism": {
+                    "type": "string"
+                  },
+                  "phenotypes": {
+                    "type": "string",
+                    "description": "Semicolon-separated HP phenotype terms"
+                  },
+                  "publications": {
+                    "type": "string",
+                    "description": "Semicolon-separated PubMed IDs"
+                  },
+                  "panel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

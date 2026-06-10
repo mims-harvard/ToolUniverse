@@ -41,5 +41,74 @@
             }, "required": ["status", "data"]},
             {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
         ]}
+    },
+    {
+        "name": "iDigBio_summary_facets",
+        "description": "Get aggregate specimen statistics from iDigBio for a Darwin Core query: the exact total record count plus top-value facet breakdowns (e.g. specimens per country, institution, or collector). Unlike iDigBio_search_records (which only paginates raw records, max 100), this returns counts over the entire matching set, enabling distribution/abundance statistics without full pagination. Filter with scientificname, genus, family, country, etc.; set top_fields to the field(s) to break down by. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "scientificname": {"type": ["string", "null"], "description": "Full scientific name, e.g. 'Puma concolor'."},
+            "genus": {"type": ["string", "null"], "description": "Genus, e.g. 'Puma'."},
+            "family": {"type": ["string", "null"], "description": "Family name."},
+            "country": {"type": ["string", "null"], "description": "Country, e.g. 'United States'."},
+            "stateprovince": {"type": ["string", "null"], "description": "State/province."},
+            "recordedby": {"type": ["string", "null"], "description": "Collector name."},
+            "phylum": {"type": ["string", "null"], "description": "Phylum."},
+            "class": {"type": ["string", "null"], "description": "Class."},
+            "order": {"type": ["string", "null"], "description": "Order."},
+            "top_fields": {"type": ["string", "null"], "description": "Darwin Core field(s) to break down counts by, e.g. 'country', 'institutioncode', or 'recordedby'. Comma-separate multiple fields. If omitted, only the total count is returned."},
+            "count": {"type": ["integer", "null"], "description": "Number of top values to return per facet field (default 10, max 100)."}
+        }, "required": []},
+        "fields": {"timeout": 30, "mode": "summary"},
+        "type": "iDigBioSearchTool",
+        "test_examples": [{"genus": "puma", "top_fields": "country", "count": 5}, {"scientificname": "puma concolor"}, {"family": "Felidae", "top_fields": "country", "count": 3}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Aggregate count and facet breakdown", "properties": {
+                "status": {"type": "string"},
+                "data": {"type": "object", "properties": {
+                    "itemCount": {"type": ["integer", "null"]},
+                    "facets": {"type": "object"}
+                }},
+                "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"status": {"type": "string"}, "error": {"type": "string"}}, "required": ["error"]}
+        ]}
+    },
+    {
+        "name": "iDigBio_search_media",
+        "description": "Search the iDigBio specimen MEDIA index (specimen photographs and scans) for a Darwin Core query. Distinct from iDigBio_search_records (occurrence records): returns image/media records with media type (StillImage), provider-managed ID, creator, rights owner, usage/licensing terms (e.g. CC BY-NC-SA), and access URIs. Filter with scientificname, genus, family, country, etc. No API key required.",
+        "parameter": {"type": "object", "properties": {
+            "scientificname": {"type": ["string", "null"], "description": "Full scientific name, e.g. 'Puma concolor'."},
+            "genus": {"type": ["string", "null"], "description": "Genus, e.g. 'Puma'."},
+            "family": {"type": ["string", "null"], "description": "Family name."},
+            "country": {"type": ["string", "null"], "description": "Country, e.g. 'United States'."},
+            "stateprovince": {"type": ["string", "null"], "description": "State/province."},
+            "recordedby": {"type": ["string", "null"], "description": "Collector name."},
+            "catalognumber": {"type": ["string", "null"], "description": "Catalog number."},
+            "collectioncode": {"type": ["string", "null"], "description": "Collection code."},
+            "phylum": {"type": ["string", "null"], "description": "Phylum."},
+            "class": {"type": ["string", "null"], "description": "Class."},
+            "order": {"type": ["string", "null"], "description": "Order."},
+            "limit": {"type": ["integer", "null"], "description": "Max media records (default 10, max 100)."}
+        }, "required": []},
+        "fields": {"timeout": 30, "mode": "media"},
+        "type": "iDigBioSearchTool",
+        "test_examples": [{"scientificname": "puma concolor", "limit": 2}, {"genus": "Quercus", "limit": 2}, {"family": "Felidae", "limit": 2}],
+        "return_schema": {"oneOf": [
+            {"type": "object", "description": "Specimen media (image) records", "properties": {
+                "status": {"type": "string"},
+                "data": {"type": "array", "items": {"type": "object", "properties": {
+                    "uuid": {"type": ["string", "null"]},
+                    "type": {"type": ["string", "null"]},
+                    "format": {"type": ["string", "null"]},
+                    "provider_managed_id": {"type": ["string", "null"]},
+                    "creator": {"type": ["string", "null"]},
+                    "rights_owner": {"type": ["string", "null"]},
+                    "usage_terms": {"type": ["string", "null"]},
+                    "access_uri": {"type": ["string", "null"]}
+                }}},
+                "metadata": {"type": "object"}
+            }, "required": ["status", "data"]},
+            {"type": "object", "properties": {"status": {"type": "string"}, "error": {"type": "string"}}, "required": ["error"]}
+        ]}
     }
 ]

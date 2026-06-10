@@ -83,6 +83,8 @@ class WikiPathwaysExtTool(BaseTool):
                 return self._get_pathway_genes(arguments)
             if self.endpoint == "find_pathways_by_gene":
                 return self._find_pathways_by_gene(arguments)
+            if self.endpoint == "get_pathway_metabolites":
+                return self._get_pathway_metabolites(arguments)
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
         except Exception as e:  # noqa: BLE001
             return {
@@ -140,6 +142,99 @@ SELECT DISTINCT ?gene_id ?gene_label WHERE {{
                 "source": "WikiPathways SPARQL",
                 "pathway_id": pathway_id,
                 "code": code,
+            },
+        }
+
+    def _get_pathway_metabolites(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Return the metabolite/compound participants of a WikiPathways pathway.
+
+        Selects nodes typed `a wp:Metabolite` that are part of the given
+        pathway, returning each distinct metabolite with its canonical
+        identifier (HMDB / ChEBI / KEGG / etc.), its `dc:source` datasource,
+        and a representative label. For a metabolic pathway these compounds are
+        the central entities (unlike get_pathway_genes which returns only gene
+        products).
+        """
+        pathway_id = (arguments.get("pathway_id") or "").upper().replace('"', "")
+        if not pathway_id:
+            return {
+                "status": "error",
+                "error": "pathway_id parameter is required (e.g., 'WP534')",
+            }
+
+        identifier_uri = f"https://identifiers.org/wikipathways/{pathway_id}"
+        sparql = f"""
+PREFIX wp: <http://vocabularies.wikipathways.org/wp#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?metabolite ?label ?identifier ?source WHERE {{
+  ?metabolite dcterms:isPartOf ?pathway ;
+        a wp:Metabolite ;
+        rdfs:label ?label ;
+        dc:identifier ?identifier ;
+        dc:source ?source .
+  ?pathway dc:identifier <{identifier_uri}> .
+}} LIMIT 1000
+"""
+        data = _sparql(sparql, timeout=self.timeout)
+        bindings = data.get("results", {}).get("bindings", [])
+
+        # Collapse rows to one entry per distinct metabolite node. The SPARQL
+        # store emits a separate row per rdfs:label alias; collect all aliases
+        # then pick the most descriptive one (prefer a real name with a
+        # lowercase letter over an all-caps abbreviation; then prefer longer).
+        by_node: Dict[str, Dict[str, Any]] = {}
+        for b in bindings:
+            node = _val(b, "metabolite")
+            if not node:
+                continue
+            label = _val(b, "label")
+            entry = by_node.get(node)
+            if entry is None:
+                by_node[node] = {
+                    "identifier": _val(b, "identifier"),
+                    "source": _val(b, "source"),
+                    "labels": [label] if label else [],
+                    "node": node,
+                }
+            elif label:
+                entry["labels"].append(label)
+
+        def _best_label(labels: list) -> str:
+            if not labels:
+                return ""
+            # Prefer labels containing a lowercase letter (descriptive names)
+            # over all-caps abbreviations; among those, prefer the longest.
+            return sorted(
+                labels,
+                key=lambda s: (any(c.islower() for c in s), len(s)),
+                reverse=True,
+            )[0]
+
+        metabolites = []
+        for entry in by_node.values():
+            metabolites.append(
+                {
+                    "identifier": entry["identifier"],
+                    "source": entry["source"],
+                    "label": _best_label(entry["labels"]),
+                    "node": entry["node"],
+                }
+            )
+
+        metabolites.sort(key=lambda e: (e["label"] or "").lower())
+
+        return {
+            "status": "success",
+            "data": {
+                "pathway_id": pathway_id,
+                "metabolite_count": len(metabolites),
+                "metabolites": metabolites,
+            },
+            "metadata": {
+                "source": "WikiPathways SPARQL",
+                "pathway_id": pathway_id,
             },
         }
 

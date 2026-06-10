@@ -68,5 +68,448 @@
         }
       ]
     }
+  },
+  {
+    "name": "ENCORI_get_RBP_targets",
+    "description": "Look up RBP-RNA binding sites from CLIP-seq via ENCORI (starBase) RBPTarget module. Provide 'rbp' (e.g. 'PTBP1') to list the transcripts an RNA-binding protein binds, OR 'gene' (e.g. 'TP53') to list the RBPs that bind a transcript. Each result reports binding-cluster counts (cluster_num), the number of supporting CLIP experiments (total_clip_experiments) and CLIP sites (total_clip_sites), genomic location, and cell line/tissue. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rbp": {
+          "type": ["string", "null"],
+          "description": "RNA-binding protein symbol to get targets for, e.g. 'PTBP1', 'ELAVL1' (alias: 'RBP'). Mutually exclusive with 'gene'."
+        },
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Gene/transcript symbol to get binding RBPs for, e.g. 'TP53', 'MYC' (alias: 'gene_symbol'). Mutually exclusive with 'rbp'."
+        },
+        "assembly": {
+          "type": ["string", "null"],
+          "description": "Genome assembly (default 'hg38'; use 'hg19' for the older build)."
+        },
+        "gene_type": {
+          "type": ["string", "null"],
+          "description": "Transcript biotype to query: 'mRNA' (default), 'lncRNA', 'pseudogene', 'sncRNA', 'miRNA'."
+        },
+        "clip_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of supporting CLIP-seq experiments (default 1)."
+        },
+        "pancancer_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum pan-cancer support count (default 0)."
+        },
+        "cell_type": {
+          "type": ["string", "null"],
+          "description": "Restrict to a CLIP cell line/tissue (default 'all')."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum binding rows to return (1-500, default 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {"encori_endpoint": "RBPTarget/"},
+    "type": "ENCORITool",
+    "test_examples": [
+      {"gene": "TP53", "clip_min": 5, "limit": 10},
+      {"rbp": "PTBP1", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rbp": {"type": "string"},
+                  "gene": {"type": "string"},
+                  "gene_id": {"type": "string"},
+                  "cluster_num": {"type": "integer"},
+                  "total_clip_experiments": {"type": "integer"},
+                  "total_clip_sites": {"type": "integer"},
+                  "chromosome": {"type": "string"},
+                  "strand": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ENCORI_get_ceRNA_network",
+    "description": "Build competing-endogenous-RNA (ceRNA / miRNA-sponge) networks via ENCORI (starBase) ceRNA module. Given a query gene/lncRNA (e.g. 'PTEN'), returns the genes and lncRNAs that share miRNA-binding families with it (candidate miRNA sponges), each with the number of shared miRNA families (shared_mirna_families), a p-value and an FDR. Lower pval/fdr and more shared families = stronger ceRNA crosstalk. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Query gene or lncRNA symbol whose ceRNA partners are wanted, e.g. 'PTEN', 'MALAT1' (aliases: 'ceRNA', 'gene_symbol')."
+        },
+        "assembly": {
+          "type": ["string", "null"],
+          "description": "Genome assembly (default 'hg38')."
+        },
+        "gene_type": {
+          "type": ["string", "null"],
+          "description": "Biotype of the query gene: 'mRNA' (default), 'lncRNA', 'pseudogene', 'sncRNA'."
+        },
+        "shared_mirna_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of shared miRNA families required (default 5)."
+        },
+        "pval": {
+          "type": ["number", "null"],
+          "description": "Maximum hypergeometric p-value (default 0.01)."
+        },
+        "fdr": {
+          "type": ["number", "null"],
+          "description": "Maximum FDR (default 0.01)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum ceRNA partner rows to return (1-500, default 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {"encori_endpoint": "ceRNA/"},
+    "type": "ENCORITool",
+    "test_examples": [
+      {"gene": "PTEN", "shared_mirna_min": 5, "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene": {"type": "string"},
+                  "partner": {"type": "string"},
+                  "partner_id": {"type": "string"},
+                  "shared_mirna_families": {"type": "integer"},
+                  "pval": {"type": ["number", "string", "null"]},
+                  "fdr": {"type": ["number", "string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ENCORI_get_RNA_RNA_interactions",
+    "description": "Retrieve ncRNA-RNA (RNA-RNA duplex) interaction networks from high-throughput crosslinking (PARIS / LIGR-seq / SPLASH) via ENCORI (starBase) RNARNA module. Given an RNA (e.g. 'MALAT1'), returns its direct base-pairing partners with interaction/experiment/read support, predicted free energy and Smith-Waterman alignment score. NOTE: set 'gene_type' to the RNA's actual biotype (default 'lncRNA' suits MALAT1 and other lncRNAs); ENCORI silently returns no rows if the biotype is wrong. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rna": {
+          "type": ["string", "null"],
+          "description": "RNA symbol whose duplex partners are wanted, e.g. 'MALAT1', 'NEAT1' (aliases: 'RNA', 'gene')."
+        },
+        "assembly": {
+          "type": ["string", "null"],
+          "description": "Genome assembly (default 'hg38')."
+        },
+        "gene_type": {
+          "type": ["string", "null"],
+          "description": "Biotype of the query RNA: 'lncRNA' (default), 'mRNA', 'pseudogene', 'sncRNA', 'miRNA'. Must match the RNA's real biotype or ENCORI returns no rows."
+        },
+        "interaction_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum interaction count (default 1)."
+        },
+        "exp_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of supporting experiments (default 1)."
+        },
+        "cell_type": {
+          "type": ["string", "null"],
+          "description": "Restrict to a cell line/tissue (default 'all')."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum interaction rows to return (1-500, default 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {"encori_endpoint": "RNARNA/"},
+    "type": "ENCORITool",
+    "test_examples": [
+      {"rna": "MALAT1", "gene_type": "lncRNA", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rna": {"type": "string"},
+                  "partner": {"type": "string"},
+                  "interaction_num": {"type": "integer"},
+                  "total_experiments": {"type": "integer"},
+                  "total_reads": {"type": "integer"},
+                  "free_energy": {"type": ["number", "string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ENCORI_get_degradome_cleavage",
+    "description": "Retrieve miRNA cleavage sites validated by degradome-seq (PARE / Degradome) via ENCORI (starBase) degradomeRNA module: experimentally confirmed slicer cleavage of a target by a miRNA. Provide 'gene' (e.g. 'TP53') to get miRNAs that cleave it, or 'mirna' for a miRNA's cleavage targets. Each row reports the cleavage-event count, number of degradome experiments, degradome sites, total reads and category (I-IV signal confidence). NOTE: degradome data is built only for assembly 'hg19' (the default here); hg38 returns nothing. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Target gene symbol to get cleaving miRNAs for, e.g. 'TP53' (alias: 'gene_symbol'). Mutually exclusive with 'mirna'."
+        },
+        "mirna": {
+          "type": ["string", "null"],
+          "description": "miRNA name to get cleavage targets for, e.g. 'hsa-miR-1-3p'. Mutually exclusive with 'gene'."
+        },
+        "assembly": {
+          "type": ["string", "null"],
+          "description": "Genome assembly (default 'hg19' — the only assembly with degradome data; hg38 returns nothing)."
+        },
+        "gene_type": {
+          "type": ["string", "null"],
+          "description": "Target biotype: 'mRNA' (default), 'lncRNA', 'pseudogene', 'sncRNA'."
+        },
+        "degradome_exp_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of supporting degradome experiments (default 1)."
+        },
+        "clip_min": {
+          "type": ["integer", "null"],
+          "description": "Minimum number of supporting CLIP experiments (default 1)."
+        },
+        "cell_type": {
+          "type": ["string", "null"],
+          "description": "Restrict to a cell line/tissue (default 'all')."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum cleavage rows to return (1-500, default 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {"encori_endpoint": "degradomeRNA/"},
+    "type": "ENCORITool",
+    "test_examples": [
+      {"gene": "TP53", "assembly": "hg19", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mirna": {"type": "string"},
+                  "gene": {"type": "string"},
+                  "cleave_event_num": {"type": "integer"},
+                  "degradome_experiments": {"type": "integer"},
+                  "total_reads": {"type": "integer"},
+                  "category": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ENCORI_get_RBP_disease",
+    "description": "Retrieve RBP-disease associations via ENCORI (starBase) RBPDisease module: RBP binding sites that overlap somatic mutations from cancer (COSMIC) in a given tissue/disease. Provide any of 'gene' (the bound target, e.g. 'MYC'), 'rbp', 'tissue' (e.g. 'breast'), or 'disease' (e.g. 'carcinoma'). Each row reports the disease name(s), COSMIC mutation IDs (disease_cosmic_id), mutation count (cosmic_num), affected sample count (sample_num) and supporting CLIP experiments. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": ["string", "null"],
+          "description": "Bound target gene symbol, e.g. 'MYC' (alias: 'gene_symbol')."
+        },
+        "rbp": {
+          "type": ["string", "null"],
+          "description": "RNA-binding protein symbol, e.g. 'ACIN1' (alias: 'RBP')."
+        },
+        "tissue": {
+          "type": ["string", "null"],
+          "description": "Tissue filter, e.g. 'breast', 'lung', 'liver'."
+        },
+        "disease": {
+          "type": ["string", "null"],
+          "description": "Disease keyword, e.g. 'carcinoma', 'adenocarcinoma'."
+        },
+        "assembly": {
+          "type": ["string", "null"],
+          "description": "Genome assembly (default 'hg38')."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum association rows to return (1-500, default 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {"encori_endpoint": "RBPDisease/"},
+    "type": "ENCORITool",
+    "test_examples": [
+      {"gene": "MYC", "tissue": "breast", "disease": "carcinoma", "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rbp": {"type": "string"},
+                  "gene": {"type": "string"},
+                  "tissue": {"type": "string"},
+                  "diseases": {"type": "string"},
+                  "disease_cosmic_id": {"type": "string"},
+                  "cosmic_num": {"type": "integer"},
+                  "sample_num": {"type": "integer"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "ENCORI_scan_RBP_motifs",
+    "description": "Scan RBP binding-motif enrichment via ENCORI (starBase) RBPMotifScan module. Provide 'motif' (e.g. 'UGCAUG') to find the RBPs and CLIP datasets whose peaks are enriched for that sequence, or 'rbp' to list an RBP's identified motifs. Each ranked row reports the identified motif, dataset ID, number of target peaks containing it (target_peak_num), percentage and enrichment p-value, plus a link to the HOMER motif matrix. Public, no authentication.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "motif": {
+          "type": ["string", "null"],
+          "description": "RNA sequence motif to scan for (use U or T), e.g. 'UGCAUG'. Mutually exclusive with 'rbp'."
+        },
+        "rbp": {
+          "type": ["string", "null"],
+          "description": "RNA-binding protein symbol whose motifs are wanted, e.g. 'MBNL2' (alias: 'RBP')."
+        },
+        "assembly": {
+          "type": ["string", "null"],
+          "description": "Genome assembly (default 'hg38')."
+        },
+        "length": {
+          "type": ["string", "null"],
+          "description": "Motif length class: 'short' (default) or 'long'."
+        },
+        "rank_limit": {
+          "type": ["integer", "null"],
+          "description": "Per-dataset motif rank cutoff sent to ENCORI (1-100, default 10)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum motif rows to return (1-500, default 100)."
+        }
+      },
+      "required": []
+    },
+    "fields": {"encori_endpoint": "RBPMotifScan/"},
+    "type": "ENCORITool",
+    "test_examples": [
+      {"motif": "UGCAUG", "rank_limit": 10, "limit": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rbp": {"type": "string"},
+                  "dataset_id": {"type": "string"},
+                  "motif_rank": {"type": "integer"},
+                  "identified_motif": {"type": "string"},
+                  "query_motif": {"type": "string"},
+                  "target_peak_num": {"type": "integer"},
+                  "pvalue": {"type": ["number", "string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

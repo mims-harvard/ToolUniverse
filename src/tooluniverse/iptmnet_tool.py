@@ -32,7 +32,9 @@ class iPTMnetTool(BaseTool):
     - search: Search proteins by name/keyword with role and PTM type filters
     - get_ptm_sites: Get all PTM sites for a protein (phosphorylation, etc.)
     - get_proteoforms: Get proteoform records with specific PTM combinations
-    - get_ptm_ppi: Get PTM-dependent protein-protein interactions
+    - get_ptm_ppi: Get PTM-dependent protein-protein interactions (residue-level)
+    - get_proteoform_ppi: Get proteoform-state-level protein-protein interactions
+      (keyed on PRO ontology proteoform IDs encoding isoform + modification state)
     """
 
     def __init__(self, tool_config: Dict[str, Any]):
@@ -44,14 +46,17 @@ class iPTMnetTool(BaseTool):
 
     def _infer_operation(self, arguments: Dict[str, Any]) -> str:
         """Infer operation from tool name when not explicitly provided."""
-        tool_name = self.tool_config.get("name", "")
-        if "search" in tool_name.lower():
+        tool_name = self.tool_config.get("name", "").lower()
+        if "search" in tool_name:
             return "search"
-        if "ptm_sites" in tool_name.lower():
+        if "ptm_sites" in tool_name:
             return "get_ptm_sites"
-        if "proteoform" in tool_name.lower():
+        # Check proteoform_ppi before the broader "proteoform" / "ppi" matches
+        if "proteoform_ppi" in tool_name or "proteoformsppi" in tool_name:
+            return "get_proteoform_ppi"
+        if "proteoform" in tool_name:
             return "get_proteoforms"
-        if "ptm_ppi" in tool_name.lower():
+        if "ptm_ppi" in tool_name:
             return "get_ptm_ppi"
         return ""
 
@@ -66,6 +71,7 @@ class iPTMnetTool(BaseTool):
             "get_ptm_sites": self._get_ptm_sites,
             "get_proteoforms": self._get_proteoforms,
             "get_ptm_ppi": self._get_ptm_ppi,
+            "get_proteoform_ppi": self._get_proteoform_ppi,
         }
 
         handler = handlers.get(operation)
@@ -333,5 +339,52 @@ class iPTMnetTool(BaseTool):
                 "uniprot_id": uniprot_id,
                 "total_interactions": len(results),
                 "ptm_type_summary": ptm_summary,
+            },
+        }
+
+    def _get_proteoform_ppi(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get proteoform-state-level protein-protein interactions.
+
+        Unlike get_ptm_ppi (residue-level: 'PTM at site X affects partner Y'),
+        this returns interactions keyed on PRO ontology proteoform IDs that encode
+        the specific isoform + modification state of each interactant
+        (e.g., hSMAD2/iso:Long/Phos:1 binding hSMAD4).
+        """
+        uniprot_id = arguments.get("uniprot_id")
+        if not uniprot_id:
+            return {
+                "status": "error",
+                "error": "Missing required parameter: uniprot_id",
+            }
+
+        result = self._fetch_protein_data(uniprot_id, "proteoformsppi")
+        if result["status"] == "error":
+            return result
+        data = result["data"]
+        if not isinstance(data, list):
+            return {"status": "error", "error": "Unexpected response format"}
+
+        results = []
+        for entry in data:
+            protein_1 = entry.get("protein_1", {}) or {}
+            protein_2 = entry.get("protein_2", {}) or {}
+            results.append(
+                {
+                    "protein_1_pro_id": protein_1.get("pro_id", ""),
+                    "protein_1_label": protein_1.get("label", ""),
+                    "relation": entry.get("relation", ""),
+                    "protein_2_pro_id": protein_2.get("pro_id", ""),
+                    "protein_2_label": protein_2.get("label", ""),
+                    "source": entry.get("source", {}).get("name", ""),
+                    "pmids": entry.get("pmids", []),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "uniprot_id": uniprot_id,
+                "total_interactions": len(results),
             },
         }

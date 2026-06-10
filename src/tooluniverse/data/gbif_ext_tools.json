@@ -377,5 +377,155 @@
         }
       ]
     }
+  },
+  {
+    "name": "GBIF_match_name",
+    "description": "Resolve a free-text scientific name to the single best-matching GBIF Backbone taxon. Unlike GBIF_search_species / GBIF_suggest_species (which return ranked candidate lists), this returns the one authoritative match with a stable usageKey (taxonKey), matchType (EXACT/FUZZY/HIGHERRANK/NONE), a confidence score (0-100), taxonomic status, and the full key-bearing lineage (kingdomKey..speciesKey). This is the GBIF-recommended way to map names to stable taxon keys for downstream occurrence queries. Example: name='Puma concolor' -> usageKey 2435099, matchType EXACT, confidence 99. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Scientific name to match, e.g. 'Puma concolor', 'Quercus robur', 'Homo sapiens'."
+        },
+        "kingdom": {"type": ["string", "null"], "description": "Optional kingdom to disambiguate homonyms, e.g. 'Animalia', 'Plantae'."},
+        "rank": {"type": ["string", "null"], "description": "Optional rank hint, e.g. 'SPECIES', 'GENUS'."},
+        "strict": {"type": ["boolean", "null"], "description": "If true, only return exact matches (no fuzzy matching)."},
+        "verbose": {"type": ["boolean", "null"], "description": "If true, include alternative matches in the response."}
+      },
+      "required": ["name"]
+    },
+    "fields": {
+      "endpoint": "https://api.gbif.org/v1/species/match"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"name": "Puma concolor"},
+      {"name": "Quercus robur"},
+      {"name": "Gadus morhua"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GBIF single best name match",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "usageKey": {"type": ["integer", "null"], "description": "Stable GBIF taxon key for the matched name"},
+                "scientificName": {"type": ["string", "null"]},
+                "canonicalName": {"type": ["string", "null"]},
+                "rank": {"type": ["string", "null"]},
+                "status": {"type": ["string", "null"], "description": "ACCEPTED, SYNONYM, DOUBTFUL"},
+                "confidence": {"type": ["integer", "null"], "description": "Match confidence score 0-100"},
+                "matchType": {"type": ["string", "null"], "description": "EXACT, FUZZY, HIGHERRANK, or NONE"},
+                "kingdom": {"type": ["string", "null"]},
+                "phylum": {"type": ["string", "null"]},
+                "class": {"type": ["string", "null"]},
+                "order": {"type": ["string", "null"]},
+                "family": {"type": ["string", "null"]},
+                "genus": {"type": ["string", "null"]},
+                "species": {"type": ["string", "null"]},
+                "kingdomKey": {"type": ["integer", "null"]},
+                "phylumKey": {"type": ["integer", "null"]},
+                "classKey": {"type": ["integer", "null"]},
+                "orderKey": {"type": ["integer", "null"]},
+                "familyKey": {"type": ["integer", "null"]},
+                "genusKey": {"type": ["integer", "null"]},
+                "speciesKey": {"type": ["integer", "null"]}
+              }
+            },
+            "url": {"type": "string"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GBIF_occurrence_stats",
+    "description": "Get GBIF occurrence statistics for a taxonKey: the total occurrence count plus faceted breakdowns (occurrences per country, year, basisOfRecord, or institutionCode). Unlike GBIF_search_occurrences (which returns raw records with no aggregation), this uses limit=0 with a facet parameter so it returns quantitative summaries over the whole matching set. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxonKey=2435099 (Puma concolor), facet=country -> count 29340 with per-country counts (US 11380, AR 3368, ...). No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxonKey": {
+          "type": "integer",
+          "description": "GBIF taxon key, e.g. 2435099 (Puma concolor). Obtain from GBIF_match_name or GBIF_search_species."
+        },
+        "facet": {
+          "type": ["string", "null"],
+          "description": "Field to break occurrence counts down by, e.g. 'country', 'year', 'basisOfRecord', or 'institutionCode'. Default 'country'.",
+          "default": "country"
+        },
+        "facetLimit": {
+          "type": ["integer", "null"],
+          "description": "Number of top facet values to return (default 10).",
+          "default": 10
+        },
+        "country": {"type": ["string", "null"], "description": "Optional ISO 3166-1 alpha-2 country code filter, e.g. 'US'."}
+      },
+      "required": ["taxonKey"]
+    },
+    "fields": {
+      "endpoint": "https://api.gbif.org/v1/occurrence/search",
+      "params": {"limit": 0}
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {"taxonKey": 2435099, "facet": "country", "facetLimit": 5},
+      {"taxonKey": 2435099, "facet": "year", "facetLimit": 5},
+      {"taxonKey": 2878688, "facet": "country", "facetLimit": 3}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "GBIF occurrence count and facets",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {"type": ["integer", "null"], "description": "Total occurrence count for the taxon/filters"},
+                "limit": {"type": "integer"},
+                "facets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field": {"type": "string"},
+                      "counts": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {"type": "string"},
+                            "count": {"type": "integer"}
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "url": {"type": "string"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

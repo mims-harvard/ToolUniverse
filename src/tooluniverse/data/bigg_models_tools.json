@@ -320,5 +320,94 @@
         "operation": "get_database_version"
       }
     ]
+  },
+  {
+    "name": "BiGG_download_model",
+    "type": "BiGGModelsTool",
+    "description": "Download a complete FBA-ready COBRA metabolic model from BiGG. Unlike BiGG_get_model (which returns only metadata counts), this returns the full constraint-based model ready for flux balance analysis (FBA): every reaction with its flux lower_bound/upper_bound and objective_coefficient, every metabolite with stoichiometry, all gene-protein-reaction associations, and compartments. The default JSON format returns the parsed COBRA model dict (loadable by COBRApy via cobra.io.load_json_model); format='sbml' returns the raw SBML/XML text. Use for: building and running FBA / FVA / gene knockout simulations, extracting the stoichiometric matrix, retrieving objective (biomass) reactions. Example model IDs: 'e_coli_core' (95 reactions, 72 metabolites, core E. coli), 'iJO1366' (full E. coli K-12), 'iMM904' (S. cerevisiae), 'Recon3D' (human).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["download_model"],
+          "description": "Operation type"
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Required: BiGG model ID (e.g., 'e_coli_core', 'iJO1366', 'iMM904', 'Recon3D'). Use BiGG_list_models to discover available models."
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "sbml", "xml"],
+          "description": "Model file format. 'json' (default) returns the parsed COBRA JSON model dict; 'sbml' (alias 'xml') returns the raw SBML XML text.",
+          "default": "json"
+        }
+      },
+      "required": ["operation", "model_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "model_id": {"type": "string"},
+                "format": {"type": "string"},
+                "model": {
+                  "type": "object",
+                  "description": "Full COBRA JSON model: reactions (with lower_bound/upper_bound/objective_coefficient/metabolites/gene_reaction_rule), metabolites, genes, compartments, id, version. Present only when format='json'."
+                },
+                "sbml": {
+                  "type": "string",
+                  "description": "Raw SBML/XML model text. Present only when format='sbml'."
+                },
+                "reaction_count": {"type": "integer"},
+                "metabolite_count": {"type": "integer"},
+                "gene_count": {"type": "integer"},
+                "compartments": {"type": "object"},
+                "objective_reactions": {
+                  "type": "array",
+                  "description": "Reaction IDs with non-zero objective coefficient (FBA objective / biomass)",
+                  "items": {"type": "string"}
+                },
+                "version": {"type": ["string", "null"]},
+                "size_bytes": {"type": "integer"},
+                "source_url": {"type": "string"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "error": {"type": "string"}
+              },
+              "required": ["error"]
+            }
+          },
+          "required": ["status", "data"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "download_model",
+        "model_id": "e_coli_core"
+      },
+      {
+        "operation": "download_model",
+        "model_id": "e_coli_core",
+        "format": "sbml"
+      }
+    ]
   }
 ]

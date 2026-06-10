@@ -103,6 +103,15 @@ class RNAcentralGetTool:
         )
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
+        fields = self.tool_config.get("fields", {}) or {}
+
+        # 'region_overlap': when set, this tool instance queries the genomic
+        # overlap endpoint /overlap/region/{species}/{chr}:{start}-{end}, which
+        # takes coordinates rather than an accession. Reuses this class so no
+        # extra registration is needed.
+        if fields.get("region_overlap"):
+            return self._get_region_overlap(base, arguments, timeout)
+
         acc = arguments.get("accession")
         if not acc:
             return {
@@ -111,8 +120,6 @@ class RNAcentralGetTool:
                 "source": "RNAcentral",
                 "success": False,
             }
-
-        fields = self.tool_config.get("fields", {}) or {}
 
         # 'sub_resources': list of rna/{accession}/{name} sub-endpoints to fetch
         # and merge into one response (e.g. ['xrefs', 'publications']). This
@@ -188,5 +195,82 @@ class RNAcentralGetTool:
             "accession": acc,
             "data": data,
             "partial_errors": errors or None,
+            "success": True,
+        }
+
+    def _get_region_overlap(self, base, arguments, timeout):
+        """Query /overlap/region/{species}/{chr}:{start}-{end} for ncRNAs.
+
+        Accepts either an explicit 'region' string ('2:39745816-39826679') or
+        the discrete 'chromosome', 'start', 'end' parameters. Returns the list
+        of overlapping RNAcentral transcripts and their exon features, split
+        into transcripts/exons for easy consumption.
+        """
+        endpoint = "overlap/region/{species}/{region}"
+        species = (arguments.get("species") or "homo_sapiens").strip()
+
+        region = (arguments.get("region") or "").strip()
+        if not region:
+            chrom = arguments.get("chromosome")
+            start = arguments.get("start")
+            end = arguments.get("end")
+            if chrom in (None, "") or start in (None, "") or end in (None, ""):
+                return {
+                    "status": "error",
+                    "error": "Provide 'region' (e.g. '2:39745816-39826679') OR all of "
+                    "'chromosome', 'start', 'end'.",
+                    "source": "RNAcentral",
+                    "endpoint": endpoint,
+                    "success": False,
+                }
+            region = f"{chrom}:{start}-{end}"
+
+        url = f"{base}/overlap/region/{species}/{region}"
+        try:
+            data = _http_get(
+                url, headers={"Accept": "application/json"}, timeout=timeout
+            )
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": str(e),
+                "source": "RNAcentral",
+                "endpoint": endpoint,
+                "region": region,
+                "success": False,
+            }
+
+        # The overlap endpoint returns a JSON array of feature dicts. Anything
+        # else (e.g. {"raw": ...}, {"error": ...}, {"message": ...}) is a
+        # server-side error or unexpected payload.
+        if not isinstance(data, list):
+            detail = ""
+            if isinstance(data, dict):
+                detail = data.get("error") or data.get("message") or data.get("raw")
+            return {
+                "status": "error",
+                "error": "RNAcentral overlap endpoint returned no feature list"
+                + (f": {detail}" if detail else "."),
+                "source": "RNAcentral",
+                "endpoint": endpoint,
+                "region": region,
+                "success": False,
+            }
+
+        transcripts = [f for f in data if f.get("feature_type") == "transcript"]
+        exons = [f for f in data if f.get("feature_type") == "exon"]
+        return {
+            "status": "success",
+            "source": "RNAcentral",
+            "endpoint": endpoint,
+            "species": species,
+            "region": region,
+            "data": {
+                "features": data,
+                "transcripts": transcripts,
+                "exons": exons,
+                "transcript_count": len(transcripts),
+                "exon_count": len(exons),
+            },
             "success": True,
         }

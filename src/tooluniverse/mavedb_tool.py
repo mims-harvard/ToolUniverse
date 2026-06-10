@@ -254,6 +254,316 @@ class MaveDBTool(BaseTool):
             },
         }
 
+    def _summarize_vrs_allele(
+        self, allele: Optional[Dict[str, Any]]
+    ) -> Optional[Dict[str, Any]]:
+        """Flatten a GA4GH VRS Allele into the few fields callers actually use.
+
+        Pulls the SequenceLocation (genomic coordinates when postMapped) plus
+        the literal state sequence and any hgvs.g expression. Returns None for a
+        null / non-dict allele so missing maps don't crash downstream code.
+        """
+        if not isinstance(allele, dict):
+            return None
+        loc = allele.get("location") or {}
+        seq_ref = loc.get("sequenceReference") or {}
+        state = allele.get("state") or {}
+        expressions = [
+            e.get("value")
+            for e in (allele.get("expressions") or [])
+            if isinstance(e, dict) and e.get("value")
+        ]
+        return {
+            "vrs_id": allele.get("id"),
+            "sequence_reference_label": seq_ref.get("label"),
+            "refget_accession": seq_ref.get("refgetAccession"),
+            "start": loc.get("start"),
+            "end": loc.get("end"),
+            "state_sequence": state.get("sequence"),
+            "hgvs_expressions": expressions or None,
+        }
+
+    @staticmethod
+    def _parse_limit(raw_limit: Any) -> Optional[int]:
+        """Coerce a user-supplied ``limit`` to a positive int, else None (no cap)."""
+        if raw_limit is None:
+            return None
+        try:
+            value = int(raw_limit)
+        except (TypeError, ValueError):
+            return None
+        return None if value <= 0 else value
+
+    @staticmethod
+    def _apply_limit(items: list, limit: Optional[int]) -> Tuple[list, bool]:
+        """Truncate ``items`` to ``limit`` rows, returning (rows, truncated)."""
+        if limit is not None and len(items) > limit:
+            return items[:limit], True
+        return items, False
+
+    def _get_mapped_variants(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Get genomically-mapped (GA4GH VRS / ClinGen Allele ID) coordinates.
+
+        Returns the list of mapped variants for a MaveDB score set. Each entry
+        carries a postMapped VRS Allele with genomic SequenceLocation (when the
+        variant maps to the genome) plus the ClinGen canonical allele ID, which
+        is what links a MAVE functional score to other variant databases.
+        """
+        urn = (params.get("urn") or "").strip()
+        if not urn:
+            return {"status": "error", "error": "urn parameter is required"}
+
+        limit = self._parse_limit(params.get("limit"))
+
+        try:
+            resp = self.session.get(
+                f"{MAVEDB_API}/score-sets/{urn}/mapped-variants", timeout=30
+            )
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"MaveDB API error: {e}"}
+
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"Score set '{urn}' not found in MaveDB",
+            }
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"MaveDB request failed: HTTP {resp.status_code}",
+            }
+
+        try:
+            raw = resp.json()
+        except ValueError as e:
+            return {"status": "error", "error": f"Invalid JSON from MaveDB: {e}"}
+        if not isinstance(raw, list):
+            raw = [raw] if raw else []
+
+        mapped = []
+        n_with_genomic = 0
+        n_with_clingen = 0
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            post = self._summarize_vrs_allele(entry.get("postMapped"))
+            pre = self._summarize_vrs_allele(entry.get("preMapped"))
+            clingen = entry.get("clingenAlleleId")
+            if post:
+                n_with_genomic += 1
+            if clingen:
+                n_with_clingen += 1
+            mapped.append(
+                {
+                    "variant_urn": entry.get("variantUrn"),
+                    "clingen_allele_id": clingen,
+                    "alignment_level": entry.get("alignmentLevel"),
+                    "vrs_version": entry.get("vrsVersion"),
+                    "current": entry.get("current"),
+                    "error_message": entry.get("errorMessage"),
+                    "post_mapped": post,
+                    "pre_mapped": pre,
+                }
+            )
+
+        total = len(mapped)
+        mapped, truncated = self._apply_limit(mapped, limit)
+
+        return {
+            "status": "success",
+            "data": {
+                "urn": urn,
+                "total_mapped_variants": total,
+                "returned": len(mapped),
+                "truncated": truncated,
+                "n_with_genomic_location": n_with_genomic,
+                "n_with_clingen_allele_id": n_with_clingen,
+                "mapped_variants": mapped,
+            },
+            "metadata": {
+                "source": "MaveDB mapped-variants (GA4GH VRS + ClinGen Allele Registry)",
+                "note": (
+                    "post_mapped carries genomic SequenceLocation when the "
+                    "variant maps to the genome (alignment_level='genomic'); "
+                    "intronic / unmappable variants have post_mapped=None and an "
+                    "error_message. clingen_allele_id links scores to ClinVar/dbSNP."
+                ),
+            },
+        }
+
+    def _get_clinical_controls(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Get ClinVar clinical-control variants overlapping a score set.
+
+        Returns the ClinVar pathogenic/benign/VUS variants that overlap the
+        score set's mapped variants — the reference set used to calibrate MAVE
+        functional scores into clinically-interpretable thresholds.
+        """
+        urn = (params.get("urn") or "").strip()
+        if not urn:
+            return {"status": "error", "error": "urn parameter is required"}
+
+        sig_filter = (params.get("clinical_significance") or "").strip().lower()
+        limit = self._parse_limit(params.get("limit"))
+
+        try:
+            resp = self.session.get(
+                f"{MAVEDB_API}/score-sets/{urn}/clinical-controls", timeout=30
+            )
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"MaveDB API error: {e}"}
+
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"Score set '{urn}' not found in MaveDB",
+            }
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"MaveDB request failed: HTTP {resp.status_code}",
+            }
+
+        try:
+            raw = resp.json()
+        except ValueError as e:
+            return {"status": "error", "error": f"Invalid JSON from MaveDB: {e}"}
+        if not isinstance(raw, list):
+            raw = [raw] if raw else []
+
+        controls = []
+        sig_counts: Counter = Counter()
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            significance = entry.get("clinicalSignificance")
+            if sig_filter and (significance or "").lower() != sig_filter:
+                continue
+            sig_counts[significance or "Unknown"] += 1
+            mapped_urns = [
+                mv.get("variantUrn")
+                for mv in entry.get("mappedVariants") or []
+                if isinstance(mv, dict) and mv.get("variantUrn")
+            ]
+            controls.append(
+                {
+                    "db_name": entry.get("dbName"),
+                    "db_identifier": entry.get("dbIdentifier"),
+                    "db_version": entry.get("dbVersion"),
+                    "gene_symbol": entry.get("geneSymbol"),
+                    "clinical_significance": significance,
+                    "clinical_review_status": entry.get("clinicalReviewStatus"),
+                    "mapped_variant_urns": mapped_urns,
+                }
+            )
+
+        total = len(controls)
+        controls, truncated = self._apply_limit(controls, limit)
+
+        return {
+            "status": "success",
+            "data": {
+                "urn": urn,
+                "total_clinical_controls": total,
+                "returned": len(controls),
+                "truncated": truncated,
+                "significance_filter": sig_filter or None,
+                "significance_breakdown": dict(sig_counts),
+                "clinical_controls": controls,
+            },
+            "metadata": {
+                "source": "MaveDB clinical-controls (ClinVar overlap)",
+                "note": (
+                    "ClinVar pathogenic/benign/VUS variants overlapping the "
+                    "score set, used to calibrate functional scores. Each entry's "
+                    "mapped_variant_urns point to the MaveDB variant(s) with the "
+                    "same genomic coordinate."
+                ),
+            },
+        }
+
+    def _get_gnomad_variants(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Get gnomAD population-frequency variants observed within a score set.
+
+        Returns gnomAD variants (allele count / number / frequency) that fall
+        within the score set, each linked to the MaveDB mapped variant via a
+        postMapped VRS Allele — lets you cross population frequency with the
+        measured functional score.
+        """
+        urn = (params.get("urn") or "").strip()
+        if not urn:
+            return {"status": "error", "error": "urn parameter is required"}
+
+        limit = self._parse_limit(params.get("limit"))
+
+        try:
+            resp = self.session.get(
+                f"{MAVEDB_API}/score-sets/{urn}/gnomad-variants", timeout=30
+            )
+        except requests.exceptions.RequestException as e:
+            return {"status": "error", "error": f"MaveDB API error: {e}"}
+
+        if resp.status_code == 404:
+            return {
+                "status": "error",
+                "error": f"Score set '{urn}' not found in MaveDB",
+            }
+        if resp.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"MaveDB request failed: HTTP {resp.status_code}",
+            }
+
+        try:
+            raw = resp.json()
+        except ValueError as e:
+            return {"status": "error", "error": f"Invalid JSON from MaveDB: {e}"}
+        if not isinstance(raw, list):
+            raw = [raw] if raw else []
+
+        variants = []
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            mapped_post = []
+            for mv in entry.get("mappedVariants") or []:
+                if isinstance(mv, dict):
+                    summary = self._summarize_vrs_allele(mv.get("postMapped"))
+                    if summary:
+                        mapped_post.append(summary)
+            variants.append(
+                {
+                    "db_name": entry.get("dbName"),
+                    "db_identifier": entry.get("dbIdentifier"),
+                    "db_version": entry.get("dbVersion"),
+                    "allele_count": entry.get("alleleCount"),
+                    "allele_number": entry.get("alleleNumber"),
+                    "allele_frequency": entry.get("alleleFrequency"),
+                    "mapped_genomic_alleles": mapped_post,
+                }
+            )
+
+        total = len(variants)
+        variants, truncated = self._apply_limit(variants, limit)
+
+        return {
+            "status": "success",
+            "data": {
+                "urn": urn,
+                "total_gnomad_variants": total,
+                "returned": len(variants),
+                "truncated": truncated,
+                "gnomad_variants": variants,
+            },
+            "metadata": {
+                "source": "MaveDB gnomAD-variants (population frequency overlap)",
+                "note": (
+                    "gnomAD variants observed within the score set. Cross "
+                    "allele_frequency with the MAVE functional score: rare "
+                    "high-impact variants are candidate disease alleles."
+                ),
+            },
+        }
+
     def _search_experiments(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Search MaveDB experiments by text query."""
         query = params.get("query", "")
@@ -515,6 +825,9 @@ class MaveDBTool(BaseTool):
             "get_variant_scores": self._get_variant_scores,
             "search_experiments": self._search_experiments,
             "get_effect_matrix": self._get_effect_matrix,
+            "get_mapped_variants": self._get_mapped_variants,
+            "get_clinical_controls": self._get_clinical_controls,
+            "get_gnomad_variants": self._get_gnomad_variants,
         }
         handler = dispatch.get(operation)
         if handler:

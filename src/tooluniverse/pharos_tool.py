@@ -55,6 +55,12 @@ class PharosTool(BaseTool):
             return self._get_tdl_summary(arguments)
         elif operation == "get_disease_targets":
             return self._get_disease_targets(arguments)
+        elif operation == "get_target_ligands":
+            return self._get_target_ligands(arguments)
+        elif operation == "get_ligand_targets":
+            return self._get_ligand_targets(arguments)
+        elif operation == "get_target_expression":
+            return self._get_target_expression(arguments)
         else:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
@@ -279,6 +285,151 @@ class PharosTool(BaseTool):
                 "disease": disease,
                 "count": targets_data.get("count", 0),
                 "targets": targets_data.get("targets", []),
+            }
+
+        return result
+
+    def _resolve_target_q(self, arguments: Dict[str, Any]):
+        """Build the ITarget input filter ({sym} or {uniprot}) from arguments.
+
+        Returns (q_dict, label) on success or (None, error_message) when neither
+        a gene symbol nor a UniProt accession is provided.
+        """
+        gene = arguments.get("gene") or arguments.get("sym")
+        uniprot = arguments.get("uniprot")
+        if uniprot:
+            return {"uniprot": uniprot}, f"UniProt {uniprot}"
+        if gene:
+            return {"sym": gene}, f"gene {gene}"
+        return None, "Either 'gene' or 'uniprot' parameter is required"
+
+    def _get_target_ligands(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get per-target ligand/drug bioactivities for a drug target.
+
+        Returns ligandCounts (total ligand and drug counts) plus the top
+        ligands with their synonyms and bioactivities (type IC50/Ki/EC50,
+        value, and mechanism of action).
+        """
+        q, label = self._resolve_target_q(arguments)
+        if q is None:
+            return {"status": "error", "error": label}
+
+        top = arguments.get("top", 3)
+        try:
+            top = min(max(int(top), 1), 50)
+        except (TypeError, ValueError):
+            top = 3
+
+        query = """
+        query TargetLigands($q: ITarget!, $top: Int!) {
+            target(q: $q) {
+                sym
+                tdl
+                fam
+                ligandCounts { name value }
+                ligands(top: $top) {
+                    name
+                    isdrug
+                    synonyms { name value }
+                    activities { type moa value }
+                }
+            }
+        }
+        """
+        result = self._execute_graphql(query, {"q": q, "top": top})
+
+        if result["status"] == "success":
+            target = result["data"].get("target")
+            if not target:
+                return {
+                    "status": "success",
+                    "data": None,
+                    "message": f"No target found for {label}",
+                }
+            result["data"] = target
+
+        return result
+
+    def _get_ligand_targets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get all protein targets for a drug/ligand (reverse polypharmacology).
+
+        Returns the ligand's targetCount plus every recorded activity with its
+        target (sym, tdl, fam), activity type, value, and mechanism of action.
+        """
+        ligid = (
+            arguments.get("ligid") or arguments.get("ligand") or arguments.get("name")
+        )
+        if not ligid:
+            return {
+                "status": "error",
+                "error": "ligid parameter is required (ligand name or Pharos ligand ID)",
+            }
+
+        query = """
+        query LigandTargets($ligid: String!) {
+            ligand(ligid: $ligid) {
+                name
+                isdrug
+                smiles
+                targetCount
+                activities {
+                    target { sym tdl fam }
+                    type
+                    value
+                    moa
+                }
+            }
+        }
+        """
+        result = self._execute_graphql(query, {"ligid": ligid})
+
+        if result["status"] == "success":
+            ligand = result["data"].get("ligand")
+            if not ligand:
+                return {
+                    "status": "success",
+                    "data": None,
+                    "message": f"No ligand found for '{ligid}'",
+                }
+            result["data"] = ligand
+
+        return result
+
+    def _get_target_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Get GTEx baseline tissue expression (per-tissue TPM) for a target.
+
+        Returns one record per GTEx tissue with tissue name, TPM value, and
+        gender stratification (when available).
+        """
+        q, label = self._resolve_target_q(arguments)
+        if q is None:
+            return {"status": "error", "error": label}
+
+        query = """
+        query TargetExpression($q: ITarget!) {
+            target(q: $q) {
+                sym
+                gtex { tissue tpm gender }
+            }
+        }
+        """
+        result = self._execute_graphql(query, {"q": q})
+
+        if result["status"] == "success":
+            target = result["data"].get("target")
+            if not target:
+                return {
+                    "status": "success",
+                    "data": None,
+                    "message": f"No target found for {label}",
+                }
+            result["data"] = {
+                "sym": target.get("sym"),
+                "count": len(target.get("gtex") or []),
+                "gtex": target.get("gtex") or [],
             }
 
         return result

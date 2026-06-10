@@ -101,5 +101,122 @@
         }
       ]
     }
+  },
+  {
+    "name": "ScanProsite_find_proteins_with_motif",
+    "type": "PROSITETool",
+    "description": "Reverse PROSITE motif scan: given a PROSITE signature accession (e.g., PS00029 for LEUCINE_ZIPPER), enumerate ALL UniProtKB/Swiss-Prot proteins that contain that motif, with per-match positions. This is the INVERSE of the forward scan (ScanProsite_scan_protein / PROSITE_scan_sequence, which take a protein and return its motifs). Use this to find the proteome-wide occurrences of one signature - for example, every Swiss-Prot protein with a leucine zipper. Returns each matching protein's UniProt accession, entry name, and the start/stop of the motif. Results can be capped by the server for very frequent signatures (the 'capped' metadata flag indicates this). Note: very frequent low-information signatures flagged SKIP-FLAG=TRUE (e.g. PS00005 PKC phosphorylation, PS00008 N-myristoylation) are skipped by default and return no hits unless skip_frequent is set to false.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "signature_ac": {
+          "type": "string",
+          "description": "PROSITE signature accession starting with 'PS'. Examples: 'PS00029' (LEUCINE_ZIPPER), 'PS00107' (PROTEIN_KINASE_ATP), 'PS00028' (ZINC_FINGER_C2H2_1). Use PROSITE_search or PROSITE_get_entry to discover signature accessions."
+        },
+        "db": {
+          "type": "string",
+          "enum": ["sprot", "trembl", "uniprot"],
+          "default": "sprot",
+          "description": "Sequence database to search: 'sprot' = Swiss-Prot (reviewed, default), 'trembl' = TrEMBL (unreviewed), 'uniprot' = both."
+        },
+        "skip_frequent": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true (default), skip very frequent low-information signatures (SKIP-FLAG=TRUE patterns such as PS00005, PS00008). Set to false to force ScanProsite to include them; note these can produce extremely large or truncated responses across the whole proteome."
+        },
+        "max_results": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Maximum number of matching protein records to return (default 50, max 1000). The 'total_matches' metadata reports the full count found by the server."
+        }
+      },
+      "required": ["signature_ac"]
+    },
+    "fields": {
+      "endpoint": "find_proteins_with_motif"
+    },
+    "test_examples": [
+      {"signature_ac": "PS00029"},
+      {"signature_ac": "PS00029", "max_results": 10}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["success"]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sequence_ac": {
+                    "type": ["string", "null"],
+                    "description": "UniProt accession of the matching protein (e.g., Q6GZW6)"
+                  },
+                  "sequence_id": {
+                    "type": ["string", "null"],
+                    "description": "UniProt entry name (e.g., 009L_FRG3G)"
+                  },
+                  "sequence_db": {
+                    "type": ["string", "null"],
+                    "description": "Sequence database (sp for Swiss-Prot, tr for TrEMBL)"
+                  },
+                  "start": {
+                    "type": ["integer", "null"],
+                    "description": "Start position of the motif match in the protein"
+                  },
+                  "stop": {
+                    "type": ["integer", "null"],
+                    "description": "End position of the motif match"
+                  },
+                  "signature_ac": {
+                    "type": ["string", "null"],
+                    "description": "PROSITE signature accession that matched (e.g., PS00029)"
+                  },
+                  "signature_id": {
+                    "type": ["string", "null"],
+                    "description": "PROSITE signature name (e.g., LEUCINE_ZIPPER)"
+                  }
+                }
+              },
+              "description": "Array of matching UniProt proteins with motif positions"
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "signature_ac": {"type": "string"},
+                "database": {"type": "string"},
+                "total_matches": {"type": "integer"},
+                "total_sequences": {"type": ["integer", "null"]},
+                "capped": {"type": "boolean"},
+                "returned": {"type": "integer"},
+                "skip_frequent_patterns": {"type": "boolean"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["error"]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
   }
 ]

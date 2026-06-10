@@ -1154,5 +1154,482 @@
                 }
             ]
         }
+    },
+    {
+        "name": "OpenTargets_get_variant_effect_predictions",
+        "description": "Retrieve in-silico functional effect predictions for a variant (chrom_pos_ref_alt) from OpenTargets. Returns one record per prediction method (VEP, SIFT, PolyPhen, AlphaMissense, FoldX, GERP, CADD, etc.), each with an assessment (e.g. 'missense_variant', 'deleterious', 'tolerated') and a numeric score. Use to judge whether a variant is likely damaging.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variantId": {
+                    "type": "string",
+                    "description": "Variant ID in chrom_pos_ref_alt format (e.g., '19_44908822_C_T' for the APOE rs7412 variant)."
+                }
+            },
+            "required": [
+                "variantId"
+            ]
+        },
+        "query_schema": "\nquery variantEffectPredictions($variantId: String!) {\n  variant(variantId: $variantId) {\n    id\n    rsIds\n    variantEffect {\n      method\n      assessment\n      assessmentFlag\n      score\n      normalisedScore\n    }\n  }\n}\n",
+        "label": [
+            "Variant",
+            "Effect Prediction",
+            "VEP",
+            "AlphaMissense",
+            "OpenTarget"
+        ],
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "variantId": "19_44908822_C_T"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "success"
+                            ]
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "rsIds": {
+                                            "type": "array"
+                                        },
+                                        "variantEffect": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "method": {
+                                                        "type": "string"
+                                                    },
+                                                    "assessment": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "score": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "error"
+                            ]
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OpenTargets_get_variant_transcript_consequences",
+        "description": "Retrieve per-transcript consequences for a variant (chrom_pos_ref_alt) from OpenTargets. Returns one record per affected transcript with transcriptId, the target gene, aminoAcidChange (when coding), consequenceScore, impact (HIGH/MODERATE/LOW/MODIFIER), and whether it is the canonical/distance transcript. Use to see how a variant affects each transcript/isoform.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variantId": {
+                    "type": "string",
+                    "description": "Variant ID in chrom_pos_ref_alt format (e.g., '19_44908822_C_T' for the APOE rs7412 variant)."
+                }
+            },
+            "required": [
+                "variantId"
+            ]
+        },
+        "query_schema": "\nquery variantTranscriptConsequences($variantId: String!) {\n  variant(variantId: $variantId) {\n    id\n    rsIds\n    transcriptConsequences {\n      transcriptId\n      target { id approvedSymbol }\n      aminoAcidChange\n      consequenceScore\n      impact\n      isEnsemblCanonical\n      variantConsequences { id label }\n    }\n  }\n}\n",
+        "label": [
+            "Variant",
+            "Transcript Consequences",
+            "VEP",
+            "OpenTarget"
+        ],
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "variantId": "19_44908822_C_T"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "success"
+                            ]
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "rsIds": {
+                                            "type": "array"
+                                        },
+                                        "transcriptConsequences": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "transcriptId": {
+                                                        "type": "string"
+                                                    },
+                                                    "aminoAcidChange": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "consequenceScore": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "impact": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "error"
+                            ]
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OpenTargets_get_variant_pharmacogenomics",
+        "description": "Retrieve variant-level pharmacogenomics (PGx) annotations for a variant (chrom_pos_ref_alt) from OpenTargets (PharmGKB-derived). Returns one record per PGx association with the drug(s), phenotypeText (clinical effect), evidenceLevel (PharmGKB 1A-4), genotypeAnnotationText, phenotype/PGx category, and source. Use to find drug-response associations for a variant.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "variantId": {
+                    "type": "string",
+                    "description": "Variant ID in chrom_pos_ref_alt format (e.g., '19_44908822_C_T' for the APOE rs7412 variant)."
+                }
+            },
+            "required": [
+                "variantId"
+            ]
+        },
+        "query_schema": "\nquery variantPharmacogenomics($variantId: String!) {\n  variant(variantId: $variantId) {\n    id\n    rsIds\n    pharmacogenomics {\n      drugs { drugFromSource drugId }\n      phenotypeText\n      genotypeAnnotationText\n      evidenceLevel\n      pgxCategory\n      phenotypeFromSourceId\n      datasourceId\n    }\n  }\n}\n",
+        "label": [
+            "Variant",
+            "Pharmacogenomics",
+            "PGx",
+            "PharmGKB",
+            "OpenTarget"
+        ],
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "variantId": "19_44908822_C_T"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "success"
+                            ]
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "variant": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "rsIds": {
+                                            "type": "array"
+                                        },
+                                        "pharmacogenomics": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "drugs": {
+                                                        "type": "array"
+                                                    },
+                                                    "phenotypeText": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "evidenceLevel": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "genotypeAnnotationText": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "error"
+                            ]
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "error"
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "OpenTargets_get_credible_set_colocalisation",
+        "description": "Retrieve GWAS/QTL colocalisation evidence for a credible set (by studyLocusId) from OpenTargets. Returns the colocalisation count and rows, each with the method (COLOC, COLOC_PIP_ECAVIAR, etc.), the posterior probability h4 of a shared causal variant, the colocalisation posterior probability clpp, numberColocalisingVariants, and the other colocalising study locus (studyLocusId, study type/id). Use to link a GWAS signal to a molecular QTL.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "studyLocusId": {
+                    "type": "string",
+                    "description": "The credible-set / study-locus ID (e.g., '0004aaf4841475f0caf5bcde04432bcf')."
+                },
+                "size": {
+                    "type": "integer",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 500,
+                    "description": "Maximum number of colocalisation rows to return (1-500)."
+                }
+            },
+            "required": [
+                "studyLocusId"
+            ]
+        },
+        "query_schema": "\nquery credibleSetColocalisation($studyLocusId: String!, $size: Int = 20) {\n  credibleSet(studyLocusId: $studyLocusId) {\n    studyLocusId\n    colocalisation(page: {size: $size, index: 0}) {\n      count\n      rows {\n        colocalisationMethod\n        h3\n        h4\n        clpp\n        numberColocalisingVariants\n        otherStudyLocus {\n          studyLocusId\n          studyType\n          study { id traitFromSource }\n        }\n      }\n    }\n  }\n}\n",
+        "label": [
+            "Credible Set",
+            "Colocalisation",
+            "GWAS",
+            "QTL",
+            "OpenTarget"
+        ],
+        "type": "OpenTarget",
+        "test_examples": [
+            {
+                "studyLocusId": "0004aaf4841475f0caf5bcde04432bcf"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "success"
+                            ]
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "credibleSet": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "studyLocusId": {
+                                            "type": "string"
+                                        },
+                                        "colocalisation": {
+                                            "type": [
+                                                "object",
+                                                "null"
+                                            ],
+                                            "properties": {
+                                                "count": {
+                                                    "type": "integer"
+                                                },
+                                                "rows": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "colocalisationMethod": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "h4": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "clpp": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "numberColocalisingVariants": {
+                                                                "type": [
+                                                                    "number",
+                                                                    "null"
+                                                                ]
+                                                            },
+                                                            "otherStudyLocus": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ]
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "data"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "enum": [
+                                "error"
+                            ]
+                        },
+                        "error": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "status",
+                        "error"
+                    ]
+                }
+            ]
+        }
     }
 ]

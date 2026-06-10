@@ -378,5 +378,113 @@
         "ptm_type": "Phosphorylation"
       }
     ]
+  },
+  {
+    "name": "iPTMnet_get_proteoform_ppi",
+    "type": "iPTMnetTool",
+    "description": "Get proteoform-state-level protein-protein interactions from iPTMnet. Unlike iPTMnet_get_ptm_ppi (residue-level: 'a PTM at site X on protein A affects binding to partner Y'), this returns interactions keyed on PRO ontology proteoform IDs that encode the specific isoform AND modification state of each interactant (e.g., PR:000025934 'hSMAD2/iso:Long/Phos:1' binding PR:Q13485 'hSMAD4'). Each record gives both interacting proteoforms (PRO ID + human-readable label), the relation type, data source, and PubMed references. Use this to find which exact modified/spliced forms of a protein engage in documented interactions. Use with UniProt accession (e.g., Q15796 for SMAD2, P04637 for TP53).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_proteoform_ppi"
+          ],
+          "description": "Operation type"
+        },
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession, e.g., Q15796 (SMAD2), P04637 (TP53), P00533 (EGFR)"
+        }
+      },
+      "required": [
+        "operation",
+        "uniprot_id"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["success"]
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "protein_1_pro_id": {
+                    "type": "string",
+                    "description": "PRO ontology proteoform ID of the first interactant (e.g., PR:000025934)"
+                  },
+                  "protein_1_label": {
+                    "type": "string",
+                    "description": "Human-readable proteoform label encoding isoform + modification state (e.g., hSMAD2/iso:Long/Phos:1)"
+                  },
+                  "relation": {
+                    "type": "string",
+                    "description": "Interaction relation type (e.g., Interaction)"
+                  },
+                  "protein_2_pro_id": {
+                    "type": "string",
+                    "description": "PRO ontology proteoform ID of the second interactant (e.g., PR:Q13485)"
+                  },
+                  "protein_2_label": {
+                    "type": "string",
+                    "description": "Human-readable proteoform label of the second interactant (e.g., hSMAD4)"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "Data source (e.g., PRO)"
+                  },
+                  "pmids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "PubMed IDs supporting the interaction"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "uniprot_id": {
+                  "type": "string"
+                },
+                "total_interactions": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["error"]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_proteoform_ppi",
+        "uniprot_id": "Q15796"
+      }
+    ]
   }
 ]

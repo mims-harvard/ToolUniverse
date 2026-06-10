@@ -496,5 +496,137 @@
         }
       ]
     }
+  },
+  {
+    "name": "HGNC_fetch_gene_family_members",
+    "description": "Enumerate ALL member genes of an HGNC gene family/group by its numeric gene_group_id, returning the full HGNC record for every member gene. Unlike HGNC_fetch_gene_by_symbol/by_id (single gene) this lists the entire family. Each member record includes hgnc_id, approved symbol, full name, chromosomal location, locus type, and cross-references (Ensembl, Entrez, UniProt, OMIM, RefSeq). Example: gene_group_id '366' returns the 56 members of the 'Ubiquitin specific peptidases' family (USP1-USP54, USPL1, CYLD, PAN2). Find a gene_group_id from the 'gene_group_id' field of any gene record returned by HGNC_fetch_gene_by_symbol.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_group_id": {
+          "type": "string",
+          "description": "Numeric HGNC gene group/family ID. Examples: '366' (Ubiquitin specific peptidases), '588' (BCL2 family), '475' (Solute carrier family). Accepts a string or integer."
+        }
+      },
+      "required": [
+        "gene_group_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "fetch",
+      "search_field": "gene_group_id"
+    },
+    "type": "HGNCTool",
+    "test_examples": [
+      {
+        "gene_group_id": "366"
+      },
+      {
+        "gene_group_id": "588"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "description": "Full HGNC record for every member gene of the family",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hgnc_id": {
+                    "type": "string"
+                  },
+                  "symbol": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "locus_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_group": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "gene_group_id": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "ensembl_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "entrez_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uniprot_ids": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query_field": {
+                  "type": "string"
+                },
+                "query_value": {
+                  "type": "string"
+                },
+                "num_found": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

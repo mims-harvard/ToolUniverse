@@ -118,6 +118,12 @@ class KEGGExtTool(BaseTool):
             return self._conv_ids(arguments)
         elif self.endpoint == "link_entries":
             return self._link_entries(arguments)
+        elif self.endpoint == "get_module":
+            return self._get_module(arguments)
+        elif self.endpoint == "get_reaction":
+            return self._get_reaction(arguments)
+        elif self.endpoint == "get_enzyme":
+            return self._get_enzyme(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -1145,6 +1151,226 @@ class KEGGExtTool(BaseTool):
             "status": "success",
             "data": result,
             "metadata": {"source": "KEGG Variant", "variant_id": variant_id},
+        }
+
+    @staticmethod
+    def _parse_kegg_record(text: str) -> Dict[str, list]:
+        """Parse a KEGG flat-file record into {FIELD: [lines]}.
+
+        KEGG records use a 12-char-wide field column; continuation lines are
+        indented with 12 spaces. Returns a dict mapping each top-level field
+        name to the list of its (de-indented) content lines, preserving order.
+        """
+        fields: Dict[str, list] = {}
+        current = None
+        for line in text.split("\n"):
+            if line.startswith("///"):
+                break
+            if not line.strip():
+                continue
+            if line.startswith(" "):
+                content = line[12:].rstrip() if len(line) > 12 else line.strip()
+                if current is not None:
+                    fields.setdefault(current, []).append(content)
+            else:
+                name = line[:12].strip()
+                content = line[12:].rstrip() if len(line) > 12 else ""
+                current = name
+                fields.setdefault(current, []).append(content)
+        return fields
+
+    @staticmethod
+    def _parse_id_map(lines: list) -> Dict[str, str]:
+        """Parse KEGG ``"ID  description"`` two-column lines into {id: description}.
+
+        Used for fields like PATHWAY/MODULE/ORTHOLOGY where each line is an entry
+        ID followed by a double-space and a human-readable label.
+        """
+        result: Dict[str, str] = {}
+        for line in lines:
+            parts = line.split("  ", 1)
+            entry_id = parts[0].strip()
+            if entry_id:
+                result[entry_id] = parts[1].strip() if len(parts) > 1 else ""
+        return result
+
+    def _get_module(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a KEGG MODULE entry (reaction-step definition + members)."""
+        module_id = (arguments.get("module_id") or arguments.get("id") or "").strip()
+        if not module_id:
+            return {
+                "status": "error",
+                "error": "module_id is required (e.g., 'M00001' for glycolysis EM pathway)",
+            }
+        module_id = module_id.replace("md:", "")
+        if not module_id.upper().startswith("M"):
+            module_id = f"M{module_id}"
+
+        url = f"{KEGG_BASE_URL}/get/{module_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        text = response.text
+        if not text.strip():
+            return {"status": "error", "error": f"Module not found: {module_id}"}
+
+        fields = self._parse_kegg_record(text)
+        name = " ".join(fields.get("NAME", [])).strip()
+        definition = " ".join(fields.get("DEFINITION", [])).strip()
+        module_class = " ".join(fields.get("CLASS", [])).strip()
+
+        reactions = []
+        for line in fields.get("REACTION", []):
+            parts = line.split("  ", 1)
+            rid = parts[0].strip()
+            equation = parts[1].strip() if len(parts) > 1 else ""
+            if rid:
+                reactions.append({"reaction_id": rid, "definition": equation})
+
+        compounds = []
+        for line in fields.get("COMPOUND", []):
+            parts = line.split("  ", 1)
+            cid = parts[0].strip()
+            cname = parts[1].strip() if len(parts) > 1 else ""
+            if cid:
+                compounds.append({"compound_id": cid, "name": cname})
+
+        orthologs = []
+        for line in fields.get("ORTHOLOGY", []):
+            if line.strip():
+                orthologs.append(line.strip())
+
+        pathways = self._parse_id_map(fields.get("PATHWAY", []))
+
+        return {
+            "status": "success",
+            "data": {
+                "module_id": module_id,
+                "name": name,
+                "definition": definition,
+                "class": module_class,
+                "reactions": reactions,
+                "compounds": compounds,
+                "orthology": orthologs,
+                "pathways": pathways,
+            },
+            "metadata": {"source": "KEGG MODULE", "module_id": module_id},
+        }
+
+    def _get_reaction(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a KEGG REACTION entry (balanced equation, EC, RCLASS, pathways)."""
+        reaction_id = (
+            arguments.get("reaction_id") or arguments.get("id") or ""
+        ).strip()
+        if not reaction_id:
+            return {
+                "status": "error",
+                "error": "reaction_id is required (e.g., 'R00200' for pyruvate kinase)",
+            }
+        reaction_id = reaction_id.replace("rn:", "")
+        if not reaction_id.upper().startswith("R"):
+            reaction_id = f"R{reaction_id}"
+
+        url = f"{KEGG_BASE_URL}/get/rn:{reaction_id}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        text = response.text
+        if not text.strip():
+            return {"status": "error", "error": f"Reaction not found: {reaction_id}"}
+
+        fields = self._parse_kegg_record(text)
+        name = " ".join(fields.get("NAME", [])).strip()
+        definition = " ".join(fields.get("DEFINITION", [])).strip()
+        equation = " ".join(fields.get("EQUATION", [])).strip()
+
+        enzymes = []
+        for line in fields.get("ENZYME", []):
+            enzymes.extend(line.split())
+
+        rclass = []
+        for line in fields.get("RCLASS", []):
+            if line.strip():
+                rclass.append(line.strip())
+
+        pathways = self._parse_id_map(fields.get("PATHWAY", []))
+        modules = self._parse_id_map(fields.get("MODULE", []))
+
+        return {
+            "status": "success",
+            "data": {
+                "reaction_id": reaction_id,
+                "name": name,
+                "definition": definition,
+                "equation": equation,
+                "enzymes": enzymes,
+                "rclass": rclass,
+                "pathways": pathways,
+                "modules": modules,
+            },
+            "metadata": {"source": "KEGG REACTION", "reaction_id": reaction_id},
+        }
+
+    def _get_enzyme(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get a KEGG ENZYME (EC number) entry: names, EC class, reaction, orthologs."""
+        ec_number = (
+            arguments.get("ec_number")
+            or arguments.get("enzyme_id")
+            or arguments.get("id")
+            or ""
+        ).strip()
+        if not ec_number:
+            return {
+                "status": "error",
+                "error": "ec_number is required (e.g., '2.7.1.1' for hexokinase)",
+            }
+        ec_number = ec_number.replace("ec:", "").replace("EC ", "").strip()
+
+        url = f"{KEGG_BASE_URL}/get/ec:{ec_number}"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        text = response.text
+        if not text.strip():
+            return {"status": "error", "error": f"Enzyme not found: {ec_number}"}
+
+        fields = self._parse_kegg_record(text)
+
+        names = []
+        for line in fields.get("NAME", []):
+            nm = line.strip().rstrip(";")
+            if nm:
+                names.append(nm)
+
+        ec_class = [
+            line.strip().rstrip(";") for line in fields.get("CLASS", []) if line.strip()
+        ]
+        sysname = " ".join(fields.get("SYSNAME", [])).strip()
+        reaction = " ".join(fields.get("REACTION", [])).strip()
+
+        substrates = [
+            line.strip().rstrip(";")
+            for line in fields.get("SUBSTRATE", [])
+            if line.strip()
+        ]
+        products = [
+            line.strip().rstrip(";")
+            for line in fields.get("PRODUCT", [])
+            if line.strip()
+        ]
+
+        orthology = self._parse_id_map(fields.get("ORTHOLOGY", []))
+
+        return {
+            "status": "success",
+            "data": {
+                "ec_number": ec_number,
+                "names": names,
+                "class": ec_class,
+                "sysname": sysname,
+                "reaction": reaction,
+                "substrates": substrates,
+                "products": products,
+                "orthology": orthology,
+            },
+            "metadata": {"source": "KEGG ENZYME", "ec_number": ec_number},
         }
 
     def _conv_ids(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

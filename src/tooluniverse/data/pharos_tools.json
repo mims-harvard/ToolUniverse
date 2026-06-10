@@ -207,5 +207,249 @@
             "tags": ["disease", "drug_target", "tdl"],
             "estimated_execution_time": "< 5 seconds"
         }
+    },
+    {
+        "name": "Pharos_get_target_ligands",
+        "description": "Get per-target ligand and drug bioactivities from Pharos/TCRD for a drug target (by gene symbol or UniProt ID). Returns ligandCounts (total ligand and approved-drug counts) plus the top ligands with synonyms (ChEMBL etc.) and measured bioactivities: activity type (IC50/Ki/EC50/Kd), value (typically -log10 molar / pActivity), and mechanism of action. Use to assess chemical tractability and known chemistry of a target.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene": {
+                    "type": "string",
+                    "description": "Gene symbol (e.g., 'DRD2', 'EGFR'). Use either gene or uniprot."
+                },
+                "uniprot": {
+                    "type": "string",
+                    "description": "UniProt accession (e.g., 'P14416'). Use either gene or uniprot."
+                },
+                "top": {
+                    "type": "integer",
+                    "default": 3,
+                    "minimum": 1,
+                    "maximum": 50,
+                    "description": "Maximum number of ligands to return (1-50)."
+                }
+            }
+        },
+        "fields": {
+            "operation": "get_target_ligands"
+        },
+        "type": "PharosTool",
+        "test_examples": [
+            {
+                "gene": "DRD2",
+                "top": 3
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": ["object", "null"],
+                            "properties": {
+                                "sym": {"type": "string"},
+                                "tdl": {"type": "string"},
+                                "fam": {"type": "string"},
+                                "ligandCounts": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {"type": "string"},
+                                            "value": {"type": "integer"}
+                                        }
+                                    }
+                                },
+                                "ligands": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {"type": "string"},
+                                            "isdrug": {"type": "boolean"},
+                                            "synonyms": {"type": "array"},
+                                            "activities": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {"type": ["string", "null"]},
+                                                        "moa": {"type": ["string", "null"]},
+                                                        "value": {"type": ["number", "null"]}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "message": {"type": "string"}
+                    },
+                    "required": ["status"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string"}
+                    },
+                    "required": ["status", "error"]
+                }
+            ]
+        },
+        "label": ["Pharos", "Ligands", "Bioactivity", "IDG"],
+        "metadata": {
+            "tags": ["drug_target", "ligands", "bioactivity", "ic50", "tractability"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "Pharos_get_ligand_targets",
+        "description": "Get all protein targets for a drug or ligand from Pharos/TCRD (reverse polypharmacology). Given one drug/ligand (by name or Pharos ligand ID), returns its SMILES, total targetCount, and every recorded bioactivity with the target (gene symbol, Target Development Level Tclin/Tchem/Tbio/Tdark, protein family), activity type, value, and mechanism of action. Use to map a drug's full target landscape and off-targets.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "ligid": {
+                    "type": "string",
+                    "description": "Ligand name or Pharos ligand ID (e.g., 'Haloperidol', 'Imatinib')."
+                }
+            },
+            "required": ["ligid"]
+        },
+        "fields": {
+            "operation": "get_ligand_targets"
+        },
+        "type": "PharosTool",
+        "test_examples": [
+            {
+                "ligid": "Haloperidol"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": ["object", "null"],
+                            "properties": {
+                                "name": {"type": "string"},
+                                "isdrug": {"type": "boolean"},
+                                "smiles": {"type": ["string", "null"]},
+                                "targetCount": {"type": "integer"},
+                                "activities": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "target": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "sym": {"type": "string"},
+                                                    "tdl": {"type": "string"},
+                                                    "fam": {"type": "string"}
+                                                }
+                                            },
+                                            "type": {"type": ["string", "null"]},
+                                            "value": {"type": ["number", "null"]},
+                                            "moa": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "message": {"type": "string"}
+                    },
+                    "required": ["status"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string"}
+                    },
+                    "required": ["status", "error"]
+                }
+            ]
+        },
+        "label": ["Pharos", "Ligand", "Polypharmacology", "IDG"],
+        "metadata": {
+            "tags": ["drug", "polypharmacology", "off_target", "bioactivity"],
+            "estimated_execution_time": "< 5 seconds"
+        }
+    },
+    {
+        "name": "Pharos_get_target_expression",
+        "description": "Get GTEx baseline tissue RNA expression (per-tissue TPM) for a drug target from Pharos/TCRD (by gene symbol or UniProt ID). Returns one record per GTEx tissue with tissue name, TPM value, and gender stratification when available. Use to assess where a target is naturally expressed (e.g., for on-target tissue-toxicity reasoning).",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "gene": {
+                    "type": "string",
+                    "description": "Gene symbol (e.g., 'DRD2', 'EGFR'). Use either gene or uniprot."
+                },
+                "uniprot": {
+                    "type": "string",
+                    "description": "UniProt accession (e.g., 'P14416'). Use either gene or uniprot."
+                }
+            }
+        },
+        "fields": {
+            "operation": "get_target_expression"
+        },
+        "type": "PharosTool",
+        "test_examples": [
+            {
+                "gene": "DRD2"
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": ["object", "null"],
+                            "properties": {
+                                "sym": {"type": "string"},
+                                "count": {"type": "integer"},
+                                "gtex": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "tissue": {"type": "string"},
+                                            "tpm": {"type": ["number", "null"]},
+                                            "gender": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "message": {"type": "string"}
+                    },
+                    "required": ["status"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string"}
+                    },
+                    "required": ["status", "error"]
+                }
+            ]
+        },
+        "label": ["Pharos", "Expression", "GTEx", "IDG"],
+        "metadata": {
+            "tags": ["expression", "gtex", "tissue", "tpm"],
+            "estimated_execution_time": "< 5 seconds"
+        }
     }
 ]
