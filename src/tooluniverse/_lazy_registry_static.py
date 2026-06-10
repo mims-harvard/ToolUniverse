@@ -82,6 +82,8 @@ STATIC_LAZY_REGISTRY = {
     "ClinVarGetClinicalSignificance": "clinvar_tool",
     "ClinVarGetVariantDetails": "clinvar_tool",
     "ClinVarRESTTool": "clinvar_tool",
+    "ClinVarSubmittedRecordsTool": "clinvar_submitted_tool",
+    "VEuPathDBTool": "veupathdb_tool",
     "ClinVarSearchVariants": "clinvar_tool",
     "ClinicalCalculatorTool": "clinical_calculators_tool",
     "ClinicalTrialAESeverityTestTool": "clinical_trial_stats_tool",
