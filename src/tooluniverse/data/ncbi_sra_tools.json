@@ -424,5 +424,116 @@
         "accessions": ["1", "2", "3"]
       }
     ]
+  },
+  {
+    "type": "NCBISRATool",
+    "name": "NCBI_SRA_locate_run_files",
+    "description": "Resolve the current, verified cloud download location(s) plus authoritative file size and md5 checksum for an SRA run via the NCBI SRA Data Locator (SDL) service. Unlike NCBI_SRA_get_download_urls (which builds a guessed legacy ftp-trace ByRun path that now returns HTTP 404, and an S3 path with no size/md5/region), this returns the real object: https S3/GCP link, exact byte size, md5, storage region, and modification date. Use SRR/ERR/DRR run accessions. Example: SRR390728 returns size=195174182, md5=29a6a1a0dd0702f45225f2eb93c958b5, location s3:us-east-1 https://sra-pub-run-odp.s3.amazonaws.com/sra/SRR390728/SRR390728. Keyless; no NCBI API key required.",
+    "parameter": {
+      "type": "object",
+      "required": ["accessions"],
+      "properties": {
+        "operation": {
+          "const": "locate_run_files",
+          "description": "Operation type (fixed: locate_run_files)"
+        },
+        "accessions": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "SRA run accession(s) (e.g., 'SRR390728', 'ERR000001', 'DRR000001'). Single accession or array. Use SRR for NCBI, ERR for ENA, DRR for DDBJ."
+        }
+      }
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["success", "error"]
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Array of per-run file location objects"
+        },
+        "count": {"type": "integer"},
+        "error": {"type": "string"}
+      },
+      "required": ["status"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {"type": "string"},
+                  "file_count": {"type": "integer"},
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {"type": "string"},
+                        "type": {"type": "string"},
+                        "size": {"type": ["integer", "null"]},
+                        "md5": {"type": ["string", "null"]},
+                        "modification_date": {"type": ["string", "null"]},
+                        "locations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "service": {"type": "string"},
+                              "region": {"type": ["string", "null"]},
+                              "link": {"type": "string"}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "error": {"type": "string"}
+                }
+              }
+            },
+            "count": {"type": "integer"}
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "locate_run_files",
+        "accessions": "SRR390728"
+      },
+      {
+        "operation": "locate_run_files",
+        "accessions": ["SRR390728", "SRR000001"]
+      }
+    ]
   }
 ]

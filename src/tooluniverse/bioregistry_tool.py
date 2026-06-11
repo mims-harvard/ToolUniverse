@@ -43,12 +43,14 @@ class BioregistryTool(BaseTool):
             return self._resolve_reference(arguments)
         elif operation == "get_registry":
             return self._get_registry(arguments)
+        elif operation == "get_prefix_mappings":
+            return self._get_prefix_mappings(arguments)
         elif operation == "search_registries":
             return self._search_registries(arguments)
         else:
             return {
                 "status": "error",
-                "error": f"Unknown operation: {operation}. Supported: resolve_reference, get_registry, search_registries",
+                "error": f"Unknown operation: {operation}. Supported: resolve_reference, get_registry, get_prefix_mappings, search_registries",
             }
 
     def _resolve_reference(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -119,6 +121,53 @@ class BioregistryTool(BaseTool):
             if data.get("publications"):
                 result["publications"] = data["publications"][:5]
             return {"status": "success", "data": result}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    def _get_prefix_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get cross-registry prefix mappings for a Bioregistry prefix.
+
+        The per-prefix Bioregistry record carries a ``mappings`` object that maps
+        the prefix to its equivalent in other registries (OBO Foundry, MIRIAM/
+        identifiers.org, OLS, Name-to-Thing/N2T, BioPortal, FAIRsharing,
+        BioContext, AberOWL, Wikidata, etc.). The standard get_registry tool
+        drops this field; this operation surfaces it.
+        """
+        prefix = arguments.get("prefix", "")
+        if not prefix:
+            return {
+                "status": "error",
+                "error": "Parameter 'prefix' is required (e.g., 'chebi', 'go', 'uniprot', 'mondo')",
+            }
+        try:
+            url = f"{BIOREGISTRY_API_URL}/registry/{prefix}"
+            resp = requests.get(url, timeout=self.timeout)
+            if resp.status_code == 404:
+                return {
+                    "status": "error",
+                    "error": f"Registry prefix '{prefix}' not found. Try search_registries to find the correct prefix.",
+                }
+            if resp.status_code != 200:
+                return {
+                    "status": "error",
+                    "error": f"HTTP {resp.status_code} from Bioregistry",
+                }
+            data = resp.json()
+            mappings = data.get("mappings", {})
+            if not isinstance(mappings, dict):
+                mappings = {}
+            return {
+                "status": "success",
+                "data": {
+                    "prefix": data.get("prefix", prefix),
+                    "name": data.get("name", ""),
+                    "mappings": mappings,
+                },
+                "metadata": {
+                    "mapping_count": len(mappings),
+                    "registries": sorted(mappings.keys()),
+                },
+            }
         except Exception as e:
             return {"status": "error", "error": str(e)}
 

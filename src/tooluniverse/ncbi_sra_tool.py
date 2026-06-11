@@ -2,6 +2,7 @@
 
 import xml.etree.ElementTree as ET
 from typing import Any, Dict
+import requests
 from .ncbi_eutils_tool import NCBIEUtilsTool
 from .tool_registry import register_tool
 
@@ -14,8 +15,14 @@ class NCBISRATool(NCBIEUtilsTool):
         "search": "_search_sra_runs",
         "get_run_info": "_get_run_info",
         "get_download_urls": "_get_download_urls",
+        "locate_run_files": "_locate_run_files",
         "link_to_biosample": "_link_to_biosample",
     }
+
+    # SRA Data Locator (SDL) v2 — returns verified cloud object locations
+    # (S3/GCP), authoritative byte size, md5 checksum, region, and
+    # modification date for an SRA run accession.
+    _SDL_URL = "https://locate.ncbi.nlm.nih.gov/sdl/2/retrieve"
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
@@ -299,6 +306,116 @@ class NCBISRATool(NCBIEUtilsTool):
 
         except Exception as e:
             return {"status": "error", "error": f"Get download URLs failed: {str(e)}"}
+
+    def _locate_run_files(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve current cloud download locations + size/md5 via the SDL API.
+
+        The legacy ftp-trace ByRun path is dead (HTTP 404). The SRA Data
+        Locator (SDL) v2 service returns the verified object: real https S3/GCP
+        link, exact byte size, md5 checksum, region, and modification date.
+        """
+        try:
+            accessions = self._normalize_accessions(arguments)
+            if not accessions:
+                return {
+                    "status": "error",
+                    "error": "Missing required parameter: accessions",
+                }
+
+            results = []
+            _VALID_PREFIXES = ("SRR", "ERR", "DRR")
+
+            for accession in accessions:
+                if not any(accession.startswith(p) for p in _VALID_PREFIXES):
+                    results.append(
+                        {
+                            "accession": accession,
+                            "error": "Invalid accession format. Must start with SRR, ERR, or DRR",
+                        }
+                    )
+                    continue
+
+                try:
+                    resp = requests.get(
+                        self._SDL_URL,
+                        params={"acc": accession},
+                        timeout=self.timeout,
+                    )
+                    resp.raise_for_status()
+                    payload = resp.json()
+                except requests.exceptions.RequestException as exc:
+                    results.append(
+                        {
+                            "accession": accession,
+                            "error": f"SDL request failed: {str(exc)}",
+                        }
+                    )
+                    continue
+                except ValueError as exc:
+                    results.append(
+                        {
+                            "accession": accession,
+                            "error": f"SDL returned non-JSON response: {str(exc)}",
+                        }
+                    )
+                    continue
+
+                results.append(self._parse_sdl_result(accession, payload))
+
+            return {
+                "status": "success",
+                "data": results,
+                "count": len(results),
+            }
+
+        except Exception as e:
+            return {"status": "error", "error": f"Locate run files failed: {str(e)}"}
+
+    @staticmethod
+    def _parse_sdl_result(accession: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Parse one SDL v2 response into a structured per-run file record."""
+        bundles = payload.get("result", []) or []
+        if not bundles:
+            return {
+                "accession": accession,
+                "error": "No result returned by SDL for this accession",
+            }
+
+        bundle = bundles[0]
+        bundle_status = bundle.get("status")
+        if bundle_status not in (200, "200", None):
+            return {
+                "accession": accession,
+                "error": bundle.get("msg", f"SDL status {bundle_status}"),
+                "status_code": bundle_status,
+            }
+
+        files = []
+        for f in bundle.get("files", []) or []:
+            locations = [
+                {
+                    "service": loc.get("service"),
+                    "region": loc.get("region"),
+                    "link": loc.get("link"),
+                }
+                for loc in (f.get("locations") or [])
+            ]
+            files.append(
+                {
+                    "name": f.get("name"),
+                    "type": f.get("type"),
+                    "size": f.get("size"),
+                    "md5": f.get("md5"),
+                    "modification_date": f.get("modificationDate"),
+                    "locations": locations,
+                }
+            )
+
+        return {
+            "accession": accession,
+            "files": files,
+            "file_count": len(files),
+        }
 
     def _link_to_biosample(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Link SRA runs to BioSample records via elink."""

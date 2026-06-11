@@ -962,5 +962,516 @@
         }
       ]
     }
+  },
+  {
+    "name": "EBIProteins_get_rna_editing",
+    "description": "Get RNA editing annotations (A-to-I / Q->R recoding sites) for a UniProt protein from the EBI Proteins API. Returns post-transcriptional RNA editing sites where a genomic adenosine is read as guanosine, recoding the protein. Each site includes the protein position, genomic location, codon, consequence type, wild-type and edited amino acid, and tissue/sample editing statistics. Distinct from DNA-level variation. Example: P42262 (GRIA2) returns 3 sites including the canonical Q/R site at residue 607 (Q->R, genomic NC_000004.12:g.157336723A>G, missense). P28335 (HTR2C) returns 5 sites.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt accession. Examples: 'P42262' (GRIA2, canonical Q/R editing site), 'P28335' (HTR2C, 5 editing sites)."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "rna_editing"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "accession": "P42262"
+      },
+      {
+        "accession": "P28335"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "entry_name": {
+                  "type": "string"
+                },
+                "rna_editing_sites": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "position": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "genomic_location": {
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      },
+                      "variant_locations": {
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      },
+                      "codon": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "consequence_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "wild_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "mutated_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "somatic_status": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "rna_editing_info": {
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "total_sites": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBIProteins_get_variation_by_dbsnp",
+    "description": "Reverse variation lookup by dbSNP rsID from the EBI Proteins API. Given a dbSNP rsID, returns every UniProt protein (including isoforms) that carries that variant, each with the mapped natural-variant features (wild-type and alternative residue, protein position, genomic location, clinical significances, cross-references to ClinVar/COSMIC/dbSNP). Inverse of looking up variants by protein accession. Example: 'rs1042522' (TP53 codon 72 Pro/Arg) returns 11 UniProt entries including TP53 isoforms and A0AAQ5BHX5, each with the position-72 variant feature.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dbsnp_id": {
+          "type": "string",
+          "description": "dbSNP reference SNP ID (rsID). Examples: 'rs1042522' (TP53 Pro72Arg), 'rs429358' (APOE)."
+        }
+      },
+      "required": [
+        "dbsnp_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "variation_dbsnp"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "dbsnp_id": "rs1042522"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "dbsnp_id": {
+                  "type": "string"
+                },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "entry_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "protein_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "taxid": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "features": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "total_features": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "total_entries": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBIProteins_get_variation_by_hgvs",
+    "description": "Reverse variation lookup by HGVS genomic expression from the EBI Proteins API. Given an HGVS genomic-level expression (e.g. 'NC_000017.11:g.7676154G>A'), returns every overlapping UniProt protein with the resulting variant consequence projected onto the protein sequence (wild-type and alternative residue, protein position, genomic location). Use to translate a genomic DNA change into its protein consequence across all affected UniProt entries. Example: 'NC_000017.11:g.7676154G>A' returns 4 UniProt entries; the TP53 (P04637) entry reports VARIANT P->L at residue 72 (the Pro72Leu protein consequence).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hgvs": {
+          "type": "string",
+          "description": "HGVS genomic expression using a RefSeq NC_ accession. Example: 'NC_000017.11:g.7676154G>A' (TP53 region)."
+        }
+      },
+      "required": [
+        "hgvs"
+      ]
+    },
+    "fields": {
+      "endpoint": "variation_hgvs"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "hgvs": "NC_000017.11:g.7676154G>A"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "hgvs": {
+                  "type": "string"
+                },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "entry_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "protein_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "gene_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "taxid": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "features": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      },
+                      "total_features": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "total_entries": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "EBIProteins_get_hpp_peptides",
+    "description": "Get Human Proteome Project (HPP) peptide-level mass-spectrometry evidence mapped to a protein from the EBI Proteins API. Returns HPP-curated peptides that confirm protein expression, each with sequence, start/end position, uniqueness flag, and source (e.g. HppPeptideAtlas). This is the stringent HPP evidence set, distinct from and larger than the generic proteomics peptide set for the same protein. Example: P04637 (TP53) returns 237 HPP features (vs 82 from generic /proteomics), e.g. peptide 'SDSDGLAPPQHLI' at residues 183-195, unique.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "proteomics_hpp"
+    },
+    "type": "EBIProteinsExtTool",
+    "test_examples": [
+      {
+        "accession": "P04637"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "entry_name": {
+                  "type": "string"
+                },
+                "peptides": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "position_start": {
+                        "type": "string"
+                      },
+                      "position_end": {
+                        "type": "string"
+                      },
+                      "peptide": {
+                        "type": "string"
+                      },
+                      "unique": {
+                        "type": "boolean"
+                      },
+                      "evidences": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "source": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "id": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "total_peptides": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

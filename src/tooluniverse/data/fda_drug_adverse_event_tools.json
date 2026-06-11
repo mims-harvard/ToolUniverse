@@ -2298,5 +2298,267 @@
         }
       }
     }
+  },
+  {
+    "type": "FDADrugAdverseEventTool",
+    "name": "FAERS_count_indications_by_drug",
+    "description": "Aggregate FDA adverse event (FAERS) reports for a drug by the INDICATION (the medical condition the drug was being used to treat), returning the distribution of indications across all reports for that drug. Answers 'across all adverse-event reports for drug X, what were the top conditions it was prescribed for?'. Only medicinalproduct is required; the optional serious filter restricts to serious/non-serious reports. Use filters sparingly to avoid overly restrictive searches that return no results. Note: 'PRODUCT USED FOR UNKNOWN INDICATION' is a common term when the prescribing indication was not reported. Data source: FDA Adverse Event Reporting System (FAERS).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "medicinalproduct": {
+          "type": "string",
+          "description": "Drug name (brand or generic, e.g., 'WARFARIN', 'METFORMIN')."
+        },
+        "serious": {
+          "type": "string",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "description": "Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness."
+        }
+      },
+      "required": [
+        "medicinalproduct"
+      ]
+    },
+    "fields": {
+      "search_fields": {
+        "medicinalproduct": [
+          "patient.drug.medicinalproduct"
+        ],
+        "serious": [
+          "serious"
+        ]
+      },
+      "return_fields": [
+        "patient.drug.drugindication.exact"
+      ]
+    },
+    "test_examples": [
+      {
+        "medicinalproduct": "WARFARIN"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": {
+                "type": "string",
+                "description": "Drug indication (condition treated), e.g., 'ATRIAL FIBRILLATION'."
+              },
+              "count": {
+                "type": "integer",
+                "description": "Number of FAERS reports listing this indication for the drug."
+              }
+            }
+          },
+          "description": "Indication distribution ordered by descending count. Empty array when no matching reports are found."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message when the request fails or parameters are invalid."
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "type": "FDADrugAdverseEventTool",
+    "name": "FAERS_count_drug_characterization",
+    "description": "Aggregate FDA adverse event (FAERS) reports for a drug by drugcharacterization, i.e. the role the drug played in the report: Suspect (the drug is suspected of causing the event), Concomitant (co-administered but not suspected), or Interacting (involved in a drug-drug interaction). Answers 'in what fraction of adverse-event reports is drug X the SUSPECT drug versus merely a concomitant/co-administered drug?'. Only medicinalproduct is required; the optional serious filter restricts to serious/non-serious reports. Data source: FDA Adverse Event Reporting System (FAERS).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "medicinalproduct": {
+          "type": "string",
+          "description": "Drug name (brand or generic, e.g., 'WARFARIN', 'METFORMIN')."
+        },
+        "serious": {
+          "type": "string",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "description": "Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness."
+        }
+      },
+      "required": [
+        "medicinalproduct"
+      ]
+    },
+    "fields": {
+      "search_fields": {
+        "medicinalproduct": [
+          "patient.drug.medicinalproduct"
+        ],
+        "serious": [
+          "serious"
+        ]
+      },
+      "return_fields": [
+        "patient.drug.drugcharacterization"
+      ],
+      "return_fields_mapping": {
+        "patient.drug.drugcharacterization": {
+          "1": "Suspect",
+          "2": "Concomitant",
+          "3": "Interacting"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "medicinalproduct": "WARFARIN"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": {
+                "type": "string",
+                "description": "Drug role: 'Suspect', 'Concomitant', or 'Interacting'."
+              },
+              "count": {
+                "type": "integer",
+                "description": "Number of FAERS reports in which the drug had this role."
+              }
+            }
+          },
+          "description": "Drug-characterization distribution ordered by descending count. Empty array when no matching reports are found."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message when the request fails or parameters are invalid."
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "type": "FDADrugAdverseEventTool",
+    "name": "FAERS_count_reporter_qualification",
+    "description": "Aggregate FDA adverse event (FAERS) reports for a drug by the primary-source reporter qualification (who submitted the report): Physician, Pharmacist, Other health professional, Lawyer, or Consumer or non-health professional. Answers 'what share of adverse-event reports for drug X came from physicians/pharmacists versus consumers/lawyers?' - a report-quality and reliability dimension (clinician-sourced reports are generally considered more reliable). Only medicinalproduct is required; the optional serious filter restricts to serious/non-serious reports. Data source: FDA Adverse Event Reporting System (FAERS).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "medicinalproduct": {
+          "type": "string",
+          "description": "Drug name (brand or generic, e.g., 'WARFARIN', 'METFORMIN')."
+        },
+        "serious": {
+          "type": "string",
+          "enum": [
+            "Yes",
+            "No"
+          ],
+          "description": "Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness."
+        }
+      },
+      "required": [
+        "medicinalproduct"
+      ]
+    },
+    "fields": {
+      "search_fields": {
+        "medicinalproduct": [
+          "patient.drug.medicinalproduct"
+        ],
+        "serious": [
+          "serious"
+        ]
+      },
+      "return_fields": [
+        "primarysource.qualification"
+      ],
+      "return_fields_mapping": {
+        "primarysource.qualification": {
+          "1": "Physician",
+          "2": "Pharmacist",
+          "3": "Other health professional",
+          "4": "Lawyer",
+          "5": "Consumer or non-health professional"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "medicinalproduct": "WARFARIN"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "term": {
+                "type": "string",
+                "description": "Reporter qualification, e.g., 'Physician', 'Pharmacist', 'Consumer or non-health professional'."
+              },
+              "count": {
+                "type": "integer",
+                "description": "Number of FAERS reports submitted by a primary source of this qualification."
+              }
+            }
+          },
+          "description": "Reporter-qualification distribution ordered by descending count. Empty array when no matching reports are found."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string",
+              "description": "Error message when the request fails or parameters are invalid."
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

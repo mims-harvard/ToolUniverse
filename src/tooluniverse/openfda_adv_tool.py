@@ -128,6 +128,13 @@ class FDADrugAdverseEventTool(BaseTool):
         mapped_results = []
         for item in response:
             try:
+                # Pass through error sentinels from _search untouched so an
+                # upstream API failure surfaces instead of being masked as a
+                # bogus {"term": None, "count": 0} row.
+                if isinstance(item, dict) and "error" in item and "term" not in item:
+                    mapped_results.append(item)
+                    continue
+
                 term = item.get("term")
                 count = item.get("count", 0)
 
@@ -208,9 +215,9 @@ class FDADrugAdverseEventTool(BaseTool):
                 f"{self.endpoint_url}?search={search_encoded}&count={self.count_field}"
             )
 
-        # API request
+        # API request (30s timeout so a hung connection cannot block the caller)
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=30)
             # Handle 404 as "no matches found" - return empty list instead of error
             if response.status_code == 404:
                 try:

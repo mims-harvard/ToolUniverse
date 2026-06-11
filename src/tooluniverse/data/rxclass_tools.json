@@ -196,5 +196,165 @@
       {"query": "statin", "class_type": "EPC"},
       {"query": "propionic acid"}
     ]
+  },
+  {
+    "name": "RxClass_get_class_hierarchy",
+    "type": "RxClassTool",
+    "description": "Traverse the drug-class hierarchy (ancestor chain / class tree) for a class ID in NLM RxClass via classGraph. Returns the ordered parent chain from a leaf class up to the classification root, with all nodes (classId, className, classType) and edges (child isa parent), plus a precomputed 'ancestor_path' from the requested class to the root. Default source is ATC. No API key required. Example: classId 'N02BA' ('Salicylic acid and derivatives') -> N02BA <- N02B ('OTHER ANALGESICS AND ANTIPYRETICS') <- N02 ('ANALGESICS') <- N ('NERVOUS SYSTEM') <- 0 ('Anatomical Therapeutic Chemical' root), 5 nodes / 4 edges.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "class_id": {
+          "type": "string",
+          "description": "Drug class identifier whose ancestor chain to traverse. ATC class codes: 'N02BA' (salicylic acid derivatives), 'M01AE' (propionic acid derivatives), 'A10BA' (biguanides), 'C09AA' (ACE inhibitors)."
+        },
+        "source": {
+          "type": ["string", "null"],
+          "description": "Optional classification source/vocabulary for the graph. Default: ATC (the API default when omitted). Most ATC class IDs do not require this."
+        }
+      },
+      "required": ["class_id"]
+    },
+    "fields": {
+      "operation": "get_class_hierarchy"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "classId": {"type": "string"},
+                      "className": {"type": "string"},
+                      "classType": {"type": "string"}
+                    }
+                  }
+                },
+                "edges": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "child": {"type": "string"},
+                      "rela": {"type": "string"},
+                      "parent": {"type": "string"}
+                    }
+                  }
+                },
+                "ancestor_path": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "classId": {"type": "string"},
+                      "className": {"type": "string"},
+                      "classType": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"class_id": "N02BA"},
+      {"class_id": "M01AE"},
+      {"class_id": "A10BA"}
+    ]
+  },
+  {
+    "name": "RxClass_get_disease_relations",
+    "type": "RxClassTool",
+    "description": "Get MED-RT drug<->disease relations (may_treat, may_prevent, CI_with, induces, has_PE) from NLM RxClass, in either direction. FORWARD: pass 'drug_name' or 'rxcui' to get the MED-RT disease classes a drug relates to (e.g. drug_name='albuterol', rela='may_treat' -> Asthma D001249, Bronchial Spasm D001986). REVERSE: pass 'class_id' (a MeSH-style disease class ID) to list all ingredient drugs that relate to that disease (e.g. class_id='D001249' (Asthma), rela='may_treat' -> terbutaline, theophylline, zafirlukast, ... 42 ingredients). Uses relaSource=MEDRT which the standard drug-class tool does not expose. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": ["string", "null"],
+          "description": "Forward lookup: drug name. Examples: 'albuterol', 'aspirin', 'metoprolol'. Provide this OR 'rxcui' OR 'class_id'."
+        },
+        "rxcui": {
+          "type": ["string", "null"],
+          "description": "Forward lookup: RxNorm RXCUI (alternative to drug_name)."
+        },
+        "class_id": {
+          "type": ["string", "null"],
+          "description": "Reverse lookup: MED-RT/MeSH disease class ID to find all related drugs for. Examples: 'D001249' (Asthma), 'D001986' (Bronchial Spasm), 'D003920' (Diabetes Mellitus)."
+        },
+        "rela": {
+          "type": ["string", "null"],
+          "description": "MED-RT relationship to filter on. Options: 'may_treat', 'may_prevent', 'CI_with' (contraindicated with), 'induces', 'has_PE' (has physiologic effect), 'has_MoA', 'has_EPC'. Default: all relations."
+        },
+        "ttys": {
+          "type": ["string", "null"],
+          "description": "Reverse lookup only: RxNorm term types for returned drugs. Options: 'IN' (ingredients, default), 'PIN', 'MIN', 'SCD'. Default: 'IN'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_disease_relations"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "success"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classId": {"type": "string"},
+                  "className": {"type": "string"},
+                  "classType": {"type": "string"},
+                  "rela": {"type": "string"},
+                  "rxcui": {"type": "string"},
+                  "drugName": {"type": "string"},
+                  "name": {"type": "string"},
+                  "tty": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "const": "error"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"drug_name": "albuterol", "rela": "may_treat"},
+      {"class_id": "D001249", "rela": "may_treat", "ttys": "IN"},
+      {"drug_name": "aspirin"}
+    ]
   }
 ]

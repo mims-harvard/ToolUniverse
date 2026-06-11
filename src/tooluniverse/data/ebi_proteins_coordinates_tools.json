@@ -94,5 +94,96 @@
                 }
             ]
         }
+    },
+    {
+        "name": "EBIProteins_get_proteins_by_genomic_loc",
+        "description": "Reverse genome-to-protein coordinate lookup from the EBI Proteins API: given a genomic position (taxonomy + chromosome:position), return all UniProt proteins whose coding sequence overlaps that position, with exon-level mapping (accession, Ensembl gene/transcript/translation IDs, protein start/end residue, amino acid, chromosome, strand, assembly). Inverse of EBIProteins_get_coordinate_mapping. Use to find which proteins a chromosomal variant affects and at which residue. Example: taxonomy 9606, location '17:7676154' returns 18 entries including TP53 (P04637) at protein residue 72 (Pro) on ENST00000923569.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "taxonomy": {
+                    "type": ["string", "integer"],
+                    "description": "NCBI taxonomy ID. Default '9606' (human). Example: 9606 (Homo sapiens), 10090 (mouse)."
+                },
+                "location": {
+                    "type": ["string", "null"],
+                    "description": "Genomic location as 'chromosome:position' (1-based). Example: '17:7676154'. Provide this OR both 'chromosome' and 'position'."
+                },
+                "chromosome": {
+                    "type": ["string", "integer", "null"],
+                    "description": "Chromosome (used with 'position' if 'location' not given). Example: '17', 'X'."
+                },
+                "position": {
+                    "type": ["string", "integer", "null"],
+                    "description": "1-based genomic position (used with 'chromosome' if 'location' not given). Example: 7676154."
+                }
+            },
+            "required": []
+        },
+        "fields": {
+            "endpoint": "glocation"
+        },
+        "type": "EBIProteinsCoordinatesTool",
+        "test_examples": [
+            {
+                "taxonomy": "9606",
+                "location": "17:7676154"
+            },
+            {
+                "taxonomy": "9606",
+                "chromosome": "17",
+                "position": 7676154
+            }
+        ],
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "required": ["status"],
+                    "properties": {
+                        "status": {"const": "success"},
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "taxonomy": {"type": "string"},
+                                "location": {"type": "string"},
+                                "proteins": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "accession": {"type": ["string", "null"]},
+                                            "entry_type": {"type": ["string", "null"]},
+                                            "taxid": {"type": ["integer", "null"]},
+                                            "ensembl_gene_id": {"type": ["string", "null"]},
+                                            "ensembl_transcript_id": {"type": ["string", "null"]},
+                                            "ensembl_translation_id": {"type": ["string", "null"]},
+                                            "protein_start": {"type": ["integer", "null"]},
+                                            "protein_end": {"type": ["integer", "null"]},
+                                            "amino_acids": {"type": ["string", "null"]},
+                                            "chromosome": {"type": ["string", "null"]},
+                                            "gene_start": {"type": ["integer", "null"]},
+                                            "gene_end": {"type": ["integer", "null"]},
+                                            "reverse_strand": {"type": ["boolean", "null"]},
+                                            "assembly_name": {"type": ["string", "null"]}
+                                        }
+                                    }
+                                },
+                                "total_proteins": {"type": ["integer", "number"]}
+                            }
+                        },
+                        "metadata": {"type": "object"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "required": ["status", "error"],
+                    "properties": {
+                        "status": {"const": "error"},
+                        "error": {"type": "string"}
+                    }
+                }
+            ]
+        }
     }
 ]

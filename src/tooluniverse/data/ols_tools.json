@@ -738,5 +738,131 @@
         }
       }
     }
+  },
+  {
+    "type": "OLSTool",
+    "name": "ols_get_term_xrefs",
+    "description": "Get the cross-references (obo_xref) of an ontology term in OLS — the canonical OxO-replacement ID-mapping tool. Translates any OLS term (EFO, MONDO, UBERON, CL, MAXO, GO, CHEBI, ORDO, etc.) to its equivalent identifiers in external vocabularies such as DOID, ICD10CM/ICD10WHO, OMIM, UMLS, MeSH, NCIt, SNOMED/SCTID, MedGen, and MedDRA. Pass a CURIE-style term ID (e.g. 'EFO:0004611' or 'MONDO:0005148'); the ontology is auto-inferred from the prefix. Each xref includes the source database, local id, a combined CURIE, and a resolver URL.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_term_xrefs",
+          "description": "The operation to perform (get_term_xrefs)"
+        },
+        "id": {
+          "type": "string",
+          "description": "Ontology term CURIE (e.g. 'EFO:0004611', 'MONDO:0005148', 'UBERON:0002107')."
+        },
+        "term_id": {
+          "type": "string",
+          "description": "Alias for id — ontology term CURIE (e.g. 'MONDO:0005148')."
+        },
+        "obo_id": {
+          "type": "string",
+          "description": "Alias for id — OBO-style term identifier (e.g. 'EFO:0004611')."
+        },
+        "term_iri": {
+          "type": "string",
+          "description": "Alias for id — may also pass a full IRI/short-form term identifier."
+        },
+        "ontology": {
+          "type": "string",
+          "description": "Ontology ID (e.g. 'efo', 'mondo', 'go'). Auto-inferred from the term CURIE prefix when not supplied."
+        }
+      },
+      "required": []
+    },
+    "examples": [
+      {
+        "description": "Map an EFO measurement term to its NCIt/SNOMED equivalents",
+        "arguments": {
+          "operation": "get_term_xrefs",
+          "id": "EFO:0004611"
+        }
+      },
+      {
+        "description": "Map MONDO type 2 diabetes to DOID/ICD10/OMIM/UMLS/MeSH/NCIT/SNOMED",
+        "arguments": {
+          "operation": "get_term_xrefs",
+          "id": "MONDO:0005148"
+        }
+      }
+    ],
+    "tags": [
+      "ontology",
+      "xref",
+      "mapping",
+      "identifier",
+      "ebi",
+      "ols"
+    ],
+    "author": "EBI OLS",
+    "version": "1.0.0",
+    "test_examples": [
+      {
+        "id": "EFO:0004611"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Success: the `data` payload with the term's cross-references.",
+          "properties": {
+            "obo_id": {
+              "type": "string"
+            },
+            "iri": {
+              "type": ["string", "null"]
+            },
+            "label": {
+              "type": ["string", "null"]
+            },
+            "ontology_name": {
+              "type": ["string", "null"]
+            },
+            "is_obsolete": {
+              "type": "boolean"
+            },
+            "xrefs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": ["string", "null"]
+                  },
+                  "id": {
+                    "type": ["string", "null"]
+                  },
+                  "curie": {
+                    "type": ["string", "null"]
+                  },
+                  "url": {
+                    "type": ["string", "null"]
+                  },
+                  "description": {
+                    "type": ["string", "null"]
+                  }
+                }
+              }
+            }
+          },
+          "required": ["obo_id", "xrefs"]
+        },
+        {
+          "type": "object",
+          "description": "Error: run() returns {status: error, error: <message>} with no data payload.",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

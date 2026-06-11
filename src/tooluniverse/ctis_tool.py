@@ -26,35 +26,145 @@ _HEADERS = {
 }
 
 
+# Maps friendly argument names to CTIS searchCriteria keys. List-valued
+# CTIS filters take arrays of string codes; the rest take scalars.
+_CTIS_LIST_FILTERS = {
+    "status": "status",
+    "trial_phase_code": "trialPhaseCode",
+    "age_group_code": "ageGroupCode",
+    "gender_code": "genderCode",
+    "therapeutic_area": "therapeuticArea",
+    "msc": "msc",
+    "country": "msc",
+    "trial_region_code": "trialRegionCode",
+    "sponsor_type_code": "sponsorTypeCode",
+}
+_CTIS_SCALAR_FILTERS = {
+    "medical_condition": "medicalCondition",
+    "sponsor": "sponsor",
+    "has_study_results": "hasStudyResults",
+    "sort_by": "sortBy",
+}
+
+
+def _pagination(arguments: Dict[str, Any]) -> Dict[str, int]:
+    """Build a CTIS pagination block from limit/page arguments (1<=size<=100)."""
+    try:
+        size = int(arguments.get("limit") or 10)
+    except (TypeError, ValueError):
+        size = 10
+    try:
+        page = int(arguments.get("page") or 1)
+    except (TypeError, ValueError):
+        page = 1
+    return {"page": max(1, page), "size": max(1, min(size, 100))}
+
+
+def _coerce_list(value: Any) -> list:
+    """Normalize a filter value to a list (CTIS list filters expect arrays)."""
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [v for v in value if v not in (None, "")]
+    return [value]
+
+
+def _build_search_criteria(arguments: Dict[str, Any]) -> Dict[str, Any]:
+    """Assemble a CTIS searchCriteria dict from filtered-search arguments."""
+    criteria: Dict[str, Any] = {}
+    contain_all = (arguments.get("query") or arguments.get("contain_all") or "").strip()
+    if contain_all:
+        criteria["containAll"] = contain_all
+
+    for arg_name, api_key in _CTIS_SCALAR_FILTERS.items():
+        val = arguments.get(arg_name)
+        if val is None:
+            continue
+        if isinstance(val, str) and not val.strip():
+            continue
+        criteria[api_key] = val
+
+    for arg_name, api_key in _CTIS_LIST_FILTERS.items():
+        items = _coerce_list(arguments.get(arg_name))
+        if not items:
+            continue
+        # status codes are integers in the CTIS API; other filters are strings.
+        if api_key == "status":
+            coerced = []
+            for it in items:
+                try:
+                    coerced.append(int(it))
+                except (TypeError, ValueError):
+                    coerced.append(it)
+            criteria.setdefault(api_key, [])
+            criteria[api_key].extend(coerced)
+        else:
+            criteria.setdefault(api_key, [])
+            criteria[api_key].extend(str(it) for it in items)
+    return criteria
+
+
 @register_tool("CTISSearchTrialsTool")
 class CTISSearchTrialsTool(BaseTool):
-    """Search EU CTIS clinical trials by free text."""
+    """Search EU CTIS clinical trials by free text or structured filters.
+
+    Behavior is selected by the tool's configured ``name``: the
+    ``CTIS_search_trials_filtered`` entry assembles a structured
+    ``searchCriteria`` body from filter arguments (status, medical condition,
+    phase, age group, gender, has-results, sponsor, country/MSC, etc.), while
+    every other entry performs the original ``containAll`` free-text search.
+    """
 
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
         self.timeout = tool_config.get("fields", {}).get("timeout", 30)
+        self._tool_name = (tool_config.get("name") or "").strip()
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        if self._tool_name == "CTIS_search_trials_filtered":
+            return self._run_filtered(arguments)
+        return self._run_freetext(arguments)
+
+    def _run_filtered(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        criteria = _build_search_criteria(arguments)
+        if not criteria:
+            return {
+                "status": "error",
+                "error": (
+                    "At least one search filter is required (e.g. "
+                    "medical_condition, query/contain_all, status, "
+                    "trial_phase_code, age_group_code, sponsor)."
+                ),
+            }
+        return self._search(arguments, criteria, {"search_criteria": criteria})
+
+    def _run_freetext(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         query = (arguments.get("query") or "").strip()
         if not query:
             return {
                 "status": "error",
                 "error": "'query' is required (e.g. 'breast cancer')",
             }
-        try:
-            size = int(arguments.get("limit") or 10)
-        except (TypeError, ValueError):
-            size = 10
-        size = max(1, min(size, 100))
-        try:
-            page = int(arguments.get("page") or 1)
-        except (TypeError, ValueError):
-            page = 1
+        return self._search(arguments, {"containAll": query}, {"query": query})
 
+    def _search(
+        self,
+        arguments: Dict[str, Any],
+        criteria: Dict[str, Any],
+        extra_meta: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Run a CTIS search with the given criteria and format the results."""
         body = {
-            "pagination": {"page": max(1, page), "size": size},
-            "searchCriteria": {"containAll": query},
+            "pagination": _pagination(arguments),
+            "searchCriteria": criteria,
         }
+        result = self._post_search(body)
+        if isinstance(result, dict) and result.get("status") == "error":
+            return result
+        return self._format_results(result, extra_meta)
+
+    def _post_search(self, body: Dict[str, Any]) -> Any:
+        """POST to the CTIS search endpoint. Returns parsed JSON or an error dict."""
         try:
             resp = requests.post(
                 f"{CTIS_BASE}/search", json=body, headers=_HEADERS, timeout=self.timeout
@@ -70,7 +180,10 @@ class CTISSearchTrialsTool(BaseTool):
             return {"status": "error", "error": f"CTIS request failed: {e}"}
         except ValueError:
             return {"status": "error", "error": "CTIS returned a non-JSON response"}
+        return payload
 
+    @staticmethod
+    def _format_results(payload: Any, extra_meta: Dict[str, Any]) -> Dict[str, Any]:
         items = payload.get("data", []) if isinstance(payload, dict) else []
         pag = payload.get("pagination", {}) if isinstance(payload, dict) else {}
         trials = [
@@ -84,25 +197,26 @@ class CTISSearchTrialsTool(BaseTool):
                 "sponsor": it.get("sponsor"),
                 "sponsor_type": it.get("sponsorType"),
                 "countries": it.get("trialCountries"),
+                "age_group": it.get("ageGroup"),
+                "gender": it.get("gender"),
+                "trial_region": it.get("trialRegion"),
                 "total_enrolled": it.get("totalNumberEnrolled"),
+                "results_first_received": it.get("resultsFirstReceived"),
                 "start_date_eu": it.get("startDateEU"),
                 "last_updated": it.get("lastUpdated"),
             }
             for it in items
             if isinstance(it, dict)
         ]
-        return {
-            "status": "success",
-            "data": trials,
-            "metadata": {
-                "total_records": pag.get("totalRecords"),
-                "page": pag.get("currentPage"),
-                "total_pages": pag.get("totalPages"),
-                "returned": len(trials),
-                "query": query,
-                "source": "EU CTIS",
-            },
+        metadata = {
+            "total_records": pag.get("totalRecords"),
+            "page": pag.get("currentPage"),
+            "total_pages": pag.get("totalPages"),
+            "returned": len(trials),
+            "source": "EU CTIS",
         }
+        metadata.update(extra_meta)
+        return {"status": "success", "data": trials, "metadata": metadata}
 
 
 @register_tool("CTISGetTrialTool")

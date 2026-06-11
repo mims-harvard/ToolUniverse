@@ -303,5 +303,147 @@
         "unii": "9100L32L2N"
       }
     ]
+  },
+  {
+    "name": "FDAGSRS_get_substance_relationships",
+    "type": "FDAGSRSTool",
+    "description": "Get the FDA GSRS substance relationship graph plus regulatory references for a substance by UNII. Returns the full set of relationship edges that the default substance view drops as unexpanded link stubs: salt/solvate->parent, impurity->parent, metabolite->parent (including METABOLITE ACTIVE / METABOLITE INACTIVE), prodrug->metabolite-active, and the active moiety, each with the related substance name+UNII, interaction type, qualification, amount, and comments. Also returns the regulatory/literature references attached to the record. No API key required. Example: UNII 'R16CO5Y76E' (aspirin) -> 37 relationships + 78 references.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "unii": {
+          "type": "string",
+          "description": "FDA UNII (Unique Ingredient Identifier) code. Examples: 'R16CO5Y76E' (aspirin), '9100L32L2N' (ibuprofen), '4T6H12BN9U' (metformin)."
+        },
+        "relationship_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional case-insensitive substring filter on relationship type. Examples: 'METABOLITE', 'SALT/SOLVATE', 'IMPURITY', 'PRODRUG', 'ACTIVE MOIETY'. Default: no filter (all relationships)."
+        },
+        "include_references": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether to include the regulatory/literature references attached to the record. Default: true."
+        },
+        "max_references": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of references to return (1-500, default 100)."
+        }
+      },
+      "required": [
+        "unii"
+      ]
+    },
+    "fields": {
+      "operation": "get_substance_relationships"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "uuid": {
+                  "type": "string"
+                },
+                "unii": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "substanceClass": {
+                  "type": "string"
+                },
+                "relationships": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "relatedSubstanceName": {
+                        "type": "string"
+                      },
+                      "relatedSubstanceUnii": {
+                        "type": "string"
+                      },
+                      "relatedSubstanceClass": {
+                        "type": "string"
+                      },
+                      "interactionType": {
+                        "type": "string"
+                      },
+                      "qualification": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "string"
+                      },
+                      "comments": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "references": {
+                  "type": "array"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "unii": "R16CO5Y76E"
+      },
+      {
+        "unii": "R16CO5Y76E",
+        "relationship_type": "METABOLITE"
+      },
+      {
+        "unii": "9100L32L2N",
+        "include_references": false
+      }
+    ]
   }
 ]
