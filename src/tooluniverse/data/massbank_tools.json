@@ -213,5 +213,354 @@
         }
       ]
     }
+  },
+  {
+    "name": "MassBank_spectral_similarity_search",
+    "description": "Identify an unknown metabolite by spectral library similarity search against MassBank Europe. Submit a query MS/MS peak list (m/z and intensity pairs) and receive cosine-scored, ranked library matches (highest similarity first). This is the core unknown-metabolite identification workflow: acquire an MS/MS spectrum of an unknown, then match it against MassBank's open reference library to find candidate compound identities. Returns a list of records each with a MassBank accession (resolve full compound info with MassBank_get_record_by_accession) and a cosine similarity score in [0,1] (1.0 = identical). Example: peak_list '138.0661;100,110.0712;40,195.0877;60' returns 422 ranked hits, top MSBNK-BAFG-CSL2311094669 at score 0.978714.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "peak_list": {
+          "type": "string",
+          "description": "Query MS/MS peak list as comma-separated 'mz;intensity' pairs. Format: 'mz1;int1,mz2;int2,...'. Example: '138.0661;100,110.0712;40,195.0877;60'. Intensities may be absolute or relative; cosine scoring is intensity-weighted."
+        },
+        "peak_list_threshold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Minimum cosine similarity score (0-1) for a record to be returned. Higher = stricter. Default 0.5. Lower it (e.g. 0.3) to widen the candidate set, raise it (e.g. 0.8) for high-confidence matches only."
+        }
+      },
+      "required": [
+        "peak_list"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://massbank.eu/MassBank-api/records/search",
+      "extract_path": "data"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "peak_list": "138.0661;100,110.0712;40,195.0877;60",
+        "peak_list_threshold": 0.5
+      },
+      {
+        "peak_list": "195.0877;100,138.0661;30",
+        "peak_list_threshold": 0.6
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "description": "Ranked library matches, highest cosine score first",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string",
+                    "description": "MassBank record accession (e.g., MSBNK-BAFG-CSL2311094669). Resolve full record with MassBank_get_record_by_accession."
+                  },
+                  "score": {
+                    "type": "number",
+                    "description": "Cosine similarity score in [0,1]; 1.0 = identical spectrum"
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MassBank_get_record_by_accession",
+    "description": "Retrieve a complete MassBank Europe spectrum record by its accession identifier. Returns the full record: title, acquisition parameters (instrument type, MS level, ionization mode, collision energy, precursor type/adduct), the compound block (names/synonyms, molecular formula, exact monoisotopic mass, SMILES, InChI), spectral peaks with the SPLASH hash, and cross-references to external databases (CAS, CHEBI, KEGG, PubChem). Use this to resolve an accession returned by MassBank_spectral_similarity_search, MassBank_search_records_advanced, or MassBank_search_by_compound into a full annotated spectrum. Example: MSBNK-Athens_Univ-AU276601 returns Caffeine (formula C8H10N4O2, mass 194.0803756), LC-ESI-QTOF, MS2, [M+H]+, with links to CAS 58-08-2 and CHEBI:27732.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "MassBank record accession identifier (e.g., 'MSBNK-Athens_Univ-AU276601', 'MSBNK-BAFG-CSL2311094669'). These are returned by the MassBank search tools."
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://massbank.eu/MassBank-api/records/{accession}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "accession": "MSBNK-Athens_Univ-AU276601"
+      },
+      {
+        "accession": "MSBNK-BAFG-CSL2311094669"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "description": "Full MassBank spectrum record",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Spectrum title with compound, instrument, MS level, collision energy and precursor type"
+                },
+                "compound": {
+                  "type": "object",
+                  "properties": {
+                    "names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "formula": {
+                      "type": "string"
+                    },
+                    "mass": {
+                      "type": "number"
+                    },
+                    "smiles": {
+                      "type": "string"
+                    },
+                    "inchi": {
+                      "type": "string"
+                    },
+                    "link": {
+                      "type": "array",
+                      "description": "External DB cross-references (CAS, CHEBI, KEGG, PubChem)",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "database": {
+                            "type": "string"
+                          },
+                          "identifier": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "acquisition": {
+                  "type": "object",
+                  "description": "Instrument and MS acquisition parameters"
+                },
+                "peak": {
+                  "type": "object",
+                  "description": "Spectral peaks with SPLASH hash"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "MassBank_search_records_advanced",
+    "description": "Filtered search of the MassBank Europe spectral library using one or more criteria combined as AND filters. Filters: exact_mass (+ mass_tolerance in Da), peaks (m/z fragment peak), neutral_loss (m/z difference), ion_mode (POSITIVE/NEGATIVE), ms_type (MS, MS2, MS3), instrument_type, substructure (SMILES/SMARTS substructure match), contributor, and compound_class. Returns matching MassBank accessions; resolve each to a full annotated spectrum with MassBank_get_record_by_accession. Useful for narrowing candidate spectra when you know a compound's mass, a diagnostic fragment, a neutral-loss, or a structural motif. Examples (vs ~139006 total records, proving each filters): exact_mass=194.0804 & mass_tolerance=0.005 -> 182; peaks=138.0661 -> 4141; ion_mode=POSITIVE -> 97745; ms_type=MS2 & ion_mode=NEGATIVE -> 38390; substructure=c1ccccc1 -> 81644; neutral_loss=18.0106 -> 9911.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "exact_mass": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Exact monoisotopic mass to match (Da). Combine with mass_tolerance. Example: 194.0804 for caffeine."
+        },
+        "mass_tolerance": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Mass tolerance window in Da for exact_mass (e.g., 0.005). Only meaningful together with exact_mass."
+        },
+        "peaks": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Fragment peak m/z value(s) that must be present (e.g., '138.0661')."
+        },
+        "neutral_loss": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Neutral loss m/z difference that must be present (e.g., '18.0106' for water loss)."
+        },
+        "ion_mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ionization polarity: 'POSITIVE' or 'NEGATIVE'."
+        },
+        "ms_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MS level: 'MS', 'MS2', or 'MS3'."
+        },
+        "instrument_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Instrument type filter (e.g., 'LC-ESI-QTOF', 'LC-ESI-ITFT')."
+        },
+        "substructure": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "SMILES/SMARTS substructure that the compound must contain (e.g., 'c1ccccc1' for a benzene ring)."
+        },
+        "contributor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Contributing institution/library filter."
+        },
+        "compound_class": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Chemical compound class filter."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "https://massbank.eu/MassBank-api/records/search",
+      "extract_path": "data"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "exact_mass": 194.0804,
+        "mass_tolerance": 0.005
+      },
+      {
+        "peaks": "138.0661"
+      },
+      {
+        "ms_type": "MS2",
+        "ion_mode": "NEGATIVE"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "description": "Matching MassBank records (filtered set)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string",
+                    "description": "MassBank record accession. Resolve full record with MassBank_get_record_by_accession."
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

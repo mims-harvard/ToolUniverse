@@ -231,5 +231,227 @@
         }
       ]
     }
+  },
+  {
+    "name": "GNPS_get_library_record",
+    "description": "Retrieve a full GNPS library reference spectrum record by its SpectrumID / CCMSLIB accession. GNPS (Global Natural Products Social Molecular Networking) hosts the world's largest community-curated MS/MS reference spectral library. Returns the compound annotation: Compound_Name, Adduct, SMILES, InChI/InChIKey, Ion_Source, Instrument, ionization mode, precursor m/z, charge, contributing PI, library membership (e.g. GNPS-LIBRARY), CAS, and PubMed id. Use this to resolve a CCMSLIB accession (e.g. from a molecular-networking hit) into its annotated reference compound. Example: CCMSLIB00005435737 -> Compound_Name 'Lovastatin M+H; Mevinolin annotated in standard', Adduct M+H, library GNPS-LIBRARY; CCMSLIB00000001547 -> '3-Des-Microcystein_LR'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "spectrum_id": {
+          "type": "string",
+          "description": "GNPS library SpectrumID / CCMSLIB accession (e.g. 'CCMSLIB00005435737')."
+        }
+      },
+      "required": [
+        "spectrum_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_library_record"
+    },
+    "type": "GNPSTool",
+    "test_examples": [
+      {
+        "spectrum_id": "CCMSLIB00005435737"
+      },
+      {
+        "spectrum_id": "CCMSLIB00000001547"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "spectrum_id": {
+                  "type": "string"
+                },
+                "compound_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "adduct": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ion_source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "instrument": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ion_mode": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "precursor_mz": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "library_membership": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "pi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GNPS_npclassifier_from_smiles",
+    "description": "NP Classifier: de novo natural-product biosynthetic classification of an arbitrary chemical structure from its SMILES. Returns the predicted biosynthetic pathway, superclass, and class, plus an is_glycoside flag. Unlike chemical-ontology classifiers, NP Classifier organizes molecules by natural-product biosynthesis (e.g. alkaloids, terpenoids, polyketides), making it the standard for annotating metabolites and natural products in untargeted metabolomics / molecular-networking workflows. Works on any SMILES (no library lookup needed). Example: caffeine SMILES 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C' -> class 'Purine alkaloids', superclass 'Pseudoalkaloids', pathway 'Alkaloids', is_glycoside false.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "SMILES string of the structure to classify (e.g. 'CN1C=NC2=C1C(=O)N(C)C(=O)N2C' for caffeine)."
+        }
+      },
+      "required": [
+        "smiles"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "npclassifier"
+    },
+    "type": "GNPSTool",
+    "test_examples": [
+      {
+        "smiles": "CN1C=NC2=C1C(=O)N(C)C(=O)N2C"
+      },
+      {
+        "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "smiles": {
+                  "type": "string"
+                },
+                "class": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "superclass": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "pathway": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "is_glycoside": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]
