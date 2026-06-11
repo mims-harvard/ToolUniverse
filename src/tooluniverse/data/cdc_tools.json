@@ -1850,5 +1850,131 @@
         "limit": 2
       }
     ]
+  },
+  {
+    "name": "cdc_data_aggregate",
+    "description": "Run server-side SoQL aggregation on a CDC Data.CDC.gov (Socrata) dataset using the /resource/{dataset_id}.json endpoint, which (unlike cdc_data_get_dataset's legacy /api/views endpoint) honors $select/$group/$having/$query. Compute grouped statistics across the ENTIRE dataset server-side (counts/sum/avg per disease event, per state, per year) instead of downloading up to 50000 raw rows and aggregating client-side. Provide select_clause with an aggregate (e.g. 'event, count(*)') plus group_clause ('event'), OR provide a full soql_query (e.g. 'SELECT event, count(*) AS n GROUP BY event ORDER BY n DESC LIMIT 10'). Field names are the dataset's API field names (lowercase). Find dataset_id with cdc_data_search_datasets and inspect field names via cdc_data_get_dataset. No authentication required.",
+    "type": "CDCRESTTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataset_id": {
+          "type": "string",
+          "description": "Dataset ID (Socrata 4x4 resource id) from Data.CDC.gov, e.g. 'jkcx-ndu8' (weekly notifiable disease counts)."
+        },
+        "select_clause": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "SoQL $select expression, typically grouping columns plus an aggregate function. Examples: 'event, count(*)', 'states, sum(m1)', 'avg(value) AS mean'. Aggregate result columns are named like 'count_1', 'sum_m1' unless you add 'AS alias'."
+        },
+        "group_clause": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "SoQL $group expression: comma-separated non-aggregate columns in select_clause. Examples: 'event', 'states, year'."
+        },
+        "where_clause": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional SoQL $where filter applied before aggregation. Example: \"year = '2019'\", \"states = 'ALABAMA'\"."
+        },
+        "having_clause": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional SoQL $having filter applied to aggregated groups. Example: 'count(*) > 100'."
+        },
+        "order_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional SoQL $order expression. Example: 'count_1 DESC', 'event ASC'."
+        },
+        "soql_query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional full SoQL query string. When provided it OVERRIDES select_clause/where_clause/group_clause/having_clause/order_by/limit/offset (it must carry its own clauses). Example: 'SELECT event, count(*) AS n GROUP BY event ORDER BY n DESC LIMIT 10'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of grouped result rows to return (default 50, max 50000). Ignored when soql_query is provided.",
+          "default": 50
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of result rows to skip for pagination (default 0). Ignored when soql_query is provided.",
+          "default": 0
+        }
+      },
+      "required": [
+        "dataset_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "/resource/{dataset_id}.json",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Aggregated result rows. Each object maps the selected/grouped columns to values; aggregate columns are strings (e.g. {'event': 'Acute Hepatitis B', 'count_1': '1235'}).",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error payload",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "dataset_id": "jkcx-ndu8",
+        "select_clause": "event, count(*)",
+        "group_clause": "event",
+        "limit": 5
+      },
+      {
+        "dataset_id": "jkcx-ndu8",
+        "select_clause": "count(*)"
+      },
+      {
+        "dataset_id": "jkcx-ndu8",
+        "soql_query": "SELECT event, count(*) AS n GROUP BY event ORDER BY n DESC LIMIT 5"
+      }
+    ]
   }
 ]

@@ -223,5 +223,113 @@
         }
       ]
     }
+  },
+  {
+    "name": "WHOGHO_list_dimension_values",
+    "description": "Decode WHO GHO dimension codes into human-readable labels and the country->region hierarchy. WHOGHO_get_indicator_data returns cryptic codes (SpatialDim='ABW', Dim1='SEX_FMLE'/'AGEGROUP_AGE0-4', region 'AFR'); this tool resolves every code in a dimension to a Title and gives the country->region rollup via ParentCode (e.g. ABW -> Aruba -> AMR/Americas). Use it to interpret results, build correct $filter clauses for WHOGHO_get_indicator_data, and aggregate countries into WHO regions. Common dimension_code values: 'COUNTRY' (234 ISO-3 country codes + region rollup), 'REGION' (6 WHO regions: AFR/AMR/EMR/EUR/SEAR/WPR), 'SEX' (SEX_BTSX/SEX_MLE/SEX_FMLE), 'AGEGROUP' (e.g. AGEGROUP_AGE0-4), 'GHO' (indicator codes), 'YEAR'. Pass 'Dimension' (capital D, no DimensionValues) to enumerate all 195 dimensions. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dimension_code": {
+          "type": "string",
+          "description": "WHO GHO dimension code whose values to list. Examples: 'COUNTRY' (countries + region parent), 'REGION' (WHO regions), 'SEX', 'AGEGROUP', 'GHO', 'YEAR', 'WORLDBANKINCOMEGROUP'. Special value 'Dimension' (case-sensitive) lists all 195 available dimension codes instead of the values of one dimension."
+        }
+      },
+      "required": [
+        "dimension_code"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://ghoapi.azureedge.net/api/DIMENSION/{dimension_code}/DimensionValues",
+      "return_format": "JSON"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "dimension_code": "COUNTRY"
+      },
+      {
+        "dimension_code": "SEX"
+      },
+      {
+        "dimension_code": "REGION"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "OData envelope. The 'value' array holds the dimension values (code -> label, with parent rollup).",
+          "properties": {
+            "value": {
+              "type": "array",
+              "description": "List of dimension values",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Dimension value code as returned by WHOGHO_get_indicator_data (e.g. 'ABW', 'SEX_FMLE', 'AGEGROUP_AGE0-4', 'AMR')"
+                  },
+                  "Title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Human-readable label (e.g. 'Aruba', 'Female', '0-4 years of age', 'Americas')"
+                  },
+                  "Dimension": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The dimension this value belongs to (e.g. 'COUNTRY')"
+                  },
+                  "ParentDimension": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parent dimension for hierarchical rollup (e.g. 'REGION' for COUNTRY)"
+                  },
+                  "ParentCode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parent code for rollup (e.g. 'AMR' for country 'ABW')"
+                  },
+                  "ParentTitle": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parent label (e.g. 'Americas' for country 'ABW')"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error payload",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]
