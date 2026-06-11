@@ -251,6 +251,7 @@ STATIC_LAZY_REGISTRY = {
     "GDCClinicalDataTool": "gdc_tool",
     "GDCFilesTool": "gdc_tool",
     "GDCGeneExpressionTool": "gdc_tool",
+    "GDCMutationFreqByProjectTool": "gdc_tool",
     "GDCMutationFrequencyTool": "gdc_tool",
     "GDCProjectsTool": "gdc_tool",
     "GDCSSMTool": "gdc_tool",
