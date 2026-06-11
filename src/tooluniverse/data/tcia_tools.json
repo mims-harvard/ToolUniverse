@@ -444,5 +444,196 @@
         }
       ]
     }
+  },
+  {
+    "name": "TCIA_get_patients",
+    "description": "List the patients (subjects) in a TCIA imaging collection. Returns patient-level fields not available from study-level tools: PatientId, PatientName, Phantom (whether the subject is a phantom test object vs a real patient), and SpeciesCode/SpeciesDescription (e.g. '337915000' / 'Homo sapiens'). Use this to enumerate subjects and filter human vs phantom/animal subjects. Filter by collection name. Example collections: 'LIDC-IDRI', 'TCGA-GBM', 'TCGA-LUAD'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "Collection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Collection name to list patients for (e.g., 'LIDC-IDRI', 'TCGA-GBM'). Omit to list patients across all collections."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getPatient"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "Collection": "LIDC-IDRI"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of patient objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "PatientId": {
+                "type": "string",
+                "description": "Patient identifier (e.g., 'LIDC-IDRI-0001')"
+              },
+              "PatientName": {
+                "type": "string",
+                "description": "Patient name (usually empty for de-identified data)"
+              },
+              "Collection": {
+                "type": "string",
+                "description": "Collection the patient belongs to"
+              },
+              "Phantom": {
+                "type": "string",
+                "description": "'YES' if the subject is a phantom test object, 'NO' for a real patient"
+              },
+              "SpeciesCode": {
+                "type": "string",
+                "description": "SNOMED species code (e.g., '337915000' for Homo sapiens)"
+              },
+              "SpeciesDescription": {
+                "type": "string",
+                "description": "Species description (e.g., 'Homo sapiens')"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_sop_instance_uids",
+    "description": "List the SOP Instance UIDs of every individual DICOM image (slice) within a TCIA imaging series. This is the deepest granularity below a series: each returned object is a single image instance. Use this to enumerate or reference individual slices. Requires a SeriesInstanceUID, obtained from TCIA_get_series results.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "SeriesInstanceUID": {
+          "type": "string",
+          "description": "DICOM Series Instance UID. Example: '1.3.6.1.4.1.14519.5.2.1.6279.6001.179049373636438705059720603192'. Obtain from TCIA_get_series results."
+        }
+      },
+      "required": [
+        "SeriesInstanceUID"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSOPInstanceUIDs"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "SeriesInstanceUID": "1.3.6.1.4.1.14519.5.2.1.6279.6001.179049373636438705059720603192"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of SOP Instance UID objects, one per image/slice",
+          "items": {
+            "type": "object",
+            "properties": {
+              "SOPInstanceUID": {
+                "type": "string",
+                "description": "DICOM SOP Instance UID of a single image"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "TCIA_get_manufacturer_values",
+    "description": "Get the distinct scanner Manufacturer values present in a TCIA collection (optionally filtered by modality or body part). This is a faceting tool analogous to TCIA_get_modality_values and TCIA_get_body_part_values, but for equipment manufacturer (e.g., 'GE MEDICAL SYSTEMS', 'SIEMENS', 'Philips', 'TOSHIBA'). Use to discover which scanner vendors appear in a collection.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "Collection": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Collection name to filter by (e.g., 'LIDC-IDRI'). Omit to get manufacturers across all collections."
+        },
+        "Modality": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Imaging modality to filter by (e.g., 'CT', 'MR')"
+        },
+        "BodyPartExamined": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Body part to filter by (e.g., 'CHEST')"
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getManufacturerValues"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "Collection": "LIDC-IDRI",
+        "Modality": "CT"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of manufacturer objects",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Manufacturer": {
+                "type": "string",
+                "description": "Scanner manufacturer name (e.g., 'GE MEDICAL SYSTEMS', 'SIEMENS')"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message if the request failed"
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    }
   }
 ]

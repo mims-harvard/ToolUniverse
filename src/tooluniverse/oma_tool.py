@@ -72,6 +72,12 @@ class OMATool(BaseTool):
             return self._get_hog(arguments)
         elif self.endpoint == "group":
             return self._get_group(arguments)
+        elif self.endpoint == "xref":
+            return self._resolve_xref(arguments)
+        elif self.endpoint == "genome_pairs":
+            return self._get_genome_pair_orthologs(arguments)
+        elif self.endpoint == "protein_ontology":
+            return self._get_protein_go(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -272,5 +278,160 @@ class OMATool(BaseTool):
                 "query": str(group_id),
                 "total_members": len(data.get("members", [])),
                 "returned_members": len(members),
+            },
+        }
+
+    def _resolve_xref(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve a gene name / symbol / cross-reference to OMA entries."""
+        search = arguments.get("search", "")
+        if not search:
+            return {
+                "status": "error",
+                "error": (
+                    "search parameter is required (gene symbol e.g. 'BRCA2', "
+                    "UniProt name e.g. 'MED4_HUMAN', or any cross-reference identifier)"
+                ),
+            }
+
+        limit = arguments.get("limit", 25)
+
+        url = f"{OMA_BASE_URL}/xref/"
+        response = requests.get(url, params={"search": search}, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        results = []
+        # /xref/?search= returns a flat list of cross-reference matches.
+        for x in data[: min(limit, 100)] if isinstance(data, list) else []:
+            genome = x.get("genome") or {}
+            results.append(
+                {
+                    "xref": x.get("xref"),
+                    "source": x.get("source"),
+                    "seq_match": x.get("seq_match"),
+                    "entry_nr": x.get("entry_nr"),
+                    "oma_id": x.get("omaid"),
+                    "species_code": genome.get("code"),
+                    "species_name": genome.get("species"),
+                    "taxon_id": genome.get("taxon_id"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "OMA Browser",
+                "query": search,
+                "total_matches": len(data) if isinstance(data, list) else 0,
+                "returned_matches": len(results),
+            },
+        }
+
+    def _get_genome_pair_orthologs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get all pairwise orthologs between two whole genomes."""
+        genome1 = arguments.get("genome1", "")
+        genome2 = arguments.get("genome2", "")
+        if not genome1 or not genome2:
+            return {
+                "status": "error",
+                "error": (
+                    "genome1 and genome2 parameters are required (UniProt species "
+                    "codes or NCBI taxon IDs, e.g. genome1='HUMAN', genome2='MOUSE')"
+                ),
+            }
+
+        per_page = arguments.get("per_page", 20)
+        page = arguments.get("page")
+
+        url = f"{OMA_BASE_URL}/pairs/{genome1}/{genome2}/"
+        params = {"per_page": min(per_page, 100)}
+        if page:
+            params["page"] = page
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        def _entry_summary(entry):
+            entry = entry or {}
+            species = entry.get("species") or {}
+            return {
+                "entry_nr": entry.get("entry_nr"),
+                "oma_id": entry.get("omaid"),
+                "canonical_id": entry.get("canonicalid"),
+                "species_code": species.get("code"),
+                "species_name": species.get("species"),
+                "taxon_id": species.get("taxon_id"),
+                "oma_group": entry.get("oma_group"),
+                "oma_hog_id": entry.get("oma_hog_id"),
+                "chromosome": entry.get("chromosome"),
+            }
+
+        results = []
+        for pair in data if isinstance(data, list) else []:
+            results.append(
+                {
+                    "entry_1": _entry_summary(pair.get("entry_1")),
+                    "entry_2": _entry_summary(pair.get("entry_2")),
+                    "rel_type": pair.get("rel_type"),
+                    "distance": pair.get("distance"),
+                    "score": pair.get("score"),
+                    "oma_group": pair.get("oma_group"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "OMA Browser",
+                "genome1": genome1,
+                "genome2": genome2,
+                "returned_pairs": len(results),
+            },
+        }
+
+    def _get_protein_go(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get GO functional annotations for a specific OMA protein."""
+        protein_id = arguments.get("protein_id", "")
+        if not protein_id:
+            return {
+                "status": "error",
+                "error": (
+                    "protein_id parameter is required (OMA ID e.g. 'HUMAN17018' "
+                    "or UniProt accession e.g. 'P04637')"
+                ),
+            }
+
+        aspect_filter = arguments.get("aspect")
+
+        url = f"{OMA_BASE_URL}/protein/{protein_id}/ontology/"
+        response = requests.get(url, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        results = []
+        for go in data if isinstance(data, list) else []:
+            if aspect_filter and go.get("aspect") != aspect_filter:
+                continue
+            results.append(
+                {
+                    "go_term": go.get("GO_term"),
+                    "name": go.get("name"),
+                    "aspect": go.get("aspect"),
+                    "information_content": go.get("ic"),
+                    "evidence": go.get("evidence"),
+                    "reference": go.get("reference"),
+                }
+            )
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "source": "OMA Browser",
+                "query": protein_id,
+                "total_annotations": len(results),
             },
         }

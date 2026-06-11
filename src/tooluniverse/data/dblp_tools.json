@@ -121,5 +121,243 @@
         "limit": 1
       }
     ]
+  },
+  {
+    "name": "DBLP_search_authors",
+    "description": "Search and disambiguate authors in the DBLP Computer Science Bibliography by name. Resolves an author name to canonical DBLP author records, each with a stable PID URL (e.g., https://dblp.org/pid/l/JureLeskovec) plus, when available, affiliation notes, name aliases, and awards (e.g., 'Turing Award'). The PID is the gateway to that author's deduplicated publication list. Use this to identify the correct author before fetching their bibliography; DBLP_search_publications only searches papers, not authors.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Author name to search for (e.g., 'jure leskovec', 'yann lecun', 'Geoffrey Hinton'). Spaces are treated as prefix-matched terms by DBLP."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of author hits to return (default 10, max 1000).",
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://dblp.org/search/author/api",
+      "param_mapping": {
+        "query": "q",
+        "limit": "h"
+      },
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "jure leskovec",
+        "limit": 1
+      },
+      {
+        "query": "yann lecun",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "DBLP author search response",
+              "properties": {
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "object"
+                    },
+                    "hits": {
+                      "type": "object",
+                      "description": "Matched author records",
+                      "properties": {
+                        "@total": {
+                          "type": "string"
+                        },
+                        "hit": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "@id": {
+                                "type": "string"
+                              },
+                              "@score": {
+                                "type": "string"
+                              },
+                              "info": {
+                                "type": "object",
+                                "description": "Author info including 'author' name, 'url' (PID URL), optional 'aliases', 'notes' (affiliations/awards)"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "DBLP_search_venues",
+    "description": "Search DBLP for a publication VENUE (conference or journal) by acronym or full name, resolving it to its canonical DBLP venue record. For example 'ICML' resolves to 'International Conference on Machine Learning (ICML)' and 'neurips' resolves to 'Conference on Neural Information Processing Systems (NeurIPS)'. Each hit includes the venue name, acronym, type (Conference/Journal), and a DBLP venue URL for browsing its proceedings. DBLP_search_publications only searches papers, not venues.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Venue acronym or name to search for (e.g., 'ICML', 'neurips', 'VLDB', 'Nature Machine Intelligence')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of venue hits to return (default 10, max 1000).",
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://dblp.org/search/venue/api",
+      "param_mapping": {
+        "query": "q",
+        "limit": "h"
+      },
+      "params": {
+        "format": "json"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "query": "ICML",
+        "limit": 1
+      },
+      {
+        "query": "neurips",
+        "limit": 1
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "DBLP venue search response",
+              "properties": {
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "object"
+                    },
+                    "hits": {
+                      "type": "object",
+                      "description": "Matched venue records",
+                      "properties": {
+                        "@total": {
+                          "type": "string"
+                        },
+                        "hit": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "@id": {
+                                "type": "string"
+                              },
+                              "@score": {
+                                "type": "string"
+                              },
+                              "info": {
+                                "type": "object",
+                                "description": "Venue info including 'venue' name, optional 'acronym', 'type' (Conference/Journal), and 'url'"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

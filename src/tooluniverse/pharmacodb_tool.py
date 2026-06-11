@@ -83,6 +83,8 @@ class PharmacoDBTool(BaseTool):
             "get_experiments": self._get_experiments,
             "list_datasets": self._list_datasets,
             "get_biomarker_associations": self._get_biomarker_associations,
+            "get_drug_targets": self._get_drug_targets,
+            "get_molecular_profiling": self._get_molecular_profiling,
         }
 
         handler = handlers.get(operation)
@@ -497,5 +499,223 @@ class PharmacoDBTool(BaseTool):
                     "tissue_name": tissue_name,
                     "mdata_type": mdata_type,
                 },
+            },
+        }
+
+    def _get_drug_targets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Query PharmacoDB drug-target relationships.
+
+        Supports three directions:
+        - gene -> targets (single_gene_target) via gene_name/gene_id
+        - compound -> targets (single_compound_target) via compound_name/compound_id
+        - full cross-database drug-target table (all_compound_targets) when no
+          gene/compound is given (client-side paginated by page/per_page).
+        """
+        gene_name = arguments.get("gene_name")
+        gene_id = arguments.get("gene_id")
+        compound_name = arguments.get("compound_name")
+        compound_id = arguments.get("compound_id")
+
+        # Direction 1: gene -> targets/compounds
+        if gene_name or gene_id is not None:
+            args = []
+            variables = {}
+            var_defs = []
+            if gene_name:
+                args.append("geneName: $geneName")
+                variables["geneName"] = gene_name
+                var_defs.append("$geneName: String")
+            if gene_id is not None:
+                args.append("geneId: $geneId")
+                variables["geneId"] = gene_id
+                var_defs.append("$geneId: Int")
+
+            gql = """
+            query GeneTargets(%s) {
+                single_gene_target(%s) {
+                    gene_id
+                    gene_name
+                    targets {
+                        target_id
+                        target_name
+                    }
+                }
+            }
+            """ % (", ".join(var_defs), ", ".join(args))
+
+            result = _execute_graphql(gql, variables)
+            if not result["ok"]:
+                return {"status": "error", "error": result["error"]}
+            gene_data = result["data"].get("single_gene_target")
+            if not gene_data:
+                return {
+                    "status": "error",
+                    "error": "No target data found for the requested gene",
+                }
+            targets = gene_data.get("targets") or []
+            return {
+                "status": "success",
+                "data": {
+                    "direction": "single_gene_target",
+                    "gene_id": gene_data.get("gene_id"),
+                    "gene_name": gene_data.get("gene_name"),
+                    "targets": targets,
+                    "num_targets": len(targets),
+                },
+            }
+
+        # Direction 2: compound -> targets
+        if compound_name or compound_id is not None:
+            args = []
+            variables = {}
+            var_defs = []
+            if compound_name:
+                args.append("compoundName: $compoundName")
+                variables["compoundName"] = compound_name
+                var_defs.append("$compoundName: String")
+            if compound_id is not None:
+                args.append("compoundId: $compoundId")
+                variables["compoundId"] = compound_id
+                var_defs.append("$compoundId: Int")
+
+            gql = """
+            query CompoundTargets(%s) {
+                single_compound_target(%s) {
+                    compound_id
+                    compound_name
+                    targets {
+                        target_id
+                        target_name
+                    }
+                }
+            }
+            """ % (", ".join(var_defs), ", ".join(args))
+
+            result = _execute_graphql(gql, variables)
+            if not result["ok"]:
+                return {"status": "error", "error": result["error"]}
+            comp_data = result["data"].get("single_compound_target")
+            if not comp_data:
+                return {
+                    "status": "error",
+                    "error": "No target data found for the requested compound",
+                }
+            targets = comp_data.get("targets") or []
+            return {
+                "status": "success",
+                "data": {
+                    "direction": "single_compound_target",
+                    "compound_id": comp_data.get("compound_id"),
+                    "compound_name": comp_data.get("compound_name"),
+                    "targets": targets,
+                    "num_targets": len(targets),
+                },
+            }
+
+        # Direction 3: full cross-database drug-target table.
+        # The API ignores server-side per_page for this field (returns the full
+        # table), so paginate client-side for a manageable response.
+        page = arguments.get("page", 1)
+        per_page = arguments.get("per_page", 20)
+        try:
+            page = max(1, int(page))
+            per_page = max(1, min(int(per_page), 200))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "page and per_page must be integers",
+            }
+
+        gql = """
+        query AllCompoundTargets {
+            all_compound_targets {
+                compound_id
+                compound_name
+                targets {
+                    target_id
+                    target_name
+                }
+            }
+        }
+        """
+        result = _execute_graphql(gql, timeout=60)
+        if not result["ok"]:
+            return {"status": "error", "error": result["error"]}
+        all_rows = result["data"].get("all_compound_targets") or []
+        total = len(all_rows)
+        start = (page - 1) * per_page
+        rows = all_rows[start : start + per_page]
+        return {
+            "status": "success",
+            "data": {
+                "direction": "all_compound_targets",
+                "compound_targets": rows,
+                "num_returned": len(rows),
+                "total_available": total,
+                "page": page,
+                "per_page": per_page,
+            },
+        }
+
+    def _get_molecular_profiling(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Per-cell-line molecular profiling inventory (which omics layers exist)."""
+        cell_line_name = arguments.get("cell_line_name") or arguments.get("cell_name")
+        cell_line_id = arguments.get("cell_line_id")
+        if cell_line_id is None:
+            cell_line_id = arguments.get("cell_id")
+
+        if not cell_line_name and cell_line_id is None:
+            return {
+                "status": "error",
+                "error": "Either cell_line_name or cell_line_id is required",
+            }
+
+        args = []
+        variables = {}
+        var_defs = []
+        if cell_line_name:
+            args.append("cellLineName: $cellLineName")
+            variables["cellLineName"] = cell_line_name
+            var_defs.append("$cellLineName: String")
+        if cell_line_id is not None:
+            args.append("cellLineId: $cellLineId")
+            variables["cellLineId"] = cell_line_id
+            var_defs.append("$cellLineId: Int")
+
+        gql = """
+        query MolecularProfiling(%s) {
+            molecular_profiling(%s) {
+                cell_line {
+                    id
+                    name
+                }
+                dataset {
+                    id
+                    name
+                }
+                mDataType
+                num_prof
+            }
+        }
+        """ % (", ".join(var_defs), ", ".join(args))
+
+        result = _execute_graphql(gql, variables, timeout=60)
+        if not result["ok"]:
+            return {"status": "error", "error": result["error"]}
+
+        profiling = result["data"].get("molecular_profiling")
+        if not profiling:
+            return {
+                "status": "error",
+                "error": "No molecular profiling data found for the requested cell line",
+            }
+
+        return {
+            "status": "success",
+            "data": {
+                "cell_line_name": cell_line_name,
+                "cell_line_id": cell_line_id,
+                "profiling": profiling,
+                "num_records": len(profiling),
             },
         }

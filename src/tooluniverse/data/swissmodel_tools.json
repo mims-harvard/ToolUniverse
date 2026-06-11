@@ -1,13 +1,39 @@
 [
   {
     "name": "SwissModel_get_models",
-    "description": "Get all available protein homology models from SWISS-MODEL Repository for a UniProt accession. Returns pre-computed 3D structure models with template information, sequence coverage, QMEAN quality scores, creation dates, and complex partner information. SWISS-MODEL is one of the most widely used protein structure prediction servers. Example: P04637 (human p53) returns 4 homology models; P00533 (EGFR) returns 380 models including many complex structures.",
+    "description": "Get protein structure models from SWISS-MODEL Repository for a UniProt accession. Returns pre-computed 3D models (homology models plus experimental PDB structures) with template information, sequence coverage, QMEAN quality scores, creation dates, a coordinates download URL, and complex partner information. Optional filters: 'range' returns only models covering a given residue range (e.g. '94-312'); 'provider' restricts to 'swissmodel' (homology models) or 'pdb' (experimental structures); 'template' restricts to a specific template. Example: P04637 (human p53) returns ~316 structures unfiltered, 218 with range=94-312; P00533 (EGFR) with provider=swissmodel isolates homology models. Up to 30 models are returned (use SwissModel_get_summary for the single best model).",
     "parameter": {
       "type": "object",
       "properties": {
         "uniprot_id": {
           "type": "string",
           "description": "UniProt accession identifier. Examples: 'P04637' (human p53), 'P00533' (human EGFR), 'Q9Y6I3' (human EPN1)."
+        },
+        "range": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional residue range filter; only models covering this range are returned. Format 'from-to', e.g. '94-312'."
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional model-provider filter. 'swissmodel' returns only SWISS-MODEL homology models; 'pdb' returns only experimental PDB structures. Omit for both.",
+          "enum": [
+            "swissmodel",
+            "pdb",
+            null
+          ]
+        },
+        "template": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional template filter; restrict results to models built from this template (PDB ID, optionally with chain, e.g. '2j6m.1.A')."
         }
       },
       "required": [
@@ -23,7 +49,12 @@
         "uniprot_id": "P04637"
       },
       {
-        "uniprot_id": "Q9Y6I3"
+        "uniprot_id": "P04637",
+        "range": "94-312"
+      },
+      {
+        "uniprot_id": "P04637",
+        "provider": "swissmodel"
       }
     ],
     "return_schema": {
@@ -51,6 +82,9 @@
                 },
                 "model_count": {
                   "type": "integer"
+                },
+                "filters_applied": {
+                  "type": "object"
                 },
                 "models": {
                   "type": "array",
@@ -99,6 +133,12 @@
                           "null"
                         ]
                       },
+                      "coordinates_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
                       "qmean_global": {
                         "type": [
                           "number",
@@ -126,7 +166,10 @@
                   "type": "string"
                 },
                 "query": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "object"
+                  ]
                 },
                 "endpoint": {
                   "type": "string"
@@ -252,6 +295,255 @@
               "type": "object",
               "properties": {
                 "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SwissModel_download_pdb",
+    "description": "Download the actual 3D atomic coordinates (PDB format) of SWISS-MODEL Repository structures for a UniProt accession. Unlike SwissModel_get_models / SwissModel_get_summary (which return only JSON metadata and a coordinates URL), this tool fetches the real ATOM/HETATM records and returns them as text. Optional selectors: 'sort' ('seqid' = sequence identity, or 'seqsim' = sequence similarity) orders the bundled models; 'provider' restricts to 'swissmodel' (homology models) or 'pdb' (experimental structures); 'template' selects a specific template; 'range' restricts to models covering a residue range. Example: P04637 (human p53) returns ~5.5 MB of coordinates; provider=swissmodel isolates the homology model with a SWISS-MODEL TITLE header. Use the returned 'pdb_content' for structural analysis, visualization, or docking.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_id": {
+          "type": "string",
+          "description": "UniProt accession identifier. Examples: 'P04637' (human p53), 'P00533' (human EGFR)."
+        },
+        "sort": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional ordering for the bundled models. 'seqid' sorts by sequence identity to the template, 'seqsim' by sequence similarity.",
+          "enum": [
+            "seqid",
+            "seqsim",
+            null
+          ]
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional model-provider filter. 'swissmodel' = SWISS-MODEL homology models only; 'pdb' = experimental PDB structures only. Omit for all.",
+          "enum": [
+            "swissmodel",
+            "pdb",
+            null
+          ]
+        },
+        "template": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional template filter; download only models built from this template (PDB ID, optionally with chain)."
+        },
+        "range": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional residue range filter ('from-to', e.g. '94-312'); download only models covering this range."
+        }
+      },
+      "required": [
+        "uniprot_id"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "download_pdb"
+    },
+    "type": "SwissModelTool",
+    "test_examples": [
+      {
+        "uniprot_id": "P04637",
+        "provider": "swissmodel"
+      },
+      {
+        "uniprot_id": "P00533",
+        "sort": "seqid"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "uniprot_id": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                },
+                "pdb_content": {
+                  "type": "string"
+                },
+                "atom_count": {
+                  "type": "integer"
+                },
+                "size_bytes": {
+                  "type": "integer"
+                },
+                "filters_applied": {
+                  "type": "object"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "query": {
+                  "type": "string"
+                },
+                "endpoint": {
+                  "type": "string"
+                },
+                "content_type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "SwissModel_get_models_batch",
+    "description": "Batch SWISS-MODEL Repository lookup for up to 250 UniProt accessions in a single call. The single-accession tools (SwissModel_get_models / SwissModel_get_summary) accept only one uniprot_id, requiring N separate calls for a gene or protein list; this tool resolves a whole list at once. Pass 'uniprot_ids' as a list (or comma-separated string). Returns one result block per accession with sequence length, model count, and up to 30 flattened models (template, coverage, QMEAN, provider, coordinates URL). Example: ['P04637','P00533','P38398'] returns 3 result blocks (P04637=316 structures, P00533=390, P38398=35).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "uniprot_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of up to 250 UniProt accessions, e.g. ['P04637', 'P00533', 'P38398']. A comma-separated string is also accepted."
+        }
+      },
+      "required": [
+        "uniprot_ids"
+      ]
+    },
+    "fields": {
+      "endpoint_type": "get_models_batch"
+    },
+    "type": "SwissModelTool",
+    "test_examples": [
+      {
+        "uniprot_ids": [
+          "P04637",
+          "P00533",
+          "P38398"
+        ]
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "requested_count": {
+                  "type": "integer"
+                },
+                "returned_count": {
+                  "type": "integer"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "uniprot_ids": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "sequence_length": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "crc64": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "model_count": {
+                        "type": "integer"
+                      },
+                      "models": {
+                        "type": "array",
+                        "items": {
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string"
+                },
+                "api_version": {
                   "type": "string"
                 },
                 "query": {

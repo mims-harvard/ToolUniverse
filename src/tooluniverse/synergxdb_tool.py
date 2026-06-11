@@ -76,6 +76,7 @@ class SYNERGxDBTool(BaseTool):
             "list_cell_lines": self._list_cell_lines,
             "list_datasets": self._list_datasets,
             "get_combo_stats": self._get_combo_stats,
+            "get_biomarker_association": self._get_biomarker_association,
         }
 
         handler = operation_handlers.get(operation)
@@ -737,4 +738,53 @@ class SYNERGxDBTool(BaseTool):
             "status": "success",
             "data": data,
             "count": len(data),
+        }
+
+    def _get_biomarker_association(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Correlate per-cell-line gene expression (FPKM) vs synergy scores.
+
+        Returns one row per cell line with the queried gene's rnaseq FPKM and the
+        measured synergy scores (bliss, loewe, hsa, zip) for that cell line.
+        """
+        gene = arguments.get("gene") or arguments.get("gene_name")
+        if not gene:
+            return {
+                "status": "error",
+                "error": "gene parameter is required (HGNC symbol, e.g., 'EGFR', 'BRAF')",
+            }
+
+        result = self._make_request(
+            "biomarkers/association", {"gene": str(gene).strip()}
+        )
+        if not result["ok"]:
+            return {"status": "error", "error": result["error"]}
+
+        data = result["data"]
+
+        # Invalid/unknown gene returns a JSON object like
+        # {"message": "No data found for a given set of parameters"} (not a list).
+        if isinstance(data, dict):
+            msg = data.get("message") or data.get("error") or "No data found"
+            return {
+                "status": "success",
+                "data": [],
+                "count": 0,
+                "gene": gene,
+                "message": (
+                    f"No biomarker association data found for gene '{gene}'. "
+                    f"API response: {msg}. Verify the HGNC gene symbol."
+                ),
+            }
+
+        if not isinstance(data, list):
+            return {
+                "status": "error",
+                "error": "Unexpected response format from SYNERGxDB biomarkers endpoint",
+            }
+
+        return {
+            "status": "success",
+            "data": data,
+            "count": len(data),
+            "gene": gene,
         }

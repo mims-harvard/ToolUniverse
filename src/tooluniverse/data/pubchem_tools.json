@@ -427,7 +427,7 @@
     "fields": {
       "endpoint": "/compound/fastsimilarity_2d/smiles/{smiles}/cids/JSON",
       "use_pugview": false,
-      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity \u2265 threshold.",
+      "input_description": "Input is:\n- smiles: SMILES for similarity comparison;\n- threshold: specify similarity threshold, PubChem will return all CIDs with similarity ≥ threshold.",
       "output_description": "Returns a JSON object with structure example:\n{\n  \"IdentifierList\": {\n    \"CID\": [2244, 2245, ...]\n  }\n}\n\nWhere: CID array contains compound IDs with similarity above specified threshold to target molecule. LLM can use this for chemical similarity analysis.",
       "property_list": []
     },
@@ -559,7 +559,7 @@
         },
         "xref_types": {
           "type": "array",
-          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types \u2014 they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
+          "description": "List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, PubMedID, MMDBID, ProteinGI, NucleotideGI, TaxonomyID, MIMID, GeneID, ProbeID, PatentID, SourceName, SourceCategory, DBURL, SBURL. Database cross-references such as ChEBI, KEGG, ChEMBL and InChIKey are NOT xref types — they are listed inside the 'RegistryID' values, so use [\"RegistryID\"] to retrieve them.",
           "items": {
             "type": "string",
             "enum": [
@@ -1147,6 +1147,171 @@
         {
           "type": "object",
           "description": "Error during substance lookup.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PubChem_get_substances_by_source",
+    "description": "Reverse sourcing: list ALL PubChem substance SIDs deposited/offered by a specific chemical vendor or data source (e.g., 'Combi-Blocks', 'Sigma-Aldrich', 'Enamine', 'TCI'). This is the inverse of the forward CID->vendor lookup (PubChem_get_compound_xrefs_by_CID): it answers 'what does vendor X actually stock/sell' by returning that depositor's full substance (SID) catalog. The 'source' name must match a PubChem registered substance source name exactly (case-sensitive) -- use PubChem_list_substance_sources first to validate/normalize the vendor name. Result lists can be very large (hundreds of thousands of SIDs).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Exact PubChem substance source / vendor name (case-sensitive), e.g., \"Combi-Blocks\", \"Sigma-Aldrich\", \"Enamine\". Multi-word names with spaces are accepted (e.g., \"Aaron Chemicals LLC\"). Validate the name with PubChem_list_substance_sources to avoid an empty/404 result."
+        },
+        "vendor": {
+          "type": "string",
+          "description": "Alias for source. The vendor/source name to retrieve SIDs for."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/substance/sourceall/{source}/sids/JSON",
+      "use_pugview": false,
+      "input_description": "Input is a single 'source' (vendor/depositor) name exactly as registered in PubChem. The tool requests every substance SID attributed to that source.",
+      "output_description": "Returns {status:'success', data:{IdentifierList:{SID:[...]}}}. data.IdentifierList.SID is the list of all PubChem Substance IDs offered/deposited by that source. Use each SID with PubChem_get_substance_by_SID to expand to the depositor record and linked compound CIDs. An unknown/misspelled source name yields a PubChem HTTP 404 returned as status:'error'."
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {
+        "source": "Combi-Blocks"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful reverse-sourcing lookup.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "IdentifierList": {
+                  "type": "object",
+                  "properties": {
+                    "SID": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error (e.g., unknown source name -> HTTP 404).",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            },
+            "detail": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "PubChem_list_substance_sources",
+    "description": "Vendor/source directory: enumerate the full master roster of chemical vendors and data sources registered as PubChem SUBSTANCE depositors (~919 sources, including Enamine, Sigma-Aldrich, TCI, Combi-Blocks). Use this to discover which suppliers PubChem aggregates and to validate/normalize a vendor name (exact, case-sensitive) BEFORE a reverse-sourcing query with PubChem_get_substances_by_source. Takes no parameters.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "fields": {
+      "endpoint": "/sources/substance/JSON",
+      "use_pugview": false,
+      "input_description": "No input parameters. Returns the complete substance source directory.",
+      "output_description": "Returns {status:'success', data:{InformationList:{SourceName:[...]}}}. data.InformationList.SourceName is the alphabetical list of every registered substance source/vendor name. Each name can be used verbatim as the 'source' argument of PubChem_get_substances_by_source."
+    },
+    "type": "PubChemRESTTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful source directory listing.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "InformationList": {
+                  "type": "object",
+                  "properties": {
+                    "SourceName": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error retrieving the source directory.",
           "properties": {
             "status": {
               "type": "string",

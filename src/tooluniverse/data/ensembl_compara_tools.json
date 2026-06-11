@@ -363,5 +363,176 @@
         }
       ]
     }
+  },
+  {
+    "name": "EnsemblCompara_get_cafe_tree",
+    "description": "Retrieve the Ensembl Compara CAFE tree for a gene family: the gene gain/loss (expansion/contraction) analysis that infers ancestral gene-copy counts (n_members) at every node of the species tree, with the birth-death rate (lambda) and per-node p-values. Unlike EnsemblCompara_get_gene_tree (which returns the phylogenetic gene tree topology + members), this returns the CAFE family-size dynamics used to detect lineage-specific gene-family expansions/contractions. Provide either gene_tree_id (e.g. 'ENSGT00390000003602') or gene (symbol e.g. 'BRCA2', or Ensembl gene ID). Example: gene_tree_id='ENSGT00390000003602' returns type 'cafe tree', rooted, pvalue_avg, lambda ~5.08e-08, and per-node n_members / pvalue along the species tree.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_tree_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ensembl gene tree (family) stable ID, e.g. 'ENSGT00390000003602'. Use this OR 'gene'."
+        },
+        "gene": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gene symbol (e.g. 'BRCA2') or Ensembl gene ID (e.g. 'ENSG00000139618'). The CAFE tree for the family containing this gene is returned. Use this OR 'gene_tree_id'."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Species for symbol lookup when 'gene' is a symbol (default: 'human'). Examples: 'human', 'mouse', 'homo_sapiens'."
+        }
+      }
+    },
+    "fields": {
+      "endpoint": "cafe_tree"
+    },
+    "type": "EnsemblComparaTool",
+    "test_examples": [
+      {
+        "gene_tree_id": "ENSGT00390000003602"
+      },
+      {
+        "gene": "BRCA2",
+        "species": "homo_sapiens"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "rooted": {
+                  "type": [
+                    "integer",
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "pvalue_avg": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "lambda": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "root_n_members": {
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
+                },
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "scientific_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "taxon_id": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "n_members": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "pvalue": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "p_value_lim": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "lambda": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "total_nodes": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

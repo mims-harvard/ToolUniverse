@@ -10,6 +10,7 @@ API: https://data.orthodb.org/v12/
 No authentication required. Free public access.
 """
 
+import json
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -65,6 +66,8 @@ class OrthoDBTool(BaseTool):
             return self._get_group(arguments)
         elif self.endpoint == "orthologs":
             return self._get_orthologs(arguments)
+        elif self.endpoint == "fasta":
+            return self._get_group_fasta(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -265,3 +268,108 @@ class OrthoDBTool(BaseTool):
                 "group_id": group_id,
             },
         }
+
+    def _get_group_fasta(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get member protein sequences (FASTA) for an orthologous group."""
+        group_id = arguments.get("group_id", "")
+        if not group_id:
+            return {
+                "status": "error",
+                "error": "group_id parameter is required (e.g., '794361at2759')",
+            }
+
+        species = arguments.get("species")
+        limit = arguments.get("limit", 50)
+
+        url = f"{ORTHODB_BASE_URL}/fasta"
+        params = {"id": group_id}
+        if species:
+            params["species"] = species
+
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        text = response.text.strip()
+
+        if not text or not text.startswith(">"):
+            return {
+                "status": "error",
+                "error": (
+                    f"No FASTA sequences found for group '{group_id}'"
+                    + (f" (species {species})" if species else "")
+                ),
+            }
+
+        sequences = self._parse_fasta(text, min(limit, 500))
+
+        if not sequences:
+            return {
+                "status": "error",
+                "error": f"No FASTA sequences found for group '{group_id}'",
+            }
+
+        return {
+            "status": "success",
+            "data": {
+                "group_id": group_id,
+                "sequences": sequences,
+                "total_sequences": len(sequences),
+                "fasta": text,
+            },
+            "metadata": {
+                "source": "OrthoDB v12 - FASTA",
+                "group_id": group_id,
+                "species": species,
+            },
+        }
+
+    @staticmethod
+    def _parse_fasta(text: str, limit: int) -> list:
+        """Parse OrthoDB FASTA: each header carries JSON-encoded metadata."""
+        sequences = []
+        record_id = None
+        header_meta = None
+        seq_lines: list = []
+
+        def _flush():
+            if record_id is None:
+                return
+            sequence = "".join(seq_lines)
+            record = {
+                "id": record_id,
+                "sequence": sequence,
+                "length": len(sequence),
+            }
+            if isinstance(header_meta, dict):
+                record["pub_gene_id"] = header_meta.get("pub_gene_id")
+                record["og_name"] = header_meta.get("og_name")
+                record["organism_name"] = header_meta.get("organism_name")
+                record["organism_taxid"] = header_meta.get("organism_taxid")
+                record["description"] = header_meta.get("description")
+                record["pub_og_id"] = header_meta.get("pub_og_id")
+            sequences.append(record)
+
+        for line in text.splitlines():
+            if line.startswith(">"):
+                if len(sequences) >= limit:
+                    break
+                _flush()
+                seq_lines = []
+                content = line[1:].strip()
+                # Header format: ">9606_0:003066 {json metadata}"
+                brace = content.find("{")
+                if brace != -1:
+                    record_id = content[:brace].strip()
+                    try:
+                        header_meta = json.loads(content[brace:])
+                    except (ValueError, json.JSONDecodeError):
+                        header_meta = None
+                else:
+                    record_id = content
+                    header_meta = None
+            else:
+                seq_lines.append(line.strip())
+
+        if len(sequences) < limit:
+            _flush()
+
+        return sequences

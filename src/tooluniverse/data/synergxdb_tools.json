@@ -538,5 +538,62 @@
         "operation": "get_combo_stats"
       }
     ]
+  },
+  {
+    "name": "SYNERGxDB_get_biomarker_association",
+    "type": "SYNERGxDBTool",
+    "description": "Pharmacogenomic biomarker discovery for drug combinations in SYNERGxDB: correlates per-cell-line gene expression (rnaseq FPKM) against the measured drug-combination synergy scores (Bliss, Loewe, HSA, ZIP) for a queried gene. Answers 'does expression of gene X track with combination synergy across cancer cell lines?'. Returns one row per cell line with that cell line's FPKM for the gene plus its synergy metrics. Pass the HGNC gene symbol via 'gene' (e.g., 'EGFR', 'BRAF'). Example: gene='EGFR' returns rows like {fpkm:0, cellName:'A2058', bliss:-1.365, loewe:-0.259, hsa:-0.628, zip:-0.498}. An unknown gene returns an empty list with a message.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_biomarker_association"],
+          "description": "Operation type"
+        },
+        "gene": {
+          "type": "string",
+          "description": "HGNC gene symbol to correlate against synergy scores (e.g., 'EGFR', 'BRAF', 'TP53'). Alias: gene_name."
+        },
+        "gene_name": {
+          "type": "string",
+          "description": "Alias for gene. HGNC gene symbol."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "One row per cell line: gene FPKM vs combination synergy scores",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fpkm": {"type": ["number", "null"], "description": "rnaseq expression (FPKM) of the queried gene in this cell line"},
+              "cellName": {"type": "string", "description": "Cancer cell line name"},
+              "bliss": {"type": ["number", "null"], "description": "Bliss independence synergy score"},
+              "loewe": {"type": ["number", "null"], "description": "Loewe additivity synergy score"},
+              "hsa": {"type": ["number", "null"], "description": "Highest Single Agent synergy score"},
+              "zip": {"type": ["number", "null"], "description": "Zero Interaction Potency synergy score"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error envelope when the gene is missing or the request fails",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_biomarker_association",
+        "gene": "EGFR"
+      }
+    ]
   }
 ]

@@ -458,5 +458,156 @@
         }
       ]
     }
+  },
+  {
+    "name": "OrthoDB_get_group_fasta",
+    "description": "Retrieve member protein sequences (FASTA) for an OrthoDB orthologous group, optionally restricted to a species. Other OrthoDB tools return group metadata, GO/KEGG/InterPro annotations, and a gene-ID/organism list, but never the actual amino-acid sequences. This returns one record per member protein, parsing the rich JSON metadata OrthoDB embeds in each FASTA header (pub_gene_id, og_name, organism_name, organism_taxid, description) plus the full sequence -- the input needed to run MSA / phylogenetics on an orthogroup. Restrict to a species with the 'species' NCBI taxon ID. Example: group_id='794361at2759' (BRCA2 orthogroup), species='9606' returns the human BRCA2 protein records (pub_gene_id 'BRCA2', organism 'Homo sapiens') with their sequences.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "group_id": {
+          "type": "string",
+          "description": "OrthoDB orthologous group ID, e.g. '794361at2759' (BRCA2 at Eukaryota level). Obtain from OrthoDB_search_groups."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional NCBI taxon ID to restrict members to one species, e.g. '9606' (human), '10090' (mouse). Leave empty for all member species."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of FASTA records to parse into structured form (default: 50, max: 500). The full raw FASTA is always returned in the 'fasta' field."
+        }
+      },
+      "required": [
+        "group_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "fasta"
+    },
+    "type": "OrthoDBTool",
+    "test_examples": [
+      {
+        "group_id": "794361at2759",
+        "species": "9606"
+      },
+      {
+        "group_id": "794361at2759",
+        "species": "10090",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "group_id": {
+                  "type": "string"
+                },
+                "sequences": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "sequence": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      },
+                      "pub_gene_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "og_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "organism_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "organism_taxid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "pub_og_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "total_sequences": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "fasta": {
+                  "type": "string"
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

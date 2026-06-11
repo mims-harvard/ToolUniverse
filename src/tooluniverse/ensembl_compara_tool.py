@@ -69,6 +69,8 @@ class EnsemblComparaTool(BaseTool):
             return self._get_paralogues(arguments)
         elif self.endpoint == "gene_tree":
             return self._get_gene_tree(arguments)
+        elif self.endpoint == "cafe_tree":
+            return self._get_cafe_tree(arguments)
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
@@ -262,3 +264,77 @@ class EnsemblComparaTool(BaseTool):
             # Traverse children
             for child in node.get("children", []):
                 self._collect_members(child, members, max_members)
+
+    def _get_cafe_tree(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the CAFE gene-family gain/loss tree for a gene family."""
+        gene_tree_id = arguments.get("gene_tree_id")
+        gene = arguments.get("gene")
+        species = arguments.get("species", "human")
+
+        if gene_tree_id:
+            url = f"{ENSEMBL_BASE_URL}/cafe/genetree/id/{gene_tree_id}"
+        elif gene:
+            if gene.startswith("ENS"):
+                url = f"{ENSEMBL_BASE_URL}/cafe/genetree/member/id/{gene}"
+            else:
+                url = f"{ENSEMBL_BASE_URL}/cafe/genetree/member/symbol/{species}/{gene}"
+        else:
+            return {
+                "status": "error",
+                "error": (
+                    "Provide gene_tree_id (e.g. 'ENSGT00390000003602') or gene "
+                    "(symbol e.g. 'BRCA2' or Ensembl gene ID)"
+                ),
+            }
+
+        headers = {**ENSEMBL_HEADERS, "Content-Type": "application/json"}
+        response = requests.get(url, headers=headers, timeout=self.timeout)
+        response.raise_for_status()
+        data = response.json()
+
+        tree = data.get("tree", {}) if isinstance(data, dict) else {}
+
+        # Recursively collect per-node gene-family size dynamics.
+        nodes = []
+        self._collect_cafe_nodes(tree, nodes)
+
+        # The root node carries the family-wide birth-death (lambda) rate.
+        root_lambda = tree.get("lambda") if isinstance(tree, dict) else None
+
+        return {
+            "status": "success",
+            "data": {
+                "type": data.get("type"),
+                "rooted": data.get("rooted"),
+                "pvalue_avg": data.get("pvalue_avg"),
+                "lambda": root_lambda,
+                "root_n_members": tree.get("n_members")
+                if isinstance(tree, dict)
+                else None,
+                "nodes": nodes[:200],
+                "total_nodes": len(nodes),
+            },
+            "metadata": {
+                "source": "Ensembl Compara - CAFE",
+                "query": gene_tree_id or gene,
+            },
+        }
+
+    def _collect_cafe_nodes(self, node, nodes, max_nodes=400):
+        """Recursively collect gene-family size dynamics at every CAFE node."""
+        if not isinstance(node, dict) or len(nodes) >= max_nodes:
+            return
+        tax = node.get("tax") or {}
+        nodes.append(
+            {
+                "name": node.get("name"),
+                "scientific_name": tax.get("scientific_name"),
+                "taxon_id": tax.get("id"),
+                "n_members": node.get("n_members"),
+                "pvalue": node.get("pvalue"),
+                "p_value_lim": node.get("p_value_lim"),
+                "lambda": node.get("lambda"),
+            }
+        )
+        for child in node.get("children", []):
+            self._collect_cafe_nodes(child, nodes, max_nodes)

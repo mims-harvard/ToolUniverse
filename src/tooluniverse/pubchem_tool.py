@@ -289,6 +289,11 @@ class PubChemRESTTool(BaseTool):
         if "name" not in arguments and "compound_name" in arguments:
             arguments["name"] = arguments["compound_name"]
 
+        # vendor alias for source (reverse-sourcing tool uses {source} in its URL
+        # template; 'vendor' is the more intuitive parameter name for callers).
+        if "source" not in arguments and "vendor" in arguments:
+            arguments["source"] = arguments["vendor"]
+
         # 1. Validate required parameters
         for key, prop in self.param_schema.items():
             if prop.get("required", False) and key not in arguments:

@@ -593,5 +593,413 @@
     "optional_api_keys": [
       "SEMANTIC_SCHOLAR_API_KEY"
     ]
+  },
+  {
+    "name": "SemanticScholar_get_paper_citations",
+    "description": "List the papers that CITE a given paper, with per-citation detail: the citation INTENTS (background, methodology, result), an isInfluential flag (highly influential citation), and the citing-sentence CONTEXTS. This is the enumerable per-citing-paper view that aggregate citation-count or supporting/contradicting-tally tools do not provide. Provide a Semantic Scholar paper ID (40-char hex), or a DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier. Use SemanticScholar_get_paper or SemanticScholar_search_papers to find the paper ID. Each result row wraps the citing paper under 'citingPaper'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "paper_id": {
+          "type": "string",
+          "description": "Paper identifier whose CITING papers to list. Semantic Scholar ID (e.g., '649def34f8be52c8b66281af98ae884c09aef38b' for 'Attention Is All You Need'), or DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated fields for each citation record. Citation-edge fields: intents, isInfluential, contexts. Citing-paper fields are prefixed (e.g., title, year, authors, citationCount, externalIds, openAccessPdf, abstract). Default returns intents, isInfluential, contexts and core citing-paper metadata.",
+          "default": "intents,isInfluential,contexts,title,year,authors,citationCount,externalIds,openAccessPdf"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of citing papers to return (default 20, max 1000).",
+          "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset into the citation list (default 0)."
+        }
+      },
+      "required": [
+        "paper_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}/citations"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "limit": 2
+      },
+      {
+        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "fields": "intents,isInfluential,contexts,title,year",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Citation list page from Semantic Scholar",
+              "properties": {
+                "offset": {
+                  "type": "integer",
+                  "description": "Pagination offset of this page"
+                },
+                "next": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Offset of the next page, if more results exist"
+                },
+                "data": {
+                  "type": "array",
+                  "description": "Citing-paper records",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "intents": {
+                        "type": "array",
+                        "description": "Citation intents: background, methodology, and/or result",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "isInfluential": {
+                        "type": "boolean",
+                        "description": "Whether this is a highly influential citation"
+                      },
+                      "contexts": {
+                        "type": "array",
+                        "description": "Citing-sentence context strings (when requested)",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "citingPaper": {
+                        "type": "object",
+                        "description": "Metadata of the citing paper (fields depend on requested fields)"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
+  },
+  {
+    "name": "SemanticScholar_get_paper_references",
+    "description": "List the papers that a given paper CITES (its reference list / bibliography), with per-reference detail: the citation INTENTS (background, methodology, result), an isInfluential flag, and the citing-sentence CONTEXTS for each reference. This complements bare-DOI reference lists by adding WHY each work is cited. Provide a Semantic Scholar paper ID (40-char hex), or a DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier. Each result row wraps the cited paper under 'citedPaper'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "paper_id": {
+          "type": "string",
+          "description": "Paper identifier whose REFERENCES (cited papers) to list. Semantic Scholar ID (e.g., '649def34f8be52c8b66281af98ae884c09aef38b' for 'Attention Is All You Need'), or DOI:/PMID:/ArXiv:/CorpusId: prefixed identifier."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated fields for each reference record. Citation-edge fields: intents, isInfluential, contexts. Cited-paper fields are prefixed (e.g., title, year, authors, citationCount, externalIds, openAccessPdf, abstract). Default returns intents, isInfluential, contexts and core cited-paper metadata.",
+          "default": "intents,isInfluential,contexts,title,year,authors,citationCount,externalIds,openAccessPdf"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of cited papers to return (default 20, max 1000).",
+          "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset into the reference list (default 0)."
+        }
+      },
+      "required": [
+        "paper_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.semanticscholar.org/graph/v1/paper/{paper_id}/references"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "limit": 2
+      },
+      {
+        "paper_id": "649def34f8be52c8b66281af98ae884c09aef38b",
+        "fields": "intents,isInfluential,title,year",
+        "limit": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Reference list page from Semantic Scholar",
+              "properties": {
+                "offset": {
+                  "type": "integer",
+                  "description": "Pagination offset of this page"
+                },
+                "next": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Offset of the next page, if more results exist"
+                },
+                "citingPaperInfo": {
+                  "type": "object",
+                  "description": "Metadata of the source (citing) paper"
+                },
+                "data": {
+                  "type": "array",
+                  "description": "Cited-paper records",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "intents": {
+                        "type": "array",
+                        "description": "Citation intents: background, methodology, and/or result",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "isInfluential": {
+                        "type": "boolean",
+                        "description": "Whether this is a highly influential reference"
+                      },
+                      "contexts": {
+                        "type": "array",
+                        "description": "Citing-sentence context strings (when requested)",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "citedPaper": {
+                        "type": "object",
+                        "description": "Metadata of the cited paper (fields depend on requested fields)"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
+  },
+  {
+    "name": "SemanticScholar_get_author_papers",
+    "description": "List an author's full publication bibliography from Semantic Scholar, one row per paper, with per-paper citation counts, publication years, venues, and identifiers. This is the enumerable paper list that the aggregate-profile tool (SemanticScholar_get_author: hIndex, total citationCount, paperCount) does not return. Provide the Semantic Scholar author ID; find it with SemanticScholar_search_authors.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "author_id": {
+          "type": "string",
+          "description": "Semantic Scholar author ID (e.g., '1741101' for Oren Etzioni). Find using SemanticScholar_search_authors."
+        },
+        "fields": {
+          "type": "string",
+          "description": "Comma-separated per-paper fields. Available: paperId, title, year, citationCount, referenceCount, venue, externalIds, authors, openAccessPdf, abstract, publicationTypes, fieldsOfStudy. Default returns core bibliographic and impact fields.",
+          "default": "paperId,title,year,citationCount,venue,externalIds,authors,openAccessPdf"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of papers to return (default 50, max 1000).",
+          "default": 50
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Pagination offset into the author's paper list (default 0)."
+        }
+      },
+      "required": [
+        "author_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.semanticscholar.org/graph/v1/author/{author_id}/papers"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "author_id": "1741101",
+        "limit": 2
+      },
+      {
+        "author_id": "1741101",
+        "fields": "title,year,citationCount",
+        "limit": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "description": "Author paper list page from Semantic Scholar",
+              "properties": {
+                "offset": {
+                  "type": "integer",
+                  "description": "Pagination offset of this page"
+                },
+                "next": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Offset of the next page, if more results exist"
+                },
+                "data": {
+                  "type": "array",
+                  "description": "Author's papers",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "paperId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "year": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "citationCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "venue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "url": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "SEMANTIC_SCHOLAR_API_KEY"
+    ]
   }
 ]

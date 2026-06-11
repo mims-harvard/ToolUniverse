@@ -173,5 +173,207 @@
         "clinical_significance": {"type": "array"}
       }
     }
+  },
+  {
+    "name": "NCBIVariation_alfa_frequencies_by_rsid",
+    "description": "Get ALFA (Allele Frequency Aggregator) per-ancestry allele frequencies for a dbSNP rsID from NCBI Variation Services. Unlike dbSNP esummary global_mafs (one aggregate global frequency per study), this returns allele COUNTS and computed frequencies broken down by population/ancestry: European, African, African American, East Asian, Latin American, South Asian, Other Asian, etc. SAMN biosample IDs are resolved to ancestry names via the live ALFA frequency metadata, aggregating >1M dbGaP subjects. Accepts rsID with or without 'rs' prefix.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP reference SNP ID. Examples: 'rs429358' (APOE, per-ancestry C allele frequency), 'rs334' (sickle-cell HBB, per-ancestry A/T counts), 'rs7412' (APOE epsilon-2)"
+        }
+      },
+      "required": ["rsid"]
+    },
+    "fields": {
+      "endpoint_type": "alfa_frequencies"
+    },
+    "type": "NCBIVariationTool",
+    "test_examples": [
+      {"rsid": "rs429358"},
+      {"rsid": "rs334"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Per-ancestry ALFA allele frequencies for the variant",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "refsnp_id": {"type": "string"},
+                "build_id": {"type": ["string", "null"]},
+                "positions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "position_key": {"type": "string"},
+                      "reference_allele": {"type": ["string", "null"]},
+                      "studies": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "study": {"type": "string"},
+                            "populations": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "biosample_id": {"type": "string"},
+                                  "population": {"type": "string"},
+                                  "total_alleles": {"type": "integer"},
+                                  "allele_counts": {"type": "object"},
+                                  "allele_frequencies": {"type": "object"}
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIVariation_spdi_to_rsids",
+    "description": "Reverse lookup from a normalized SPDI variant to the co-located dbSNP rsID(s), using NCBI Variation Services /spdi/{spdi}/rsids. Complements the forward direction (rsid_lookup) and the SPDI conversion tools, letting you recover an rsID from a genomic SPDI/coordinate. SPDI format: 'SeqID:Position:DeletedSequence:InsertedSequence' (0-based interbase). Returns a list of integer rsIDs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "spdi": {
+          "type": "string",
+          "description": "Variant in SPDI notation (SeqID:Position:Deleted:Inserted). Examples: 'NC_000019.10:44908683:T:C' (recovers rs429358 APOE), 'NC_000001.11:230710047:A:G' (AGT)"
+        }
+      },
+      "required": ["spdi"]
+    },
+    "fields": {
+      "endpoint_type": "spdi_to_rsids"
+    },
+    "type": "NCBIVariationTool",
+    "test_examples": [
+      {"spdi": "NC_000019.10:44908683:T:C"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "dbSNP rsIDs co-located with the SPDI variant",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "spdi": {"type": "string"},
+                "rsids": {"type": "array", "items": {"type": "integer"}},
+                "count": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "NCBIVariation_vcf_to_spdi",
+    "description": "Convert a raw VCF four-field variant (chromosome RefSeq accession, position, reference allele, alternate allele) directly to a normalized contextual SPDI on a RefSeq sequence, using NCBI Variation Services /vcf/{chrom}/{pos}/{ref}/{alts}/contextuals. Lets you enter the SPDI pipeline from VCF coordinates without first building an HGVS string. Position is 1-based VCF coordinate; the returned SPDI position is 0-based interbase.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome RefSeq accession (e.g., 'NC_000007.14' for chr7 GRCh38, 'NC_000019.10' for chr19)"
+        },
+        "pos": {
+          "type": "string",
+          "description": "1-based VCF position (e.g., '140753336' for BRAF V600E, '44908684' for APOE rs429358)"
+        },
+        "ref": {
+          "type": "string",
+          "description": "Reference allele (e.g., 'A', 'T', 'G', 'C')"
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternate allele (e.g., 'T', 'C'). Single allele; comma-separated alts also accepted by the API."
+        }
+      },
+      "required": ["chrom", "pos", "ref", "alt"]
+    },
+    "fields": {
+      "endpoint_type": "vcf_to_spdi"
+    },
+    "type": "NCBIVariationTool",
+    "test_examples": [
+      {"chrom": "NC_000007.14", "pos": "140753336", "ref": "A", "alt": "T"},
+      {"chrom": "NC_000019.10", "pos": "44908684", "ref": "T", "alt": "C"}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Normalized contextual SPDI(s) for the VCF variant",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "spdis": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "seq_id": {"type": "string"},
+                      "position": {"type": "integer"},
+                      "deleted_sequence": {"type": "string"},
+                      "inserted_sequence": {"type": "string"}
+                    }
+                  }
+                },
+                "count": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
   }
 ]

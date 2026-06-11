@@ -321,5 +321,102 @@
         }
       ]
     }
+  },
+  {
+    "name": "EVA_get_clustered_variant_by_rs",
+    "description": "Resolve an EVA clustered-variant RS accession to its canonical assembly/contig/position record using the EVA accessioning (identifiers) service. This is distinct from EVA's variant-DATA API (webservices/rest) used by the other EVA tools: the accessioning API (webservices/identifiers) maps an RS accession to its definitive coordinate record (assemblyAccession, taxonomyAccession, contig, start, variant type). The RS accession is the numeric clustered-variant id (e.g. 429358), not the 'rs' prefixed dbSNP string. Returns a list of accession records (usually one).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EVA clustered-variant RS accession (numeric, no 'rs' prefix). Examples: '429358' (human APOE region, GRCh38 contig CM000681.2 start 44908684), '3091781465' (horse clustered variant)"
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://www.ebi.ac.uk/eva/webservices/identifiers/v1/clustered-variants/{accession}"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "accession": "429358"
+      },
+      {
+        "accession": "3091781465"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "EVA accessioning record(s) for the clustered-variant RS accession",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "integer"
+                  },
+                  "version": {
+                    "type": "integer"
+                  },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "assemblyAccession": {
+                        "type": "string"
+                      },
+                      "taxonomyAccession": {
+                        "type": "integer"
+                      },
+                      "contig": {
+                        "type": "string"
+                      },
+                      "start": {
+                        "type": "integer"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Variant type (e.g., SNV)"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
   }
 ]

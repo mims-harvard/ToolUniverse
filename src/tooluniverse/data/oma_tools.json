@@ -481,5 +481,325 @@
         }
       ]
     }
+  },
+  {
+    "name": "OMA_resolve_xref",
+    "description": "Resolve a gene name, gene symbol, UniProt entry name, or any cross-reference identifier to OMA protein entries. This is the entry point into the OMA toolchain when you only have a common identifier (e.g. 'BRCA2' or 'MED4_HUMAN') rather than a UniProt accession or OMA ID. OMA_get_protein only accepts a UniProt accession (P04637) or OMA ID (HUMAN31534); use this tool first to obtain the entry_nr / oma_id / genome for the gene of interest, then feed the oma_id into OMA_get_protein, OMA_get_orthologs, OMA_get_protein_go, etc. Example: search='MED4_HUMAN' returns entry_nr 24423700, oma_id HUMAN17018, species Homo sapiens (taxon 9606); search='BRCA2' returns matching OMA entries across species.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Gene symbol (e.g. 'BRCA2'), UniProt entry name (e.g. 'MED4_HUMAN'), or any cross-reference identifier to resolve to OMA entries."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of cross-reference matches to return (default: 25, max: 100)."
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "xref"
+    },
+    "type": "OMATool",
+    "test_examples": [
+      {
+        "search": "MED4_HUMAN"
+      },
+      {
+        "search": "BRCA2"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "xref": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "seq_match": {
+                    "type": "string"
+                  },
+                  "entry_nr": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "oma_id": {
+                    "type": "string"
+                  },
+                  "species_code": {
+                    "type": "string"
+                  },
+                  "species_name": {
+                    "type": "string"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "OMA_get_genome_pair_orthologs",
+    "description": "Retrieve the complete set of pairwise orthologs between TWO whole genomes (proteome-vs-proteome) in OMA. Unlike OMA_get_orthologs (which returns orthologs of a single query protein), this returns every orthologous protein PAIR between two species genomes -- the data used to build species-pair ortholog tables, dN/dS panels, and comparative-genomics / synteny analyses. Each pair reports entry_1 and entry_2 (omaid, canonical_id, species, HOG/group), the relationship type (1:1, 1:n, n:1, n:m), evolutionary distance, and alignment score. Provide species codes (e.g. genome1='HUMAN', genome2='MOUSE') or NCBI taxon IDs. Results are paginated; use per_page and page. Example: genome1='HUMAN', genome2='MOUSE' returns pairs such as HUMAN01436 (NK2R_HUMAN) <-> MOUSE00001 (NK2R_MOUSE), rel_type 1:1.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "genome1": {
+          "type": "string",
+          "description": "First genome: UniProt species code (e.g. 'HUMAN', 'PANTR') or NCBI taxon ID (e.g. '9606')."
+        },
+        "genome2": {
+          "type": "string",
+          "description": "Second genome: UniProt species code (e.g. 'MOUSE', 'PANTR') or NCBI taxon ID (e.g. '10090')."
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of ortholog pairs to return per page (default: 20, max: 100). The full proteome-vs-proteome set is large; paginate with 'page'."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page number for paginated results (default: 1)."
+        }
+      },
+      "required": [
+        "genome1",
+        "genome2"
+      ]
+    },
+    "fields": {
+      "endpoint": "genome_pairs"
+    },
+    "type": "OMATool",
+    "test_examples": [
+      {
+        "genome1": "HUMAN",
+        "genome2": "MOUSE",
+        "per_page": 1
+      },
+      {
+        "genome1": "HUMAN",
+        "genome2": "PANTR",
+        "per_page": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entry_1": {
+                    "type": "object"
+                  },
+                  "entry_2": {
+                    "type": "object"
+                  },
+                  "rel_type": {
+                    "type": "string"
+                  },
+                  "distance": {
+                    "type": "number"
+                  },
+                  "score": {
+                    "type": "number"
+                  },
+                  "oma_group": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "OMA_get_protein_go",
+    "description": "Get Gene Ontology (GO) functional annotations for a specific OMA protein. OMA attaches per-entry GO annotations with the aspect (biological_process / molecular_function / cellular_component), information content (ic), evidence code (e.g. IDA, NAS, IEA), and a literature reference (PMID). Other OMA tools return orthology / HOG / group membership but not these functional annotations. Accepts an OMA ID (e.g. 'HUMAN17018') or UniProt accession (e.g. 'P04637'); use OMA_resolve_xref or OMA_get_protein first if you only have a gene symbol. Example: protein_id='HUMAN17018' returns GO:0060261 'positive regulation of transcription initiation by RNA polymerase II', aspect biological_process, ic 8.27, evidence IDA, reference PMID:12218053.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "protein_id": {
+          "type": "string",
+          "description": "OMA ID (e.g. 'HUMAN17018') or UniProt accession (e.g. 'P04637')."
+        },
+        "aspect": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional GO aspect filter: 'biological_process', 'molecular_function', or 'cellular_component'. Leave empty for all aspects."
+        }
+      },
+      "required": [
+        "protein_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "protein_ontology"
+    },
+    "type": "OMATool",
+    "test_examples": [
+      {
+        "protein_id": "HUMAN17018"
+      },
+      {
+        "protein_id": "P04637"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_term": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "aspect": {
+                    "type": "string"
+                  },
+                  "information_content": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": "string"
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
   }
 ]

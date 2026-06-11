@@ -355,5 +355,170 @@
         "per_page": 5
       }
     ]
+  },
+  {
+    "name": "PharmacoDB_get_drug_targets",
+    "type": "PharmacoDBTool",
+    "description": "Query PharmacoDB drug-target relationships in three directions. (1) Gene -> targets: pass gene_name (HGNC symbol, e.g. 'EGFR') or gene_id to get the molecular targets annotated to that gene (single_gene_target) - this is the reverse 'which targets/compounds are associated with gene X' lookup that PharmacoDB_get_compound cannot do. (2) Compound -> targets: pass compound_name (e.g. 'paclitaxel') or compound_id to list that drug's targets (single_compound_target). (3) Full cross-database drug-target table: pass NEITHER gene nor compound to page through the entire compound->targets table (all_compound_targets), client-side paginated via page/per_page. Targets are ChEMBL-style protein target names with PharmacoDB target IDs. Example: gene_name='EGFR' returns gene_id 8931 with targets 67 (Epidermal growth factor receptor erbB1) and 1226.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_drug_targets"],
+          "description": "Operation type"
+        },
+        "gene_name": {
+          "type": ["string", "null"],
+          "description": "Gene HGNC symbol for the gene->targets direction (e.g., 'EGFR', 'BRAF'). Mutually exclusive with compound inputs."
+        },
+        "gene_id": {
+          "type": ["integer", "null"],
+          "description": "PharmacoDB gene database ID for the gene->targets direction (e.g., 8931 for EGFR). Mutually exclusive with compound inputs."
+        },
+        "compound_name": {
+          "type": ["string", "null"],
+          "description": "Compound/drug name for the compound->targets direction (e.g., 'paclitaxel'). Mutually exclusive with gene inputs."
+        },
+        "compound_id": {
+          "type": ["integer", "null"],
+          "description": "PharmacoDB compound database ID for the compound->targets direction (e.g., 49658 for Paclitaxel). Mutually exclusive with gene inputs."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "Page number for the full drug-target table direction (when no gene/compound is given). Default 1."
+        },
+        "per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 20,
+          "description": "Rows per page for the full drug-target table direction (default 20, max 200). Ignored when gene_name/gene_id/compound_name/compound_id is supplied."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Single gene->targets or compound->targets direction result",
+          "properties": {
+            "direction": {"type": "string", "description": "single_gene_target or single_compound_target"},
+            "gene_id": {"type": ["integer", "null"]},
+            "gene_name": {"type": ["string", "null"]},
+            "compound_id": {"type": ["integer", "null"]},
+            "compound_name": {"type": ["string", "null"]},
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "target_id": {"type": "integer"},
+                  "target_name": {"type": "string"}
+                }
+              }
+            },
+            "num_targets": {"type": "integer"}
+          },
+          "required": ["direction", "targets", "num_targets"]
+        },
+        {
+          "type": "object",
+          "description": "Full cross-database drug-target table (paginated)",
+          "properties": {
+            "direction": {"type": "string", "enum": ["all_compound_targets"]},
+            "compound_targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "compound_id": {"type": "integer"},
+                  "compound_name": {"type": "string"},
+                  "targets": {"type": "array"}
+                }
+              }
+            },
+            "num_returned": {"type": "integer"},
+            "total_available": {"type": "integer"},
+            "page": {"type": "integer"},
+            "per_page": {"type": "integer"}
+          },
+          "required": ["direction", "compound_targets", "num_returned", "total_available"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_drug_targets",
+        "gene_name": "EGFR"
+      }
+    ]
+  },
+  {
+    "name": "PharmacoDB_get_molecular_profiling",
+    "type": "PharmacoDBTool",
+    "description": "Get the per-cell-line molecular profiling inventory from PharmacoDB: which molecular data types (e.g., Kallisto RNA-seq isoforms, rnaseq, rna microarray, mutation, cnv) are available for a given cancer cell line, and in which pharmacogenomics dataset (CCLE, CTRPv2, FIMM, GDSC1/2, gCSI, etc.), with the number of profiles available (num_prof). Use this to confirm a cell line has the omics layer you need before pulling biomarker associations. Look up by cell_line_name (e.g., 'MCF-7') or cell_line_id. Example: cell_line_name='MCF-7' (cell id 273) returns records like {dataset CCLE, mDataType 'Kallisto_0.46.1.rnaseq', num_prof 1} plus mutation/cnv/rna layers.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_molecular_profiling"],
+          "description": "Operation type"
+        },
+        "cell_line_name": {
+          "type": ["string", "null"],
+          "description": "Cancer cell line name (e.g., 'MCF-7', 'A549'). Mutually exclusive with cell_line_id."
+        },
+        "cell_line_id": {
+          "type": ["integer", "null"],
+          "description": "PharmacoDB cell line database ID (e.g., 273 for MCF-7). Mutually exclusive with cell_line_name."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Molecular profiling inventory for the requested cell line",
+          "properties": {
+            "cell_line_name": {"type": ["string", "null"]},
+            "cell_line_id": {"type": ["integer", "null"]},
+            "profiling": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "cell_line": {"type": "object"},
+                  "dataset": {"type": "object"},
+                  "mDataType": {"type": "string", "description": "Molecular data type (e.g., rnaseq, rna, mutation, cnv, Kallisto isoforms)"},
+                  "num_prof": {"type": "integer", "description": "Number of profiles available for this data type/dataset"}
+                }
+              }
+            },
+            "num_records": {"type": "integer"}
+          },
+          "required": ["profiling", "num_records"]
+        },
+        {
+          "type": "object",
+          "description": "Error envelope when the cell line has no profiling or the request fails",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_molecular_profiling",
+        "cell_line_name": "MCF-7"
+      }
+    ]
   }
 ]
