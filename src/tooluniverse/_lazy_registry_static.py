@@ -498,6 +498,7 @@ STATIC_LAZY_REGISTRY = {
     "PaleobiologyRESTTool": "paleobiology_tool",
     "PathwayCommonsTool": "pathwaycommons_tool",
     "PepCalcTool": "pepcalc_tool",
+    "PeptideAtlasGetObservedPeptidesTool": "peptideatlas_tool",
     "PfamTool": "pfam_tool",
     "PharmGKBTool": "pharmgkb_tool",
     "PharmacoDBTool": "pharmacodb_tool",

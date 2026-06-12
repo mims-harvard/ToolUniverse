@@ -1231,6 +1231,7 @@ default_tool_files = {
     "pepcalc": os.path.join(current_dir, "data", "pepcalc_tools.json"),
     "hlaligandatlas": os.path.join(current_dir, "data", "hlaligandatlas_tools.json"),
     "mhcmotifatlas": os.path.join(current_dir, "data", "mhcmotifatlas_tools.json"),
+    "peptideatlas": os.path.join(current_dir, "data", "peptideatlas_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/
