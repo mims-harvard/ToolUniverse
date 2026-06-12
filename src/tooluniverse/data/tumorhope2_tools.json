@@ -1,0 +1,58 @@
+[
+  {
+    "name": "TumorHope2_search_peptides",
+    "type": "TumorHope2SearchPeptidesTool",
+    "description": "Search TumorHoPe 2 (Raghava lab, IIITD) for TUMOR-HOMING peptide records used in drug delivery. Filter by 'source' (peptide source label, e.g. A33H), 'target_tumor' (e.g. 'Brain tumor'), 'name_source', or 'conjugate'. Each record returns the peptide sequence, target tumor / cell, receptor / biomarker, N/C-terminus modifications, sequence motif, phage-display origin, in-vitro and in-vivo evidence, conjugate, PubMed ID, year, and title. Note: this API does not support sequence search. Keyless public API.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Peptide source label. Example: 'A33H' -> 1 record (SIWV, a brain-tumor-homing tetrapeptide)."
+        },
+        "target_tumor": {
+          "type": "string",
+          "description": "Target tumor type. Example: 'Brain tumor' -> ~39 records."
+        },
+        "name_source": {
+          "type": "string",
+          "description": "Source name to match."
+        },
+        "conjugate": {
+          "type": "string",
+          "description": "Conjugate / payload label (e.g. a fluorophore or nanoparticle)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": { "const": "success" },
+            "data": {
+              "type": "array",
+              "items": { "type": "object" },
+              "description": "Matching tumor-homing peptide records. Each has id, title, pmid, year, source, name_source, sequence, n_term, c_term, motif, target_tumor, target_cell, receptors_biomarker, phage_display, invitro, invivo."
+            },
+            "metadata": { "type": "object" }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": { "const": "error" },
+            "error": { "type": "string" }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      { "source": "A33H" },
+      { "target_tumor": "Brain tumor" }
+    ]
+  }
+]

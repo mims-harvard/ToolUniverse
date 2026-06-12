@@ -1,0 +1,93 @@
+[
+    {
+        "name": "PepCalc_peptide_properties",
+        "type": "PepCalcTool",
+        "description": "Calculate physicochemical properties for a peptide with optional N-terminal and C-terminal chemical modifications, using the Pep-Calc.com API. Returns the molecular formula, monoisotopic and average molecular weight, isoelectric point (pI), and 280 nm extinction coefficient (oxidized / reduced cysteine).\n\nUnlike a bare-sequence calculator (e.g. ProtParam_calculate, which only accepts standard amino acids with free termini), this tool models the terminal group, so it covers synthetic / therapeutic peptides. The terminal group changes the formula, mass, and pI: for example seq=ACDEFGHIK with C_term=NH2 (amide) gives pI 6.96 and MW 1017.47, while C_term=OH (free acid) gives pI 5.23 and MW 1018.45.\n\nN_term / C_term are chemical-group strings understood by Pep-Calc: N_term defaults to 'H' (free amine; 'Ac' for N-terminal acetyl), C_term defaults to 'OH' (free acid; 'NH2' for C-terminal amide). No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "seq": {
+                    "type": "string",
+                    "description": "Peptide sequence in single-letter amino acid code (e.g. 'HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR' or 'ACDEFGHIK')."
+                },
+                "N_term": {
+                    "type": "string",
+                    "description": "N-terminal group as a Pep-Calc chemical string. Default 'H' (free amine, unmodified). Use 'Ac' for N-terminal acetylation.",
+                    "default": "H"
+                },
+                "C_term": {
+                    "type": "string",
+                    "description": "C-terminal group as a Pep-Calc chemical string. Default 'OH' (free acid, unmodified). Use 'NH2' for C-terminal amidation.",
+                    "default": "OH"
+                }
+            },
+            "required": ["seq"]
+        },
+        "return_schema": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "description": "Successful peptide property calculation.",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["success"]},
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "seqString": {"type": ["string", "null"], "description": "Input peptide sequence."},
+                                "seqList": {"type": ["array", "null"], "description": "Per-residue list of the sequence.", "items": {"type": "string"}},
+                                "seqLength": {"type": ["integer", "null"], "description": "Number of residues."},
+                                "nString": {"type": ["string", "null"], "description": "N-terminal group string used."},
+                                "cString": {"type": ["string", "null"], "description": "C-terminal group string used."},
+                                "nName": {"type": ["string", "null"], "description": "Human-readable N-terminal modification name (e.g. 'Unmodified', 'Acetyl')."},
+                                "cName": {"type": ["string", "null"], "description": "Human-readable C-terminal modification name (e.g. 'Acid', 'Amide')."},
+                                "nModified": {"type": ["boolean", "null"], "description": "Whether the N-terminus is modified."},
+                                "cModified": {"type": ["boolean", "null"], "description": "Whether the C-terminus is modified."},
+                                "formula": {"type": ["string", "null"], "description": "Molecular formula (e.g. 'C44H67N13O13S')."},
+                                "molecularWeight": {"type": ["string", "null"], "description": "Monoisotopic molecular weight in Da (string)."},
+                                "molecularWeightAverage": {"type": ["string", "null"], "description": "Average molecular weight in Da (string)."},
+                                "isoelectricPoint": {"type": ["string", "null"], "description": "Isoelectric point (pI); null if the iso endpoint could not be computed."},
+                                "extinctionCoefficient": {
+                                    "type": ["object", "null"],
+                                    "description": "Molar extinction coefficient at 280 nm (M^-1 cm^-1).",
+                                    "properties": {
+                                        "oxidized": {"type": ["number", "null"], "description": "With cystine (oxidized cysteines)."},
+                                        "reduced": {"type": ["number", "null"], "description": "With free (reduced) cysteines."}
+                                    },
+                                    "additionalProperties": true
+                                }
+                            },
+                            "additionalProperties": true
+                        },
+                        "metadata": {"type": "object", "additionalProperties": true}
+                    },
+                    "required": ["status", "data"]
+                },
+                {
+                    "type": "object",
+                    "description": "Error response.",
+                    "properties": {
+                        "status": {"type": "string", "enum": ["error"]},
+                        "error": {"type": "string", "description": "Human-readable error message."},
+                        "errorCode": {"type": ["string", "null"], "description": "Pep-Calc API error code, when present."}
+                    },
+                    "required": ["status", "error"]
+                }
+            ]
+        },
+        "test_examples": [
+            {
+                "seq": "HAEGTFTSDVSSYLEGQAAKEFIAWLVKGR",
+                "N_term": "H",
+                "C_term": "NH2"
+            },
+            {
+                "seq": "ACDEFGHIK",
+                "C_term": "OH"
+            },
+            {
+                "seq": "ACDEFGHIK",
+                "C_term": "NH2"
+            }
+        ]
+    }
+]

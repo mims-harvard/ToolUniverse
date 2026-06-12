@@ -1222,6 +1222,15 @@ default_tool_files = {
     "data_quality": os.path.join(current_dir, "data", "data_quality_tools.json"),
     # Meta-Analysis - fixed/random effects, inverse-variance, DerSimonian-Laird (local)
     "meta_analysis": os.path.join(current_dir, "data", "meta_analysis_tools.json"),
+    # Peptide resources - antimicrobial / cell-penetrating / therapeutic / immunopeptidomics
+    "dbaasp": os.path.join(current_dir, "data", "dbaasp_tools.json"),
+    "hemolytik2": os.path.join(current_dir, "data", "hemolytik2_tools.json"),
+    "cancerppd2": os.path.join(current_dir, "data", "cancerppd2_tools.json"),
+    "peplife2": os.path.join(current_dir, "data", "peplife2_tools.json"),
+    "tumorhope2": os.path.join(current_dir, "data", "tumorhope2_tools.json"),
+    "pepcalc": os.path.join(current_dir, "data", "pepcalc_tools.json"),
+    "hlaligandatlas": os.path.join(current_dir, "data", "hlaligandatlas_tools.json"),
+    "mhcmotifatlas": os.path.join(current_dir, "data", "mhcmotifatlas_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/
