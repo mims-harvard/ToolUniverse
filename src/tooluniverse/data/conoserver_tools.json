@@ -1,0 +1,121 @@
+[
+  {
+    "name": "ConoServer_get_conopeptide",
+    "type": "ConoServerGetConopeptideTool",
+    "description": "Get a full ConoServer conopeptide (cone-snail venom peptide) record by its ConoServer protein ID (e.g. P00001). Returns the sequence, post-translational modifications, cysteine framework, gene superfamily, pharmacological family, source Conus species/diet/region, average and monoisotopic mass, pI, extinction coefficient, and literature references. Data from the keyless ConoServer bulk protein export (conoserver.org).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "conoserver_id": {
+          "type": "string",
+          "description": "ConoServer protein ID, e.g. 'P00001' (alpha-conotoxin SI, sequence ICCNPACGPKYSCX, from Conus striatus). Case-insensitive."
+        }
+      },
+      "required": ["conoserver_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful conopeptide lookup.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": {"type": ["string", "null"]},
+                "name": {"type": ["string", "null"]},
+                "alternative_names": {"type": "array"},
+                "class": {"type": ["string", "null"]},
+                "gene_superfamily": {"type": ["string", "null"]},
+                "cysteine_framework": {"type": ["string", "null"]},
+                "pharmacological_family": {"type": ["string", "null"]},
+                "organism_latin": {"type": ["string", "null"]},
+                "organism_diet": {"type": ["string", "null"]},
+                "organism_region": {"type": ["string", "null"]},
+                "sequence": {"type": ["string", "null"]},
+                "sequence_modifications": {"type": "array"},
+                "sequence_evidence": {"type": ["string", "null"]},
+                "average_mass": {"type": ["string", "null"]},
+                "monoisotopic_mass": {"type": ["string", "null"]},
+                "isoelectric_point": {"type": ["string", "null"]},
+                "extinction_coefficient": {"type": ["string", "null"]},
+                "references": {"type": "array"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"conoserver_id": "P00001"},
+      {"conoserver_id": "P00022"}
+    ]
+  },
+  {
+    "name": "ConoServer_search_conopeptides",
+    "type": "ConoServerSearchConopeptidesTool",
+    "description": "Search ConoServer conopeptides (cone-snail venom peptides) by one or more case-insensitive substring filters: name, sequence, pharmacological_family (e.g. 'alpha conotoxin'), gene_superfamily (e.g. 'A superfamily'), cysteine_framework (e.g. 'I'), organism (Conus species, e.g. 'Conus geographus'), or conopeptide_class. Returns matching records (sequence, modifications, masses, organism, references). Keyless ConoServer bulk export (conoserver.org).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "description": "Peptide name substring."},
+        "sequence": {"type": "string", "description": "Amino-acid sequence substring (e.g. 'GCCS')."},
+        "pharmacological_family": {"type": "string", "description": "e.g. 'alpha conotoxin', 'omega conotoxin'."},
+        "gene_superfamily": {"type": "string", "description": "e.g. 'A superfamily', 'O1 superfamily'."},
+        "cysteine_framework": {"type": "string", "description": "Cysteine framework, e.g. 'I', 'III', 'VI/VII'."},
+        "organism": {"type": "string", "description": "Source Conus species, e.g. 'Conus geographus'."},
+        "conopeptide_class": {"type": "string", "description": "Conopeptide class, e.g. 'conotoxin'."},
+        "limit": {"type": "integer", "description": "Max records to return (default 25, max 200)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful search.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "count": {"type": "integer"},
+                "returned": {"type": "integer"},
+                "results": {"type": "array"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"organism": "Conus geographus", "limit": 3},
+      {"pharmacological_family": "omega conotoxin", "limit": 5},
+      {"sequence": "GCCS", "limit": 5}
+    ]
+  }
+]

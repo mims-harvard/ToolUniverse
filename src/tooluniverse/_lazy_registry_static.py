@@ -101,6 +101,8 @@ STATIC_LAZY_REGISTRY = {
     "CompoundDiseaseProfileTool": "compound_disease_tool",
     "CompoundGeneDiseaseAssociationTool": "compound_gene_disease_tool",
     "CompoundVariantAnnotationTool": "compound_variant_tool",
+    "ConoServerGetConopeptideTool": "conoserver_tool",
+    "ConoServerSearchConopeptidesTool": "conoserver_tool",
     "CorePDFSnippetsTool": "core_tool",
     "CoreTool": "core_tool",
     "CrossrefRESTTool": "crossref_tool",
