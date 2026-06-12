@@ -1234,6 +1234,10 @@ default_tool_files = {
     "peptideatlas": os.path.join(current_dir, "data", "peptideatlas_tools.json"),
     "conoserver": os.path.join(current_dir, "data", "conoserver_tools.json"),
     "norine": os.path.join(current_dir, "data", "norine_tools.json"),
+    "ampsphere_record": os.path.join(
+        current_dir, "data", "ampsphere_record_tools.json"
+    ),
+    "ampsphere": os.path.join(current_dir, "data", "ampsphere_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/
