@@ -21,6 +21,38 @@ This skill is built on **validated, mostly keyless tools** (BLAST, ELM/PROSITE, 
 
 ---
 
+## Automated pipeline (scripts) — the fast path
+
+Two runnable scripts in `scripts/` execute the whole pipeline so you don't have to chain the phase calls by hand. Both load ToolUniverse via the SDK and run from the repo root.
+
+### `deorphanize_peptide.py` — keyless candidate generation + ranking (Phases 1–4)
+
+No API key. Characterizes the peptide, scans PROSITE/ELM signatures, enumerates the hypothesized target's receptor family (HGNC group + GPCRdb), anchors on phenotype (OpenTargets), checks cross-species orthologs (Alliance), and prints a ranked candidate shortlist.
+
+```bash
+python3 scripts/deorphanize_peptide.py \
+  --sequence <PEPTIDE_SEQ> \
+  --hypothesized-target <GENE> \         # optional but recommended; seeds family enumeration (e.g. GLP1R)
+  --phenotype "<disease name>" \         # optional; OpenTargets anchor — use the DISEASE node, not a symptom
+  --assay-species mus_musculus \         # species of the negative binding assay
+  [--no-blast] [--out result.json]
+```
+
+**Validated on the control** (`--sequence HGEGTFTSDLSKQMEEEAVRLFIEWLKNGGPSSGAPPPS --hypothesized-target GLP1R --phenotype "type 2 diabetes mellitus"`): recovers the class-B panel `{GCGR, GHRHR, GIPR, GLP1R, GLP2R, SCTR}`, flags **GLP1R as hypothesized (tested negative)**, and promotes **GIPR to Tier 1 (family + phenotype, score 0.674)** as the leading real-target hypothesis — exactly the deorphanization re-ranking, produced with zero API keys.
+
+### `cofold_screen.py` — structural confirmation (Phase 5, key-gated)
+
+Co-folds the peptide against each shortlisted receptor and ranks by interface confidence (ipTM). Requires `NVIDIA_API_KEY`; **without it, runs a DRY RUN** that still resolves every receptor sequence (GPCRdb → UniProt fallback) and prints the co-fold plan, so you can verify inputs before paying for GPU time.
+
+```bash
+python3 scripts/cofold_screen.py --peptide <SEQ> --candidates GIPR GCGR GLP2R \
+  [--backend boltz2|alphafold2_multimer|openfold3] [--assay-species mus_musculus] [--out cofold.json]
+```
+
+Use the scripts for the fast path. The per-phase documentation below is the manual/fallback reference — it explains every tool call the scripts automate, with the exact parameter names and gotchas, so you can run, debug, or extend any single step.
+
+---
+
 ## Phase 0 — Tool verification (run first)
 
 Confirm every tool you intend to use is loadable before building the pipeline. Mark any tool that errors here and substitute its fallback.
