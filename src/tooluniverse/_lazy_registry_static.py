@@ -438,6 +438,7 @@ STATIC_LAZY_REGISTRY = {
     "NICEWebScrapingTool": "unified_guideline_tools",
     "NeuroMorphoTool": "neuromorpho_tool",
     "NextstrainTool": "nextstrain_tool",
+    "NorineGetPeptideTool": "norine_tool",
     "NvidiaNIMTool": "nvidia_nim_tool",
     "OBISOccurrenceTool": "obis_tool",
     "OBISTaxaTool": "obis_tool",

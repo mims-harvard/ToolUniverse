@@ -1,0 +1,109 @@
+[
+  {
+    "name": "Norine_get_peptide",
+    "type": "NorineGetPeptideTool",
+    "description": "Programmatic keyless lookup of non-ribosomal peptide (NRP) records from Norine (Nonribosomal Peptides Database, Universite de Lille) by peptide name or Norine ID. Returns the curated structure (monomer composition, cyclic/linear type, monomer graph), molecular formula/weight, SMILES, biological activity, source organism (taxId), and literature references (PMIDs). NRPs are bacterial/fungal peptides made by NRP synthetases (not the ribosome) and often contain non-proteinogenic monomers and cyclic/branched backbones (e.g. tyrocidine, microcystin, surfactin), so they are NOT covered by ribosomal/therapeutic/MHC peptide resources. Provide 'name' (e.g. 'tyrocidine' -> 4 records) OR 'norine_id' (e.g. '00123', zero-padded to 5 digits). The name route may return several peptides of a family; the id route returns one. Keyless Norine REST API.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": ["string", "null"],
+          "description": "Peptide (or family) name to look up. Example: 'tyrocidine' returns 4 records (tyrocidine A-D). Case-insensitive partial-family matching is handled by Norine. Provide either 'name' or 'norine_id', not both."
+        },
+        "norine_id": {
+          "type": ["string", "integer", "null"],
+          "description": "Norine peptide ID. Accepts a bare number, a zero-padded 5-digit string, or a 'NOR00123'-style ID (digits are extracted and zero-padded to 5 digits). Example: '00123' (microcystin family, category PK-NRP, organism Anabaena, taxId 1163). Provide either 'name' or 'norine_id', not both."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful Norine peptide lookup.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "peptides": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "cite": {"type": "array"},
+                      "general": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "string"},
+                          "name": {"type": "string"},
+                          "family": {"type": "string"},
+                          "syno": {"type": "array"},
+                          "category": {"type": "string"},
+                          "formula": {"type": "string"},
+                          "mw": {"type": ["string", "number"]},
+                          "comment": {"type": "string"},
+                          "status": {"type": "string"},
+                          "activity": {"type": "array"},
+                          "source": {"type": "string"},
+                          "doi": {"type": "string"}
+                        }
+                      },
+                      "structure": {
+                        "type": "object",
+                        "properties": {
+                          "type": {"type": "string"},
+                          "size": {"type": ["integer", "string"]},
+                          "composition": {"type": "string"},
+                          "graph": {"type": "string"},
+                          "smiles": {"type": "string"}
+                        }
+                      },
+                      "organism": {"type": "array"},
+                      "reference": {"type": "array"}
+                    }
+                  },
+                  "description": "Normalized list of Norine NRP records (name route 'peptides' and id route 'norine.peptide' merged here)."
+                }
+              },
+              "required": ["peptides"]
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "lookup_mode": {"type": "string"},
+                "query": {"type": "string"},
+                "count": {"type": "integer"},
+                "first_record": {"type": "object"}
+              }
+            }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"name": "tyrocidine"},
+      {"norine_id": "00123"}
+    ],
+    "label": ["Norine", "Non-ribosomal Peptide", "NRP", "Cyclic Peptide", "Peptide"],
+    "metadata": {
+      "tags": ["Norine", "non-ribosomal peptide", "NRP", "cyclic peptide", "monomer", "SMILES", "peptide"],
+      "estimated_execution_time": "1-10 seconds"
+    }
+  }
+]
