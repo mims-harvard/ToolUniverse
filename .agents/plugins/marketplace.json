@@ -1,0 +1,20 @@
+{
+  "name": "tooluniverse-local",
+  "interface": {
+    "displayName": "ToolUniverse Local"
+  },
+  "plugins": [
+    {
+      "name": "tooluniverse",
+      "source": {
+        "source": "local",
+        "path": "./plugins/tooluniverse"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Research"
+    }
+  ]
+}

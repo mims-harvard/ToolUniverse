@@ -1,0 +1,23 @@
+{
+  "skill_name": "tooluniverse-microbial-genome-characterization",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Find the reference genome for Escherichia coli and report its assembly statistics: total length, number of chromosomes, contig N50, GC content, and assembly level.",
+      "expected_output": "Agent should: (1) resolve E. coli to tax id 562 via NCBIDatasets_suggest_taxonomy, (2) list reference genomes with NCBIDatasets_list_genomes_by_taxon (reference_only=true) and identify GCF_000005845.2, (3) call NCBIDatasets_get_genome_assembly to report ~4,641,652 bp (4.64 Mb), 1 chromosome, 1 contig, contig N50 = 4,641,652, GC ~51%, assembly level Complete Genome, refseq_category 'reference genome'.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "How many plasmids does the E. coli O157:H7 Sakai reference assembly (GCF_000008865.2) have, and what are their names and sizes?",
+      "expected_output": "Agent should call NCBIDatasets_get_sequence_reports on GCF_000008865.2 and report 1 chromosome (NC_002695.2, ~5,498,578 bp) plus 2 plasmids: pOSAK1 (NC_002127.1, ~3,306 bp) and pO157 (NC_002128.1, ~92,721 bp). Answer: 2 plasmids. Should note that number_of_chromosomes counts all assembled molecules so the sequence report is authoritative.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "How many genome assemblies are available for Mycobacterium tuberculosis, and what is its reference assembly?",
+      "expected_output": "Agent should call NCBIDatasets_list_genomes_by_taxon for Mycobacterium tuberculosis and report metadata.total_available around 16,311 assemblies. Using reference_only=true it should identify the reference genome GCF_000195955.2 (Complete Genome, contig N50 ~4,411,532, 1 contig), noting GCF_ (RefSeq) is preferred over its GCA_000195955.2 GenBank pair.",
+      "files": []
+    }
+  ]
+}

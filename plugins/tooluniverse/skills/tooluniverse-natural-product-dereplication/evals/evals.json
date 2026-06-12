@@ -1,0 +1,38 @@
+{
+  "skill": "tooluniverse-natural-product-dereplication",
+  "evals": [
+    {
+      "name": "staurosporine_dereplication_and_producer",
+      "prompt": "Is staurosporine a known natural product, and what organism produces it?",
+      "expected_tools": ["PubChem_get_CID_by_compound_name", "PubChem_get_compound_properties_by_CID", "NPAtlas_search_compounds", "NPAtlas_get_compound"],
+      "expected_facts": [
+        "Known microbial natural product, NPAtlas ID NPA014588",
+        "InChIKey HKSZLNNOFSGOKW-FYTWVXJKSA-N",
+        "Produced by Streptomyces (genus; Bacteria > Actinobacteria > Streptomycetaceae)",
+        "First reported 1978, DOI 10.1039/C39780000800"
+      ]
+    },
+    {
+      "name": "staurosporine_chemont_class",
+      "prompt": "What ChemOnt chemical class is staurosporine (InChIKey HKSZLNNOFSGOKW-FYTWVXJKSA-N)?",
+      "expected_tools": ["ClassyFire_classify_by_inchikey"],
+      "expected_facts": [
+        "Kingdom: Organic compounds",
+        "Superclass: Organoheterocyclic compounds",
+        "Class: Indoles and derivatives",
+        "Direct parent: Indolocarbazoles",
+        "Molecular framework: aromatic heteropolycyclic compounds"
+      ]
+    },
+    {
+      "name": "formula_dereplication_isomer_ambiguity",
+      "prompt": "Dereplicate a metabolomics feature with molecular formula C28H26N4O3 (exact mass ~466.20) against known microbial natural products. Is the identity unique?",
+      "expected_tools": ["NPAtlas_search_compounds"],
+      "expected_facts": [
+        "NPAtlas formula search returns 2 isomeric hits at exact mass 466.2005",
+        "Staurosporine (NPA014588) and 5-N-acetyl-15b-didehydroardeemin (NPA006390)",
+        "Formula/exact mass alone is NOT a unique identification; an InChIKey or MS/MS is needed to disambiguate isomers"
+      ]
+    }
+  ]
+}
