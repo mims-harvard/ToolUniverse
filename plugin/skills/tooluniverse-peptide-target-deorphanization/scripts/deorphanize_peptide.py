@@ -463,7 +463,8 @@ class Pipeline:
         seeds: Dict[str, str] = {}
         for kw in kws:
             for noun in nouns:
-                res = self._data(self.run("UniProt_search", {"query": f"{kw} {noun}", "organism": "9606", "limit": 5}))
+                # organism takes a COMMON NAME ('human'), not a taxid; '9606' errors.
+                res = self._data(self.run("UniProt_search", {"query": f"{kw} {noun}", "organism": "human", "limit": 5}))
                 for r in _as_list(res, "results"):
                     pname = (r.get("protein_name") or "").lower()
                     if not any(n in pname for n in nouns):
@@ -525,6 +526,25 @@ class Pipeline:
                 scores[sym] = r.get("score")
         scores["__efo__"] = efo  # carry the resolved id for the report
         return scores
+
+    def phenotype_union(self, names: List[str]) -> Dict[str, Any]:
+        """Union the OpenTargets anchor across SEVERAL phenotypes, keeping the max
+        score per target. For an unknown peptide you rarely know the single right
+        disease, so anchoring on every plausible phenotype (and taking the union)
+        is more robust than betting on one."""
+        scores: Dict[str, float] = {}
+        efos: List[str] = []
+        for name in names or []:
+            pt = self.phenotype_targets(name)
+            efo = pt.pop("__efo__", None)
+            if efo:
+                efos.append(f"{name} -> {efo}")
+            for sym, sc in pt.items():
+                if sc is None:
+                    continue
+                if sym not in scores or (scores[sym] or 0) < sc:
+                    scores[sym] = sc
+        return {"scores": scores, "efo": "; ".join(efos)}
 
     # ---- Phase 3: cross-species ----------------------------------------
     def ortholog_status(self, hgnc_id: Optional[str], assay_species: str) -> Dict[str, Any]:
@@ -647,6 +667,33 @@ def _rank_key(r: Dict[str, Any]):
     return (rank, -(r["phenotype_score"] or 0), -len(r.get("family_sources") or []))
 
 
+def _build_panel(pipe: Pipeline, args, result: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """Seed family (if a hypothesized target is given) UNION the sequence-derived
+    candidates (motif + homology, class-aware nouns). Running the sequence-derived
+    derivation in BOTH modes is deliberate: the hypothesized seed may be WRONG (the
+    premise of deorphanization), so the real target can sit in a DIFFERENT family;
+    the sequence-derived panel keeps that family in play instead of being blinded by
+    the seed. Degrades gracefully when the UniProt resolver is down (seeds empty ->
+    seed family / phenotype carry the panel)."""
+    panel: Dict[str, Dict[str, Any]] = {}
+    if args.hypothesized_target:
+        fp = pipe.family_panel(args.hypothesized_target)
+        panel = fp["panel"]
+        result["family_meta"] = fp["meta"]
+    pipe.log(f"[{result.get('label')}] sequence-derived candidates ({result['target_class']['target_class']})")
+    sl = pipe.seedless_seeds(
+        result["signatures"],
+        nouns=result["target_class"]["seedless_nouns"],
+        homology_defs=result.get("homology_hits") or [],
+    )
+    result["seedless"] = sl
+    for seed in sl["seeds"]:
+        for sym, info in pipe.family_panel(seed)["panel"].items():
+            existing = panel.get(sym, {}).get("sources", [])
+            panel[sym] = {"sources": sorted(set(existing) | set(info["sources"]))}
+    return panel
+
+
 def analyze_one(pipe: Pipeline, label: str, seq: str, args, pheno: Dict[str, float], efo: Optional[str]) -> Dict[str, Any]:
     result: Dict[str, Any] = {"label": label, "sequence": seq, "hypothesized_target": args.hypothesized_target}
 
@@ -666,23 +713,7 @@ def analyze_one(pipe: Pipeline, label: str, seq: str, args, pheno: Dict[str, flo
         result["signatures"], result.get("homology_hits") or [], seq
     )
 
-    panel: Dict[str, Dict[str, Any]] = {}
-    if args.hypothesized_target:
-        fp = pipe.family_panel(args.hypothesized_target)
-        panel = fp["panel"]
-        result["family_meta"] = fp["meta"]
-    else:  # SEEDLESS: derive seeds from motif + homology, class-aware nouns
-        pipe.log(f"[{label}] seedless seed derivation ({result['target_class']['target_class']})")
-        sl = pipe.seedless_seeds(
-            result["signatures"],
-            nouns=result["target_class"]["seedless_nouns"],
-            homology_defs=result.get("homology_hits") or [],
-        )
-        result["seedless"] = sl
-        for seed in sl["seeds"]:
-            for sym, info in pipe.family_panel(seed)["panel"].items():
-                panel.setdefault(sym, {"sources": set()})
-                panel[sym]["sources"] = sorted(set(panel[sym].get("sources", [])) | set(info["sources"]))
+    panel = _build_panel(pipe, args, result)
 
     candidates = set(panel) | (set(pheno) & set(panel))
     if not candidates and pheno:
@@ -747,17 +778,17 @@ def _print_summary(args, result, panel, rows) -> None:
     print(f"protease: DPP4 {dpp4.get('p2_residue')}@P2 -> {'LABILE' if dpp4.get('labile') else 'resistant'}; "
           f"cleavage motifs: {len(pl.get('cleavage_motifs', []))}")
     if args.hypothesized_target:
-        print(f"family of {args.hypothesized_target}: {result.get('family_meta', {}).get('gene_group')}  (panel: {sorted(panel)})")
-    elif result.get("seedless"):
-        sl = result["seedless"]
-        if sl["seeds"]:
-            print(f"seedless: keywords {sl['keywords']} x nouns {sl.get('nouns')} -> seeds {dict(sl['seeds'])}  (panel: {sorted(panel)})")
-        else:
-            print(f"seedless: keywords {sl['keywords']} x nouns {sl.get('nouns')} -> target-name resolver returned nothing "
-                  "(UniProt transient, or target not named like a '{noun}'). Showing phenotype-anchored "
-                  "candidates only; pass --hypothesized-target for clean family enumeration.")
+        print(f"seed family of {args.hypothesized_target}: {result.get('family_meta', {}).get('gene_group')}")
+    sl = result.get("seedless") or {}
+    if sl.get("seeds"):
+        print(f"sequence-derived (keywords {sl['keywords']} x nouns {sl.get('nouns')}) -> seeds {dict(sl['seeds'])}")
+    elif sl and not args.hypothesized_target:
+        print(f"sequence-derived: keywords {sl.get('keywords')} x nouns {sl.get('nouns')} -> resolver returned nothing "
+              "(UniProt transient, or target not named like one of the nouns). Showing phenotype-anchored "
+              "candidates only; pass --hypothesized-target for clean family enumeration.")
+    print(f"panel ({len(panel)}): {sorted(panel)[:20]}{' ...' if len(panel) > 20 else ''}")
     if args.phenotype:
-        print(f"phenotype anchor: {args.phenotype} -> {result.get('phenotype_efo')}")
+        print(f"phenotype anchor(s): {', '.join(args.phenotype)} -> {result.get('phenotype_efo')}")
     print("-" * 72)
     print(f"{'GENE':<10}{'TIER':<32}{'PHENO':<8}{'FAMILY':<14}{'X-SPECIES'}")
     for r in rows:
@@ -810,7 +841,8 @@ def main() -> int:
     src.add_argument("--sequence", help="Single peptide amino-acid sequence (1-letter).")
     src.add_argument("--fasta", help="FASTA file of peptides for BATCH mode (one record each).")
     ap.add_argument("--hypothesized-target", default=None, help="Gene symbol the peptide was assumed to hit (seeds family enumeration). Omit for SEEDLESS mode.")
-    ap.add_argument("--phenotype", default=None, help="Disease name for the OpenTargets anchor, e.g. 'type 2 diabetes mellitus'.")
+    ap.add_argument("--phenotype", action="append", default=None, metavar="DISEASE",
+                    help="Disease name for the OpenTargets anchor, e.g. 'type 2 diabetes mellitus'. Repeatable: pass --phenotype several times to anchor on every plausible phenotype and union the target sets (best for an unknown peptide).")
     ap.add_argument("--assay-species", default="mus_musculus", help="Species of the negative binding assay (cross-species reconciliation).")
     ap.add_argument("--source-species", default=None, help="Species where binding WAS observed (e.g. the source organism). Adds a 3-way human/assay/source interface alignment. Protists are often absent from UniProt — supply the partner sequence by hand if unresolved.")
     ap.add_argument("--no-blast", action="store_true", help="Skip the slow BLAST homology route.")
@@ -823,9 +855,9 @@ def main() -> int:
     pheno: Dict[str, float] = {}
     efo: Optional[str] = None
     if args.phenotype:
-        pipe.log("phenotype anchor (OpenTargets) — shared across peptides")
-        pheno = pipe.phenotype_targets(args.phenotype)
-        efo = pheno.pop("__efo__", None)
+        pipe.log(f"phenotype anchor (OpenTargets) — {len(args.phenotype)} phenotype(s), shared across peptides")
+        pu = pipe.phenotype_union(args.phenotype)
+        pheno, efo = pu["scores"], pu["efo"]
 
     all_results = {label: analyze_one(pipe, label, seq.upper(), args, pheno, efo) for label, seq in peptides.items()}
 

@@ -35,15 +35,16 @@ No API key. For each peptide it characterizes it (PepCalc/ProtParam), flags **no
 python3 scripts/deorphanize_peptide.py \
   --sequence <PEPTIDE_SEQ> \             # OR  --fasta peptides.fasta  for BATCH mode
   --hypothesized-target <GENE> \         # optional; seeds family enumeration (e.g. GLP1R). OMIT for SEEDLESS mode
-  --phenotype "<disease name>" \         # optional; OpenTargets anchor — use the DISEASE node, not a symptom
+  --phenotype "<disease name>" \         # optional, REPEATABLE; OpenTargets anchor (use the DISEASE node, not a symptom) — pass several to union plausible phenotypes
   --assay-species mus_musculus \         # species of the NEGATIVE binding assay
   --source-species <organism> \          # optional; species where binding WAS observed -> 3-way interface alignment
   [--no-blast] [--out result.json]
 ```
 
 **Modes:**
-- **Seeded** (`--hypothesized-target GLP1R`) — enumerate that gene's family as the candidate panel (cleanest).
+- **Seeded** (`--hypothesized-target GLP1R`) — enumerate that gene's family as the candidate panel (cleanest). **Even seeded, the sequence-derived candidates (below) are always unioned in**, so a *wrong* hypothesized seed cannot blind the search to the real target's family — exactly the deorphanization premise.
 - **Seedless** (omit it) — derive candidate targets from PROSITE **and BLAST-homolog** keywords × the **target-class nouns** (e.g. `receptor`/`channel`/`protease`, chosen by the router) via UniProt; degrades to phenotype-only if that resolver is transiently down. No longer receptor-only.
+- **Multi-phenotype** — `--phenotype` is repeatable; pass every plausible disease and the anchor is the **union** (max score per target). Best when you don't know the single right phenotype.
 - **Batch** (`--fasta`) — one record per FASTA entry, sharing `--phenotype`/`--assay-species`.
 
 **Extra signals it always reports:**

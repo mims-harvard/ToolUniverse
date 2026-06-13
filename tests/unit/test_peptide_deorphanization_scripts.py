@@ -295,6 +295,47 @@ def test_family_panel_hgnc_authoritative_interpro_only_annotates():
     assert "HGNC" in panel["GCGR"]["sources"]
 
 
+def test_build_panel_unions_sequence_derived_even_with_a_wrong_seed():
+    """A WRONG hypothesized seed must not blind the search: the sequence-derived
+    (motif+homology) candidates still bring in the real target's family."""
+    class _Args:
+        hypothesized_target = "EGFR"  # the (wrong) seed
+
+    pipe = dp.Pipeline(_FakeTU({}))
+    # EGFR seed -> ErbB family; any sequence-derived seed -> the real class-B family
+    pipe.family_panel = lambda seed: (
+        {"panel": {"EGFR": {"sources": ["HGNC"]}, "ERBB2": {"sources": ["HGNC"]}}, "meta": {}}
+        if seed == "EGFR"
+        else {"panel": {"GLP1R": {"sources": ["HGNC"]}, "GIPR": {"sources": ["HGNC"]}}, "meta": {}}
+    )
+    pipe.seedless_seeds = lambda *a, **k: {"keywords": ["glucagon"], "nouns": ["receptor"], "seeds": {"GLP1R": "glucagon receptor"}}
+    result = {"label": "x", "signatures": [], "target_class": {"target_class": "gpcr_ligand", "seedless_nouns": ["receptor"]}, "homology_hits": []}
+    panel = dp._build_panel(pipe, _Args(), result)
+    assert "EGFR" in panel                       # the wrong seed's family is still there
+    assert "GLP1R" in panel and "GIPR" in panel  # but the REAL family was rescued from the sequence
+
+
+def test_phenotype_union_unions_diseases_and_keeps_max_score():
+    """Multiple --phenotype anchors union their target sets, keeping the max score."""
+    def _search(a):
+        return {"search": {"hits": [{"id": "EFO1" if a["diseaseName"] == "d1" else "EFO2"}]}}
+
+    def _targets(a):
+        if a["efoId"] == "EFO1":
+            rows = [{"target": {"approvedSymbol": "A"}, "score": 0.5}, {"target": {"approvedSymbol": "B"}, "score": 0.9}]
+        else:
+            rows = [{"target": {"approvedSymbol": "B"}, "score": 0.3}, {"target": {"approvedSymbol": "C"}, "score": 0.7}]
+        return {"disease": {"associatedTargets": {"rows": rows}}}
+
+    tu = _FakeTU({
+        "OpenTargets_get_disease_id_description_by_name": _search,
+        "OpenTargets_get_associated_targets_by_disease_efoId": _targets,
+    })
+    out = dp.Pipeline(tu).phenotype_union(["d1", "d2"])
+    assert out["scores"] == {"A": 0.5, "B": 0.9, "C": 0.7}  # B keeps max(0.9, 0.3)
+    assert "EFO1" in out["efo"] and "EFO2" in out["efo"]
+
+
 def test_rank_key_prefers_two_source_corroborated_family_member():
     """Within the same tier, a HGNC+InterPro member outranks an HGNC-only one —
     floating the cross-checked tight family above noisy broad-group panels."""
