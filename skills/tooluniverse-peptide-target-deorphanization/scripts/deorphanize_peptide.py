@@ -130,6 +130,85 @@ def _parse_fasta_str(fasta: str) -> Dict[str, str]:
     return out
 
 
+# Target-class router: a peptide's real target need not be a GPCR. Classifying the
+# likely target class lets candidate generation ADAPT its enumeration strategy
+# (and pick the right seedless search nouns) instead of assuming "receptor". Each
+# entry: (class, keyword triggers in PROSITE/BLAST text, seedless search nouns).
+_TARGET_CLASS_RULES = [
+    ("gpcr_ligand",
+     ("glucagon", "secretin", "incretin", "gip", "vip ", "pacap", "tachykinin",
+      "bombesin", "melanocortin", "somatostatin", "angiotensin", "bradykinin",
+      "orexin", "gnrh", "opioid", "neuropeptide", "calcitonin", "parathyroid"),
+     ("receptor",)),
+    ("guanylyl_cyclase_ligand",
+     ("natriuretic", "guanylin", "uroguanylin"),
+     ("receptor", "guanylate cyclase")),
+    ("cytokine_or_growth_factor",
+     ("interleukin", "interferon", "chemokine", "tumor necrosis", "growth factor",
+      "erythropoietin", "leptin", "cytokine"),
+     ("receptor",)),
+    ("rtk_ligand",
+     ("insulin", "epidermal growth factor", "fibroblast growth factor", "ephrin"),
+     ("receptor",)),
+    ("ion_channel_toxin",
+     ("conotoxin", "scorpion toxin", "spider toxin", "sea anemone", "channel blocker",
+      "potassium channel", "sodium channel", "calcium channel"),
+     ("channel", "receptor")),
+    ("protease_inhibitor_or_substrate",
+     ("protease inhibitor", "serine protease inhibitor", "kunitz", "bowman-birk",
+      "peptidase inhibitor", "serpin"),
+     ("protease", "peptidase")),
+    ("integrin_ligand",
+     ("integrin", "disintegrin", "fibronectin"),
+     ("integrin",)),
+    ("antimicrobial",
+     ("antimicrobial", "defensin", "cathelicidin", "bacteriocin"),
+     ()),  # AMPs often act on the membrane, not a single protein target
+]
+_UNKNOWN_CLASS_NOUNS = ("receptor", "enzyme", "channel", "transporter")
+
+
+def _classify_target_class(
+    signatures: List[Dict[str, str]],
+    homology_defs: List[str],
+    seq: str,
+    amp_matched: bool = False,
+) -> Dict[str, Any]:
+    """Heuristically classify the peptide's likely target class from its motif/
+    homology text + sequence features, so candidate generation can branch.
+
+    Transparent and evidence-bearing: returns the matched class, the text that
+    triggered it, and the seedless search nouns to use. Never authoritative — it
+    only *steers* enumeration; phenotype + homology still drive the candidates.
+    """
+    hay = " ".join(
+        [(s.get("description") or "") + " " + (s.get("name") or "") for s in signatures]
+        + list(homology_defs or [])
+    ).lower()
+
+    def _result(cls, nouns, evidence):
+        return {"target_class": cls, "seedless_nouns": list(nouns), "evidence": evidence}
+
+    # Most specific signals first: an explicit RGD motif -> integrins.
+    if "RGD" in seq.upper():
+        return _result("integrin_ligand", ("integrin",), ["RGD motif in sequence"])
+    # Keyword-driven classes from the motif/homology text.
+    for cls, triggers, nouns in _TARGET_CLASS_RULES:
+        hit = next((t for t in triggers if t in hay), None)
+        if hit:
+            return _result(cls, nouns, [f"text match: '{hit.strip()}'"])
+    # Sequence-feature fallback: a short, cysteine-rich peptide with no named
+    # family is most often a disulfide-stabilised toxin/knottin (ion channels,
+    # proteases) rather than a linear hormone.
+    cys = seq.upper().count("C")
+    if seq and cys >= 4 and cys / len(seq) >= 0.15 and len(seq) <= 60:
+        return _result("ion_channel_toxin", ("channel", "receptor", "protease"),
+                       [f"cysteine-rich ({cys} Cys / {len(seq)} aa) -> disulfide-stabilised toxin"])
+    if amp_matched:
+        return _result("antimicrobial", (), ["AMPSphere exact match"])
+    return _result("unknown", _UNKNOWN_CLASS_NOUNS, ["no class-specific signal; using broad search"])
+
+
 class Pipeline:
     def __init__(self, tu, verbose: bool = True):
         self.tu = tu
@@ -231,16 +310,53 @@ class Pipeline:
                     defs.append(d)
         return defs
 
-    # ---- Phase 2c: receptor-family panel -------------------------------
+    # ---- Phase 2c: target-family panel ---------------------------------
+    def interpro_family_members(self, accession: Optional[str], cap: int = 60) -> List[str]:
+        """Enumerate a target's protein family via InterPro — a GENERAL route that
+        works for any target class (kinases, channels, proteases, GPCRs alike),
+        unlike GPCRdb. From the seed's UniProt accession, take its InterPro FAMILY
+        entries, then list the human members of each (bounded so a broad family
+        does not explode the panel)."""
+        if not accession:
+            return []
+        entries = self._data(self.run("InterPro_get_entries_for_protein", {"accession": accession}))
+        ipr_ids: List[str] = []
+        for e in _as_list(entries, "entries", "results", "data"):
+            if not isinstance(e, dict):
+                continue
+            etype = str(e.get("type") or e.get("entry_type") or "").lower()
+            ipr = e.get("accession") or e.get("interpro_accession") or e.get("id")
+            if ipr and str(ipr).upper().startswith("IPR") and ("family" in etype or not etype):
+                ipr_ids.append(str(ipr))
+        symbols: set = set()
+        for ipr in ipr_ids[:3]:  # a protein's most specific family entries
+            prots = self._data(self.run("InterPro_get_proteins_by_domain",
+                                        {"domain_id": ipr, "page_size": 50, "reviewed_only": True}))
+            fam: set = set()
+            for p in _as_list(prots, "proteins", "results", "data"):
+                if not isinstance(p, dict):
+                    continue
+                sym = p.get("gene") or p.get("gene_name") or p.get("symbol")
+                if isinstance(sym, list):
+                    sym = sym[0] if sym else None
+                if sym:
+                    fam.add(str(sym).upper())
+            if 1 < len(fam) <= cap:  # skip a singleton or a too-broad superfamily
+                symbols |= fam
+        return sorted(symbols)
+
     def family_panel(self, seed_symbol: str) -> Dict[str, Any]:
-        """Enumerate the seed gene's family (seed + paralogs) via HGNC + GPCRdb."""
+        """Enumerate the seed gene's family (seed + paralogs). HGNC gene-family is
+        the general backbone (any target class); GPCRdb cross-checks GPCRs; InterPro
+        cross-checks (or, for a target with no HGNC group, provides) the family."""
         panel: Dict[str, Dict[str, Any]] = {}
         meta: Dict[str, Any] = {"seed": seed_symbol}
 
         gene = self._data(self.run("HGNC_fetch_gene_by_symbol", {"symbol": seed_symbol}))
         gene = gene if isinstance(gene, dict) else {}
         meta["hgnc_id"] = gene.get("hgnc_id")
-        meta["uniprot"] = (gene.get("uniprot_ids") or [None])[0]
+        uniprot = (gene.get("uniprot_ids") or [None])[0]
+        meta["uniprot"] = uniprot
         meta["gene_group"] = gene.get("gene_group")
         for gid in gene.get("gene_group_id") or []:
             members = self._data(self.run("HGNC_fetch_gene_family_members", {"gene_group_id": str(gid)}))
@@ -267,40 +383,70 @@ class Pipeline:
                     continue  # skip GPCRdb alias not in the authoritative HGNC panel
                 panel.setdefault(sym, {"sources": set()})["sources"].add("GPCRdb")
 
+        # InterPro general cross-check / fallback. When HGNC grouped the family it
+        # only annotates those members; when there is NO HGNC group (a target not
+        # in a curated family) it supplies the panel — the route that generalizes
+        # beyond GPCRs/curated groups.
+        seed_up = seed_symbol.upper()
+        for sym in self.interpro_family_members(uniprot):
+            if hgnc_authoritative and sym not in panel and sym != seed_up:
+                continue
+            panel.setdefault(sym, {"sources": set()})["sources"].add("InterPro")
+
         for v in panel.values():
             v["sources"] = sorted(v["sources"])
         return {"panel": panel, "meta": meta}
 
-    # ---- Phase 2c (seedless): derive seed receptors from the motif ------
+    # ---- Phase 2c (seedless): derive seed targets from motif + homology -----
     @staticmethod
-    def _family_keywords(signatures: List[Dict[str, str]]) -> List[str]:
-        stop = {"family", "signature", "domain", "receptor", "protein", "type"}
+    def _family_keywords(signatures: List[Dict[str, str]], homology_defs: Optional[List[str]] = None) -> List[str]:
+        """Family keywords from PROSITE descriptions AND BLAST hit names — so a
+        peptide with NO named PROSITE family can still seed from its homologs."""
+        stop = {"family", "signature", "domain", "receptor", "protein", "type", "like",
+                "precursor", "isoform", "fragment", "chain", "human", "putative"}
+        texts = [s.get("description") or "" for s in signatures] + list(homology_defs or [])
         out: List[str] = []
-        for s in signatures:
-            for tok in re.split(r"[\s/,.;()\-]+", (s.get("description") or "").lower()):
+        for text in texts:
+            for tok in re.split(r"[\s/,.;()\-]+", text.lower()):
                 if len(tok) >= 4 and tok.isalpha() and tok not in stop and tok not in out:
                     out.append(tok)
-        return out[:6]
+        return out[:8]
 
-    def seedless_seeds(self, signatures: List[Dict[str, str]], max_seeds: int = 3) -> Dict[str, Any]:
-        """Derive candidate receptor seed symbols from PROSITE family keywords.
+    def seedless_seeds(
+        self,
+        signatures: List[Dict[str, str]],
+        nouns: Optional[List[str]] = None,
+        homology_defs: Optional[List[str]] = None,
+        max_seeds: int = 4,
+    ) -> Dict[str, Any]:
+        """Derive candidate seed gene symbols when no hypothesized target is given.
 
-        For each keyword, UniProt_search("<kw> receptor", human) and keep the
-        gene symbols whose protein_name is a *receptor* (dropping ligand hits
-        like pro-glucagon). These seeds feed family_panel().
+        For each family keyword × target-class noun (e.g. 'receptor', 'channel',
+        'protease'), UniProt_search("<kw> <noun>", human) and keep the gene symbols
+        whose protein_name actually contains one of the nouns (dropping ligand /
+        precursor hits). The nouns come from the target-class router, so this is no
+        longer receptor-only — an ion-channel toxin seeds channels, a protease-
+        targeting peptide seeds proteases, etc. These seeds feed family_panel().
         """
-        kws = self._family_keywords(signatures)
+        nouns = [n.lower() for n in (nouns or ["receptor"])]
+        kws = self._family_keywords(signatures, homology_defs)
         seeds: Dict[str, str] = {}
         for kw in kws:
-            res = self._data(self.run("UniProt_search", {"query": f"{kw} receptor", "organism": "9606", "limit": 5}))
-            for r in _as_list(res, "results"):
-                if "receptor" not in (r.get("protein_name") or "").lower():
-                    continue  # keep receptors, drop ligand/precursor hits
-                for g in r.get("gene_names") or []:
-                    seeds.setdefault(g, kw)
-                    if len(seeds) >= max_seeds:
-                        break
-        return {"keywords": kws, "seeds": seeds}
+            for noun in nouns:
+                res = self._data(self.run("UniProt_search", {"query": f"{kw} {noun}", "organism": "9606", "limit": 5}))
+                for r in _as_list(res, "results"):
+                    pname = (r.get("protein_name") or "").lower()
+                    if not any(n in pname for n in nouns):
+                        continue  # keep target-class members, drop ligand/precursor hits
+                    for g in r.get("gene_names") or []:
+                        seeds.setdefault(g, f"{kw} {noun}")
+                        if len(seeds) >= max_seeds:
+                            break
+                if len(seeds) >= max_seeds:
+                    break
+            if len(seeds) >= max_seeds:
+                break
+        return {"keywords": kws, "nouns": nouns, "seeds": seeds}
 
     # ---- Phase 2e: protease / degradation liability --------------------
     _DPP4_P2 = {"A", "P"}
@@ -480,14 +626,24 @@ def analyze_one(pipe: Pipeline, label: str, seq: str, args, pheno: Dict[str, flo
         pipe.log(f"[{label}] BLAST homology (slow)")
         result["homology_hits"] = pipe.homology_hits(seq)
 
+    # Target-class router: classify the likely target class so candidate
+    # generation adapts (a peptide's real target need not be a GPCR).
+    result["target_class"] = _classify_target_class(
+        result["signatures"], result.get("homology_hits") or [], seq
+    )
+
     panel: Dict[str, Dict[str, Any]] = {}
     if args.hypothesized_target:
         fp = pipe.family_panel(args.hypothesized_target)
         panel = fp["panel"]
         result["family_meta"] = fp["meta"]
-    else:  # SEEDLESS: derive seeds from the motif, enumerate each family, union
-        pipe.log(f"[{label}] seedless seed derivation")
-        sl = pipe.seedless_seeds(result["signatures"])
+    else:  # SEEDLESS: derive seeds from motif + homology, class-aware nouns
+        pipe.log(f"[{label}] seedless seed derivation ({result['target_class']['target_class']})")
+        sl = pipe.seedless_seeds(
+            result["signatures"],
+            nouns=result["target_class"]["seedless_nouns"],
+            homology_defs=result.get("homology_hits") or [],
+        )
         result["seedless"] = sl
         for seed in sl["seeds"]:
             for sym, info in pipe.family_panel(seed)["panel"].items():
@@ -542,6 +698,10 @@ def _print_summary(args, result, panel, rows) -> None:
     if form.get("noncanonical_residues"):
         print(f"NON-CANONICAL residues {form['noncanonical_residues']} -> sequence tools may "
               "mischaracterize; if NRP/cyclic use Norine_get_peptide + cofold --cyclic")
+    tc = result.get("target_class")
+    if tc:
+        print(f"target class: {tc['target_class']}  ({'; '.join(tc.get('evidence', []))})"
+              + (f"  -> seedless nouns: {tc['seedless_nouns']}" if tc.get("seedless_nouns") else ""))
     for s in result.get("signatures") or []:
         print(f"signature: {s['accession']}  {s['description']}")
     elm = result.get("elm_motifs") or []
@@ -557,11 +717,11 @@ def _print_summary(args, result, panel, rows) -> None:
     elif result.get("seedless"):
         sl = result["seedless"]
         if sl["seeds"]:
-            print(f"seedless: keywords {sl['keywords']} -> seeds {dict(sl['seeds'])}  (panel: {sorted(panel)})")
+            print(f"seedless: keywords {sl['keywords']} x nouns {sl.get('nouns')} -> seeds {dict(sl['seeds'])}  (panel: {sorted(panel)})")
         else:
-            print(f"seedless: keywords {sl['keywords']} -> receptor-name resolver returned nothing "
-                  "(UniProt transient?). Showing phenotype-anchored candidates only; pass "
-                  "--hypothesized-target for clean family enumeration.")
+            print(f"seedless: keywords {sl['keywords']} x nouns {sl.get('nouns')} -> target-name resolver returned nothing "
+                  "(UniProt transient, or target not named like a '{noun}'). Showing phenotype-anchored "
+                  "candidates only; pass --hypothesized-target for clean family enumeration.")
     if args.phenotype:
         print(f"phenotype anchor: {args.phenotype} -> {result.get('phenotype_efo')}")
     print("-" * 72)

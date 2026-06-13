@@ -174,3 +174,98 @@ def test_ortholog_sequence_uses_uniprot_path():
     assert cs.CoFolder(tu).ortholog_sequence("GIPR", "mus_musculus") == "MOUSESEQ"
     # confirms it queried UniProt with the common-name organism filter
     assert any(n == "UniProt_search" and a["organism"] == "mouse" for n, a in tu.calls)
+
+
+# ------------- generality: target-class router (A) --------------------------
+
+def test_classify_gpcr_ligand_from_prosite_text():
+    out = dp._classify_target_class([{"description": "Glucagon / GIP / secretin / VIP family signature"}], [], "HGEGTFTSD")
+    assert out["target_class"] == "gpcr_ligand" and out["seedless_nouns"] == ["receptor"]
+
+
+def test_classify_ion_channel_toxin_from_homology_and_from_cysteine_density():
+    by_text = dp._classify_target_class([], ["Omega-conotoxin GVIA"], "CKSPGSSCS")
+    assert by_text["target_class"] == "ion_channel_toxin"
+    # no keyword, but cysteine-rich short peptide -> disulfide toxin fallback
+    by_cys = dp._classify_target_class([], ["Hypothetical protein"], "GCCSDPRCNMNNPDYCG")
+    assert by_cys["target_class"] == "ion_channel_toxin"
+    assert "cysteine-rich" in by_cys["evidence"][0]
+
+
+def test_classify_integrin_by_rgd_and_protease_by_text_and_unknown_default():
+    assert dp._classify_target_class([], [], "GRGDSPK")["target_class"] == "integrin_ligand"
+    prot = dp._classify_target_class([{"description": "Kunitz/BPTI protease inhibitor domain"}], [], "RPDFCLE")
+    assert prot["target_class"] == "protease_inhibitor_or_substrate"
+    assert prot["seedless_nouns"] == ["protease", "peptidase"]
+    unk = dp._classify_target_class([], ["Uncharacterized protein"], "MKTAYIAKQR")
+    assert unk["target_class"] == "unknown" and "receptor" in unk["seedless_nouns"]
+
+
+# ------------- generality: seedless beyond "receptor" (C) -------------------
+
+def test_family_keywords_drawn_from_homology_not_only_signatures():
+    # a peptide with NO PROSITE signature still seeds keywords from its BLAST hits
+    kws = dp.Pipeline._family_keywords([], ["Voltage-gated potassium channel subfamily"])
+    assert "potassium" in kws and "voltage" in kws
+    assert "protein" not in kws  # generic stopwords are dropped
+
+
+def test_seedless_seeds_finds_non_receptor_targets():
+    """A channel-class peptide must seed channels, not be limited to receptors."""
+    def _search(args):
+        # only the 'potassium channel' query returns a channel gene
+        if "channel" in args["query"]:
+            return {"results": [{"protein_name": "Potassium voltage-gated channel KCNA1", "gene_names": ["KCNA1"]}]}
+        return {"results": []}
+    tu = _FakeTU({"UniProt_search": _search})
+    out = dp.Pipeline(tu).seedless_seeds(
+        [{"description": "potassium channel toxin"}], nouns=["channel", "receptor"], homology_defs=[]
+    )
+    assert "KCNA1" in out["seeds"] and out["nouns"] == ["channel", "receptor"]
+
+
+# ------------- generality: InterPro universal family route (B) --------------
+
+def test_interpro_family_members_enumerates_and_bounds():
+    tu = _FakeTU({
+        "InterPro_get_entries_for_protein": {"entries": [
+            {"type": "family", "accession": "IPR000001"},
+            {"type": "domain", "accession": "IPR999999"},  # domains are ignored
+        ]},
+        "InterPro_get_proteins_by_domain": {"proteins": [
+            {"gene": "AAA"}, {"gene": "BBB"}, {"gene": "CCC"},
+        ]},
+    })
+    members = dp.Pipeline(tu).interpro_family_members("P12345")
+    assert members == ["AAA", "BBB", "CCC"]
+    # only the family entry was enumerated, not the domain one
+    assert any(n == "InterPro_get_proteins_by_domain" and a["domain_id"] == "IPR000001" for n, a in tu.calls)
+    assert not any(a.get("domain_id") == "IPR999999" for n, a in tu.calls if n == "InterPro_get_proteins_by_domain")
+
+
+def test_family_panel_interpro_supplies_panel_when_no_hgnc_group():
+    """For a target with no curated HGNC group, InterPro provides the family."""
+    tu = _FakeTU({
+        "HGNC_fetch_gene_by_symbol": {"uniprot_ids": ["P2"]},  # no gene_group_id
+        "GPCRdb_get_protein": {},                               # not a GPCR
+        "InterPro_get_entries_for_protein": {"entries": [{"type": "family", "accession": "IPR0NPR"}]},
+        "InterPro_get_proteins_by_domain": {"proteins": [{"gene": "NPR1"}, {"gene": "NPR2"}, {"gene": "NPR3"}]},
+    })
+    panel = dp.Pipeline(tu).family_panel("NPR1")["panel"]
+    assert set(panel) == {"NPR1", "NPR2", "NPR3"}
+    assert panel["NPR2"]["sources"] == ["InterPro"]
+
+
+def test_family_panel_hgnc_authoritative_interpro_only_annotates():
+    """When HGNC grouped the family, InterPro annotates members but adds no outsiders."""
+    tu = _FakeTU({
+        "HGNC_fetch_gene_by_symbol": {"hgnc_id": "HGNC:1", "uniprot_ids": ["P1"], "gene_group_id": ["100"]},
+        "HGNC_fetch_gene_family_members": [{"symbol": "GLP1R"}, {"symbol": "GCGR"}],
+        "GPCRdb_get_protein": {},
+        "InterPro_get_entries_for_protein": {"entries": [{"type": "family", "accession": "IPR0G"}]},
+        "InterPro_get_proteins_by_domain": {"proteins": [{"gene": "GCGR"}, {"gene": "OUTSIDER1"}, {"gene": "OUTSIDER2"}]},
+    })
+    panel = dp.Pipeline(tu).family_panel("GLP1R")["panel"]
+    assert set(panel) == {"GLP1R", "GCGR"}                 # no OUTSIDER leaked in
+    assert "InterPro" in panel["GCGR"]["sources"]          # but GCGR cross-checked
+    assert "HGNC" in panel["GCGR"]["sources"]

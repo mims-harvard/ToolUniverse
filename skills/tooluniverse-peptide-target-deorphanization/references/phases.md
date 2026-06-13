@@ -14,6 +14,7 @@ Detailed manual/fallback reference for the `tooluniverse-peptide-target-deorphan
 - [NVIDIA NIM / runtime notes](#nvidia-nim--runtime-notes)
 - [Worked example A — exendin-4 → GLP1R (control)](#worked-example-a--exendin-4--glp1r-control-recovers-the-class-b-family)
 - [Worked example B — anti-insulin-resistance peptide (the real case)](#worked-example-b--anti-insulin-resistance-peptide-that-does-not-bind-glp1r-in-mouse)
+- [Worked example C — ω-conotoxin → ion channel (NON-GPCR target class)](#worked-example-c--ω-conotoxin--ion-channel-non-gpcr-demonstrates-generality)
 
 ---
 
@@ -85,6 +86,23 @@ python3 -m tooluniverse.cli run ESMFold_predict_structure '{"sequence":"<SEQUENC
 - Returns `mean_plddt`, per-residue pLDDT, confident fractions, `pdb_text`. Control: mean pLDDT 0.85.
 - Key-gated alternative: `NvidiaNIM_esmfold` (`NVIDIA_API_KEY`). Use the keyless one first.
 
+### 1e. Target-class router — classify before you enumerate
+A peptide's real target is **not necessarily a GPCR**. Before Route 2C, classify the likely target class from the motif/homology text + sequence features, and let it pick the enumeration strategy and the seedless search nouns. The script does this automatically (`_classify_target_class`); doing it by hand is just reading the signals:
+
+| Signal | Likely target class | Seedless nouns |
+|---|---|---|
+| PROSITE/BLAST text: glucagon/secretin/opioid/chemokine/neuropeptide… | `gpcr_ligand` | receptor |
+| text: natriuretic/guanylin | `guanylyl_cyclase_ligand` | receptor, guanylate cyclase |
+| text: interleukin/interferon/growth factor/leptin | `cytokine_or_growth_factor` | receptor |
+| text: conotoxin/scorpion/sodium-potassium-calcium channel | `ion_channel_toxin` | channel, receptor |
+| text: kunitz/protease inhibitor/serpin | `protease_inhibitor_or_substrate` | protease, peptidase |
+| **RGD** motif in sequence, or text: integrin/disintegrin | `integrin_ligand` | integrin |
+| text: defensin/cathelicidin/antimicrobial | `antimicrobial` | (membrane-acting; often no single protein target) |
+| cysteine-rich short peptide, no named family | `ion_channel_toxin` (disulfide toxin/knottin) | channel, receptor, protease |
+| nothing specific | `unknown` | receptor, enzyme, channel, transporter |
+
+The class only **steers** enumeration (which resource, which nouns); phenotype + homology still drive the actual candidates. Record the class + the evidence that triggered it in the report.
+
 ---
 
 ## Phase 2 — Multi-route candidate generation (run routes in parallel)
@@ -114,10 +132,21 @@ python3 -m tooluniverse.cli run BLAST_protein_search '{"sequence":"<SEQUENCE>","
 ### Route 2B — Motif → binding domain (from Phase 1b/1c)
 Carry the PROSITE family / ELM Pfam-domain hits from Phase 1 into Route 2C: a named ligand family or Pfam binding domain becomes the seed for receptor-family enumeration.
 
-### Route 2C — Receptor-family enumeration + known pharmacology (keyless)
-From ONE seed receptor (from a homolog, a known-drug class, or the motif hit), enumerate the **full candidate panel** (seed + close paralogs) using **three independent resources that must agree**.
+### Route 2C — Target-family enumeration + known pharmacology (keyless)
+From ONE seed target (from a homolog, a known-drug class, or the motif hit), enumerate the **full candidate panel** (seed + close paralogs) using **independent resources that must agree**. The **general backbone is HGNC gene-family + InterPro** (work for any target class — kinases, channels, proteases, GPCRs alike); **GPCRdb** is an extra cross-check that applies only when the target is a GPCR.
 
-**Seed from pharmacology (GtoPdb):**
+**General family enumeration (any target class) — HGNC + InterPro:**
+```bash
+python3 -m tooluniverse.cli run HGNC_fetch_gene_by_symbol '{"symbol":"<SEED>"}'              # -> gene_group_id[], uniprot_ids[]
+python3 -m tooluniverse.cli run HGNC_fetch_gene_family_members '{"gene_group_id":"<ID>"}'     # STRING id; the whole family
+# InterPro: general route that does NOT depend on GPCRdb (e.g. the seed is a kinase/channel/protease)
+python3 -m tooluniverse.cli run InterPro_get_entries_for_protein '{"accession":"<SEED_UNIPROT>"}'   # -> InterPro entries; take the FAMILY-type IPR ids
+python3 -m tooluniverse.cli run InterPro_get_proteins_by_domain '{"domain_id":"<IPRxxxxxx>","page_size":50,"reviewed_only":true}'  # -> family members; map to gene symbols
+```
+- **HGNC gene_group works for any family** — its own docs example is non-GPCR (`gene_group_id '366'` = the 56 'Ubiquitin specific peptidases'). This is why the script's family enumeration is **not** GPCR-locked.
+- **InterPro** is the second general cross-check: take the seed's **FAMILY-type** InterPro entry (not the broad superfamily/domain entries — those explode), enumerate its human members, and keep the panel only if it is bounded (the script caps at ≤60 members). When the seed is in no curated HGNC group, InterPro **supplies** the panel.
+
+**Known pharmacology (GtoPdb — general: GPCRs, ion channels, enzymes, transporters):**
 ```bash
 python3 -m tooluniverse.cli run GtoPdb_search_ligands  '{"query":"exenatide"}'                 # -> ligandId 1135, name 'exendin-4'
 python3 -m tooluniverse.cli run GtoPdb_search_targets  '{"query":"glucagon"}'                   # USE A SINGLE KEYWORD
@@ -125,7 +154,7 @@ python3 -m tooluniverse.cli run GtoPdb_get_interactions '{"gene_symbol":"GLP1R"}
 ```
 - **Gotchas:** multi-word phrases (`"glucagon-like peptide"`) return count=0 — use a single keyword (`"glucagon"`, `"secretin"`). `GtoPdb_get_interactions` indexed by **target**: `{"ligandId":1135}` returns EMPTY; always pass `gene_symbol`.
 
-**Family slug from GPCRdb:**
+**Family slug from GPCRdb (GPCR targets ONLY — skip for channels/proteases/enzymes):**
 ```bash
 python3 -m tooluniverse.cli run GPCRdb_get_protein  '{"protein":"GLP1R"}'                       # bare gene symbol auto-resolves -> family slug, e.g. 002_001_003_003
 python3 -m tooluniverse.cli run GPCRdb_list_proteins '{"family":"002_001_003"}'                 # tight subfamily panel
@@ -312,3 +341,20 @@ How this skill drives it (no target assumed from the name):
 7. **Report (Phase 6):** ranked shortlist with the **GLP1R negative flagged**, GIPR/GCGR promoted to Tier 1–2 with their phenotype scores and cross-species interface notes, and a wet-lab recommendation: binding/competition + cAMP assays against **GIPR and GCGR (human + mouse orthologs)**, using the GtoPdb-listed family antagonists as controls.
 
 **Takeaway:** the negative GLP1R result is not a dead end — by anchoring on PHENOTYPE × SEQUENCE/STRUCTURE plausibility and reconciling across species, the skill surfaces the **paralog / interface-diverged** alternatives (GIPR, GCGR, …) as the testable real-target hypotheses, every one of them backed by a recorded tool result rather than a name-level guess.
+
+---
+
+## Worked example C — ω-conotoxin → ion channel (NON-GPCR; demonstrates generality)
+
+**Input:** `CKGKGAKCSRLMYDCCTGSCRSGKC` (ω-conotoxin MVIIA / ziconotide, 25 aa, *Conus magus* venom). Phenotype: analgesia / severe chronic pain. **The target is an ion channel, not a GPCR** — this case exists to show the pipeline is not GPCR-only.
+
+1. **Characterize + classify (Phase 1 + 1e):** PepCalc/ProtParam → small, basic, **6 cysteines / 25 aa**. The target-class router sees the cysteine-rich short peptide (and, if BLAST has run, "omega-conotoxin" in the hit names) → **`ion_channel_toxin`**, seedless nouns `channel, receptor, protease`. **Crucially it does NOT default to "receptor"-only enumeration.**
+2. **Homology (Route 2A):** `BLAST_protein_search` (swissprot) → hits are conotoxins / channel-blocking toxins; `AMPSphere_sequence_match` → not an AMP.
+3. **Target-family enumeration (Route 2C, GENERAL path — no GPCRdb):**
+   - Seedless derives keywords (`omega`, `conotoxin`, `calcium`) × nouns (`channel`) → `UniProt_search "calcium channel"` → seeds **CACNA1B** (Cav2.2, the real target) and its relatives.
+   - `HGNC_fetch_gene_by_symbol CACNA1B` → gene group **"Calcium voltage-gated channel alpha1 subunits"** → `HGNC_fetch_gene_family_members` → {CACNA1A, CACNA1B, CACNA1C, CACNA1D, CACNA1E, …}. **GPCRdb returns nothing (correct — not a GPCR); InterPro cross-checks the same calcium-channel family.** The "two general resources agree" principle holds with HGNC + InterPro instead of HGNC + GPCRdb.
+4. **Phenotype anchor (Route 2D):** `neuropathic pain` / `chronic pain` → OpenTargets associated targets include **CACNA1B** (and CACNA2D1, the gabapentinoid target) → intersect with the channel family → CACNA1B is phenotype-supported.
+5. **Cross-species (Phase 3):** ortholog interface alignment of CACNA1B across human/assay species — conotoxin selectivity is famously species- and subtype-specific, so interface divergence is the expected lever for any "binds in A not B".
+6. **Narrow + report (Phases 4–6):** ranked shortlist led by **CACNA1B (N-type Cav2.2)**, Tier 1 (channel family + pain phenotype), with electrophysiology (not cAMP) as the class-appropriate validation assay.
+
+**Takeaway:** with the target-class router selecting channel/HGNC/InterPro enumeration instead of GPCRdb, the **same pipeline** recovers a non-GPCR ion-channel target — confirming the skill covers the broad class "peptide → any protein target", not only GPCR ligands.

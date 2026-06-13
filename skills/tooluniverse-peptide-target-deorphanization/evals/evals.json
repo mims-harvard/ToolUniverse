@@ -39,10 +39,25 @@
       "expected_output": "A seedless-mode deorphanization: because no hypothesized target is given, it derives candidate targets from the motif/signature and the inflammation phenotype anchor rather than from a seed family, flags the peptide as cysteine-rich/possibly non-canonical or cyclic (so sequence tools may mischaracterize it), and returns a phenotype-anchored ranked candidate list — degrading gracefully to phenotype-only candidates if the motif resolver returns nothing, without inventing a target.",
       "assertions": [
         "It runs without a seeded hypothesized target (seedless mode) and derives candidates from the motif/signature and/or the inflammation phenotype rather than assuming a receptor family.",
+        "It classifies the target class as something OTHER than a GPCR (e.g. ion-channel toxin / cysteine-rich, or unknown) and does NOT restrict candidate generation to receptors only.",
         "It flags the peptide as cysteine-rich / possibly cyclic or non-canonical and notes that BLAST/PROSITE/ProtParam may mischaracterize a non-linear peptide (or recommends Norine / a cyclic-aware tool).",
         "It anchors candidate targets on the inflammation phenotype (e.g. via OpenTargets) and intersects with any sequence/motif evidence.",
-        "If the motif-based receptor resolver returns nothing, it degrades to a phenotype-anchored candidate list and says so, rather than fabricating a specific target.",
+        "If the motif-based resolver returns nothing, it degrades to a phenotype-anchored candidate list and says so, rather than fabricating a specific target.",
         "Every candidate target is supported by a tool result, and the report states which evidence is keyless vs key-gated."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "conotoxin-ion-channel-nongpcr-control",
+      "prompt": "Deorphanize this venom peptide for me: CKGKGAKCSRLMYDCCTGSCRSGKC. It's a 25-mer from a cone snail and it has strong analgesic / pain-relief activity. I want to know what protein it actually acts on — work it out from the sequence, don't just tell me it's a 'conotoxin'.",
+      "files": [],
+      "expected_output": "A deorphanization that classifies this cysteine-rich venom peptide as a NON-GPCR target class (ion-channel toxin), enumerates the relevant channel family via the general HGNC/InterPro route (not GPCRdb), anchors on the pain phenotype, and lands on a voltage-gated calcium channel (CACNA1B / Cav2.2, the real ziconotide target) or the calcium-channel family as the top candidate — with electrophysiology, not a GPCR cAMP assay, as the recommended validation.",
+      "assertions": [
+        "It classifies the target class as an ion-channel toxin / non-GPCR (e.g. from the cysteine-rich pattern and/or conotoxin homology), NOT as a GPCR ligand.",
+        "Candidate generation uses the general target-family route (HGNC gene-family and/or InterPro) rather than GPCRdb, and the candidate panel is a channel family (e.g. voltage-gated calcium channels), not a receptor family.",
+        "The top candidate is a voltage-gated calcium channel — CACNA1B (Cav2.2) or the CACNA1x family — consistent with the analgesic phenotype.",
+        "The recommended validation is class-appropriate (electrophysiology / channel binding), not a GPCR functional assay.",
+        "Every candidate is backed by a tool result, and the answer does not stop at the label 'conotoxin' without naming a protein target."
       ]
     }
   ]
