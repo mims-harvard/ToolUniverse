@@ -640,7 +640,11 @@ def _rank_key(r: Dict[str, Any]):
     rank = {"Tier 1 (family + phenotype)": 0, "Tier 2 (family only)": 1, "Tier 3 (phenotype only)": 2}.get(r["tier"], 3)
     if r["is_hypothesized_target"]:
         rank = 4
-    return (rank, -(r["phenotype_score"] or 0))
+    # Within a tier, break ties by phenotype score, then by how many independent
+    # family resources agree (HGNC + InterPro + GPCRdb). A 2-source-corroborated
+    # member is more likely the true tight family than an HGNC-only loose-group
+    # member — this floats the cross-checked core above noisy broad-group panels.
+    return (rank, -(r["phenotype_score"] or 0), -len(r.get("family_sources") or []))
 
 
 def analyze_one(pipe: Pipeline, label: str, seq: str, args, pheno: Dict[str, float], efo: Optional[str]) -> Dict[str, Any]:

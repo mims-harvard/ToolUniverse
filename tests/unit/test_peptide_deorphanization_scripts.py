@@ -295,6 +295,22 @@ def test_family_panel_hgnc_authoritative_interpro_only_annotates():
     assert "HGNC" in panel["GCGR"]["sources"]
 
 
+def test_rank_key_prefers_two_source_corroborated_family_member():
+    """Within the same tier, a HGNC+InterPro member outranks an HGNC-only one —
+    floating the cross-checked tight family above noisy broad-group panels."""
+    both = {"tier": "Tier 2 (family only)", "phenotype_score": None, "is_hypothesized_target": False,
+            "family_sources": ["HGNC", "InterPro"]}
+    hgnc_only = {"tier": "Tier 2 (family only)", "phenotype_score": None, "is_hypothesized_target": False,
+                 "family_sources": ["HGNC"]}
+    assert dp._rank_key(both) < dp._rank_key(hgnc_only)
+    # phenotype score still dominates the source count
+    pheno = {"tier": "Tier 1 (family + phenotype)", "phenotype_score": 0.9, "is_hypothesized_target": False,
+             "family_sources": ["HGNC"]}
+    weak_pheno = {"tier": "Tier 1 (family + phenotype)", "phenotype_score": 0.1, "is_hypothesized_target": False,
+                  "family_sources": ["HGNC", "InterPro", "GPCRdb"]}
+    assert dp._rank_key(pheno) < dp._rank_key(weak_pheno)
+
+
 def test_family_panel_skips_oversized_hgnc_supergroup():
     """A domain supergroup (e.g. 'EF-hand', ~200 genes) must NOT flood the panel;
     only the bounded target-family group is enumerated."""
