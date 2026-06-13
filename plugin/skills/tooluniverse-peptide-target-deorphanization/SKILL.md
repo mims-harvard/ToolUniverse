@@ -76,7 +76,8 @@ Verification targets (all expected KEYLESS unless noted):
 - Homology: `BLAST_protein_search`, `EBI_msa_align`, `AMPSphere_sequence_match`
 - Receptor family / pharmacology: `GtoPdb_search_targets`, `GtoPdb_search_ligands`, `GtoPdb_get_interactions`, `GPCRdb_get_protein`, `GPCRdb_list_proteins`, `GPCRdb_get_ligands`, `HGNC_fetch_gene_by_symbol`, `HGNC_fetch_gene_family_members`
 - Phenotype / cross-species: `OpenTargets_get_disease_id_description_by_name`, `OpenTargets_get_associated_targets_by_disease_efoId`, `EnsemblCompara_get_paralogues`, `EnsemblCompara_get_orthologues`, `Alliance_get_gene_orthologs`
-- **Key-gated (note, do not block):** `NvidiaNIM_boltz2`, `NvidiaNIM_esmfold`, `NvidiaNIM_esm2_650m`, `NvidiaNIM_alphafold2_multimer`, `NvidiaNIM_openfold3` — require `NVIDIA_API_KEY`.
+- Target-engagement (soluble candidates, keyless): `ProteomicsDB_get_protein_meltome`
+- **Key-gated (note, do not block):** `NvidiaNIM_boltz2`, `NvidiaNIM_esmfold`, `NvidiaNIM_esm2_650m`, `NvidiaNIM_alphafold2_multimer`, `NvidiaNIM_openfold3` — require `NVIDIA_API_KEY`; `ClusPro_submit_peptide_docking` — requires a free academic `CLUSPRO_USERNAME` / `CLUSPRO_API_SECRET`.
 
 If any keyless tool fails to load, record it and use the Fallback Chains below. Do **not** abort the pipeline because a key-gated co-folding tool is unavailable — co-folding is Phase 5 (optional confirmation only).
 
@@ -236,6 +237,7 @@ Reduce the union candidate set to a ranked shortlist (**target ≤15** before an
 2. **Phenotype plausibility** — appears in the OpenTargets associated-target set for the relevant disease (Route 2D). Record the `score`.
 3. **Known pharmacology cross-check** — does GtoPdb already list peptide ligands for this receptor (`GtoPdb_get_interactions {"gene_symbol":...}`)? Existing peptide ligands of the same family raise prior plausibility.
 4. **Cross-species consistency** — is the receptor conserved (clean `ortholog_one2one`) in the assay species, and does the interface match? A receptor that is *absent or interface-diverged* in the assay species explains a negative binding result and **stays on the list** rather than being dropped.
+5. **Target-engagement context (soluble candidates only)** — `ProteomicsDB_get_protein_meltome {"gene_symbol":...}` returns the candidate's thermal proteome profiling (TPP) melting curves. Presence in the meltome means it is a soluble protein with a measurable Tm; if the lab can run CETSA/TPP, a peptide-induced **Tm shift directly confirms target engagement** (the strongest experimental cross-check). NOTE: membrane GPCRs are absent from the meltome (returns 0 curves) — this signal applies to soluble candidates (kinases, enzymes), not the class-B GPCR panel.
 
 **Ranking rule:** sort by (sequence/structure plausibility tiers) then (phenotype score), and **explicitly promote paralogs / phenotype-shared receptors when the hypothesized target tested negative.** The non-binding result against the hypothesized target is itself evidence that re-ranks the panel.
 
@@ -258,6 +260,14 @@ Inputs are the **peptide sequence** + each candidate **receptor protein sequence
 **Interpretation:** the candidate with the **highest interface ipTM / interface pLDDT** at the peptide-binding pocket is the top structurally-supported target. Run the co-fold for **both the human and assay-species ortholog** of the leading candidate to confirm the cross-species binding difference structurally (a drop in interface ipTM for the mouse ortholog mechanistically explains "binds human, not mouse").
 
 If `NVIDIA_API_KEY` is unset, **skip Phase 5 and report the shortlist with its Phase 1–4 evidence**, clearly flagging that structural confirmation was not performed.
+
+### Academic-free alternative (no NVIDIA key): ClusPro peptide docking
+
+If you have a **free academic ClusPro account** (set `CLUSPRO_USERNAME` + `CLUSPRO_API_SECRET`) and the candidate receptor has a solved **PDB structure**, submit a native peptide–protein docking job instead of co-folding:
+
+`ClusPro_submit_peptide_docking {"receptor_pdb_id": "<4-letter PDB>", "peptide_sequence": "<SEQ>", "peptide_motif": "<motif, optional>"}`
+
+It returns a ClusPro **job id** — docking is asynchronous, so retrieve clustered poses + scores from your ClusPro results page later (hours). Best for **short peptides (≤~30 residues)** against a receptor with a solved structure. Use this as the academic-free structural path when no NVIDIA key is available; the co-folding backends above remain preferred for direct interface-ipTM ranking and for receptors that have only a sequence (no PDB).
 
 ---
 
