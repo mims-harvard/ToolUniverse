@@ -1,0 +1,199 @@
+[
+  {
+    "name": "HLALigandAtlas_get_benign_peptides",
+    "type": "HLALigandAtlasTool",
+    "description": "Retrieve benign-tissue HLA-presented peptides (immunopeptidome) from the HLA Ligand Atlas (hla-ligand-atlas.org, release 2020.12) - the curated reference of self-peptides eluted from non-malignant human tissues, used to filter self-peptides during cancer neoantigen discovery. Filter the aggregated table by peptide sequence, HLA class (HLA-I or HLA-II), presenting donor allele, and/or tissue of origin. Each row reports the peptide, HLA class, the donor-allele presentation flags (strong 'n/' or weak 'w/'), and the tissues in which it was detected. Filtering by an exact peptide sequence or a specific tissue/allele is recommended because the aggregated table is large.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "peptide": {
+          "type": "string",
+          "description": "Exact peptide sequence (single-letter amino acids) to match, e.g. 'LLPKKTESHHKAKGK'. Case-insensitive. Leave empty to return any peptide matching the other filters."
+        },
+        "hla_class": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HLA class filter: 'HLA-I' or 'HLA-II'. Leave empty for both."
+        },
+        "allele": {
+          "type": "string",
+          "description": "Substring of a presenting allele to match within the donor_alleles list, e.g. 'DRB1*01:01' or 'DQA1*01:03-DQB1*06:02'. Case-sensitive."
+        },
+        "tissue": {
+          "type": "string",
+          "description": "Tissue of origin substring to match, e.g. 'Lung', 'Brain', 'Spleen'. Case-insensitive."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of peptide rows to return (1-500). Default 50.",
+          "default": 50
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "peptides": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "peptide_sequence_id": {
+                        "type": "string"
+                      },
+                      "peptide_sequence": {
+                        "type": "string"
+                      },
+                      "hla_class": {
+                        "type": "string"
+                      },
+                      "donor_alleles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "tissues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "peptide": "LLPKKTESHHKAKGK"
+      },
+      {
+        "hla_class": "HLA-I",
+        "tissue": "Lung",
+        "limit": 10
+      }
+    ],
+    "fields": {
+      "operation": "get_benign_peptides"
+    }
+  },
+  {
+    "name": "HLALigandAtlas_get_donors",
+    "type": "HLALigandAtlasTool",
+    "description": "Retrieve the donor-to-HLA-allele mapping table from the HLA Ligand Atlas (hla-ligand-atlas.org, release 2020.12). Each row pairs a benign-tissue donor identifier (e.g. 'AUT01-DN13') with one of that donor's typed HLA alleles (e.g. 'A*11:01'). Use this to find which donors carry a given allele, or which alleles a donor carries, when interpreting the benign immunopeptidome.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "donor": {
+          "type": "string",
+          "description": "Donor identifier substring to match, e.g. 'AUT01' or 'AUT01-DN13'. Leave empty for all donors."
+        },
+        "allele": {
+          "type": "string",
+          "description": "HLA allele substring to match, e.g. 'A*11:01' or 'A*11'. Leave empty for all alleles."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "donors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "donor": {
+                        "type": "string"
+                      },
+                      "hla_allele": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "allele": "A*11:01"
+      },
+      {
+        "donor": "AUT01"
+      }
+    ],
+    "fields": {
+      "operation": "get_donors"
+    }
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "name": "Hemolytik2_search_peptides",
+    "type": "Hemolytik2SearchPeptidesTool",
+    "description": "Search Hemolytik 2.0 (Raghava lab, IIITD) for experimentally validated HEMOLYTIC / TOXIC peptide records. Filter by 'nature' (e.g. Antimicrobial, Anticancer, CPP), 'source' (source organism, e.g. Human), or 'seq' (sequence). Each record returns the peptide sequence, hemolytic activity (LC50/HC50 with units), source organism, origin, N/C-terminus and chemical (non-natural) modifications, linear/cyclic form, L/D chirality mix, length, nature, PubMed ID, and year. Use to assess peptide safety / hemolysis liability. Keyless public API.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "dataType": {
+          "type": "string",
+          "description": "Field to filter on. One of: 'nature' (peptide nature, e.g. Anticancer, Antimicrobial, CPP), 'source' (source organism, e.g. Human), or 'seq' (sequence). Default: 'nature'.",
+          "enum": ["nature", "source", "seq"]
+        },
+        "dataValue": {
+          "type": "string",
+          "description": "Value to match for the chosen dataType. Examples: 'Anticancer' (with dataType=nature) -> ~166 records; 'Human' (with dataType=source) -> ~9255 records."
+        }
+      },
+      "required": ["dataValue"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": { "const": "success" },
+            "data": {
+              "type": "array",
+              "items": { "type": "object" },
+              "description": "Matching hemolytic peptide records. Each has id, pmid, year, seq, name, cter, nter, lyn_cyc, ldmix, non_nat, length, nature, activity (e.g. 'LC50 =1.4 micromolar'), source, origin, exp_str, non_hem."
+            },
+            "metadata": { "type": "object" }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": { "const": "error" },
+            "error": { "type": "string" }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      { "dataType": "nature", "dataValue": "Anticancer" },
+      { "dataType": "source", "dataValue": "Human" }
+    ]
+  }
+]

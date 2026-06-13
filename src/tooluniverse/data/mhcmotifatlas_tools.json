@@ -1,0 +1,110 @@
+[
+  {
+    "name": "MHCMotifAtlas_get_allele_ligands",
+    "type": "MHCMotifAtlasTool",
+    "description": "Retrieve curated lists of naturally-presented MHC ligand peptides for a specific allele from the MHC Motif Atlas (mhcmotifatlas.org), covering MHC class I and class II across human/mouse/cattle/chicken. Class II peptides additionally include the predicted binding core. Optionally also return the per-allele MHC protein sequence. Use this for binding-motif and specificity analysis. Allele names use the atlas format without separators: class I e.g. 'A0101', 'B0702', 'C0701'; class II e.g. 'DRB1_01_01'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "allele": {
+          "type": "string",
+          "description": "MHC allele in MHC Motif Atlas format. Class I example: 'A0101' (HLA-A*01:01), 'B0702'. Class II example: 'DRB1_01_01'."
+        },
+        "mhc_class": {
+          "type": "string",
+          "description": "'I' for MHC class I or 'II' for MHC class II. Default 'I'.",
+          "default": "I"
+        },
+        "include_sequence": {
+          "type": "boolean",
+          "description": "If true, also fetch the per-allele MHC protein sequence (from MHC_I_sequences.txt / MHC_II_sequences.txt). Default false.",
+          "default": false
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of ligand peptides to return (1-1000). Default 100.",
+          "default": 100
+        }
+      },
+      "required": [
+        "allele"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "allele": {
+                  "type": "string"
+                },
+                "mhc_class": {
+                  "type": "string"
+                },
+                "peptides": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "peptide": {
+                        "type": "string"
+                      },
+                      "core": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "sequence": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "allele": "A0101",
+        "mhc_class": "I",
+        "limit": 20
+      },
+      {
+        "allele": "DRB1_01_01",
+        "mhc_class": "II",
+        "limit": 10
+      }
+    ]
+  }
+]

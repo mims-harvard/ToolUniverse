@@ -1104,6 +1104,21 @@ default_tool_files = {
     # PDC - NCI Proteomics Data Commons (CPTAC, ICPC, APOLLO cancer proteomics)
     "pdc": os.path.join(current_dir, "data", "pdc_tools.json"),
     "proteomicsdb": os.path.join(current_dir, "data", "proteomicsdb_tools.json"),
+    # Keyless peptide-resource databases (AMP, therapeutic, venom, catalogs)
+    "ampsphere": os.path.join(current_dir, "data", "ampsphere_tools.json"),
+    "ampsphere_record": os.path.join(
+        current_dir, "data", "ampsphere_record_tools.json"
+    ),
+    "cancerppd2": os.path.join(current_dir, "data", "cancerppd2_tools.json"),
+    "dbaasp": os.path.join(current_dir, "data", "dbaasp_tools.json"),
+    "hemolytik2": os.path.join(current_dir, "data", "hemolytik2_tools.json"),
+    "hlaligandatlas": os.path.join(current_dir, "data", "hlaligandatlas_tools.json"),
+    "mhcmotifatlas": os.path.join(current_dir, "data", "mhcmotifatlas_tools.json"),
+    "norine": os.path.join(current_dir, "data", "norine_tools.json"),
+    "pepcalc": os.path.join(current_dir, "data", "pepcalc_tools.json"),
+    "peplife2": os.path.join(current_dir, "data", "peplife2_tools.json"),
+    "peptideatlas": os.path.join(current_dir, "data", "peptideatlas_tools.json"),
+    "tumorhope2": os.path.join(current_dir, "data", "tumorhope2_tools.json"),
     "proteomicsdb_meltome": os.path.join(
         current_dir, "data", "proteomicsdb_meltome_tools.json"
     ),

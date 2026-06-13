@@ -1,0 +1,91 @@
+[
+  {
+    "name": "PeptideAtlas_get_observed_peptides",
+    "type": "PeptideAtlasGetObservedPeptidesTool",
+    "description": "Query PeptideAtlas (SBEAMS PeptideAtlas, ISB) for the mass-spectrometry-OBSERVED peptides of a protein/gene, the canonical record of which tryptic peptides have actually been seen in MS proteomics experiments and how often. Constrain by a UniProt accession or biosequence name (biosequence_name), or omit it to sample the whole build. Each record returns: peptide_accession (PAp...), peptide_sequence, n_observations (spectral count across the atlas), n_samples (number of samples), best_probability (PeptideProphet), empirical_proteotypic_score, SSRCalc_relative_hydrophobicity, n_protein_mappings, n_genome_locations, is_exon_spanning, protease_ids, and is_subpeptide_of. Distinct from sequence-derived peptide-coverage tools: PeptideAtlas adds empirical observation frequency and proteotypic scoring. Keyless public CGI; default build is Human 2024-01 (atlas_build_id=572).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "biosequence_name": {
+          "type": "string",
+          "description": "Protein/gene constraint: a UniProt accession or PeptideAtlas biosequence name. Example: 'P02768' (human serum albumin) -> several thousand observed peptides. Maps to biosequence_name_constraint. Omit to query the whole build (use a small row_limit)."
+        },
+        "atlas_build_id": {
+          "type": ["integer", "string"],
+          "description": "PeptideAtlas build to query. Default 572 (Human 2024-01)."
+        },
+        "row_limit": {
+          "type": ["integer", "string"],
+          "description": "Maximum number of peptide rows to return (default 500). Use a small value (e.g. 2-5) for whole-build sampling, since a build holds millions of peptides."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful observed-peptide query.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "peptide_accession": {"type": "string"},
+                  "peptide_sequence": {"type": "string"},
+                  "n_observations": {"type": ["integer", "string"]},
+                  "n_samples": {"type": ["integer", "string"]},
+                  "best_probability": {"type": ["string", "number"]},
+                  "n_protein_mappings": {"type": ["integer", "string"]},
+                  "n_genome_locations": {"type": ["integer", "string"]},
+                  "is_exon_spanning": {"type": "string"},
+                  "empirical_proteotypic_score": {"type": ["string", "number", "null"]},
+                  "SSRCalc_relative_hydrophobicity": {"type": ["string", "number", "null"]},
+                  "protease_ids": {"type": ["string", "null"]},
+                  "is_subpeptide_of": {"type": ["string", "null"]},
+                  "organism_full_name": {"type": "string"},
+                  "atlas build name": {"type": "string"}
+                }
+              },
+              "description": "Observed MS peptides for the protein/build."
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "atlas_build_id": {"type": "integer"},
+                "biosequence_name": {"type": ["string", "null"]},
+                "row_limit": {"type": "integer"},
+                "returned_count": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"biosequence_name": "P02768", "row_limit": 5},
+      {"row_limit": 2}
+    ],
+    "label": ["PeptideAtlas", "Proteomics", "Mass Spectrometry", "Observed Peptide", "Proteotypic"],
+    "metadata": {
+      "tags": ["PeptideAtlas", "proteomics", "mass spectrometry", "observed peptide", "proteotypic", "SSRCalc", "peptide"],
+      "estimated_execution_time": "2-10 seconds"
+    }
+  }
+]

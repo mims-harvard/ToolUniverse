@@ -1,0 +1,324 @@
+[
+  {
+    "name": "AMPSphere_search_amps",
+    "type": "AMPSphereSearchAmpsTool",
+    "description": "Filter/search the AMPSphere catalogue (863,498 prokaryotic smORF antimicrobial peptides from the 2024 Global Microbial smORF Catalogue, Big Data Biology Lab) by habitat, SPHERE family, microbial source, peptide length, molecular weight, isoelectric point, charge, and quality-control flags (exp_evidence, antifam, RNAcode, coordinates), with pagination. Returns a paginated list of AMPs, each with its accession, amino-acid sequence, physicochemical properties (length, MW, pI, charge, aromaticity, instability index, GRAVY) and quality flags. Interval filters use a 'min,max' string (e.g. pep_length_interval='8,20'). Set list_options=true to instead return the valid filter values (habitats, microbial sources, quality labels, and min/max ranges) from /v1/all_available_options. Keyless AMPSphere REST API.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "list_options": {
+          "type": "boolean",
+          "description": "If true, ignore all other filters and return the valid filter enumerations from /v1/all_available_options (quality labels, habitat list, microbial_source list, and min/max ranges for pep_length, molecular_weight, isoelectric_point, charge_at_pH_7). Use this first to discover valid habitat / microbial_source values."
+        },
+        "habitat": {
+          "type": "string",
+          "description": "Environmental habitat filter, e.g. 'human gut', 'soil', 'marine'. Must match an AMPSphere habitat label (see list_options)."
+        },
+        "family": {
+          "type": "string",
+          "description": "SPHERE family accession filter, e.g. 'SPHERE-III.001_396'. Returns the AMPs in that family."
+        },
+        "microbial_source": {
+          "type": "string",
+          "description": "Microbial taxonomic source filter (GTDB-style name), e.g. 'Faecalibacterium'. See list_options for valid values."
+        },
+        "exp_evidence": {
+          "type": "string",
+          "description": "Experimental-evidence quality flag filter: 'Passed', 'Failed', or 'Not tested'."
+        },
+        "antifam": {
+          "type": "string",
+          "description": "Antifam quality flag filter: 'Passed', 'Failed', or 'Not tested' (Antifam = not a spurious/false ORF)."
+        },
+        "RNAcode": {
+          "type": "string",
+          "description": "RNAcode coding-potential quality flag filter: 'Passed', 'Failed', or 'Not tested'."
+        },
+        "coordinates": {
+          "type": "string",
+          "description": "Genomic-coordinates quality flag filter: 'Passed', 'Failed', or 'Not tested'."
+        },
+        "pep_length_interval": {
+          "type": "string",
+          "description": "Peptide-length range as 'min,max' (residues), e.g. '8,20'. Catalogue range is 8-99."
+        },
+        "mw_interval": {
+          "type": "string",
+          "description": "Molecular-weight range as 'min,max' (Da), e.g. '800,3000'. Catalogue range is ~813-12286."
+        },
+        "pI_interval": {
+          "type": "string",
+          "description": "Isoelectric-point range as 'min,max', e.g. '9,12'. Catalogue range is ~4-12."
+        },
+        "charge_interval": {
+          "type": "string",
+          "description": "Net-charge-at-pH-7 range as 'min,max', e.g. '0,10'. Catalogue range is ~-57 to 44."
+        },
+        "page_size": {
+          "type": ["integer", "string"],
+          "description": "Results per page (default 20)."
+        },
+        "page": {
+          "type": ["integer", "string"],
+          "description": "Zero-based page index (default 0)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful AMP search or options listing.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "description": "List of AMP records (search), or the filter-options object (list_options)."
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "mode": {"type": "string"},
+                "current_page": {"type": ["integer", "null"]},
+                "page_size": {"type": ["integer", "null"]},
+                "total_page": {"type": ["integer", "null"]},
+                "total_item": {"type": ["integer", "null"]},
+                "returned_count": {"type": ["integer", "null"]},
+                "filters": {"type": "object"}
+              }
+            }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"habitat": "human gut", "page_size": 2, "page": 0},
+      {"family": "SPHERE-III.001_396", "page_size": 3, "page": 0},
+      {"list_options": true}
+    ],
+    "label": ["AMPSphere", "Antimicrobial Peptide", "AMP", "smORF", "Peptide"],
+    "metadata": {
+      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "smORF", "metagenome", "microbiome", "peptide"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  },
+  {
+    "name": "AMPSphere_get_family",
+    "type": "AMPSphereGetFamilyTool",
+    "description": "Retrieve full detail for an AMPSphere protein family (SPHERE cluster) by accession (e.g. 'SPHERE-III.001_396'): the consensus sequence, member count, the full member-AMP accession list, per-member feature statistics, geographic / habitat / microbial-source distributions, and ready-to-use download URLs for the family's alignment (.aln), member sequences (.faa), HMM profile (.hmm), and phylogenetic tree (.nwk / ASCII figure). Keyless AMPSphere REST API (/v1/families/{accession}).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "SPHERE family accession. Example: 'SPHERE-III.001_396' (23 member AMPs, consensus 'GDKLXXXXXVDXXXXGGLIVKXGSRMXDXSLXXKLXXLXXAMKXXG')."
+        }
+      },
+      "required": ["accession"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful family lookup.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "description": "Full AMPSphere family record.",
+              "properties": {
+                "accession": {"type": "string"},
+                "consensus_sequence": {"type": ["string", "null"]},
+                "num_amps": {"type": ["integer", "null"]},
+                "downloads": {"type": "object"},
+                "associated_amps": {"type": "array"},
+                "feature_statistics": {"type": "object"},
+                "distributions": {"type": "object"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "accession": {"type": "string"},
+                "num_amps": {"type": ["integer", "null"]},
+                "member_count": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "SPHERE-III.001_396"},
+      {"accession": "SPHERE-III.001_493"}
+    ],
+    "label": ["AMPSphere", "Protein Family", "SPHERE", "AMP", "Peptide"],
+    "metadata": {
+      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "protein family", "SPHERE", "consensus", "peptide"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  },
+  {
+    "name": "AMPSphere_get_amp_distributions",
+    "type": "AMPSphereGetAmpDistributionsTool",
+    "description": "Retrieve the ecological and geographic distribution of a single AMPSphere AMP by accession (e.g. 'AMP10.000_000'): where it has been observed as a bubble-map of lat/lon coordinates with sample counts, across which habitats, and from which microbial taxonomic sources. Returns three blocks: geo (type='bubble map' with parallel lat/lon/size arrays), habitat (labels + values), and microbial_source (labels + values). Keyless AMPSphere REST API (/v1/amps/{accession}/distributions).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'."
+        }
+      },
+      "required": ["accession"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful distribution lookup.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "description": "Per-AMP distribution record.",
+              "properties": {
+                "geo": {"type": "object"},
+                "habitat": {"type": "object"},
+                "microbial_source": {"type": "object"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "accession": {"type": "string"},
+                "geo_point_count": {"type": ["integer", "null"]}
+              }
+            }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "AMP10.000_000"},
+      {"accession": "AMP10.000_001"}
+    ],
+    "label": ["AMPSphere", "Biogeography", "Habitat", "AMP", "Peptide"],
+    "metadata": {
+      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "biogeography", "habitat", "microbial source", "peptide"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  },
+  {
+    "name": "AMPSphere_get_amp_features",
+    "type": "AMPSphereGetAmpFeaturesTool",
+    "description": "Retrieve the full physicochemical feature profile of a single AMPSphere AMP by accession (e.g. 'AMP10.000_000'): molecular weight, length, molar extinction (reduced cysteines / cystine residues), aromaticity, GRAVY hydrophobicity, instability index, isoelectric point, net charge at pH 7, and predicted secondary-structure fractions (helix / turn / sheet). The same GRAVY / instability / pI / charge values are also available as fields on AMPSphere_search_amps; this tool adds molar extinction and secondary-structure fractions. Keyless AMPSphere REST API (/v1/amps/{accession}/features).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'."
+        }
+      },
+      "required": ["accession"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful feature lookup.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "description": "Physicochemical feature profile.",
+              "properties": {
+                "MW": {"type": ["number", "null"]},
+                "Length": {"type": ["number", "null"]},
+                "Molar_extinction": {"type": "object"},
+                "Aromaticity": {"type": ["number", "null"]},
+                "GRAVY": {"type": ["number", "null"]},
+                "Instability_index": {"type": ["number", "null"]},
+                "Isoelectric_point": {"type": ["number", "null"]},
+                "Charge_at_pH_7": {"type": ["number", "null"]},
+                "Secondary_structure": {"type": "object"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "accession": {"type": "string"}
+              }
+            }
+          },
+          "required": ["status", "data", "metadata"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "AMP10.000_000"},
+      {"accession": "AMP10.000_001"}
+    ],
+    "label": ["AMPSphere", "Physicochemical", "Secondary Structure", "AMP", "Peptide"],
+    "metadata": {
+      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "physicochemical", "GRAVY", "secondary structure", "peptide"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  }
+]

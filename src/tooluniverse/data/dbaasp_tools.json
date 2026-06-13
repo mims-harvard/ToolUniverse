@@ -1,0 +1,210 @@
+[
+  {
+    "name": "DBAASP_get_peptide",
+    "type": "DBAASPGetPeptideTool",
+    "description": "Get a full DBAASP antimicrobial peptide record by numeric peptide ID. Returns the sequence, N/C-terminus modifications, structure (PDB / 3D model), per-target activity measurements (MIC values with units, medium, CFU), hemolytic/cytotoxic activity, antibiofilm activity, source genes, UniProt cross-references, SMILES, and references. Keyless DBAASP v3/v4 API (dbaasp.org).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "peptideId": {
+          "type": ["integer", "string"],
+          "description": "DBAASP numeric peptide ID. Example: 107 (Dermaseptin S4 (1-16)[M4K], sequence ALWKTLLKKVLKAAAK). Accepts a bare integer or a 'DBAASPR_107'-style ID (digits are extracted)."
+        }
+      },
+      "required": ["peptideId"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful peptide lookup.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "description": "Full DBAASP peptide record.",
+              "properties": {
+                "id": {"type": "integer"},
+                "dbaaspId": {"type": "string"},
+                "name": {"type": "string"},
+                "sequence": {"type": "string"},
+                "sequenceLength": {"type": "integer"},
+                "nTerminus": {"type": ["string", "null"]},
+                "cTerminus": {"type": ["string", "null"]},
+                "synthesisType": {"type": ["string", "null"]},
+                "complexity": {"type": ["string", "null"]},
+                "pdbs": {"type": "array"},
+                "structureModel": {"type": ["object", "null"]},
+                "targetGroups": {"type": "array"},
+                "targetActivities": {"type": "array"},
+                "hemoliticCytotoxicActivities": {"type": "array"},
+                "antibiofilmActivities": {"type": "array"},
+                "uniprots": {"type": "array"},
+                "sourceGenes": {"type": "array"},
+                "smiles": {"type": ["string", "null"]},
+                "articles": {"type": "array"}
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "peptide_id": {"type": "integer"},
+                "dbaasp_id": {"type": "string"},
+                "name": {"type": "string"},
+                "sequence": {"type": "string"},
+                "sequence_length": {"type": "integer"},
+                "target_activity_count": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"peptideId": 107},
+      {"peptideId": "2975"}
+    ],
+    "label": ["DBAASP", "Antimicrobial Peptide", "AMP", "MIC", "Peptide"],
+    "metadata": {
+      "tags": ["antimicrobial peptide", "AMP", "DBAASP", "MIC", "hemolytic", "antibiofilm", "peptide"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  },
+  {
+    "name": "DBAASP_search_peptides",
+    "type": "DBAASPSearchPeptidesTool",
+    "description": "Search/filter DBAASP antimicrobial peptides by sequence (exact/substring), peptide name, target organism/species, target group, sequence length, synthesis type, source kingdom, UniProt xref, or DBAASP ID. Returns a paginated list of matching AMPs with a total count. Enables sequence->AMP lookup, 'what peptides are active against organism X', and target-organism activity surveys. Keyless DBAASP v3/v4 API (dbaasp.org); pagination is limit/offset.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Amino-acid sequence to match (single-letter code). Pair with sequence_option ('full' for exact, 'part' for substring). Example: 'GLFDIVKKVVGALGSL'."
+        },
+        "sequence_option": {
+          "type": "string",
+          "description": "How to match 'sequence': 'full' (exact, default) or 'part' (substring). Maps to DBAASP sequence.option."
+        },
+        "name": {
+          "type": "string",
+          "description": "Peptide name substring. Example: 'Magainin'."
+        },
+        "target_species": {
+          "type": "string",
+          "description": "Target organism / species name. Example: 'Staphylococcus aureus'. Maps to targetSpecies.value."
+        },
+        "target_group": {
+          "type": "string",
+          "description": "Target group (e.g. 'Gram+', 'Gram-'). Maps to targetGroup.value."
+        },
+        "sequence_length": {
+          "type": ["integer", "string"],
+          "description": "Exact peptide length filter. Maps to sequenceLength.value."
+        },
+        "synthesis_type": {
+          "type": "string",
+          "description": "Synthesis type, e.g. 'Ribosomal', 'Synthetic'. Maps to synthesisType.value."
+        },
+        "kingdom": {
+          "type": "string",
+          "description": "Source kingdom/taxonomy filter. Maps to kingdom.value."
+        },
+        "uniprot": {
+          "type": "string",
+          "description": "UniProt accession cross-reference. Maps to uniprot.value."
+        },
+        "dbaasp_id": {
+          "type": ["integer", "string"],
+          "description": "DBAASP numeric ID filter. Maps to id.value."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Max results to return (default 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Result offset for pagination (default 0)."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful search.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "description": "List of matching peptide summaries.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "integer"},
+                  "dbaaspId": {"type": "string"},
+                  "name": {"type": ["string", "null"]},
+                  "sequence": {"type": ["string", "null"]},
+                  "sequenceLength": {"type": ["integer", "null"]},
+                  "nTerminus": {"type": ["string", "null"]},
+                  "cTerminus": {"type": ["string", "null"]},
+                  "complexity": {"type": ["string", "null"]},
+                  "synthesisType": {"type": ["string", "null"]},
+                  "pdb": {"type": ["string", "null"]},
+                  "pubchemCid": {"type": ["integer", "string", "null"]}
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "source": {"type": "string"},
+                "url": {"type": "string"},
+                "total_count": {"type": "integer"},
+                "returned_count": {"type": "integer"},
+                "limit": {"type": "integer"},
+                "offset": {"type": "integer"}
+              }
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"},
+            "response_snippet": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"sequence": "GLFDIVKKVVGALGSL", "sequence_option": "full", "limit": 3},
+      {"name": "Magainin", "limit": 3},
+      {"target_species": "Staphylococcus aureus", "limit": 2}
+    ],
+    "label": ["DBAASP", "Antimicrobial Peptide", "AMP", "Search", "Peptide"],
+    "metadata": {
+      "tags": ["antimicrobial peptide", "AMP", "DBAASP", "search", "sequence", "target organism", "peptide"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  }
+]
