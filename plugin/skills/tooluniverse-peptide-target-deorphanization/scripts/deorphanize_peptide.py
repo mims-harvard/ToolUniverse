@@ -166,6 +166,14 @@ _TARGET_CLASS_RULES = [
      ()),  # AMPs often act on the membrane, not a single protein target
 ]
 _UNKNOWN_CLASS_NOUNS = ("receptor", "enzyme", "channel", "transporter")
+# An HGNC gene group larger than this is a domain SUPERGROUP (e.g. "EF-hand domain
+# containing" ~190 genes), not a ligand-target family — enumerating it floods the
+# panel. Real target families (channels, secretin GPCRs, NPRs, protease subfamilies)
+# are well under this; bound them like the InterPro route.
+_HGNC_GROUP_CAP = 80
+# A seed protein can sit in several InterPro FAMILY entries; enumerate only the
+# first few to bound the number of InterPro_get_proteins_by_domain calls.
+_INTERPRO_MAX_FAMILIES = 2
 
 
 def _classify_target_class(
@@ -311,12 +319,31 @@ class Pipeline:
         return defs
 
     # ---- Phase 2c: target-family panel ---------------------------------
+    def _accessions_to_symbols(self, accessions: List[str]) -> List[str]:
+        """Batch-map UniProt accessions -> gene symbols in ONE UniProt query.
+
+        InterPro returns members as UniProt accessions (no gene field), so resolve
+        them in a single 'accession:A OR accession:B ...' search rather than N calls.
+        """
+        accessions = accessions[:60]
+        if not accessions:
+            return []
+        q = " OR ".join(f"accession:{a}" for a in accessions)
+        res = self._data(self.run("UniProt_search", {"query": q, "limit": 60}))
+        syms: set = set()
+        for r in _as_list(res, "results"):
+            for g in r.get("gene_names") or []:
+                if g:
+                    syms.add(str(g).upper())
+        return sorted(syms)
+
     def interpro_family_members(self, accession: Optional[str], cap: int = 60) -> List[str]:
         """Enumerate a target's protein family via InterPro — a GENERAL route that
         works for any target class (kinases, channels, proteases, GPCRs alike),
         unlike GPCRdb. From the seed's UniProt accession, take its InterPro FAMILY
-        entries, then list the human members of each (bounded so a broad family
-        does not explode the panel)."""
+        entries, list each family's HUMAN members (InterPro mixes organisms, so
+        filter tax_id 9606), and map those accessions to gene symbols. Bounded so a
+        broad superfamily does not explode the panel."""
         if not accession:
             return []
         entries = self._data(self.run("InterPro_get_entries_for_protein", {"accession": accession}))
@@ -326,24 +353,23 @@ class Pipeline:
                 continue
             etype = str(e.get("type") or e.get("entry_type") or "").lower()
             ipr = e.get("accession") or e.get("interpro_accession") or e.get("id")
-            if ipr and str(ipr).upper().startswith("IPR") and ("family" in etype or not etype):
+            if ipr and str(ipr).upper().startswith("IPR") and etype == "family":
                 ipr_ids.append(str(ipr))
-        symbols: set = set()
-        for ipr in ipr_ids[:3]:  # a protein's most specific family entries
+
+        human_accs: set = set()
+        for ipr in ipr_ids[:_INTERPRO_MAX_FAMILIES]:
             prots = self._data(self.run("InterPro_get_proteins_by_domain",
                                         {"domain_id": ipr, "page_size": 50, "reviewed_only": True}))
-            fam: set = set()
-            for p in _as_list(prots, "proteins", "results", "data"):
-                if not isinstance(p, dict):
-                    continue
-                sym = p.get("gene") or p.get("gene_name") or p.get("symbol")
-                if isinstance(sym, list):
-                    sym = sym[0] if sym else None
-                if sym:
-                    fam.add(str(sym).upper())
+            fam = [
+                p.get("accession")
+                for p in _as_list(prots, "proteins", "results", "data")
+                if isinstance(p, dict) and str(p.get("tax_id")) == "9606" and p.get("accession")
+            ]
             if 1 < len(fam) <= cap:  # skip a singleton or a too-broad superfamily
-                symbols |= fam
-        return sorted(symbols)
+                human_accs.update(fam)
+        if not human_accs or len(human_accs) > cap:
+            return []
+        return self._accessions_to_symbols(sorted(human_accs))
 
     def family_panel(self, seed_symbol: str) -> Dict[str, Any]:
         """Enumerate the seed gene's family (seed + paralogs). HGNC gene-family is
@@ -359,8 +385,12 @@ class Pipeline:
         meta["uniprot"] = uniprot
         meta["gene_group"] = gene.get("gene_group")
         for gid in gene.get("gene_group_id") or []:
-            members = self._data(self.run("HGNC_fetch_gene_family_members", {"gene_group_id": str(gid)}))
-            for mem in members or []:
+            members = self._data(self.run("HGNC_fetch_gene_family_members", {"gene_group_id": str(gid)})) or []
+            if len(members) > _HGNC_GROUP_CAP:
+                # a domain supergroup (e.g. EF-hand), not a target family — skip it
+                meta.setdefault("skipped_broad_groups", []).append({"gene_group_id": str(gid), "size": len(members)})
+                continue
+            for mem in members:
                 if mem.get("symbol"):
                     panel.setdefault(mem["symbol"], {"sources": set()})["sources"].add("HGNC")
 

@@ -140,11 +140,13 @@ From ONE seed target (from a homolog, a known-drug class, or the motif hit), enu
 python3 -m tooluniverse.cli run HGNC_fetch_gene_by_symbol '{"symbol":"<SEED>"}'              # -> gene_group_id[], uniprot_ids[]
 python3 -m tooluniverse.cli run HGNC_fetch_gene_family_members '{"gene_group_id":"<ID>"}'     # STRING id; the whole family
 # InterPro: general route that does NOT depend on GPCRdb (e.g. the seed is a kinase/channel/protease)
-python3 -m tooluniverse.cli run InterPro_get_entries_for_protein '{"accession":"<SEED_UNIPROT>"}'   # -> InterPro entries; take the FAMILY-type IPR ids
-python3 -m tooluniverse.cli run InterPro_get_proteins_by_domain '{"domain_id":"<IPRxxxxxx>","page_size":50,"reviewed_only":true}'  # -> family members; map to gene symbols
+python3 -m tooluniverse.cli run InterPro_get_entries_for_protein '{"accession":"<SEED_UNIPROT>"}'   # -> entries[]; take FAMILY-type (type=="family") IPR ids
+python3 -m tooluniverse.cli run InterPro_get_proteins_by_domain '{"domain_id":"<IPRxxxxxx>","page_size":50,"reviewed_only":true}'  # -> proteins[] (accession + tax_id; MIXED organisms)
+# proteins[] carry UniProt accessions, NOT gene symbols, and mix species -> filter tax_id=="9606", then batch-map:
+python3 -m tooluniverse.cli run UniProt_search '{"query":"accession:Q00975 OR accession:O00555","limit":60}'   # -> results[].gene_names per accession
 ```
-- **HGNC gene_group works for any family** — its own docs example is non-GPCR (`gene_group_id '366'` = the 56 'Ubiquitin specific peptidases'). This is why the script's family enumeration is **not** GPCR-locked.
-- **InterPro** is the second general cross-check: take the seed's **FAMILY-type** InterPro entry (not the broad superfamily/domain entries — those explode), enumerate its human members, and keep the panel only if it is bounded (the script caps at ≤60 members). When the seed is in no curated HGNC group, InterPro **supplies** the panel.
+- **HGNC gene_group works for any family** — its own docs example is non-GPCR (`gene_group_id '366'` = the 56 'Ubiquitin specific peptidases'). This is why the script's family enumeration is **not** GPCR-locked. **Gotcha:** a gene can sit in several HGNC groups, including a **domain supergroup** (e.g. CACNA1B is in both 'Calcium voltage-gated channel alpha1 subunits' (10) and 'EF-hand domain containing' (~200)). The script **skips any group with > ~80 members** so the supergroup does not flood the panel — enumerate the bounded target family, not the domain supergroup.
+- **InterPro** is the second general cross-check (live-verified): take the seed's **FAMILY-type** entries (`type=="family"`; skip `domain`/`homologous_superfamily` — those explode), list each family's members via `InterPro_get_proteins_by_domain`, **keep only human (`tax_id=="9606"`)** because InterPro mixes organisms, and **batch-map the accessions → gene symbols** with one `UniProt_search "accession:A OR accession:B …"` query (proteins have no gene field). Bounded (≤60). When the seed is in no curated HGNC group, InterPro **supplies** the panel. Control: `Q00975` (CACNA1B/Cav2.2) → `{CACNA1A…CACNA1S}` calcium-channel family, with each member cross-checked HGNC+InterPro.
 
 **Known pharmacology (GtoPdb — general: GPCRs, ion channels, enzymes, transporters):**
 ```bash

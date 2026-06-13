@@ -226,21 +226,35 @@ def test_seedless_seeds_finds_non_receptor_targets():
 
 # ------------- generality: InterPro universal family route (B) --------------
 
-def test_interpro_family_members_enumerates_and_bounds():
+# InterPro live shape: proteins carry UniProt `accession` + `tax_id` (no gene
+# field) and mix organisms; symbols come from a batch UniProt accession->gene map.
+_IPR_ENTRIES = {"entries": [
+    {"type": "family", "accession": "IPR000001"},
+    {"type": "domain", "accession": "IPR999999"},  # domains/superfamilies ignored
+]}
+
+
+def test_interpro_family_members_filters_human_and_maps_accessions_to_symbols():
     tu = _FakeTU({
-        "InterPro_get_entries_for_protein": {"entries": [
-            {"type": "family", "accession": "IPR000001"},
-            {"type": "domain", "accession": "IPR999999"},  # domains are ignored
-        ]},
+        "InterPro_get_entries_for_protein": _IPR_ENTRIES,
         "InterPro_get_proteins_by_domain": {"proteins": [
-            {"gene": "AAA"}, {"gene": "BBB"}, {"gene": "CCC"},
+            {"accession": "P1", "tax_id": "9606"},
+            {"accession": "P2", "tax_id": "9606"},
+            {"accession": "P3", "tax_id": "7460"},  # honeybee -> filtered out
+        ]},
+        "UniProt_search": {"results": [
+            {"accession": "P1", "gene_names": ["AAA"]},
+            {"accession": "P2", "gene_names": ["BBB"]},
         ]},
     })
     members = dp.Pipeline(tu).interpro_family_members("P12345")
-    assert members == ["AAA", "BBB", "CCC"]
-    # only the family entry was enumerated, not the domain one
-    assert any(n == "InterPro_get_proteins_by_domain" and a["domain_id"] == "IPR000001" for n, a in tu.calls)
-    assert not any(a.get("domain_id") == "IPR999999" for n, a in tu.calls if n == "InterPro_get_proteins_by_domain")
+    assert members == ["AAA", "BBB"]
+    # only the FAMILY entry is enumerated, not the domain entry
+    iprs = [a["domain_id"] for n, a in tu.calls if n == "InterPro_get_proteins_by_domain"]
+    assert iprs == ["IPR000001"]
+    # the non-human accession is not sent to the batch symbol mapper
+    uq = next(a["query"] for n, a in tu.calls if n == "UniProt_search")
+    assert "P1" in uq and "P2" in uq and "P3" not in uq
 
 
 def test_family_panel_interpro_supplies_panel_when_no_hgnc_group():
@@ -249,7 +263,12 @@ def test_family_panel_interpro_supplies_panel_when_no_hgnc_group():
         "HGNC_fetch_gene_by_symbol": {"uniprot_ids": ["P2"]},  # no gene_group_id
         "GPCRdb_get_protein": {},                               # not a GPCR
         "InterPro_get_entries_for_protein": {"entries": [{"type": "family", "accession": "IPR0NPR"}]},
-        "InterPro_get_proteins_by_domain": {"proteins": [{"gene": "NPR1"}, {"gene": "NPR2"}, {"gene": "NPR3"}]},
+        "InterPro_get_proteins_by_domain": {"proteins": [
+            {"accession": "Q1", "tax_id": "9606"}, {"accession": "Q2", "tax_id": "9606"}, {"accession": "Q3", "tax_id": "9606"},
+        ]},
+        "UniProt_search": {"results": [
+            {"accession": "Q1", "gene_names": ["NPR1"]}, {"accession": "Q2", "gene_names": ["NPR2"]}, {"accession": "Q3", "gene_names": ["NPR3"]},
+        ]},
     })
     panel = dp.Pipeline(tu).family_panel("NPR1")["panel"]
     assert set(panel) == {"NPR1", "NPR2", "NPR3"}
@@ -263,9 +282,32 @@ def test_family_panel_hgnc_authoritative_interpro_only_annotates():
         "HGNC_fetch_gene_family_members": [{"symbol": "GLP1R"}, {"symbol": "GCGR"}],
         "GPCRdb_get_protein": {},
         "InterPro_get_entries_for_protein": {"entries": [{"type": "family", "accession": "IPR0G"}]},
-        "InterPro_get_proteins_by_domain": {"proteins": [{"gene": "GCGR"}, {"gene": "OUTSIDER1"}, {"gene": "OUTSIDER2"}]},
+        "InterPro_get_proteins_by_domain": {"proteins": [
+            {"accession": "A1", "tax_id": "9606"}, {"accession": "A2", "tax_id": "9606"}, {"accession": "A3", "tax_id": "9606"},
+        ]},
+        "UniProt_search": {"results": [
+            {"accession": "A1", "gene_names": ["GCGR"]}, {"accession": "A2", "gene_names": ["OUTSIDER1"]}, {"accession": "A3", "gene_names": ["OUTSIDER2"]},
+        ]},
     })
     panel = dp.Pipeline(tu).family_panel("GLP1R")["panel"]
     assert set(panel) == {"GLP1R", "GCGR"}                 # no OUTSIDER leaked in
     assert "InterPro" in panel["GCGR"]["sources"]          # but GCGR cross-checked
     assert "HGNC" in panel["GCGR"]["sources"]
+
+
+def test_family_panel_skips_oversized_hgnc_supergroup():
+    """A domain supergroup (e.g. 'EF-hand', ~200 genes) must NOT flood the panel;
+    only the bounded target-family group is enumerated."""
+    big = [{"symbol": f"EF{i}"} for i in range(201)]  # over _HGNC_GROUP_CAP
+
+    def _members(args):
+        return big if args["gene_group_id"] == "863" else [{"symbol": "CACNA1B"}, {"symbol": "CACNA1A"}]
+
+    tu = _FakeTU({
+        "HGNC_fetch_gene_by_symbol": {"uniprot_ids": [None], "gene_group_id": ["863", "100"]},
+        "HGNC_fetch_gene_family_members": _members,
+        "GPCRdb_get_protein": {},
+    })
+    out = dp.Pipeline(tu).family_panel("CACNA1B")
+    assert set(out["panel"]) == {"CACNA1B", "CACNA1A"}  # the EF-hand supergroup is skipped
+    assert out["meta"]["skipped_broad_groups"][0]["gene_group_id"] == "863"
