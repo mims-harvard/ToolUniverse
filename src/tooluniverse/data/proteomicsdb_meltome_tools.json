@@ -1,0 +1,64 @@
+[
+  {
+    "name": "ProteomicsDB_get_protein_meltome",
+    "type": "ProteomicsDBGetProteinMeltomeTool",
+    "description": "Get a protein's thermal proteome profiling (meltome / TPP) melting curves from ProteomicsDB by gene symbol or UniProt accession. Each curve yields an apparent melting temperature (Tm) and fit quality (R^2 / p-value); a ligand-induced Tm shift is the basis of CETSA/TPP target deconvolution. Keyless. NOTE: the meltome covers SOLUBLE proteins — most membrane GPCRs (e.g. GLP1R) have no data.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": ["string", "null"],
+          "description": "HGNC gene symbol, e.g. 'MAPK1'. Provide this OR uniprot_accession."
+        },
+        "uniprot_accession": {
+          "type": ["string", "null"],
+          "description": "UniProt accession, e.g. 'P28482'. Provide this OR gene_symbol."
+        },
+        "max_curves": {
+          "type": "integer",
+          "description": "Max melting curves to return (default 25, max 200)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful meltome lookup.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_name": {"type": ["string", "null"]},
+                "uniprot": {"type": ["string", "null"]},
+                "protein_name": {"type": ["string", "null"]},
+                "protein_id": {"type": ["integer", "null"]},
+                "n_melting_curves": {"type": "integer"},
+                "median_apparent_tm_celsius": {"type": ["number", "null"]},
+                "curves": {"type": "array"}
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_symbol": "MAPK1"},
+      {"gene_symbol": "CDK2", "max_curves": 5},
+      {"uniprot_accession": "P28482"}
+    ]
+  }
+]

@@ -144,6 +144,30 @@
     ]
   },
   {
+    "name": "CLUSPRO_API_SECRET",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Proteins & Structure",
+    "register_url": "https://cluspro.bu.edu",
+    "purpose": "API secret paired with CLUSPRO_USERNAME for signing ClusPro peptide-docking submissions.",
+    "without": "The ClusPro_submit_peptide_docking tool is hidden until both ClusPro keys are set.",
+    "used_by": [
+      "cluspro_tools.json"
+    ]
+  },
+  {
+    "name": "CLUSPRO_USERNAME",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Proteins & Structure",
+    "register_url": "https://cluspro.bu.edu",
+    "purpose": "Authenticate peptide-protein docking submissions to the ClusPro server (free for academic use).",
+    "without": "The ClusPro_submit_peptide_docking tool is hidden until both ClusPro keys are set.",
+    "used_by": [
+      "cluspro_tools.json"
+    ]
+  },
+  {
     "name": "DISGENET_API_KEY",
     "requirement": "required",
     "type": "secret",

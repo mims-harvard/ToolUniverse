@@ -1,0 +1,76 @@
+[
+  {
+    "name": "ClusPro_submit_peptide_docking",
+    "type": "ClusProSubmitPeptideDockingTool",
+    "description": "Submit a peptide-protein docking job to ClusPro (peptide mode) and return the ClusPro job id. Docks a short peptide (motif + sequence) against a receptor given by 4-letter PDB code. Docking is asynchronous (hours); retrieve clustered poses + scores from your ClusPro results page. Requires a FREE academic ClusPro account: set CLUSPRO_USERNAME and CLUSPRO_API_SECRET. Peptide mode is for SHORT peptides (~<=30 residues).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "receptor_pdb_id": {
+          "type": "string",
+          "description": "4-letter PDB code of the receptor protein, e.g. '1A2K'."
+        },
+        "peptide_sequence": {
+          "type": "string",
+          "description": "Peptide amino-acid sequence (1-letter), e.g. 'KGRRL'. Short peptides only."
+        },
+        "peptide_motif": {
+          "type": ["string", "null"],
+          "description": "Peptide motif for PDB fragment search (X = wildcard), e.g. 'KXRRL'. Defaults to peptide_sequence if omitted."
+        },
+        "jobname": {
+          "type": ["string", "null"],
+          "description": "Optional job name (defaults to a ClusPro job number)."
+        }
+      },
+      "required": ["receptor_pdb_id", "peptide_sequence"]
+    },
+    "required_api_keys": ["CLUSPRO_USERNAME", "CLUSPRO_API_SECRET"],
+    "api_key_info": {
+      "CLUSPRO_USERNAME": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://cluspro.bu.edu",
+        "purpose": "Authenticate peptide-protein docking submissions to the ClusPro server (free for academic use).",
+        "without": "The ClusPro_submit_peptide_docking tool is hidden until both ClusPro keys are set."
+      },
+      "CLUSPRO_API_SECRET": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://cluspro.bu.edu",
+        "purpose": "API secret paired with CLUSPRO_USERNAME for signing ClusPro peptide-docking submissions.",
+        "without": "The ClusPro_submit_peptide_docking tool is hidden until both ClusPro keys are set."
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful job submission.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "object",
+              "properties": {"job_id": {"type": ["string", "integer"]}}
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error result.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "url": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"receptor_pdb_id": "1A2K", "peptide_sequence": "KGRRL", "peptide_motif": "KXRRL"}
+    ]
+  }
+]
