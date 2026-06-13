@@ -60,6 +60,76 @@ def _as_list(node: Any, *keys: str) -> List[Any]:
     return []
 
 
+# UniProt accepts organism common names; map the usual assay/source species.
+_ORGANISM_COMMON = {
+    "homo_sapiens": "human",
+    "mus_musculus": "mouse",
+    "rattus_norvegicus": "rat",
+    "danio_rerio": "zebrafish",
+    "drosophila_melanogaster": "fruit fly",
+    "caenorhabditis_elegans": "Caenorhabditis elegans",
+    "saccharomyces_cerevisiae": "yeast",
+}
+
+_CANONICAL_AA = set("ACDEFGHIKLMNPQRSTVWY")
+
+
+def _organism_query(species: str) -> str:
+    """Species token -> a UniProt organism filter (common name when known)."""
+    return _ORGANISM_COMMON.get(species.lower(), species.replace("_", " "))
+
+
+def _noncanonical(seq: str) -> Dict[str, Any]:
+    """Flag residues outside the 20 standard AAs (BLAST/PROSITE assume canonical)."""
+    extra = sorted({c for c in seq.upper() if c not in _CANONICAL_AA})
+    return {
+        "noncanonical_residues": extra,
+        "is_canonical_linear": not extra,
+        "note": (
+            "non-standard residues present -> BLAST/PROSITE/ProtParam assume canonical "
+            "linear L-amino acids and may mischaracterize this peptide. If it is a "
+            "non-ribosomal/cyclic peptide, look it up by name with Norine_get_peptide "
+            "and pass --cyclic to cofold_screen.py."
+            if extra
+            else "all residues are standard L-amino acids."
+        ),
+    }
+
+
+def _pairwise_identity(aligned: Dict[str, str], a: str, b: str) -> Optional[Dict[str, Any]]:
+    """Percent identity of two aligned sequences over non-gap shared columns."""
+    sa, sb = aligned.get(a), aligned.get(b)
+    if not sa or not sb or len(sa) != len(sb):
+        return None
+    cols = [(x, y) for x, y in zip(sa, sb) if x != "-" and y != "-"]
+    if not cols:
+        return None
+    same = sum(1 for x, y in cols if x.upper() == y.upper())
+    return {
+        "percent_identity": round(100.0 * same / len(cols), 1),
+        "n_substitutions": len(cols) - same,
+        "aligned_columns": len(cols),
+    }
+
+
+def _parse_fasta_str(fasta: str) -> Dict[str, str]:
+    """Parse an aligned/plain FASTA string into {name: sequence}."""
+    out: Dict[str, str] = {}
+    name: Optional[str] = None
+    buf: List[str] = []
+    for line in (fasta or "").splitlines():
+        if line.startswith(">"):
+            if name:
+                out[name] = "".join(buf)
+            name = line[1:].split()[0] if line[1:].split() else line[1:]
+            buf = []
+        elif line.strip():
+            buf.append(line.strip())
+    if name:
+        out[name] = "".join(buf)
+    return out
+
+
 class Pipeline:
     def __init__(self, tu, verbose: bool = True):
         self.tu = tu
@@ -290,8 +360,92 @@ class Pipeline:
         for o in rows:
             sp = str(o.get("species") or o.get("target_species") or o.get("organism") or "").lower()
             if target in sp:  # e.g. 'musculus' in 'Mus musculus'
-                return {"present": True, "best_method_count": o.get("methods") or o.get("method_count")}
+                m = o.get("methods")
+                count = len(m) if isinstance(m, list) else (m or o.get("method_count"))
+                return {"present": True, "best_method_count": count}
         return {"present": bool(rows), "note": f"ortholog list returned but no {assay_species} match parsed"}
+
+    # ---- Phase 3': ortholog sequences + binding-interface divergence -----
+    def _human_sequence(self, symbol: str) -> Dict[str, Optional[str]]:
+        gene = self._data(self.run("HGNC_fetch_gene_by_symbol", {"symbol": symbol}))
+        acc = (gene.get("uniprot_ids") or [None])[0] if isinstance(gene, dict) else None
+        return {"accession": acc, "sequence": self._sequence_for(acc)}
+
+    def _species_sequence(self, symbol: str, species: str) -> Dict[str, Optional[str]]:
+        """Resolve the ortholog's protein sequence in ``species`` via UniProt search."""
+        res = self._data(self.run("UniProt_search", {"query": f"gene:{symbol}", "organism": _organism_query(species), "limit": 1}))
+        rows = _as_list(res, "results")
+        acc = rows[0].get("accession") if rows else None
+        return {"accession": acc, "sequence": self._sequence_for(acc)}
+
+    def _sequence_for(self, accession: Optional[str]) -> Optional[str]:
+        if not accession:
+            return None
+        seq = self._data(self.run("UniProt_get_sequence_by_accession", {"accession": accession}))
+        if isinstance(seq, str):
+            return seq.strip() or None
+        if isinstance(seq, dict):
+            return seq.get("sequence") or seq.get("value")
+        return None
+
+    def cross_species_alignment(self, symbol: str, assay_species: str, source_species: Optional[str]) -> Dict[str, Any]:
+        """Align the human ortholog vs the assay (and optional source) species and
+        report sequence divergence — the mechanistic core of "binds in A, not B".
+
+        Keyless full-length identity is a proxy for interface divergence (we cannot
+        pinpoint the binding pocket without a structure); a low human-vs-assay
+        identity flags the ortholog whose interface most plausibly diverged.
+        """
+        chains: Dict[str, str] = {}
+        accs: Dict[str, Optional[str]] = {}
+        human = self._human_sequence(symbol)
+        if human["sequence"]:
+            chains["human"] = human["sequence"]
+            accs["human"] = human["accession"]
+        species = {"assay": assay_species}
+        if source_species:
+            species["source"] = source_species
+        for role, sp in species.items():
+            got = self._species_sequence(symbol, sp)
+            if got["sequence"]:
+                chains[role] = got["sequence"]
+                accs[role] = got["accession"]
+        if len(chains) < 2:
+            return {"status": "insufficient", "resolved": list(chains), "accessions": accs,
+                    "note": "need >=2 ortholog sequences to align; some species not in UniProt "
+                            "(source organism may be a protist absent from vertebrate-centric DBs). "
+                            "Provide the source binding-partner sequence directly to align by hand."}
+        fasta = "".join(f">{role}\n{seq}\n" for role, seq in chains.items())
+        aln = self._data(self.run("EBI_msa_align", {"sequences": fasta, "method": "clustalo", "sequence_type": "protein"}))
+        aln = aln if isinstance(aln, dict) else {}
+        aligned_fasta = aln.get("aligned_fasta") or aln.get("alignment") or aln.get("fasta")
+        aligned = _parse_fasta_str(aligned_fasta) if aligned_fasta else {}
+        pairs: List[Dict[str, Any]] = []
+        for other in ("assay", "source"):
+            if "human" in aligned and other in aligned:
+                pid = _pairwise_identity(aligned, "human", other)
+                if pid:
+                    pairs.append({"pair": f"human_vs_{other}", "species": species.get(other), **pid})
+        return {"status": "ok" if pairs else "aligned_unparsed", "accessions": accs, "pairs": pairs,
+                "note": "lower human-vs-assay identity = the ortholog whose binding interface most "
+                        "plausibly diverged, a mechanistic explanation for a species-specific negative."}
+
+    def representative_pdb(self, symbol: str, accession: Optional[str]) -> Optional[Dict[str, Any]]:
+        """Best PDB structure for the candidate (keyless) — feeds ClusPro docking."""
+        if not accession:
+            gene = self._data(self.run("HGNC_fetch_gene_by_symbol", {"symbol": symbol}))
+            accession = (gene.get("uniprot_ids") or [None])[0] if isinstance(gene, dict) else None
+        if not accession:
+            return None
+        best = self._data(self.run("PDBeSIFTS_get_best_structures", {"uniprot_accession": accession}))
+        rows = _as_list(best, "structures", "best_structures", "data")
+        if isinstance(best, dict) and not rows and isinstance(best.get(accession), list):
+            rows = best[accession]  # SIFTS keys results under the accession
+        if not rows:
+            return None
+        top = rows[0]
+        return {"pdb_id": top.get("pdb_id") or top.get("pdbId"), "uniprot": accession,
+                "chain": top.get("chain_id") or top.get("chainId")}
 
 
 def tier(in_panel: bool, pheno_score: Optional[float], is_hypoth: bool) -> str:
@@ -318,6 +472,7 @@ def analyze_one(pipe: Pipeline, label: str, seq: str, args, pheno: Dict[str, flo
 
     pipe.log(f"[{label}] characterization + motif")
     result["properties"] = pipe.characterize(seq)
+    result["peptide_form"] = _noncanonical(seq)
     result["signatures"] = pipe.motif_families(seq)
     result["elm_motifs"] = pipe.elm_motif_match(seq)
     result["protease_liability"] = pipe.protease_liability(seq)
@@ -354,11 +509,21 @@ def analyze_one(pipe: Pipeline, label: str, seq: str, args, pheno: Dict[str, flo
             "is_hypothesized_target": is_hypoth,
         })
     rows.sort(key=_rank_key)
+    leads_done = 0
     for r in rows[:5]:
         if r["is_hypothesized_target"]:
             continue
         g = pipe._data(pipe.run("HGNC_fetch_gene_by_symbol", {"symbol": r["gene"]}))
+        acc = (g.get("uniprot_ids") or [None])[0] if isinstance(g, dict) else None
         r["cross_species"] = pipe.ortholog_status(g.get("hgnc_id") if isinstance(g, dict) else None, args.assay_species)
+        # For the top few real-target hypotheses, do the work the skill promised:
+        # resolve ortholog sequences and align the binding interface across species,
+        # and suggest a ClusPro-ready PDB structure.
+        if leads_done < 3:
+            pipe.log(f"[{label}] cross-species interface alignment: {r['gene']}")
+            r["interface_alignment"] = pipe.cross_species_alignment(r["gene"], args.assay_species, args.source_species)
+            r["representative_pdb"] = pipe.representative_pdb(r["gene"], acc)
+            leads_done += 1
     result["ranked_candidates"] = rows
     result["phenotype_efo"] = efo
 
@@ -373,6 +538,10 @@ def _print_summary(args, result, panel, rows) -> None:
     print("=" * 72)
     p = result["properties"]
     print(f"len={p.get('length')}  MW~{p.get('mw_average')}  pI~{p.get('pI_protparam')}  GRAVY={p.get('gravy')}")
+    form = result.get("peptide_form", {})
+    if form.get("noncanonical_residues"):
+        print(f"NON-CANONICAL residues {form['noncanonical_residues']} -> sequence tools may "
+              "mischaracterize; if NRP/cyclic use Norine_get_peptide + cofold --cyclic")
     for s in result.get("signatures") or []:
         print(f"signature: {s['accession']}  {s['description']}")
     elm = result.get("elm_motifs") or []
@@ -402,6 +571,17 @@ def _print_summary(args, result, panel, rows) -> None:
         xs_s = ("present" if xs.get("present") else "") if xs else ""
         ps = f"{r['phenotype_score']:.3f}" if r["phenotype_score"] is not None else "-"
         print(f"{r['gene']:<10}{r['tier']:<32}{ps:<8}{','.join(r['family_sources']) or '-':<14}{xs_s}")
+    # Lead-candidate cross-species interface divergence + ClusPro-ready PDB
+    for r in rows:
+        ia = r.get("interface_alignment")
+        if ia and ia.get("pairs"):
+            spans = "; ".join(f"{x['pair']} {x['percent_identity']}% id ({x['n_substitutions']} subs)" for x in ia["pairs"])
+            print(f"  x-species {r['gene']}: {spans}")
+        elif ia and ia.get("status") == "insufficient":
+            print(f"  x-species {r['gene']}: {ia['note']}")
+        pdb = r.get("representative_pdb")
+        if pdb and pdb.get("pdb_id"):
+            print(f"  ClusPro-ready PDB for {r['gene']}: {pdb['pdb_id']} (chain {pdb.get('chain') or '?'}, {pdb['uniprot']})")
     print("=" * 72)
     if dpp4.get("labile"):
         print("NOTE: peptide is DPP4-labile -> an assay-negative result may be DEGRADATION, not")
@@ -438,6 +618,7 @@ def main() -> int:
     ap.add_argument("--hypothesized-target", default=None, help="Gene symbol the peptide was assumed to hit (seeds family enumeration). Omit for SEEDLESS mode.")
     ap.add_argument("--phenotype", default=None, help="Disease name for the OpenTargets anchor, e.g. 'type 2 diabetes mellitus'.")
     ap.add_argument("--assay-species", default="mus_musculus", help="Species of the negative binding assay (cross-species reconciliation).")
+    ap.add_argument("--source-species", default=None, help="Species where binding WAS observed (e.g. the source organism). Adds a 3-way human/assay/source interface alignment. Protists are often absent from UniProt — supply the partner sequence by hand if unresolved.")
     ap.add_argument("--no-blast", action="store_true", help="Skip the slow BLAST homology route.")
     ap.add_argument("--out", default=None, help="Optional path to write the full JSON result.")
     args = ap.parse_args()

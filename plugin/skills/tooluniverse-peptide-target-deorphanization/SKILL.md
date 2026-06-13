@@ -27,14 +27,15 @@ Two runnable scripts in `scripts/` execute the whole pipeline so you don't have 
 
 ### `deorphanize_peptide.py` — keyless candidate generation + ranking (Phases 1–4)
 
-No API key. For each peptide it characterizes it (PepCalc/ProtParam), scans **PROSITE + ELM** signatures, flags **protease/degradation liability**, enumerates the candidate **receptor family**, anchors on **phenotype** (OpenTargets), checks **cross-species** orthologs (Alliance), and prints a ranked candidate shortlist with evidence tiers.
+No API key. For each peptide it characterizes it (PepCalc/ProtParam), flags **non-canonical/cyclic** residues, scans **PROSITE + ELM** signatures, flags **protease/degradation liability**, enumerates the candidate **receptor family**, anchors on **phenotype** (OpenTargets), and — for the top candidates — **resolves the ortholog protein sequences and aligns the binding interface across human / assay-species / source-species** (the mechanistic "binds in A, not B" step) and **suggests a ClusPro-ready PDB** structure. Prints a ranked candidate shortlist with evidence tiers.
 
 ```bash
 python3 scripts/deorphanize_peptide.py \
   --sequence <PEPTIDE_SEQ> \             # OR  --fasta peptides.fasta  for BATCH mode
   --hypothesized-target <GENE> \         # optional; seeds family enumeration (e.g. GLP1R). OMIT for SEEDLESS mode
   --phenotype "<disease name>" \         # optional; OpenTargets anchor — use the DISEASE node, not a symptom
-  --assay-species mus_musculus \         # species of the negative binding assay
+  --assay-species mus_musculus \         # species of the NEGATIVE binding assay
+  --source-species <organism> \          # optional; species where binding WAS observed -> 3-way interface alignment
   [--no-blast] [--out result.json]
 ```
 
@@ -43,9 +44,12 @@ python3 scripts/deorphanize_peptide.py \
 - **Seedless** (omit it) — derive candidate receptors from the PROSITE family keywords via UniProt (`"<keyword> receptor"` → receptor genes → family); degrades to phenotype-only if that resolver is transiently down.
 - **Batch** (`--fasta`) — one record per FASTA entry, sharing `--phenotype`/`--assay-species`.
 
-**Two extra signals it always reports:**
+**Extra signals it always reports:**
 - **DPP4 / protease liability** — a peptide can be assay-negative because it is *cleaved*, not because it fails to bind. Native GLP-1 (`A@P2`) is **DPP4-LABILE**; exendin-4 (`G@P2`) is **resistant**. A labile flag triggers a "re-test with a DPP4 inhibitor or protease-resistant analog" note — a key alternative explanation for "works in vitro, not in the mouse assay."
 - **ELM LIG motifs** (ranked by rarity) + the Pfam binding domain each engages — low-confidence context for peptides without a named PROSITE family.
+- **Non-canonical / cyclic flag** — any residue outside the 20 standard L-amino acids is surfaced, because BLAST/PROSITE/ProtParam silently assume a canonical linear peptide and will mischaracterize a non-ribosomal/cyclic peptide (common for unicellular-organism natural products). Look such peptides up by name with `Norine_get_peptide` and pass `--cyclic` to `cofold_screen.py`.
+- **Cross-species interface alignment** (top ≤3 candidates) — resolves each candidate's human + assay-species (+ optional source-species) ortholog sequence (UniProt) and aligns them (`EBI_msa_align`), reporting per-pair % identity and substitution count. A low human-vs-assay identity flags the ortholog whose binding interface most plausibly diverged — the mechanistic answer to "binds in A, not B". If the source organism is a protist absent from UniProt, it reports `insufficient` and tells you to supply the partner sequence by hand.
+- **ClusPro-ready PDB** (top ≤3 candidates) — `PDBeSIFTS_get_best_structures` resolves a representative solved PDB id you can feed straight to `ClusPro_submit_peptide_docking`.
 
 **Validated on the control** (`--sequence HGEGTFTSDLSKQMEEEAVRLFIEWLKNGGPSSGAPPPS --hypothesized-target GLP1R --phenotype "type 2 diabetes mellitus"`): recovers the class-B panel `{GCGR, GHRHR, GIPR, GLP1R, GLP2R, SCTR}`, flags **GLP1R as hypothesized (tested negative)**, and promotes **GIPR to Tier 1 (family + phenotype, score 0.674)** as the leading real-target hypothesis — exactly the deorphanization re-ranking, produced with zero API keys.
 
@@ -203,6 +207,8 @@ python3 -m tooluniverse.cli run OpenTargets_get_associated_targets_by_disease_ef
 
 This is where "binds in species A but not B" gets resolved. Pull the candidate receptor's paralog and ortholog sets, then compare the **ligand-binding interface** across the assay species.
 
+> **Automated:** `deorphanize_peptide.py` now does the interface comparison for the top ≤3 candidates — it resolves the human + assay-species (+ optional `--source-species`) ortholog sequences via UniProt and aligns them with `EBI_msa_align`, printing per-pair % identity and substitution counts (`x-species GIPR: human_vs_assay 92.1% id (34 subs)`). The manual calls below are the reference for running, extending, or debugging that step, and for the **paralog** disambiguation (which the script leaves to the HGNC family panel).
+
 **Paralogs (disambiguate which family member is the real target):**
 ```bash
 python3 -m tooluniverse.cli run EnsemblCompara_get_paralogues '{"gene":"GLP1R","species":"homo_sapiens"}'
@@ -267,7 +273,9 @@ If you have a **free academic ClusPro account** (set `CLUSPRO_USERNAME` + `CLUSP
 
 `ClusPro_submit_peptide_docking {"receptor_pdb_id": "<4-letter PDB>", "peptide_sequence": "<SEQ>", "peptide_motif": "<motif, optional>"}`
 
-It returns a ClusPro **job id** — docking is asynchronous, so retrieve clustered poses + scores from your ClusPro results page later (hours). Best for **short peptides (≤~30 residues)** against a receptor with a solved structure. Use this as the academic-free structural path when no NVIDIA key is available; the co-folding backends above remain preferred for direct interface-ipTM ranking and for receptors that have only a sequence (no PDB).
+- **Which PDB?** `deorphanize_peptide.py` already prints a `ClusPro-ready PDB for <GENE>: <PDBID>` line for each top candidate (resolved keyless via `PDBeSIFTS_get_best_structures` from the candidate's UniProt accession). Use that id directly, or run `PDBeSIFTS_get_best_structures {"uniprot_accession":"<acc>"}` yourself to pick a higher-coverage/resolution entry.
+
+It returns a ClusPro **job id** — docking is asynchronous, so retrieve clustered poses + scores from your ClusPro results page later (hours). Best for **short peptides (≤~30 residues)** against a receptor with a solved structure. Use this as the academic-free structural path when no NVIDIA key is available; the co-folding backends above remain preferred for direct interface-ipTM ranking and for receptors that have only a sequence (no PDB). For a **cyclic/non-ribosomal** peptide, prefer `cofold_screen.py --backend boltz2 --cyclic` (ClusPro peptide mode assumes a linear peptide).
 
 ---
 

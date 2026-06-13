@@ -47,6 +47,12 @@ _BACKENDS = {
     "openfold3": "NvidiaNIM_openfold3",
 }
 
+# UniProt organism filter accepts common names; map the usual species tokens.
+_ORGANISM_COMMON = {
+    "homo_sapiens": "human", "mus_musculus": "mouse", "rattus_norvegicus": "rat",
+    "danio_rerio": "zebrafish",
+}
+
 
 class CoFolder:
     def __init__(self, tu):
@@ -68,6 +74,16 @@ class CoFolder:
         ids = (g or {}).get("uniprot_ids") if isinstance(g, dict) else None
         return ids[0] if ids else None
 
+    def _sequence_for_accession(self, accession: Optional[str]) -> Optional[str]:
+        if not accession:
+            return None
+        seq = self._data(self.run("UniProt_get_sequence_by_accession", {"accession": accession}))
+        if isinstance(seq, str):
+            return seq.strip() or None
+        if isinstance(seq, dict):
+            return seq.get("sequence") or seq.get("value")
+        return None
+
     def receptor_sequence(self, symbol: str) -> Optional[str]:
         """Resolve a receptor's protein sequence (GPCRdb first, UniProt fallback).
 
@@ -78,21 +94,19 @@ class CoFolder:
         gp = self._data(self.run("GPCRdb_get_protein", {"protein": symbol}))
         if isinstance(gp, dict) and gp.get("sequence"):
             return gp["sequence"]
-        acc = self._uniprot_accession(symbol)
-        if acc:
-            seq = self._data(self.run("UniProt_get_sequence_by_accession", {"accession": acc}))
-            if isinstance(seq, str) and seq.strip():
-                return seq.strip()
-            if isinstance(seq, dict):
-                return seq.get("sequence") or seq.get("value")
-        return None
+        return self._sequence_for_accession(self._uniprot_accession(symbol))
 
     def ortholog_sequence(self, symbol: str, species: str) -> Optional[str]:
-        """Best-effort: fetch the assay-species ortholog sequence via GPCRdb."""
-        gp = self._data(self.run("GPCRdb_get_protein", {"protein": f"{symbol.lower()}_{species.split('_')[-1]}"}))
-        if isinstance(gp, dict) and gp.get("sequence"):
-            return gp["sequence"]
-        return None
+        """Fetch the assay-species ortholog sequence (UniProt gene+organism search).
+
+        Canonical for any species; replaces the GPCRdb entry-name guess, whose
+        species suffixes are common names ('_mouse'), not the 'mus_musculus' token.
+        """
+        organism = _ORGANISM_COMMON.get(species.lower(), species.replace("_", " "))
+        res = self._data(self.run("UniProt_search", {"query": f"gene:{symbol}", "organism": organism, "limit": 1}))
+        rows = res.get("results") if isinstance(res, dict) else None
+        acc = rows[0].get("accession") if rows else None
+        return self._sequence_for_accession(acc)
 
     @staticmethod
     def _interface_score(result: Any) -> Optional[float]:
@@ -117,16 +131,19 @@ class CoFolder:
                 return float(node)
         return None
 
-    def cofold(self, backend_tool: str, peptide: str, receptor: str) -> Dict[str, Any]:
+    def cofold(self, backend_tool: str, peptide: str, receptor: str, cyclic: bool = False) -> Dict[str, Any]:
         if backend_tool == "NvidiaNIM_boltz2":
-            args = {"polymers": [
-                {"molecule_type": "protein", "sequence": peptide},
-                {"molecule_type": "protein", "sequence": receptor},
-            ]}
+            pep: Dict[str, Any] = {"id": "A", "molecule_type": "protein", "sequence": peptide}
+            if cyclic:
+                pep["cyclic"] = True  # boltz2 natively supports head-to-tail cyclic peptides
+            args = {"polymers": [pep, {"id": "B", "molecule_type": "protein", "sequence": receptor}]}
         elif backend_tool == "NvidiaNIM_alphafold2_multimer":
-            args = {"sequences": [peptide, receptor]}
-        else:  # openfold3
-            args = {"inputs": [{"sequence": peptide}, {"sequence": receptor}]}
+            args = {"sequences": [peptide, receptor]}  # array of chains -> one complex
+        else:  # openfold3: ONE input whose `molecules` array holds both chains (a co-fold)
+            args = {"inputs": [{"input_id": "complex", "molecules": [
+                {"type": "protein", "sequence": peptide},
+                {"type": "protein", "sequence": receptor},
+            ]}]}
         return self.run(backend_tool, args)
 
 
@@ -136,6 +153,7 @@ def main() -> int:
     ap.add_argument("--candidates", nargs="+", required=True, help="Candidate receptor gene symbols (keep <=8).")
     ap.add_argument("--backend", choices=list(_BACKENDS), default="boltz2")
     ap.add_argument("--assay-species", default=None, help="If set, also co-fold the lead candidate's ortholog in this species (e.g. mus_musculus) to test cross-species binding.")
+    ap.add_argument("--cyclic", action="store_true", help="Treat the peptide as head-to-tail cyclic (boltz2 backend only).")
     ap.add_argument("--out", default=None, help="Optional JSON output path.")
     args = ap.parse_args()
 
@@ -170,7 +188,7 @@ def main() -> int:
             continue
         sym = p["candidate"]
         print(f"  co-folding peptide : {sym} ...", flush=True)
-        resp = cf.cofold(backend_tool, peptide, p["_seq"])
+        resp = cf.cofold(backend_tool, peptide, p["_seq"], cyclic=args.cyclic)
         score = cf._interface_score(cf._data(resp))
         results.append({"candidate": sym, "interface_score": score, "status": resp.get("status"),
                         "error": resp.get("error")})
@@ -185,7 +203,7 @@ def main() -> int:
         oseq = cf.ortholog_sequence(lead, args.assay_species)
         if oseq:
             print(f"  cross-species: co-folding peptide : {lead} ({args.assay_species}) ...", flush=True)
-            r = cf.cofold(backend_tool, peptide, oseq)
+            r = cf.cofold(backend_tool, peptide, oseq, cyclic=args.cyclic)
             cross = {"candidate": lead, "species": args.assay_species, "interface_score": cf._interface_score(cf._data(r))}
             print(f"    -> {args.assay_species} interface score: {cross['interface_score']}")
 
