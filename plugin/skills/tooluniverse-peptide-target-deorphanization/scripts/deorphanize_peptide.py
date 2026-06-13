@@ -5,23 +5,32 @@ Given a peptide sequence (and, ideally, the hypothesized target gene that the
 peptide does NOT actually bind, plus the phenotype it produces), enumerate and
 rank the candidate real protein targets using only keyless ToolUniverse tools:
 
-    characterization -> motif/signature -> homology -> receptor-family panel
-    -> phenotype anchor -> cross-species -> ranked shortlist
+    characterization -> motif/signature (PROSITE + ELM regex) -> homology
+    -> receptor-family panel (seeded, or SEEDLESS) -> phenotype anchor
+    -> protease/degradation liability -> cross-species -> ranked shortlist
 
 No API key is required. The optional structural confirmation step (co-folding)
 lives in ``cofold_screen.py`` and needs NVIDIA_API_KEY.
 
-Example (the exendin-4 -> GLP1R control):
+Single peptide (the exendin-4 -> GLP1R control):
 
     python3 deorphanize_peptide.py \
         --sequence HGEGTFTSDLSKQMEEEAVRLFIEWLKNGGPSSGAPPPS \
         --hypothesized-target GLP1R \
-        --phenotype "type 2 diabetes mellitus" \
-        --assay-species mus_musculus
+        --phenotype "type 2 diabetes mellitus" --assay-species mus_musculus
+
+Seedless (no hypothesized target -> derive candidate receptors from the motif):
+
+    python3 deorphanize_peptide.py --sequence <SEQ> --phenotype "type 2 diabetes mellitus"
+
+Batch (one record per FASTA entry; shared --phenotype/--assay-species):
+
+    python3 deorphanize_peptide.py --fasta peptides.fasta --phenotype "type 2 diabetes mellitus"
 """
 
 import argparse
 import json
+import re
 import sys
 from typing import Any, Dict, List, Optional
 
@@ -40,17 +49,39 @@ def _load_tu():
     return tu
 
 
+def _as_list(node: Any, *keys: str) -> List[Any]:
+    """Return a list from ``node`` (already a list, or under one of ``keys``)."""
+    if isinstance(node, list):
+        return node
+    if isinstance(node, dict):
+        for k in keys:
+            if isinstance(node.get(k), list):
+                return node[k]
+    return []
+
+
 class Pipeline:
     def __init__(self, tu, verbose: bool = True):
         self.tu = tu
         self.verbose = verbose
 
-    def run(self, name: str, args: Dict[str, Any]) -> Dict[str, Any]:
-        try:
-            out = self.tu.run({"name": name, "arguments": args})
-        except Exception as exc:  # never let one tool kill the pipeline
-            return {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
-        return out if isinstance(out, dict) else {"status": "success", "data": out}
+    def run(self, name: str, args: Dict[str, Any], attempts: int = 2) -> Dict[str, Any]:
+        last = {"status": "error", "error": "no attempt"}
+        for _ in range(max(1, attempts)):
+            try:
+                out = self.tu.run({"name": name, "arguments": args})
+            except Exception as exc:  # never let one tool kill the pipeline
+                last = {"status": "error", "error": f"{type(exc).__name__}: {exc}"}
+                continue
+            resp = out if isinstance(out, dict) else {"status": "success", "data": out}
+            if resp.get("status") == "success":
+                return resp
+            # retry only transient upstream connection drops; surface other errors
+            err = str(resp.get("error", "")).lower()
+            if "aborted" not in err and "disconnect" not in err:
+                return resp
+            last = resp
+        return last
 
     @staticmethod
     def _data(resp: Dict[str, Any]) -> Any:
@@ -78,27 +109,50 @@ class Pipeline:
             props["mw_protparam"] = pp.get("molecular_weight_da")
         return props
 
-    # ---- Phase 2a: motif / signature -----------------------------------
+    # ---- Phase 2a: motif / PROSITE signature ---------------------------
     def motif_families(self, seq: str) -> List[Dict[str, str]]:
         out: List[Dict[str, str]] = []
         scan = self._data(self.run("ScanProsite_scan_protein", {"seq": seq}))
-        matches = (scan or {}).get("matchset") if isinstance(scan, dict) else None
-        for m in matches or []:
+        for m in scan.get("matchset", []) if isinstance(scan, dict) else []:
             ac = m.get("signature_ac")
             if not ac:
                 continue
             entry = self._data(self.run("PROSITE_get_entry", {"accession": ac}))
-            desc = (entry or {}).get("description") if isinstance(entry, dict) else None
-            out.append({"accession": ac, "description": desc or "", "name": (entry or {}).get("entry_name", "")})
+            entry = entry if isinstance(entry, dict) else {}
+            out.append({"accession": ac, "description": entry.get("description", ""), "name": entry.get("entry_name", "")})
         return out
+
+    # ---- Phase 2a': ELM short-linear-motif regex match (enrichment) -----
+    def elm_motif_match(self, seq: str, top: int = 6) -> List[Dict[str, Any]]:
+        """Match the peptide against ELM ligand (LIG) motif regexes.
+
+        LIG regexes are short and low-specificity, so results are ranked by
+        rarity (ELM ``probability``, smaller = rarer) and each match is annotated
+        with the Pfam domain it engages. Treat as low-confidence context, useful
+        mainly for peptides whose PROSITE signature is not a named family.
+        """
+        lig = self._data(self.run("ELM_list_classes", {"operation": "list_classes", "motif_type": "LIG", "max_results": 300}))
+        hits: List[Dict[str, Any]] = []
+        for c in _as_list(lig, "classes", "elm_classes"):
+            rgx = c.get("regex")
+            try:
+                if rgx and re.search(rgx, seq):
+                    hits.append({"elm": c.get("elm_identifier"), "probability": c.get("probability"), "site": c.get("functional_site_name")})
+            except re.error:
+                continue
+        hits.sort(key=lambda h: h["probability"] if h["probability"] is not None else 1.0)
+        hits = hits[:top]
+        for h in hits:
+            dom = self._data(self.run("ELM_get_interaction_domains", {"operation": "get_interaction_domains", "elm_identifier": h["elm"]}))
+            h["binding_domains"] = [
+                {"pfam": m.get("pfam_accession"), "name": m.get("interaction_domain_name")}
+                for m in _as_list(dom, "mappings", "interaction_domains", "data")[:3]
+            ]
+        return hits
 
     # ---- Phase 2b: homology (slow; optional) ---------------------------
     def homology_hits(self, seq: str, hitlist: int = 10) -> List[str]:
-        resp = self.run(
-            "BLAST_protein_search",
-            {"sequence": seq, "database": "swissprot", "expect": 10.0, "hitlist_size": hitlist},
-        )
-        data = self._data(resp)
+        data = self._data(self.run("BLAST_protein_search", {"sequence": seq, "database": "swissprot", "expect": 10.0, "hitlist_size": hitlist}))
         defs: List[str] = []
         if isinstance(data, dict):
             for aln in data.get("alignments") or data.get("hits") or []:
@@ -114,29 +168,28 @@ class Pipeline:
         meta: Dict[str, Any] = {"seed": seed_symbol}
 
         gene = self._data(self.run("HGNC_fetch_gene_by_symbol", {"symbol": seed_symbol}))
-        group_ids = (gene or {}).get("gene_group_id") or []
-        meta["hgnc_id"] = (gene or {}).get("hgnc_id")
-        meta["uniprot"] = ((gene or {}).get("uniprot_ids") or [None])[0]
-        meta["gene_group"] = (gene or {}).get("gene_group")
-        for gid in group_ids:
+        gene = gene if isinstance(gene, dict) else {}
+        meta["hgnc_id"] = gene.get("hgnc_id")
+        meta["uniprot"] = (gene.get("uniprot_ids") or [None])[0]
+        meta["gene_group"] = gene.get("gene_group")
+        for gid in gene.get("gene_group_id") or []:
             members = self._data(self.run("HGNC_fetch_gene_family_members", {"gene_group_id": str(gid)}))
             for mem in members or []:
-                sym = mem.get("symbol")
-                if sym:
-                    panel.setdefault(sym, {"sources": set()})["sources"].add("HGNC")
+                if mem.get("symbol"):
+                    panel.setdefault(mem["symbol"], {"sources": set()})["sources"].add("HGNC")
 
         # HGNC family group is authoritative when present; GPCRdb then only
         # ANNOTATES those symbols (its entry-names carry aliases like 'glr' for
         # GCGR, so do not let GPCRdb introduce non-HGNC symbols once HGNC succeeded).
         hgnc_authoritative = bool(panel)
         gp = self._data(self.run("GPCRdb_get_protein", {"protein": seed_symbol}))
-        slug = (gp or {}).get("family") if isinstance(gp, dict) else None
+        slug = gp.get("family") if isinstance(gp, dict) else None
         if slug:
             meta["gpcrdb_slug"] = slug
             subfam = "_".join(slug.split("_")[:3])  # trim to subfamily level
             listed = self._data(self.run("GPCRdb_list_proteins", {"family": subfam})) or {}
             for p in listed.get("proteins", []):
-                en = (p.get("entry_name") or "")
+                en = p.get("entry_name") or ""
                 if not en.endswith("_human"):
                     continue
                 sym = en[: -len("_human")].upper()
@@ -147,6 +200,66 @@ class Pipeline:
         for v in panel.values():
             v["sources"] = sorted(v["sources"])
         return {"panel": panel, "meta": meta}
+
+    # ---- Phase 2c (seedless): derive seed receptors from the motif ------
+    @staticmethod
+    def _family_keywords(signatures: List[Dict[str, str]]) -> List[str]:
+        stop = {"family", "signature", "domain", "receptor", "protein", "type"}
+        out: List[str] = []
+        for s in signatures:
+            for tok in re.split(r"[\s/,.;()\-]+", (s.get("description") or "").lower()):
+                if len(tok) >= 4 and tok.isalpha() and tok not in stop and tok not in out:
+                    out.append(tok)
+        return out[:6]
+
+    def seedless_seeds(self, signatures: List[Dict[str, str]], max_seeds: int = 3) -> Dict[str, Any]:
+        """Derive candidate receptor seed symbols from PROSITE family keywords.
+
+        For each keyword, UniProt_search("<kw> receptor", human) and keep the
+        gene symbols whose protein_name is a *receptor* (dropping ligand hits
+        like pro-glucagon). These seeds feed family_panel().
+        """
+        kws = self._family_keywords(signatures)
+        seeds: Dict[str, str] = {}
+        for kw in kws:
+            res = self._data(self.run("UniProt_search", {"query": f"{kw} receptor", "organism": "9606", "limit": 5}))
+            for r in _as_list(res, "results"):
+                if "receptor" not in (r.get("protein_name") or "").lower():
+                    continue  # keep receptors, drop ligand/precursor hits
+                for g in r.get("gene_names") or []:
+                    seeds.setdefault(g, kw)
+                    if len(seeds) >= max_seeds:
+                        break
+        return {"keywords": kws, "seeds": seeds}
+
+    # ---- Phase 2e: protease / degradation liability --------------------
+    _DPP4_P2 = {"A", "P"}
+
+    def protease_liability(self, seq: str) -> Dict[str, Any]:
+        """Flag degradation liabilities (a peptide may be inactive in an assay
+        because it is *cleaved*, not because it fails to bind)."""
+        p2 = seq[1] if len(seq) > 1 else ""
+        labile = p2 in self._DPP4_P2
+        out: Dict[str, Any] = {
+            "dpp4": {
+                "p2_residue": p2,
+                "labile": labile,
+                "note": (f"position-2 {p2} -> DPP4-labile (rapid N-terminal truncation, like native GLP-1)"
+                         if labile else f"position-2 {p2} -> DPP4-resistant (like exendin-4)"),
+            }
+        }
+        clv = self._data(self.run("ELM_list_classes", {"operation": "list_classes", "motif_type": "CLV", "max_results": 100}))
+        sites: List[Dict[str, Any]] = []
+        for c in _as_list(clv, "classes", "elm_classes"):
+            rgx = c.get("regex")
+            try:
+                m = re.search(rgx, seq) if rgx else None
+            except re.error:
+                m = None
+            if m:
+                sites.append({"elm": c.get("elm_identifier"), "site": c.get("functional_site_name"), "span": [m.start() + 1, m.end()]})
+        out["cleavage_motifs"] = sites
+        return out
 
     # ---- Phase 2d: phenotype anchor ------------------------------------
     def phenotype_targets(self, disease_name: str) -> Dict[str, float]:
@@ -161,7 +274,7 @@ class Pipeline:
         rows = ((((tg or {}).get("disease") or {}).get("associatedTargets") or {}).get("rows")) if isinstance(tg, dict) else None
         scores: Dict[str, float] = {}
         for r in rows or []:
-            sym = ((r.get("target") or {}).get("approvedSymbol"))
+            sym = (r.get("target") or {}).get("approvedSymbol")
             if sym:
                 scores[sym] = r.get("score")
         scores["__efo__"] = efo  # carry the resolved id for the report
@@ -172,12 +285,12 @@ class Pipeline:
         if not hgnc_id:
             return {}
         resp = self._data(self.run("Alliance_get_gene_orthologs", {"gene_id": hgnc_id, "stringency": "all", "limit": 60}))
-        rows = resp if isinstance(resp, list) else (resp or {}).get("orthologs") or (resp or {}).get("data") or []
-        target = assay_species.replace("_", " ").lower()
-        for o in rows or []:
+        rows = _as_list(resp, "orthologs", "data")
+        target = assay_species.replace("_", " ").lower().split()[-1]
+        for o in rows:
             sp = str(o.get("species") or o.get("target_species") or o.get("organism") or "").lower()
-            if target.split()[-1] in sp:  # e.g. 'musculus' in 'Mus musculus'
-                return {"present": True, "best_method_count": o.get("methods") or o.get("method_count"), "raw": {k: o.get(k) for k in list(o)[:6]}}
+            if target in sp:  # e.g. 'musculus' in 'Mus musculus'
+                return {"present": True, "best_method_count": o.get("methods") or o.get("method_count")}
         return {"present": bool(rows), "note": f"ortholog list returned but no {assay_species} match parsed"}
 
 
@@ -193,92 +306,93 @@ def tier(in_panel: bool, pheno_score: Optional[float], is_hypoth: bool) -> str:
     return "Tier 3 (weak)"
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description="Keyless peptide target deorphanization (Phases 1-4).")
-    ap.add_argument("--sequence", required=True, help="Peptide amino-acid sequence (1-letter).")
-    ap.add_argument("--hypothesized-target", default=None, help="Gene symbol the peptide was assumed to hit (seeds family enumeration), e.g. GLP1R.")
-    ap.add_argument("--phenotype", default=None, help="Disease/phenotype name for the OpenTargets anchor, e.g. 'type 2 diabetes mellitus'.")
-    ap.add_argument("--assay-species", default="mus_musculus", help="Species of the negative binding assay (for cross-species reconciliation).")
-    ap.add_argument("--no-blast", action="store_true", help="Skip the slow BLAST homology route.")
-    ap.add_argument("--out", default=None, help="Optional path to write the full JSON result.")
-    args = ap.parse_args()
+def _rank_key(r: Dict[str, Any]):
+    rank = {"Tier 1 (family + phenotype)": 0, "Tier 2 (family only)": 1, "Tier 3 (phenotype only)": 2}.get(r["tier"], 3)
+    if r["is_hypothesized_target"]:
+        rank = 4
+    return (rank, -(r["phenotype_score"] or 0))
 
-    pipe = Pipeline(_load_tu())
-    seq = args.sequence.strip().upper()
-    result: Dict[str, Any] = {"sequence": seq, "hypothesized_target": args.hypothesized_target}
 
-    pipe.log("Phase 1: characterization")
+def analyze_one(pipe: Pipeline, label: str, seq: str, args, pheno: Dict[str, float], efo: Optional[str]) -> Dict[str, Any]:
+    result: Dict[str, Any] = {"label": label, "sequence": seq, "hypothesized_target": args.hypothesized_target}
+
+    pipe.log(f"[{label}] characterization + motif")
     result["properties"] = pipe.characterize(seq)
-    pipe.log("Phase 2a: PROSITE/ELM signature")
     result["signatures"] = pipe.motif_families(seq)
+    result["elm_motifs"] = pipe.elm_motif_match(seq)
+    result["protease_liability"] = pipe.protease_liability(seq)
     if not args.no_blast:
-        pipe.log("Phase 2b: BLAST homology (slow, swissprot)")
+        pipe.log(f"[{label}] BLAST homology (slow)")
         result["homology_hits"] = pipe.homology_hits(seq)
 
     panel: Dict[str, Dict[str, Any]] = {}
     if args.hypothesized_target:
-        pipe.log("Phase 2c: receptor-family panel from hypothesized target")
         fp = pipe.family_panel(args.hypothesized_target)
         panel = fp["panel"]
         result["family_meta"] = fp["meta"]
+    else:  # SEEDLESS: derive seeds from the motif, enumerate each family, union
+        pipe.log(f"[{label}] seedless seed derivation")
+        sl = pipe.seedless_seeds(result["signatures"])
+        result["seedless"] = sl
+        for seed in sl["seeds"]:
+            for sym, info in pipe.family_panel(seed)["panel"].items():
+                panel.setdefault(sym, {"sources": set()})
+                panel[sym]["sources"] = sorted(set(panel[sym].get("sources", [])) | set(info["sources"]))
 
-    pheno: Dict[str, float] = {}
-    if args.phenotype:
-        pipe.log("Phase 2d: phenotype anchor (OpenTargets)")
-        pheno = pipe.phenotype_targets(args.phenotype)
-        result["phenotype_efo"] = pheno.pop("__efo__", None)
-
-    # Build the candidate set = family panel UNION phenotype-supported family members
     candidates = set(panel) | (set(pheno) & set(panel))
     if not candidates and pheno:
         candidates = set(list(pheno)[:15])  # phenotype-only fallback
 
-    pipe.log("Phase 3: cross-species + ranking")
     rows: List[Dict[str, Any]] = []
     for sym in sorted(candidates):
         in_panel = sym in panel
         pscore = pheno.get(sym)
         is_hypoth = bool(args.hypothesized_target and sym.upper() == args.hypothesized_target.upper())
-        rows.append(
-            {
-                "gene": sym,
-                "tier": tier(in_panel, pscore, is_hypoth),
-                "in_family_panel": in_panel,
-                "family_sources": panel.get(sym, {}).get("sources", []),
-                "phenotype_score": pscore,
-                "is_hypothesized_target": is_hypoth,
-            }
-        )
-
-    # cross-species only for the leading non-hypothesized candidates (limit calls)
-    def sort_key(r):
-        rank = {"Tier 1 (family + phenotype)": 0, "Tier 2 (family only)": 1, "Tier 3 (phenotype only)": 2}.get(r["tier"], 3)
-        if r["is_hypothesized_target"]:
-            rank = 4
-        return (rank, -(r["phenotype_score"] or 0))
-
-    rows.sort(key=sort_key)
+        rows.append({
+            "gene": sym, "tier": tier(in_panel, pscore, is_hypoth), "in_family_panel": in_panel,
+            "family_sources": panel.get(sym, {}).get("sources", []), "phenotype_score": pscore,
+            "is_hypothesized_target": is_hypoth,
+        })
+    rows.sort(key=_rank_key)
     for r in rows[:5]:
         if r["is_hypothesized_target"]:
             continue
         g = pipe._data(pipe.run("HGNC_fetch_gene_by_symbol", {"symbol": r["gene"]}))
-        hid = (g or {}).get("hgnc_id") if isinstance(g, dict) else None
-        r["cross_species"] = pipe.ortholog_status(hid, args.assay_species)
-
+        r["cross_species"] = pipe.ortholog_status(g.get("hgnc_id") if isinstance(g, dict) else None, args.assay_species)
     result["ranked_candidates"] = rows
+    result["phenotype_efo"] = efo
 
-    # ---- human-readable summary ----
+    _print_summary(args, result, panel, rows)
+    return result
+
+
+def _print_summary(args, result, panel, rows) -> None:
+    seq = result["sequence"]
     print("\n" + "=" * 72)
-    print(f"PEPTIDE DEORPHANIZATION  |  {seq[:40]}{'...' if len(seq) > 40 else ''}")
+    print(f"PEPTIDE DEORPHANIZATION  |  {result['label']}  |  {seq[:34]}{'...' if len(seq) > 34 else ''}")
     print("=" * 72)
     p = result["properties"]
     print(f"len={p.get('length')}  MW~{p.get('mw_average')}  pI~{p.get('pI_protparam')}  GRAVY={p.get('gravy')}")
-    if result.get("signatures"):
-        for s in result["signatures"]:
-            print(f"signature: {s['accession']}  {s['description']}")
+    for s in result.get("signatures") or []:
+        print(f"signature: {s['accession']}  {s['description']}")
+    elm = result.get("elm_motifs") or []
+    if elm:
+        doms = ", ".join(d["name"] for h in elm[:3] for d in h.get("binding_domains", []) if d.get("name"))
+        print(f"ELM LIG motifs (rarest): {', '.join(h['elm'] for h in elm[:3])}" + (f"  -> domains: {doms}" if doms else ""))
+    pl = result.get("protease_liability", {})
+    dpp4 = pl.get("dpp4", {})
+    print(f"protease: DPP4 {dpp4.get('p2_residue')}@P2 -> {'LABILE' if dpp4.get('labile') else 'resistant'}; "
+          f"cleavage motifs: {len(pl.get('cleavage_motifs', []))}")
     if args.hypothesized_target:
-        fm = result.get("family_meta", {})
-        print(f"family of {args.hypothesized_target}: {fm.get('gene_group')}  (panel: {sorted(panel)})")
+        print(f"family of {args.hypothesized_target}: {result.get('family_meta', {}).get('gene_group')}  (panel: {sorted(panel)})")
+    elif result.get("seedless"):
+        sl = result["seedless"]
+        if sl["seeds"]:
+            print(f"seedless: keywords {sl['keywords']} -> seeds {dict(sl['seeds'])}  (panel: {sorted(panel)})")
+        else:
+            print(f"seedless: keywords {sl['keywords']} -> receptor-name resolver returned nothing "
+                  "(UniProt transient?). Showing phenotype-anchored candidates only; pass "
+                  "--hypothesized-target for clean family enumeration.")
     if args.phenotype:
         print(f"phenotype anchor: {args.phenotype} -> {result.get('phenotype_efo')}")
     print("-" * 72)
@@ -289,13 +403,60 @@ def main() -> int:
         ps = f"{r['phenotype_score']:.3f}" if r["phenotype_score"] is not None else "-"
         print(f"{r['gene']:<10}{r['tier']:<32}{ps:<8}{','.join(r['family_sources']) or '-':<14}{xs_s}")
     print("=" * 72)
+    if dpp4.get("labile"):
+        print("NOTE: peptide is DPP4-labile -> an assay-negative result may be DEGRADATION, not")
+        print("non-binding. Re-test with a DPP4 inhibitor or a protease-resistant analog.")
     if args.hypothesized_target:
         print(f"NOTE: {args.hypothesized_target} was the hypothesized target (assay-negative). The Tier-1/2")
         print("alternatives above are the testable real-target hypotheses to validate next.")
 
+
+def _parse_fasta(path: str) -> Dict[str, str]:
+    seqs: Dict[str, str] = {}
+    name: Optional[str] = None
+    buf: List[str] = []
+    with open(path) as fh:
+        for line in fh:
+            line = line.strip()
+            if line.startswith(">"):
+                if name:
+                    seqs[name] = "".join(buf)
+                name = (line[1:].split() or [f"seq{len(seqs) + 1}"])[0]
+                buf = []
+            elif line:
+                buf.append(line)
+    if name:
+        seqs[name] = "".join(buf)
+    return seqs
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description="Keyless peptide target deorphanization (Phases 1-4).")
+    src = ap.add_mutually_exclusive_group(required=True)
+    src.add_argument("--sequence", help="Single peptide amino-acid sequence (1-letter).")
+    src.add_argument("--fasta", help="FASTA file of peptides for BATCH mode (one record each).")
+    ap.add_argument("--hypothesized-target", default=None, help="Gene symbol the peptide was assumed to hit (seeds family enumeration). Omit for SEEDLESS mode.")
+    ap.add_argument("--phenotype", default=None, help="Disease name for the OpenTargets anchor, e.g. 'type 2 diabetes mellitus'.")
+    ap.add_argument("--assay-species", default="mus_musculus", help="Species of the negative binding assay (cross-species reconciliation).")
+    ap.add_argument("--no-blast", action="store_true", help="Skip the slow BLAST homology route.")
+    ap.add_argument("--out", default=None, help="Optional path to write the full JSON result.")
+    args = ap.parse_args()
+
+    pipe = Pipeline(_load_tu())
+    peptides = _parse_fasta(args.fasta) if args.fasta else {"peptide": args.sequence.strip().upper()}
+
+    pheno: Dict[str, float] = {}
+    efo: Optional[str] = None
+    if args.phenotype:
+        pipe.log("phenotype anchor (OpenTargets) — shared across peptides")
+        pheno = pipe.phenotype_targets(args.phenotype)
+        efo = pheno.pop("__efo__", None)
+
+    all_results = {label: analyze_one(pipe, label, seq.upper(), args, pheno, efo) for label, seq in peptides.items()}
+
     if args.out:
         with open(args.out, "w") as f:
-            json.dump(result, f, indent=2, default=str)
+            json.dump(all_results if args.fasta else next(iter(all_results.values())), f, indent=2, default=str)
         print(f"\nFull JSON -> {args.out}")
     return 0
 

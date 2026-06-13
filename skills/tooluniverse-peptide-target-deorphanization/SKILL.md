@@ -27,16 +27,25 @@ Two runnable scripts in `scripts/` execute the whole pipeline so you don't have 
 
 ### `deorphanize_peptide.py` — keyless candidate generation + ranking (Phases 1–4)
 
-No API key. Characterizes the peptide, scans PROSITE/ELM signatures, enumerates the hypothesized target's receptor family (HGNC group + GPCRdb), anchors on phenotype (OpenTargets), checks cross-species orthologs (Alliance), and prints a ranked candidate shortlist.
+No API key. For each peptide it characterizes it (PepCalc/ProtParam), scans **PROSITE + ELM** signatures, flags **protease/degradation liability**, enumerates the candidate **receptor family**, anchors on **phenotype** (OpenTargets), checks **cross-species** orthologs (Alliance), and prints a ranked candidate shortlist with evidence tiers.
 
 ```bash
 python3 scripts/deorphanize_peptide.py \
-  --sequence <PEPTIDE_SEQ> \
-  --hypothesized-target <GENE> \         # optional but recommended; seeds family enumeration (e.g. GLP1R)
+  --sequence <PEPTIDE_SEQ> \             # OR  --fasta peptides.fasta  for BATCH mode
+  --hypothesized-target <GENE> \         # optional; seeds family enumeration (e.g. GLP1R). OMIT for SEEDLESS mode
   --phenotype "<disease name>" \         # optional; OpenTargets anchor — use the DISEASE node, not a symptom
   --assay-species mus_musculus \         # species of the negative binding assay
   [--no-blast] [--out result.json]
 ```
+
+**Modes:**
+- **Seeded** (`--hypothesized-target GLP1R`) — enumerate that gene's family as the candidate panel (cleanest).
+- **Seedless** (omit it) — derive candidate receptors from the PROSITE family keywords via UniProt (`"<keyword> receptor"` → receptor genes → family); degrades to phenotype-only if that resolver is transiently down.
+- **Batch** (`--fasta`) — one record per FASTA entry, sharing `--phenotype`/`--assay-species`.
+
+**Two extra signals it always reports:**
+- **DPP4 / protease liability** — a peptide can be assay-negative because it is *cleaved*, not because it fails to bind. Native GLP-1 (`A@P2`) is **DPP4-LABILE**; exendin-4 (`G@P2`) is **resistant**. A labile flag triggers a "re-test with a DPP4 inhibitor or protease-resistant analog" note — a key alternative explanation for "works in vitro, not in the mouse assay."
+- **ELM LIG motifs** (ranked by rarity) + the Pfam binding domain each engages — low-confidence context for peptides without a named PROSITE family.
 
 **Validated on the control** (`--sequence HGEGTFTSDLSKQMEEEAVRLFIEWLKNGGPSSGAPPPS --hypothesized-target GLP1R --phenotype "type 2 diabetes mellitus"`): recovers the class-B panel `{GCGR, GHRHR, GIPR, GLP1R, GLP2R, SCTR}`, flags **GLP1R as hypothesized (tested negative)**, and promotes **GIPR to Tier 1 (family + phenotype, score 0.674)** as the leading real-target hypothesis — exactly the deorphanization re-ranking, produced with zero API keys.
 
