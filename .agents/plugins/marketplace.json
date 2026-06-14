@@ -1,7 +1,7 @@
 {
-  "name": "tooluniverse-local",
+  "name": "tooluniverse",
   "interface": {
-    "displayName": "ToolUniverse Local"
+    "displayName": "ToolUniverse"
   },
   "plugins": [
     {
