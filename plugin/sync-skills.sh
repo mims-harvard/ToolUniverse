@@ -29,6 +29,10 @@ set -euo pipefail
 cd "$(dirname "$0")"
 REPO_ROOT="$(cd .. && pwd)"
 
+# Codex-host-specific skills that should NOT ship in the Claude packaging
+# (mirror of how the Codex sync drops tooluniverse-claude-code-plugin).
+CLAUDE_EXCLUDE="tooluniverse-codex-plugin"
+
 # Recreate plugin/skills/ from scratch (Claude packaging — all user-facing skills)
 rm -rf skills
 mkdir skills
@@ -41,6 +45,7 @@ for dir in ../skills/tooluniverse ../skills/tooluniverse-* ../skills/setup-toolu
   # evaluator output directories, not skills.
   [ -f "$dir/SKILL.md" ] || continue
   name=$(basename "$dir")
+  [[ " $CLAUDE_EXCLUDE " == *" $name "* ]] && continue
   rsync -a \
     --exclude='test_*.py' \
     --exclude='*_test.py' \
