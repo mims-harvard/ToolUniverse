@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-cancer-variant-interpretation
 description: "Clinical interpretation of somatic cancer mutations for precision oncology. Transforms a gene + variant + cancer-type input into an actionable report: clinical evidence tier (CIViC, OncoKB), therapeutic options (FDA-approved + investigational), resistance mechanisms, prognosis, and matching clinical trials. Use for tumor-board variant calls, somatic-mutation actionability assessment, and treatment selection. Always cancer-type-specific."
+disable-model-invocation: true
 ---
 
 # Cancer Variant Interpretation for Precision Oncology

@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-epidemiological-analysis
-description: "End-to-end observational epidemiology analysis — from research question (PECO Population/Exposure/Comparator/Outcome) to publication-ready statistical report. Covers cohort/case-control/cross-sectional design, regression with confounders, propensity scoring, sensitivity analysis. Writes Python code for every step. Use for epidemiology study analysis, NHANES/UK-Biobank-style analyses."
+description: End-to-end observational epidemiology analysis — from research question (PECO Population/Exposure/Comparator/Outcome) to publication-ready statistical report. Covers cohort/case-control/cross-sectional design, regression with confounders, propensity scoring, sensitivity analysis. Writes Python code for every step. Use for epidemiology study analysis, NHANES/UK-Biobank-style analyses.
+disable-model-invocation: true
 ---
 
 # Epidemiological Data Analysis

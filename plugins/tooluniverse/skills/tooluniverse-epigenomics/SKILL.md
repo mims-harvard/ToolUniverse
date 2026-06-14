@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-epigenomics
 description: "Genomics and epigenomics analysis: DNA methylation (CpG, 5mC, 5hmC, bisulfite, RRBS), m6A RNA modification (MeRIP-seq), ChIP-seq peaks, ATAC-seq accessibility, histone modifications, chromatin state, multi-omics integration. Combines pandas/scipy/pysam computation with ToolUniverse annotation tools. Use for genome-wide epigenomic statistics, methylation analysis, and chromatin-genome integration."
+disable-model-invocation: true
 ---
 
 # Genomics and Epigenomics Data Processing

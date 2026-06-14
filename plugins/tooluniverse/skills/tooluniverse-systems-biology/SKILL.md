@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-systems-biology
-description: "Systems biology and pathway analysis integrating Reactome, KEGG, WikiPathways, BioCarta, NCI-Nature Pathway Interaction Database. Multi-database pathway enrichment, protein-pathway relationships, network reasoning. Use for pathway analysis on a gene list, multi-source pathway concordance, and systems-level interpretation across databases."
+description: Systems biology and pathway analysis integrating Reactome, KEGG, WikiPathways, BioCarta, NCI-Nature Pathway Interaction Database. Multi-database pathway enrichment, protein-pathway relationships, network reasoning. Use for pathway analysis on a gene list, multi-source pathway concordance, and systems-level interpretation across databases.
+disable-model-invocation: true
 ---
 
 # Systems Biology & Pathway Analysis

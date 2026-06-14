@@ -133,7 +133,8 @@ if [ "$DRY_RUN" -eq 1 ]; then
     echo "(--dry-run) Would change (absent manifests are skipped):"
     for f in plugin/.claude-plugin/plugin.json \
              plugin/.claude-plugin/marketplace.json \
-             .claude-plugin/marketplace.json; do
+             .claude-plugin/marketplace.json \
+             plugins/tooluniverse/.codex-plugin/plugin.json; do
         [ -f "$f" ] && echo "  $f   $CURRENT → $NEW" || echo "  $f   (absent, skipped)"
     done
     echo "  Then commit \"Release v$NEW\", tag v$NEW, push to origin/$BRANCH"
@@ -147,6 +148,7 @@ files = [
     ("plugin/.claude-plugin/plugin.json",       "version"),
     ("plugin/.claude-plugin/marketplace.json",  "metadata.version"),
     (".claude-plugin/marketplace.json",         "metadata.version"),
+    ("plugins/tooluniverse/.codex-plugin/plugin.json", "version"),
 ]
 for path, field in files:
     p = pathlib.Path(path)
@@ -166,7 +168,8 @@ EOF
 echo
 for f in plugin/.claude-plugin/plugin.json \
          plugin/.claude-plugin/marketplace.json \
-         .claude-plugin/marketplace.json; do
+         .claude-plugin/marketplace.json \
+         plugins/tooluniverse/.codex-plugin/plugin.json; do
     [ -f "$f" ] && git add "$f"
 done
 git commit -m "Release v$NEW"

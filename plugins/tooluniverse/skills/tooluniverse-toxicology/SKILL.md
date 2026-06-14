@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-toxicology
-description: "Drug and chemical toxicity assessment via adverse outcome pathways (AOPs), real-world FAERS adverse event signals, FDA labels, and toxicogenomic associations. Triangulates molecular initiating event to cellular outcome to organ-level toxicity to clinical adverse event. Use for hepatotoxicity/cardiotoxicity/nephrotoxicity prediction and toxicology reports."
+description: Drug and chemical toxicity assessment via adverse outcome pathways (AOPs), real-world FAERS adverse event signals, FDA labels, and toxicogenomic associations. Triangulates molecular initiating event to cellular outcome to organ-level toxicity to clinical adverse event. Use for hepatotoxicity/cardiotoxicity/nephrotoxicity prediction and toxicology reports.
+disable-model-invocation: true
 ---
 
 # Toxicology Assessment via Adverse Outcome Pathways & Signal Detection

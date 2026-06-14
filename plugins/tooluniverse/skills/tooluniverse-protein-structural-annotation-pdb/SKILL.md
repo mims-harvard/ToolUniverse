@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-protein-structural-annotation-pdb
 description: "Given a PDB structure, produce a per-residue annotation table: which residues sit at a binding interface (vs a partner chain), which line a ligand pocket, which are buried (core) vs solvent-exposed (surface), and optionally secondary structure. This is the structural track drawn under a DMS heatmap and the structural prior SAE feature drops are read against. Use when you need to anchor a variant-interpretation or DMS analysis to the protein's actual physical context."
+disable-model-invocation: true
 ---
 
 # Protein structural annotation from a PDB

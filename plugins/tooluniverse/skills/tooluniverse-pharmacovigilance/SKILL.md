@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-pharmacovigilance
-description: "Drug safety and adverse event analysis — FAERS spontaneous-report mining, FDA black-box warnings, signal detection (PRR, ROR, IC), risk factors by demographic/comorbidity, and label change tracking. Use for post-market safety surveillance, AE signal investigation, drug-AE association strength scoring, and pharmacovigilance reports."
+description: Drug safety and adverse event analysis — FAERS spontaneous-report mining, FDA black-box warnings, signal detection (PRR, ROR, IC), risk factors by demographic/comorbidity, and label change tracking. Use for post-market safety surveillance, AE signal investigation, drug-AE association strength scoring, and pharmacovigilance reports.
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

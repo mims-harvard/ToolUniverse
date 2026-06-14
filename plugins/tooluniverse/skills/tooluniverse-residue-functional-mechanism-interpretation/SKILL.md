@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-residue-functional-mechanism-interpretation
 description: "Given a set of residues in a protein, explain WHY they are functionally critical by combining structural context (binding interface, ligand pocket, core, secondary structure), UniProt features (active sites, binding sites, PTM sites, disulfides), optional SAE feature evidence, and optional DMS data. Accepts residues from any source: DMS hotspots (top-K by max effect), ClinVar recurrent variants, literature-reported hot regions, evolutionarily conserved positions, or user-curated lists. Returns a per-cluster mechanism call: catalytic / ligand-binding / interface / structural-core / PTM / regulatory / unknown."
+disable-model-invocation: true
 ---
 
 # Residue functional mechanism interpretation

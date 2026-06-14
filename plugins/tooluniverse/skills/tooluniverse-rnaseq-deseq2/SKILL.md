@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-rnaseq-deseq2
-description: "RNA-seq differential expression analysis with DESeq2, edgeR, and limma-voom — DEG lists, fold changes, dispersion estimation, design formulas including covariates, multi-condition contrasts, and Venn-set operations across groups. Routes across DESeq2 (default), edgeR (QL-F / exact test for small replicate counts), and limma-voom (large n / complex designs). Use when you have a count matrix + metadata, want to find DEGs, or need dispersion/PCA/clustering analysis. Includes RULE ZERO precedence (read executed.ipynb if present)."
+description: RNA-seq differential expression analysis with DESeq2, edgeR, and limma-voom — DEG lists, fold changes, dispersion estimation, design formulas including covariates, multi-condition contrasts, and Venn-set operations across groups. Routes across DESeq2 (default), edgeR (QL-F / exact test for small replicate counts), and limma-voom (large n / complex designs). Use when you have a count matrix + metadata, want to find DEGs, or need dispersion/PCA/clustering analysis. Includes RULE ZERO precedence (read executed.ipynb if present).
+disable-model-invocation: true
 ---
 
 # RNA-seq Differential Expression Analysis (DESeq2)

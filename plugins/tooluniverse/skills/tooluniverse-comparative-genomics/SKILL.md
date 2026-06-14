@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-comparative-genomics
-description: "Cross-species gene comparison and ortholog analysis. Integrates Ensembl Compara orthologs, NCBI Gene, UniProt, OLS, Monarch, and OpenTargets to identify orthologs, paralogs, sequence conservation, functional conservation across species, and lineage-specific gene gains/losses. Use for phylogenetic gene tracing, model-organism mapping, and evolutionary-genomics queries."
+description: Cross-species gene comparison and ortholog analysis. Integrates Ensembl Compara orthologs, NCBI Gene, UniProt, OLS, Monarch, and OpenTargets to identify orthologs, paralogs, sequence conservation, functional conservation across species, and lineage-specific gene gains/losses. Use for phylogenetic gene tracing, model-organism mapping, and evolutionary-genomics queries.
+disable-model-invocation: true
 ---
 
 # Comparative Genomics & Ortholog Analysis

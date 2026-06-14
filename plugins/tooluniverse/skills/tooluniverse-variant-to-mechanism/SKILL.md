@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-variant-to-mechanism
-description: "End-to-end variant-to-mechanism analysis — trace a variant (rsID/coordinates) through regulatory context, target gene(s), molecular pathway(s), and phenotypic consequences. Integrates 7+ databases across 3 evidence layers (regulatory, molecular, disease) for a mechanistic model. Use for GWAS-hit-to-mechanism, eQTL-causal-gene tracing, and full causal-chain reports."
+description: End-to-end variant-to-mechanism analysis — trace a variant (rsID/coordinates) through regulatory context, target gene(s), molecular pathway(s), and phenotypic consequences. Integrates 7+ databases across 3 evidence layers (regulatory, molecular, disease) for a mechanistic model. Use for GWAS-hit-to-mechanism, eQTL-causal-gene tracing, and full causal-chain reports.
+disable-model-invocation: true
 ---
 
 # Variant-to-Mechanism Analysis Skill

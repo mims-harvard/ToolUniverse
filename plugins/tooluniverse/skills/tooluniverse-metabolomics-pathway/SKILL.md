@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-metabolomics-pathway
-description: "Metabolomics pathway analysis — metabolite identification (HMDB, KEGG, ChEBI), pathway mapping (Reactome, KEGG, MetaCyc), disease associations, enzyme/gene linkage. Use for metabolite-to-pathway-to-disease connections, BridgeDb-based ID conversion, and integrating metabolomics with gene-level pathway analyses."
+description: Metabolomics pathway analysis — metabolite identification (HMDB, KEGG, ChEBI), pathway mapping (Reactome, KEGG, MetaCyc), disease associations, enzyme/gene linkage. Use for metabolite-to-pathway-to-disease connections, BridgeDb-based ID conversion, and integrating metabolomics with gene-level pathway analyses.
+disable-model-invocation: true
 ---
 
 # Metabolomics Pathway Analysis

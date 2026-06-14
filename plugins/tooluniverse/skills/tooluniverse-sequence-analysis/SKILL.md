@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-sequence-analysis
-description: "Biological sequence analysis — gene/protein sequence retrieval (NCBI, Ensembl, UniProt), nucleotide/protein search, ortholog discovery, and FASTQ QC + alignment workflows (Trimmomatic, BWA, samtools, coverage depth). Use for sequence retrieval, sequence comparison, FASTQ QC analysis, and read alignment pre-processing."
+description: Biological sequence analysis — gene/protein sequence retrieval (NCBI, Ensembl, UniProt), nucleotide/protein search, ortholog discovery, and FASTQ QC + alignment workflows (Trimmomatic, BWA, samtools, coverage depth). Use for sequence retrieval, sequence comparison, FASTQ QC analysis, and read alignment pre-processing.
+disable-model-invocation: true
 ---
 
 # Biological Sequence Analysis

@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-variant-functional-annotation
-description: "Functional annotation of protein variants — ProtVar structural/functional context, ClinVar clinical classifications, gnomAD population frequencies, CADD deleteriousness, ClinGen gene-disease validity, plus FAVOR one-call comprehensive GRCh38 annotation. Use for variant annotation pipelines, missense effect prediction, and protein-level variant interpretation with functional context."
+description: Functional annotation of protein variants — ProtVar structural/functional context, ClinVar clinical classifications, gnomAD population frequencies, CADD deleteriousness, ClinGen gene-disease validity, plus FAVOR one-call comprehensive GRCh38 annotation. Use for variant annotation pipelines, missense effect prediction, and protein-level variant interpretation with functional context.
+disable-model-invocation: true
 ---
 
 # Protein Variant Functional Annotation

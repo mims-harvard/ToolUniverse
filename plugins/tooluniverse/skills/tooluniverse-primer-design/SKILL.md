@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-primer-design
-description: "PCR / qPCR primer and oligo design — design forward/reverse primers for a target region (SantaLucia nearest-neighbor thermodynamics), compute melting temperature (Tm) and annealing temperature (Ta), check GC content, and screen an oligo for hairpins and primer-dimers. Use when you need primers for a sequence, want to QC an existing primer pair, or need the Tm of an oligo. Covers the primer-design rules (Tm matching, GC clamp, 3'-end, length) and the tools' constraint quirks."
+description: PCR / qPCR primer and oligo design — design forward/reverse primers for a target region (SantaLucia nearest-neighbor thermodynamics), compute melting temperature (Tm) and annealing temperature (Ta), check GC content, and screen an oligo for hairpins and primer-dimers. Use when you need primers for a sequence, want to QC an existing primer pair, or need the Tm of an oligo. Covers the primer-design rules (Tm matching, GC clamp, 3'-end, length) and the tools' constraint quirks.
+disable-model-invocation: true
 ---
 
 # PCR / qPCR Primer & Oligo Design

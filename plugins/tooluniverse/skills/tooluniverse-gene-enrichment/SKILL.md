@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-gene-enrichment
-description: "Gene-set enrichment analysis — GO (Biological Process, Molecular Function, Cellular Component), KEGG, Reactome pathway enrichment via clusterProfiler, gseapy, ORA, GSEA. Use for interpreting DEG lists, screen hit lists, or any gene-list-to-pathways query. Includes simplify-cutoff handling and union-vs-total denominator conventions for percent-DE questions."
+description: Gene-set enrichment analysis — GO (Biological Process, Molecular Function, Cellular Component), KEGG, Reactome pathway enrichment via clusterProfiler, gseapy, ORA, GSEA. Use for interpreting DEG lists, screen hit lists, or any gene-list-to-pathways query. Includes simplify-cutoff handling and union-vs-total denominator conventions for percent-DE questions.
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

@@ -1,10 +1,10 @@
 ---
-
 name: tooluniverse-kegg-disease-drug
-description: "KEGG-based disease-drug-variant network research. Connects diseases to causal genes, drugs to molecular targets, and variants to pathways using KEGG's editorially curated databases (KEGG Disease, Drug, Network, Variant, Pathway). Use for drug repurposing via shared pathways, mechanistic disease-gene-drug networks, and pathway-based target discovery. Distinguishes direct (binding) vs indirect (pathway co-membership) drug-target relationships."
+description: KEGG-based disease-drug-variant network research. Connects diseases to causal genes, drugs to molecular targets, and variants to pathways using KEGG's editorially curated databases (KEGG Disease, Drug, Network, Variant, Pathway). Use for drug repurposing via shared pathways, mechanistic disease-gene-drug networks, and pathway-based target discovery. Distinguishes direct (binding) vs indirect (pathway co-membership) drug-target relationships.
 triggers:
   - keywords: [KEGG disease, KEGG drug, KEGG network, KEGG variant, disease genes, drug targets]
   - patterns: ["KEGG .* disease", "KEGG .* drug", "disease.*drug.*variant", "KEGG network"]
+disable-model-invocation: true
 ---
 
 # KEGG Disease-Drug-Variant Research

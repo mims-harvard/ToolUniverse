@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-diagnostic-test-evaluation
-description: "Diagnostic test / biomarker accuracy — sensitivity, specificity, PPV, NPV, likelihood ratios, accuracy from a 2x2 table; ROC curve, AUC, and the optimal cutoff (Youden) for a continuous biomarker; and post-test probability via Bayes. Use when you have test results vs a gold standard (binary 2x2, or a continuous score + true labels) and need to judge how good the test is, pick a threshold, or compute the probability of disease given a result. Emphasizes the prevalence-dependence of PPV/NPV."
+description: Diagnostic test / biomarker accuracy — sensitivity, specificity, PPV, NPV, likelihood ratios, accuracy from a 2x2 table; ROC curve, AUC, and the optimal cutoff (Youden) for a continuous biomarker; and post-test probability via Bayes. Use when you have test results vs a gold standard (binary 2x2, or a continuous score + true labels) and need to judge how good the test is, pick a threshold, or compute the probability of disease given a result. Emphasizes the prevalence-dependence of PPV/NPV.
+disable-model-invocation: true
 ---
 
 # Diagnostic Test / Biomarker Accuracy Evaluation

@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-plant-genomics
-description: "Plant genomics and biology research — PlantReactome pathways, Ensembl Plants gene structure, POWO species taxonomy, UniProt annotation, KEGG plant pathways. Handles polyploidy (wheat hexaploidy etc.) and homeologous gene copies. Use for crop-gene annotation, plant secondary metabolism queries, and plant-disease/stress-response biology."
+description: Plant genomics and biology research — PlantReactome pathways, Ensembl Plants gene structure, POWO species taxonomy, UniProt annotation, KEGG plant pathways. Handles polyploidy (wheat hexaploidy etc.) and homeologous gene copies. Use for crop-gene annotation, plant secondary metabolism queries, and plant-disease/stress-response biology.
+disable-model-invocation: true
 ---
 
 # Plant Genomics & Biology

@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-dataset-discovery
-description: "Find and evaluate research datasets for any scientific question. Maps research questions to required study designs (longitudinal vs cross-sectional, observational vs experimental, single-cohort vs multi-cohort). Use when the user asks 'find data about X', 'where can I get data on Y', or needs a specific cohort/survey/repository. Covers GEO, ArrayExpress, dbGaP, NHANES, UK Biobank, ClinicalTrials.gov, GWAS Catalog, and 30+ scientific repositories."
+description: Find and evaluate research datasets for any scientific question. Maps research questions to required study designs (longitudinal vs cross-sectional, observational vs experimental, single-cohort vs multi-cohort). Use when the user asks 'find data about X', 'where can I get data on Y', or needs a specific cohort/survey/repository. Covers GEO, ArrayExpress, dbGaP, NHANES, UK Biobank, ClinicalTrials.gov, GWAS Catalog, and 30+ scientific repositories.
+disable-model-invocation: true
 ---
 
 # Dataset Discovery

@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-inorganic-physical-chemistry
-description: "Inorganic chemistry, physical chemistry, and materials science — crystal structures, coordination chemistry, lattice parameters, thermodynamic properties, electronic structure. Use for unit cell volume calculations, coordination geometry, materials property estimation, and inorganic-mechanism reasoning. Complementary to tooluniverse-organic-chemistry."
+description: Inorganic chemistry, physical chemistry, and materials science — crystal structures, coordination chemistry, lattice parameters, thermodynamic properties, electronic structure. Use for unit cell volume calculations, coordination geometry, materials property estimation, and inorganic-mechanism reasoning. Complementary to tooluniverse-organic-chemistry.
+disable-model-invocation: true
 ---
 
 # Inorganic & Physical Chemistry

@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-sdk
-description: "Build AI scientist systems with the ToolUniverse Python SDK for scientific research. Covers the 3 calling patterns (`tu.run` portable dict API, `tu.tools.X` function API, direct class instantiation), tool loading, batch execution, MCP server integration, and embedding-based tool search. Use for SDK programming, custom tool composition, benchmarking pipelines, and integrating ToolUniverse into research workflows."
+description: Build AI scientist systems with the ToolUniverse Python SDK for scientific research. Covers the 3 calling patterns (`tu.run` portable dict API, `tu.tools.X` function API, direct class instantiation), tool loading, batch execution, MCP server integration, and embedding-based tool search. Use for SDK programming, custom tool composition, benchmarking pipelines, and integrating ToolUniverse into research workflows.
+disable-model-invocation: true
 ---
 
 # ToolUniverse Python SDK

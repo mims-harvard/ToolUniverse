@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-metabolomics
-description: "Metabolomics research — metabolite identification, study analysis, and database searches across HMDB, MetaboLights, Metabolomics Workbench, KEGG. Use for annotating mass-spec features to known metabolites, finding metabolomics studies of a disease, and structured metabolomics research reports with metabolite-pathway mapping."
+description: Metabolomics research — metabolite identification, study analysis, and database searches across HMDB, MetaboLights, Metabolomics Workbench, KEGG. Use for annotating mass-spec features to known metabolites, finding metabolomics studies of a disease, and structured metabolomics research reports with metabolite-pathway mapping.
+disable-model-invocation: true
 ---
 
 # Metabolomics Research

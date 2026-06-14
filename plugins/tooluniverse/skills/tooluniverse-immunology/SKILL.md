@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-immunology
 description: "Immunology research workflows: antibody-antigen interactions, T/B cell repertoire, MHC/HLA binding prediction, autoimmune disease genetics, vaccine epitope mapping. Uses IEDB, IMGT, SAbDab, UniProt. Use for adaptive immunity questions, immune response analysis, antibody/TCR/BCR characterization, immunogenicity prediction, and immune-pathway-to-disease mapping."
+disable-model-invocation: true
 ---
 
 # Immunology Research Skill

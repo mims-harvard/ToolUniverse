@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-noncoding-rna
-description: "Non-coding RNA analysis — miRNAs (miRBase, miRDB targets), lncRNAs (LNCipedia, RNAcentral), circRNAs, snoRNAs, and other ncRNA classes. Distinct mechanisms per class — miRNAs repress mRNA; lncRNAs scaffold/decoy/enhance. Use for ncRNA function prediction, miRNA-target prediction, lncRNA functional annotation, and ncRNA-disease association queries."
+description: Non-coding RNA analysis — miRNAs (miRBase, miRDB targets), lncRNAs (LNCipedia, RNAcentral), circRNAs, snoRNAs, and other ncRNA classes. Distinct mechanisms per class — miRNAs repress mRNA; lncRNAs scaffold/decoy/enhance. Use for ncRNA function prediction, miRNA-target prediction, lncRNA functional annotation, and ncRNA-disease association queries.
+disable-model-invocation: true
 ---
 
 # Non-Coding RNA Analysis

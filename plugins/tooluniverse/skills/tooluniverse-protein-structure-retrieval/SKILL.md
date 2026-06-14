@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-protein-structure-retrieval
-description: "Protein structure retrieval from RCSB PDB, PDBe, and AlphaFold with disambiguation, quality assessment (resolution, R-factor, pLDDT), and metadata. Distinguishes high-quality experimental (X-ray under 2 Angstrom) vs predicted vs medium-quality structures. Use for fetching protein structures, structure-quality comparison, and selecting structures for drug design or modeling."
+description: Protein structure retrieval from RCSB PDB, PDBe, and AlphaFold with disambiguation, quality assessment (resolution, R-factor, pLDDT), and metadata. Distinguishes high-quality experimental (X-ray under 2 Angstrom) vs predicted vs medium-quality structures. Use for fetching protein structures, structure-quality comparison, and selecting structures for drug design or modeling.
+disable-model-invocation: true
 ---
 
 # Protein Structure Data Retrieval

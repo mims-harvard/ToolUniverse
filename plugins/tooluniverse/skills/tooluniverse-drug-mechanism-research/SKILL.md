@@ -1,10 +1,10 @@
 ---
-
 name: tooluniverse-drug-mechanism-research
-description: "Trace drug mechanism of action — primary target → downstream signaling → pathway perturbation → tissue/organ effect → clinical outcome. Uses DrugBank, ChEMBL, KEGG, Reactome, STRING. Use for understanding how a drug works, identifying off-target effects, mechanism-based combination therapy design, and writing mechanism sections of reports."
+description: Trace drug mechanism of action — primary target → downstream signaling → pathway perturbation → tissue/organ effect → clinical outcome. Uses DrugBank, ChEMBL, KEGG, Reactome, STRING. Use for understanding how a drug works, identifying off-target effects, mechanism-based combination therapy design, and writing mechanism sections of reports.
 triggers:
   - keywords: [mechanism of action, drug target, pharmacology, pathway, pharmacogenomics, drug interaction, DailyMed, CPIC, MOA, off-target]
   - patterns: ["how does .* work", "mechanism of action", "drug target", "pathway context", "clinical pharmacology", "drug-drug interaction", "pharmacogenomic", "off-target effect"]
+disable-model-invocation: true
 ---
 
 # Drug Mechanism of Action Investigation

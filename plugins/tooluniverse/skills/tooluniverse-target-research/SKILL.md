@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-target-research
-description: "Comprehensive drug-target intelligence — tissue expression (GTEx, HPA), pathways, protein interactions (STRING), variant landscape (ClinVar, gnomAD), druggability (DGIdb, ChEMBL approved drugs). 9 parallel research paths with citations. Use for full target profile reports, target characterization for drug discovery, and 'tell me about target X' queries."
+description: Comprehensive drug-target intelligence — tissue expression (GTEx, HPA), pathways, protein interactions (STRING), variant landscape (ClinVar, gnomAD), druggability (DGIdb, ChEMBL approved drugs). 9 parallel research paths with citations. Use for full target profile reports, target characterization for drug discovery, and 'tell me about target X' queries.
+disable-model-invocation: true
 ---
 
 # Comprehensive Target Intelligence Gatherer

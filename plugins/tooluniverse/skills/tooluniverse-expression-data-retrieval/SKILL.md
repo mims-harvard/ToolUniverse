@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-expression-data-retrieval
-description: "Retrieve gene expression and omics datasets from ArrayExpress and BioStudies with gene disambiguation and quality assessment. Use for finding RNA-seq/microarray datasets by organism/tissue/condition, comparing across studies (case-control, time-series, dose-response), and assessing dataset suitability before downloading. Always uses English search terms."
+description: Retrieve gene expression and omics datasets from ArrayExpress and BioStudies with gene disambiguation and quality assessment. Use for finding RNA-seq/microarray datasets by organism/tissue/condition, comparing across studies (case-control, time-series, dose-response), and assessing dataset suitability before downloading. Always uses English search terms.
+disable-model-invocation: true
 ---
 
 # Gene Expression & Omics Data Retrieval

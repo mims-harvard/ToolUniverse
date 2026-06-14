@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-crispr-screen-analysis
-description: "Analyze CRISPR-Cas9 genetic screens — MAGeCK gene-level scores, sgRNA count QC, replicate correlation, hit prioritization, and pathway GSEA on screen output. Use for genome-wide essentiality screens, synthetic-lethality discovery, dropout vs positive-selection screen analysis, target identification, and resistance-screen interpretation. Includes screen-QC and statistical thresholds."
+description: Analyze CRISPR-Cas9 genetic screens — MAGeCK gene-level scores, sgRNA count QC, replicate correlation, hit prioritization, and pathway GSEA on screen output. Use for genome-wide essentiality screens, synthetic-lethality discovery, dropout vs positive-selection screen analysis, target identification, and resistance-screen interpretation. Includes screen-QC and statistical thresholds.
+disable-model-invocation: true
 ---
 
 # ToolUniverse CRISPR Screen Analysis

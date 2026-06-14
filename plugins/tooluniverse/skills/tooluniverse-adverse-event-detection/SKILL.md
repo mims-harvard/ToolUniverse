@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-adverse-event-detection
-description: "Detect and analyze adverse drug event signals using FDA FAERS reports, drug labels, and disproportionality statistics (PRR, ROR, IC). Generates quantitative safety signal scores (0-100) with evidence grading. Use for post-market surveillance, pharmacovigilance, drug safety assessment, regulatory submissions, and detecting rare AE signals not visible in clinical trials."
+description: Detect and analyze adverse drug event signals using FDA FAERS reports, drug labels, and disproportionality statistics (PRR, ROR, IC). Generates quantitative safety signal scores (0-100) with evidence grading. Use for post-market surveillance, pharmacovigilance, drug safety assessment, regulatory submissions, and detecting rare AE signals not visible in clinical trials.
+disable-model-invocation: true
 ---
 
 ## COMPUTE, DON'T DESCRIBE

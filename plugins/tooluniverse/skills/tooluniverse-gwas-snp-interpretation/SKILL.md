@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-gwas-snp-interpretation
-description: "Interpret a single GWAS SNP across multiple databases — GWAS Catalog hits, LD/haplotype context, eQTL evidence, regulatory annotation, ClinVar pathogenicity, gnomAD frequency. Use for 'what does this SNP do', SNP-to-mechanism tracing, and resolving lead-SNP-vs-causal-variant ambiguity. Always considers LD structure before claiming a SNP is mechanistically responsible."
+description: Interpret a single GWAS SNP across multiple databases — GWAS Catalog hits, LD/haplotype context, eQTL evidence, regulatory annotation, ClinVar pathogenicity, gnomAD frequency. Use for 'what does this SNP do', SNP-to-mechanism tracing, and resolving lead-SNP-vs-causal-variant ambiguity. Always considers LD structure before claiming a SNP is mechanistically responsible.
+disable-model-invocation: true
 ---
 
 # GWAS SNP Interpretation Skill

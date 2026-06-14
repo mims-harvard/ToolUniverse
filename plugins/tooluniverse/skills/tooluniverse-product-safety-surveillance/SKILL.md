@@ -1,7 +1,24 @@
 ---
-
 name: tooluniverse-product-safety-surveillance
-description: "Post-market safety surveillance and recall/adverse-event RETRIEVAL across the full spectrum of FDA-regulated products that are NOT covered by the drug-AE signal skills: medical devices, food / dietary supplements / cosmetics, veterinary drugs, and drug supply (shortages). Orchestrates openFDA endpoints (MAUDE device adverse events + device recalls + 510(k), CAERS food/supplement/ cosmetic adverse events, veterinary adverse events, drug shortages, and cross-product enforcement/recall reports). USE WHEN the user asks: \"are there adverse events for [device / pacemaker / infusion pump / insulin pump]\", \"device recalls for [firm/product]\", \"supplement / vitamin / cosmetic adverse reactions\", \"is [drug] in shortage\", \"what injectables are on shortage\", \"veterinary / animal adverse events for [drug] in [dog/cat/horse]\", \"food recall for listeria\", \"MAUDE report for [device]\", \"CAERS reactions for [brand]\". DO NOT USE for drug adverse-event SIGNAL detection or disproportionality (PRR / ROR /..."
+description: >-
+  Post-market safety surveillance and recall/adverse-event RETRIEVAL across the
+  full spectrum of FDA-regulated products that are NOT covered by the drug-AE
+  signal skills: medical devices, food / dietary supplements / cosmetics,
+  veterinary drugs, and drug supply (shortages). Orchestrates openFDA endpoints
+  (MAUDE device adverse events + device recalls + 510(k), CAERS food/supplement/
+  cosmetic adverse events, veterinary adverse events, drug shortages, and
+  cross-product enforcement/recall reports). USE WHEN the user asks: "are there
+  adverse events for [device / pacemaker / infusion pump / insulin pump]",
+  "device recalls for [firm/product]", "supplement / vitamin / cosmetic adverse
+  reactions", "is [drug] in shortage", "what injectables are on shortage",
+  "veterinary / animal adverse events for [drug] in [dog/cat/horse]", "food
+  recall for listeria", "MAUDE report for [device]", "CAERS reactions for [brand]".
+  DO NOT USE for drug adverse-event SIGNAL detection or disproportionality
+  (PRR / ROR / IC) or drug-AE association scoring — that is
+  `tooluniverse-pharmacovigilance` / `tooluniverse-adverse-event-detection`.
+  This skill is multi-product surveillance and retrieval, not drug-AE
+  statistical signal mining.
+disable-model-invocation: true
 ---
 
 # Product Safety Surveillance (multi-product, openFDA)

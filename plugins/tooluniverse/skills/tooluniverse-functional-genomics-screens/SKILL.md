@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-functional-genomics-screens
-description: "Interpret hits from CRISPR-KO/CRISPRi/shRNA screens by integrating DepMap essentiality, gnomAD constraint scores, pathway context (Reactome, STRING), druggability (DGIdb), and clinical evidence (CIViC, COSMIC). Use for screen-hit prioritization, essentiality ranking, and turning a list of screen hits into a prioritized target shortlist."
+description: Interpret hits from CRISPR-KO/CRISPRi/shRNA screens by integrating DepMap essentiality, gnomAD constraint scores, pathway context (Reactome, STRING), druggability (DGIdb), and clinical evidence (CIViC, COSMIC). Use for screen-hit prioritization, essentiality ranking, and turning a list of screen hits into a prioritized target shortlist.
+disable-model-invocation: true
 ---
 
 # Functional Genomics Screen Interpretation

@@ -1,7 +1,7 @@
 ---
-
 name: tooluniverse-immunotherapy-response-prediction
-description: "Predict patient response to immune checkpoint inhibitors (ICIs) by integrating tumor mutational burden (TMB), microsatellite instability (MSI), PD-L1 expression, HLA status, and immune-related gene expression. Outputs ICI Response Score with drug-specific recommendations and resistance-risk assessment. Use for melanoma/NSCLC/RCC immunotherapy decision support."
+description: Predict patient response to immune checkpoint inhibitors (ICIs) by integrating tumor mutational burden (TMB), microsatellite instability (MSI), PD-L1 expression, HLA status, and immune-related gene expression. Outputs ICI Response Score with drug-specific recommendations and resistance-risk assessment. Use for melanoma/NSCLC/RCC immunotherapy decision support.
+disable-model-invocation: true
 ---
 
 # Immunotherapy Response Prediction
