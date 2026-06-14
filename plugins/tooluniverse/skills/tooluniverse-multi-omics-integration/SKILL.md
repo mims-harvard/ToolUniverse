@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-multi-omics-integration
-description: Multi-omics integration — orchestrate per-layer analysis (transcriptomics, proteomics, epigenomics, genomics, metabolomics) then perform cross-omics correlation, multi-omics clustering, and pathway-level integration. Use for integrative systems-biology analysis, multi-modal disease characterization, and cross-omics biomarker discovery.
-disable-model-invocation: true
+description: "Multi-omics integration — orchestrate per-layer analysis (transcriptomics, proteomics, epigenomics, genomics, metabolomics) then perform cross-omics correlation, multi-omics clustering, and pathway-level integration. Use for integrative systems-biology analysis, multi-modal disease characterization, and cross-omics biomarker discovery."
 ---
 
 # Multi-Omics Integration

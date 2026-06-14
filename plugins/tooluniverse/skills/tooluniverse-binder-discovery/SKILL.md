@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-binder-discovery
-description: Discover novel small-molecule binders for protein targets using structure-based and ligand-based screening. Covers druggability assessment, known-ligand mining (ChEMBL, BindingDB), similarity expansion, ADMET filtering, and synthesis feasibility. Use for hit identification, virtual screening, target-to-compounds workflows, and lead-finding before commit-to-medchem.
-disable-model-invocation: true
+description: "Discover novel small-molecule binders for protein targets using structure-based and ligand-based screening. Covers druggability assessment, known-ligand mining (ChEMBL, BindingDB), similarity expansion, ADMET filtering, and synthesis feasibility. Use for hit identification, virtual screening, target-to-compounds workflows, and lead-finding before commit-to-medchem."
 ---
 
 # Small Molecule Binder Discovery Strategy

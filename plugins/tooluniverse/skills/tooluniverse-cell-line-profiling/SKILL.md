@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-cell-line-profiling
-description: Cancer cell-line selection and profiling for experimental model choice. Cross-references DepMap, Cellosaurus, COSMIC, PharmacoDB to deliver identity verification, mutation/CNV profile, gene dependencies, drug sensitivities, and druggable targets. Use to answer 'which cell line should I use for studying gene X?' or 'is this cell line a good model for cancer Y?'. Outputs ranked recommendations with rationale, growth characteristics, and known pitfalls.
-disable-model-invocation: true
+description: "Cancer cell-line selection and profiling for experimental model choice. Cross-references DepMap, Cellosaurus, COSMIC, PharmacoDB to deliver identity verification, mutation/CNV profile, gene dependencies, drug sensitivities, and druggable targets. Use to answer 'which cell line should I use for studying gene X?' or 'is this cell line a good model for cancer Y?'. Outputs ranked recommendations with rationale, growth characteristics, and known pitfalls."
 ---
 
 # Cancer Cell Line Profiling and Selection

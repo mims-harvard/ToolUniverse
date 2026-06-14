@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-literature-deep-research
-description: Deep literature review — PubMed, EuropePMC, bioRxiv preprints, citation networks, evidence synthesis. Disambiguates queries, runs collision-aware searches, grades evidence T1-T4, and produces structured reports. Use for systematic literature review, meta-analysis evidence collection, and detailed answer-with-citations workflows.
-disable-model-invocation: true
+description: "Deep literature review — PubMed, EuropePMC, bioRxiv preprints, citation networks, evidence synthesis. Disambiguates queries, runs collision-aware searches, grades evidence T1-T4, and produces structured reports. Use for systematic literature review, meta-analysis evidence collection, and detailed answer-with-citations workflows."
 ---
 
 # Literature Deep Research

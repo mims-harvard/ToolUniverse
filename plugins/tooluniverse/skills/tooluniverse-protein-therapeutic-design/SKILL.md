@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-protein-therapeutic-design
-description: AI-guided de novo protein design — RFdiffusion backbone generation, ProteinMPNN sequence design, structure validation (pLDDT, pTM, MPNN scores). Use for designing therapeutic protein binders, novel scaffolds, enzyme variants, and miniprotein/protein-interface design before experimental validation.
-disable-model-invocation: true
+description: "AI-guided de novo protein design — RFdiffusion backbone generation, ProteinMPNN sequence design, structure validation (pLDDT, pTM, MPNN scores). Use for designing therapeutic protein binders, novel scaffolds, enzyme variants, and miniprotein/protein-interface design before experimental validation."
 ---
 
 # Therapeutic Protein Designer

@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-meta-analysis
-description: Meta-analysis / evidence synthesis — pool effect sizes across studies (odds ratios, risk ratios, hazard ratios, mean differences, correlations, GWAS betas) with fixed- or random-effects models, quantify heterogeneity (Q, I², τ²), and build a forest plot. Use when you have results from MULTIPLE studies and need a single pooled estimate, or to synthesize evidence from a systematic review / multiple GWAS / replicated experiments. Handles the error-prone effect-size + standard-error preparation (converting OR/HR/CI, two-group means±SD, proportions, and correlations into the (effect, SE) the pooling step needs).
-disable-model-invocation: true
+description: "Meta-analysis / evidence synthesis — pool effect sizes across studies (odds ratios, risk ratios, hazard ratios, mean differences, correlations, GWAS betas) with fixed- or random-effects models, quantify heterogeneity (Q, I², τ²), and build a forest plot. Use when you have results from MULTIPLE studies and need a single pooled estimate, or to synthesize evidence from a systematic review / multiple GWAS / replicated experiments. Handles the error-prone effect-size + standard-error preparation (converting OR/HR/CI, two-group means±SD, proportions, and correlations into the (effect, SE) the pooling step needs)."
 ---
 
 # Meta-Analysis & Evidence Synthesis

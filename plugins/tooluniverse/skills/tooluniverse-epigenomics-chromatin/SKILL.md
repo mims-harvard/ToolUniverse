@@ -1,10 +1,10 @@
 ---
+
 name: tooluniverse-epigenomics-chromatin
-description: Histone-modification ChIP-seq, ATAC-seq accessibility, chromatin state, and TF binding analysis from ENCODE, Roadmap Epigenomics, ChIP-Atlas. Use for chromatin-state-by-tissue queries, TF-binding-by-region, regulatory landscape mapping, and ENCODE-cCRE annotations. For DNA methylation use tooluniverse-epigenomics; for RNA-seq use tooluniverse-rnaseq-deseq2.
+description: "Histone-modification ChIP-seq, ATAC-seq accessibility, chromatin state, and TF binding analysis from ENCODE, Roadmap Epigenomics, ChIP-Atlas. Use for chromatin-state-by-tissue queries, TF-binding-by-region, regulatory landscape mapping, and ENCODE-cCRE annotations. For DNA methylation use tooluniverse-epigenomics; for RNA-seq use tooluniverse-rnaseq-deseq2."
 triggers:
   - keywords: [histone, ChIP-seq, chromatin, ENCODE, eQTL, CTCF, enhancer, promoter, cCRE, H3K27ac, H3K4me3, H3K4me1, chromatin state, ATAC-seq, regulatory element, RegulomeDB]
   - patterns: ["histone modification", "chromatin accessibility", "chromatin architecture", "gene regulation", "regulatory variant", "expression QTL", "cis-regulatory"]
-disable-model-invocation: true
 ---
 
 # Epigenomics and Chromatin Accessibility Research

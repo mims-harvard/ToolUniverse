@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-gwas-drug-discovery
-description: Transform GWAS signals into drug targets and repurposing opportunities. Connects GWAS-significant loci to causal genes via fine-mapping/eQTL, then to druggable proteins via DGIdb/OpenTargets, then to existing drugs via ChEMBL. Use for GWAS-to-target hypothesis generation, druggable-fraction analysis of disease loci, and human-genetics-validated drug-repurposing prioritization.
-disable-model-invocation: true
+description: "Transform GWAS signals into drug targets and repurposing opportunities. Connects GWAS-significant loci to causal genes via fine-mapping/eQTL, then to druggable proteins via DGIdb/OpenTargets, then to existing drugs via ChEMBL. Use for GWAS-to-target hypothesis generation, druggable-fraction analysis of disease loci, and human-genetics-validated drug-repurposing prioritization."
 ---
 
 # GWAS-to-Drug Target Discovery

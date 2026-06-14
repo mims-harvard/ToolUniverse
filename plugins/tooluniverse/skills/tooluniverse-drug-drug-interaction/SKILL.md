@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-drug-drug-interaction
-description: Assess drug-drug interactions — CYP metabolic interactions (substrate/inhibitor/inducer), transporter (P-gp, BCRP, OATP) effects, pharmacodynamic synergy/antagonism, clinical significance scoring, and management recommendations. Use for polypharmacy review, prescribing decision support, and safety analysis when adding or switching drugs.
-disable-model-invocation: true
+description: "Assess drug-drug interactions — CYP metabolic interactions (substrate/inhibitor/inducer), transporter (P-gp, BCRP, OATP) effects, pharmacodynamic synergy/antagonism, clinical significance scoring, and management recommendations. Use for polypharmacy review, prescribing decision support, and safety analysis when adding or switching drugs."
 ---
 
 # Drug-Drug Interaction Prediction & Risk Assessment

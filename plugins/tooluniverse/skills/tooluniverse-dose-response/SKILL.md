@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-dose-response
-description: Dose-response / concentration-response curve fitting — IC50, EC50, Hill slope, Emax/Emin efficacy, and relative potency from paired concentration vs response data (enzyme/cell assays, drug screening, agonist/antagonist pharmacology). Fits the 4-parameter logistic (Hill sigmoidal) model. Use when you have concentrations + responses and need a potency value, to compare two compounds' potency, or to judge curve quality. NOT for image-derived dose-response (use tooluniverse-image-analysis) and NOT for survival/regression (use tooluniverse-statistical-modeling).
-disable-model-invocation: true
+description: "Dose-response / concentration-response curve fitting — IC50, EC50, Hill slope, Emax/Emin efficacy, and relative potency from paired concentration vs response data (enzyme/cell assays, drug screening, agonist/antagonist pharmacology). Fits the 4-parameter logistic (Hill sigmoidal) model. Use when you have concentrations + responses and need a potency value, to compare two compounds' potency, or to judge curve quality. NOT for image-derived dose-response (use tooluniverse-image-analysis) and NOT for survival/regression (use tooluniverse-statistical-modeling)."
 ---
 
 # Dose-Response / Concentration-Response Analysis

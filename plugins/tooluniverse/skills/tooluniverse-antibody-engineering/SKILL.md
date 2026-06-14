@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-antibody-engineering
-description: Therapeutic antibody engineering and optimization, lead-to-clinical-candidate. Covers sequence humanization (germline alignment, framework retention), affinity maturation, developability (aggregation, stability, PTMs), structure modeling (AlphaFold/PDB CDR analysis), immunogenicity prediction, and manufacturing feasibility. Use for biologic-drug optimization, mAb design review, biosimilar engineering, and clinical-precedent comparison.
-disable-model-invocation: true
+description: "Therapeutic antibody engineering and optimization, lead-to-clinical-candidate. Covers sequence humanization (germline alignment, framework retention), affinity maturation, developability (aggregation, stability, PTMs), structure modeling (AlphaFold/PDB CDR analysis), immunogenicity prediction, and manufacturing feasibility. Use for biologic-drug optimization, mAb design review, biosimilar engineering, and clinical-precedent comparison."
 ---
 
 # Antibody Engineering & Optimization

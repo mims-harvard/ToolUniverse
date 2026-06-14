@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-organic-chemistry
-description: Organic chemistry reasoning guide for reaction product prediction, mechanism analysis (electrophilic/nucleophilic substitution, addition, elimination, pericyclic, radical), and spectroscopy interpretation (1H/13C NMR, IR, MS). Reasons from first principles (electron flow, kinetic vs thermodynamic) rather than pattern-matching named reactions. Use for organic synthesis problems and mechanism explanations.
-disable-model-invocation: true
+description: "Organic chemistry reasoning guide for reaction product prediction, mechanism analysis (electrophilic/nucleophilic substitution, addition, elimination, pericyclic, radical), and spectroscopy interpretation (1H/13C NMR, IR, MS). Reasons from first principles (electron flow, kinetic vs thermodynamic) rather than pattern-matching named reactions. Use for organic synthesis problems and mechanism explanations."
 ---
 
 # Organic Chemistry Reasoning Guide

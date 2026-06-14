@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-neuroscience
 description: "Neuroscience research workflows: neuroanatomy, neural circuits, neurotransmitter biology, neurological/psychiatric disease genetics, neural-protein function. Uses Allen Brain Atlas, WormBase (C. elegans connectome), UniProt for neural proteins, PubMed for primary literature. Use for brain-region biology, neural development, neurodegeneration mechanisms (Alzheimer's, Parkinson's, ALS), and synaptic-protein characterization."
-disable-model-invocation: true
 ---
 
 # Neuroscience Research Skill

@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-data-wrangling
-description: Universal data access patterns for downloading and parsing scientific data when ToolUniverse tools don't cover the source, only return metadata, or you need bulk records. Use for VCF/h5ad/BAM/SDF/GCT parsing, multi-step API workflows (search to filter to download to parse), thousands of records at once, or sources with no dedicated tool. Write Python code via Bash for every step.
-disable-model-invocation: true
+description: "Universal data access patterns for downloading and parsing scientific data when ToolUniverse tools don't cover the source, only return metadata, or you need bulk records. Use for VCF/h5ad/BAM/SDF/GCT parsing, multi-step API workflows (search to filter to download to parse), thousands of records at once, or sources with no dedicated tool. Write Python code via Bash for every step."
 ---
 
 # Data Wrangling: Universal Access Patterns

@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-aging-senescence
-description: Aging biology, cellular senescence, and longevity research. Covers senescence markers (p16/CDKN2A, SASP, SA-beta-gal), aging hallmarks, senolytic drug discovery (dasatinib+quercetin, fisetin, navitoclax), epigenetic clocks, telomere biology, and longevity GWAS. Use for senescence-pathway analysis, age-related disease genetics, senolytic-target discovery, and centenarian-genetics queries. Distinguishes correlative vs causal evidence (knockout, intervention).
-disable-model-invocation: true
+description: "Aging biology, cellular senescence, and longevity research. Covers senescence markers (p16/CDKN2A, SASP, SA-beta-gal), aging hallmarks, senolytic drug discovery (dasatinib+quercetin, fisetin, navitoclax), epigenetic clocks, telomere biology, and longevity GWAS. Use for senescence-pathway analysis, age-related disease genetics, senolytic-target discovery, and centenarian-genetics queries. Distinguishes correlative vs causal evidence (knockout, intervention)."
 ---
 
 # Aging & Cellular Senescence Research

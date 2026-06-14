@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-drug-research
-description: Comprehensive drug profiling — mechanism, primary/secondary targets, drug interactions, clinical-trial status, adverse events (FAERS), pharmacogenomics, and approval history. Use for full drug investigation reports, 'tell me about drug X' queries, and assembling drug profiles for clinicians, researchers, or regulatory work.
-disable-model-invocation: true
+description: "Comprehensive drug profiling — mechanism, primary/secondary targets, drug interactions, clinical-trial status, adverse events (FAERS), pharmacogenomics, and approval history. Use for full drug investigation reports, 'tell me about drug X' queries, and assembling drug profiles for clinicians, researchers, or regulatory work."
 ---
 
 # Drug Research Strategy

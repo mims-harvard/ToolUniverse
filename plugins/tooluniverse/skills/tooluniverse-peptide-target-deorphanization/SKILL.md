@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-peptide-target-deorphanization
-description: Find the real protein target(s) of a peptide from its sequence — peptide target deorphanization / off-target identification, for ANY target class (GPCR, ion channel, protease, cytokine/growth-factor receptor, enzyme, integrin), not only GPCRs. Use when a peptide has a phenotype but does not bind its hypothesized target, when a peptide binds a target in one species or assay but not another, or to screen candidate targets for an orphan peptide. A target-class router steers a multi-route keyless pipeline (PROSITE/ELM motif, BLAST homology, HGNC/InterPro/GPCRdb/GtoPdb target-family enumeration, OpenTargets phenotype anchor, EnsemblCompara/Alliance cross-species reconciliation) plus optional NVIDIA-NIM co-folding (Boltz2, AlphaFold2-Multimer, OpenFold3) for structural confirmation.
-disable-model-invocation: true
+description: "Find the real protein target(s) of a peptide from its sequence — peptide target deorphanization / off-target identification, for ANY target class (GPCR, ion channel, protease, cytokine/growth-factor receptor, enzyme, integrin), not only GPCRs. Use when a peptide has a phenotype but does not bind its hypothesized target, when a peptide binds a target in one species or assay but not another, or to screen candidate targets for an orphan peptide. A target-class router steers a multi-route keyless pipeline (PROSITE/ELM motif, BLAST homology, HGNC/InterPro/GPCRdb/GtoPdb target-family enumeration, OpenTargets phenotype anchor, EnsemblCompara/Alliance cross-species reconciliation) plus optional NVIDIA-NIM co-folding (Boltz2, AlphaFold2-Multimer, OpenFold3) for structural confirmation."
 ---
 
 # Peptide Target Deorphanization

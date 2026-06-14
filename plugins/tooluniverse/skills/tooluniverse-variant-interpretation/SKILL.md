@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-variant-interpretation
-description: Clinical variant interpretation from raw variant calls to ACMG-classified recommendations with structural impact analysis. Use for VUS classification, pathogenicity assessment with cited criteria, structure-based variant impact (AlphaFold/PDB), and producing clinical-grade variant reports for return of results or molecular tumor boards.
-disable-model-invocation: true
+description: "Clinical variant interpretation from raw variant calls to ACMG-classified recommendations with structural impact analysis. Use for VUS classification, pathogenicity assessment with cited criteria, structure-based variant impact (AlphaFold/PDB), and producing clinical-grade variant reports for return of results or molecular tumor boards."
 ---
 
 # Clinical Variant Interpreter

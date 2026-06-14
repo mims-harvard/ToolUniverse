@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-multiomic-disease-characterization
-description: Comprehensive disease characterization across genomics, transcriptomics, proteomics, and pathways for systems-level understanding. Identifies therapeutic opportunities and biomarker candidates by integrating multi-layer molecular data. Use for full-omics disease deep-dive reports, mechanism mapping, and biomarker-and-target identification from multi-omics data.
-disable-model-invocation: true
+description: "Comprehensive disease characterization across genomics, transcriptomics, proteomics, and pathways for systems-level understanding. Identifies therapeutic opportunities and biomarker candidates by integrating multi-layer molecular data. Use for full-omics disease deep-dive reports, mechanism mapping, and biomarker-and-target identification from multi-omics data."
 ---
 
 # Multi-Omics Disease Characterization Pipeline

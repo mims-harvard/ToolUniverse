@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-polygenic-risk-score
-description: Build and interpret polygenic risk scores (PRS) for complex diseases using GWAS summary statistics. Covers PRS construction (clumping/thresholding, PRS-CS), validation in independent cohorts, ancestry-aware adjustment, and clinical interpretation (population-relative risk, not absolute prediction). Use for PRS-based risk stratification.
-disable-model-invocation: true
+description: "Build and interpret polygenic risk scores (PRS) for complex diseases using GWAS summary statistics. Covers PRS construction (clumping/thresholding, PRS-CS), validation in independent cohorts, ancestry-aware adjustment, and clinical interpretation (population-relative risk, not absolute prediction). Use for PRS-based risk stratification."
 ---
 
 # Polygenic Risk Score (PRS) Builder

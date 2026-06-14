@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-enzyme-kinetics
-description: Enzyme kinetics — Michaelis-Menten Km, Vmax, kcat (turnover), and kcat/Km (catalytic efficiency / specificity constant) from substrate-velocity data, plus inhibition-mechanism analysis (competitive / uncompetitive / non-competitive, Ki). Fits the MM equation by nonlinear regression (and reports Lineweaver-Burk for reference). Use when you have substrate concentrations and initial reaction velocities and need kinetic parameters or to classify an inhibitor. NOT for BRENDA database lookups of published constants (use the BRENDA tools).
-disable-model-invocation: true
+description: "Enzyme kinetics — Michaelis-Menten Km, Vmax, kcat (turnover), and kcat/Km (catalytic efficiency / specificity constant) from substrate-velocity data, plus inhibition-mechanism analysis (competitive / uncompetitive / non-competitive, Ki). Fits the MM equation by nonlinear regression (and reports Lineweaver-Burk for reference). Use when you have substrate concentrations and initial reaction velocities and need kinetic parameters or to classify an inhibitor. NOT for BRENDA database lookups of published constants (use the BRENDA tools)."
 ---
 
 # Enzyme Kinetics (Michaelis-Menten)

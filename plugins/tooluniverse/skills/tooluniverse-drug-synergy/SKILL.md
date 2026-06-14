@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-drug-synergy
-description: Drug-combination synergy analysis — quantify whether two drugs together are synergistic, additive, or antagonistic using the standard reference models (Bliss independence, HSA / highest single agent, Loewe additivity, ZIP, and the Chou-Talalay Combination Index). Use when you have measured single-drug and combination effects (inhibition/viability) and need a synergy score. Explains which model to use, what data each one needs, and how to read the score. NOT for looking up pre-computed synergy in a database (use the SYNERGxDB tool / cell-line-profiling skill).
-disable-model-invocation: true
+description: "Drug-combination synergy analysis — quantify whether two drugs together are synergistic, additive, or antagonistic using the standard reference models (Bliss independence, HSA / highest single agent, Loewe additivity, ZIP, and the Chou-Talalay Combination Index). Use when you have measured single-drug and combination effects (inhibition/viability) and need a synergy score. Explains which model to use, what data each one needs, and how to read the score. NOT for looking up pre-computed synergy in a database (use the SYNERGxDB tool / cell-line-profiling skill)."
 ---
 
 # Drug-Combination Synergy Analysis

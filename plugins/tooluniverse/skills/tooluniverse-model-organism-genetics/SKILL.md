@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-model-organism-genetics
-description: Cross-species genetic analysis using model organism databases (MGI mouse, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD yeast, RGD rat, GBIF taxonomy). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease.
-disable-model-invocation: true
+description: "Cross-species genetic analysis using model organism databases (MGI mouse, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD yeast, RGD rat, GBIF taxonomy). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease."
 ---
 
 ## COMPUTE, DON'T DESCRIBE

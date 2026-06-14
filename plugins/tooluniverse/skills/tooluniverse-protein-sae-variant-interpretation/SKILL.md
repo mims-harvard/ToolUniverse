@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-protein-sae-variant-interpretation
 description: "Interpret a missense variant via ESMC-6B Sparse Autoencoder (SAE) feature activations. For a given protein + variant, computes which interpretable SAE features (catalytic, ligand-binding, PTM, structural motif, domain, etc.) are lost or gained at the mutation site. Use when standard pathogenicity scores (AlphaMissense, ClinVar) say a variant is damaging but you need a MECHANISTIC explanation — e.g. 'why is this variant LoF?' Complements (does not replace) variant-interpretation and variant-to-mechanism skills, which focus on ACMG classification or regulatory mechanism."
-disable-model-invocation: true
 ---
 
 # Protein SAE Variant Interpretation

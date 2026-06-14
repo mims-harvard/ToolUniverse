@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-gwas-study-explorer
-description: Compare GWAS studies, perform meta-analyses across cohorts, and assess signal replication. Uses GWAS Catalog metadata, study-level statistics, and cross-cohort comparison. Use for evaluating GWAS reproducibility for a trait, meta-analysis sample size and effect-size aggregation, and detecting study heterogeneity (population, design, ancestry).
-disable-model-invocation: true
+description: "Compare GWAS studies, perform meta-analyses across cohorts, and assess signal replication. Uses GWAS Catalog metadata, study-level statistics, and cross-cohort comparison. Use for evaluating GWAS reproducibility for a trait, meta-analysis sample size and effect-size aggregation, and detecting study heterogeneity (population, design, ancestry)."
 ---
 
 

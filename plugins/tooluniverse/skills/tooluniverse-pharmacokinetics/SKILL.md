@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-pharmacokinetics
-description: Pharmacokinetic (PK) analysis of concentration-time data — non-compartmental analysis (NCA) for Cmax, Tmax, AUC (0-t and 0-∞), terminal half-life, clearance (CL), volume of distribution (Vd), MRT, and absolute bioavailability (F). Also one-compartment fitting. Use when you have plasma/serum drug concentrations over time after a dose and need PK parameters, or to compute bioavailability from IV + oral AUCs. NOT for ADMET property prediction from structure (use tooluniverse-admet-prediction).
-disable-model-invocation: true
+description: "Pharmacokinetic (PK) analysis of concentration-time data — non-compartmental analysis (NCA) for Cmax, Tmax, AUC (0-t and 0-∞), terminal half-life, clearance (CL), volume of distribution (Vd), MRT, and absolute bioavailability (F). Also one-compartment fitting. Use when you have plasma/serum drug concentrations over time after a dose and need PK parameters, or to compute bioavailability from IV + oral AUCs. NOT for ADMET property prediction from structure (use tooluniverse-admet-prediction)."
 ---
 
 # Pharmacokinetic (PK) Analysis — Non-Compartmental Analysis

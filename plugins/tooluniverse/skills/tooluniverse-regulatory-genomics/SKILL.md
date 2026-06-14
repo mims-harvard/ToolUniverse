@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-regulatory-genomics
-description: Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC. Use for regulatory element annotation, TF-binding-site prediction, and regulatory-region functional impact assessment.
-disable-model-invocation: true
+description: "Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC. Use for regulatory element annotation, TF-binding-site prediction, and regulatory-region functional impact assessment."
 ---
 
 # Regulatory Genomics Research Skill

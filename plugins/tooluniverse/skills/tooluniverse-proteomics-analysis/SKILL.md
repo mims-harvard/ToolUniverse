@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-proteomics-analysis
-description: Mass-spec proteomics analysis — protein identification, quantification (LFQ, TMT, iTRAQ), differential expression (tumor vs normal, treatment vs control), PTM identification, and pathway enrichment on protein lists. Use when you have proteomics MS output, asking about protein abundance differences, or doing systems-level proteomic interpretation.
-disable-model-invocation: true
+description: "Mass-spec proteomics analysis — protein identification, quantification (LFQ, TMT, iTRAQ), differential expression (tumor vs normal, treatment vs control), PTM identification, and pathway enrichment on protein lists. Use when you have proteomics MS output, asking about protein abundance differences, or doing systems-level proteomic interpretation."
 ---
 
 # Proteomics Analysis

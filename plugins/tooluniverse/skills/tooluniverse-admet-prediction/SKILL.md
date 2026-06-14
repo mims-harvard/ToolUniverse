@@ -1,7 +1,7 @@
 ---
+
 name: tooluniverse-admet-prediction
-description: Comprehensive ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) profiling for drug candidates. Integrates ADMET-AI predictions, SwissADME drug-likeness, PubChemTox experimental toxicity, ChEMBL clinical data, Lipinski rule-of-five, and CYP interaction data. Use for drug-likeness assessment, BBB penetration, bioavailability, hepatotoxicity prediction, ADME/PK profiling, or screening compound libraries before lab testing.
-disable-model-invocation: true
+description: "Comprehensive ADMET (Absorption, Distribution, Metabolism, Excretion, Toxicity) profiling for drug candidates. Integrates ADMET-AI predictions, SwissADME drug-likeness, PubChemTox experimental toxicity, ChEMBL clinical data, Lipinski rule-of-five, and CYP interaction data. Use for drug-likeness assessment, BBB penetration, bioavailability, hepatotoxicity prediction, ADME/PK profiling, or screening compound libraries before lab testing."
 ---
 
 # ADMET Prediction & Drug Candidate Profiling
