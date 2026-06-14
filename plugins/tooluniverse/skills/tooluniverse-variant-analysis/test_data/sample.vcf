@@ -1,0 +1,40 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=LowQual,Description="Low quality">
+##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.Pos / cDNA.Length | CDS.Pos / CDS.Length | AA.Pos / AA.Length | Distance | ERRORS / WARNINGS / INFO'">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency">
+##INFO=<ID=CLNSIG,Number=.,Type=String,Description="Clinical significance">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth">
+##FORMAT=<ID=AF,Number=A,Type=Float,Description="Allele fractions">
+##contig=<ID=1,length=249250621>
+##contig=<ID=7,length=159138663>
+##contig=<ID=17,length=81195210>
+##contig=<ID=19,length=59128983>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE1	SAMPLE2
+1	12345	rs12345	A	G	100	PASS	ANN=G|missense_variant|MODERATE|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding|1/5|c.100A>G|p.Thr34Ala||||;DP=200;AF=0.25	GT:AD:DP:AF	0/1:150,50:200:0.25	0/0:190,10:200:0.05
+1	12400	rs12346	C	T	95	PASS	ANN=T|synonymous_variant|LOW|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding|2/5|c.200C>T|p.Ala67=||||;DP=180;AF=0.15	GT:AD:DP:AF	0/1:153,27:180:0.15	0/1:150,30:180:0.17
+1	12500	.	G	A	30	LowQual	ANN=A|intron_variant|MODIFIER|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding||||||||;DP=50;AF=0.10	GT:AD:DP:AF	0/1:45,5:50:0.10	0/0:50,0:50:0.00
+1	12600	rs12347	T	C	150	PASS	ANN=C|missense_variant|MODERATE|GENE1|ENSG00000001|transcript|ENST00000001|protein_coding|3/5|c.300T>C|p.Val100Ala||||;DP=300;AF=0.45;CLNSIG=Likely_pathogenic	GT:AD:DP:AF	0/1:165,135:300:0.45	0/1:240,60:300:0.20
+1	12700	.	A	T	80	PASS	ANN=T|intergenic_variant|MODIFIER|||||||||||||;DP=120	GT:AD:DP:AF	0/1:96,24:120:0.20	0/0:120,0:120:0.00
+7	55249071	rs121913529	T	A	200	PASS	ANN=A|missense_variant|MODERATE|EGFR|ENSG00000146648|transcript|ENST00000275493|protein_coding|21/28|c.2573T>A|p.Leu858Arg||||;DP=500;AF=0.35;CLNSIG=Pathogenic	GT:AD:DP:AF	0/1:325,175:500:0.35	0/1:400,100:500:0.20
+7	55259515	.	G	T	120	PASS	ANN=T|stop_gained|HIGH|EGFR|ENSG00000146648|transcript|ENST00000275493|protein_coding|20/28|c.2369G>T|p.Gly790*||||;DP=250;AF=0.28	GT:AD:DP:AF	0/1:180,70:250:0.28	0/0:250,0:250:0.00
+17	7577120	rs28934578	C	T	180	PASS	ANN=T|missense_variant|MODERATE|TP53|ENSG00000141510|transcript|ENST00000269305|protein_coding|8/11|c.818C>T|p.Arg273His||||;DP=400;AF=0.40;CLNSIG=Pathogenic	GT:AD:DP:AF	0/1:240,160:400:0.40	0/1:320,80:400:0.20
+17	7577539	.	G	A	70	PASS	ANN=A|splice_region_variant&intron_variant|LOW|TP53|ENSG00000141510|transcript|ENST00000269305|protein_coding||||||||;DP=100;AF=0.08	GT:AD:DP:AF	0/1:92,8:100:0.08	0/0:100,0:100:0.00
+17	7578190	.	T	TG	90	PASS	ANN=TG|frameshift_variant|HIGH|TP53|ENSG00000141510|transcript|ENST00000269305|protein_coding|7/11|c.700dupG|p.Val234Glyfs*6||||;DP=150;AF=0.12	GT:AD:DP:AF	0/1:132,18:150:0.12	0/0:150,0:150:0.00
+17	7578300	.	AGC	A	85	PASS	ANN=A|inframe_deletion|MODERATE|TP53|ENSG00000141510|transcript|ENST00000269305|protein_coding|6/11|c.580_581del|p.Arg194del||||;DP=130;AF=0.18	GT:AD:DP:AF	0/1:107,23:130:0.18	0/1:110,20:130:0.15
+19	44908822	rs7412	C	T	190	PASS	ANN=T|missense_variant|MODERATE|APOE|ENSG00000130203|transcript|ENST00000252486|protein_coding|4/4|c.526C>T|p.Arg176Cys||||;DP=350;AF=0.30;CLNSIG=drug_response	GT:AD:DP:AF	0/1:245,105:350:0.30	0/1:280,70:350:0.20
+19	44908684	rs429358	T	C	170	PASS	ANN=C|missense_variant|MODERATE|APOE|ENSG00000130203|transcript|ENST00000252486|protein_coding|4/4|c.388T>C|p.Cys130Arg||||;DP=320;AF=0.22	GT:AD:DP:AF	0/1:250,70:320:0.22	0/0:320,0:320:0.00
+1	13000	.	G	A	40	PASS	ANN=A|upstream_gene_variant|MODIFIER|GENE2|ENSG00000002|transcript|ENST00000002|protein_coding||||||||;DP=60;AF=0.05	GT:AD:DP:AF	0/0:60,0:60:0.00	0/0:60,0:60:0.00
+1	13100	.	C	G	55	PASS	ANN=G|downstream_gene_variant|MODIFIER|GENE2|ENSG00000002|transcript|ENST00000002|protein_coding||||||||;DP=80	GT:AD:DP:AF	0/1:64,16:80:0.20	0/0:80,0:80:0.00
+1	13200	.	A	C	110	PASS	ANN=C|missense_variant|MODERATE|GENE3|ENSG00000003|transcript|ENST00000003|protein_coding|2/3|c.50A>C|p.Asp17Ala||||;DP=220;AF=0.08	GT:AD:DP:AF	0/1:202,18:220:0.08	0/1:200,20:220:0.09
+1	13300	.	T	A	130	PASS	ANN=A|nonsense_variant|HIGH|GENE3|ENSG00000003|transcript|ENST00000003|protein_coding|3/3|c.150T>A|p.Tyr50*||||;DP=260;AF=0.55	GT:AD:DP:AF	1/1:117,143:260:0.55	0/1:195,65:260:0.25
+1	13400	.	G	GAAAA	60	PASS	ANN=GAAAA|frameshift_variant|HIGH|GENE3|ENSG00000003|transcript|ENST00000003|protein_coding|1/3|c.20insAAAA|p.Gly7Argfs*12||||;DP=90;AF=0.22	GT:AD:DP:AF	0/1:70,20:90:0.22	0/0:90,0:90:0.00
+1	13500	.	CTA	C	75	PASS	ANN=C|inframe_deletion|MODERATE|GENE3|ENSG00000003|transcript|ENST00000003|protein_coding|2/3|c.80_81del|p.Leu27del||||;DP=100;AF=0.15	GT:AD:DP:AF	0/1:85,15:100:0.15	0/1:88,12:100:0.12
+1	13600	.	A	G	145	PASS	ANN=G|synonymous_variant|LOW|GENE4|ENSG00000004|transcript|ENST00000004|protein_coding|1/2|c.30A>G|p.Leu10=||||;DP=280;AF=0.38	GT:AD:DP:AF	0/1:174,106:280:0.38	0/1:210,70:280:0.25
+1	13700	.	C	T	50	PASS	ANN=T|3_prime_UTR_variant|MODIFIER|GENE4|ENSG00000004|transcript|ENST00000004|protein_coding||||||||;DP=70;AF=0.10	GT:AD:DP:AF	0/1:63,7:70:0.10	0/0:70,0:70:0.00
+1	13800	.	T	C	65	PASS	ANN=C|5_prime_UTR_variant|MODIFIER|GENE4|ENSG00000004|transcript|ENST00000004|protein_coding||||||||;DP=85;AF=0.12	GT:AD:DP:AF	0/1:75,10:85:0.12	0/0:85,0:85:0.00
+1	13900	.	G	A	155	PASS	ANN=A|missense_variant|MODERATE|GENE5|ENSG00000005|transcript|ENST00000005|protein_coding|4/6|c.400G>A|p.Gly134Ser||||;DP=310;AF=0.42	GT:AD:DP:AF	0/1:180,130:310:0.42	0/1:250,60:310:0.19
+1	14000	.	A	G	160	PASS	ANN=G|missense_variant&splice_region_variant|MODERATE|GENE5|ENSG00000005|transcript|ENST00000005|protein_coding|5/6|c.500A>G|p.Asn167Ser||||;DP=330;AF=0.33	GT:AD:DP:AF	0/1:221,109:330:0.33	0/1:264,66:330:0.20

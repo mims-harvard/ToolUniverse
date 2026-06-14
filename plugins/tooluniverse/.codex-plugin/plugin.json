@@ -1,0 +1,53 @@
+{
+  "name": "tooluniverse",
+  "description": "1000+ scientific research tools for biology, chemistry, medicine, and data science. Access PubMed, UniProt, PubChem, TCGA, NHANES, GWAS Catalog, and hundreds more databases through a unified MCP interface. Includes specialized research skills for genomics, drug discovery, clinical analysis, protein variant interpretation, and more.",
+  "version": "1.2.18",
+  "author": {
+    "name": "Shanghua Gao",
+    "url": "https://shgao.site"
+  },
+  "homepage": "https://aiscientist.tools",
+  "repository": "https://github.com/mims-harvard/ToolUniverse",
+  "license": "Apache-2.0",
+  "keywords": [
+    "science",
+    "biology",
+    "chemistry",
+    "medicine",
+    "genomics",
+    "bioinformatics",
+    "rna-seq",
+    "deseq2",
+    "phylogenetics",
+    "drug-discovery",
+    "clinical-trials",
+    "pubmed",
+    "uniprot",
+    "pubchem",
+    "tcga",
+    "research",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "ToolUniverse",
+    "shortDescription": "Scientific research tools for Codex",
+    "longDescription": "Use ToolUniverse to discover and run 1000+ tools across biology, chemistry, medicine, genomics, literature search, drug discovery, clinical research, and scientific data analysis.",
+    "developerName": "ToolUniverse",
+    "category": "Research",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://aiscientist.tools",
+    "defaultPrompt": [
+      "Research EGFR drug resistance mutations",
+      "Find tools for variant interpretation",
+      "Run a literature sweep on KRAS G12C"
+    ],
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}

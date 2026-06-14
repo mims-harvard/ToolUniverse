@@ -26,6 +26,22 @@
       "required": ["receptor_pdb_id", "peptide_sequence"]
     },
     "required_api_keys": ["CLUSPRO_USERNAME", "CLUSPRO_API_SECRET"],
+    "api_key_info": {
+      "CLUSPRO_USERNAME": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://cluspro.bu.edu",
+        "purpose": "Authenticate peptide-protein docking submissions to the ClusPro server (free for academic use).",
+        "without": "The ClusPro_submit_peptide_docking tool is hidden until both ClusPro keys are set."
+      },
+      "CLUSPRO_API_SECRET": {
+        "domain": "Proteins & Structure",
+        "type": "secret",
+        "register_url": "https://cluspro.bu.edu",
+        "purpose": "API secret paired with CLUSPRO_USERNAME for signing ClusPro peptide-docking submissions.",
+        "without": "The ClusPro_submit_peptide_docking tool is hidden until both ClusPro keys are set."
+      }
+    },
     "return_schema": {
       "oneOf": [
         {

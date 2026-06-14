@@ -18,8 +18,46 @@ On the machine with ToolUniverse installed:
     # Install full ToolUniverse package
     pip install tooluniverse
 
-    # Start HTTP API server (single worker with async thread pool)
+    # Start HTTP API server (defaults to loopback 127.0.0.1)
+    tooluniverse-http-api --port 8080
+
+The server binds to ``127.0.0.1`` by default and is reachable only from the
+local machine. Exposing it to the network requires authentication — see
+:ref:`http-api-authentication` below.
+
+.. _http-api-authentication:
+
+Authentication and Network Exposure
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The HTTP API can execute any ToolUniverse method, including the Python code
+executor, so it must never be reachable on an untrusted network without
+authentication.
+
+* **Default bind is loopback** (``127.0.0.1``). The server refuses to bind to a
+  non-loopback address (e.g. ``0.0.0.0``) unless ``TOOLUNIVERSE_API_TOKEN`` is set.
+* **Set a token to enable Bearer authentication.** When ``TOOLUNIVERSE_API_TOKEN``
+  is set, every request must include ``Authorization: Bearer <token>`` (only
+  ``/health`` is exempt). Generate a strong random value, e.g.
+  ``python -c "import secrets; print(secrets.token_urlsafe(32))"``.
+
+.. code-block:: bash
+
+    # Expose to the network with authentication required
+    export TOOLUNIVERSE_API_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
     tooluniverse-http-api --host 0.0.0.0 --port 8080
+
+Clients authenticate by passing the token (or by setting ``TOOLUNIVERSE_API_TOKEN``
+in the client's environment, which is picked up automatically):
+
+.. code-block:: python
+
+    from tooluniverse import ToolUniverseClient
+
+    client = ToolUniverseClient("http://your-server:8080", api_token="<token>")
+
+The same ``TOOLUNIVERSE_API_TOKEN`` enables Bearer authentication on the SMCP
+(MCP, ``streamable-http``) server as well.
 
 Use Client
 ~~~~~~~~~~
@@ -201,6 +239,14 @@ See ``examples/http_api_usage_example.py`` for comprehensive examples including:
 
 Production Deployment
 ---------------------
+
+.. important::
+
+   The ``--host 0.0.0.0`` examples below expose the server to the network and
+   therefore **require** ``TOOLUNIVERSE_API_TOKEN`` to be set — the server
+   refuses to bind to a non-loopback address without it. Prefix each command
+   with ``TOOLUNIVERSE_API_TOKEN=<token>`` (or export it). See
+   :ref:`http-api-authentication`.
 
 GPU-Optimized Configuration (Recommended)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

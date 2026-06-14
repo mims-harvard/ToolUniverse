@@ -1,0 +1,279 @@
+---
+
+name: tooluniverse-polygenic-risk-score
+description: "Build and interpret polygenic risk scores (PRS) for complex diseases using GWAS summary statistics. Covers PRS construction (clumping/thresholding, PRS-CS), validation in independent cohorts, ancestry-aware adjustment, and clinical interpretation (population-relative risk, not absolute prediction). Use for PRS-based risk stratification."
+---
+
+# Polygenic Risk Score (PRS) Builder
+
+Build and interpret polygenic risk scores for complex diseases using genome-wide association study (GWAS) data.
+
+## Reasoning Strategy
+
+A polygenic risk score predicts genetic risk, not disease. A high PRS means elevated risk relative to the population — it does not mean the person will develop the condition, and a low PRS does not confer immunity. PRS performance varies dramatically across ancestries: a European-derived PRS applied to a West African population can lose 50–70% of its predictive power because the underlying GWAS was trained on European allele frequencies and LD patterns. Effect sizes from discovery GWAS are subject to winner's curse (overestimation in single studies); always prefer weights from large meta-analyses or validated PGS Catalog models. PRS should always be interpreted in the context of non-genetic risk factors — for most complex diseases, environmental factors contribute as much or more than genetics.
+
+**LOOK UP DON'T GUESS**: Do not assume effect sizes, allele frequencies, or which SNPs are genome-wide significant for a trait — always query GWAS Catalog (`gwas_get_associations_for_trait`) for actual data. Do not assume a validated PRS model exists for a trait; check PGS Catalog via PubMed search.
+
+## Overview
+
+**Use Cases:**
+- "Calculate my genetic risk for type 2 diabetes"
+- "Build a polygenic risk score for coronary artery disease"
+- "What's my genetic predisposition to Alzheimer's disease?"
+- "Interpret my PRS percentile for breast cancer risk"
+
+**What This Skill Does:**
+- Extracts genome-wide significant variants (p < 5e-8) from GWAS Catalog
+- Builds weighted PRS models using effect sizes (beta coefficients)
+- Calculates individual risk scores from genotype data
+- Interprets PRS as population percentiles and risk categories
+
+**What This Skill Does NOT Do:**
+- Diagnose disease (PRS is probabilistic, not deterministic)
+- Replace clinical assessment or genetic counseling
+- Account for non-genetic factors (lifestyle, environment)
+- Provide treatment recommendations
+
+## Methodology
+
+### PRS Calculation Formula
+
+A polygenic risk score is calculated as a weighted sum across genetic variants:
+
+```
+PRS = Σ (dosage_i × effect_size_i)
+```
+
+Where:
+- **dosage_i**: Number of effect alleles at SNP i (0, 1, or 2)
+- **effect_size_i**: Beta coefficient or log(odds ratio) from GWAS
+
+### Standardization
+
+Raw PRS is standardized to z-scores for interpretation:
+
+```
+z-score = (PRS - population_mean) / population_std
+```
+
+This allows comparison to population distribution and percentile calculation.
+
+### Significance Thresholds
+
+- **Genome-wide significance**: p < 5×10⁻⁸ (default threshold)
+- This corrects for ~1 million independent tests across the genome
+- Relaxed thresholds (e.g., p < 1×10⁻⁵) can include more SNPs but may add noise
+
+### Effect Size Handling
+
+- **Continuous traits** (e.g., height, BMI): Beta coefficient (units of trait per allele)
+- **Binary traits** (e.g., disease): Odds ratio converted to log-odds (beta = ln(OR))
+- Missing effect sizes or non-significant SNPs are excluded
+
+## Data Sources
+
+This skill uses ToolUniverse GWAS tools to query:
+
+1. **GWAS Catalog** (EMBL-EBI)
+   - Curated GWAS associations, 5000+ studies
+   - Tools: `gwas_search_associations` (param: `disease_trait`, `size`; also `gwas_get_associations_for_trait`), `gwas_get_snps_for_gene` (param: `gene_symbol`), `dbsnp_get_variant_by_rsid`
+   - Note: `disease_trait` search returns associations where the trait is one of potentially several linked EFO traits. For precise filtering, use EFO IDs via `efo_trait` param.
+
+2. **Open Targets Genetics**
+   - Integrated genetics platform with fine-mapped credible sets
+   - Tools: `OpenTargets_search_gwas_studies_by_disease`, `EnsemblVEP_annotate_hgvs` (for variant consequence/frequency)
+
+3. **Variant Annotation**
+   - `gnomad_search_variants` + `gnomad_get_variant` — population allele frequencies (ancestry-specific via VEP colocated_variants)
+   - `MyVariant_query_variants` — CADD, SIFT, PolyPhen, ClinVar, gnomAD in one call
+   - `gnomad_get_gene_constraints` — gene constraint metrics (pLI, oe_lof) for target prioritization
+
+## Key Concepts
+
+### Polygenic Risk Scores (PRS)
+
+Polygenic risk scores aggregate the effects of many genetic variants to estimate an individual's genetic predisposition to a trait or disease. Unlike Mendelian diseases caused by single mutations, complex diseases involve hundreds to thousands of variants, each with small effects.
+
+**Key Properties:**
+- **Continuous distribution**: PRS forms a bell curve in populations
+- **Relative risk**: Compares individual to population average
+- **Probabilistic**: High PRS doesn't guarantee disease, low PRS doesn't guarantee protection
+- **Ancestry-specific**: PRS accuracy depends on matching GWAS and target ancestry
+
+### GWAS (Genome-Wide Association Studies)
+
+GWAS compare allele frequencies between cases and controls (or correlate with trait values) across millions of SNPs to identify disease-associated variants.
+
+**Study Design:**
+- **Discovery cohort**: Initial identification of associations
+- **Replication cohort**: Validation in independent samples
+- **Sample size**: Larger studies detect smaller effects (power ∝ √N)
+- **Multiple testing correction**: Bonferroni-type correction for ~1M tests
+
+### Effect Sizes and Odds Ratios
+
+- **Beta (β)**: Change in trait per copy of effect allele
+  - Example: β = 0.5 kg/m² means each allele increases BMI by 0.5 units
+- **Odds Ratio (OR)**: Multiplicative change in disease odds
+  - OR = 1.5 means 50% increased odds per allele
+  - Convert to beta: β = ln(OR)
+
+### Linkage Disequilibrium (LD) and Clumping
+
+Nearby variants are often inherited together (LD). To avoid double-counting:
+- **LD clumping**: Select independent variants (r² < 0.1 within 1 Mb windows)
+- **Fine-mapping**: Statistical methods to identify causal variants
+- This skill uses raw associations; production PRS should include LD pruning
+
+### Population Stratification
+
+GWAS and PRS are most accurate when ancestries match:
+- **Population structure**: Different ancestries have different allele frequencies
+- **Transferability**: European-trained PRS perform worse in non-European populations
+- **Solution**: Train PRS on diverse cohorts or use ancestry-matched references
+
+## Applications
+
+### Clinical Risk Assessment
+
+PRS can stratify individuals for:
+- **Screening programs**: Target high-risk individuals (e.g., mammography, colonoscopy)
+- **Prevention strategies**: Lifestyle interventions for high genetic risk
+- **Drug response**: Pharmacogenomics based on metabolism genes
+
+**Example**: Khera et al. (2018) showed PRS identifies 3× more individuals at >3-fold coronary artery disease risk than monogenic mutations.
+
+### Research Applications
+
+- **Gene discovery**: PRS-based phenome-wide association studies (PheWAS)
+- **Genetic correlation**: Compare PRS across traits
+- **Causal inference**: Mendelian randomization using PRS as instruments
+- **Simulation studies**: Model polygenic architecture
+
+### Personal Genomics
+
+Consumer genetic testing (23andMe, Ancestry DNA) provides raw genotypes. Users can:
+- Calculate PRS for traits not reported
+- Compare to published PRS models
+- Understand genetic contribution vs. lifestyle factors
+
+**Caution**: Personal PRS should not replace medical advice. Results may cause anxiety if not properly contextualized.
+
+## Limitations and Considerations
+
+- **Heritability gap**: PRS explains only a fraction of genetic heritability (T2D: ~50% heritable, PRS explains ~10–20%). Rare variants, epistasis, and gene-environment interactions are not captured.
+- **Ancestry bias**: European-derived PRS performance drops substantially in non-European populations. Use multi-ancestry GWAS weights when available.
+- **Winner's curse**: Discovery effect sizes are overestimated; use meta-analysis weights or PGS Catalog validated models.
+- **Not diagnostic**: High PRS does not guarantee disease; low PRS does not guarantee protection. Environmental factors contribute equally or more for most complex diseases.
+- **Actionability varies**: Alzheimer's PRS has limited actionable interventions; cardiovascular PRS can guide statin or lifestyle decisions. Always consider what the person can do with the information.
+- **Ethical**: Genetic data is permanent and familial. GINA protects employment/health insurance in the US, but not life insurance. Provide genetic counseling context.
+
+## Workflow
+
+### 1. Trait Selection
+
+Identify the disease or trait of interest:
+- Use standard terminology (e.g., "type 2 diabetes" not "T2D")
+- Check GWAS Catalog for availability
+- Verify sufficient GWAS studies exist (n > 10,000 samples ideal)
+
+### 2. Association Collection
+
+Query GWAS databases for genome-wide significant associations:
+```python
+prs = build_polygenic_risk_score(
+    trait="coronary artery disease",
+    p_threshold=5e-8,  # Genome-wide significance
+    max_snps=1000
+)
+```
+
+**Considerations:**
+- P-value threshold: 5e-8 is conservative, 1e-5 includes more variants
+- LD clumping: Production systems should prune correlated SNPs
+- Study quality: Prefer large meta-analyses over small studies
+
+### 3. Effect Size Extraction
+
+Extract beta coefficients or odds ratios:
+- Beta for continuous traits (direct use)
+- OR for binary traits (convert to log-odds)
+- Handle missing values (exclude or impute from meta-analysis)
+
+### 4. SNP Filtering
+
+Quality control filters:
+- **MAF filter**: Exclude rare variants (MAF < 0.01) for robustness
+- **Genotype QC**: Remove SNPs with high missingness (> 10%)
+- **Hardy-Weinberg**: Exclude SNPs violating HWE (p < 1e-6)
+- **Ambiguous SNPs**: Remove A/T and G/C SNPs (strand ambiguity)
+
+### 5. Score Calculation
+
+Calculate weighted sum of genotype dosages:
+```python
+result = calculate_personal_prs(
+    prs_weights=prs,
+    genotypes=my_genotypes,
+    population_mean=0.0,
+    population_std=1.0
+)
+```
+
+**Genotype Sources:**
+- 23andMe raw data export
+- Ancestry DNA raw data
+- Whole genome sequencing (VCF files)
+- SNP array data (Illumina, Affymetrix)
+
+### 6. Risk Interpretation
+
+Convert to percentiles and risk categories:
+```python
+result = interpret_prs_percentile(result)
+print(f"Percentile: {result.percentile:.1f}%")
+print(f"Risk: {result.risk_category}")
+```
+
+**Risk Categories:**
+- **Low risk**: < 20th percentile (genetic protection)
+- **Average risk**: 20-80th percentile (typical genetic predisposition)
+- **Elevated risk**: 80-95th percentile (moderately increased risk)
+- **High risk**: > 95th percentile (substantially increased risk)
+
+**Clinical Interpretation:**
+- Percentiles assume normal distribution
+- Relative risk vs. average (not absolute risk)
+- Combine with family history, clinical risk factors
+- PRS is NOT diagnostic - many high-risk individuals never develop disease
+
+## Best Practices
+
+- Use validated PRS from PGS Catalog when available (externally validated, includes LD clumping and ancestry-specific weights)
+- Match ancestries between GWAS and target population; use multi-ancestry GWAS when available
+- For highly polygenic traits (height, education), relaxed p-value thresholds capture more signal; for oligogenic traits (IBD, T1D), strict thresholds are better
+- Combine PRS with clinical risk scores (Framingham, QRISK) for integrated prediction
+- In research: document SNP selection criteria, LD clumping parameters, and ancestry of GWAS; validate in held-out cohorts; report R² or AUC stratified by ancestry
+
+## Disclaimer
+
+**This skill is for educational and research purposes only.**
+
+- **Not for clinical diagnosis or treatment decisions**
+- **Not validated for clinical use** - use PGS Catalog models for clinical-grade PRS
+- **Requires genetic counseling** - interpretation requires expertise
+- **Does not account for family history, environment, or lifestyle factors**
+- **Ancestry-specific** - accuracy depends on matching GWAS ancestry
+
+**For clinical genetic testing, consult:**
+- Genetic counselors (certified by ABGC/ABMGG)
+- Medical geneticists
+- Healthcare providers with genomics training
+
+PRS is a rapidly evolving field. Guidelines and best practices will continue to change as research progresses.
+
+**Regulatory Status:**
+- FDA does not currently regulate PRS (as of 2024)
+- Some countries restrict direct-to-consumer genetic risk reporting
+- Check local regulations before clinical implementation
+
