@@ -5,11 +5,16 @@ Local-compute, deterministic ROC analysis for any binary classifier or
 continuous biomarker: given scores and 0/1 labels, returns AUC (with a
 bootstrap 95% CI), the Youden-optimal cutoff and its sensitivity/specificity,
 optionally the metrics at a user-supplied fixed cutoff, and a downsampled ROC
-curve. Backed by scikit-learn. No network, no API key.
+curve. Pure NumPy (a core dependency) — no scikit-learn, no network, no API key,
+so it runs on a default install.
+
+AUC is the tie-aware Mann-Whitney rank-sum statistic, which equals
+``sklearn.metrics.roc_auc_score`` exactly. The ROC curve uses the standard
+descending-score sweep with distinct-score thresholds, matching ``roc_curve``.
 
 Generic by construction — it takes scores + labels (inline arrays or two
 columns of a CSV), exposes the positive label and cutoff as parameters, and
-returns the standard sklearn result. It encodes no task-specific convention.
+returns the standard ROC result. It encodes no task-specific convention.
 """
 
 import csv as _csv
@@ -29,7 +34,7 @@ def _err(msg: str) -> Dict[str, Any]:
 
 
 def _ok(data: Dict[str, Any], **metadata) -> Dict[str, Any]:
-    meta = {"engine": "scikit-learn"}
+    meta = {"engine": "numpy"}
     meta.update(metadata)
     return {"status": "success", "data": data, "metadata": meta}
 
@@ -98,18 +103,64 @@ def _coerce(scores: List[Any], labels: List[Any], positive_label: Any) -> Any:
     return s, y
 
 
+def _avg_ranks(values, np):
+    """1-based ranks with ties resolved to their average (midranks)."""
+    order = np.argsort(values, kind="mergesort")
+    sorted_vals = values[order]
+    ranks_sorted = np.empty(len(values), dtype=float)
+    i = 0
+    n = len(values)
+    while i < n:
+        j = i
+        while j + 1 < n and sorted_vals[j + 1] == sorted_vals[i]:
+            j += 1
+        ranks_sorted[i : j + 1] = (i + j) / 2.0 + 1.0  # mean of 1-based ranks
+        i = j + 1
+    ranks = np.empty(n, dtype=float)
+    ranks[order] = ranks_sorted
+    return ranks
+
+
+def _auc(y, s, np) -> float:
+    """Tie-aware AUC via the Mann-Whitney rank sum (== sklearn roc_auc_score)."""
+    n_pos = int(y.sum())
+    n_neg = int(y.size - n_pos)
+    if n_pos == 0 or n_neg == 0:
+        return float("nan")
+    ranks = _avg_ranks(s, np)
+    sum_ranks_pos = ranks[y == 1].sum()
+    return (sum_ranks_pos - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
+
+
+def _roc_curve(y, s, np):
+    """Standard ROC sweep. Returns (fpr, tpr, thresholds) like sklearn.roc_curve."""
+    order = np.argsort(-s, kind="mergesort")
+    s_sorted, y_sorted = s[order], y[order]
+    tps = np.cumsum(y_sorted)
+    fps = np.cumsum(1 - y_sorted)
+    # Collapse points that share a score: keep the last index of each run.
+    distinct = np.where(np.diff(s_sorted) != 0)[0]
+    idxs = np.r_[distinct, s_sorted.size - 1]
+    tps, fps, thr = tps[idxs], fps[idxs], s_sorted[idxs]
+    tpr = tps / tps[-1]
+    fpr = fps / fps[-1]
+    # Prepend the (0,0) origin with an +inf threshold, as sklearn does.
+    return (
+        np.r_[0.0, fpr],
+        np.r_[0.0, tpr],
+        np.r_[np.inf, thr],
+    )
+
+
 @register_tool("ROCAnalysisTool")
 class ROCAnalysisTool(BaseTool):
-    """Deterministic ROC/AUC analysis over scores + binary labels."""
+    """Deterministic ROC/AUC analysis over scores + binary labels (pure NumPy)."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
             import numpy as np
-            from sklearn.metrics import roc_auc_score, roc_curve
         except Exception:  # pragma: no cover - dependency guard
-            return _err(
-                "scikit-learn / numpy not installed. `pip install scikit-learn`."
-            )
+            return _err("numpy not installed (it is a core ToolUniverse dependency).")
 
         scores = arguments.get("scores")
         labels = arguments.get("labels")
@@ -131,14 +182,13 @@ class ROCAnalysisTool(BaseTool):
         y = np.asarray(y_list, dtype=int)
 
         try:
-            auc = float(roc_auc_score(y, s))
-            fpr, tpr, thr = roc_curve(y, s)
-        except Exception as e:
+            auc = _auc(y, s, np)
+            fpr, tpr, thr = _roc_curve(y, s, np)
+        except Exception as e:  # pragma: no cover - defensive
             return _err(f"ROC computation failed: {e}")
 
         # Youden-optimal operating point.
-        youden = tpr - fpr
-        j = int(np.argmax(youden))
+        j = int(np.argmax(tpr - fpr))
         opt = {
             "cutoff": float(thr[j]),
             "sensitivity": round(float(tpr[j]), 6),
@@ -146,8 +196,8 @@ class ROCAnalysisTool(BaseTool):
         }
 
         data: Dict[str, Any] = {
-            "auc": round(auc, 6),
-            "auc_ci95": self._bootstrap_ci(y, s, np, roc_auc_score),
+            "auc": round(float(auc), 6),
+            "auc_ci95": self._bootstrap_ci(y, s, np),
             "n": int(y.size),
             "n_positive": int(y.sum()),
             "n_negative": int(y.size - y.sum()),
@@ -175,7 +225,7 @@ class ROCAnalysisTool(BaseTool):
         return _ok(data)
 
     @staticmethod
-    def _bootstrap_ci(y, s, np, roc_auc_score) -> Optional[List[float]]:
+    def _bootstrap_ci(y, s, np) -> Optional[List[float]]:
         """Deterministic bootstrap 95% CI for AUC (fixed seed)."""
         rng = np.random.default_rng(_BOOTSTRAP_SEED)
         idx = np.arange(y.size)
@@ -184,7 +234,7 @@ class ROCAnalysisTool(BaseTool):
             b = rng.choice(idx, size=y.size, replace=True)
             if len(np.unique(y[b])) < 2:
                 continue
-            aucs.append(roc_auc_score(y[b], s[b]))
+            aucs.append(_auc(y[b], s[b], np))
         if not aucs:
             return None
         lo, hi = np.percentile(aucs, [2.5, 97.5])
@@ -202,7 +252,7 @@ class ROCAnalysisTool(BaseTool):
         return {
             "fpr": [round(float(fpr[i]), 6) for i in keep],
             "tpr": [round(float(tpr[i]), 6) for i in keep],
-            # thr[0] is sklearn's +inf sentinel; report as a large finite number.
+            # The leading threshold is the +inf origin sentinel; report as null.
             "thresholds": [
                 (round(float(thr[i]), 6) if thr[i] != float("inf") else None)
                 for i in keep
