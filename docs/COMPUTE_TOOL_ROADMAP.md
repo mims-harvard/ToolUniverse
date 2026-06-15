@@ -7,17 +7,46 @@
 
 ## Executive summary
 
-ToolUniverse's coverage is **lopsided**, and the lopsidedness is the opportunity:
+> **Correction (2026-06-15).** An earlier draft of this file claimed "only 5 of 2,539 tools are local-compute." **That was wrong** — it counted only tools with `requires_local_input: true` (file inputs) and missed every *inline-data* compute tool. A proper `find_tools`/registry audit shows **58 local-compute tools across 17 classes**. The compute layer is real and decently populated; the genuine gaps are a focused list, not a structural hole. Two roadmap items below (`Survival_analysis`, `PopGen`, `PK_nca`, `Curve_fit`, `Meta_analysis`) were found to **already exist** and must not be rebuilt. Always run `tu.find_tools(query="<capability>")` before building — see the audit table.
+
+ToolUniverse's coverage:
 
 | Layer | Inventory | Verdict |
 |---|---|---|
-| **Knowledge / database-access tools** (query an API by ID/region/name) | 568 source APIs, ~2,534 tools | ✅ Comprehensive — *not* the gap |
-| **Local-compute tools** (run a deterministic analysis on the user's own file) | **5 of 2,539** tools (`phykit_batch_analysis`, `run_deseq2_analysis`, `VCF_summary_stats`, `VCF_count_variants`, `VCF_normalize`) | ❌ Structural hole |
-| **Analysis capability locked in skill scripts** (real compute, but not a callable tool) | **86 scripts across 33 skills** | ⚠️ Agent must re-discover and run ad-hoc every time → non-reproducible |
+| **Knowledge / database-access tools** (query an API by ID/region/name) | 568 source APIs, ~2,480 tools | ✅ Comprehensive |
+| **Local-compute tools** (deterministic analysis on user-provided data, inline or file) | **58 tools across 17 classes** — `SurvivalTool`, `PopGenTool`, `NCATool`, `DoseResponseTool`, `DrugSynergyTool`, `EpidemiologyTool`, `DNATool`, `ScientificCalculatorTool` (incl. `EnzymeKinetics_calculate`), `ClinicalCalculatorTool`, `MetaAnalysisTool`, `DESeq2Tool`, `ROCAnalysisTool`, `VCFStatsTool`, … | ✅ More mature than first claimed; gaps are specific |
+| **Analysis capability still only in skill scripts** (real compute, not a callable tool) | a subset of the 86 `skills/*/scripts/*.py` | ⚠️ The genuine opportunity — but only for capabilities with NO existing tool |
 
-The plugin already *knows how* to do most standard analyses — the procedures live in 86 `skills/*/scripts/*.py`. But because they are not registered tools, an MCP agent either re-derives them as throwaway code (the root cause of non-deterministic counts, e.g. BixBench bix-61 indel totals) or never finds them. **The highest-leverage work is promoting the genuine compute scripts into validated, callable tools** — the pattern just established by `VCFStatsTool`.
+The genuine remaining work is **narrower than a "promote all 86 scripts" sweep**: most common analyses (survival, dose-response, enzyme kinetics, PK NCA, popgen, meta-analysis, DESeq2, sequence utilities, drug synergy, clinical calculators) already have tools. Build only where `find_tools` confirms a true blank — and promote the *method*, not the script (next section).
 
 This document is the prioritized backlog. It is **not** a commitment to build all of it; it is the map to choose from.
+
+### Search before you build (MANDATORY — this rule was learned the hard way)
+
+`Survival_analysis` was started, then found to duplicate the existing `Survival_kaplan_meier`/`Survival_log_rank_test`/`Survival_cox_regression` (`SurvivalTool`, numpy/scipy, *more* thorough) — and reverted. Run `tu.find_tools(query="<capability, not brand>")` for every candidate. Audit as of 2026-06-15:
+
+| Roadmap candidate | Status | Existing tool(s) |
+|---|---|---|
+| Survival (KM/log-rank/Cox) | ❌ ALREADY EXISTS | `Survival_kaplan_meier`, `Survival_log_rank_test`, `Survival_cox_regression` |
+| Dose-response / IC50 | ❌ ALREADY EXISTS | `DoseResponse_fit_curve`, `DoseResponse_calculate_ic50`, `DoseResponse_compare_potency` |
+| Enzyme kinetics (Km/Vmax) | ❌ ALREADY EXISTS | `EnzymeKinetics_calculate` (ScientificCalculatorTool) |
+| PK NCA (AUC/Cmax) | ❌ ALREADY EXISTS | `NCA_compute_parameters`, `NCA_fit_one_compartment`, `NCA_calculate_bioavailability` |
+| Population genetics (HWE/Fst) | ❌ ALREADY EXISTS | `PopGen_hwe_test`, `PopGen_fst`, `PopGen_inbreeding`, `PopGen_haplotype_count` |
+| Meta-analysis | ❌ ALREADY EXISTS | `MetaAnalysis_run` |
+| Bulk RNA-seq DE (DESeq2) | ❌ ALREADY EXISTS | `run_deseq2_analysis` |
+| Sequence utils (translate/ORF/GC/revcomp) | ❌ ALREADY EXISTS | `DNATool` (10 tools) |
+| Drug synergy (Bliss/HSA/ZIP/Loewe) | ❌ ALREADY EXISTS | `DrugSynergyTool` (5 tools) |
+| Generic stats | ⚠️ PARTIAL | `Statistics_test` (thin: chi-square/fisher/OLS), `expression_anova_per_gene`, `Epidemiology_*` |
+| **ROC / AUC** | ✅ TRUE GAP → built | shipped as `ROC_analysis` (PR #260) |
+| edgeR / limma DE | ✅ TRUE GAP | only DESeq2 exists |
+| Expression-matrix PCA | ✅ TRUE GAP | none |
+| FASTQ QC | ✅ TRUE GAP | none (SRA/ENA hits are DB search, not QC compute) |
+| Single-cell QC/clustering compute | ✅ TRUE GAP | none (CellMarker hits are DB lookups) |
+| Network proximity | ✅ TRUE GAP | none |
+| Methylation density | ✅ TRUE GAP | none |
+| dN/dS | ✅ TRUE GAP | none |
+| Variant calling (GATK BAM→VCF) | ✅ TRUE GAP | none (`VCFStatsTool` counts an existing VCF; doesn't call) |
+| Microbiome diversity / MS metabolomics / MS proteomics / image segmentation | ✅ TRUE GAP (Part B) | none |
 
 ### Generality gate — read before promoting ANY script
 
@@ -81,42 +110,38 @@ External **binaries** (bcftools, GATK, bwa) have no `required_packages` analogue
 
 ---
 
-## Part A — Promote skill scripts to callable tools
+## Part A — Build tools ONLY for confirmed gaps
 
-Grouped by value tier. Each row: the script that becomes the implementation, what it computes, the dependency, effort, impact.
+The audit table above already removed everything that exists. What remains below is **only the `find_tools`-confirmed true gaps.** Each row: implementation basis, what it computes, dependency, effort, impact. (Rows for Survival, dose-response, enzyme kinetics, PK NCA, popgen, meta-analysis, DESeq2 were deleted — those tools already exist.)
 
-### Tier 1 — broad impact, dependency installed, build first
+### Tier 1 — broad impact, build first
 
-| Proposed tool | From script(s) | Computes | Dep | Effort | Impact |
+| Proposed tool | Basis | Computes | Dep | Effort | Impact |
 |---|---|---|---|---|---|
-| **`Stats_test`** (richer engine; existing `Statistics_test` is pure-Python chi-square only) | `statistical-modeling/stat_tests.py`, `logistic_regression_or.py`, `power_analysis.py` | t-test / Mann–Whitney / Wilcoxon / one-way & two-way ANOVA / linear & logistic (incl. ordinal) regression / power & sample-size, on a user table | scipy, statsmodels ✓ | S–M | ★★★★★ touches nearly every analysis |
-| **`Survival_analysis`** | (stats skill; lifelines) | Kaplan–Meier curves, median survival, log-rank, Cox PH hazard ratios from a survival table | lifelines ✓ | S | ★★★★ clinical + oncology |
-| **`Enrichment_run`** | `gene-enrichment/enrichgo_runner.py`, `gseapy_enrichment_runner.py` | Deterministic GO/pathway over-representation (clusterProfiler::enrichGO) and GSEA/prerank (gseapy) from a gene list | Rscript ✓, gseapy ✓ | S–M | ★★★★★ BixBench enrichment=32 |
-| **`RNAseq_DE_edger_limma`** | `rnaseq-deseq2/r_edger_limma_wrapper.py` | edgeR / limma-voom DE on a count matrix (complements the existing DESeq2 tool) | Rscript ✓ | S | ★★★★ RNA-seq=69 |
-| **`Expr_matrix_stats`** | **rebuild clean** (`one_way_anova_f.py` is fine; PCA method only — do **not** port `pca_variance.py`/`gene_length_correlation.py`, which fail the gate) | PCA %-variance per PC (single orientation; transform as a parameter) and per-gene one-way ANOVA F/p on a matrix | numpy, scipy ✓ | S–M | ★★★ recurring RNA-seq sub-questions, but trim the answer-sweep scripts |
-| **`Variant_call_gatk`** | `variant-analysis/gatk_haplotypecaller_pipeline.py` | BAM→VCF SNP/indel calling (BWA align → sort → HaplotypeCaller), with canonical counts; pairs with the new `VCF_*` tools | gatk, bwa, samtools ✓ | M | ★★★★ WGS/variant questions, the bix-61 family |
-| **`ROC_analysis`** | `diagnostic-test-evaluation/roc_analysis.py` | ROC curve, AUC, Youden-optimal cutoff, sensitivity/specificity from scores+labels | scikit-learn ✓ | S | ★★★★ diagnostics + any classifier eval |
+| **`Stats_test`** (EXTEND existing `Statistics_test`, which is thin: chi-square/fisher/OLS only) | `statistical-modeling/stat_tests.py` (+ scipy/statsmodels) | add t-test / Mann–Whitney / Wilcoxon / one-way & two-way ANOVA / logistic & ordinal regression on a user table | scipy, statsmodels (optional) | S–M | ★★★★★ touches nearly every analysis |
+| **`Enrichment_run`** (check overlap with existing `Enrichr_enrich`/`PANTHER_enrichment`, which are API-based; this is a LOCAL clusterProfiler/gseapy path) | `gene-enrichment/enrichgo_runner.py` (method only — drop the answer-crutches) | local GO over-representation + GSEA/prerank from a gene list | Rscript / gseapy (optional) | S–M | ★★★★ enrichment=32 |
+| **`RNAseq_DE_edger_limma`** | `rnaseq-deseq2/r_edger_limma_wrapper.py` | edgeR / limma-voom DE on a count matrix (complements existing `run_deseq2_analysis`) | Rscript (optional) | S | ★★★★ RNA-seq=69 |
+| **`Expr_matrix_pca`** | rebuild clean (do **not** port the answer-sweep `pca_variance.py`) | PCA %-variance per PC on a matrix (single orientation; transform as a parameter) | numpy (core) | S | ★★★ recurring RNA-seq sub-question |
+| **`Variant_call_gatk`** | `variant-analysis/gatk_haplotypecaller_pipeline.py` | BAM→VCF SNP/indel calling (BWA → sort → HaplotypeCaller); pairs with `VCF_*` | gatk/bwa/samtools (binaries) | M | ★★★★ WGS/variant, the bix-61 family |
+| ~~`ROC_analysis`~~ | — | **DONE** — shipped pure-numpy in PR #260 | numpy (core) | — | ✅ |
 
-### Tier 2 — valuable compute, narrower or one extra dependency
+### Tier 2 — valuable compute, narrower
 
-| Proposed tool | From script(s) | Computes | Dep | Effort | Impact |
+| Proposed tool | Basis | Computes | Dep | Effort | Impact |
 |---|---|---|---|---|---|
-| **`Curve_fit`** (dose-response + enzyme kinetics) | `dose-response/fit_dose_response.py`, `enzyme-kinetics/fit_michaelis_menten.py` | 4-param logistic (IC50/EC50/Hill) and Michaelis–Menten (Km/Vmax/Ki) nonlinear fits | scipy ✓ | S | ★★★ pharmacology, assays |
-| **`SingleCell_qc_cluster`** | `single-cell/scrna_qc.py`, `qc_metrics.py`, `normalize_data.py`, `find_markers.py` | scRNA QC gating, normalization, Leiden clustering, marker/cell-type annotation on an h5ad | scanpy, anndata ✓ | M | ★★★ huge field, low BixBench weight |
-| **`Image_segment`** | `image-analysis/segment_cells.py`, `measure_fluorescence.py` | Cell/nucleus segmentation + count, fluorescence intensity quantification | scikit-image ✓ (classical); cellpose ✗ (DL) | M | ★★★ imaging=21 |
-| **`PK_nca`** | `pharmacokinetics/nca_from_csv.py` | Non-compartmental PK (AUC, Cmax, Tmax, t½, CL/F) from concentration–time CSV | numpy, scipy ✓ | S | ★★★ pharmacometrics |
-| **`PopGen_calc`** | `population-genetics/popgen_calculator.py` | Hardy–Weinberg, Fst, inbreeding coefficient, haplotype frequencies | numpy ✓ | S | ★★★ pop-gen |
-| **`Meta_analysis`** | `meta-analysis/meta_analysis.py` | Fixed/random-effects pooled effect, heterogeneity (I²), forest-plot data | scipy ✓ | S | ★★★ evidence synthesis |
-| **`dNdS`** | `comparative-genomics/dnds.py` | dN/dS (Ka/Ks, Nei–Gojobori) between two coding sequences | biopython ✓ | S | ★★ molecular evolution |
-| **`FASTQ_qc`** | `fastq-qc/run_fastq_qc.py` | Read count, length, GC, per-base quality, Q20/Q30, duplication, adapter — entry point of every sequencing pipeline | biopython/pysam ✓ (seqkit/fastp ✗ for speed) | S–M | ★★★ ubiquitous first step |
-| **`Methylation_density`** | `epigenomics/methylation_density.py` | CpG methylation density stats from a long-format methylation CSV | pandas ✓ | S | ★★ epigenomics=12 |
+| **`SingleCell_qc_cluster`** | `single-cell/scrna_qc.py`, `qc_metrics.py`, `normalize_data.py`, `find_markers.py` | scRNA QC gating, normalization, Leiden clustering, marker/cell-type annotation on an h5ad | scanpy, anndata (optional) | M | ★★★ huge field |
+| **`Image_segment`** | `image-analysis/segment_cells.py`, `measure_fluorescence.py` | cell/nucleus segmentation + count, fluorescence quantification | scikit-image (classical); cellpose ✗ (DL) | M | ★★★ imaging=21 |
+| **`dNdS`** | `comparative-genomics/dnds.py` | dN/dS (Ka/Ks, Nei–Gojobori) between two coding sequences | biopython (optional) | S | ★★ molecular evolution |
+| **`FASTQ_qc`** | `fastq-qc/run_fastq_qc.py` | read count, length, GC, per-base quality, Q20/Q30, duplication, adapter | biopython/pysam (seqkit/fastp ✗ for speed) | S–M | ★★★ ubiquitous first step |
+| **`Methylation_density`** | `epigenomics/methylation_density.py` | CpG methylation density stats from a long-format methylation CSV | pandas (core) | S | ★★ epigenomics=12 |
+| **`Network_proximity`** | `network-pharmacology/network_proximity.py` | network proximity Z-score between drug targets and a disease gene set | numpy (core) | S | ★★ network pharmacology |
 | **`Network_proximity`** | `network-pharmacology/network_proximity.py` | Network proximity Z-score between drug targets and a disease gene set | numpy ✓ | S | ★★ network pharmacology |
 | **`HLA_population_coverage`** | `vaccine-design/population_coverage.py` | IEDB-style population coverage for a set of T-cell epitopes | numpy ✓ | S | ★★ vaccine design |
 | **`Antibody_developability`** | `antibody-engineering/developability.py` | Aggregation/charge/hydrophobicity liability flags from an antibody sequence | biopython ✓ | S | ★★ antibody engineering |
 
-### Tier 3 — pure calculators (extend the existing calculator family, lower urgency)
+### Tier 3 — pure calculators (mostly ALREADY exist)
 
-`computational-biophysics/` ships 8 deterministic calculators (`enzyme_kinetics`, `epidemiology` R0/NNT/Bayes, `radioactive_decay`, `herd_immunity`, `iv_drip_rate`, `fluid_calculations`, `burn_fluids`, `env_risk_assessment`) and `inorganic-physical-chemistry/equilibrium_solver.py`. These match the **already-shipped** `ClinicalCalculatorTool` pattern and could be folded into a `ScientificCalculator` family. Medium-low priority — they are short and self-contained.
+The big calculator families are already tools: `ClinicalCalculatorTool` (10), `ScientificCalculatorTool` (incl. `EnzymeKinetics_calculate`, `EquilibriumSolver_calculate`, `MolecularFormula_analyze`), `EpidemiologyTool` (R0/NNT/Bayes/diagnostic), `DrugSynergyTool` (5). The only `computational-biophysics/` calculators without an obvious tool home are the clinical-dosing ones (`radioactive_decay`, `iv_drip_rate`, `fluid_calculations`, `burn_fluids`) — low priority, and arguably belong in `ClinicalCalculatorTool` if anywhere. Confirm with `find_tools` before adding any.
 
 ### Explicitly **do NOT** promote — two categories
 
