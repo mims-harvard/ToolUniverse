@@ -39,12 +39,21 @@ Returns `sensitivity`, `specificity`, `PPV`, `NPV`, `accuracy`, `LR_pos`, `LR_ne
 
 When the test is a continuous score, evaluate across **all** thresholds:
 
+Prefer the **`ROC_analysis`** tool — one call returns structured JSON (AUC + bootstrap 95% CI, Youden-optimal cutoff with its sens/spec, optional metrics at a fixed cutoff, and the ROC curve), and works under the MCP server without a shell:
+
+```
+ROC_analysis(scores=[...], labels=[0,1,...])          # inline arrays
+ROC_analysis(csv_path="scores.csv", cutoff=0.6)        # or a CSV (cols: label, score)
+```
+
+The bundled script is the equivalent CLI form:
+
 ```bash
 python skills/tooluniverse-diagnostic-test-evaluation/scripts/roc_analysis.py --input scores.csv
 # scores.csv columns: label (1=disease, 0=healthy), score (continuous biomarker)
 ```
 
-It reports AUC (with a bootstrap 95% CI), the **Youden-optimal cutoff** (max sensitivity+specificity−1) and its sens/spec, and a text ROC curve.
+Both report AUC (with a bootstrap 95% CI), the **Youden-optimal cutoff** (max sensitivity+specificity−1) and its sens/spec.
 
 | AUC | Discrimination |
 |---|---|
