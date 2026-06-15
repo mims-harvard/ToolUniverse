@@ -51,12 +51,32 @@ Worked classification of the scripts audited 2026-06-15:
 - `return_schema` with `oneOf` (success + error); unit test in `tests/unit/` that generates a fixture and skips when the binary/lib is absent.
 - **Reuse the existing skill script** as the implementation core — this is a promotion, not a rewrite. The skill keeps the script *and* gains a one-call tool form (as `variant-analysis` now does for VCF).
 
-### Dependency status on this machine (drives the Effort column)
+#### Dependencies — use the framework's optional-dependency design
 
-`Rscript ✓  samtools ✓  bcftools ✓  bwa ✓  gatk ✓  mafft ✓` · missing `seqkit ✗  fastp ✗  minimap2 ✗  iqtree ✗`
-`scipy ✓  numpy ✓  pandas ✓  statsmodels ✓  lifelines ✓  scikit-learn ✓  scanpy ✓  anndata ✓  gseapy ✓  biopython ✓  pysam ✓  cyvcf2 ✓  rdkit ✓` · missing `scikit-bio ✗  cellpose ✗  pyopenms ✗`
+**Only `numpy>=2.2` and `pandas>=2.2` are core deps.** `scipy`, `statsmodels`, `lifelines`, `scikit-learn`, `scikit-bio`, `scanpy`, `gseapy` are **optional extras** (`pyproject.toml` groups `ml`/`singlecell`/`bioinformatics`/`all`) — absent on a default install and in the CI core-test env.
 
-> "Effort" assumes the script already exists and the dependency is installed = **S** (small, ~½ day: wrap + schema + test). Add a dependency = **M**. New compute from scratch = **L**.
+ToolUniverse has a **first-class design** for this — don't fight it:
+
+- **Lazy-loader graceful degradation** (`tool_registry.py`): when `lazy_import_tool` hits an `ImportError` importing a tool's module, it calls `mark_tool_unavailable(...)`, which records the failure and uses `_extract_missing_package()` to capture the missing package name. The tool is dropped from the registry; the rest of ToolUniverse keeps working. Users/agents can query `get_tool_errors()` to see exactly which package a tool needs.
+- **`required_packages` config field** — declarative; surfaced in `get_tool_info`/CLI as `Required: …`. (It documents the need; the *enforcement* is the lazy-loader path above, not this field.)
+- **`pyproject.toml` optional extras** — add the lib to the right group (`ml`/`bioinformatics`/`singlecell`/`all`) so installers/CI can opt in with `pip install tooluniverse[ml]`.
+- **Tool-side guard** — module-level `try: import heavy_lib; FLAG=True except ImportError: FLAG=False` (the `blast_tool` `BIOPYTHON_AVAILABLE` pattern), or a guarded import inside `run()` returning a clean `{"status":"error","error":"pip install …"}` (the `cellxgene` pattern). Never raise.
+
+Decision, per tool:
+1. **If the math is simple, reimplement on numpy/pandas (core)** so the tool works for *everyone* — strictly better than an optional dep, which makes the tool gracefully *unavailable* on default installs. ROC/AUC (tie-aware Mann-Whitney rank sum), HWE/Fst, dN/dS, network proximity, NCA trapezoids, fold-changes, basic curve fits all qualify. This is why the shipped `ROC_analysis` uses numpy, not sklearn.
+2. **If it genuinely needs a heavy library** (lifelines Cox, scanpy clustering, R DESeq2/edgeR, gseapy), use the framework design: **declare `required_packages` + add to a `pyproject` extra + module-level/guarded import + `pytest.mark.skipif` the unit test when absent** (mirror the bcftools `needs_bcftools` guard). The tool is then cleanly "needs `lifelines`" rather than broken.
+
+External **binaries** (bcftools, GATK, bwa) have no `required_packages` analogue — guard with `shutil.which(...)` + a clear error, as `VCFStatsTool` does.
+
+### Dependency status (drives the Effort column)
+
+**Core ToolUniverse deps (always present — safe to import in a tool):** `numpy>=2.2`, `pandas>=2.2`.
+
+**Optional extras — installed on *this dev machine* but NOT on a default install / in CI core-tests** (so importing one needs the three guards above): `scipy`, `statsmodels`, `lifelines`, `scikit-learn`, `scanpy`, `anndata`, `gseapy`, `biopython`, `pysam`, `cyvcf2`, `rdkit`. Not installed even here: `scikit-bio ✗`, `cellpose ✗`, `pyopenms ✗`.
+
+**External binaries on this machine:** `Rscript ✓  samtools ✓  bcftools ✓  bwa ✓  gatk ✓  mafft ✓` · missing `seqkit ✗  fastp ✗  minimap2 ✗  iqtree ✗` (binaries are guarded with `shutil.which`, not `required_packages`).
+
+> "Effort" — reimplementable on numpy/pandas = **S** (½ day). Needs an optional Python lib (declare + guard + skipif) or an installed binary = **M**. New compute from scratch / new dependency to add = **L**.
 > "Impact" proxy = BixBench category weight (RNA-seq 69 · WGS/variant 64 · enrichment 32 · phylogenetics 33 · imaging 21 · stats 17 · single-cell) + field ubiquity. No real usage telemetry exists; treat as a planning heuristic.
 
 ---
