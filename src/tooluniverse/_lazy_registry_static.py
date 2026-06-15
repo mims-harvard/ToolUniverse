@@ -105,6 +105,7 @@ STATIC_LAZY_REGISTRY = {
     "VEuPathDBTool": "veupathdb_tool",
     "ClinVarSearchVariants": "clinvar_tool",
     "ClinicalCalculatorTool": "clinical_calculators_tool",
+    "VCFStatsTool": "vcf_stats_tool",
     "ClinicalTrialAESeverityTestTool": "clinical_trial_stats_tool",
     "CTISSearchTrialsTool": "ctis_tool",
     "CTISGetTrialTool": "ctis_tool",

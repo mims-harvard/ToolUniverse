@@ -162,6 +162,8 @@ default_tool_files = {
     "clinical_calculators": os.path.join(
         current_dir, "data", "clinical_calculators_tools.json"
     ),
+    # Canonical VCF/BCF variant statistics (bcftools-backed, local compute)
+    "vcf_stats": os.path.join(current_dir, "data", "vcf_stats_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),

@@ -1,0 +1,84 @@
+[
+  {
+    "name": "VCF_summary_stats",
+    "type": "VCFStatsTool",
+    "description": "Canonical variant statistics for a local VCF/BCF file via bcftools stats. Returns records, SNPs, indels, MNPs, multiallelic sites, ts/tv ratio, and per-sample het/hom/missing counts. Optional PASS-only, region, QUAL, and bcftools-expression filters. Use this instead of writing an ad-hoc parser so counts are reproducible. Requires bcftools on PATH.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "vcf_path"],
+      "properties": {
+        "operation": {"const": "summary_stats", "description": "Operation (fixed)"},
+        "vcf_path": {"type": "string", "description": "Path to a local .vcf, .vcf.gz, or .bcf file"},
+        "pass_only": {"type": ["boolean", "null"], "description": "If true, count only FILTER=PASS or '.' records"},
+        "regions": {"type": ["string", "null"], "description": "Restrict to a region, e.g. 'chr1' or 'chr1:1-1000000' (streamed, no index needed)"},
+        "min_qual": {"type": ["number", "null"], "description": "Keep only records with QUAL >= this value"},
+        "include_expr": {"type": ["string", "null"], "description": "Extra bcftools -i include expression, e.g. 'INFO/DP>10'"}
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
+        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+      ]
+    },
+    "test_examples": [
+      {"operation": "summary_stats", "vcf_path": "/tmp/sample.vcf.gz", "pass_only": true}
+    ]
+  },
+  {
+    "name": "VCF_count_variants",
+    "type": "VCFStatsTool",
+    "description": "Count variants in a local VCF/BCF after applying filters, via bcftools. Returns total records plus SNP/indel/MNP breakdown. Supports PASS-only, region, min QUAL, and a custom bcftools include expression so SNP/indel counts under a filter are deterministic. Requires bcftools on PATH.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "vcf_path"],
+      "properties": {
+        "operation": {"const": "count_variants", "description": "Operation (fixed)"},
+        "vcf_path": {"type": "string", "description": "Path to a local .vcf, .vcf.gz, or .bcf file"},
+        "pass_only": {"type": ["boolean", "null"], "description": "If true, count only FILTER=PASS or '.' records"},
+        "regions": {"type": ["string", "null"], "description": "Restrict to a region, e.g. 'chr1' or 'chr1:1-1000000'"},
+        "min_qual": {"type": ["number", "null"], "description": "Keep only records with QUAL >= this value"},
+        "include_expr": {"type": ["string", "null"], "description": "Extra bcftools -i include expression, e.g. 'INFO/AF>0.01'"}
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
+        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+      ]
+    },
+    "test_examples": [
+      {"operation": "count_variants", "vcf_path": "/tmp/sample.vcf.gz", "min_qual": 30}
+    ]
+  },
+  {
+    "name": "VCF_normalize",
+    "type": "VCFStatsTool",
+    "description": "Normalize a local VCF/BCF with bcftools norm (split or join multiallelics; left-align indels against a reference FASTA when given) and report SNP/indel/record counts before vs after. Resolves the common cause of disagreeing indel counts: un-split multiallelics and non-left-aligned indels. Requires bcftools on PATH.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "vcf_path"],
+      "properties": {
+        "operation": {"const": "normalize", "description": "Operation (fixed)"},
+        "vcf_path": {"type": "string", "description": "Path to a local .vcf, .vcf.gz, or .bcf file"},
+        "multiallelics": {"type": ["string", "null"], "enum": ["split", "join", "none", null], "description": "'split' (default) breaks multiallelic records into biallelic; 'join' merges; 'none' leaves as-is"},
+        "reference_fasta": {"type": ["string", "null"], "description": "Optional reference FASTA path; enables indel left-alignment (-f)"}
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
+        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+      ]
+    },
+    "test_examples": [
+      {"operation": "normalize", "vcf_path": "/tmp/sample.vcf.gz", "multiallelics": "split"}
+    ]
+  }
+]

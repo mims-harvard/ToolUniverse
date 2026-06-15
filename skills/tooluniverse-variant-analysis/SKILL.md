@@ -31,6 +31,8 @@ new code.
 | `coding_variant_filter.py` | "Average number of CHIP / coding variants per sample after filtering out intronic, intergenic, and UTR variants." Two-stage canonical filter: (1) drop `Zygosity == Reference` rows (when present — these inflate counts ~10×), (2) drop intronic/intergenic/UTR/upstream/downstream SO terms. Handles 2-row VarSeq Excel headers and per-sample folders or combined CSVs. |
 | `variant_fraction.py` | "Fraction of variants with VAF < X annotated as Y" — denominator is the CODING subset only (synonymous/missense/splice_region/stop_gained/lost/start_lost/frameshift/inframe indel), NOT all records. |
 
+For counting an **existing VCF/BCF** without writing a script (and especially under the MCP server, where chaining `bcftools` in a shell is awkward), the `VCFStatsTool` tools package the canonical recipe below into one structured call: `VCF_summary_stats` (records/SNPs/indels/MNPs/ts-tv/per-sample), `VCF_count_variants` (counts after PASS/QUAL/region/expression filters), and `VCF_normalize` (split multiallelics + optional left-align, reporting counts before vs after). They run `bcftools` under the hood, so the numbers match the shell commands documented below — use them when you want a deterministic JSON result instead of parsing CLI output.
+
 ### Workspace isolation (CRITICAL)
 
 `gatk_haplotypecaller_pipeline.py` and `coding_variant_filter.py` REFUSE
@@ -135,6 +137,7 @@ can confirm what was actually used.
    - Wrong: `bcftools view -f PASS variants.vcf | grep -v '^#' | awk '$5~/[ACGT]/' | wc -l` → returns ~10% of true SNP count.
    - Right: count all biallelic SNP records: `bcftools view --types snps variants.vcf | grep -v '^#' | wc -l`. For all SNPs (incl. multi-allelic): split first with `bcftools norm -m -` then count.
    - Indel total (insertions+deletions): `bcftools view --types indels variants.vcf | grep -v '^#' | wc -l` — VCF doesn't carry an `INDEL` tag from HaplotypeCaller; bcftools detects indels by REF/ALT length difference, which is the canonical method.
+   - Equivalent one-call form: `VCF_summary_stats` returns the same SNP/indel totals as structured JSON, and `VCF_normalize` (multiallelics=split) reports the post-split indel count — the number that disagrees with a naive parser that never splits multiallelics.
    - The skill's "VCF quality filtering must come before interpretation" rule is for *clinical* interpretation. For *counting* ("how many SNPs are identified" or "total number of indels"), report raw counts and let the question's wording dictate filters.
 
 ---
