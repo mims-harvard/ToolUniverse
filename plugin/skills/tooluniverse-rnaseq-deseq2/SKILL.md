@@ -64,17 +64,27 @@ python scripts/r_deseq2_wrapper.py \
 This automatically prints all 3-way Venn region sizes plus several
 candidate denominators (`/|A|`, `/|A∩B|`, `/|A∪B∪C|`).
 
-### `scripts/r_edger_limma_wrapper.py` — edgeR / limma-voom alternative DE routes
+### edgeR / limma-voom alternative DE routes
 
-Runs **edgeR** (QL-F) or **limma-voom** as an alternative to DESeq2, with the
-same workspace-isolation and parseable output as `r_deseq2_wrapper.py`. It is a
-**run-if-available** wrapper: it PREFLIGHTS that `Rscript` and the Bioconductor
-packages (edgeR + limma) are installed; if anything is missing it prints a clear
-install plan and **exits 0 without fabricating results**. Use it when the
-question names edgeR or limma-voom, or to cross-check a DESeq2 DEG count.
+Runs **edgeR** (QL-F) or **limma-voom** as an alternative to DESeq2. Prefer the
+**`RNAseq_edger_limma_de`** tool — one call returns the same three DEG counts as
+the DESeq2 tool (`sig_padj_only` / `sig_padjlfc` / `sig_strict`), optional
+per-gene logFC/FDR, and the ranked table on disk, so counts are directly
+comparable to `run_deseq2_analysis`:
+
+```
+RNAseq_edger_limma_de(counts_file=".../counts.csv", metadata_file=".../meta.csv",
+    design="~ condition", contrast="condition,treated,control", method="edger")
+# method="limma" for limma-voom; design="~ batch + condition" for covariates
+```
+
+Use it when the question names edgeR or limma-voom, or to cross-check a DESeq2
+DEG count. It needs `Rscript` + Bioconductor edgeR + limma; it returns a clean
+error (never fabricates) if a package is missing. The bundled
+`scripts/r_edger_limma_wrapper.py` is the equivalent CLI form (a run-if-available
+wrapper that prints an install plan and exits 0 when packages are absent):
 
 ```bash
-# edgeR QL-F (use --method limma for limma-voom; --design "~batch + condition" for covariates)
 python scripts/r_edger_limma_wrapper.py \
     --count-matrix <data-folder>/counts.csv \
     --sample-metadata <data-folder>/meta.csv \

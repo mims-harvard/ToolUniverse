@@ -109,6 +109,7 @@ STATIC_LAZY_REGISTRY = {
     "ROCAnalysisTool": "roc_analysis_tool",
     "NetworkProximityTool": "network_proximity_tool",
     "DnDsTool": "dn_ds_tool",
+    "EdgeRLimmaTool": "edger_limma_tool",
     "ClinicalTrialAESeverityTestTool": "clinical_trial_stats_tool",
     "CTISSearchTrialsTool": "ctis_tool",
     "CTISGetTrialTool": "ctis_tool",

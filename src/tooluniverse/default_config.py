@@ -172,6 +172,8 @@ default_tool_files = {
     ),
     # dN/dS (Ka/Ks) selection analysis between coding sequences (pure Python)
     "dn_ds": os.path.join(current_dir, "data", "dn_ds_tools.json"),
+    # edgeR / limma-voom differential expression (Rscript, local compute)
+    "edger_limma": os.path.join(current_dir, "data", "edger_limma_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),
