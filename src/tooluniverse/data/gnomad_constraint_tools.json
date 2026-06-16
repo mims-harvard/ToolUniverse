@@ -1,0 +1,147 @@
+[
+  {
+    "type": "GnomADConstraintTool",
+    "name": "gnomad_get_constraint",
+    "description": "Get gene-level constraint metrics from gnomAD (Genome Aggregation Database) for a single gene, given a gene symbol (e.g. BRCA1) OR an Ensembl gene ID (e.g. ENSG00000012048). Returns a flat, curated summary: pLI (probability of loss-of-function intolerance), oe_lof (observed/expected LoF ratio) with its lower/upper confidence bounds, LOEUF (= oe_lof_upper, the recommended constraint metric; lower = more constrained), missense Z-score (mis_z), synonymous Z-score (syn_z), and expected/observed LoF counts (exp_lof, obs_lof). The `dataset` parameter selects the constraint release: gnomad_r4 (default) and gnomad_r3 use GRCh38 (gnomAD v4 constraint); gnomad_r2_1 and exac use GRCh37. Note: gnomAD uses current HGNC symbols (e.g. GBA1, not GBA). No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol, e.g. 'BRCA1', 'TP53', 'GBA1'. Provide this OR gene_id."
+        },
+        "gene_id": {
+          "type": "string",
+          "description": "Ensembl gene ID, e.g. 'ENSG00000012048' (BRCA1). Provide this OR gene_symbol."
+        },
+        "dataset": {
+          "type": "string",
+          "description": "gnomAD dataset release selecting the constraint table. 'gnomad_r4' (default) and 'gnomad_r3' -> GRCh38 / gnomAD v4 constraint; 'gnomad_r2_1' and 'exac' -> GRCh37 / gnomAD v2.1.1 era constraint.",
+          "enum": [
+            "gnomad_r4",
+            "gnomad_r3",
+            "gnomad_r2_1",
+            "exac"
+          ],
+          "default": "gnomad_r4"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Successful response with curated gene constraint metrics.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["success"]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_symbol": {
+                  "type": ["string", "null"],
+                  "description": "Resolved HGNC gene symbol."
+                },
+                "gene_id": {
+                  "type": ["string", "null"],
+                  "description": "Ensembl gene ID."
+                },
+                "dataset": {
+                  "type": "string",
+                  "description": "Requested gnomAD dataset id."
+                },
+                "reference_genome": {
+                  "type": "string",
+                  "description": "Reference genome used for the constraint table (GRCh38 or GRCh37)."
+                },
+                "pLI": {
+                  "type": ["number", "null"],
+                  "description": "Probability of being loss-of-function intolerant (0-1); >=0.9 = highly constrained."
+                },
+                "oe_lof": {
+                  "type": ["number", "null"],
+                  "description": "Observed/expected loss-of-function ratio (point estimate)."
+                },
+                "oe_lof_lower": {
+                  "type": ["number", "null"],
+                  "description": "Lower bound of the oe_lof 90% confidence interval."
+                },
+                "oe_lof_upper": {
+                  "type": ["number", "null"],
+                  "description": "Upper bound of the oe_lof 90% confidence interval (= LOEUF)."
+                },
+                "loeuf": {
+                  "type": ["number", "null"],
+                  "description": "Loss-of-function observed/expected upper bound fraction (= oe_lof_upper); lower = more constrained."
+                },
+                "mis_z": {
+                  "type": ["number", "null"],
+                  "description": "Missense constraint Z-score (higher = more missense-constrained)."
+                },
+                "syn_z": {
+                  "type": ["number", "null"],
+                  "description": "Synonymous constraint Z-score (calibration metric; should be near 0)."
+                },
+                "exp_lof": {
+                  "type": ["number", "null"],
+                  "description": "Expected number of loss-of-function variants."
+                },
+                "obs_lof": {
+                  "type": ["number", "null"],
+                  "description": "Observed number of loss-of-function variants."
+                }
+              },
+              "required": ["gene_symbol", "gene_id", "dataset", "reference_genome"]
+            }
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["error"]
+            },
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message."
+            }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "gene_symbol": "BRCA1"
+      },
+      {
+        "gene_symbol": "TP53",
+        "dataset": "gnomad_r4"
+      },
+      {
+        "gene_id": "ENSG00000177628"
+      },
+      {
+        "gene_symbol": "GBA1"
+      }
+    ],
+    "tags": [
+      "gnomad",
+      "constraint",
+      "pLI",
+      "LOEUF",
+      "gene",
+      "genetics",
+      "loss-of-function",
+      "missense",
+      "tolerance",
+      "GRCh38"
+    ]
+  }
+]

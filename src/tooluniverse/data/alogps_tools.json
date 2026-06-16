@@ -1,0 +1,66 @@
+[
+  {
+    "name": "ALOGPS_predict_logp_logs",
+    "type": "ALOGPSTool",
+    "description": "Predict lipophilicity (logP, octanol/water partition coefficient) and aqueous solubility (logS, log10 of solubility in mol/L) of a small molecule directly from its SMILES string using the ALOGPS 2.1 model (VCCLAB Virtual Computational Chemistry Laboratory). ALOGPS uses associative neural networks (ASNN) trained on experimental logP and logS data and is a widely cited reference method, providing a fast, independent second-opinion estimate that complements RDKit descriptors, SwissADME, and ADMET-AI. Accepts a single SMILES via 'smiles' or up to 10 SMILES via 'smiles_list'. Requires a valid SMILES string (not a chemical name, CAS number, or InChI) and no API key. Each prediction takes about 1-2 seconds.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": ["string", "null"],
+          "description": "A single molecule as a SMILES string, e.g. 'CC(=O)Oc1ccccc1C(=O)O' (aspirin) or 'c1ccccc1' (benzene). Must be a valid SMILES; chemical names, CAS numbers, and InChI are not accepted. Mutually exclusive with 'smiles_list'."
+        },
+        "smiles_list": {
+          "type": ["array", "null"],
+          "items": {"type": "string"},
+          "description": "A list of up to 10 SMILES strings to predict in one call, e.g. ['CC(=O)Oc1ccccc1C(=O)O', 'c1ccccc1']. Mutually exclusive with 'smiles'."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "smiles": {"type": "string"},
+                  "logP": {"type": ["number", "null"]},
+                  "logS": {"type": ["number", "null"]},
+                  "error": {"type": ["string", "null"]}
+                },
+                "required": ["smiles"]
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"},
+            "retryable": {"type": "boolean"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
+      {"smiles": "c1ccccc1"},
+      {"smiles_list": ["CC(C)Cc1ccc(cc1)C(C)C(=O)O", "OCC(O)CO"]}
+    ],
+    "label": ["ALOGPS", "VCCLAB", "Chemistry", "logP", "logS", "Solubility", "Lipophilicity", "Property Prediction"],
+    "metadata": {
+      "tags": ["chemistry", "property prediction", "logP", "logS", "lipophilicity", "aqueous solubility", "ASNN", "machine learning", "small molecule", "SMILES"],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  }
+]

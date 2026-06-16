@@ -262,7 +262,8 @@
     "purpose": "Download Hugging Face models and datasets used by structure/sequence tools.",
     "without": "Public models work without it; needed for gated or private repos.",
     "used_by": [
-      "embedding_tools.json"
+      "embedding_tools.json",
+      "huggingface_inference_tools.json"
     ]
   },
   {

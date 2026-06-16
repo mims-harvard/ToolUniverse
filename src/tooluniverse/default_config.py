@@ -174,6 +174,22 @@ default_tool_files = {
     "dn_ds": os.path.join(current_dir, "data", "dn_ds_tools.json"),
     # edgeR / limma-voom differential expression (Rscript, local compute)
     "edger_limma": os.path.join(current_dir, "data", "edger_limma_tools.json"),
+    # gnomAD gene constraint (pLI / LOEUF / mis_z) via GraphQL
+    "gnomad_constraint": os.path.join(
+        current_dir, "data", "gnomad_constraint_tools.json"
+    ),
+    # HuggingFace Inference API (hosted ML models: classify / embed / fill-mask)
+    "huggingface_inference": os.path.join(
+        current_dir, "data", "huggingface_inference_tools.json"
+    ),
+    # IUPred3 protein disorder prediction (sequence ML)
+    "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
+    # ALOGPS 2.1 logP / logS prediction (chemistry ML)
+    "alogps": os.path.join(current_dir, "data", "alogps_tools.json"),
+    # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)
+    "vep_pathogenicity": os.path.join(
+        current_dir, "data", "vep_pathogenicity_tools.json"
+    ),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),
