@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Network_proximity",
+    "type": "NetworkProximityTool",
+    "description": "Network proximity between two node sets (e.g. drug targets vs disease genes) on a user-supplied graph, via the Guney/Barabasi (2016) closest-distance measure with a degree-matched random Z-score. Give the network as inline 'edges' pairs or a 2-column 'edgelist_path', plus 'targets' and 'disease_genes' node lists. Returns closest distance, Z-score, empirical p, and random reference stats. Pure networkx+numpy, no network call or API key.",
+    "parameter": {
+      "type": "object",
+      "required": ["targets", "disease_genes"],
+      "properties": {
+        "edges": {"type": ["array", "null"], "items": {"type": "array", "items": {"type": "string"}}, "description": "Network as inline [source, target] node-id pairs (undirected). Use for small/medium graphs."},
+        "edgelist_path": {"type": ["string", "null"], "description": "Alternative to inline: path to a 2-column edgelist (.tsv/.txt = tab, else comma)"},
+        "targets": {"type": "array", "items": {"type": "string"}, "description": "First node set, e.g. drug-target gene IDs"},
+        "disease_genes": {"type": "array", "items": {"type": "string"}, "description": "Second node set, e.g. disease-module gene IDs"},
+        "n_rand": {"type": ["integer", "null"], "description": "Degree-matched randomizations for the null (default 1000)"},
+        "seed": {"type": ["integer", "null"], "description": "Random seed for reproducibility (default 42)"}
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "oneOf": [
+        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
+        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+      ]
+    },
+    "test_examples": [
+      {"edges": [["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"], ["A", "C"], ["B", "D"], ["E", "F"], ["F", "G"], ["A", "F"], ["C", "G"]], "targets": ["A", "B"], "disease_genes": ["D", "E"], "n_rand": 200, "seed": 1}
+    ]
+  }
+]

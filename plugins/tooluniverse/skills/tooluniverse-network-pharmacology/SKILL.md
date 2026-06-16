@@ -111,8 +111,9 @@ Evidence grades: T1 = human clinical proof; T2 = functional experimental evidenc
 - Hub identification: which targets are most connected in the drug-disease subnetwork
 - Shortest paths between drug targets and disease genes: how many hops, through which intermediaries
 - Network proximity Z-score: are drug targets closer to disease module than random expectation
+  - Use the **`Network_proximity`** tool — it computes the Guney/Barabasi (2016) closest-distance proximity + degree-matched Z-score deterministically from a graph you supply (inline `edges` or an `edgelist_path`) plus `targets` and `disease_genes`. Returns `closest_distance`, `z_score`, `p_value`. Build the network first (Phase 2: STRING/IntAct edges), then pass its edges in. (The skill's `scripts/network_proximity.py`, which auto-downloads STRING, is the CLI equivalent when you don't already have the edges.)
 - Functional enrichment to identify shared biological processes
-- Tools: `STRING_functional_enrichment`, `STRING_ppi_enrichment`, `enrichr_gene_enrichment_analysis`, `ReactomeAnalysis_pathway_enrichment`
+- Tools: `Network_proximity`, `STRING_functional_enrichment`, `STRING_ppi_enrichment`, `enrichr_gene_enrichment_analysis`, `ReactomeAnalysis_pathway_enrichment`
 
 ### Phase 4: Drug Repurposing Predictions
 - Identify drugs targeting disease genes (disease-to-compound mode)
