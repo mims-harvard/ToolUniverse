@@ -108,6 +108,7 @@ STATIC_LAZY_REGISTRY = {
     "VCFStatsTool": "vcf_stats_tool",
     "ROCAnalysisTool": "roc_analysis_tool",
     "NetworkProximityTool": "network_proximity_tool",
+    "DnDsTool": "dn_ds_tool",
     "ClinicalTrialAESeverityTestTool": "clinical_trial_stats_tool",
     "CTISSearchTrialsTool": "ctis_tool",
     "CTISGetTrialTool": "ctis_tool",

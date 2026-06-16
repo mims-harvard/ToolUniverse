@@ -43,12 +43,14 @@ Understanding conservation requires distinguishing between types of evolutionary
 
 **Low conservation in one lineage has two possible explanations: relaxed selection or positive selection.** Use the dN/dS ratio (nonsynonymous to synonymous substitution rate) to distinguish them. A dN/dS ratio near 1 suggests neutral evolution — the gene is no longer under purifying selection (relaxed constraint, possibly reflecting loss of function in that lineage). A dN/dS ratio > 1 indicates positive selection — the gene is diverging faster than neutral expectation, often because it is adapting to a new environment or function. A dN/dS ratio << 1 is the signature of purifying selection (functional constraint). When a vertebrate gene shows high divergence in a specific branch of the tree, ask which explanation applies before concluding that function is lost.
 
-**Computing dN/dS** (no TU tool does this — use the bundled script). The data path: `ensembl_get_homology(...)` → the 1:1 ortholog IDs → `EnsemblSeq_get_id_sequence(id=..., type="cds")` for each → codon-align the two CDS (orthologous CDS are usually directly alignable; for divergent pairs align the protein and back-translate) → run `scripts/dnds.py`:
+**Computing dN/dS.** The data path: `ensembl_get_homology(...)` → the 1:1 ortholog IDs → `EnsemblSeq_get_id_sequence(id=..., type="cds")` for each → codon-align the two CDS (orthologous CDS are usually directly alignable; for divergent pairs align the protein and back-translate) → compute dN/dS. Prefer the **`Sequence_dn_ds`** tool — one call returns structured `dN`, `dS`, `dN_dS`, per-site counts, and an interpretation:
 
-```bash
-python scripts/dnds.py human_CDS.fasta mouse_CDS.fasta   # or --seq1 ATG... --seq2 ATG...
 ```
-It implements the Nei-Gojobori estimator with Jukes-Cantor correction (dN validated against Biopython NG86) and returns dN, dS, dN/dS, and an interpretation (>1 positive, ~1 neutral/relaxed, <<1 purifying). `dN/dS` is `null` when dS is 0 or uncorrectable (too few/too many substitutions) — do not over-interpret a single high-divergence pair without enough synonymous sites.
+Sequence_dn_ds(seq1="ATG...", seq2="ATG...")        # inline codon-aligned CDS
+Sequence_dn_ds(fasta1_path="human.fa", fasta2_path="mouse.fa")
+```
+
+It implements the Nei-Gojobori (1986) estimator with Jukes-Cantor correction (the bundled `scripts/dnds.py` is the identical CLI form, validated against Biopython NG86). `dN_dS` is `null` when dS is 0 or uncorrectable (too few/too many substitutions) — do not over-interpret a single high-divergence pair without enough synonymous sites.
 
 **Ortholog relationship type shapes interpretation.** A 1:1 ortholog (one gene in human, one in mouse) is the highest-confidence functional equivalent — it has not been duplicated in either lineage, so it most likely performs the same ancestral role. A 1:many relationship (one gene in human, multiple in mouse) means the target species has duplicated the gene; the copies may have subfunctionalized (each copy performs a subset of the original roles) or neofunctionalized (one copy gained a new role). Do not assume both copies retain full ancestral function. A many:many relationship reflects complex duplication history in both species and requires analyzing each paralog pair individually.
 
