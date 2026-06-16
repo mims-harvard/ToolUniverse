@@ -1,21 +1,25 @@
 """
-Network proximity between two node sets for ToolUniverse.
+Network proximity / separation between two node sets for ToolUniverse.
 
-Local-compute, deterministic implementation of the Guney/Barabasi (2016)
-closest-distance network proximity and its degree-matched random Z-score — the
-core of network-pharmacology "is this drug's targets close to the disease
-module?" analyses. Pure networkx + NumPy (both core deps); no network call, no
-API key.
+Local-compute, deterministic graph distance between two node sets, with the
+standard family of measures from Guney/Barabasi (2016) and Menche (2015) and a
+degree-matched random Z-score. The canonical use is network pharmacology ("are a
+drug's targets close to a disease module?"), but the computation is
+domain-agnostic — it works for any two node sets on any graph (two pathways, two
+marker-gene sets, two GO terms, …).
 
-It is general by construction: the caller supplies the network (inline edges or
-a 2-column edgelist file) and the two node sets, so it works for any
-interactome / metabolic / custom graph — it does not bake in a particular
-database or species.
+Measures (all on shortest-path lengths in the supplied graph):
+  closest     d_c(A,B) = mean over a of  min over b  d(a, b)               (Guney 2016)
+  shortest    d_s(A,B) = mean over reachable (a,b) pairs of  d(a, b)
+  separation  s_AB     = d_AB - (d_AA + d_BB)/2                            (Menche 2015)
+              where d_XY is the symmetric closest distance between sets.
+A low value (and low empirical p vs a degree-matched null) means the two sets sit
+closer / more overlapping than chance. For `separation`, s_AB < 0 ⇒ overlapping
+modules, s_AB > 0 ⇒ topologically separated.
 
-  d_c(S, T) = mean over s in S of  min over t in T of  shortest_path(s, t)
-  Z = (d_c - mean(d_c_random)) / sd(d_c_random)
-where the random reference draws degree-matched node sets of the same sizes.
-A negative Z (and low empirical p) means S sits closer to T than chance.
+Pure networkx + NumPy (both core deps); no network call, no API key. The caller
+supplies the graph (inline `edges` or a 2-column `edgelist_path`), so no
+particular interactome or species is baked in.
 """
 
 import csv as _csv
@@ -28,6 +32,7 @@ from .tool_registry import register_tool
 
 _DEFAULT_N_RAND = 1000
 _DEFAULT_SEED = 42
+_MEASURES = ("closest", "shortest", "separation")
 
 
 def _err(msg: str) -> Dict[str, Any]:
@@ -35,7 +40,7 @@ def _err(msg: str) -> Dict[str, Any]:
 
 
 def _ok(data: Dict[str, Any], **metadata) -> Dict[str, Any]:
-    meta = {"engine": "networkx", "method": "Guney2016_closest_distance"}
+    meta = {"engine": "networkx"}
     meta.update(metadata)
     return {"status": "success", "data": data, "metadata": meta}
 
@@ -67,8 +72,66 @@ def _load_edges(args: Dict[str, Any]) -> Any:
     return out
 
 
-def _degree_bins(graph) -> Dict[Any, List[Any]]:
-    """Map each node to the list of nodes sharing its degree (for degree match)."""
+def _lengths(graph, nx, node, cache) -> Dict[Any, int]:
+    """Shortest-path lengths from `node` to all reachable nodes (memoized)."""
+    if node not in cache:
+        cache[node] = nx.single_source_shortest_path_length(graph, node)
+    return cache[node]
+
+
+def _closest_to_set(graph, nx, node, node_set, cache) -> Optional[int]:
+    """Min shortest-path length from `node` to any member of `node_set`."""
+    lengths = _lengths(graph, nx, node, cache)
+    reachable = [lengths[t] for t in node_set if t in lengths]
+    return min(reachable) if reachable else None
+
+
+def _within_closest(graph, nx, nodes, cache) -> float:
+    """Mean over nodes of the distance to the nearest OTHER node in the set."""
+    s = set(nodes)
+    vals = []
+    for n in nodes:
+        lengths = _lengths(graph, nx, n, cache)
+        reachable = [lengths[o] for o in s if o != n and o in lengths]
+        if reachable:
+            vals.append(min(reachable))
+    return sum(vals) / len(vals) if vals else 0.0
+
+
+def _closest_distances(graph, nx, src_nodes, dst_set, cache) -> List[int]:
+    """Per-source closest distance into `dst_set`, skipping unreachable sources."""
+    return [
+        d
+        for n in src_nodes
+        if (d := _closest_to_set(graph, nx, n, dst_set, cache)) is not None
+    ]
+
+
+def _measure(graph, nx, a, b, kind, cache) -> Optional[float]:
+    """Compute the requested set-distance measure, or None if undefined/disjoint."""
+    aset, bset = set(a), set(b)
+    if kind == "closest":
+        vals = _closest_distances(graph, nx, a, bset, cache)
+        return sum(vals) / len(vals) if vals else None
+    if kind == "shortest":
+        pair = []
+        for n in a:
+            lengths = _lengths(graph, nx, n, cache)
+            pair += [lengths[t] for t in bset if t in lengths]
+        return sum(pair) / len(pair) if pair else None
+    if kind == "separation":
+        ab = _closest_distances(graph, nx, a, bset, cache)
+        ba = _closest_distances(graph, nx, b, aset, cache)
+        if not ab or not ba:
+            return None
+        d_ab = (sum(ab) + sum(ba)) / (len(ab) + len(ba))
+        d_aa = _within_closest(graph, nx, a, cache)
+        d_bb = _within_closest(graph, nx, b, cache)
+        return d_ab - (d_aa + d_bb) / 2.0
+    return None
+
+
+def _degree_bins(graph) -> Dict[int, List[Any]]:
     bins: Dict[int, List[Any]] = {}
     for node, deg in graph.degree():
         bins.setdefault(deg, []).append(node)
@@ -80,25 +143,9 @@ def _degree_matched(ref_nodes, bins, graph, rng) -> List[Any]:
     return [rng.choice(bins[graph.degree(n)]) for n in ref_nodes]
 
 
-def _closest_distance(graph, source_set, target_set, nx, cache) -> Optional[float]:
-    """Mean over sources of the min shortest-path to any target. None if disjoint."""
-    dists = []
-    target_set = set(target_set)
-    for s in source_set:
-        if s not in cache:
-            cache[s] = nx.single_source_shortest_path_length(graph, s)
-        lengths = cache[s]
-        reachable = [lengths[t] for t in target_set if t in lengths]
-        if reachable:
-            dists.append(min(reachable))
-    if not dists:
-        return None
-    return sum(dists) / len(dists)
-
-
 @register_tool("NetworkProximityTool")
 class NetworkProximityTool(BaseTool):
-    """Closest-distance network proximity + degree-matched Z-score (Guney 2016)."""
+    """Network proximity / separation between two node sets (Guney/Menche)."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
@@ -107,35 +154,43 @@ class NetworkProximityTool(BaseTool):
         except Exception:  # pragma: no cover - core deps, defensive
             return _err("networkx/numpy not available (both are core dependencies).")
 
+        measure = arguments.get("measure") or "closest"
+        if measure not in _MEASURES:
+            return _err(f"'measure' must be one of {_MEASURES}, got {measure!r}.")
+
+        # Domain-neutral set_a/set_b, with drug-pharmacology aliases.
+        a_in = arguments.get("set_a") or arguments.get("targets")
+        b_in = arguments.get("set_b") or arguments.get("disease_genes")
+        if not a_in or not b_in:
+            return _err(
+                "Provide two non-empty node sets: 'set_a'/'set_b' "
+                "(or the aliases 'targets'/'disease_genes')."
+            )
+        set_a = [str(x) for x in a_in]
+        set_b = [str(x) for x in b_in]
+
         edges = _load_edges(arguments)
         if isinstance(edges, dict):
             return edges
-        targets = arguments.get("targets")
-        disease = arguments.get("disease_genes")
-        if not targets or not disease:
-            return _err("Provide non-empty 'targets' and 'disease_genes' node lists.")
-        targets = [str(x) for x in targets]
-        disease = [str(x) for x in disease]
-
         graph = nx.Graph()
         graph.add_edges_from(edges)
         if graph.number_of_nodes() == 0:
             return _err("network has no nodes/edges.")
 
-        src = [n for n in targets if n in graph]
-        tgt = [n for n in disease if n in graph]
-        missing_targets = [n for n in targets if n not in graph]
-        missing_disease = [n for n in disease if n not in graph]
-        if not src or not tgt:
+        a = [n for n in set_a if n in graph]
+        b = [n for n in set_b if n in graph]
+        missing_a = [n for n in set_a if n not in graph]
+        missing_b = [n for n in set_b if n not in graph]
+        if not a or not b:
             return _err(
-                "no 'targets' or no 'disease_genes' are present in the network "
-                f"(targets in net: {len(src)}, disease in net: {len(tgt)})."
+                f"set_a or set_b has no nodes in the network "
+                f"(set_a in net: {len(a)}, set_b in net: {len(b)})."
             )
 
         cache: Dict[Any, Dict[Any, int]] = {}
-        d_c = _closest_distance(graph, src, tgt, nx, cache)
-        if d_c is None:
-            return _err("targets and disease_genes are in disconnected components.")
+        observed = _measure(graph, nx, a, b, measure, cache)
+        if observed is None:
+            return _err("set_a and set_b are in disconnected components.")
 
         try:
             n_rand = int(arguments.get("n_rand") or _DEFAULT_N_RAND)
@@ -148,32 +203,34 @@ class NetworkProximityTool(BaseTool):
 
         randoms = []
         for _ in range(n_rand):
-            rs = _degree_matched(src, bins, graph, rng)
-            rt = _degree_matched(tgt, bins, graph, rng)
-            dr = _closest_distance(graph, rs, rt, nx, {})
+            ra = _degree_matched(a, bins, graph, rng)
+            rb = _degree_matched(b, bins, graph, rng)
+            dr = _measure(graph, nx, ra, rb, measure, {})
             if dr is not None:
                 randoms.append(dr)
 
         data: Dict[str, Any] = {
-            "closest_distance": round(float(d_c), 6),
-            "n_targets_in_network": len(src),
-            "n_disease_in_network": len(tgt),
+            "measure": measure,
+            "value": round(float(observed), 6),
+            "n_set_a_in_network": len(a),
+            "n_set_b_in_network": len(b),
             "nodes_in_network": graph.number_of_nodes(),
-            "missing_targets": missing_targets or None,
-            "missing_disease_genes": missing_disease or None,
+            "missing_set_a": missing_a or None,
+            "missing_set_b": missing_b or None,
         }
         if len(randoms) >= 2:
             arr = np.asarray(randoms, dtype=float)
             mu, sd = float(arr.mean()), float(arr.std(ddof=0))
-            z = round((d_c - mu) / sd, 6) if sd > 0 else None
-            p = float((arr <= d_c).sum()) / len(arr)  # one-sided: closer than chance
+            p = float((arr <= observed).sum()) / len(
+                arr
+            )  # one-sided: closer than chance
             data.update(
                 {
-                    "z_score": z,
+                    "z_score": round((observed - mu) / sd, 6) if sd > 0 else None,
                     "p_value": round(p, 6),
                     "random_mean": round(mu, 6),
                     "random_std": round(sd, 6),
                     "n_randomizations": len(randoms),
                 }
             )
-        return _ok(data)
+        return _ok(data, method=f"{measure}_distance")
