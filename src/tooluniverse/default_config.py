@@ -198,6 +198,12 @@ default_tool_files = {
     "replicate": os.path.join(current_dir, "data", "replicate_tools.json"),
     # DTU protein predictors (DeepTMHMM / SignalP via biolib)
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
+    # Cellpose deep-learning cell/nucleus segmentation (local, cellpose pkg)
+    "cellpose": os.path.join(current_dir, "data", "cellpose_tools.json"),
+    # Therapeutics Data Commons benchmark dataset retrieval (PyTDC)
+    "tdc_dataset": os.path.join(current_dir, "data", "tdc_dataset_tools.json"),
+    # ENCODE SCREEN cCRE registry (candidate cis-regulatory elements, GraphQL)
+    "screen_ccre": os.path.join(current_dir, "data", "screen_ccre_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),
