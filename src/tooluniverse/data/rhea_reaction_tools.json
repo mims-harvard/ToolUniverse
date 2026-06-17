@@ -1,0 +1,283 @@
+[
+  {
+    "type": "RheaReactionTool",
+    "name": "Rhea_get_reaction",
+    "description": "Fetch the full structured detail of a single Rhea biochemical reaction by its Rhea identifier. Rhea (SIB Swiss Institute of Bioinformatics) is an expert-curated knowledgebase of chemical and transport reactions, all linked to ChEBI compounds and EC numbers. Given a Rhea id (e.g. '10280' or 'RHEA:10280'), returns the chemical equation, the parsed ChEBI participants split into reactants and products (each with ChEBI id + compound name), the list of EC enzyme numbers, the count of curated enzymes, PubMed reference IDs, KEGG and MetaCyc cross-references, and the curation status plus balanced and transport flags. Use this to retrieve mechanistic detail for one reaction after finding it with Rhea_search_reactions / Rhea_search_by_ec / Rhea_search_by_chebi. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rhea_id": {
+          "type": "string",
+          "description": "Rhea reaction identifier, numeric or RHEA-prefixed. Examples: '10280' (caffeine synthase), 'RHEA:13065' (ATP hydrolysis), '29467' (K+/H+ antiport transport reaction)."
+        }
+      },
+      "required": [
+        "rhea_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_reaction"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Success: full structured reaction record.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "rhea_id": {
+                  "type": "string"
+                },
+                "equation": {
+                  "type": "string"
+                },
+                "status_curation": {
+                  "type": "string"
+                },
+                "balanced": {
+                  "type": "boolean"
+                },
+                "transport": {
+                  "type": "boolean"
+                },
+                "comment": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "reactants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "chebi_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "chebi_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "ec_numbers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "enzyme_count": {
+                  "type": "integer"
+                },
+                "pubmed_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "kegg_xrefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "metacyc_xrefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "rhea_id",
+                "equation",
+                "reactants",
+                "products",
+                "ec_numbers"
+              ]
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error: reaction not found or invalid input.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "rhea_id": "10280"
+      },
+      {
+        "rhea_id": "RHEA:13065"
+      },
+      {
+        "rhea_id": "29467"
+      }
+    ]
+  },
+  {
+    "type": "RheaReactionTool",
+    "name": "Rhea_get_reaction_participants",
+    "description": "Return just the structured ChEBI participants (reactants and products) of a single Rhea biochemical reaction, given its Rhea identifier (e.g. '16505' or 'RHEA:16505'). Each participant carries its ChEBI compound id and name. Lightweight alternative to Rhea_get_reaction when only the substrate/product compound lists are needed, for example when building or annotating a metabolic network. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "rhea_id": {
+          "type": "string",
+          "description": "Rhea reaction identifier, numeric or RHEA-prefixed. Examples: '16505' (chorismate -> 4-hydroxybenzoate + pyruvate), 'RHEA:10280'."
+        }
+      },
+      "required": [
+        "rhea_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_participants"
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Success: reactant and product ChEBI participant lists.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "success"
+              ]
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "rhea_id": {
+                  "type": "string"
+                },
+                "equation": {
+                  "type": "string"
+                },
+                "reactants": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "chebi_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "chebi_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "n_reactants": {
+                  "type": "integer"
+                },
+                "n_products": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "rhea_id",
+                "reactants",
+                "products"
+              ]
+            },
+            "metadata": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error: reaction not found or invalid input.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "error"
+              ]
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "rhea_id": "16505"
+      },
+      {
+        "rhea_id": "RHEA:10280"
+      }
+    ]
+  }
+]

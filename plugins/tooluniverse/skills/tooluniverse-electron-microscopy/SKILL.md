@@ -267,6 +267,22 @@ Assemble findings into an actionable report:
 - **EMDB entry without PDB model**: Common for lower-resolution maps. Note the gap; suggest AlphaFold for approximate modeling
 - **No EMPIAR data**: Raw data deposition is newer and not universal. The processed map in EMDB may be the only available data
 - **Large complexes**: Ribosomes, viruses, etc. may have hundreds of EMDB entries. Use resolution filters to narrow results
+- **Light-microscopy / phenotypic-screen question (not EM)**: If the user actually wants published light-microscopy or high-content imaging data (e.g. "which imaging studies knocked down gene X?", "find HeLa images stained for an antibody", "what phenotypes were screened with compound Y?"), this EM pipeline does not apply. Use the Image Data Resource (IDR) search tools instead (see below).
+
+---
+
+## Related Resource: IDR (light microscopy & high-content screening)
+
+IDR (Image Data Resource, https://idr.openmicroscopy.org) is the reference repository for *light* microscopy and high-content screening data — distinct from the EM databases above. Use it to find published imaging studies and images by curated metadata across all ~140 studies at once:
+
+- `IDR_search_studies` — which screens/projects involve a gene/organism/compound/phenotype. Returns containing screens and projects with IDR container IDs.
+  - Example: `tu.run_tool("IDR_search_studies", {"key": "Gene Symbol", "value": "TP53"})` -> 12 studies (idr0043 Human Protein Atlas, idr0135 melanocytes, ...).
+  - Example: `tu.run_tool("IDR_search_studies", {"key": "Phenotype", "value": "spindly"})` -> 4 RhoGTPase screens (idr0028).
+- `IDR_search_images` — individual images matching metadata, each with IDR image ID, webclient URL, and key/value pairs (gene, cell line, antibody, organism).
+- `IDR_list_metadata_keys` — discover the searchable keys (Gene Symbol, Organism, Compound Name, Cell Line, Phenotype, Antibody Name, Pathology, ...).
+- `IDR_list_values_for_key` — enumerate values + image counts for a key, e.g. all organisms or all screened compounds.
+
+Notes: value matching is case-sensitive on the stored capitalization (organism must be `Homo sapiens`, not `homo sapiens`); use `IDR_list_values_for_key` to find valid values. To drill from a returned IDR study container into its datasets/images, use the existing `IDR_get_study` / `IDR_get_study_datasets` / `IDR_list_dataset_images` / `IDR_get_image_map_annotations` tools.
 
 ---
 

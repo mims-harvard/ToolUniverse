@@ -52,6 +52,9 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 | `jaspar_search_matrices` | Find TF binding motifs by TF name or organism | `name`, `species`, `collection`, `tax_id` |
 | `jaspar_get_matrix` | Get full PWM/PFM for a specific JASPAR matrix | `matrix_id` (e.g., "MA0139.1") |
 | `JASPAR_get_transcription_factors` | List all TF matrices (paginated) | `page`, `page_size` |
+| `UniBind_search_datasets` | Find curated, experimentally-derived direct TF-DNA binding-site datasets | `tf_name`, `species`, `cell_line`, `collection` (Robust/Permissive) |
+| `UniBind_get_dataset` | Get binding-site detail for one UniBind dataset (JASPAR motifs, score/CentriMo thresholds, BED/FASTA URLs) | `dataset_id` |
+| `UniBind_list_tfs` | List/filter TFs profiled in UniBind | `search` (substring), `limit` |
 | `ENCODE_search_experiments` | Search ENCODE ChIP-seq/ATAC-seq/WGBS experiments | `assay_title`, `target`, `biosample_term_name`, `limit` |
 | `ENCODE_search_histone_experiments` | Search histone mark ChIP-seq specifically | `histone_mark`, `biosample_term_name`, `limit` |
 | `ENCODE_search_chromatin_accessibility` | Search ATAC-seq/DNase-seq experiments | `biosample_term_name`, `limit` |
@@ -92,6 +95,35 @@ When asked about TF binding motifs or what TFs might regulate a gene:
 - `name`: TF gene symbol
 - `sequence_logo`: URL to binding site logo PNG/SVG
 - `collection`: Which JASPAR collection
+
+### Phase 1b: Direct TF-DNA Binding Sites (UniBind)
+
+JASPAR gives the motif *model*; UniBind gives curated, experimentally-derived
+*direct* binding sites (motif-anchored, base-pair resolution, per ChIP-seq
+experiment via the DAMO/ChIP-eat pipeline). Use it to find which experiments
+support binding for a TF and to get downloadable BED/FASTA of the sites — a
+middle layer between JASPAR motifs and raw ChIP-seq peaks.
+
+```
+# Find curated binding-site datasets for a TF (filters compose)
+tu.run_tool("UniBind_search_datasets",
+            {"tf_name": "CTCF", "species": "Homo sapiens",
+             "collection": "Robust", "page_size": 5})
+#   -> list of {tf_name, total_peaks, dataset_id, dataset_url}
+
+# Full binding-site detail for one dataset
+tu.run_tool("UniBind_get_dataset",
+            {"dataset_id": "EXP030726.neural_stem_cells.SMAD3"})
+#   -> tf_name, cell_line, jaspar_id[], tfbs_models[] each with
+#      jaspar_id, total_tfbs, score_threshold, adj_centrimo_pvalue,
+#      bed_url, fasta_url, summary_plot_url
+
+# Discover valid tf_name values (search is client-side substring)
+tu.run_tool("UniBind_list_tfs", {"search": "SMAD"})   # -> [SMAD2, SMAD3, SMAD4]
+```
+
+Notes: `species` is the scientific name ('Homo sapiens', not a taxid);
+`collection` is 'Robust' (high-confidence) or 'Permissive'; public, no API key.
 
 ### Phase 2: ENCODE Experiment Search
 

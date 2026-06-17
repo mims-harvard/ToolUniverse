@@ -57,6 +57,11 @@ When a question involves identifying or comparing species:
 | `IUCN_get_conservation_status` | **Red List conservation status** (CR/EN/VU/NT/LC) by scientific name — the authoritative extinction-risk source (needs a free IUCN_API_KEY) |
 | `GBIF_search_species` | Species taxonomy, occurrence data, distribution |
 | `GBIF_search_occurrences` | Where has a species been observed? |
+| `GBIF_get_taxon_parents` | Walk UP the GBIF Backbone tree — ranked ancestor lineage (kingdom→genus) for a taxonKey |
+| `GBIF_get_taxon_children` | Walk DOWN the tree — direct child taxa (e.g. species in a genus) for a taxonKey |
+| `GBIF_get_taxon_synonyms` | Alternative / historical scientific names for an accepted taxonKey |
+| `GBIF_get_vernacular_names` | Common names (with language code) for a taxonKey; optional `language` filter |
+| `GBIF_parse_name` | Parse messy/authored name strings into canonical name + genus/epithet/author/year |
 | `iDigBio_search_records` | Search 130M+ digitized museum/herbarium specimen records (Darwin Core) by `genus`/`scientificname`/locality — use to complement GBIF with physical-specimen provenance |
 | `iDigBio_get_record` | Full Darwin Core detail for one specimen by `uuid` (from `iDigBio_search_records`) |
 | `WoRMS_search_species` | Marine species taxonomy |
@@ -64,6 +69,24 @@ When a question involves identifying or comparing species:
 | `NCBIDatasets_get_taxonomy` | NCBI taxonomy lookup |
 | `PubMed_search_articles` | Literature on ecology topics |
 | `EuropePMC_search_articles` | European literature including ecology |
+
+## Navigating the GBIF taxonomic tree
+
+Resolve a name to a GBIF `usageKey` once, then navigate the Backbone tree:
+
+```python
+key = tu.run_tool("GBIF_match_name", {"name": "Panthera leo"})["data"]["usageKey"]  # 5219404
+tu.run_tool("GBIF_get_taxon_parents", {"taxon_key": key})        # Animalia→...→Felidae→Panthera
+tu.run_tool("GBIF_get_taxon_synonyms", {"taxon_key": key})       # Felis leo Linnaeus, 1758, ...
+tu.run_tool("GBIF_get_vernacular_names", {"taxon_key": key, "language": "eng"})  # Lion, African Lion
+# Walk down from a genus key (Panthera = 2435194) to its species:
+tu.run_tool("GBIF_get_taxon_children", {"taxon_key": 2435194, "limit": 8})
+# Normalize an authored name string without a key:
+tu.run_tool("GBIF_parse_name", {"name": "Quercus robur L."})     # canonicalName 'Quercus robur'
+```
+
+All five tools hit the public GBIF API with no key. Get the starting `taxon_key`
+from `GBIF_match_name` or `GBIF_search_species`.
 
 ## LOOK UP DON'T GUESS
 

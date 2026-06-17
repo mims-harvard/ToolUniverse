@@ -1,0 +1,313 @@
+[
+  {
+    "name": "GBIF_get_taxon_children",
+    "description": "List the direct child taxa of a GBIF Backbone taxon. Given a taxonKey (e.g. a genus), returns its immediate children one rank down (e.g. the species in that genus), with key, scientificName, rank and taxonomicStatus for each. Use to walk DOWN the taxonomic tree. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxon_key=2435194 (genus Panthera) -> Panthera leo (5219404), Panthera onca (5219426), Panthera tigris, etc. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_key": {
+          "type": "integer",
+          "description": "GBIF Backbone usageKey of the parent taxon, e.g. 2435194 (genus Panthera). Obtain from GBIF_match_name or GBIF_search_species."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of child taxa to return (1-100, default 20).",
+          "default": 20
+        }
+      },
+      "required": ["taxon_key"]
+    },
+    "fields": {
+      "operation": "get_children",
+      "base_url": "https://api.gbif.org/v1"
+    },
+    "type": "GBIFTaxonomyTool",
+    "test_examples": [
+      {"taxon_key": 2435194, "limit": 8},
+      {"taxon_key": 2877951, "limit": 5}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Child taxa of the given GBIF taxon",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {"type": ["integer", "null"]},
+                  "scientificName": {"type": ["string", "null"]},
+                  "canonicalName": {"type": ["string", "null"]},
+                  "rank": {"type": ["string", "null"]},
+                  "taxonomicStatus": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GBIF_get_taxon_parents",
+    "description": "Get the full ranked ancestor lineage of a GBIF Backbone taxon. Given a taxonKey, returns the ordered list of higher taxa from KINGDOM down to the immediate parent (kingdom, phylum, class, order, family, genus...), each with key, rank and scientificName. Use to walk UP the taxonomic tree / build a classification path. Returns a root-first array. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxon_key=5219404 (Panthera leo) -> Animalia, Chordata, Mammalia, Carnivora, Felidae, Panthera. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_key": {
+          "type": "integer",
+          "description": "GBIF Backbone usageKey of the taxon, e.g. 5219404 (Panthera leo). Obtain from GBIF_match_name or GBIF_search_species."
+        }
+      },
+      "required": ["taxon_key"]
+    },
+    "fields": {
+      "operation": "get_parents",
+      "base_url": "https://api.gbif.org/v1"
+    },
+    "type": "GBIFTaxonomyTool",
+    "test_examples": [
+      {"taxon_key": 5219404},
+      {"taxon_key": 2878688}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Ranked ancestor lineage (root-first)",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {"type": ["integer", "null"]},
+                  "scientificName": {"type": ["string", "null"]},
+                  "rank": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GBIF_get_taxon_synonyms",
+    "description": "List the taxonomic synonyms (unaccepted names that point to an accepted taxon) of a GBIF Backbone taxon. Given the taxonKey of an accepted name, returns its synonym name-usages with key, scientificName and taxonomicStatus. Use to find alternative / historical scientific names for a species. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxon_key=5219404 (Panthera leo) -> Felis leo Linnaeus 1758, Felis imperialis Leidy 1873. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_key": {
+          "type": "integer",
+          "description": "GBIF Backbone usageKey of the accepted taxon, e.g. 5219404 (Panthera leo). Obtain from GBIF_match_name or GBIF_search_species."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of synonyms to return (1-100, default 20).",
+          "default": 20
+        }
+      },
+      "required": ["taxon_key"]
+    },
+    "fields": {
+      "operation": "get_synonyms",
+      "base_url": "https://api.gbif.org/v1"
+    },
+    "type": "GBIFTaxonomyTool",
+    "test_examples": [
+      {"taxon_key": 5219404, "limit": 5},
+      {"taxon_key": 2878688, "limit": 5}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Synonym name-usages for the given taxon",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": {"type": ["integer", "null"]},
+                  "scientificName": {"type": ["string", "null"]},
+                  "canonicalName": {"type": ["string", "null"]},
+                  "taxonomicStatus": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GBIF_get_vernacular_names",
+    "description": "Get the vernacular (common) names of a GBIF Backbone taxon. Given a taxonKey, returns common names with their language code (ISO 639) and country, de-duplicated. Optionally filter by language. Use to find common names for a species across languages. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxon_key=5219404 (Panthera leo), language=eng -> 'Lion', 'African Lion'. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "taxon_key": {
+          "type": "integer",
+          "description": "GBIF Backbone usageKey of the taxon, e.g. 5219404 (Panthera leo). Obtain from GBIF_match_name or GBIF_search_species."
+        },
+        "language": {
+          "type": ["string", "null"],
+          "description": "Optional ISO 639-3 language code to filter by, e.g. 'eng' (English), 'spa' (Spanish), 'fra' (French). If omitted, returns names in all languages."
+        }
+      },
+      "required": ["taxon_key"]
+    },
+    "fields": {
+      "operation": "get_vernacular_names",
+      "base_url": "https://api.gbif.org/v1"
+    },
+    "type": "GBIFTaxonomyTool",
+    "test_examples": [
+      {"taxon_key": 5219404, "language": "eng"},
+      {"taxon_key": 2878688}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Vernacular (common) names for the given taxon",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "vernacularName": {"type": ["string", "null"]},
+                  "language": {"type": ["string", "null"]},
+                  "country": {"type": ["string", "null"]},
+                  "source": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  },
+  {
+    "name": "GBIF_parse_name",
+    "description": "Parse one or more scientific name strings into structured components using the GBIF name parser. Returns the canonical name (no authorship), genus, specific/infraspecific epithet, authorship, bracket (basionym) authorship, year and rank marker for each input. Useful for normalizing messy or authored names before matching. No taxonKey needed; this is pure string parsing. No API key required. Example: name='Panthera leo (Linnaeus, 1758)' -> canonicalName 'Panthera leo', genusOrAbove 'Panthera', specificEpithet 'leo', bracketAuthorship 'Linnaeus'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": ["string", "null"],
+          "description": "A single scientific name string to parse, e.g. 'Panthera leo (Linnaeus, 1758)'. Provide either 'name' or 'names'."
+        },
+        "names": {
+          "type": ["array", "null"],
+          "items": {"type": "string"},
+          "description": "A list of scientific name strings to parse in one call, e.g. ['Homo sapiens Linnaeus, 1758', 'Quercus robur L.']. Provide either 'name' or 'names'."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "parse_name",
+      "base_url": "https://api.gbif.org/v1"
+    },
+    "type": "GBIFTaxonomyTool",
+    "test_examples": [
+      {"name": "Panthera leo (Linnaeus, 1758)"},
+      {"names": ["Homo sapiens Linnaeus, 1758", "Quercus robur L."]}
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Parsed scientific-name components",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scientificName": {"type": ["string", "null"]},
+                  "type": {"type": ["string", "null"]},
+                  "canonicalName": {"type": ["string", "null"]},
+                  "genusOrAbove": {"type": ["string", "null"]},
+                  "specificEpithet": {"type": ["string", "null"]},
+                  "infraSpecificEpithet": {"type": ["string", "null"]},
+                  "authorship": {"type": ["string", "null"]},
+                  "bracketAuthorship": {"type": ["string", "null"]},
+                  "year": {"type": ["string", "null"]},
+                  "rankMarker": {"type": ["string", "null"]},
+                  "parsed": {"type": ["boolean", "null"]}
+                }
+              }
+            },
+            "metadata": {"type": "object"}
+          },
+          "required": ["status", "data"]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "status": {"type": "string"},
+            "error": {"type": "string"}
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    }
+  }
+]

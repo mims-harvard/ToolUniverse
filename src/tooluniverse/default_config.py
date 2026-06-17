@@ -216,6 +216,18 @@ default_tool_files = {
     "interpro_member_db": os.path.join(
         current_dir, "data", "interpro_member_db_tools.json"
     ),
+    # Rhea biochemical-reaction detail (equation, ChEBI participants, EC, xrefs)
+    "rhea_reaction": os.path.join(current_dir, "data", "rhea_reaction_tools.json"),
+    # PanglaoDB single-cell marker genes per cell type
+    "panglaodb": os.path.join(current_dir, "data", "panglaodb_tools.json"),
+    # IDR (Image Data Resource) cross-study metadata search engine
+    "idr_searchengine": os.path.join(
+        current_dir, "data", "idr_searchengine_tools.json"
+    ),
+    # GBIF backbone-taxonomy tree navigation + name parsing
+    "gbif_taxonomy": os.path.join(current_dir, "data", "gbif_taxonomy_tools.json"),
+    # UniBind direct TF-DNA binding sites (curated ChIP-seq)
+    "unibind": os.path.join(current_dir, "data", "unibind_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),

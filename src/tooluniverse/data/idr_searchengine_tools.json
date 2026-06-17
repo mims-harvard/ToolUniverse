@@ -1,0 +1,517 @@
+[
+  {
+    "name": "IDR_search_images",
+    "description": "Search the Image Data Resource (IDR) for individual images across ALL published studies at once by curated metadata, using the IDR searchengine (Elasticsearch-backed). This is the cross-study entry point that the project-tree tools (IDR_list_studies / IDR_list_dataset_images) cannot provide. Filter by a metadata key (e.g. 'Gene Symbol', 'Organism', 'Compound Name', 'Cell Line', 'Phenotype', 'Antibody Name'; use IDR_list_metadata_keys to see all keys) and a value (e.g. Gene Symbol = 'TP53'). Each returned image includes its IDR image ID, a webclient URL, and its flattened key/value metadata pairs (gene, cell line, organism, antibody, etc.). Use operator='contains' for substring matching. Note: value matching is case-sensitive on the stored form regardless of case_sensitive (e.g. organism must be 'Homo sapiens', not 'homo sapiens'); call IDR_list_values_for_key to get the exact stored values, which are reported lower-cased there but matched with their original capitalization in search. Example: key='Gene Symbol', value='TP53' returns thousands of images annotated with the TP53 gene.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The metadata value to search for, e.g. 'TP53', 'homo sapiens', 'HeLa', 'paclitaxel'. Required."
+        },
+        "key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The metadata attribute to match the value against, e.g. 'Gene Symbol', 'Organism', 'Compound Name', 'Cell Line', 'Phenotype'. If omitted, the value is searched across all keys. Use IDR_list_metadata_keys to list available keys."
+        },
+        "operator": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Match operator: 'equals' (default) or 'contains' for substring matching."
+        },
+        "case_sensitive": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the value match is case sensitive. Default false."
+        },
+        "study": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional study-name filter, e.g. 'idr0001-graml-sysgro/screenA', to restrict results to one study."
+        },
+        "resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Resource type to search. Default 'image'. Other values: 'screen', 'project', 'well', 'plate'."
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional client-side cap on the number of image rows returned (the API returns up to 1000)."
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "type": "IDRSearchEngineTool",
+    "test_examples": [
+      {
+        "key": "Gene Symbol",
+        "value": "TP53",
+        "max_results": 5
+      },
+      {
+        "key": "Organism",
+        "value": "Homo sapiens",
+        "max_results": 3
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "operator": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "image_count": {
+                  "type": "integer"
+                },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "image_id": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "image_webclient_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "study": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "key_values": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "IDR_search_studies",
+    "description": "Find which IDR studies (screens and projects) contain images matching a metadata key/value, searching across the entire Image Data Resource. This answers the question 'which published imaging studies involve gene X / organism Y / compound Z / phenotype W?'. Returns the containing screens (high-content screens) and projects, each with its IDR container ID, name (e.g. 'idr0028-pascualvargas-rhogtpases/screenA'), type ('screen' or 'project'), image count, and study-level key/value metadata. Use the returned container name/id with IDR_get_study or IDR_get_study_datasets to drill down. Example: key='Phenotype', value='spindly' returns the RhoGTPase screens (idr0028).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The metadata value to search for, e.g. 'TP53', 'spindly', 'homo sapiens'. Required."
+        },
+        "key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The metadata attribute to match against, e.g. 'Gene Symbol', 'Phenotype', 'Organism', 'Compound Name'. If omitted, the value is searched across all keys."
+        },
+        "operator": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Match operator: 'equals' (default) or 'contains'."
+        },
+        "case_sensitive": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the value match is case sensitive. Default false."
+        },
+        "study": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional study-name filter to restrict to one study."
+        },
+        "resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Resource type to search. Default 'image'."
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "type": "IDRSearchEngineTool",
+    "test_examples": [
+      {
+        "key": "Phenotype",
+        "value": "spindly"
+      },
+      {
+        "key": "Gene Symbol",
+        "value": "TP53"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "operator": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "container_count": {
+                  "type": "integer"
+                },
+                "containers": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "image_count": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "key_values": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "IDR_list_metadata_keys",
+    "description": "List the curated metadata attribute keys available for searching the Image Data Resource (IDR), for a given resource type. These are the valid 'key' arguments for IDR_search_images and IDR_search_studies, e.g. 'Gene Symbol', 'Gene Identifier', 'Organism', 'Cell Line', 'Compound Name', 'Antibody Name', 'Phenotype', 'Pathology', 'Sex', 'Age'. Use this first to discover what can be queried before building a search.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Resource type whose metadata keys to list. Default 'image'. Other values: 'screen', 'project', 'well', 'plate'."
+        }
+      },
+      "required": []
+    },
+    "type": "IDRSearchEngineTool",
+    "test_examples": [
+      {},
+      {
+        "resource": "image"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "resource": {
+                  "type": "string"
+                },
+                "key_count": {
+                  "type": "integer"
+                },
+                "keys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "IDR_list_values_for_key",
+    "description": "List every distinct value (and the number of images annotated with it) for one IDR metadata key, across the whole Image Data Resource. For example key='Organism' returns 'homo sapiens' (13M+ images), 'mus musculus', 'danio rerio', etc.; key='Phenotype' returns 300+ phenotype terms with their image counts; key='Compound Name' returns the screened compounds. Use this to discover valid values before calling IDR_search_images / IDR_search_studies, or to survey the contents of IDR for a given attribute.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "The metadata attribute whose values to enumerate, e.g. 'Organism', 'Phenotype', 'Cell Line', 'Compound Name'. Required. Use IDR_list_metadata_keys to find valid keys."
+        },
+        "resource": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Resource type. Default 'image'."
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Optional client-side cap on the number of values returned."
+        }
+      },
+      "required": [
+        "key"
+      ]
+    },
+    "type": "IDRSearchEngineTool",
+    "test_examples": [
+      {
+        "key": "Organism",
+        "max_results": 10
+      },
+      {
+        "key": "Phenotype",
+        "max_results": 5
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "resource": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                },
+                "value_count": {
+                  "type": "integer"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "image_count": {
+                        "type": [
+                          "integer",
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+]
