@@ -66,6 +66,30 @@ This chain structures the Genetic & Molecular Basis (Section 3) and Biological P
 
 See: tool_usage_details.md for complete tool calls per section.
 
+### Normalizing free text to ontology IDs (Dimension 1)
+
+When the input is messy free text (a sample attribute, a synonym, a tissue/organism label) rather than a clean disease name, use `ZOOMA_annotate_text` to map it to standardized ontology terms (EFO/MONDO/UBERON/etc.) before lookup. It returns each match as an ontology IRI with a confidence rating (HIGH/GOOD/MEDIUM/LOW), so you can keep only high-confidence hits and feed the resolved ID into OLS / OpenTargets.
+
+```python
+tu.run_tool("ZOOMA_annotate_text", {
+    "property_value": "asthma",        # free text to resolve
+    "property_type": "disease",         # optional context hint
+    "min_confidence": "HIGH",           # drop fuzzy matches
+    "max_results": 3,
+})
+# -> [{"semantic_tags": ["http://purl.obolibrary.org/obo/MONDO_0004979"],
+#      "curies": ["MONDO:0004979"], "confidence": "HIGH", "source": "zooma", ...}]
+
+# Restrict to one ontology source (e.g. EFO) when you need a specific namespace:
+tu.run_tool("ZOOMA_annotate_text", {"property_value": "diabetes", "ontologies": "efo"})
+
+# Inspect which curated datasources back ZOOMA annotations (for provenance):
+tu.run_tool("ZOOMA_list_datasources", {})
+# -> [{"name": "eva-clinvar", "type": "DATABASE", "uri": "https://www.ebi.ac.uk/eva"}, ...]
+```
+
+Each match also carries a ready-to-use `curies` field (e.g. `MONDO:0004979`) so you can feed the resolved ID straight into OLS / OpenTargets without parsing the IRI. ZOOMA is the live replacement for the retired OxO cross-reference service; pair it with `ols_get_efo_term` to expand the resolved IRI into labels, synonyms, and hierarchy.
+
 ---
 
 ## Report Template

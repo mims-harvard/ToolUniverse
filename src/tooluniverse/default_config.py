@@ -228,6 +228,14 @@ default_tool_files = {
     "gbif_taxonomy": os.path.join(current_dir, "data", "gbif_taxonomy_tools.json"),
     # UniBind direct TF-DNA binding sites (curated ChIP-seq)
     "unibind": os.path.join(current_dir, "data", "unibind_tools.json"),
+    # ZOOMA free-text -> ontology annotation (EBI)
+    "zooma": os.path.join(current_dir, "data", "zooma_tools.json"),
+    # RGD rat disease-model strain catalog + annotations
+    "rgd_strain": os.path.join(current_dir, "data", "rgd_strain_tools.json"),
+    # SGD yeast protein domains / PTM sites / literature
+    "sgd_protein": os.path.join(current_dir, "data", "sgd_protein_tools.json"),
+    # HuBMAP biospecimen layer (samples w/ CCF spatial registration + donors)
+    "hubmap_sample": os.path.join(current_dir, "data", "hubmap_sample_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),

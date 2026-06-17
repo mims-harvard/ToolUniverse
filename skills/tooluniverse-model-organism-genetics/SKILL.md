@@ -124,6 +124,25 @@ Distinguish: morpholino knockdown (rapid, potential off-target), CRISPR mutant (
 
 ---
 
+### Phase 4b: Rat (RGD) — physiology & disease-model strains
+
+Rat is the premier mammalian model for cardiovascular, metabolic, behavioral, and toxicology physiology. RGD's distinctive asset is its curated **strain** catalog (inbred/congenic/consomic lines) annotated as disease models — data not found in MGI or the Alliance.
+
+Gene-level:
+1. `RGD_search_genes(query="<gene_symbol>")` then `RGD_get_gene(rgd_id=<id>)` — rat gene details
+2. `RGD_get_annotations(rgd_id=<id>)` — disease/phenotype/GO annotations for the gene
+3. `RGD_get_orthologs(rgd_id=<id>)` — rat-to-human/mouse orthologs
+4. `RGD_get_qtls_in_region(chromosome="1", start=1, stop=10000000, map_key=360)` — QTLs in a region
+
+Strain-level (rat disease models — use when the question is "which rat strain models disease X?"):
+5. `RGD_search_strains(query="hypertensive", strain_type="inbred")` — find strains by keyword/type (types: inbred, congenic, consomic, transgenic, recombinant_inbred, ...)
+6. `RGD_get_strain(symbol="SHR")` — full record for a named strain (e.g. SHR = spontaneously hypertensive rat, rgd_id 61000; BN = Brown Norway; SS = Dahl salt-sensitive; GK = Goto-Kakizaki diabetes)
+7. `RGD_get_strain_annotations(symbol="SHR", category="disease")` — curated disease/phenotype annotations that define the strain as a model
+
+Example — SHR is annotated to `Left Ventricular Hypertrophy` (DOID:9004616, qualifier `MODEL: spontaneous`) and `arterial blood pressure trait` (VT:2000000), making it the canonical model for essential hypertension and its cardiac sequelae.
+
+---
+
 ### Phase 5: Yeast (SGD)
 
 1. `SGD_search(query="<gene_symbol>", category="gene")`

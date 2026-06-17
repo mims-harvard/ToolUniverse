@@ -1,0 +1,342 @@
+[
+  {
+    "name": "HuBMAP_search_samples",
+    "description": "Search HuBMAP (Human BioMolecular Atlas Program) biospecimen Samples (the physical tissue layer, distinct from datasets). HuBMAP Samples are anatomical blocks, sections, organs, or cell suspensions cut from human donors and registered into the Common Coordinate Framework (CCF). Filter by organ (2-letter RUI code) and sample_category, and optionally restrict to spatially-registered specimens (those carrying CCF/RUI coordinates). Organ codes: LK=Left Kidney, RK=Right Kidney, LL=Left Lung, RL=Right Lung, HT=Heart, LV=Liver, SP=Spleen, PA=Pancreas, SK=Skin, BR=Brain, BM=Bone Marrow, SI=Small Intestine, LI=Large Intestine, UT=Uterus, PL=Placenta, BL=Bladder, LY=Lymph Node. Each result reports whether the sample is spatially registered and its donor link. Use HuBMAP_get_sample to retrieve the full CCF/RUI spatial coordinates for a returned sample.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "organ": {
+          "type": "string",
+          "description": "2-letter RUI organ code to filter by (e.g. 'LK' left kidney, 'HT' heart, 'SK' skin, 'BR' brain). Case-insensitive."
+        },
+        "sample_category": {
+          "type": "string",
+          "description": "Tissue granularity: 'block', 'section', 'organ', or 'suspension'. Case-insensitive."
+        },
+        "registered_only": {
+          "type": "boolean",
+          "description": "If true, return only spatially-registered samples that carry CCF/RUI coordinates (rui_location). Default false.",
+          "default": false
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (1-50, default 10).",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search_samples"
+    },
+    "type": "HuBMAPSampleTool",
+    "test_examples": [
+      {
+        "organ": "LK",
+        "sample_category": "block",
+        "limit": 3
+      },
+      {
+        "sample_category": "section",
+        "registered_only": true,
+        "limit": 3
+      },
+      {
+        "organ": "HT",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "samples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hubmap_id": {
+                        "type": ["string", "null"]
+                      },
+                      "uuid": {
+                        "type": ["string", "null"]
+                      },
+                      "sample_category": {
+                        "type": ["string", "null"]
+                      },
+                      "organ_code": {
+                        "type": ["string", "null"]
+                      },
+                      "organ_name": {
+                        "type": ["string", "null"]
+                      },
+                      "group_name": {
+                        "type": ["string", "null"]
+                      },
+                      "spatially_registered": {
+                        "type": ["boolean", "null"]
+                      },
+                      "donor_hubmap_id": {
+                        "type": ["string", "null"]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["status", "error"],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "HuBMAP_get_sample",
+    "description": "Get the full record for a single HuBMAP tissue Sample by its HuBMAP ID, including its CCF/RUI spatial registration. For spatially-registered blocks and sections this returns rui_location: the 3-D dimensions (x/y/z + units) of the tissue, the placement_target reference organ in the Common Coordinate Framework (e.g. a 3-D kidney/heart/lung model), and ccf_annotations -- the list of CCF/UBERON anatomical structures the specimen overlaps. Also returns sample_category, organ, owning group, protocol URL, and the parent donor's HuBMAP ID. Obtain valid sample IDs from HuBMAP_search_samples. Example: HBM658.BXNB.873.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "hubmap_id": {
+          "type": "string",
+          "description": "HuBMAP Sample identifier (e.g. 'HBM658.BXNB.873'). Obtain from HuBMAP_search_samples."
+        }
+      },
+      "required": ["hubmap_id"]
+    },
+    "fields": {
+      "operation": "get_sample"
+    },
+    "type": "HuBMAPSampleTool",
+    "test_examples": [
+      {
+        "hubmap_id": "HBM658.BXNB.873"
+      },
+      {
+        "hubmap_id": "HBM828.FDRM.746"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "hubmap_id": {
+                  "type": ["string", "null"]
+                },
+                "uuid": {
+                  "type": ["string", "null"]
+                },
+                "entity_type": {
+                  "type": ["string", "null"]
+                },
+                "sample_category": {
+                  "type": ["string", "null"]
+                },
+                "organ_code": {
+                  "type": ["string", "null"]
+                },
+                "organ_name": {
+                  "type": ["string", "null"]
+                },
+                "group_name": {
+                  "type": ["string", "null"]
+                },
+                "data_access_level": {
+                  "type": ["string", "null"]
+                },
+                "protocol_url": {
+                  "type": ["string", "null"]
+                },
+                "donor_hubmap_id": {
+                  "type": ["string", "null"]
+                },
+                "created_timestamp": {
+                  "type": ["integer", "number", "null"]
+                },
+                "rui_location": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "registered": {
+                      "type": "boolean"
+                    },
+                    "placement_target": {
+                      "type": ["string", "null"]
+                    },
+                    "x_dimension": {
+                      "type": ["number", "null"]
+                    },
+                    "y_dimension": {
+                      "type": ["number", "null"]
+                    },
+                    "z_dimension": {
+                      "type": ["number", "null"]
+                    },
+                    "dimension_units": {
+                      "type": ["string", "null"]
+                    },
+                    "ccf_annotations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["status", "error"],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "HuBMAP_search_donors",
+    "description": "Search HuBMAP (Human BioMolecular Atlas Program) human Donors -- the individuals from whom all HuBMAP tissue samples and datasets are derived. Returns each donor with normalized demographics (age, sex, race, body_mass_index, cause_of_death, and other UMLS/SNOMED-coded organ_donor_data fields when available) extracted from the donor metadata. Filter by owning group (e.g. 'Stanford', 'Vanderbilt TMC') or free-text query across donor description and demographic values. Useful for building demographically-matched tissue cohorts before retrieving the donor's samples (HuBMAP_search_samples) and datasets (HuBMAP_search_datasets).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "group_name": {
+          "type": "string",
+          "description": "Filter by the data-providing group/TMC name (partial match, e.g. 'Stanford', 'Vanderbilt TMC', 'University of California San Diego TMC')."
+        },
+        "query": {
+          "type": "string",
+          "description": "Free-text search across donor description and demographic values (e.g. 'female', 'White', 'diabetes')."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of results (1-50, default 10).",
+          "default": 10
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "search_donors"
+    },
+    "type": "HuBMAPSampleTool",
+    "test_examples": [
+      {
+        "group_name": "Stanford",
+        "limit": 3
+      },
+      {
+        "query": "Female",
+        "limit": 3
+      },
+      {
+        "group_name": "Vanderbilt TMC",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer"
+                },
+                "returned": {
+                  "type": "integer"
+                },
+                "donors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "hubmap_id": {
+                        "type": ["string", "null"]
+                      },
+                      "uuid": {
+                        "type": ["string", "null"]
+                      },
+                      "group_name": {
+                        "type": ["string", "null"]
+                      },
+                      "demographics": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["status", "error"],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

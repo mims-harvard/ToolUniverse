@@ -181,6 +181,27 @@ Use HuBMAP tools to discover published spatial biology datasets for reference, v
 
 Organ codes: LK/RK=Kidney, LI=Large Intestine, SI=Small Intestine, HT=Heart, LV=Liver, LU=Lung, SP=Spleen, BR=Brain, PA=Pancreas, SK=Skin.
 
+#### HuBMAP biospecimen + spatial-registration layer (Samples & Donors)
+
+Below the dataset level, HuBMAP indexes the physical tissue **Samples** (anatomical blocks/sections/organs/suspensions) and the human **Donors**. Use these to inspect CCF/RUI spatial registration and donor demographics — context the dataset tools do not expose.
+
+- `HuBMAP_search_samples`: Find tissue Samples by `organ` (2-letter code), `sample_category` ("block"/"section"/"organ"/"suspension"), `registered_only` (only CCF/RUI-registered specimens), `limit`. Each result flags `spatially_registered` and links the parent donor.
+- `HuBMAP_get_sample`: Full record for one Sample `hubmap_id` (e.g. "HBM658.BXNB.873"), including parsed `rui_location` — the CCF `placement_target` reference organ, x/y/z `dimension`s + units, and `ccf_annotations` (UBERON/FMA structures the block overlaps).
+- `HuBMAP_search_donors`: Find Donors by `group_name` (e.g. "Stanford") or free-text `query`, with normalized `demographics` (age, sex, race, body_mass_index, cause_of_death) extracted from UMLS/SNOMED-coded metadata. Use to build demographically-matched tissue cohorts.
+
+```python
+# Spatially-registered kidney blocks (carry CCF coordinates)
+blocks = tu.tools.HuBMAP_search_samples(organ="LK", sample_category="block", registered_only=True, limit=5)
+
+# Inspect the CCF spatial registration of one block
+s = tu.tools.HuBMAP_get_sample(hubmap_id="HBM658.BXNB.873")
+# s["data"]["rui_location"] -> {placement_target: ...VHMLung..., x/y/z_dimension, dimension_units, ccf_annotations:[UBERON...]}
+
+# Demographically-matched donor cohort
+donors = tu.tools.HuBMAP_search_donors(group_name="Stanford", limit=10)
+# donors["data"]["donors"][i]["demographics"] -> {age, sex, race, body_mass_index, ...}
+```
+
 **When to use**:
 - Finding reference spatial datasets for a given organ/tissue
 - Identifying available spatial assay types (Visium, CODEX, MERFISH) for a tissue
