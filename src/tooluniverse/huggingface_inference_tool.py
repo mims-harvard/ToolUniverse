@@ -13,6 +13,8 @@ few high-value task wrappers:
 * ``ner``                 — token-classification / named-entity recognition
 * ``question_answering``  — extractive QA over a question + context
 * ``translate``           — machine translation -> translated text
+* ``classify_image``      — image-classification -> top labels + scores
+* ``detect_objects``      — object-detection -> objects with bounding boxes
 
 Endpoint note
 -------------
@@ -86,6 +88,8 @@ class HuggingFaceInferenceTool(BaseTool):
             "ner": self._ner,
             "question_answering": self._question_answering,
             "translate": self._translate,
+            "classify_image": self._classify_image,
+            "detect_objects": self._detect_objects,
         }
         handler = handlers.get(operation)
         if handler is None:
@@ -164,8 +168,124 @@ class HuggingFaceInferenceTool(BaseTool):
         except requests.exceptions.RequestException as exc:
             return _err(f"Network error contacting {model_id}: {exc}")
 
+        # Text POSTs use a gated/private-specific 401 message; all other
+        # status handling is shared with image POSTs via _interpret_status.
+        if resp.status_code == 401:
+            return _err(
+                f"Unauthorized for {model_id}. The model may be gated/private; "
+                "set a valid HF_TOKEN with access."
+            )
+        return self._interpret_status(resp, model_id)
+
+    # ------------------------------------------------------------------ #
+    # shared image input helpers
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def _content_type_for(source: str, default: str = "image/jpeg") -> str:
+        """Guess an image Content-Type from a URL or file path extension."""
+        ext = os.path.splitext(source.split("?")[0])[1].lower()
+        return {
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".gif": "image/gif",
+            ".bmp": "image/bmp",
+            ".webp": "image/webp",
+            ".tif": "image/tiff",
+            ".tiff": "image/tiff",
+        }.get(ext, default)
+
+    def _load_image_bytes(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve image bytes from image_url or image_path.
+
+        Returns ``{"_bytes": <data>, "_content_type": <ct>}`` on success or a
+        ready-made ``{"status": "error", ...}`` dict on any failure.
+        """
+        image_url = args.get("image_url")
+        image_path = args.get("image_path")
+        if not image_url and not image_path:
+            return _err(
+                "Missing image input: provide exactly one of image_url "
+                "(a public http(s) URL) or image_path (a local file path)."
+            )
+        if image_url and image_path:
+            return _err("Provide only one of image_url or image_path, not both.")
+
+        if image_path:
+            try:
+                with open(image_path, "rb") as fh:
+                    data = fh.read()
+            except OSError as exc:
+                return _err(f"Could not read image_path {image_path!r}: {exc}")
+            if not data:
+                return _err(f"Image file is empty: {image_path}")
+            return {
+                "_bytes": data,
+                "_content_type": self._content_type_for(image_path),
+            }
+
+        # image_url
+        try:
+            resp = requests.get(image_url, timeout=_TIMEOUT)
+        except requests.exceptions.Timeout:
+            return _err(f"Timeout after {_TIMEOUT}s fetching image_url {image_url}.")
+        except requests.exceptions.RequestException as exc:
+            return _err(f"Could not fetch image_url {image_url}: {exc}")
+        if resp.status_code != 200:
+            return _err(
+                f"HTTP {resp.status_code} fetching image_url {image_url}. "
+                "Ensure it is a public, directly-downloadable image."
+            )
+        if not resp.content:
+            return _err(f"Empty image body from image_url {image_url}.")
+        ct = resp.headers.get("content-type", "").split(";")[0].strip()
+        if not ct.startswith("image/"):
+            ct = self._content_type_for(image_url)
+        return {"_bytes": resp.content, "_content_type": ct}
+
+    def _post_image(self, model_id: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        """Validate model + load image, then POST the raw image bytes.
+
+        Image models expect the binary image as the request body with the
+        image's Content-Type (not JSON). Returns ``{"_json": <body>}`` on
+        success or a ready-made ``{"status": ...}`` dict on any failure.
+        """
+        if not model_id:
+            return _err("Missing required parameter: model_id")
+        loaded = self._load_image_bytes(args)
+        if "_bytes" not in loaded:
+            return loaded  # error dict
+
+        url = f"{_BASE_URL}/{model_id.strip('/')}"
+        headers = {"Content-Type": loaded["_content_type"]}
+        token = os.environ.get("HF_TOKEN", "")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        if bool(args.get("wait_for_model", False)):
+            headers["x-wait-for-model"] = "true"
+
+        try:
+            resp = requests.post(
+                url, data=loaded["_bytes"], headers=headers, timeout=_TIMEOUT
+            )
+        except requests.exceptions.Timeout:
+            return _err(
+                f"Timeout after {_TIMEOUT}s contacting {model_id}. The image "
+                "model may be loading — retry, optionally with "
+                "wait_for_model=true."
+            )
+        except requests.exceptions.RequestException as exc:
+            return _err(f"Network error contacting {model_id}: {exc}")
+
+        return self._interpret_status(resp, model_id)
+
+    def _interpret_status(self, resp, model_id: str) -> Dict[str, Any]:
+        """Map an HTTP response to ``{"_json": ...}`` or a status dict.
+
+        Shared status handling for both JSON and image POSTs (503 loading,
+        401/404/429, other non-200, and non-JSON bodies).
+        """
         if resp.status_code == 503:
-            # Model is warming up. Surface as a retryable status, not an error.
             est = None
             try:
                 est = resp.json().get("estimated_time")
@@ -185,11 +305,10 @@ class HuggingFaceInferenceTool(BaseTool):
                 ),
                 "estimated_time": est,
             }
-
         if resp.status_code == 401:
             return _err(
-                f"Unauthorized for {model_id}. The model may be gated/private; "
-                "set a valid HF_TOKEN with access."
+                f"Unauthorized for {model_id}. Serverless image inference now "
+                "requires a token: set a valid HF_TOKEN with access."
             )
         if resp.status_code == 404:
             return _err(
@@ -209,11 +328,38 @@ class HuggingFaceInferenceTool(BaseTool):
             except Exception:
                 detail = resp.text[:300]
             return _err(f"HTTP {resp.status_code} from {model_id}: {detail}")
-
         try:
             return {"_json": resp.json()}
         except ValueError:
             return _err(f"Non-JSON response from {model_id}: {resp.text[:200]}")
+
+    # ------------------------------------------------------------------ #
+    # shared label-classification parsing
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def _parse_labels(body: Any) -> Optional[List[Dict[str, Any]]]:
+        """Parse a (text|image)-classification body into sorted label dicts.
+
+        Both tasks return ``[{label, score}, ...]`` or, batched, a nested
+        ``[[{label, score}, ...]]``. Returns the score-descending label list,
+        or ``None`` if the body is not a list of records.
+        """
+        labels = (
+            body[0]
+            if (isinstance(body, list) and body and isinstance(body[0], list))
+            else body
+        )
+        if not isinstance(labels, list):
+            return None
+        return sorted(
+            (
+                {"label": d.get("label"), "score": d.get("score")}
+                for d in labels
+                if isinstance(d, dict)
+            ),
+            key=lambda d: d["score"] if d["score"] is not None else -1.0,
+            reverse=True,
+        )
 
     # ------------------------------------------------------------------ #
     # text-classification
@@ -225,25 +371,9 @@ class HuggingFaceInferenceTool(BaseTool):
             return result  # error / loading dict
         body = result["_json"]
 
-        # text-classification returns [[{label, score}, ...]] (batch of 1) or
-        # occasionally a flat [{label, score}, ...].
-        labels = (
-            body[0]
-            if (isinstance(body, list) and body and isinstance(body[0], list))
-            else body
-        )
-        if not isinstance(labels, list):
+        labels = self._parse_labels(body)
+        if labels is None:
             return _err(f"Unexpected classification response: {str(body)[:200]}")
-
-        labels = sorted(
-            (
-                {"label": d.get("label"), "score": d.get("score")}
-                for d in labels
-                if isinstance(d, dict)
-            ),
-            key=lambda d: d["score"] if d["score"] is not None else -1.0,
-            reverse=True,
-        )
         top = labels[0]["label"] if labels else None
         return _ok(
             {"model_id": model_id, "top_label": top, "labels": labels},
@@ -553,4 +683,70 @@ class HuggingFaceInferenceTool(BaseTool):
         return _ok(
             {"model_id": model_id, "translation_text": translation},
             task="translation",
+        )
+
+    # ------------------------------------------------------------------ #
+    # image-classification
+    # ------------------------------------------------------------------ #
+    def _classify_image(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        model_id = args.get("model_id")
+        result = self._post_image(model_id, args)
+        if "_json" not in result:
+            return result  # error / loading dict
+        body = result["_json"]
+
+        labels = self._parse_labels(body)
+        if labels is None:
+            return _err(f"Unexpected image-classification response: {str(body)[:200]}")
+        top = labels[0]["label"] if labels else None
+        return _ok(
+            {"model_id": model_id, "top_label": top, "labels": labels},
+            task="image-classification",
+        )
+
+    # ------------------------------------------------------------------ #
+    # object-detection
+    # ------------------------------------------------------------------ #
+    def _detect_objects(self, args: Dict[str, Any]) -> Dict[str, Any]:
+        model_id = args.get("model_id")
+        result = self._post_image(model_id, args)
+        if "_json" not in result:
+            return result  # error / loading dict
+        body = result["_json"]
+
+        # object-detection returns [{score, label, box:{xmin,ymin,xmax,ymax}},
+        # ...]; with batching it may nest one list per input.
+        if isinstance(body, list) and body and isinstance(body[0], list):
+            body = body[0]
+        if not isinstance(body, list):
+            return _err(f"Unexpected object-detection response: {str(body)[:200]}")
+
+        objects = []
+        for d in body:
+            if not isinstance(d, dict):
+                continue
+            box = d.get("box") if isinstance(d.get("box"), dict) else {}
+            objects.append(
+                {
+                    "label": d.get("label"),
+                    "score": d.get("score"),
+                    "box": {
+                        "xmin": box.get("xmin"),
+                        "ymin": box.get("ymin"),
+                        "xmax": box.get("xmax"),
+                        "ymax": box.get("ymax"),
+                    },
+                }
+            )
+        objects.sort(
+            key=lambda o: o["score"] if o["score"] is not None else -1.0,
+            reverse=True,
+        )
+        return _ok(
+            {
+                "model_id": model_id,
+                "object_count": len(objects),
+                "objects": objects,
+            },
+            task="object-detection",
         )

@@ -204,6 +204,18 @@ default_tool_files = {
     "tdc_dataset": os.path.join(current_dir, "data", "tdc_dataset_tools.json"),
     # ENCODE SCREEN cCRE registry (candidate cis-regulatory elements, GraphQL)
     "screen_ccre": os.path.join(current_dir, "data", "screen_ccre_tools.json"),
+    # jPOST proteomics data repository (PROXI API)
+    "jpost": os.path.join(current_dir, "data", "jpost_tools.json"),
+    # RNAcentral ncRNA genome locations / publications / sequence
+    "rnacentral_genome": os.path.join(
+        current_dir, "data", "rnacentral_genome_tools.json"
+    ),
+    # LIPID MAPS Proteome Database (lipid-metabolism gene/protein lookup)
+    "lipidmaps_gene": os.path.join(current_dir, "data", "lipidmaps_gene_tools.json"),
+    # InterPro member-database signatures (Pfam/SMART/PANTHER/... + PDB structures)
+    "interpro_member_db": os.path.join(
+        current_dir, "data", "interpro_member_db_tools.json"
+    ),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),

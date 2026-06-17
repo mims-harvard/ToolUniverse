@@ -500,5 +500,144 @@
         "text": "Hello, how are you today?"
       }
     ]
+  },
+  {
+    "name": "HFInference_classify_image",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Run image-classification on any HuggingFace-hosted vision model (serverless hf-inference provider) and return the top predicted labels with confidence scores, sorted high to low. Supply the image as image_url (a public http(s) URL) OR image_path (a local file); the raw image bytes are POSTed with the correct content-type. Example model_id 'google/vit-base-patch16-224' classifies into 1000 ImageNet classes. Serverless image inference requires HF_TOKEN. Returns {top_label, labels:[{label,score}]}.",
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "model_id"],
+      "properties": {
+        "operation": {
+          "const": "classify_image",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of an image-classification model, e.g. 'google/vit-base-patch16-224' or 'microsoft/resnet-50'."
+        },
+        "image_url": {
+          "type": ["string", "null"],
+          "description": "Public http(s) URL of the image to classify. Provide exactly one of image_url or image_path."
+        },
+        "image_path": {
+          "type": ["string", "null"],
+          "description": "Local filesystem path to the image to classify. Provide exactly one of image_url or image_path."
+        },
+        "wait_for_model": {
+          "type": ["boolean", "null"],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "model_id": {"type": "string"},
+            "top_label": {"type": ["string", "null"]},
+            "labels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": ["string", "null"]},
+                  "score": {"type": ["number", "null"]}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "optional_api_keys": ["HF_TOKEN"],
+    "test_examples": [
+      {
+        "operation": "classify_image",
+        "model_id": "google/vit-base-patch16-224",
+        "image_url": "http://images.cocodataset.org/val2017/000000039769.jpg"
+      }
+    ]
+  },
+  {
+    "name": "HFInference_detect_objects",
+    "type": "HuggingFaceInferenceTool",
+    "description": "Run object-detection on any HuggingFace-hosted vision model (serverless hf-inference provider) and return the detected objects, each with a label, confidence score, and bounding box (xmin,ymin,xmax,ymax in pixels), sorted by score. Supply the image as image_url (a public http(s) URL) OR image_path (a local file); the raw image bytes are POSTed with the correct content-type. Example model_id 'facebook/detr-resnet-50'. Serverless image inference requires HF_TOKEN. Returns {object_count, objects:[{label,score,box}]}.",
+    "parameter": {
+      "type": "object",
+      "required": ["operation", "model_id"],
+      "properties": {
+        "operation": {
+          "const": "detect_objects",
+          "description": "Operation selector (fixed)."
+        },
+        "model_id": {
+          "type": "string",
+          "description": "HuggingFace repo id of an object-detection model, e.g. 'facebook/detr-resnet-50' or 'facebook/detr-resnet-101'."
+        },
+        "image_url": {
+          "type": ["string", "null"],
+          "description": "Public http(s) URL of the image to run detection on. Provide exactly one of image_url or image_path."
+        },
+        "image_path": {
+          "type": ["string", "null"],
+          "description": "Local filesystem path to the image to run detection on. Provide exactly one of image_url or image_path."
+        },
+        "wait_for_model": {
+          "type": ["boolean", "null"],
+          "description": "If true, send x-wait-for-model so the server blocks until a cold model finishes loading instead of returning 503. Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "model_id": {"type": "string"},
+            "object_count": {"type": "integer"},
+            "objects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": ["string", "null"]},
+                  "score": {"type": ["number", "null"]},
+                  "box": {
+                    "type": "object",
+                    "properties": {
+                      "xmin": {"type": ["number", "null"]},
+                      "ymin": {"type": ["number", "null"]},
+                      "xmax": {"type": ["number", "null"]},
+                      "ymax": {"type": ["number", "null"]}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "optional_api_keys": ["HF_TOKEN"],
+    "test_examples": [
+      {
+        "operation": "detect_objects",
+        "model_id": "facebook/detr-resnet-50",
+        "image_url": "http://images.cocodataset.org/val2017/000000039769.jpg"
+      }
+    ]
   }
 ]
