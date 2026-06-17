@@ -1,0 +1,256 @@
+[
+  {
+    "name": "Replicate_run_prediction",
+    "type": "ReplicateTool",
+    "description": "Run a prediction on any model hosted on Replicate (https://replicate.com), the platform serving thousands of community ML models (image generation, protein structure, language, embeddings, audio, etc.). Specify the model by 'model' (owner/name, runs the latest version) OR by 'version' (a 64-char version hash, pins an exact version) \u2014 not both \u2014 plus 'input', an object of the model's inputs (see the model page for its schema). Replicate is asynchronous: this tool creates the prediction (POST /v1/predictions or POST /v1/models/{owner}/{name}/predictions), then polls urls.get until status is succeeded/failed/canceled (bounded to ~22s). If still running, it returns status='processing' with the prediction id so you can fetch it later with Replicate_get_prediction. Returns {id, status, output, error, logs, poll_url}. REQUIRES env var REPLICATE_API_TOKEN (read from environment only). Example: model='replicate/hello-world', input={'text':'Claude'} returns output 'hello Claude'.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "input"
+      ],
+      "properties": {
+        "operation": {
+          "const": "run_prediction",
+          "description": "Operation selector (fixed)."
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Model in 'owner/name' form, e.g. 'replicate/hello-world'. Runs the model's latest/default version. Provide either 'model' or 'version', not both."
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A specific 64-char hex version hash from the model's API page. Pins an exact version. Provide either 'model' or 'version', not both."
+        },
+        "input": {
+          "type": "object",
+          "description": "Object of the model's inputs, e.g. {'text': 'hello'} for replicate/hello-world or {'prompt': 'a cat'} for an image model. See the model page on replicate.com for its exact input schema."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "output": {
+              "type": [
+                "string",
+                "array",
+                "object",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "error": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "logs": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "poll_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "status"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "required_api_keys": [
+      "REPLICATE_API_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "run_prediction",
+        "model": "replicate/hello-world",
+        "input": {
+          "text": "ToolUniverse"
+        }
+      },
+      {
+        "operation": "run_prediction",
+        "model": "replicate/hello-world",
+        "input": {
+          "text": "async polling test"
+        }
+      }
+    ],
+    "api_key_info": {
+      "REPLICATE_API_TOKEN": {
+        "domain": "AI & ML",
+        "type": "secret",
+        "register_url": "https://replicate.com/account/api-tokens",
+        "purpose": "Replicate API token \u2014 runs hosted ML model inference (image, protein, language models) via the predictions API.",
+        "without": "Replicate tools return a clear missing-token error and cannot run model inference."
+      }
+    }
+  },
+  {
+    "name": "Replicate_get_prediction",
+    "type": "ReplicateTool",
+    "description": "Fetch the current state of a previously created Replicate prediction by its id (GET /v1/predictions/{id}). Use this to retrieve the output of a prediction that was still running (status='processing') when Replicate_run_prediction returned, or to re-check a long-running job. Returns {id, status, output, error, logs, poll_url}; status is one of starting/processing/succeeded/failed/canceled. REQUIRES env var REPLICATE_API_TOKEN (read from environment only). The prediction_id comes from the 'id' field of a prior Replicate_run_prediction call.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "operation",
+        "prediction_id"
+      ],
+      "properties": {
+        "operation": {
+          "const": "get_prediction",
+          "description": "Operation selector (fixed)."
+        },
+        "prediction_id": {
+          "type": "string",
+          "description": "The prediction id returned in the 'id' field of a prior Replicate_run_prediction call, e.g. 'gm3qorzdhgbfurvjtvhg6dckhu'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "model": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "output": {
+              "type": [
+                "string",
+                "array",
+                "object",
+                "number",
+                "boolean",
+                "null"
+              ]
+            },
+            "error": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "logs": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "poll_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "status"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "required_api_keys": [
+      "REPLICATE_API_TOKEN"
+    ],
+    "test_examples": [
+      {
+        "operation": "get_prediction",
+        "prediction_id": "gm3qorzdhgbfurvjtvhg6dckhu"
+      }
+    ],
+    "api_key_info": {
+      "REPLICATE_API_TOKEN": {
+        "domain": "AI & ML",
+        "type": "secret",
+        "register_url": "https://replicate.com/account/api-tokens",
+        "purpose": "Replicate API token \u2014 runs hosted ML model inference (image, protein, language models) via the predictions API.",
+        "without": "Replicate tools return a clear missing-token error and cannot run model inference."
+      }
+    }
+  }
+]

@@ -1,0 +1,273 @@
+[
+  {
+    "name": "RXNChemistry_predict_reaction",
+    "description": "Predict the most likely product of a chemical reaction using IBM RXN for Chemistry (ML forward reaction prediction). Input is reactant/reagent SMILES joined by '.' (e.g. 'BrBr.c1ccc2cc3ccccc3cc2c1'); output is the predicted product SMILES with a confidence score. Submits an async job and polls until complete. Requires a free API key in the RXN4CHEMISTRY_API_KEY environment variable (register at https://rxn.app.accelerate.science).",
+    "type": "RXNChemistryTool",
+    "required_api_keys": [
+      "RXN4CHEMISTRY_API_KEY"
+    ],
+    "api_key_info": {
+      "RXN4CHEMISTRY_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://rxn.app.accelerate.science",
+        "purpose": "IBM RXN for Chemistry API key — runs ML forward reaction prediction and retrosynthesis.",
+        "without": "RXN tools return a clear missing-key error and cannot run predictions."
+      }
+    },
+    "is_async": true,
+    "poll_interval": 5,
+    "max_wait_time": 60,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "predict_reaction",
+          "description": "Operation type (fixed: predict_reaction)."
+        },
+        "reactants": {
+          "type": "string",
+          "description": "Reactant and reagent SMILES joined by '.' (dot-separated). Example: 'BrBr.c1ccc2cc3ccccc3cc2c1'."
+        },
+        "ai_model": {
+          "type": "string",
+          "description": "Optional IBM RXN AI model id for forward prediction. Defaults to '2020-08-10'."
+        },
+        "project_id": {
+          "type": "string",
+          "description": "Optional IBM RXN project id to run the prediction under. If omitted, the first available project is used (or one is created)."
+        },
+        "poll_interval": {
+          "type": "number",
+          "description": "Optional seconds between status polls (default 5)."
+        },
+        "max_wait_time": {
+          "type": "number",
+          "description": "Optional total polling budget in seconds (default 60)."
+        }
+      },
+      "required": [
+        "reactants"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "reactants": {
+                  "type": "string"
+                },
+                "product_smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "confidence": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "attempts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "smiles": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "confidence": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "prediction_id": {
+                  "type": "string"
+                },
+                "ai_model": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "predict_reaction",
+        "reactants": "BrBr.c1ccc2cc3ccccc3cc2c1"
+      }
+    ]
+  },
+  {
+    "name": "RXNChemistry_predict_retrosynthesis",
+    "description": "Predict retrosynthetic routes for a target molecule using IBM RXN for Chemistry (ML retrosynthesis). Input is the target product SMILES (e.g. aspirin 'CC(=O)Oc1ccccc1C(=O)O'); output is a list of predicted precursor routes, each with a confidence/score. Submits an async job and polls until complete. Requires a free API key in the RXN4CHEMISTRY_API_KEY environment variable (register at https://rxn.app.accelerate.science).",
+    "type": "RXNChemistryTool",
+    "required_api_keys": [
+      "RXN4CHEMISTRY_API_KEY"
+    ],
+    "api_key_info": {
+      "RXN4CHEMISTRY_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://rxn.app.accelerate.science",
+        "purpose": "IBM RXN for Chemistry API key — runs ML forward reaction prediction and retrosynthesis.",
+        "without": "RXN tools return a clear missing-key error and cannot run predictions."
+      }
+    },
+    "is_async": true,
+    "poll_interval": 5,
+    "max_wait_time": 60,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "predict_retrosynthesis",
+          "description": "Operation type (fixed: predict_retrosynthesis)."
+        },
+        "product": {
+          "type": "string",
+          "description": "Target product SMILES to retrosynthesize. Example: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin)."
+        },
+        "ai_model": {
+          "type": "string",
+          "description": "Optional IBM RXN retrosynthesis model id. Defaults to '2020-08-10'."
+        },
+        "max_steps": {
+          "type": "integer",
+          "description": "Optional maximum number of retrosynthetic steps to explore."
+        },
+        "project_id": {
+          "type": "string",
+          "description": "Optional IBM RXN project id to run the prediction under. If omitted, the first available project is used (or one is created)."
+        },
+        "poll_interval": {
+          "type": "number",
+          "description": "Optional seconds between status polls (default 5)."
+        },
+        "max_wait_time": {
+          "type": "number",
+          "description": "Optional total polling budget in seconds (default 60)."
+        }
+      },
+      "required": [
+        "product"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "type": "string"
+                },
+                "routes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "smiles": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "confidence": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "route_count": {
+                  "type": "integer"
+                },
+                "prediction_id": {
+                  "type": "string"
+                },
+                "ai_model": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "predict_retrosynthesis",
+        "product": "CC(=O)Oc1ccccc1C(=O)O"
+      }
+    ]
+  }
+]

@@ -190,6 +190,14 @@ default_tool_files = {
     "vep_pathogenicity": os.path.join(
         current_dir, "data", "vep_pathogenicity_tools.json"
     ),
+    # Therapeutics Data Commons ML oracles (QED/SA/LogP/bioactivity; PyTDC)
+    "tdc_oracle": os.path.join(current_dir, "data", "tdc_oracle_tools.json"),
+    # IBM RXN for Chemistry — reaction/retrosynthesis prediction (API key)
+    "rxn_chemistry": os.path.join(current_dir, "data", "rxn_chemistry_tools.json"),
+    # Replicate — hosted ML model inference gateway (API token)
+    "replicate": os.path.join(current_dir, "data", "replicate_tools.json"),
+    # DTU protein predictors (DeepTMHMM / SignalP via biolib)
+    "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
     "intact": os.path.join(current_dir, "data", "intact_tools.json"),
     "intogen": os.path.join(current_dir, "data", "intogen_tools.json"),
     "metabolights": os.path.join(current_dir, "data", "metabolights_tools.json"),

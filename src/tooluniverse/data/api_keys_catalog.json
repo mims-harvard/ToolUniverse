@@ -426,6 +426,30 @@
     ]
   },
   {
+    "name": "REPLICATE_API_TOKEN",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "AI & ML",
+    "register_url": "https://replicate.com/account/api-tokens",
+    "purpose": "Replicate API token \u2014 runs hosted ML model inference (image, protein, language models) via the predictions API.",
+    "without": "Replicate tools return a clear missing-token error and cannot run model inference.",
+    "used_by": [
+      "replicate_tools.json"
+    ]
+  },
+  {
+    "name": "RXN4CHEMISTRY_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Drugs & Chemistry",
+    "register_url": "https://rxn.app.accelerate.science",
+    "purpose": "IBM RXN for Chemistry API key \u2014 runs ML forward reaction prediction and retrosynthesis.",
+    "without": "RXN tools return a clear missing-key error and cannot run predictions.",
+    "used_by": [
+      "rxn_chemistry_tools.json"
+    ]
+  },
+  {
     "name": "SEMANTIC_SCHOLAR_API_KEY",
     "requirement": "optional",
     "type": "secret",
