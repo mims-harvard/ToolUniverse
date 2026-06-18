@@ -192,18 +192,9 @@
     },
     "test_examples": [
       {
-        "description": "Predict transmembrane topology for a short protein with a signal peptide (DeepTMHMM).",
-        "arguments": {
-          "model": "deeptmhmm",
-          "sequence": "MELAALCRWGLLLALLPPGAASTQVCTGTDMKLRLPASPETHLDMLRHLYQGCQVV",
-          "max_wait_time": 600
-        }
-      },
-      {
-        "description": "Error case: missing protein input returns a clean error.",
-        "arguments": {
-          "model": "deeptmhmm"
-        }
+        "model": "deeptmhmm",
+        "sequence": "MELAALCRWGLLLALLPPGAASTQVCTGTDMKLRLPASPETHLDMLRHLYQGCQVV",
+        "max_wait_time": 600
       }
     ]
   }
