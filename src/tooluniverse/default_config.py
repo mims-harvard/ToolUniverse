@@ -202,9 +202,7 @@ default_tool_files = {
     "tdc_dataset": os.path.join(current_dir, "data", "tdc_dataset_tools.json"),
     # ENCODE SCREEN cCRE registry (candidate cis-regulatory elements, GraphQL)
     "screen_ccre": os.path.join(current_dir, "data", "screen_ccre_tools.json"),
-    # jPOST proteomics data repository (PROXI API)
-    "jpost": os.path.join(current_dir, "data", "jpost_tools.json"),
-    # RNAcentral ncRNA genome locations / publications / sequence
+    # RNAcentral ncRNA genome locations / sequence
     "rnacentral_genome": os.path.join(
         current_dir, "data", "rnacentral_genome_tools.json"
     ),

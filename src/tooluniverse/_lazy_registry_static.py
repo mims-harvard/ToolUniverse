@@ -121,7 +121,6 @@ STATIC_LAZY_REGISTRY = {
     "CellposeTool": "cellpose_tool",
     "TDCDatasetTool": "tdc_dataset_tool",
     "ScreenCcreTool": "screen_ccre_tool",
-    "JPOSTTool": "jpost_tool",
     "RNAcentralGenomeTool": "rnacentral_genome_tool",
     "LipidMapsGeneTool": "lipidmaps_gene_tool",
     "InterProMemberDBTool": "interpro_member_db_tool",
