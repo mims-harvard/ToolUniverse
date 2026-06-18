@@ -68,6 +68,12 @@ class RNAcentralGenomeTool(BaseTool):
         settings = self.tool_config.get("settings", {}) or {}
         self.base_url = settings.get("base_url", _BASE_URL).rstrip("/")
         self.timeout = int(settings.get("timeout", _TIMEOUT))
+        # Each wrapper fixes its operation via fields.operation so that a call
+        # with only urs_id routes to the right endpoint (the schema default for
+        # `operation` is not injected by the runner).
+        self.default_operation = (self.tool_config.get("fields", {}) or {}).get(
+            "operation", "genome_locations"
+        )
 
     # ------------------------------------------------------------------ helpers
     def _error(self, message: str, operation: str = None) -> Dict[str, Any]:
@@ -89,7 +95,7 @@ class RNAcentralGenomeTool(BaseTool):
     # ------------------------------------------------------------------- run
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         arguments = arguments or {}
-        operation = (arguments.get("operation") or "genome_locations").strip()
+        operation = (arguments.get("operation") or self.default_operation).strip()
 
         urs_raw = arguments.get("urs_id")
         urs = self._clean_urs(urs_raw) if urs_raw else ""

@@ -7,15 +7,24 @@
       "type": "object",
       "properties": {
         "query": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Keyword to match against strain symbol, name, genetics, and description (case-insensitive substring). Example: 'hypertensive' or 'Dahl'."
         },
         "strain_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by strain type, e.g. 'inbred', 'congenic', 'transgenic', 'recombinant_inbred', 'consomic'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of strains to return (default 25, max 200)."
         }
       },
@@ -25,40 +34,125 @@
       "operation": "search_strains"
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "rgd_id": {"type": ["integer", "null"]},
-              "symbol": {"type": ["string", "null"]},
-              "name": {"type": ["string", "null"]},
-              "full_strain_name": {"type": ["string", "null"]},
-              "substrain": {"type": ["string", "null"]},
-              "strain_type": {"type": ["string", "null"]},
-              "genetics": {"type": ["string", "null"]},
-              "origin": {"type": ["string", "null"]},
-              "source": {"type": ["string", "null"]},
-              "background_strain_rgd_id": {"type": ["integer", "null"]},
-              "research_use": {"type": ["string", "null"]},
-              "description": {"type": ["string", "null"]}
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rgd_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "full_strain_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "substrain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "strain_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "genetics": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "background_strain_rgd_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "research_use": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "hypertensive", "strain_type": "inbred"},
-      {"query": "Dahl", "limit": 10},
-      {"strain_type": "consomic", "limit": 5}
+      {
+        "query": "hypertensive",
+        "strain_type": "inbred"
+      },
+      {
+        "query": "Dahl",
+        "limit": 10
+      },
+      {
+        "strain_type": "consomic",
+        "limit": 5
+      }
     ]
   },
   {
@@ -73,43 +167,127 @@
           "description": "Exact rat strain symbol (case-insensitive), e.g. 'SHR' (spontaneously hypertensive rat), 'BN' (Brown Norway), 'SS' (Dahl salt-sensitive)."
         }
       },
-      "required": ["symbol"]
+      "required": [
+        "symbol"
+      ]
     },
     "fields": {
       "operation": "get_strain"
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "rgd_id": {"type": ["integer", "null"]},
-            "symbol": {"type": ["string", "null"]},
-            "name": {"type": ["string", "null"]},
-            "full_strain_name": {"type": ["string", "null"]},
-            "substrain": {"type": ["string", "null"]},
-            "strain_type": {"type": ["string", "null"]},
-            "genetics": {"type": ["string", "null"]},
-            "origin": {"type": ["string", "null"]},
-            "source": {"type": ["string", "null"]},
-            "background_strain_rgd_id": {"type": ["integer", "null"]},
-            "research_use": {"type": ["string", "null"]},
-            "description": {"type": ["string", "null"]}
-          }
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "rgd_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "full_strain_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "substrain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "strain_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genetics": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "origin": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "background_strain_rgd_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "research_use": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"symbol": "SHR"},
-      {"symbol": "BN"},
-      {"symbol": "SS"}
+      {
+        "symbol": "SHR"
+      },
+      {
+        "symbol": "BN"
+      },
+      {
+        "symbol": "SS"
+      }
     ]
   },
   {
@@ -124,46 +302,114 @@
           "description": "Exact rat strain symbol (case-insensitive), e.g. 'SHR', 'BN', 'SS'."
         },
         "category": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional annotation category filter: 'disease', 'phenotype', 'strain', 'pathway', etc. Omit to return all categories."
         }
       },
-      "required": ["symbol"]
+      "required": [
+        "symbol"
+      ]
     },
     "fields": {
       "operation": "get_strain_annotations"
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "term": {"type": ["string", "null"]},
-              "term_acc": {"type": ["string", "null"]},
-              "category": {"type": ["string", "null"]},
-              "aspect": {"type": ["string", "null"]},
-              "qualifier": {"type": ["string", "null"]},
-              "evidence": {"type": ["string", "null"]},
-              "data_source": {"type": ["string", "null"]},
-              "ref_rgd_id": {"type": ["integer", "null"]}
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "term_acc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "aspect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "qualifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data_source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ref_rgd_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"symbol": "SHR", "category": "disease"},
-      {"symbol": "SHR"},
-      {"symbol": "BN"}
+      {
+        "symbol": "SHR",
+        "category": "disease"
+      },
+      {
+        "symbol": "SHR"
+      },
+      {
+        "symbol": "BN"
+      }
     ]
   }
 ]

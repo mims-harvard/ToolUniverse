@@ -131,16 +131,52 @@ def _measure(graph, nx, a, b, kind, cache) -> Optional[float]:
     return None
 
 
-def _degree_bins(graph) -> Dict[int, List[Any]]:
-    bins: Dict[int, List[Any]] = {}
+_MIN_BIN = 100
+
+
+def _degree_binning(graph, min_bin: int = _MIN_BIN) -> Dict[Any, List[Any]]:
+    """Map each node to a degree-stratified pool of >= min_bin nodes (Guney 2016).
+
+    Exact-degree bins make a hub map only to itself (no real randomization), so
+    consecutive degrees are merged until each bin holds at least min_bin nodes;
+    a trailing small bin is folded into the previous one. On small graphs the
+    bin collapses to all nodes (degree stratification is meaningless there).
+    """
+    deg_to_nodes: Dict[int, List[Any]] = {}
     for node, deg in graph.degree():
-        bins.setdefault(deg, []).append(node)
-    return bins
+        deg_to_nodes.setdefault(deg, []).append(node)
+    target = min(min_bin, graph.number_of_nodes())
+    bins: List[List[Any]] = []
+    cur: List[Any] = []
+    for deg in sorted(deg_to_nodes):
+        cur = cur + deg_to_nodes[deg]
+        if len(cur) >= target:
+            bins.append(cur)
+            cur = []
+    if cur:
+        if bins:
+            bins[-1] = bins[-1] + cur
+        else:
+            bins.append(cur)
+    node_to_bin: Dict[Any, List[Any]] = {}
+    for b in bins:
+        for node in b:
+            node_to_bin[node] = b
+    return node_to_bin
 
 
-def _degree_matched(ref_nodes, bins, graph, rng) -> List[Any]:
-    """Sample one degree-matched node per reference node (with replacement)."""
-    return [rng.choice(bins[graph.degree(n)]) for n in ref_nodes]
+def _degree_matched(ref_nodes, node_to_bin, rng) -> List[Any]:
+    """Sample one degree-matched node per reference node, WITHOUT replacement
+    within the sampled set (falls back to reuse only if a bin is exhausted)."""
+    chosen: set = set()
+    sample: List[Any] = []
+    for n in ref_nodes:
+        pool = node_to_bin.get(n) or [n]
+        candidates = [x for x in pool if x not in chosen] or pool
+        pick = rng.choice(candidates)
+        chosen.add(pick)
+        sample.append(pick)
+    return sample
 
 
 @register_tool("NetworkProximityTool")
@@ -199,12 +235,12 @@ class NetworkProximityTool(BaseTool):
         seed = arguments.get("seed")
         seed = _DEFAULT_SEED if seed is None else int(seed)
         rng = random.Random(seed)
-        bins = _degree_bins(graph)
+        node_to_bin = _degree_binning(graph)
 
         randoms = []
         for _ in range(n_rand):
-            ra = _degree_matched(a, bins, graph, rng)
-            rb = _degree_matched(b, bins, graph, rng)
+            ra = _degree_matched(a, node_to_bin, rng)
+            rb = _degree_matched(b, node_to_bin, rng)
             dr = _measure(graph, nx, ra, rb, measure, {})
             if dr is not None:
                 randoms.append(dr)
@@ -221,9 +257,9 @@ class NetworkProximityTool(BaseTool):
         if len(randoms) >= 2:
             arr = np.asarray(randoms, dtype=float)
             mu, sd = float(arr.mean()), float(arr.std(ddof=0))
-            p = float((arr <= observed).sum()) / len(
-                arr
-            )  # one-sided: closer than chance
+            # One-sided "closer than chance" with the (k+1)/(n+1) correction so
+            # an empirical p is never exactly 0.
+            p = (float((arr <= observed).sum()) + 1.0) / (len(arr) + 1.0)
             data.update(
                 {
                     "z_score": round((observed - mu) / sd, 6) if sd > 0 else None,

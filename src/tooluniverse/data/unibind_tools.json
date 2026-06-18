@@ -8,29 +8,50 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_datasets"],
+          "enum": [
+            "search_datasets"
+          ],
           "default": "search_datasets",
           "description": "Operation selector. Must be 'search_datasets'."
         },
         "tf_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Transcription factor gene symbol to filter by, e.g. 'CTCF', 'SMAD3', 'ESR1'. Exact match on UniBind's TF name. Optional."
         },
         "species": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Species scientific name to filter by, e.g. 'Homo sapiens', 'Mus musculus', 'Drosophila melanogaster'. Optional."
         },
         "cell_line": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Cell type / tissue / condition name to filter by, e.g. 'neural stem cells', 'MCF7'. Optional."
         },
         "collection": {
-          "type": ["string", "null"],
-          "enum": ["Robust", "Permissive", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "Robust",
+            "Permissive",
+            null
+          ],
           "description": "UniBind collection: 'Robust' (high-confidence, metadata-curated) or 'Permissive' (broader). Optional."
         },
         "order": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Field to order results by, e.g. 'tf_name' or '-tf_name' (prefix '-' for descending). Optional."
         },
         "page": {
@@ -54,30 +75,83 @@
       "return_format": "JSON"
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "tf_name": {"type": ["string", "null"]},
-              "total_peaks": {"type": ["string", "integer", "null"]},
-              "dataset_url": {"type": ["string", "null"]},
-              "dataset_id": {"type": ["string", "null"]}
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "tf_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "total_peaks": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "dataset_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dataset_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": ["error"],
-          "properties": {"error": {"type": "string"}}
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
         }
       ]
     },
     "test_examples": [
-      {"operation": "search_datasets", "tf_name": "SMAD3", "page_size": 5},
-      {"operation": "search_datasets", "tf_name": "CTCF", "species": "Homo sapiens", "collection": "Robust", "page_size": 3},
-      {"operation": "search_datasets", "cell_line": "neural stem cells", "page_size": 5}
+      {
+        "operation": "search_datasets",
+        "tf_name": "SMAD3",
+        "page_size": 5
+      },
+      {
+        "operation": "search_datasets",
+        "tf_name": "CTCF",
+        "species": "Homo sapiens",
+        "collection": "Robust",
+        "page_size": 3
+      },
+      {
+        "operation": "search_datasets",
+        "cell_line": "neural stem cells",
+        "page_size": 5
+      }
     ]
   },
   {
@@ -89,7 +163,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_dataset"],
+          "enum": [
+            "get_dataset"
+          ],
           "default": "get_dataset",
           "description": "Operation selector. Must be 'get_dataset'."
         },
@@ -98,55 +174,171 @@
           "description": "UniBind dataset identifier, e.g. 'EXP030726.neural_stem_cells.SMAD3'. Obtain from UniBind_search_datasets (the 'dataset_id' field)."
         }
       },
-      "required": ["dataset_id"]
+      "required": [
+        "dataset_id"
+      ]
     },
     "fields": {
       "operation": "get_dataset",
       "return_format": "JSON"
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
           "type": "object",
-          "required": ["dataset_id", "tf_name", "tfbs_models"],
           "properties": {
-            "dataset_id": {"type": "string"},
-            "tf_name": {"type": ["string", "null"]},
-            "cell_line": {"type": "array", "items": {"type": "string"}},
-            "biological_condition": {"type": "array", "items": {"type": "string"}},
-            "identifier": {"type": "array", "items": {"type": "string"}},
-            "jaspar_id": {"type": "array", "items": {"type": "string"}},
-            "prediction_models": {"type": "array", "items": {"type": "string"}},
-            "tfbs_models": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "prediction_model": {"type": ["string", "null"]},
-                  "jaspar_id": {"type": ["string", "null"]},
-                  "jaspar_version": {"type": ["string", "null"]},
-                  "total_tfbs": {"type": ["string", "integer", "null"]},
-                  "score_threshold": {"type": ["string", "number", "null"]},
-                  "distance_threshold": {"type": ["string", "number", "null"]},
-                  "adj_centrimo_pvalue": {"type": ["number", "string", "null"]},
-                  "bed_url": {"type": ["string", "null"]},
-                  "fasta_url": {"type": ["string", "null"]},
-                  "summary_plot_url": {"type": ["string", "null"]}
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "dataset_id",
+                "tf_name",
+                "tfbs_models"
+              ],
+              "properties": {
+                "dataset_id": {
+                  "type": "string"
+                },
+                "tf_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "cell_line": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "biological_condition": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "identifier": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "jaspar_id": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "prediction_models": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "tfbs_models": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "prediction_model": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "jaspar_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "jaspar_version": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "total_tfbs": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "score_threshold": {
+                        "type": [
+                          "string",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "distance_threshold": {
+                        "type": [
+                          "string",
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "adj_centrimo_pvalue": {
+                        "type": [
+                          "number",
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "bed_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "fasta_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "summary_plot_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
                 }
               }
             }
-          }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": ["error"],
-          "properties": {"error": {"type": "string"}}
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
         }
       ]
     },
     "test_examples": [
-      {"operation": "get_dataset", "dataset_id": "EXP030726.neural_stem_cells.SMAD3"},
-      {"operation": "get_dataset", "dataset_id": "ENCSR000AHD.MCF7_Invasive_ductal_breast_carcinoma.CTCF"}
+      {
+        "operation": "get_dataset",
+        "dataset_id": "EXP030726.neural_stem_cells.SMAD3"
+      },
+      {
+        "operation": "get_dataset",
+        "dataset_id": "ENCSR000AHD.MCF7_Invasive_ductal_breast_carcinoma.CTCF"
+      }
     ]
   },
   {
@@ -158,12 +350,17 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["list_tfs"],
+          "enum": [
+            "list_tfs"
+          ],
           "default": "list_tfs",
           "description": "Operation selector. Must be 'list_tfs'."
         },
         "search": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Case-insensitive substring filter applied client-side to TF gene symbols, e.g. 'SMAD', 'FOX', 'GATA'. Optional; omit to list all TFs."
         },
         "limit": {
@@ -181,22 +378,51 @@
       "return_format": "JSON"
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
-          "type": "array",
-          "items": {"type": "string"}
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
-          "required": ["error"],
-          "properties": {"error": {"type": "string"}}
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
         }
       ]
     },
     "test_examples": [
-      {"operation": "list_tfs", "search": "SMAD"},
-      {"operation": "list_tfs", "search": "CTCF"},
-      {"operation": "list_tfs", "limit": 10}
+      {
+        "operation": "list_tfs",
+        "search": "SMAD"
+      },
+      {
+        "operation": "list_tfs",
+        "search": "CTCF"
+      },
+      {
+        "operation": "list_tfs",
+        "limit": 10
+      }
     ]
   }
 ]

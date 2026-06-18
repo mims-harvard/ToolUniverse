@@ -185,7 +185,9 @@ class IDRSearchEngineTool(BaseTool):
                     "image_id": r.get("id"),
                     "name": r.get("name"),
                     "image_webclient_url": r.get("image_webclient_url"),
-                    "study": r.get("study_title") or r.get("study"),
+                    # IDR image rows carry the study under screen_name/project_name.
+                    "study": r.get("screen_name") or r.get("project_name"),
+                    "dataset_name": r.get("dataset_name"),
                     "key_values": self._kv_pairs(r),
                 }
                 for r in rows

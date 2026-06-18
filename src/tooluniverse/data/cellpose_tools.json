@@ -12,7 +12,12 @@
         "model_type": {
           "type": "string",
           "description": "Cellpose model to use. 'cyto3'/'cyto'/'cyto2' for cells/cytoplasm, 'nuclei' for nuclei. Honored on cellpose 3.x; ignored by the unified model on 4.x. Default 'cyto3'.",
-          "enum": ["cyto3", "cyto2", "cyto", "nuclei"]
+          "enum": [
+            "cyto3",
+            "cyto2",
+            "cyto",
+            "nuclei"
+          ]
         },
         "diameter": {
           "type": "number",
@@ -36,16 +41,23 @@
           "description": "Where to write the mask when save_mask is true. Defaults to '<image_path>_cp_masks.png'."
         }
       },
-      "required": ["image_path"]
+      "required": [
+        "image_path"
+      ]
     },
     "type": "CellposeTool",
     "requires_local_input": true,
-    "required_packages": ["cellpose"],
+    "required_packages": [
+      "cellpose"
+    ],
     "test_examples": [
       {
         "image_path": "/path/to/microscopy/cells.tif",
         "model_type": "cyto3",
-        "channels": [0, 0]
+        "channels": [
+          0,
+          0
+        ]
       },
       {
         "image_path": "/path/to/microscopy/nuclei.png",
@@ -55,80 +67,100 @@
       }
     ],
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
           "type": "object",
-          "description": "Successful segmentation. Mirrors the content of the 'data' field returned by the tool.",
           "properties": {
-            "image_path": {
-              "type": "string",
-              "description": "The input image path that was segmented."
+            "status": {
+              "const": "success"
             },
-            "model_type_requested": {
-              "type": "string",
-              "description": "The model_type the caller asked for."
-            },
-            "model_used": {
-              "type": "string",
-              "description": "Identifier of the cellpose model that actually produced the segmentation."
-            },
-            "num_objects": {
-              "type": "integer",
-              "description": "Number of segmented cells/nuclei (distinct nonzero labels in the mask)."
-            },
-            "image_shape": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              },
-              "description": "Shape of the output label mask, e.g. [height, width]."
-            },
-            "objects": {
-              "type": "array",
-              "description": "One entry per segmented object.",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "integer",
-                    "description": "Integer label of this object in the mask."
+            "data": {
+              "type": "object",
+              "description": "Successful segmentation. Mirrors the content of the 'data' field returned by the tool.",
+              "properties": {
+                "image_path": {
+                  "type": "string",
+                  "description": "The input image path that was segmented."
+                },
+                "model_type_requested": {
+                  "type": "string",
+                  "description": "The model_type the caller asked for."
+                },
+                "model_used": {
+                  "type": "string",
+                  "description": "Identifier of the cellpose model that actually produced the segmentation."
+                },
+                "num_objects": {
+                  "type": "integer",
+                  "description": "Number of segmented cells/nuclei (distinct nonzero labels in the mask)."
+                },
+                "image_shape": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
                   },
-                  "area": {
-                    "type": "integer",
-                    "description": "Object area in pixels."
-                  },
-                  "centroid_y": {
-                    "type": "number",
-                    "description": "Centroid row (y) coordinate in pixels."
-                  },
-                  "centroid_x": {
-                    "type": "number",
-                    "description": "Centroid column (x) coordinate in pixels."
+                  "description": "Shape of the output label mask, e.g. [height, width]."
+                },
+                "objects": {
+                  "type": "array",
+                  "description": "One entry per segmented object.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "integer",
+                        "description": "Integer label of this object in the mask."
+                      },
+                      "area": {
+                        "type": "integer",
+                        "description": "Object area in pixels."
+                      },
+                      "centroid_y": {
+                        "type": "number",
+                        "description": "Centroid row (y) coordinate in pixels."
+                      },
+                      "centroid_x": {
+                        "type": "number",
+                        "description": "Centroid column (x) coordinate in pixels."
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "area",
+                      "centroid_y",
+                      "centroid_x"
+                    ]
                   }
                 },
-                "required": ["label", "area", "centroid_y", "centroid_x"]
-              }
-            },
-            "mask_path": {
-              "type": ["string", "null"],
-              "description": "Path to the saved label-mask image, or null if save_mask was false."
-            },
-            "note": {
-              "type": "string",
-              "description": "Present when the cellpose build ignored model_type (unified-model builds)."
-            },
-            "mask_save_error": {
-              "type": "string",
-              "description": "Present only if saving the mask failed (segmentation still succeeded)."
+                "mask_path": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Path to the saved label-mask image, or null if save_mask was false."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Present when the cellpose build ignored model_type (unified-model builds)."
+                },
+                "mask_save_error": {
+                  "type": "string",
+                  "description": "Present only if saving the mask failed (segmentation still succeeded)."
+                }
+              },
+              "required": [
+                "image_path",
+                "model_type_requested",
+                "model_used",
+                "num_objects",
+                "image_shape",
+                "objects"
+              ]
             }
           },
           "required": [
-            "image_path",
-            "model_type_requested",
-            "model_used",
-            "num_objects",
-            "image_shape",
-            "objects"
+            "data"
           ]
         },
         {
@@ -140,7 +172,9 @@
               "description": "Error message."
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

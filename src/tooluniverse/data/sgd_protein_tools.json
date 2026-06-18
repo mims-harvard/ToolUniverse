@@ -15,47 +15,121 @@
           "description": "Yeast gene identifier: standard gene name (e.g. 'ACT1'), systematic/ORF name (e.g. 'YFL039C'), or SGD ID (e.g. 'S000001855')."
         }
       },
-      "required": ["locus"]
+      "required": [
+        "locus"
+      ]
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "gene_name": {"type": ["string", "null"]},
-            "systematic_name": {"type": ["string", "null"]},
-            "sgd_link": {"type": ["string", "null"]},
-            "domain_count": {"type": "integer"},
-            "domains": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {"type": ["string", "null"]},
-                  "description": {"type": ["string", "null"]},
-                  "source": {"type": ["string", "null"]},
-                  "start": {"type": ["integer", "null"]},
-                  "end": {"type": ["integer", "null"]},
-                  "domain_link": {"type": ["string", "null"]}
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sgd_link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "domain_count": {
+                  "type": "integer"
+                },
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "accession": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "start": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "end": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "domain_link": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
                 }
-              }
+              },
+              "required": [
+                "domain_count",
+                "domains"
+              ]
             }
           },
-          "required": ["domain_count", "domains"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"locus": "ACT1"},
-      {"locus": "YAL001C"},
-      {"locus": "S000001855"}
+      {
+        "locus": "ACT1"
+      },
+      {
+        "locus": "YAL001C"
+      },
+      {
+        "locus": "S000001855"
+      }
     ]
   },
   {
@@ -74,46 +148,115 @@
           "description": "Yeast gene identifier: standard gene name (e.g. 'ACT1'), systematic/ORF name (e.g. 'YAL001C'), or SGD ID (e.g. 'S000001855')."
         }
       },
-      "required": ["locus"]
+      "required": [
+        "locus"
+      ]
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "gene_name": {"type": ["string", "null"]},
-            "systematic_name": {"type": ["string", "null"]},
-            "sgd_link": {"type": ["string", "null"]},
-            "site_count": {"type": "integer"},
-            "sites": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "modification": {"type": ["string", "null"]},
-                  "residue": {"type": ["string", "null"]},
-                  "position": {"type": ["integer", "null"]},
-                  "reference": {"type": ["string", "null"]},
-                  "pubmed_id": {"type": ["integer", "null"]}
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "gene_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sgd_link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "site_count": {
+                  "type": "integer"
+                },
+                "sites": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "modification": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "residue": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "position": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "reference": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "pubmed_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
                 }
-              }
+              },
+              "required": [
+                "site_count",
+                "sites"
+              ]
             }
           },
-          "required": ["site_count", "sites"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"locus": "ACT1"},
-      {"locus": "YAL001C"},
-      {"locus": "CDC28"}
+      {
+        "locus": "ACT1"
+      },
+      {
+        "locus": "YAL001C"
+      },
+      {
+        "locus": "CDC28"
+      }
     ]
   },
   {
@@ -132,51 +275,107 @@
           "description": "Yeast gene identifier: standard gene name (e.g. 'ACT1'), systematic/ORF name (e.g. 'YAL001C'), or SGD ID (e.g. 'S000001855')."
         }
       },
-      "required": ["locus"]
+      "required": [
+        "locus"
+      ]
     },
     "return_schema": {
+      "type": "object",
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "query": {"type": "string"},
-            "total_references": {"type": "integer"},
-            "counts_by_category": {
-              "type": "object",
-              "additionalProperties": {"type": "integer"}
+            "status": {
+              "const": "success"
             },
-            "references": {
+            "data": {
               "type": "object",
-              "additionalProperties": {
-                "type": "array",
-                "items": {
+              "properties": {
+                "query": {
+                  "type": "string"
+                },
+                "total_references": {
+                  "type": "integer"
+                },
+                "counts_by_category": {
                   "type": "object",
-                  "properties": {
-                    "citation": {"type": ["string", "null"]},
-                    "pubmed_id": {"type": ["integer", "null"]},
-                    "year": {"type": ["integer", "null"]},
-                    "reference_link": {"type": ["string", "null"]}
+                  "additionalProperties": {
+                    "type": "integer"
                   }
+                },
+                "references": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "pubmed_id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "year": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "reference_link": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "truncated_per_category": {
+                  "type": "integer"
                 }
-              }
-            },
-            "truncated_per_category": {"type": "integer"}
+              },
+              "required": [
+                "total_references",
+                "counts_by_category",
+                "references"
+              ]
+            }
           },
-          "required": ["total_references", "counts_by_category", "references"]
+          "required": [
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"locus": "ACT1"},
-      {"locus": "YAL001C"},
-      {"locus": "CDC28"}
+      {
+        "locus": "ACT1"
+      },
+      {
+        "locus": "YAL001C"
+      },
+      {
+        "locus": "CDC28"
+      }
     ]
   }
 ]

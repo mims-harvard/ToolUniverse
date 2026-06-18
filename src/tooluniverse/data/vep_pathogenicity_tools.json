@@ -12,53 +12,178 @@
         "genome_build": {
           "type": "string",
           "default": "GRCh38",
-          "enum": ["GRCh38", "GRCh37"],
+          "enum": [
+            "GRCh38",
+            "GRCh37"
+          ],
           "description": "Reference genome assembly. AlphaMissense is available on both."
         }
       },
-      "required": ["rsid"]
+      "required": [
+        "rsid"
+      ]
     },
     "fields": {
       "operation": "predict_by_rsid"
     },
     "type": "VEPPathogenicityTool",
     "test_examples": [
-      { "rsid": "rs699" },
-      { "rsid": "rs28934578", "genome_build": "GRCh38" }
+      {
+        "rsid": "rs699"
+      },
+      {
+        "rsid": "rs28934578",
+        "genome_build": "GRCh38"
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "input": { "type": ["string", "null"] },
-          "variant_id": { "type": ["string", "null"] },
-          "assembly_name": { "type": ["string", "null"] },
-          "seq_region_name": { "type": ["string", "null"] },
-          "start": { "type": ["integer", "null"] },
-          "end": { "type": ["integer", "null"] },
-          "allele_string": { "type": ["string", "null"] },
-          "most_severe_consequence": { "type": ["string", "null"] },
-          "has_alphamissense": { "type": "boolean" },
+          "input": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assembly_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seq_region_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "start": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "end": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "allele_string": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "most_severe_consequence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_alphamissense": {
+            "type": "boolean"
+          },
           "predictions": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "transcript_id": { "type": ["string", "null"] },
-                "gene_symbol": { "type": ["string", "null"] },
-                "gene_id": { "type": ["string", "null"] },
-                "biotype": { "type": ["string", "null"] },
-                "consequence_terms": { "type": ["array", "null"], "items": { "type": "string" } },
-                "amino_acids": { "type": ["string", "null"] },
-                "codons": { "type": ["string", "null"] },
-                "impact": { "type": ["string", "null"] },
-                "sift_prediction": { "type": ["string", "null"] },
-                "sift_score": { "type": ["number", "null"] },
-                "polyphen_prediction": { "type": ["string", "null"] },
-                "polyphen_score": { "type": ["number", "null"] },
-                "alphamissense_class": { "type": ["string", "null"] },
-                "alphamissense_pathogenicity": { "type": ["number", "null"] }
+                "transcript_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "biotype": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "consequence_terms": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "amino_acids": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "codons": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "impact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sift_prediction": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sift_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "polyphen_prediction": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "polyphen_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "alphamissense_class": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "alphamissense_pathogenicity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
               }
             }
           }
@@ -79,53 +204,178 @@
         "genome_build": {
           "type": "string",
           "default": "GRCh38",
-          "enum": ["GRCh38", "GRCh37"],
+          "enum": [
+            "GRCh38",
+            "GRCh37"
+          ],
           "description": "Reference genome assembly."
         }
       },
-      "required": ["hgvs_notation"]
+      "required": [
+        "hgvs_notation"
+      ]
     },
     "fields": {
       "operation": "predict_by_hgvs"
     },
     "type": "VEPPathogenicityTool",
     "test_examples": [
-      { "hgvs_notation": "ENST00000269305.9:c.524G>A" },
-      { "hgvs_notation": "ENST00000646891.2:c.1799T>A", "genome_build": "GRCh38" }
+      {
+        "hgvs_notation": "ENST00000269305.9:c.524G>A"
+      },
+      {
+        "hgvs_notation": "ENST00000646891.2:c.1799T>A",
+        "genome_build": "GRCh38"
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "input": { "type": ["string", "null"] },
-          "variant_id": { "type": ["string", "null"] },
-          "assembly_name": { "type": ["string", "null"] },
-          "seq_region_name": { "type": ["string", "null"] },
-          "start": { "type": ["integer", "null"] },
-          "end": { "type": ["integer", "null"] },
-          "allele_string": { "type": ["string", "null"] },
-          "most_severe_consequence": { "type": ["string", "null"] },
-          "has_alphamissense": { "type": "boolean" },
+          "input": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assembly_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seq_region_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "start": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "end": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "allele_string": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "most_severe_consequence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_alphamissense": {
+            "type": "boolean"
+          },
           "predictions": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "transcript_id": { "type": ["string", "null"] },
-                "gene_symbol": { "type": ["string", "null"] },
-                "gene_id": { "type": ["string", "null"] },
-                "biotype": { "type": ["string", "null"] },
-                "consequence_terms": { "type": ["array", "null"], "items": { "type": "string" } },
-                "amino_acids": { "type": ["string", "null"] },
-                "codons": { "type": ["string", "null"] },
-                "impact": { "type": ["string", "null"] },
-                "sift_prediction": { "type": ["string", "null"] },
-                "sift_score": { "type": ["number", "null"] },
-                "polyphen_prediction": { "type": ["string", "null"] },
-                "polyphen_score": { "type": ["number", "null"] },
-                "alphamissense_class": { "type": ["string", "null"] },
-                "alphamissense_pathogenicity": { "type": ["number", "null"] }
+                "transcript_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "biotype": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "consequence_terms": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "amino_acids": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "codons": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "impact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sift_prediction": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sift_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "polyphen_prediction": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "polyphen_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "alphamissense_class": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "alphamissense_pathogenicity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
               }
             }
           }
@@ -154,53 +404,184 @@
         "genome_build": {
           "type": "string",
           "default": "GRCh38",
-          "enum": ["GRCh38", "GRCh37"],
+          "enum": [
+            "GRCh38",
+            "GRCh37"
+          ],
           "description": "Reference genome assembly. Coordinates must match the chosen build."
         }
       },
-      "required": ["chrom", "pos", "alt"]
+      "required": [
+        "chrom",
+        "pos",
+        "alt"
+      ]
     },
     "fields": {
       "operation": "predict_by_region"
     },
     "type": "VEPPathogenicityTool",
     "test_examples": [
-      { "chrom": "7", "pos": 140753336, "alt": "T" },
-      { "chrom": "17", "pos": 7675088, "alt": "T", "genome_build": "GRCh38" }
+      {
+        "chrom": "7",
+        "pos": 140753336,
+        "alt": "T"
+      },
+      {
+        "chrom": "17",
+        "pos": 7675088,
+        "alt": "T",
+        "genome_build": "GRCh38"
+      }
     ],
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "input": { "type": ["string", "null"] },
-          "variant_id": { "type": ["string", "null"] },
-          "assembly_name": { "type": ["string", "null"] },
-          "seq_region_name": { "type": ["string", "null"] },
-          "start": { "type": ["integer", "null"] },
-          "end": { "type": ["integer", "null"] },
-          "allele_string": { "type": ["string", "null"] },
-          "most_severe_consequence": { "type": ["string", "null"] },
-          "has_alphamissense": { "type": "boolean" },
+          "input": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assembly_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "seq_region_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "start": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "end": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "allele_string": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "most_severe_consequence": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "has_alphamissense": {
+            "type": "boolean"
+          },
           "predictions": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "transcript_id": { "type": ["string", "null"] },
-                "gene_symbol": { "type": ["string", "null"] },
-                "gene_id": { "type": ["string", "null"] },
-                "biotype": { "type": ["string", "null"] },
-                "consequence_terms": { "type": ["array", "null"], "items": { "type": "string" } },
-                "amino_acids": { "type": ["string", "null"] },
-                "codons": { "type": ["string", "null"] },
-                "impact": { "type": ["string", "null"] },
-                "sift_prediction": { "type": ["string", "null"] },
-                "sift_score": { "type": ["number", "null"] },
-                "polyphen_prediction": { "type": ["string", "null"] },
-                "polyphen_score": { "type": ["number", "null"] },
-                "alphamissense_class": { "type": ["string", "null"] },
-                "alphamissense_pathogenicity": { "type": ["number", "null"] }
+                "transcript_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "gene_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "biotype": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "consequence_terms": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "amino_acids": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "codons": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "impact": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sift_prediction": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sift_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "polyphen_prediction": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "polyphen_score": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "alphamissense_class": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "alphamissense_pathogenicity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
               }
             }
           }
