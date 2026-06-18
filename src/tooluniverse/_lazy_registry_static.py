@@ -113,7 +113,6 @@ STATIC_LAZY_REGISTRY = {
     "GnomADConstraintTool": "gnomad_constraint_tool",
     "HuggingFaceInferenceTool": "huggingface_inference_tool",
     "IUPred3Tool": "iupred3_tool",
-    "ALOGPSTool": "alogps_tool",
     "VEPPathogenicityTool": "vep_pathogenicity_tool",
     "TDCOracleTool": "tdc_oracle_tool",
     "RXNChemistryTool": "rxn_chemistry_tool",

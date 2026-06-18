@@ -77,7 +77,23 @@ class VEPPathogenicityTool(BaseTool):
         arguments = arguments or {}
         operation = self.operation or arguments.get("operation")
         if not operation:
-            return {"status": "error", "error": "Missing required field: operation"}
+            # Single collapsed tool: route by whichever input was supplied.
+            if arguments.get("rsid"):
+                operation = "predict_by_rsid"
+            elif arguments.get("hgvs_notation"):
+                operation = "predict_by_hgvs"
+            elif (
+                arguments.get("chrom")
+                and arguments.get("pos") is not None
+                and arguments.get("alt")
+            ):
+                operation = "predict_by_region"
+            else:
+                return {
+                    "status": "error",
+                    "error": "Provide one of: 'rsid', 'hgvs_notation', "
+                    "or ('chrom' + 'pos' + 'alt').",
+                }
 
         handlers = {
             "predict_by_rsid": self._predict_by_rsid,

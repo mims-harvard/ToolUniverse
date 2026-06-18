@@ -184,8 +184,6 @@ default_tool_files = {
     ),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
-    # ALOGPS 2.1 logP / logS prediction (chemistry ML)
-    "alogps": os.path.join(current_dir, "data", "alogps_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)
     "vep_pathogenicity": os.path.join(
         current_dir, "data", "vep_pathogenicity_tools.json"

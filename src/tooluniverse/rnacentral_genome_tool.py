@@ -20,7 +20,6 @@ All requests are anonymous (no API key). ``run()`` always returns a dict with a
 """
 
 import json
-import re
 from typing import Any, Dict
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -37,15 +36,6 @@ def _http_get_json(url: str, timeout: int = _TIMEOUT) -> Dict[str, Any]:
     with urlopen(req, timeout=timeout) as resp:
         raw = resp.read().decode("utf-8", errors="ignore")
     return json.loads(raw)
-
-
-def _extract_year(citation: str):
-    """Pull a 4-digit publication year out of an RNAcentral citation string
-    like 'Genome Res. 18 (4):610-621(2008).' -> 2008. Returns None if absent."""
-    if not citation:
-        return None
-    years = re.findall(r"(?:19|20)\d{2}", citation)
-    return int(years[-1]) if years else None
 
 
 def _http_get_text(url: str, timeout: int = _TIMEOUT) -> str:
@@ -104,14 +94,11 @@ class RNAcentralGenomeTool(BaseTool):
 
         if operation == "genome_locations":
             return self._genome_locations(urs, arguments)
-        if operation == "publications":
-            return self._publications(urs)
         if operation == "sequence":
             return self._sequence(urs)
 
         return self._error(
-            f"Unknown operation '{operation}'. Use one of: "
-            "genome_locations, publications, sequence.",
+            f"Unknown operation '{operation}'. Use one of: genome_locations, sequence.",
             operation,
         )
 
@@ -181,49 +168,6 @@ class RNAcentralGenomeTool(BaseTool):
                 if isinstance(payload, dict)
                 else len(locations),
                 "locations": locations,
-            },
-        }
-
-    def _publications(self, urs: str) -> Dict[str, Any]:
-        url = f"{self.base_url}/rna/{urs}/publications"
-        try:
-            payload = _http_get_json(url, self.timeout)
-        except HTTPError as e:
-            if e.code == 404:
-                return self._error(f"Unknown RNAcentral id '{urs}'.", "publications")
-            return self._error(f"HTTP {e.code} from RNAcentral.", "publications")
-        except (URLError, TimeoutError) as e:
-            return self._error(f"Network error: {e}", "publications")
-        except json.JSONDecodeError:
-            return self._error(
-                "RNAcentral returned a non-JSON response.", "publications"
-            )
-
-        results = payload.get("results", []) if isinstance(payload, dict) else []
-        publications = [
-            {
-                "title": p.get("title"),
-                "authors": p.get("authors"),
-                # RNAcentral stores the journal/citation in 'publication'
-                # (e.g. 'Genome Res. 18 (4):610-621(2008).').
-                "journal": p.get("publication") or p.get("journal"),
-                "year": _extract_year(p.get("publication")),
-                "pubmed_id": p.get("pubmed_id") or p.get("pubmedid"),
-                "doi": p.get("doi"),
-            }
-            for p in results
-        ]
-
-        return {
-            "status": "success",
-            "source": "RNAcentral",
-            "operation": "publications",
-            "urs_id": urs,
-            "data": {
-                "count": payload.get("count", len(publications))
-                if isinstance(payload, dict)
-                else len(publications),
-                "publications": publications,
             },
         }
 

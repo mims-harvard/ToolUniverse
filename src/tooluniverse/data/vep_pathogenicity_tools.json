@@ -1,41 +1,56 @@
 [
   {
-    "name": "VEP_predict_pathogenicity_by_rsid",
-    "description": "Get missense pathogenicity predictor scores for a dbSNP variant via Ensembl VEP. Returns per-transcript AlphaMissense (class + 0-1 pathogenicity), SIFT (tolerated/deleterious + score), PolyPhen-2 (benign/damaging + score), and the variant's most-severe consequence. One call returns predictions across all overlapping transcripts. No API key required. For CADD scores use the dedicated CADD tools.",
+    "name": "VEP_predict_pathogenicity",
+    "type": "VEPPathogenicityTool",
+    "description": "Predict missense variant pathogenicity via the Ensembl VEP REST API with AlphaMissense (DeepMind 2023) + SIFT + PolyPhen-2 per transcript, in one call. Provide ONE of: a dbSNP rsID ('rsid'), HGVS notation ('hgvs_notation'), or a genomic locus ('chrom'+'pos'+'alt'). Returns per-transcript predictions (gene, amino_acids, alphamissense_class/score, sift, polyphen, most_severe_consequence). No API key.",
     "parameter": {
       "type": "object",
+      "required": [],
       "properties": {
         "rsid": {
-          "type": "string",
-          "description": "dbSNP reference SNP ID, e.g. 'rs699' (AGT) or 'rs28934578' (TP53 R175H)."
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "dbSNP rsID, e.g. 'rs699' (one input mode)"
+        },
+        "hgvs_notation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HGVS notation, e.g. 'ENST00000269305.9:c.524G>A' (one input mode)"
+        },
+        "chrom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Chromosome for region input, e.g. '17' (with pos+alt)"
+        },
+        "pos": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1-based position for region input"
+        },
+        "alt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alternate allele for region input, e.g. 'T'"
         },
         "genome_build": {
-          "type": "string",
-          "default": "GRCh38",
-          "enum": [
-            "GRCh38",
-            "GRCh37"
+          "type": [
+            "string",
+            "null"
           ],
-          "description": "Reference genome assembly. AlphaMissense is available on both."
+          "description": "GRCh38 (default) or GRCh37"
         }
-      },
-      "required": [
-        "rsid"
-      ]
-    },
-    "fields": {
-      "operation": "predict_by_rsid"
-    },
-    "type": "VEPPathogenicityTool",
-    "test_examples": [
-      {
-        "rsid": "rs699"
-      },
-      {
-        "rsid": "rs28934578",
-        "genome_build": "GRCh38"
       }
-    ],
+    },
     "return_schema": {
       "type": "array",
       "items": {
@@ -189,404 +204,19 @@
           }
         }
       }
-    }
-  },
-  {
-    "name": "VEP_predict_pathogenicity_by_hgvs",
-    "description": "Get missense pathogenicity predictor scores for an HGVS-notated variant via Ensembl VEP. Accepts transcript/genomic HGVS such as 'ENST00000269305.9:c.524G>A' (TP53 R175H) or 'ENSP.../NM_...' notations. Returns per-transcript AlphaMissense (class + 0-1 score), SIFT, PolyPhen-2, and the most-severe consequence. No API key required.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "hgvs_notation": {
-          "type": "string",
-          "description": "HGVS notation, e.g. 'ENST00000269305.9:c.524G>A' (TP53 R175H). The reference allele must match the transcript/genome."
-        },
-        "genome_build": {
-          "type": "string",
-          "default": "GRCh38",
-          "enum": [
-            "GRCh38",
-            "GRCh37"
-          ],
-          "description": "Reference genome assembly."
-        }
-      },
-      "required": [
-        "hgvs_notation"
-      ]
     },
-    "fields": {
-      "operation": "predict_by_hgvs"
-    },
-    "type": "VEPPathogenicityTool",
     "test_examples": [
       {
         "hgvs_notation": "ENST00000269305.9:c.524G>A"
       },
       {
-        "hgvs_notation": "ENST00000646891.2:c.1799T>A",
-        "genome_build": "GRCh38"
-      }
-    ],
-    "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "input": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "variant_id": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "assembly_name": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "seq_region_name": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "start": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "end": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "allele_string": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "most_severe_consequence": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "has_alphamissense": {
-            "type": "boolean"
-          },
-          "predictions": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "transcript_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_symbol": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "biotype": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "consequence_terms": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "amino_acids": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "codons": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "impact": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "sift_prediction": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "sift_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "polyphen_prediction": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "polyphen_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "alphamissense_class": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "alphamissense_pathogenicity": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  {
-    "name": "VEP_predict_pathogenicity_by_region",
-    "description": "Get missense pathogenicity predictor scores for a variant specified by chromosome, position, and alternate allele via Ensembl VEP. Example: BRAF V600E is chrom=7, pos=140753336, alt=T on GRCh38. Returns per-transcript AlphaMissense (class + 0-1 score), SIFT, PolyPhen-2, and the most-severe consequence. No API key required.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "chrom": {
-          "type": "string",
-          "description": "Chromosome (1-22, X, Y, MT). A 'chr' prefix is accepted and stripped."
-        },
-        "pos": {
-          "type": "integer",
-          "description": "1-based genomic position of the substituted base."
-        },
-        "alt": {
-          "type": "string",
-          "description": "Alternate (variant) allele, e.g. 'T'. Single-nucleotide substitution."
-        },
-        "genome_build": {
-          "type": "string",
-          "default": "GRCh38",
-          "enum": [
-            "GRCh38",
-            "GRCh37"
-          ],
-          "description": "Reference genome assembly. Coordinates must match the chosen build."
-        }
+        "rsid": "rs699"
       },
-      "required": [
-        "chrom",
-        "pos",
-        "alt"
-      ]
-    },
-    "fields": {
-      "operation": "predict_by_region"
-    },
-    "type": "VEPPathogenicityTool",
-    "test_examples": [
       {
         "chrom": "7",
         "pos": 140753336,
         "alt": "T"
-      },
-      {
-        "chrom": "17",
-        "pos": 7675088,
-        "alt": "T",
-        "genome_build": "GRCh38"
       }
-    ],
-    "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "input": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "variant_id": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "assembly_name": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "seq_region_name": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "start": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "end": {
-            "type": [
-              "integer",
-              "null"
-            ]
-          },
-          "allele_string": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "most_severe_consequence": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "has_alphamissense": {
-            "type": "boolean"
-          },
-          "predictions": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "transcript_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_symbol": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "biotype": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "consequence_terms": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "amino_acids": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "codons": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "impact": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "sift_prediction": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "sift_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "polyphen_prediction": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "polyphen_score": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "alphamissense_class": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "alphamissense_pathogenicity": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    ]
   }
 ]
