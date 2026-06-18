@@ -8,8 +8,11 @@ They deliberately do NOT exercise the upstream model forward pass (loading
 ``enformer-pytorch`` / ``borzoi-pytorch`` / ``scvi-tools`` weights), which runs
 on a deployed MCP server, not in CI. The three un-installable model packages are
 stubbed in ``sys.modules`` so the server modules import; the model call itself is
-monkeypatched per-test. This pins the glue logic that is most likely to carry a
-bug, while being honest that end-to-end inference is verified at deploy time.
+monkeypatched per-test.
+
+CI does not install the heavy DL stack, so the torch/scanpy-dependent cases skip
+cleanly there; the stdlib-only LDSC cases run everywhere. All cases run locally
+where the deps are present.
 """
 
 import importlib.util
@@ -22,32 +25,10 @@ import pytest
 
 pytestmark = pytest.mark.unit
 
-# --- stub the model packages that aren't installed, so the servers import ----
-if "enformer_pytorch" not in sys.modules:
-    m = types.ModuleType("enformer_pytorch")
-    m.from_pretrained = lambda *a, **k: object()
-    sys.modules["enformer_pytorch"] = m
-
-if "borzoi_pytorch" not in sys.modules:
-    m = types.ModuleType("borzoi_pytorch")
-
-    class _Borzoi:
-        @classmethod
-        def from_pretrained(cls, *a, **k):
-            return cls()
-
-    m.Borzoi = _Borzoi
-    sys.modules["borzoi_pytorch"] = m
-
-if "scvi" not in sys.modules:
-    scvi_mod = types.ModuleType("scvi")
-    model_mod = types.ModuleType("scvi.model")
-    model_mod.SCVI = object
-    scvi_mod.model = model_mod
-    sys.modules["scvi"] = scvi_mod
-    sys.modules["scvi.model"] = model_mod
-
-import torch  # noqa: E402  (available in this env)
+HAS_TORCH = importlib.util.find_spec("torch") is not None
+HAS_SCANPY = importlib.util.find_spec("scanpy") is not None
+requires_torch = pytest.mark.skipif(not HAS_TORCH, reason="torch not installed")
+requires_scanpy = pytest.mark.skipif(not HAS_SCANPY, reason="scanpy not installed")
 
 _REMOTE = os.path.join(
     os.path.dirname(__file__), "..", "..", "src", "tooluniverse", "remote"
@@ -63,13 +44,45 @@ def _load(rel_path, name):
     return mod
 
 
-ef = _load("enformer/enformer_tool.py", "ef_tool")
-bz = _load("borzoi/borzoi_tool.py", "bz_tool")
+def _stub(name, **attrs):
+    if name not in sys.modules:
+        m = types.ModuleType(name)
+        for k, v in attrs.items():
+            setattr(m, k, v)
+        sys.modules[name] = m
+
+
+# LDSC server is stdlib-only — always loadable, even in a minimal CI image.
 ld = _load("ldsc/ldsc_tool.py", "ld_tool")
-sv = _load("scvi/scvi_tool.py", "sv_tool")
+
+# torch-backed servers: stub the model packages, then load (only when torch present)
+ef = bz = sv = None
+if HAS_TORCH:
+    import torch
+
+    _stub("enformer_pytorch", from_pretrained=lambda *a, **k: object())
+
+    class _Borzoi:
+        @classmethod
+        def from_pretrained(cls, *a, **k):
+            return cls()
+
+    _stub("borzoi_pytorch", Borzoi=_Borzoi)
+    ef = _load("enformer/enformer_tool.py", "ef_tool")
+    bz = _load("borzoi/borzoi_tool.py", "bz_tool")
+
+if HAS_SCANPY:
+    scvi_mod = types.ModuleType("scvi")
+    model_mod = types.ModuleType("scvi.model")
+    model_mod.SCVI = object
+    scvi_mod.model = model_mod
+    sys.modules.setdefault("scvi", scvi_mod)
+    sys.modules.setdefault("scvi.model", model_mod)
+    sv = _load("scvi/scvi_tool.py", "sv_tool")
 
 
 # ----------------------------------------------------------------- Enformer
+@requires_torch
 def test_enformer_encode_centers_and_maps_bases():
     out = ef._encode("ACGT")
     assert out.shape == (1, ef.SEQ_LENGTH) and out.dtype == torch.long
@@ -78,30 +91,31 @@ def test_enformer_encode_centers_and_maps_bases():
     assert out[0, 0].item() == 4 and out[0, -1].item() == 4  # N-padded ends
 
 
+@requires_torch
 def test_enformer_encode_crops_overlong_sequence():
-    seq = "ACGT" * (ef.SEQ_LENGTH)  # far longer than the model input
-    out = ef._encode(seq)
+    out = ef._encode("ACGT" * ef.SEQ_LENGTH)  # far longer than the model input
     assert out.shape == (1, ef.SEQ_LENGTH)
 
 
+@requires_torch
 def test_enformer_encode_unknown_base_is_n():
     out = ef._encode("AXGT")  # X is not a base -> mapped to N(4)
     pad = (ef.SEQ_LENGTH - 4) // 2
     assert out[0, pad : pad + 4].tolist() == [0, 4, 2, 3]
 
 
+@requires_torch
 def test_enformer_top_center_tracks_selection_and_ordering():
     pred = torch.zeros(ef.N_BINS, 5)
     pred[ef.N_BINS // 2] = torch.tensor([0.1, 0.5, 0.2, 0.9, 0.3])
-    # explicit indices preserve request
-    sel = ef._top_center_tracks(pred, [0, 4], 20)
+    sel = ef._top_center_tracks(pred, [0, 4], 20)  # explicit indices preserved
     assert [d["track"] for d in sel] == [0, 4]
     assert sel[0]["center_value"] == pytest.approx(0.1)
-    # top_n returns highest-signal tracks, descending
-    top = ef._top_center_tracks(pred, None, 2)
+    top = ef._top_center_tracks(pred, None, 2)  # top_n, descending
     assert [d["track"] for d in top] == [3, 1]
 
 
+@requires_torch
 def test_enformer_run_predict_envelope(monkeypatch):
     monkeypatch.setattr(ef, "_predict", lambda seq, org: torch.zeros(ef.N_BINS, 5))
     out = ef.EnformerPredictTool().run({"sequence": "ACGT", "top_n": 3})
@@ -110,6 +124,7 @@ def test_enformer_run_predict_envelope(monkeypatch):
     assert len(out["tracks"]) == 3
 
 
+@requires_torch
 def test_enformer_run_predict_errors():
     assert ef.EnformerPredictTool().run({})["error"]
     assert "organism" in ef.EnformerPredictTool().run(
@@ -117,10 +132,10 @@ def test_enformer_run_predict_errors():
     )["error"]
 
 
+@requires_torch
 def test_enformer_variant_effect_delta_sign(monkeypatch):
     def fake_predict(seq, org):
-        v = 1.0 if seq == "ALT" else 0.0
-        return torch.full((ef.N_BINS, 3), v)
+        return torch.full((ef.N_BINS, 3), 1.0 if seq == "ALT" else 0.0)
 
     monkeypatch.setattr(ef, "_predict", fake_predict)
     out = ef.EnformerVariantEffectTool().run(
@@ -131,6 +146,7 @@ def test_enformer_variant_effect_delta_sign(monkeypatch):
 
 
 # ------------------------------------------------------------------- Borzoi
+@requires_torch
 def test_borzoi_encode_onehot_shape_and_channels():
     out = bz._encode("ACGT")
     assert out.shape == (1, 4, bz.SEQ_LENGTH)
@@ -140,6 +156,7 @@ def test_borzoi_encode_onehot_shape_and_channels():
     assert out[0, :, 0].sum().item() == 0.0  # N column is all-zero
 
 
+@requires_torch
 def test_borzoi_run_predict_envelope(monkeypatch):
     monkeypatch.setattr(bz, "_predict", lambda seq: torch.zeros(bz.N_BINS, 7))
     out = bz.BorzoiPredictTool().run({"sequence": "ACGT", "top_n": 4})
@@ -203,6 +220,7 @@ def test_ldsc_missing_args():
 
 
 # --------------------------------------------------------------------- scVI
+@requires_scanpy
 def test_scvi_integration_envelope(monkeypatch):
     class _FakeModel:
         def get_latent_representation(self):
@@ -219,6 +237,7 @@ def test_scvi_integration_envelope(monkeypatch):
     assert out["cell_ids"] == ["c1", "c2", "c3"]
 
 
+@requires_scanpy
 def test_scvi_missing_args():
     assert sv.ScviIntegrationTool().run({})["error"]
     assert sv.ScviDifferentialExpressionTool().run({"adata_path": "x.h5ad"})["error"]
