@@ -1,0 +1,2 @@
+torch>=1.6
+enformer-pytorch>=0.8

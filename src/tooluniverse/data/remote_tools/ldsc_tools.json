@@ -1,0 +1,72 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_ldsc_heritability",
+    "description": "Estimate SNP-heritability from GWAS summary statistics with LD Score regression (Bulik-Sullivan 2015), using the maintained Python-3 engine (NCI CBIIT/ldsc). Input a munged .sumstats(.gz) file; returns observed-scale h2 with SE, the LD-score-regression intercept (confounding/inflation diagnostic), and the ratio. Requires multi-GB LD-score reference panels staged on the server; hosted alternative: https://ldlink.nih.gov/ldscore.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sumstats_path": {"type": "string", "description": "Server-accessible path to a munged .sumstats.gz file (output of munge_sumstats.py)."},
+        "ref_ld_chr": {"type": "string", "description": "Reference LD-score prefix/dir (default 'eur_w_ld_chr/', resolved under LDSC_REF_DIR)."},
+        "w_ld_chr": {"type": "string", "description": "Regression-weight LD-score prefix/dir (default same as ref_ld_chr)."}
+      },
+      "required": ["sumstats_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "h2": {"type": "number", "description": "Total observed-scale SNP-heritability."},
+        "h2_se": {"type": "number"},
+        "intercept": {"type": "number", "description": "LD-score-regression intercept (~1 = no confounding)."},
+        "ratio": {"type": "number"},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "LdscHeritabilityTool",
+      "url": "https://github.com/CBIIT/ldsc",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/ldsc",
+      "mcp_tool_name": "run_ldsc_heritability"
+    },
+    "test_examples": [
+      {"sumstats_path": "scz.sumstats.gz", "ref_ld_chr": "eur_w_ld_chr/"}
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_ldsc_genetic_correlation",
+    "description": "Estimate the genetic correlation (rg) between two traits from their GWAS summary statistics with cross-trait LD Score regression (Bulik-Sullivan 2015), using the Python-3 engine (NCI CBIIT/ldsc). Input two munged .sumstats(.gz) files; returns rg with SE and p-value. Requires multi-GB LD-score reference panels staged on the server; hosted alternative: https://ldlink.nih.gov/ldscore.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sumstats_path_1": {"type": "string", "description": "Munged .sumstats.gz for trait 1."},
+        "sumstats_path_2": {"type": "string", "description": "Munged .sumstats.gz for trait 2."},
+        "ref_ld_chr": {"type": "string", "description": "Reference LD-score prefix/dir (default 'eur_w_ld_chr/')."},
+        "w_ld_chr": {"type": "string", "description": "Regression-weight LD-score prefix/dir (default same as ref_ld_chr)."}
+      },
+      "required": ["sumstats_path_1", "sumstats_path_2"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "rg": {"type": "number", "description": "Genetic correlation between the two traits."},
+        "rg_se": {"type": "number"},
+        "p_value": {"type": "number"},
+        "error": {"type": "string"}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "LdscGeneticCorrelationTool",
+      "url": "https://github.com/CBIIT/ldsc",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/ldsc",
+      "mcp_tool_name": "run_ldsc_genetic_correlation"
+    },
+    "test_examples": [
+      {"sumstats_path_1": "scz.sumstats.gz", "sumstats_path_2": "bip.sumstats.gz", "ref_ld_chr": "eur_w_ld_chr/"}
+    ]
+  }
+]
