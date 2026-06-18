@@ -112,6 +112,7 @@ STATIC_LAZY_REGISTRY = {
     "EdgeRLimmaTool": "edger_limma_tool",
     "GnomADConstraintTool": "gnomad_constraint_tool",
     "HuggingFaceInferenceTool": "huggingface_inference_tool",
+    "ESM2VariantEffectTool": "esm2_variant_effect_tool",
     "IUPred3Tool": "iupred3_tool",
     "VEPPathogenicityTool": "vep_pathogenicity_tool",
     "TDCOracleTool": "tdc_oracle_tool",

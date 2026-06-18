@@ -182,6 +182,10 @@ default_tool_files = {
     "huggingface_inference": os.path.join(
         current_dir, "data", "huggingface_inference_tools.json"
     ),
+    # Keyless ESM-2 masked-marginal missense variant scoring (via hf-inference)
+    "esm2_variant_effect": os.path.join(
+        current_dir, "data", "esm2_variant_effect_tools.json"
+    ),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)

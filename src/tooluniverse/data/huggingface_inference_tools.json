@@ -112,7 +112,7 @@
   {
     "name": "HFInference_embed_text",
     "type": "HuggingFaceInferenceTool",
-    "description": "Generate a dense embedding vector for text using any HuggingFace feature-extraction model (serverless hf-inference provider). Forces the feature-extraction pipeline so sentence-transformers models return a raw vector (not a similarity score); token-level outputs are mean-pooled to one vector. Example model_id 'sentence-transformers/all-MiniLM-L6-v2' -> 384-dim embedding. Returns {dimension, embedding:[float], preview}. Optional HF_TOKEN raises rate limits.",
+    "description": "Generate a dense embedding vector for text using any HuggingFace feature-extraction model (serverless hf-inference provider). Forces the feature-extraction pipeline so sentence-transformers models return a raw vector (not a similarity score); token-level outputs are mean-pooled to one vector. Example model_id 'sentence-transformers/all-MiniLM-L6-v2' -> 384-dim embedding. Verified-live biomedical model_ids: NeuML/pubmedbert-base-embeddings and pritamdeka/S-PubMedBert-MS-MARCO (literature similarity), cambridgeltl/SapBERT-from-PubMedBERT-fulltext (entity normalization), facebook/esm2_t33_650M_UR50D (protein embeddings). Pass the canonical 'org/name' id, not a bare alias. Returns {dimension, embedding:[float], preview}. Optional HF_TOKEN raises rate limits.",
     "parameter": {
       "type": "object",
       "required": [
@@ -211,7 +211,7 @@
   {
     "name": "HFInference_fill_mask",
     "type": "HuggingFaceInferenceTool",
-    "description": "Predict the most likely token(s) for a masked position using any HuggingFace fill-mask (masked-LM) model, including protein language models. Input text must contain the model's mask token: '[MASK]' for BERT-family, '<mask>' for RoBERTa/ESM. Example: 'facebook/esm2_t6_8M_UR50D' with 'MQIF<mask>KTLTGKTITLEV' ranks amino-acid tokens. Returns {top_token, predictions:[{token_str,score,sequence}]}. Optional HF_TOKEN raises rate limits.",
+    "description": "Predict the most likely token(s) for a masked position using any HuggingFace fill-mask (masked-LM) model, including protein language models. Input text must contain the model's mask token: '[MASK]' for BERT-family, '<mask>' for RoBERTa/ESM. Example: 'facebook/esm2_t6_8M_UR50D' with 'MQIF<mask>KTLTGKTITLEV' ranks amino-acid tokens. Verified-live biomedical model_ids: protein LMs facebook/esm2_t33_650M_UR50D (or t30_150M/t12_35M/t6_8M), biomedical text dmis-lab/biobert-base-cased-v1.2, clinical emilyalsentzer/Bio_ClinicalBERT, genomic InstaDeepAI/nucleotide-transformer-500m-human-ref. For proper missense variant scoring (log-likelihood ratio) use ESM2_score_missense_variant, not raw fill-mask. Pass the canonical 'org/name' id (e.g. 'google-bert/bert-base-uncased'), not a bare alias, or hf-inference returns HTTP 400. Returns {top_token, predictions:[{token_str,score,sequence}]}. Optional HF_TOKEN raises rate limits.",
     "parameter": {
       "type": "object",
       "required": [
@@ -559,7 +559,7 @@
   {
     "name": "HFInference_ner",
     "type": "HuggingFaceInferenceTool",
-    "description": "Extract named entities (people, locations, organizations, etc.) from text using any HuggingFace token-classification / NER model (serverless hf-inference provider). Example model_id 'dslim/bert-base-NER' tags PER/LOC/ORG/MISC spans with confidence scores and character offsets. Optional HF_TOKEN raises rate limits. Returns {entity_count, entities:[{entity_group,word,score,start,end}]}.",
+    "description": "Extract named entities (people, locations, organizations, etc.) from text using any HuggingFace token-classification / NER model (serverless hf-inference provider). Example model_id 'dslim/bert-base-NER' tags PER/LOC/ORG/MISC spans with confidence scores and character offsets. Verified-live biomedical NER model_ids: d4data/biomedical-ner-all (drugs/diseases/dosage/symptoms) and OpenMed/OpenMed-NER-DiseaseDetect-BioMed-335M (diseases). Pass the canonical 'org/name' id, not a bare alias. Optional HF_TOKEN raises rate limits. Returns {entity_count, entities:[{entity_group,word,score,start,end}]}.",
     "parameter": {
       "type": "object",
       "required": [

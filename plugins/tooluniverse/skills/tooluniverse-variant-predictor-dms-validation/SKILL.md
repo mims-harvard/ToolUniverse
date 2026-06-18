@@ -201,6 +201,30 @@ ESM_score_sequence(
 # returns per-residue logits; compute mutant-vs-WT log-odds at the mutation site
 ```
 
+#### Predictor option C2 — ESM-2 masked-marginal (keyless, no API key)
+
+When you have **no `ESM_API_KEY`** (the option A/C tools need one), use
+`ESM2_score_missense_variant` — it runs ESM-2 over HuggingFace's free
+`hf-inference` provider and returns the masked-marginal log-likelihood ratio
+`logP(mut) − logP(wt)` (Meier et al. 2021) for one missense variant:
+
+```python
+# one call per variant; negative LLR = mutant disfavored (candidate deleterious)
+res = ESM2_score_missense_variant(
+    sequence=wild_type_sequence,   # 1-letter AA string
+    position=position,             # 1-based
+    mutant=alt_aa,                 # e.g. "V"
+)
+score = res["data"]["log_likelihood_ratio"]   # use directly as the predictor score
+```
+
+It is one HTTP call per variant (no batch endpoint), so for a saturation sweep
+it is slower than the key-based ESM-C batch tools — prefer option A/C when you
+have a key, and reach for this as the zero-setup fallback. Sequences over ~1022
+residues are auto-windowed around the variant (see `metadata.windowed`). The
+LLR is a ranking score, not a calibrated probability — Steps 3–5 handle the
+thresholding, so feed the raw LLR straight into the `(20, n_positions)` matrix.
+
 #### Predictor option D — any external score
 
 Bring your own. Just produce a `(20, n_positions)` `np.ndarray` aligned to the
