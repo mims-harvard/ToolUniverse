@@ -1,0 +1,3 @@
+celltypist>=1.6
+scanpy>=1.10
+anndata

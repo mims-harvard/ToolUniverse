@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Coloc_abf_test",
+    "type": "ColocalizationTool",
+    "description": "Bayesian colocalization (coloc.abf, Giambartolomei 2014) of two GWAS/QTL signals over the same SNP set in a region. Tests whether the two traits share a single causal variant. Returns the five posterior probabilities PP0-PP4; PP4 (>0.8 = strong) is the probability of a shared causal variant - the standard way to link a GWAS locus to a gene via an eQTL. Pure-compute (no R, no LD matrix); pairs with eQTL_get_associations + GWAS summary tools.",
+    "parameter": {
+      "type": "object",
+      "required": ["beta1", "se1", "beta2", "se2"],
+      "properties": {
+        "beta1": {"type": "array", "items": {"type": "number"}, "description": "Trait 1 per-SNP effect sizes over the region (same SNP order as trait 2)."},
+        "se1": {"type": "array", "items": {"type": "number"}, "description": "Standard errors of beta1 (positive)."},
+        "beta2": {"type": "array", "items": {"type": "number"}, "description": "Trait 2 per-SNP effect sizes (same SNP order/alleles)."},
+        "se2": {"type": "array", "items": {"type": "number"}, "description": "Standard errors of beta2 (positive)."},
+        "snp": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Optional SNP identifiers (same order) to label the best shared variant."},
+        "sd_prior": {"type": ["number", "null"], "description": "Prior SD of the effect size (default 0.15; 0.2 common for case/control log-OR)."},
+        "p1": {"type": ["number", "null"], "description": "Prior prob a SNP is causal for trait 1 (default 1e-4)."},
+        "p2": {"type": ["number", "null"], "description": "Prior prob a SNP is causal for trait 2 (default 1e-4)."},
+        "p12": {"type": ["number", "null"], "description": "Prior prob a SNP is causal for both traits (default 1e-5)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_snps": {"type": "integer"},
+                "posteriors": {"type": "object"},
+                "pp4_colocalization": {"type": "number"},
+                "best_causal_snp": {},
+                "interpretation": {"type": "string"}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "beta1": [0.01, 0.02, 0.03, 0.20, 0.04, 0.01],
+        "se1": [0.02, 0.02, 0.02, 0.02, 0.02, 0.02],
+        "beta2": [0.02, 0.01, 0.04, 0.18, 0.03, 0.02],
+        "se2": [0.02, 0.02, 0.02, 0.02, 0.02, 0.02]
+      }
+    ]
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_liana_cellphonedb",
+    "description": "Infer cell-cell communication from a single-cell RNA-seq dataset using LIANA (LIgand-receptor ANalysis frAmework; Dimitrov et al., Nature Communications 2022) with its CellPhoneDB permutation-test method, returning the top ligand-receptor interactions between cell types. LIANA is the consensus framework that re-implements CellPhoneDB/CellChat/NATMI/Connectome/etc. over shared curated resources. Input is a server-accessible .h5ad of log1p-normalized expression with a cell-type label column in obs. Each interaction is scored by magnitude (lr_means) and specificity (cellphone_pvals).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of LOG1P-NORMALIZED expression."},
+        "cluster_key": {"type": "string", "description": "obs column holding the cell-type / cluster labels to compute interactions between."},
+        "top_n": {"type": "integer", "description": "Number of top interactions to return, ranked by specificity then magnitude (default 50)."},
+        "expr_prop": {"type": "number", "description": "Minimum fraction of cells in a group expressing a gene for it to be considered (default 0.1)."}
+      },
+      "required": ["adata_path", "cluster_key"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "method": {"type": "string"},
+        "cluster_key": {"type": "string"},
+        "n_interactions": {"type": "integer"},
+        "interactions": {"type": "array", "items": {"type": "object"}, "description": "Top ligand-receptor records (source, target, ligand_complex, receptor_complex, lr_means, cellphone_pvals)."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "LianaCellPhoneDBTool",
+      "url": "https://liana-py.readthedocs.io/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/liana",
+      "mcp_tool_name": "run_liana_cellphonedb"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_10k.h5ad", "cluster_key": "cell_type", "top_n": 50, "expr_prop": 0.1}
+    ]
+  }
+]

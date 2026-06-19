@@ -116,6 +116,7 @@ STATIC_LAZY_REGISTRY = {
     "AlphaGenomeTool": "alphagenome_tool",
     "Evo2VariantEffectTool": "evo2_variant_effect_tool",
     "MendelianRandomizationTool": "mendelian_randomization_tool",
+    "ColocalizationTool": "colocalization_tool",
     "IUPred3Tool": "iupred3_tool",
     "VEPPathogenicityTool": "vep_pathogenicity_tool",
     "TDCOracleTool": "tdc_oracle_tool",

@@ -1,0 +1,37 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_scrublet_doublets",
+    "description": "Detect technical doublets in a single-cell RNA-seq count matrix with Scrublet (Wolock et al., Cell Systems 2019). Simulates synthetic doublets from observed transcriptomes and scores each real cell by its local density of simulated doublets, returning a per-cell doublet_score and a boolean predicted_doublet call — so doublets can be filtered before clustering/annotation. Input is a server-accessible .h5ad of RAW counts (not normalized/log data).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of RAW counts."},
+        "expected_doublet_rate": {"type": "number", "description": "Expected fraction of transcriptomes that are doublets (default 0.06; scale ~0.008 per 1000 cells loaded for 10x)."}
+      },
+      "required": ["adata_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "Cell barcodes, aligned with the score/prediction arrays."},
+        "doublet_score": {"type": "array", "items": {"type": "number"}, "description": "Per-cell Scrublet doublet score (higher = more doublet-like)."},
+        "predicted_doublet": {"type": "array", "items": {"type": "boolean"}, "description": "Per-cell boolean: True if predicted to be a doublet."},
+        "n_doublets": {"type": "integer", "description": "Number of cells predicted to be doublets."},
+        "doublet_rate": {"type": "number", "description": "Fraction of cells predicted to be doublets."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "ScrubletDoubletTool",
+      "url": "https://github.com/swolock/scrublet",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/scrublet",
+      "mcp_tool_name": "run_scrublet_doublets"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_10k.h5ad", "expected_doublet_rate": 0.06}
+    ]
+  }
+]
