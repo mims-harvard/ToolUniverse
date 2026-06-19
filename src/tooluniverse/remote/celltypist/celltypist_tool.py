@@ -95,7 +95,7 @@ class CelltypistAnnotateTool:
 
         try:
             adata = _prepare_adata(adata_path)
-            models.download_if_required(model)
+            models.download_models(model=model)  # fetch the built-in model if absent
             predictions = celltypist.annotate(
                 adata, model=model, majority_voting=majority_voting
             )

@@ -105,7 +105,9 @@ class SquidpyNhoodEnrichmentTool:
             if str(adata.obs[cluster_key].dtype) != "category":
                 adata.obs[cluster_key] = adata.obs[cluster_key].astype("category")
             sq.gr.spatial_neighbors(adata, coord_type="generic", n_neighs=n_neighs)
-            sq.gr.nhood_enrichment(adata, cluster_key=cluster_key)
+            # seed for reproducibility; n_jobs=1 avoids multiprocessing-spawn
+            # issues when the server runs outside an `if __name__ == '__main__'`.
+            sq.gr.nhood_enrichment(adata, cluster_key=cluster_key, seed=0, n_jobs=1)
         except Exception as exc:
             return {"error": f"Squidpy neighborhood enrichment failed: {exc}"}
 
