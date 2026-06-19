@@ -186,6 +186,8 @@ default_tool_files = {
     "esm2_variant_effect": os.path.join(
         current_dir, "data", "esm2_variant_effect_tools.json"
     ),
+    # AlphaGenome regulatory-genomics prediction (DeepMind hosted API, key-gated)
+    "alphagenome": os.path.join(current_dir, "data", "alphagenome_tools.json"),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)
