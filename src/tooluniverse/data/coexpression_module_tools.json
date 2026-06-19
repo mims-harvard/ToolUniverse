@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Coexpression_modules",
+    "type": "CoexpressionModuleTool",
+    "description": "Detect co-expression modules from a genes x samples expression matrix (WGCNA-style): builds a soft-thresholded correlation network and partitions it into modules of co-regulated genes by modularity, returning each module's genes and its module eigengene (first PC = per-sample summary profile). Pure-compute (NumPy + NetworkX). Simplified WGCNA (no TOM / dynamic tree cut).",
+    "parameter": {
+      "type": "object",
+      "required": ["expression"],
+      "properties": {
+        "expression": {"type": "object", "description": "{gene: [value_per_sample, ...]} — a genes x samples expression matrix (log-normalized)."},
+        "power": {"type": ["integer", "null"], "description": "Soft-threshold exponent on |correlation| (default 6, the WGCNA scale-free default)."},
+        "correlation_threshold": {"type": ["number", "null"], "description": "Minimum |correlation| to connect two genes (default 0.5)."},
+        "min_module_size": {"type": ["integer", "null"], "description": "Minimum genes for a module to be reported (default 5)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_genes": {"type": "integer"},
+                "n_samples": {"type": "integer"},
+                "n_modules": {"type": "integer"},
+                "n_unassigned": {"type": "integer"},
+                "modules": {"type": "array", "items": {"type": "object"}}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "expression": {
+          "G1": [6, 5, 4, 3, 2, 1], "G2": [6.1, 4.9, 4.0, 3.1, 1.9, 1.0], "G3": [5.9, 5.1, 3.9, 3.0, 2.1, 0.9], "G4": [6.0, 5.0, 4.1, 2.9, 2.0, 1.1],
+          "G5": [1, 2, 1, 2, 1, 2], "G6": [1.1, 1.9, 1.0, 2.1, 0.9, 2.0], "G7": [0.9, 2.1, 1.1, 1.9, 1.0, 2.1], "G8": [1.0, 2.0, 0.9, 2.0, 1.1, 1.9]
+        },
+        "min_module_size": 3
+      }
+    ]
+  }
+]

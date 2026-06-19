@@ -122,6 +122,7 @@ STATIC_LAZY_REGISTRY = {
     "DecouplerULMTool": "decoupler_ulm_tool",
     "SSGSEATool": "ssgsea_tool",
     "SPrediXcanTool": "spredixcan_tool",
+    "CoexpressionModuleTool": "coexpression_module_tool",
     "IUPred3Tool": "iupred3_tool",
     "VEPPathogenicityTool": "vep_pathogenicity_tool",
     "TDCOracleTool": "tdc_oracle_tool",

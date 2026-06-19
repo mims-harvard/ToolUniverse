@@ -208,6 +208,10 @@ default_tool_files = {
     "ssgsea": os.path.join(current_dir, "data", "ssgsea_tools.json"),
     # S-PrediXcan summary-based TWAS (local-compute, pure NumPy)
     "spredixcan": os.path.join(current_dir, "data", "spredixcan_tools.json"),
+    # Co-expression module detection (local-compute, NumPy + NetworkX)
+    "coexpression_module": os.path.join(
+        current_dir, "data", "coexpression_module_tools.json"
+    ),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)
