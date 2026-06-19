@@ -45,6 +45,8 @@ claude plugin install tooluniverse@tooluniverse
   - `/tooluniverse:cross-validate` — verify a claim across 3+ independent databases
   - `/tooluniverse:compare` — N-way side-by-side comparison with domain-appropriate columns
   - `/tooluniverse:literature-sweep` — graded mini-review across PubMed + EuropePMC + Semantic Scholar
+  - `/tooluniverse:self-review` — generate weighted success criteria for a task and check work against them (what's missing / done well)
+  - `/tooluniverse:setup-keys` — configure ToolUniverse API keys
 - **Research Agent**: `/tooluniverse:researcher` — same investigation, delegated to a forked-context subagent that returns one summary (use when you don't want intermediate tool-call output in your main thread).
 
 ## Usage
@@ -77,6 +79,8 @@ For specific surfaces, use the right interaction below.
 | `/tooluniverse:cross-validate <claim>` | You have a specific testable claim and want to know how strongly it's supported. Forces 3+ independent databases, reports concordance per source. Use before publishing or acting on a fact. |
 | `/tooluniverse:compare <items>` | You want a side-by-side comparison of N items (drugs, targets, diseases, variants). Detects the domain, picks domain-appropriate columns, produces a tabular report. |
 | `/tooluniverse:literature-sweep <topic>` | Graded mini-review across PubMed + EuropePMC + Semantic Scholar with dedup, relevance scoring, and a recommended reading order. |
+| `/tooluniverse:self-review <task>` | You (or an agent) are about to do, are doing, or have finished a task and want the success criteria for it — then to check work against them. Decomposes the task into scenarios → perspectives → weighted YES/NO criteria (the Qworld Recursive Expansion Tree method); with work supplied, scores it and lists what's missing. Use for self-review, a definition-of-done checklist, or an evaluation rubric. |
+| `/tooluniverse:setup-keys` | Set up ToolUniverse API keys — opens a setup page listing every key tools can use, with registration links, and saves them to a `.env` the MCP server, CLI, and SDK all read. |
 
 ### Launch the research agent
 
