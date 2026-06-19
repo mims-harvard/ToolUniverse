@@ -206,6 +206,8 @@ default_tool_files = {
     "decoupler_ulm": os.path.join(current_dir, "data", "decoupler_ulm_tools.json"),
     # Single-sample GSEA signature scoring (local-compute, pure NumPy)
     "ssgsea": os.path.join(current_dir, "data", "ssgsea_tools.json"),
+    # S-PrediXcan summary-based TWAS (local-compute, pure NumPy)
+    "spredixcan": os.path.join(current_dir, "data", "spredixcan_tools.json"),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)

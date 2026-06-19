@@ -1,0 +1,3 @@
+harmonypy
+scanpy>=1.10
+anndata
