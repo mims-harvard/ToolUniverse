@@ -1,0 +1,41 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_tangram_deconvolution",
+    "description": "Deconvolve a spatial-transcriptomics assay into per-spot cell-type proportions using Tangram (Biancalani 2021). Maps cell-type clusters from a single-cell reference AnnData onto a spatial AnnData (clusters mode, rna_count_based density prior) and projects the cell-type annotations to space, returning each spot's cell-type composition and the dataset-wide mean proportions. Inputs are server-accessible .h5ad files; the single-cell reference obs must contain the cluster_label column.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sc_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad single-cell REFERENCE AnnData; obs must contain `cluster_label`."},
+        "sp_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad SPATIAL AnnData (spots x genes) to deconvolve."},
+        "cluster_label": {"type": "string", "description": "obs column in the single-cell reference naming the cell type/cluster (e.g. 'cell_type')."},
+        "num_epochs": {"type": "integer", "description": "Tangram mapping epochs (default 500)."}
+      },
+      "required": ["sc_path", "sp_path", "cluster_label"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_spots": {"type": "integer"},
+        "n_cell_types": {"type": "integer"},
+        "cell_types": {"type": "array", "items": {"type": "string"}},
+        "mean_proportions": {"type": "object", "description": "Dataset-wide mean proportion per cell type."},
+        "spot_ids": {"type": "array", "items": {"type": "string"}, "description": "Spatial spot/voxel identifiers (present when n_spots is small)."},
+        "deconvolution": {"type": "array", "items": {"type": "array", "items": {"type": "number"}}, "description": "Spots x cell_types proportion matrix (present when n_spots is small)."},
+        "deconvolution_summary": {"type": "object", "description": "Per-cell-type summary stats returned instead of the full matrix for large spatial assays."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "TangramDeconvolutionTool",
+      "url": "https://tangram-sc.readthedocs.io/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/tangram",
+      "mcp_tool_name": "run_tangram_deconvolution"
+    },
+    "test_examples": [
+      {"sc_path": "sc_reference.h5ad", "sp_path": "spatial_visium.h5ad", "cluster_label": "cell_type", "num_epochs": 500}
+    ]
+  }
+]

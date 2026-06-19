@@ -1,0 +1,40 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_cell2location_deconvolution",
+    "description": "Deconvolve spatial transcriptomics data (e.g. 10x Visium) into per-location cell-type abundances with cell2location (Kleshchevnikov 2022), a principled Bayesian model. Two steps: (1) estimate reference cell-type signatures from an annotated single-cell/single-nucleus reference (.h5ad of raw counts) via a negative-binomial RegressionModel; (2) map those signatures onto the spatial data (.h5ad of raw counts) to estimate absolute cell-type abundance at every spot. Returns a summary of mean cell-type abundance across spots. GPU-recommended; epoch counts default LOW for CPU feasibility.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sc_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad annotated single-cell/single-nucleus REFERENCE of RAW counts."},
+        "sp_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad SPATIAL AnnData of RAW counts (e.g. 10x Visium)."},
+        "cluster_label": {"type": "string", "description": "obs column in the reference giving the cell-type label to build signatures for (e.g. 'cell_type')."},
+        "batch_key": {"type": "string", "description": "obs column naming the batch/sample (optional; empty = no batch term). Applied to both reference and spatial setup."},
+        "ref_epochs": {"type": "integer", "description": "Reference RegressionModel training epochs (default 250; raise on GPU)."},
+        "sp_epochs": {"type": "integer", "description": "Spatial Cell2location training epochs (default 250; raise on GPU)."}
+      },
+      "required": ["sc_path", "sp_path", "cluster_label"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_spots": {"type": "integer", "description": "Number of spatial locations (spots) deconvolved."},
+        "cell_types": {"type": "array", "items": {"type": "string"}, "description": "Reference cell types mapped onto the spatial data."},
+        "mean_abundance": {"type": "object", "description": "Per-cell-type mean q05 abundance averaged across all spots."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "Cell2locationDeconvolutionTool",
+      "url": "https://cell2location.readthedocs.io/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/cell2location",
+      "mcp_tool_name": "run_cell2location_deconvolution"
+    },
+    "test_examples": [
+      {"sc_path": "sc_reference.h5ad", "sp_path": "visium_spatial.h5ad", "cluster_label": "cell_type", "batch_key": "sample", "ref_epochs": 250, "sp_epochs": 250}
+    ]
+  }
+]

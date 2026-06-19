@@ -202,6 +202,10 @@ default_tool_files = {
     "finemap_abf": os.path.join(current_dir, "data", "finemap_abf_tools.json"),
     # Pre-ranked GSEA gene-set enrichment (local-compute, pure NumPy)
     "gsea_prerank": os.path.join(current_dir, "data", "gsea_prerank_tools.json"),
+    # TF/pathway activity inference (decoupleR ULM; local-compute, pure NumPy)
+    "decoupler_ulm": os.path.join(current_dir, "data", "decoupler_ulm_tools.json"),
+    # Single-sample GSEA signature scoring (local-compute, pure NumPy)
+    "ssgsea": os.path.join(current_dir, "data", "ssgsea_tools.json"),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)

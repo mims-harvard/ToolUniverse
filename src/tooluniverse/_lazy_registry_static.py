@@ -119,6 +119,8 @@ STATIC_LAZY_REGISTRY = {
     "ColocalizationTool": "colocalization_tool",
     "FinemapABFTool": "finemap_abf_tool",
     "GSEAPrerankTool": "gsea_prerank_tool",
+    "DecouplerULMTool": "decoupler_ulm_tool",
+    "SSGSEATool": "ssgsea_tool",
     "IUPred3Tool": "iupred3_tool",
     "VEPPathogenicityTool": "vep_pathogenicity_tool",
     "TDCOracleTool": "tdc_oracle_tool",
