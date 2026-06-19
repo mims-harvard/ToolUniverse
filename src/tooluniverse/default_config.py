@@ -192,6 +192,10 @@ default_tool_files = {
     "evo2_variant_effect": os.path.join(
         current_dir, "data", "evo2_variant_effect_tools.json"
     ),
+    # Two-sample Mendelian randomization estimators (local-compute, pure NumPy)
+    "mendelian_randomization": os.path.join(
+        current_dir, "data", "mendelian_randomization_tools.json"
+    ),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)
