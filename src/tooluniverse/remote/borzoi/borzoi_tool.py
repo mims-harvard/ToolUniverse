@@ -64,17 +64,27 @@ def _encode(sequence: str) -> torch.Tensor:
 
 
 def _predict(sequence: str) -> torch.Tensor:
-    """Return the (N_BINS, n_tracks) human coverage prediction for one sequence."""
+    """Return the (n_tracks, n_bins) human coverage prediction for one sequence.
+
+    borzoi-pytorch outputs (batch, tracks, bins) = (1, 7611, 6144) — tracks on
+    the first axis, sequence bins on the second (the opposite order from
+    Enformer), so the central-bin value per track is taken along the bin axis.
+    """
     model = _get_model()
     with torch.no_grad():
         out = model(_encode(sequence))
-    return out[0]  # (6144, 7611)
+    return out[0]  # (7611, 6144) = (tracks, bins)
+
+
+def _center_bin(pred: torch.Tensor) -> torch.Tensor:
+    """Per-track value at the central sequence bin -> shape (n_tracks,)."""
+    return pred[:, pred.shape[1] // 2]
 
 
 def _top_center_tracks(
     pred: torch.Tensor, track_indices: Optional[List[int]], top_n: int
 ):
-    center = pred[N_BINS // 2]
+    center = _center_bin(pred)
     if track_indices:
         return [
             {"track": int(t), "center_value": float(center[int(t)])}
@@ -135,8 +145,8 @@ class BorzoiPredictTool:
         return {
             "model": "Borzoi",
             "organism": "human",
-            "n_tracks": int(pred.shape[1]),
-            "n_bins": int(pred.shape[0]),
+            "n_tracks": int(pred.shape[0]),
+            "n_bins": int(pred.shape[1]),
             "bin_size_bp": 32,
             "tracks": _top_center_tracks(pred, track_indices, top_n),
         }
@@ -195,7 +205,7 @@ class BorzoiVariantEffectTool:
         track_indices = arguments.get("track_indices")
         top_n = int(arguments.get("top_n") or 20)
 
-        delta = _predict(alt)[N_BINS // 2] - _predict(ref)[N_BINS // 2]
+        delta = _center_bin(_predict(alt)) - _center_bin(_predict(ref))
         if track_indices:
             tracks = [
                 {"track": int(t), "delta": float(delta[int(t)])}
