@@ -169,6 +169,11 @@ class Macs3CallpeakTool:
             top_n = 50 if top_n is None else int(top_n)
         except (TypeError, ValueError):
             return {"error": "Parameter 'top_n' must be an integer."}
+        nomodel = bool(arguments.get("nomodel", False))
+        try:
+            extsize = int(arguments.get("extsize") or 200)
+        except (TypeError, ValueError):
+            return {"error": "Parameter 'extsize' must be an integer."}
 
         name = "macs3_run"
         with tempfile.TemporaryDirectory() as tmp:
@@ -190,6 +195,10 @@ class Macs3CallpeakTool:
             ]
             if control:
                 cmd[4:4] = ["-c", control]
+            # --nomodel skips the cross-correlation shift-model step (which needs
+            # paired +/- strand peaks); required for ATAC-seq and single-end data.
+            if nomodel:
+                cmd += ["--nomodel", "--extsize", str(extsize)]
 
             try:
                 proc = subprocess.run(

@@ -178,6 +178,9 @@ class MiloDifferentialAbundanceTool:
         """Compute PCA + a kNN graph in place (Milo reads .obsp connectivities)."""
         if "X_pca" not in adata.obsm:
             sc.pp.pca(adata, n_comps=min(n_pcs, max(1, adata.n_vars - 1, 1)))
+        # never request more PCs than X_pca actually has (a pre-computed X_pca
+        # may have fewer components than the requested n_pcs).
+        n_pcs = min(n_pcs, adata.obsm["X_pca"].shape[1])
         sc.pp.neighbors(adata, n_neighbors=n_neighbors, n_pcs=n_pcs)
 
     @staticmethod
