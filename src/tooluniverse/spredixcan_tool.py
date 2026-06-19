@@ -128,6 +128,11 @@ class SPrediXcanTool(BaseTool):
                 return self._err(
                     f"covariance must be a {n}x{n} matrix (one row/col per SNP)."
                 )
+            # Keep sigma consistent with the covariance: when snp_sd was not given,
+            # take sigma_i = sqrt(Gamma_ii) so the numerator (w_i*sigma_i*Z_i) and
+            # the denominator (w^T Gamma w) use the same SNP scale.
+            if sd is None:
+                sigma = np.sqrt(np.clip(np.diag(cov), 0.0, None))
         return np.asarray(weight), np.asarray(gwas_z), sigma, cov
 
     def _num_list(self, v: Any, name: str):

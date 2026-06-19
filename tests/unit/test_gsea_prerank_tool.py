@@ -70,6 +70,13 @@ def test_small_overlap_set_is_skipped_not_crashed():
     assert r.get("skipped") is True and r["n_overlap"] == 1
 
 
+def test_duplicate_members_are_deduped():
+    """A gene listed twice must not be double-counted (same ES + n_overlap)."""
+    clean = _result(_tool().run({"ranked_genes": RANKED, "gene_set": ["G1", "G2", "G3", "G4"]}), "gene_set")
+    dup = _result(_tool().run({"ranked_genes": RANKED, "gene_set": ["G1", "G1", "G2", "G2", "G3", "G4"]}), "gene_set")
+    assert dup["n_overlap"] == 4 and dup["es"] == clean["es"]
+
+
 def test_errors():
     assert _tool().run({"ranked_genes": {"a": 1}})["status"] == "error"  # too few genes
     assert _tool().run({"ranked_genes": RANKED})["status"] == "error"  # no gene set

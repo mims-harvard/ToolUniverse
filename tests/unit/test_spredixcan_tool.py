@@ -53,6 +53,13 @@ def test_covariance_changes_denominator():
     assert corr < indep
 
 
+def test_covariance_diagonal_supplies_sigma_when_snp_sd_omitted():
+    """sigma must come from sqrt(diag(cov)) so numerator and denominator agree."""
+    out = _tool().run({"weight": [1.0, 1.0], "gwas_z": [2.0, 2.0], "covariance": [[4.0, 0.0], [0.0, 4.0]]})
+    # num = sum(w*2*z) = 8; den = sqrt(w^T cov w) = sqrt(8) -> z = 8/sqrt(8) = sqrt(8)
+    assert math.isclose(out["data"]["twas_zscore"], math.sqrt(8.0), rel_tol=1e-9)
+
+
 def test_normal_p_helper():
     assert math.isclose(_norm_p(1.959964), 0.05, abs_tol=1e-4)
 

@@ -65,7 +65,11 @@ class GSEAPrerankTool(BaseTool):
 
         results = []
         for name, members in gene_sets.items():
-            hits = np.array(sorted(index[g] for g in members if g in index), dtype=int)
+            # dedup members (a set may list a gene twice) so a gene's weight is
+            # not double-counted and the miss-step denominator stays correct.
+            hits = np.array(
+                sorted({index[g] for g in members if g in index}), dtype=int
+            )
             if len(hits) < 2:
                 results.append(
                     {"gene_set": name, "n_overlap": int(len(hits)), "skipped": True}
