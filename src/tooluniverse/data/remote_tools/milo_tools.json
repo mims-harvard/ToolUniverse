@@ -1,0 +1,42 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_milo_differential_abundance",
+    "description": "Test single-cell differential abundance with Milo (Dann et al., Nature Biotechnology 2022). Builds a kNN graph on the data, assigns cells to overlapping neighbourhoods, counts cells per neighbourhood per biological sample, and fits a negative-binomial GLM to test each neighbourhood for a shift in abundance across a condition (design '~condition_col'). Returns the number of neighbourhoods, how many are significant at SpatialFDR<0.1, and how many of those are enriched (logFC>0) vs depleted (logFC<0). Input is a server-accessible .h5ad. Implemented via pertpy's pt.tl.Milo (falls back to milopy).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of single cells."},
+        "sample_col": {"type": "string", "description": "obs column identifying the biological replicate/sample id (the unit of replication)."},
+        "condition_col": {"type": "string", "description": "obs column naming the condition being tested for differential abundance (design '~condition_col')."},
+        "n_pcs": {"type": "integer", "description": "Number of principal components for the kNN graph (default 30)."},
+        "n_neighbors": {"type": "integer", "description": "Number of neighbours for the kNN graph (default 15)."},
+        "prop": {"type": "number", "description": "Fraction of cells sampled as neighbourhood index cells (default 0.1)."},
+        "spatial_fdr": {"type": "number", "description": "SpatialFDR threshold for calling a neighbourhood significant (default 0.1)."}
+      },
+      "required": ["adata_path", "sample_col", "condition_col"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_neighbourhoods": {"type": "integer", "description": "Total neighbourhoods tested."},
+        "n_significant": {"type": "integer", "description": "Neighbourhoods significant at SpatialFDR<threshold."},
+        "n_da_up": {"type": "integer", "description": "Significant neighbourhoods enriched in the condition (logFC>0)."},
+        "n_da_down": {"type": "integer", "description": "Significant neighbourhoods depleted in the condition (logFC<0)."},
+        "note": {"type": "string", "description": "Human-readable summary of the differential abundance result."},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "MiloDifferentialAbundanceTool",
+      "url": "https://pertpy.readthedocs.io/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/milo",
+      "mcp_tool_name": "run_milo_differential_abundance"
+    },
+    "test_examples": [
+      {"adata_path": "pbmc_disease_vs_control.h5ad", "sample_col": "sample_id", "condition_col": "disease_status"}
+    ]
+  }
+]

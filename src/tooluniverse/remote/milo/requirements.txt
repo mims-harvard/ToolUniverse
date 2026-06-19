@@ -1,0 +1,3 @@
+pertpy>=0.9
+scanpy>=1.10
+anndata
