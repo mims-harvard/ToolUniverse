@@ -1,3 +1,0 @@
-scvi-tools>=1.4
-scanpy>=1.10
-anndata
