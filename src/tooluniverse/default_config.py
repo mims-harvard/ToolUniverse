@@ -200,6 +200,8 @@ default_tool_files = {
     "colocalization": os.path.join(current_dir, "data", "colocalization_tools.json"),
     # Single-causal fine-mapping (Wakefield ABF; local-compute, pure NumPy)
     "finemap_abf": os.path.join(current_dir, "data", "finemap_abf_tools.json"),
+    # Pre-ranked GSEA gene-set enrichment (local-compute, pure NumPy)
+    "gsea_prerank": os.path.join(current_dir, "data", "gsea_prerank_tools.json"),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)

@@ -118,6 +118,7 @@ STATIC_LAZY_REGISTRY = {
     "MendelianRandomizationTool": "mendelian_randomization_tool",
     "ColocalizationTool": "colocalization_tool",
     "FinemapABFTool": "finemap_abf_tool",
+    "GSEAPrerankTool": "gsea_prerank_tool",
     "IUPred3Tool": "iupred3_tool",
     "VEPPathogenicityTool": "vep_pathogenicity_tool",
     "TDCOracleTool": "tdc_oracle_tool",

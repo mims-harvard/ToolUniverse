@@ -1,0 +1,49 @@
+[
+  {
+    "name": "GSEA_prerank",
+    "type": "GSEAPrerankTool",
+    "description": "Pre-ranked Gene Set Enrichment Analysis (Subramanian 2005) on a ranked gene list (e.g. genes ranked by a DESeq2/edgeR statistic) against one or more gene sets. Returns per-set enrichment score (ES), normalized ES (NES), permutation p-value, and leading-edge genes. Pure-compute (no R, no bundled MSigDB - supply gene sets, e.g. from Enrichr). Complements over-representation tools by using the full ranking.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ranked_genes": {"type": ["object", "null"], "description": "{gene: score} mapping (score = DE statistic / fold change). Genes are ranked by score descending. Alternative to genes+scores."},
+        "genes": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Gene identifiers (use with `scores`, same order)."},
+        "scores": {"type": ["array", "null"], "items": {"type": "number"}, "description": "Per-gene ranking metric (same order as `genes`)."},
+        "gene_sets": {"type": ["object", "null"], "description": "{set_name: [gene, ...]} collection to test. Alternative to gene_set."},
+        "gene_set": {"type": ["array", "null"], "items": {"type": "string"}, "description": "A single gene set (list of gene symbols)."},
+        "weight": {"type": ["number", "null"], "description": "Score weighting exponent for the running sum (default 1.0; classic GSEA)."},
+        "n_permutations": {"type": ["integer", "null"], "description": "Gene-label permutations for the p-value (default 1000)."}
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"const": "success"},
+            "data": {
+              "type": "object",
+              "properties": {
+                "n_genes_ranked": {"type": "integer"},
+                "n_gene_sets": {"type": "integer"},
+                "results": {"type": "array", "items": {"type": "object"}}
+              }
+            }
+          },
+          "required": ["data"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "ranked_genes": {"G1": 5.0, "G2": 4.5, "G3": 4.0, "G4": 3.5, "G5": 3.0, "G6": 1.0, "G7": 0.5, "G8": 0.0, "G9": -0.5, "G10": -1.0, "G11": -1.5, "G12": -2.0, "G13": -2.5, "G14": -3.0, "G15": -3.5},
+        "gene_sets": {"TOP_SET": ["G1", "G2", "G3", "G4"], "BOTTOM_SET": ["G12", "G13", "G14", "G15"]}
+      }
+    ]
+  }
+]
