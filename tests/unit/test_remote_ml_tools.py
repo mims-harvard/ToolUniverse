@@ -158,10 +158,12 @@ def test_borzoi_encode_onehot_shape_and_channels():
 
 @requires_torch
 def test_borzoi_run_predict_envelope(monkeypatch):
-    monkeypatch.setattr(bz, "_predict", lambda seq: torch.zeros(bz.N_BINS, 7))
+    # Borzoi output is (tracks, bins); mock 7 tracks x N_BINS bins.
+    monkeypatch.setattr(bz, "_predict", lambda seq: torch.zeros(7, bz.N_BINS))
     out = bz.BorzoiPredictTool().run({"sequence": "ACGT", "top_n": 4})
     assert out["model"] == "Borzoi" and out["n_tracks"] == 7
-    assert out["bin_size_bp"] == 32 and len(out["tracks"]) == 4
+    assert out["n_bins"] == bz.N_BINS and out["bin_size_bp"] == 32
+    assert len(out["tracks"]) == 4
     assert bz.BorzoiPredictTool().run({})["error"]
 
 
