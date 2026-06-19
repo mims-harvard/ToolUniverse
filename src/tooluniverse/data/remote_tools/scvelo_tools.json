@@ -1,0 +1,44 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_scvelo_velocity",
+    "description": "Run scVelo (RNA velocity; Bergen et al., Nature Biotechnology 2020) on a single-cell AnnData and return a velocity-derived pseudotime ordering of cells plus a per-cell velocity confidence. The input .h5ad MUST contain `spliced` and `unspliced` count layers (e.g. from velocyto, kb-python / kallisto|bustools, or STARsolo); without them RNA velocity cannot be estimated and the tool returns an error. Pipeline: filter_and_normalize -> moments -> velocity -> velocity_graph -> velocity_pseudotime + velocity_confidence. When a cluster_key is supplied, also returns the mean pseudotime per cluster (a coarse trajectory ordering).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData that contains `spliced` and `unspliced` layers."},
+        "cluster_key": {"type": "string", "description": "obs column to summarize pseudotime by (optional); returns mean velocity_pseudotime per cluster as a coarse ordering."},
+        "mode": {"type": "string", "description": "Velocity estimation mode: 'deterministic', 'stochastic' (default), or 'dynamical'."}
+      },
+      "required": ["adata_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "n_cells": {"type": "integer"},
+        "mode": {"type": "string"},
+        "mean_pseudotime": {"type": "number", "description": "Mean velocity_pseudotime across cells (0-1 ordering along inferred differentiation)."},
+        "pseudotime_summary": {"type": "object", "description": "mean/min/max/std of velocity_pseudotime."},
+        "mean_confidence": {"type": "number", "description": "Mean velocity_confidence across cells (0-1; local coherence of the velocity field)."},
+        "confidence_summary": {"type": "object", "description": "mean/min/max/std of velocity_confidence."},
+        "pseudotime_by_cluster": {"type": "object", "description": "Mean velocity_pseudotime per cluster (returned when cluster_key given), sorted early -> late."},
+        "pseudotime": {"type": "array", "items": {"type": "number"}, "description": "Per-cell pseudotime (only for small datasets, n_cells <= 500)."},
+        "confidence": {"type": "array", "items": {"type": "number"}, "description": "Per-cell confidence (only for small datasets, n_cells <= 500)."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed (e.g. missing spliced/unspliced layers)."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "ScveloVelocityTool",
+      "url": "https://scvelo.readthedocs.io/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/scvelo",
+      "mcp_tool_name": "run_scvelo_velocity"
+    },
+    "test_examples": [
+      {"adata_path": "dentategyrus.h5ad", "cluster_key": "clusters", "mode": "stochastic"},
+      {"adata_path": "pancreas.h5ad", "cluster_key": "clusters", "mode": "dynamical"}
+    ]
+  }
+]
