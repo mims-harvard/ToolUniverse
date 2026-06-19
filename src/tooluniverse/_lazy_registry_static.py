@@ -114,6 +114,7 @@ STATIC_LAZY_REGISTRY = {
     "HuggingFaceInferenceTool": "huggingface_inference_tool",
     "ESM2VariantEffectTool": "esm2_variant_effect_tool",
     "AlphaGenomeTool": "alphagenome_tool",
+    "Evo2VariantEffectTool": "evo2_variant_effect_tool",
     "IUPred3Tool": "iupred3_tool",
     "VEPPathogenicityTool": "vep_pathogenicity_tool",
     "TDCOracleTool": "tdc_oracle_tool",

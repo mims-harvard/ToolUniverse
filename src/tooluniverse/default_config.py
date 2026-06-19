@@ -188,6 +188,10 @@ default_tool_files = {
     ),
     # AlphaGenome regulatory-genomics prediction (DeepMind hosted API, key-gated)
     "alphagenome": os.path.join(current_dir, "data", "alphagenome_tools.json"),
+    # Evo 2 zero-shot variant scoring (NVIDIA NIM forward endpoint, key-gated)
+    "evo2_variant_effect": os.path.join(
+        current_dir, "data", "evo2_variant_effect_tools.json"
+    ),
     # IUPred3 protein disorder prediction (sequence ML)
     "iupred3": os.path.join(current_dir, "data", "iupred3_tools.json"),
     # Ensembl VEP missense pathogenicity (AlphaMissense + SIFT + PolyPhen)

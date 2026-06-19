@@ -362,6 +362,7 @@
     "purpose": "Call NVIDIA NIM model endpoints (hosted inference for bio/chem models).",
     "without": "NIM tools are blocked without it.",
     "used_by": [
+      "evo2_variant_effect_tools.json",
       "nvidia_nim_tools.json"
     ]
   },
