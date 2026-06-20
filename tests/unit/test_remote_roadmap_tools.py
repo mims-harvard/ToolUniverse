@@ -62,6 +62,28 @@ sys.modules.setdefault("cellrank", _cr)
 crk = _load("cellrank/cellrank_tool.py", "cellrank_tool")
 
 
+def _stub_tree(dotted, **attrs):
+    """Register a (possibly dotted) module in sys.modules with attrs, linking parents."""
+    parts = dotted.split(".")
+    for i in range(len(parts)):
+        name = ".".join(parts[: i + 1])
+        if name not in sys.modules:
+            sys.modules[name] = types.ModuleType(name)
+        if i > 0:
+            setattr(sys.modules[".".join(parts[:i])], parts[i], sys.modules[name])
+    for k, v in attrs.items():
+        setattr(sys.modules[dotted], k, v)
+
+
+# Stub the scipy bits singler_tool imports, so it loads without scipy in CI.
+_stub_tree("scipy")
+_stub_tree("scipy.io", mmwrite=lambda *a, **k: None)
+_stub_tree("scipy.sparse", csr_matrix=lambda x: x)
+
+sgr = _load("singler/singler_tool.py", "singler_tool")
+sls = _load("slingshot/slingshot_tool.py", "slingshot_tool")
+
+
 # ------------------------------------------------------------------ CellRank
 def test_cellrank_missing_adata_path():
     assert crk.CellrankFateTool().run({})["error"]
@@ -129,3 +151,137 @@ def test_cellrank_fate_envelope(monkeypatch):
     assert by["A"]["Alpha"] > by["A"]["Beta"]
     assert by["B"]["Beta"] > by["B"]["Alpha"]
     assert len(out["fate_probabilities"]) == 4 and out["cell_ids"] == ["c0", "c1", "c2", "c3"]
+
+
+# ------------------------------------------------------------------- SingleR
+def test_singler_missing_adata_path():
+    assert sgr.SinglerAnnotateTool().run({})["error"]
+
+
+def test_singler_rejects_unknown_celldex_ref():
+    out = sgr.SinglerAnnotateTool().run({"adata_path": "q.h5ad", "celldex_ref": "MadeUpRef"})
+    assert "celldex_ref must be one of" in out["error"]
+
+
+def test_singler_requires_a_reference():
+    out = sgr.SinglerAnnotateTool().run({"adata_path": "q.h5ad"})
+    assert "Provide either celldex_ref" in out["error"]
+
+
+def test_singler_summarize_shapes_envelope():
+    out = sgr._summarize(
+        ["T cell", "B cell", "T cell", "Monocyte"],
+        ["c0", "c1", "c2", "c3"],
+        "MonacoImmuneData",
+    )
+    assert out["model"] == "SingleR" and out["reference"] == "MonacoImmuneData"
+    assert out["n_cells"] == 4
+    assert out["label_counts"]["T cell"] == 2  # most_common puts T cell first
+    assert list(out["label_counts"])[0] == "T cell"
+    assert out["predicted_labels"][0] == "T cell" and out["cell_ids"][3] == "c3"
+
+
+def test_singler_run_parses_r_output(monkeypatch):
+    class _Adata:
+        obs_names = __import__("numpy").array(["c0", "c1", "c2"])
+
+        class _V:
+            def astype(self, _):
+                return ["g"]
+
+        var_names = ["g1"]
+        X = None
+
+    monkeypatch.setattr(sgr.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sgr, "_export_matrix", lambda *a, **k: None)
+    monkeypatch.setattr(
+        sgr,
+        "_run_rscript",
+        lambda work: {"predicted_labels": ["T", "T", "B"], "ref": "MonacoImmuneData"},
+    )
+    out = sgr.SinglerAnnotateTool().run(
+        {"adata_path": "q.h5ad", "celldex_ref": "MonacoImmuneData"}
+    )
+    assert out["n_cells"] == 3 and out["label_counts"]["T"] == 2
+    assert out["cell_ids"] == ["c0", "c1", "c2"]
+
+
+def test_singler_propagates_r_error(monkeypatch):
+    class _Adata:
+        obs_names = __import__("numpy").array(["c0"])
+        var_names = ["g1"]
+        X = None
+
+    monkeypatch.setattr(sgr.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sgr, "_export_matrix", lambda *a, **k: None)
+    monkeypatch.setattr(sgr, "_run_rscript", lambda work: {"error": "SingleR (R) failed: boom"})
+    out = sgr.SinglerAnnotateTool().run({"adata_path": "q.h5ad", "celldex_ref": "ImmGenData"})
+    assert out["error"] == "SingleR (R) failed: boom"
+
+
+# ----------------------------------------------------------------- Slingshot
+def test_slingshot_missing_required_args():
+    assert sls.SlingshotTrajectoryTool().run({})["error"]
+    assert sls.SlingshotTrajectoryTool().run({"adata_path": "x.h5ad"})["error"]
+
+
+def test_slingshot_validates_embedding_and_cluster_keys(monkeypatch):
+    class _Adata:
+        obsm = {"X_pca": np.zeros((4, 5))}
+        obs = {}
+
+    monkeypatch.setattr(sls.sc, "read_h5ad", lambda *a, **k: _Adata())
+    # missing embedding key
+    out = sls.SlingshotTrajectoryTool().run(
+        {"adata_path": "x.h5ad", "cluster_key": "clusters", "embedding_key": "X_umap"}
+    )
+    assert "embedding_key" in out["error"]
+    # missing cluster key (X_pca exists, but obs has no 'clusters')
+    out = sls.SlingshotTrajectoryTool().run(
+        {"adata_path": "x.h5ad", "cluster_key": "clusters"}
+    )
+    assert "cluster_key" in out["error"]
+
+
+def test_slingshot_envelope(monkeypatch):
+    import pandas as pd
+
+    class _Adata:
+        obsm = {"X_pca": np.random.default_rng(0).normal(size=(6, 10))}
+        obs = pd.DataFrame({"clusters": ["A", "A", "B", "B", "C", "C"]})
+        obs_names = pd.Index([f"c{i}" for i in range(6)])
+
+    monkeypatch.setattr(sls.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(
+        sls,
+        "_run_rscript",
+        lambda work: {
+            "lineages": [["A", "B"], ["A", "C"]],
+            "lineage_names": ["Lineage1", "Lineage2"],
+            "n_lineages": 2,
+            "cluster_pseudotime": {"A": {"Lineage1": 0.0}},
+            "pseudotime": [[0.0, 0.0]] * 6,
+        },
+    )
+    out = sls.SlingshotTrajectoryTool().run(
+        {"adata_path": "x.h5ad", "cluster_key": "clusters", "n_dims": 5}
+    )
+    assert out["model"] == "Slingshot" and out["n_lineages"] == 2
+    assert out["embedding_key"] == "X_pca" and out["n_cells"] == 6
+    assert out["lineages"] == [["A", "B"], ["A", "C"]]
+    assert out["cell_ids"][0] == "c0"  # cell_ids attached because pseudotime present
+
+
+def test_slingshot_propagates_r_error(monkeypatch):
+    """An R-side failure surfaces as a clean error envelope, not a crash."""
+    import pandas as pd
+
+    class _Adata:
+        obsm = {"X_pca": np.zeros((4, 5))}
+        obs = pd.DataFrame({"clusters": ["A", "A", "B", "B"]})
+        obs_names = pd.Index(["c0", "c1", "c2", "c3"])
+
+    monkeypatch.setattr(sls.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sls, "_run_rscript", lambda work: {"error": "Slingshot (R) failed: boom"})
+    out = sls.SlingshotTrajectoryTool().run({"adata_path": "x.h5ad", "cluster_key": "clusters"})
+    assert out["error"] == "Slingshot (R) failed: boom"
