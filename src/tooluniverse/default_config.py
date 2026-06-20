@@ -206,6 +206,8 @@ default_tool_files = {
     "decoupler_ulm": os.path.join(current_dir, "data", "decoupler_ulm_tools.json"),
     # Single-sample GSEA signature scoring (local-compute, pure NumPy)
     "ssgsea": os.path.join(current_dir, "data", "ssgsea_tools.json"),
+    # Gene Set Variation Analysis (local-compute, pure NumPy)
+    "gsva": os.path.join(current_dir, "data", "gsva_tools.json"),
     # S-PrediXcan summary-based TWAS (local-compute, pure NumPy)
     "spredixcan": os.path.join(current_dir, "data", "spredixcan_tools.json"),
     # Co-expression module detection (local-compute, NumPy + NetworkX)

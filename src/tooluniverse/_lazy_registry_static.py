@@ -121,6 +121,7 @@ STATIC_LAZY_REGISTRY = {
     "GSEAPrerankTool": "gsea_prerank_tool",
     "DecouplerULMTool": "decoupler_ulm_tool",
     "SSGSEATool": "ssgsea_tool",
+    "GSVATool": "gsva_tool",
     "SPrediXcanTool": "spredixcan_tool",
     "CoexpressionModuleTool": "coexpression_module_tool",
     "IUPred3Tool": "iupred3_tool",
