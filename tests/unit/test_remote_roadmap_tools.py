@@ -30,12 +30,37 @@ def _load(rel_path, name):
     return mod
 
 
-def _stub(name, **attrs):
-    if name not in sys.modules:
-        m = types.ModuleType(name)
-        for k, v in attrs.items():
-            setattr(m, k, v)
-        sys.modules[name] = m
+def _have(name):
+    """True if the REAL module is importable (so we must not shadow it with a stub)."""
+    if name in sys.modules:
+        # already imported: real module has a __spec__; our stubs do not.
+        return getattr(sys.modules[name], "__spec__", None) is not None
+    try:
+        return importlib.util.find_spec(name) is not None
+    except Exception:
+        return False
+
+
+def _ensure_stub(dotted, **attrs):
+    """Install a fake module tree ONLY when the real top-level package is absent.
+
+    Never mutates an installed module — overwriting e.g. ``requests.exceptions``
+    would corrupt unrelated tests sharing the same interpreter session (the cause
+    of an earlier CI break). Returns True if a stub was installed, False if the
+    real module is present and should be used as-is.
+    """
+    if _have(dotted.split(".")[0]):
+        return False
+    parts = dotted.split(".")
+    for i in range(len(parts)):
+        name = ".".join(parts[: i + 1])
+        if name not in sys.modules:
+            sys.modules[name] = types.ModuleType(name)
+        if i > 0:
+            setattr(sys.modules[".".join(parts[:i])], parts[i], sys.modules[name])
+    for k, v in attrs.items():
+        setattr(sys.modules[dotted], k, v)
+    return True
 
 
 class _FakeLineage:
@@ -49,49 +74,33 @@ class _FakeLineage:
         return self._arr if dtype is None else self._arr.astype(dtype)
 
 
-# Stub the single-cell stack so cellrank_tool imports without the heavy deps.
-_stub("scanpy")
-sys.modules["scanpy"].read_h5ad = lambda *a, **k: None
-sys.modules["scanpy"].pp = types.SimpleNamespace(
-    pca=lambda *a, **k: None, neighbors=lambda *a, **k: None
+# Heavy deps are absent in CI (stubbed here) and present locally (used for real).
+# Each stub is installed ONLY when the real package is missing, so an installed
+# module is never corrupted for other tests. `requests` is a real dependency in
+# every environment, so it is deliberately NOT stubbed.
+if _ensure_stub("scanpy"):
+    sys.modules["scanpy"].read_h5ad = lambda *a, **k: None
+    sys.modules["scanpy"].pp = types.SimpleNamespace(
+        pca=lambda *a, **k: None, neighbors=lambda *a, **k: None
+    )
+if _ensure_stub("cellrank"):
+    sys.modules["cellrank"].estimators = types.SimpleNamespace(GPCCA=lambda *a, **k: None)
+    sys.modules["cellrank"].kernels = types.SimpleNamespace()
+_ensure_stub("scipy")
+_ensure_stub("scipy.io", mmwrite=lambda *a, **k: None)
+_ensure_stub("scipy.sparse", csr_matrix=lambda x: x)
+_ensure_stub(
+    "tensorflow",
+    keras=types.SimpleNamespace(
+        models=types.SimpleNamespace(load_model=lambda *a, **k: None)
+    ),
 )
-_cr = types.ModuleType("cellrank")
-_cr.estimators = types.SimpleNamespace(GPCCA=lambda *a, **k: None)
-_cr.kernels = types.SimpleNamespace()
-sys.modules.setdefault("cellrank", _cr)
 
 crk = _load("cellrank/cellrank_tool.py", "cellrank_tool")
-
-
-def _stub_tree(dotted, **attrs):
-    """Register a (possibly dotted) module in sys.modules with attrs, linking parents."""
-    parts = dotted.split(".")
-    for i in range(len(parts)):
-        name = ".".join(parts[: i + 1])
-        if name not in sys.modules:
-            sys.modules[name] = types.ModuleType(name)
-        if i > 0:
-            setattr(sys.modules[".".join(parts[:i])], parts[i], sys.modules[name])
-    for k, v in attrs.items():
-        setattr(sys.modules[dotted], k, v)
-
-
-# Stub the scipy bits singler_tool imports, so it loads without scipy in CI.
-_stub_tree("scipy")
-_stub_tree("scipy.io", mmwrite=lambda *a, **k: None)
-_stub_tree("scipy.sparse", csr_matrix=lambda x: x)
-
 sgr = _load("singler/singler_tool.py", "singler_tool")
 sls = _load("slingshot/slingshot_tool.py", "slingshot_tool")
 mc3 = _load("monocle3/monocle3_tool.py", "monocle3_tool")
-
-# Stub tensorflow so chrombpnet_tool imports without the heavy DL stack in CI.
-_stub_tree("tensorflow", keras=types.SimpleNamespace(models=types.SimpleNamespace(load_model=lambda *a, **k: None)))
 cbp = _load("chrombpnet/chrombpnet_tool.py", "chrombpnet_tool")
-
-# Hosted-model remote tools: evo2 needs numpy+requests (stub requests); alphagenome
-# lazily imports the alphagenome SDK inside _make_client, so it loads bare.
-_stub_tree("requests", exceptions=types.SimpleNamespace(Timeout=Exception, RequestException=Exception))
 evo = _load("evo2/evo2_tool.py", "evo2_tool")
 agn = _load("alphagenome/alphagenome_tool.py", "alphagenome_tool")
 
