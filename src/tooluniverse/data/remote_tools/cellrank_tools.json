@@ -1,0 +1,45 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_cellrank_fate",
+    "description": "Map single-cell fate with CellRank 2 (Weiler 2024 / Lange 2022): build a Markov transition matrix over cells with a selectable kernel (connectivity = kNN graph only, pseudotime, or RNA-velocity), coarse-grain it with a GPCCA estimator to identify terminal macrostates, and compute each cell's probability of reaching each terminal state — the standard differentiation/lineage readout. Returns the terminal states and the per-cell fate-probability matrix (plus per-cluster mean fate probabilities when a cluster_key is supplied). Input is a server-accessible .h5ad.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData (log-normalized; raw scVelo velocity layers required only for kernel='velocity')."},
+        "kernel": {"type": "string", "description": "Transition kernel: 'connectivity' (default; needs only a kNN graph), 'pseudotime' (needs pseudotime_key), or 'velocity' (needs scVelo velocity layers)."},
+        "n_states": {"type": "integer", "description": "Number of macrostates to compute (default 3); terminal states are auto-selected from these."},
+        "pseudotime_key": {"type": "string", "description": "obs column with a precomputed pseudotime (required when kernel='pseudotime', e.g. 'dpt_pseudotime')."},
+        "cluster_key": {"type": "string", "description": "obs column with cluster/cell-type labels; used to name macrostates and report per-cluster mean fate probabilities (optional)."}
+      },
+      "required": ["adata_path"]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "kernel": {"type": "string"},
+        "n_cells": {"type": "integer"},
+        "n_macrostates": {"type": "integer"},
+        "terminal_states": {"type": "array", "items": {"type": "string"}, "description": "Names of the identified terminal macrostates."},
+        "n_terminal_states": {"type": "integer"},
+        "mean_fate_probabilities_by_cluster": {"type": "object", "description": "{cluster: {terminal_state: mean_probability}} (present when cluster_key is given)."},
+        "fate_probabilities": {"type": "array", "description": "Per-cell fate-probability matrix (n_cells x n_terminal); omitted if n_cells > 5000."},
+        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "obs_names aligned with fate_probabilities rows (omitted if n_cells > 5000)."},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "CellrankFateTool",
+      "url": "https://cellrank.readthedocs.io/",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/cellrank",
+      "mcp_tool_name": "run_cellrank_fate"
+    },
+    "test_examples": [
+      {"adata_path": "pancreas.h5ad", "kernel": "connectivity", "n_states": 3, "cluster_key": "clusters"}
+    ]
+  }
+]
