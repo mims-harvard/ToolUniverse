@@ -1,0 +1,52 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_evo2_variant_effect",
+    "description": "Zero-shot variant-effect scoring with NVIDIA-hosted Evo 2 (Arc Institute genome foundation model, 1 Mb context). Runs the model's forward pass on the reference and alternate DNA windows and returns the delta log-likelihood (alt - ref). Negative = variant disfavored by the genome model (candidate deleterious); near-zero = tolerated. Served as a remote MCP tool so the hosted NIM call and NVIDIA_API_KEY live on the server. Complements NvidiaNIM_evo2 (which only generates sequences). Provide ref_sequence+alt_sequence (same length) or sequence+position+alternate.",
+    "required_api_keys": ["NVIDIA_API_KEY"],
+    "api_key_info": {
+      "NVIDIA_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "secret",
+        "register_url": "https://build.nvidia.com/",
+        "purpose": "Call NVIDIA NIM model endpoints (hosted inference for bio/chem models).",
+        "without": "NIM tools are blocked without it."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ref_sequence": {"type": ["string", "null"], "description": "Reference DNA window (A/C/G/T/N). Use with alt_sequence (same length)."},
+        "alt_sequence": {"type": ["string", "null"], "description": "Alternate DNA window, same length/centering as ref_sequence."},
+        "sequence": {"type": ["string", "null"], "description": "Reference DNA window for point-substitution mode (use with position + alternate)."},
+        "position": {"type": ["integer", "null"], "description": "1-based position of the substituted base within `sequence`."},
+        "reference": {"type": ["string", "null"], "description": "Optional reference base (single letter) at `position`, validated against `sequence`."},
+        "alternate": {"type": ["string", "null"], "description": "Alternate base (single letter) substituted at `position`."}
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {"type": "string"},
+        "method": {"type": "string"},
+        "delta_loglik": {"type": "number", "description": "loglik(alt) - loglik(ref). Negative = variant disfavored."},
+        "ref_loglik": {"type": "number"},
+        "alt_loglik": {"type": "number"},
+        "direction": {"type": "string"},
+        "note": {"type": "string"},
+        "error": {"type": "string", "description": "Error description if the run failed."}
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "Evo2VariantEffectTool",
+      "url": "https://docs.nvidia.com/nim/bionemo/evo2/latest/endpoints.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/evo2",
+      "mcp_tool_name": "run_evo2_variant_effect"
+    },
+    "test_examples": [
+      {"sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT", "position": 21, "reference": "G", "alternate": "T"}
+    ]
+  }
+]

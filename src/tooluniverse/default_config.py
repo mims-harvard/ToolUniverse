@@ -186,12 +186,9 @@ default_tool_files = {
     "esm2_variant_effect": os.path.join(
         current_dir, "data", "esm2_variant_effect_tools.json"
     ),
-    # AlphaGenome regulatory-genomics prediction (DeepMind hosted API, key-gated)
-    "alphagenome": os.path.join(current_dir, "data", "alphagenome_tools.json"),
-    # Evo 2 zero-shot variant scoring (NVIDIA NIM forward endpoint, key-gated)
-    "evo2_variant_effect": os.path.join(
-        current_dir, "data", "evo2_variant_effect_tools.json"
-    ),
+    # AlphaGenome (DeepMind) and Evo 2 (NVIDIA NIM) are hosted-model tools served
+    # as remote MCP tools (src/tooluniverse/remote/{alphagenome,evo2}), so their
+    # SDK/credentials live on the server — no local-tool entry here.
     # Two-sample Mendelian randomization estimators (local-compute, pure NumPy)
     "mendelian_randomization": os.path.join(
         current_dir, "data", "mendelian_randomization_tools.json"

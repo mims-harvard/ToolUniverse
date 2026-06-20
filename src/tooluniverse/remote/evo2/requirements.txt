@@ -1,0 +1,4 @@
+numpy
+requests
+# Calls NVIDIA's hosted Evo 2 NIM (no local model weights). The server must have
+# NVIDIA_API_KEY set in its environment (free key at https://build.nvidia.com).

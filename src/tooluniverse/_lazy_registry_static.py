@@ -113,8 +113,6 @@ STATIC_LAZY_REGISTRY = {
     "GnomADConstraintTool": "gnomad_constraint_tool",
     "HuggingFaceInferenceTool": "huggingface_inference_tool",
     "ESM2VariantEffectTool": "esm2_variant_effect_tool",
-    "AlphaGenomeTool": "alphagenome_tool",
-    "Evo2VariantEffectTool": "evo2_variant_effect_tool",
     "MendelianRandomizationTool": "mendelian_randomization_tool",
     "ColocalizationTool": "colocalization_tool",
     "FinemapABFTool": "finemap_abf_tool",
