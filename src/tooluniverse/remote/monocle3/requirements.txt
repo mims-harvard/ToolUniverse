@@ -1,0 +1,10 @@
+# Python side
+scanpy>=1.10
+anndata
+scipy
+# R side (install separately on the server):
+#   R >= 4.2 with monocle3 (+ Matrix, jsonlite). monocle3 is installed from
+#   GitHub and needs Bioconductor deps and system libs (gdal/geos/proj via terra):
+#     BiocManager::install(c("SingleCellExperiment","batchelor","terra","ggrastr","leidenbase"))
+#     remotes::install_github("cole-trapnell-lab/monocle3")
+#   Rscript must be on PATH (or set RSCRIPT_BIN).

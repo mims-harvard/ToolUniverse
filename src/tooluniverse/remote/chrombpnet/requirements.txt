@@ -1,0 +1,6 @@
+tensorflow>=2.12
+numpy
+# A trained, cell-type-specific ChromBPNet model (.h5) is referenced at call time
+# via model_path. Get models from the ChromBPNet model zoo / ENCODE, or train
+# your own with the `chrombpnet` package (https://github.com/kundajelab/chrombpnet).
+# GPU recommended for throughput.
