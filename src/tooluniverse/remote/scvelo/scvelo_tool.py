@@ -35,7 +35,7 @@ La Manno G, Soldatov R, Zeisel A, et al. "RNA velocity of single cells." Nature
 from typing import Any, Dict
 
 import numpy as np
-import scanpy as sc  # noqa: F401  (scvelo builds on scanpy/anndata)
+import scanpy as sc  # scvelo builds on scanpy/anndata; also used to read .h5ad
 import scvelo as scv
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
@@ -114,7 +114,7 @@ class ScveloVelocityTool:
             }
 
         try:
-            adata = scv.read(adata_path)
+            adata = sc.read_h5ad(adata_path)
         except Exception as exc:  # noqa: BLE001
             return {"error": f"Failed to read adata_path '{adata_path}': {exc}"}
 
@@ -142,7 +142,10 @@ class ScveloVelocityTool:
             }
 
         try:
-            scv.pp.filter_and_normalize(adata, min_shared_counts=20, n_top_genes=2000)
+            # filter + normalize + log (no n_top_genes: scVelo routes it through
+            # **kwargs into normalize_per_cell, which rejects it on 0.3.x; HVG
+            # subsetting is only a speed optimization, not needed for correctness).
+            scv.pp.filter_and_normalize(adata, min_shared_counts=20)
             scv.pp.moments(adata, n_pcs=30, n_neighbors=30)
             if mode == "dynamical":
                 # Dynamical mode requires the recovered latent gene dynamics.
