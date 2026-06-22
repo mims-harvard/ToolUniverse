@@ -179,10 +179,10 @@ class Cell2locationDeconvolutionTool:
             adata_sp = _map_to_spatial(adata_sp, inf_aver, batch_key, sp_epochs)
 
             abundance = adata_sp.obsm["q05_cell_abundance_w_sf"]
-            # Column names are prefixed (q05_cell_abundance_w_sf_<ct>); strip to cell type.
-            cell_types = [
-                c.replace("q05_cell_abundance_w_sf_", "") for c in abundance.columns
-            ]
+            # cell2location names the columns `q05cell_abundance_w_sf_<ct>` (note: no
+            # underscore after `q05`), so split on the stable `_w_sf_` suffix to
+            # recover the cell type robustly rather than stripping a fixed prefix.
+            cell_types = [c.split("_w_sf_")[-1] for c in abundance.columns]
             means = np.asarray(abundance.mean(axis=0)).ravel()
             mean_abundance = {
                 ct: round(float(m), 6) for ct, m in zip(cell_types, means)
