@@ -101,8 +101,6 @@ sgr = _load("singler/singler_tool.py", "singler_tool")
 sls = _load("slingshot/slingshot_tool.py", "slingshot_tool")
 mc3 = _load("monocle3/monocle3_tool.py", "monocle3_tool")
 cbp = _load("chrombpnet/chrombpnet_tool.py", "chrombpnet_tool")
-evo = _load("evo2/evo2_tool.py", "evo2_tool")
-agn = _load("alphagenome/alphagenome_tool.py", "alphagenome_tool")
 
 
 # ------------------------------------------------------------------ CellRank
@@ -452,91 +450,3 @@ def test_chrombpnet_handles_unloadable_model(monkeypatch):
     out = cbp.ChrombpnetPredictTool().run({"model_path": "missing.h5", "sequence": "ACGT"})
     assert "Could not load ChromBPNet model" in out["error"]
 
-
-# ---------------------------------------------------------------------- Evo2
-def _ref_loglik(seq, logits):
-    arr = logits[:, 0, :] if logits.ndim == 3 else logits
-    n = min(len(seq), arr.shape[0])
-    total = 0.0
-    for i in range(n - 1):
-        row = arr[i]
-        logz = math.log(np.exp(row - row.max()).sum()) + row.max()
-        total += row[ord(seq[i + 1])] - logz
-    return total
-
-
-def test_evo2_loglik_uniform_is_minus_log_vocab():
-    seq = "ACGT"
-    ll = evo._autoregressive_loglik(seq, np.zeros((4, 256)))
-    assert math.isclose(ll, -(len(seq) - 1) * math.log(256), rel_tol=1e-9)
-
-
-def test_evo2_loglik_matches_reference_and_3d_shape():
-    seq = "ACGTACGT"
-    rng = np.random.default_rng(0)
-    logits = rng.normal(size=(len(seq), 256))
-    assert math.isclose(evo._autoregressive_loglik(seq, logits), _ref_loglik(seq, logits), rel_tol=1e-9)
-    logits3d = logits[:, None, :]  # [L,1,vocab] batch shape
-    assert math.isclose(
-        evo._autoregressive_loglik(seq, logits3d),
-        evo._autoregressive_loglik(seq, logits),
-        rel_tol=1e-9,
-    )
-
-
-def test_evo2_resolve_sequences_modes():
-    # point-substitution mode
-    ref, alt, err = evo._resolve_sequences({"sequence": "ACGTG", "position": 5, "alternate": "T"})
-    assert err is None and ref == "ACGTG" and alt == "ACGTT"
-    # length mismatch
-    _, _, err = evo._resolve_sequences({"ref_sequence": "ACGT", "alt_sequence": "ACG"})
-    assert err and "same length" in err["error"]
-    # reference base mismatch
-    _, _, err = evo._resolve_sequences({"sequence": "ACGTG", "position": 1, "reference": "G", "alternate": "T"})
-    assert err and "does not match" in err["error"]
-    # missing inputs
-    _, _, err = evo._resolve_sequences({})
-    assert err and "Provide either" in err["error"]
-
-
-def test_evo2_run_requires_api_key(monkeypatch):
-    monkeypatch.delenv("NVIDIA_API_KEY", raising=False)
-    out = evo.Evo2VariantEffectTool().run({"ref_sequence": "ACGT", "alt_sequence": "ACGA"})
-    assert "NVIDIA_API_KEY" in out["error"]
-
-
-def test_evo2_run_delta_and_direction(monkeypatch):
-    monkeypatch.setenv("NVIDIA_API_KEY", "x")
-    monkeypatch.setattr(evo, "_sequence_log_likelihood", lambda seq, key: -8.0 if seq.endswith("A") else -5.0)
-    out = evo.Evo2VariantEffectTool().run({"ref_sequence": "ACGT", "alt_sequence": "ACGA"})
-    assert out["model"].startswith("Evo 2")
-    assert out["ref_loglik"] == -5.0 and out["alt_loglik"] == -8.0
-    assert out["delta_loglik"] == -3.0 and "deleterious" in out["direction"]
-
-
-# ---------------------------------------------------------------- AlphaGenome
-def test_alphagenome_score_variant_missing_args():
-    assert agn.AlphagenomeScoreVariantTool().run({})["error"]
-
-
-def test_alphagenome_predict_interval_missing_args():
-    assert agn.AlphagenomePredictIntervalTool().run({"chromosome": "chr1"})["error"]
-
-
-def test_alphagenome_reports_missing_sdk_or_key(monkeypatch):
-    # _make_client returns an error dict when the SDK or key is absent; the tool surfaces it
-    monkeypatch.setattr(agn, "_make_client", lambda: {"error": "The 'alphagenome' package is required on the server: pip install alphagenome."})
-    out = agn.AlphagenomeScoreVariantTool().run(
-        {"chromosome": "chr22", "position": 100, "reference_bases": "A", "alternate_bases": "C"}
-    )
-    assert "alphagenome" in out["error"]
-
-
-def test_alphagenome_summarize_scores_sorts_by_abs_effect():
-    class _AData:
-        X = np.array([0.1, -0.9, 0.3])
-        var_names = ["t0", "t1", "t2"]
-
-    rows = agn._summarize_scores([_AData()], top_n=2)
-    assert [r["track"] for r in rows] == ["t1", "t2"]  # |−0.9| then |0.3|
-    assert rows[0]["score"] == pytest.approx(-0.9)

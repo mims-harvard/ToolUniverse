@@ -12,6 +12,18 @@
     ]
   },
   {
+    "name": "ALPHA_GENOME_API_KEY",
+    "requirement": "required",
+    "type": "api_key",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://deepmind.google.com/science/alphagenome",
+    "purpose": "Free non-commercial access to the hosted AlphaGenome prediction API.",
+    "without": "Tool stays config-only until the key is set.",
+    "used_by": [
+      "alphagenome_tools.json"
+    ]
+  },
+  {
     "name": "AZURE_OPENAI_API_KEY",
     "requirement": "optional",
     "type": "secret",
@@ -350,6 +362,7 @@
     "purpose": "Call NVIDIA NIM model endpoints (hosted inference for bio/chem models).",
     "without": "NIM tools are blocked without it.",
     "used_by": [
+      "evo2_variant_effect_tools.json",
       "nvidia_nim_tools.json"
     ]
   },

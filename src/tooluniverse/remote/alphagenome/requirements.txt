@@ -1,4 +1,0 @@
-alphagenome
-# DeepMind's AlphaGenome client SDK (gRPC to the hosted API; no local weights).
-# The server must have ALPHA_GENOME_API_KEY set in its environment
-# (free non-commercial key at https://deepmind.google.com/science/alphagenome).

@@ -1,0 +1,262 @@
+[
+  {
+    "name": "AlphaGenome_score_variant",
+    "type": "AlphaGenomeTool",
+    "fields": {
+      "operation": "score_variant"
+    },
+    "description": "Score a regulatory variant's effect with DeepMind AlphaGenome (Avsec, Nature 2026), the hosted successor to Enformer/Borzoi. Predicts ref vs alt over up to 1 Mb at single-base resolution and returns the recommended per-track effect scores (sorted by |effect|). Hosted API via the alphagenome SDK; free for non-commercial use (set ALPHA_GENOME_API_KEY).",
+    "required_api_keys": [
+      "ALPHA_GENOME_API_KEY"
+    ],
+    "api_key_info": {
+      "ALPHA_GENOME_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "api_key",
+        "register_url": "https://deepmind.google.com/science/alphagenome",
+        "purpose": "Free non-commercial access to the hosted AlphaGenome prediction API.",
+        "without": "Tool stays config-only until the key is set."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "chromosome",
+        "position",
+        "reference_bases",
+        "alternate_bases"
+      ],
+      "properties": {
+        "chromosome": {
+          "type": "string",
+          "description": "Chromosome, e.g. 'chr22'."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-based variant position."
+        },
+        "reference_bases": {
+          "type": "string",
+          "description": "Reference allele, e.g. 'A'."
+        },
+        "alternate_bases": {
+          "type": "string",
+          "description": "Alternate allele, e.g. 'C'."
+        },
+        "output_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Modality to score: RNA_SEQ (default), ATAC, DNASE, CAGE, CHIP_HISTONE, CHIP_TF, SPLICE_SITES, CONTACT_MAPS."
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'human' (default) or 'mouse'."
+        },
+        "sequence_length": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Context window: 16KB, 100KB, 500KB, or 1MB (default)."
+        },
+        "top_n": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of top |effect| tracks to return (default 20)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "variant": {
+                  "type": "string"
+                },
+                "output_type": {
+                  "type": "string"
+                },
+                "scores": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "chromosome": "chr22",
+        "position": 36201698,
+        "reference_bases": "A",
+        "alternate_bases": "C",
+        "output_type": "RNA_SEQ"
+      }
+    ]
+  },
+  {
+    "name": "AlphaGenome_predict_interval",
+    "type": "AlphaGenomeTool",
+    "fields": {
+      "operation": "predict_interval"
+    },
+    "description": "Predict multimodal genomic tracks for a genomic interval with DeepMind AlphaGenome (single DNA-sequence model; up to 1 Mb at single-base resolution). Returns a compact per-modality summary (track counts and shapes) for the requested outputs. Hosted API via the alphagenome SDK; free for non-commercial use (set ALPHA_GENOME_API_KEY).",
+    "required_api_keys": [
+      "ALPHA_GENOME_API_KEY"
+    ],
+    "api_key_info": {
+      "ALPHA_GENOME_API_KEY": {
+        "domain": "Models & Infrastructure",
+        "type": "api_key",
+        "register_url": "https://deepmind.google.com/science/alphagenome",
+        "purpose": "Free non-commercial access to the hosted AlphaGenome prediction API.",
+        "without": "Tool stays config-only until the key is set."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "chromosome",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "chromosome": {
+          "type": "string",
+          "description": "Chromosome, e.g. 'chr19'."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Interval start (0-based)."
+        },
+        "end": {
+          "type": "integer",
+          "description": "Interval end."
+        },
+        "output_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Modalities to predict, e.g. ['RNA_SEQ','ATAC'] (default ['RNA_SEQ'])."
+        },
+        "ontology_terms": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional tissue/cell ontology terms (e.g. ['UBERON:0001114'] = liver) to restrict tracks."
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'human' (default) or 'mouse'."
+        },
+        "sequence_length": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Context window: 16KB, 100KB, 500KB, or 1MB (default)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "interval": {
+                  "type": "string"
+                },
+                "tracks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "chromosome": "chr19",
+        "start": 40991281,
+        "end": 41018398,
+        "output_types": [
+          "RNA_SEQ",
+          "ATAC"
+        ]
+      }
+    ]
+  }
+]
