@@ -31,8 +31,9 @@ integration of single-cell data with Harmony." Nature Methods 16,
 
 from typing import Any, Dict
 
+import numpy as np
 import scanpy as sc
-import scanpy.external as sce
+import harmonypy
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
 
@@ -44,8 +45,6 @@ _MAX_EMBEDDING_CELLS = 2000
 def _looks_like_raw_counts(adata) -> bool:
     """Heuristic: integer-valued, non-negative X => raw UMI counts."""
     try:
-        import numpy as np
-
         X = adata.X
         sample = X[:100] if X.shape[0] > 100 else X
         arr = sample.toarray() if hasattr(sample, "toarray") else np.asarray(sample)
@@ -138,7 +137,15 @@ class HarmonyIntegrateTool:
             return {"error": f"PCA computation failed: {exc}"}
 
         try:
-            sce.pp.harmony_integrate(adata, key=batch_key)
+            # Call harmonypy directly (not scanpy.external.pp.harmony_integrate):
+            # harmonypy >= 2.0 returns Z_corr as (n_cells, n_pcs), but the scanpy
+            # wrapper transposes assuming the old (n_pcs, n_cells) layout, which
+            # mis-shapes X_pca_harmony. Orient by whichever axis matches n_obs.
+            ho = harmonypy.run_harmony(adata.obsm["X_pca"], adata.obs, [batch_key])
+            z = np.asarray(ho.Z_corr)
+            if z.shape[0] != adata.n_obs:
+                z = z.T
+            adata.obsm["X_pca_harmony"] = z
         except Exception as exc:
             return {"error": f"Harmony integration failed: {exc}"}
 
