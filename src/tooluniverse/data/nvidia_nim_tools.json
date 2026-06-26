@@ -575,7 +575,7 @@
   },
   {
     "name": "NvidiaNIM_diffdock",
-    "description": "Blind molecular docking using DiffDock via NVIDIA NIM. Predict ligand binding poses without specifying binding pocket. Input: protein (PDB content or asset ID), ligand (SDF content or asset ID). For large files, use is_staged=true with asset IDs. Returns docking poses with confidence scores.",
+    "description": "Blind molecular docking using DiffDock via NVIDIA NIM. Predict ligand binding poses without specifying binding pocket. Input: protein (valid PDB ATOM records of a folded structure, or asset ID), ligand (a valid RDKit-readable SDF/MOL block, or asset ID). The ligand must be a well-formed molblock (e.g. generated with RDKit MolToMolBlock); a malformed ligand fails with 'Fail to read ligand molecule description'. For large proteins, use is_staged=true with asset IDs. Returns docking poses with per-pose confidence scores.",
     "type": "NvidiaNIMTool",
     "parameter": {
       "type": "object",
@@ -649,7 +649,7 @@
     "test_examples": [
       {
         "protein": "ATOM      1  N   ALA A   1       0.000   0.000   0.000  1.00  0.00           N",
-        "ligand": "\n  RDKit          3D\n\n  3  2  0  0  0  0  0  0  0  0999 V2000\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.0000    0.0000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\nM  END\n",
+        "ligand": "\n     RDKit          3D\n\n 12 12  0  0  0  0  0  0  0  0999 V2000\n    1.2772    0.5595   -0.0341 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.1215   -0.8260   -0.0746 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.1558   -1.3855   -0.0405 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.2772   -0.5595    0.0341 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1215    0.8260    0.0746 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.1558    1.3855    0.0405 C   0  0  0  0  0  0  0  0  0  0  0  0\n    2.2723    0.9954   -0.0607 H   0  0  0  0  0  0  0  0  0  0  0  0\n    1.9952   -1.4695   -0.1327 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.2771   -2.4650   -0.0720 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -2.2723   -0.9954    0.0607 H   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.9952    1.4695    0.1327 H   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2771    2.4650    0.0720 H   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0\n  2  3  2  0\n  3  4  1  0\n  4  5  2  0\n  5  6  1  0\n  6  1  2  0\n  1  7  1  0\n  2  8  1  0\n  3  9  1  0\n  4 10  1  0\n  5 11  1  0\n  6 12  1  0\nM  END\n",
         "ligand_file_type": "sdf",
         "num_poses": 5
       }

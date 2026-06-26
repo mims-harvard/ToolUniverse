@@ -15,6 +15,7 @@ import os
 import time
 import requests
 from typing import Dict, Any, Optional, List
+from urllib.parse import urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -66,7 +67,13 @@ class NvidiaNIMTool(BaseTool):
     """
 
     DEFAULT_BASE_URL = "https://health.api.nvidia.com/v1/biology"
-    STATUS_URL = "https://integrate.api.nvidia.com/v1/status"
+    # Hosted NVCF functions are polled on the SAME gateway host they are invoked
+    # on. The biology/medical-imaging NIMs live on health.api.nvidia.com, so async
+    # results must be polled there — NOT on integrate.api.nvidia.com, which only
+    # serves the OpenAI-compatible LLM endpoints and has no /v1/status route
+    # (it returns a plain-text "404 page not found"). The poll host is derived
+    # from the invocation base_url at request time; this is the default.
+    STATUS_URL = "https://health.api.nvidia.com/v1/status"
     ASSETS_URL = "https://api.nvcf.nvidia.com/v2/nvcf/assets"
     DEFAULT_TIMEOUT = 600
     DEFAULT_POLL_SECONDS = 300
@@ -125,7 +132,10 @@ class NvidiaNIMTool(BaseTool):
         Returns:
             Final response from the API
         """
-        poll_url = f"{self.STATUS_URL}/{req_id}"
+        # Poll on the same gateway host the request was sent to (e.g.
+        # health.api.nvidia.com), falling back to the documented default.
+        host = urlparse(self.base_url).netloc or urlparse(self.STATUS_URL).netloc
+        poll_url = f"https://{host}/v1/status/{req_id}"
 
         for attempt in range(self.MAX_POLL_ATTEMPTS):
             try:
@@ -173,18 +183,44 @@ class NvidiaNIMTool(BaseTool):
             }
 
         if response.status_code == 404:
+            # Two distinct 404s: the route is valid but the model function isn't
+            # provisioned for this account ("Not found for account ..." — a JSON
+            # body), versus a genuinely wrong path (plain "404 page not found").
+            body = response.text or ""
+            if "not found for account" in body.lower():
+                return {
+                    "status": "error",
+                    "error": "Model not available for this NVIDIA account",
+                    "detail": (
+                        "This NIM model is not provisioned for your NVIDIA_API_KEY "
+                        "and may require special/enterprise access. " + body[:300]
+                    ),
+                    "status_code": 404,
+                }
             return {
                 "status": "error",
                 "error": "Endpoint not found",
-                "detail": response.text,
+                "detail": body,
                 "status_code": 404,
             }
 
         if response.status_code >= 500:
+            # 5xx from the gateway often has an empty body; the NVCF headers carry
+            # the real signal (e.g. nvcf-status "errored" on a cold/failed function).
+            nvcf_status = response.headers.get("nvcf-status")
+            detail = response.text.strip()
+            if not detail and nvcf_status:
+                detail = (
+                    f"NVCF function status: {nvcf_status}; request id "
+                    f"{response.headers.get('nvcf-reqid')}. The hosted function may be "
+                    f"cold-starting or temporarily unavailable — retry shortly."
+                )
+            elif not detail:
+                detail = "No response body."
             return {
                 "status": "error",
                 "error": "Server error",
-                "detail": response.text,
+                "detail": detail,
                 "status_code": response.status_code,
             }
 
@@ -222,10 +258,25 @@ class NvidiaNIMTool(BaseTool):
             }
 
         if self.response_type == "pdb" or "text/plain" in content_type:
-            # PDB structure text
+            # PDB structure text. Some NIMs (e.g. ESMFold) wrap it in JSON
+            # {"pdbs": ["...ATOM records..."]} even on the pdb path, so unwrap to
+            # the actual PDB string rather than handing back a JSON blob.
+            structure = response.text
+            stripped = structure.lstrip()
+            if stripped.startswith(("{", "[")):
+                try:
+                    payload = response.json()
+                except ValueError:
+                    payload = None
+                if isinstance(payload, dict):
+                    pdbs = payload.get("pdbs") or payload.get("pdb")
+                    if isinstance(pdbs, list) and pdbs:
+                        structure = pdbs[0]
+                    elif isinstance(pdbs, str):
+                        structure = pdbs
             return {
                 "status": "success",
-                "structure": response.text,
+                "structure": structure,
                 "format": "pdb",
             }
 
@@ -248,6 +299,21 @@ class NvidiaNIMTool(BaseTool):
         # Default: JSON response
         try:
             data = response.json()
+            # Some NIMs (e.g. DiffDock) answer HTTP 200 but report an inner
+            # failure (e.g. {"status": "failed", "detail": ...}). Surface that as
+            # an error rather than a misleading top-level success.
+            if isinstance(data, dict) and str(data.get("status", "")).lower() in (
+                "failed",
+                "error",
+                "errored",
+            ):
+                detail = str(data.get("detail") or data.get("message") or data)[:300]
+                return {
+                    "status": "error",
+                    "error": "NIM reported an inner failure",
+                    "detail": detail,
+                    "data": data,
+                }
             return {
                 "status": "success",
                 "data": data,
