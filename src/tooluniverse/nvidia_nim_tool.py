@@ -225,10 +225,25 @@ class NvidiaNIMTool(BaseTool):
             }
 
         if response.status_code not in [200, 201]:
+            body = response.text or ""
+            # A hosted function NVIDIA has flagged unhealthy returns
+            # "DEGRADED function cannot be invoked" (seen as a 400). It's a
+            # transient server-side state, not a bad request from the caller.
+            if "degraded" in body.lower():
+                return {
+                    "status": "error",
+                    "error": "NIM function temporarily degraded",
+                    "detail": (
+                        "NVIDIA has flagged this hosted model as degraded and is "
+                        "rejecting invocations — a transient server-side state, not "
+                        "a problem with your request. Retry later. " + body[:300]
+                    ),
+                    "status_code": response.status_code,
+                }
             return {
                 "status": "error",
                 "error": f"API returned status {response.status_code}",
-                "detail": response.text[:1000] if response.text else "No details",
+                "detail": body[:1000] if body else "No details",
                 "status_code": response.status_code,
             }
 

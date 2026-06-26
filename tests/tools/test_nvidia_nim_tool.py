@@ -334,6 +334,26 @@ class TestNvidiaNIMToolUnit:
         assert "not available" in result["error"].lower()
         assert "account" in result["error"].lower()
 
+    @patch("requests.post")
+    def test_degraded_function_reported_clearly(self, mock_post, nvidia_nim_tool):
+        """A 400 'DEGRADED function cannot be invoked' is a transient NVIDIA state.
+
+        It must read as a server-side degradation (retry later), not a bad
+        request from the caller.
+        """
+        mock_response = MagicMock()
+        mock_response.status_code = 400
+        mock_response.text = ('{"status":400,"title":"Bad Request",'
+                              '"detail":"Function id \'e3dfc6dd\': DEGRADED function cannot be invoked"}')
+        mock_response.headers = {}
+        mock_post.return_value = mock_response
+
+        result = nvidia_nim_tool.run({"sequence": "MVLSP"})
+
+        assert result["status"] == "error"
+        assert "degraded" in result["error"].lower()
+        assert "retry later" in result["detail"].lower()
+
     @patch("requests.get")
     @patch("requests.post")
     def test_async_polls_on_invocation_host_not_integrate(self, mock_post, mock_get):
