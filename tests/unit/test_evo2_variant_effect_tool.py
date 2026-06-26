@@ -25,7 +25,7 @@ def _tool():
 
 def _reference_loglik(seq, logits):
     """Plain-loop reference for the autoregressive log-likelihood."""
-    arr = logits[:, 0, :] if logits.ndim == 3 else logits
+    arr = logits[0] if logits.ndim == 3 else logits  # (batch, seq, vocab)
     n = min(len(seq), arr.shape[0])
     total = 0.0
     for i in range(n - 1):
@@ -54,7 +54,7 @@ def test_loglik_matches_reference_on_random_logits():
 def test_loglik_handles_3d_batch_shape():
     seq = "ACGT"
     logits2d = np.random.default_rng(1).normal(size=(4, VOCAB))
-    logits3d = logits2d[:, None, :]  # [L, 1, vocab]
+    logits3d = logits2d[None, :, :]  # [1, L, vocab] = (batch, seq, vocab)
     assert math.isclose(
         Evo2VariantEffectTool._autoregressive_loglik(seq, logits3d),
         Evo2VariantEffectTool._autoregressive_loglik(seq, logits2d),

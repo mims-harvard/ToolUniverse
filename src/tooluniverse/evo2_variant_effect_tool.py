@@ -17,11 +17,12 @@ A **negative** delta means the variant makes the sequence less likely under the
 genome model — a candidate deleterious/disruptive change; near-zero means
 tolerated.
 
-The hosted ``/forward`` endpoint returns the requested layer tensors as a
-base64-encoded NumPy ``.npz`` (``output_layer`` = final logits, shape
-``[seq_len, batch, 512]`` over Evo 2's byte-level vocabulary). This tool decodes
-that, computes the likelihood (byte-level tokens, token = ``ord(base)``), and
-takes the delta. ``run()`` is key-gated (``NVIDIA_API_KEY``) and never raises.
+The hosted ``/forward`` endpoint (arc/evo2-40b, a StripedHyena model) returns the
+requested layer tensors as a base64-encoded NumPy ``.npz``. The final logits are
+the ``unembed`` layer (npz key ``unembed.output``, shape ``[batch, seq_len, 512]``
+over Evo 2's byte-level vocabulary). This tool decodes that, computes the
+likelihood (byte-level tokens, token = ``ord(base)``), and takes the delta.
+``run()`` is key-gated (``NVIDIA_API_KEY``) and never raises.
 
 Note: the forward/scoring path requires a live key to validate end-to-end; the
 likelihood reduction is unit-tested independently against synthetic logits.
@@ -191,7 +192,8 @@ class Evo2VariantEffectTool(BaseTool):
 
         Evo 2 is byte-level: the vocabulary index of a base is ``ord(base)``.
         """
-        arr = logits[:, 0, :] if logits.ndim == 3 else logits  # [L, vocab]
+        # NIM returns (batch, seq_len, vocab); take batch 0 -> [L, vocab].
+        arr = logits[0] if logits.ndim == 3 else logits
         n = min(len(seq), arr.shape[0])
         if n < 2:
             return 0.0
@@ -209,7 +211,10 @@ class Evo2VariantEffectTool(BaseTool):
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
-        payload = {"sequence": seq, "output_layers": ["output_layer"]}
+        # The hosted arc/evo2-40b NIM is a StripedHyena model: the final logits
+        # layer is 'unembed' (returns 'unembed.output', shape (batch, L, 512)).
+        # ('output_layer' is the BioNeMo/Megatron name and 422s on this endpoint.)
+        payload = {"sequence": seq, "output_layers": ["unembed"]}
         try:
             resp = requests.post(
                 url, headers=headers, json=payload, timeout=self.timeout
@@ -225,7 +230,7 @@ class Evo2VariantEffectTool(BaseTool):
             decoded = self._decode_response(resp)
             blob = base64.b64decode(decoded["data"])
             arrays = np.load(io.BytesIO(blob))
-            return arrays["output_layer"]
+            return arrays["unembed.output"]
         except Exception as exc:
             return self._err(f"Could not parse Evo 2 response: {exc}")
 
