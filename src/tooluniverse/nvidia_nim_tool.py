@@ -59,7 +59,11 @@ class NvidiaNIMTool(BaseTool):
     - MAISI, Vista3D
 
     Configuration fields:
-    - endpoint: API endpoint path (relative to base URL)
+    - endpoint: API endpoint path (relative to base URL); may contain {placeholder}
+      segments filled from path_params (e.g. "arc/{model}/generate")
+    - path_params: {name: default} map for templated endpoint segments; the value
+      is taken from the request argument of the same name (or the default) and is
+      not forwarded in the request body (e.g. {"model": "evo2-40b"})
     - base_url: Override base URL (default: https://health.api.nvidia.com/v1/biology)
     - async_expected: Whether 202 async response is expected
     - poll_seconds: NVCF-POLL-SECONDS header value (default 300)
