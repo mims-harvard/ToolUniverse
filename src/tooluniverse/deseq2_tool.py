@@ -32,6 +32,36 @@ class DESeq2Tool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown operation: {operation}"}
 
+    @staticmethod
+    def _run_rscript(r_script: str, timeout: int = 300) -> subprocess.CompletedProcess:
+        r"""Execute an R script by writing it to a temp file and running it.
+
+        We deliberately run ``Rscript <file>`` rather than ``Rscript -e <string>``.
+        The ``-e`` form collapses one backslash level before the R parser sees the
+        code, so a regex literal such as the Ensembl-version strip ``sub("\\..*", ...)``
+        (two backslashes in the generated R source) is mangled down to ``sub("\..*", ...)``
+        and R aborts with "'\.' is an unrecognized escape in character string". A
+        script file is parsed verbatim and is immune to this. The temp file is always
+        removed, including on timeout.
+        """
+        tmp = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".R", delete=False, encoding="utf-8"
+        )
+        try:
+            tmp.write(r_script)
+            tmp.close()
+            return subprocess.run(
+                ["Rscript", tmp.name],
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+            )
+        finally:
+            try:
+                os.unlink(tmp.name)
+            except OSError:
+                pass
+
     def _run_deseq2(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Run DESeq2 differential expression analysis."""
         counts_file = arguments.get("counts_file", "")
@@ -147,12 +177,7 @@ cat("RESULTS_FILE:", out_file, "\\n")
 """
 
         try:
-            r = subprocess.run(
-                ["Rscript", "-e", r_script],
-                capture_output=True,
-                text=True,
-                timeout=300,
-            )
+            r = self._run_rscript(r_script)
             if r.returncode != 0:
                 return {
                     "status": "error",
@@ -250,12 +275,7 @@ cat("RESULTS_FILE:", out_file, "\\n")
 """
 
         try:
-            r = subprocess.run(
-                ["Rscript", "-e", r_script],
-                capture_output=True,
-                text=True,
-                timeout=300,
-            )
+            r = self._run_rscript(r_script)
             if r.returncode != 0:
                 return {
                     "status": "error",
