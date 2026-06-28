@@ -17,12 +17,13 @@ A **negative** delta means the variant makes the sequence less likely under the
 genome model — a candidate deleterious/disruptive change; near-zero means
 tolerated.
 
-The hosted ``/forward`` endpoint (arc/evo2-40b, a StripedHyena model) returns the
-requested layer tensors as a base64-encoded NumPy ``.npz``. The final logits are
-the ``unembed`` layer (npz key ``unembed.output``, shape ``[batch, seq_len, 512]``
-over Evo 2's byte-level vocabulary). This tool decodes that, computes the
-likelihood (byte-level tokens, token = ``ord(base)``), and takes the delta.
-``run()`` is key-gated (``NVIDIA_API_KEY``) and never raises.
+The hosted ``/forward`` endpoint (a StripedHyena model, served in two sizes —
+``arc/evo2-40b`` default and ``arc/evo2-7b``, selectable via the ``model`` arg)
+returns the requested layer tensors as a base64-encoded NumPy ``.npz``. The final
+logits are the ``unembed`` layer (npz key ``unembed.output``, shape
+``[batch, seq_len, 512]`` over Evo 2's byte-level vocabulary). This tool decodes
+that, computes the likelihood (byte-level tokens, token = ``ord(base)``), and
+takes the delta. ``run()`` is key-gated (``NVIDIA_API_KEY``) and never raises.
 
 Note: the forward/scoring path requires a live key to validate end-to-end; the
 likelihood reduction is unit-tested independently against synthetic logits.
@@ -43,7 +44,9 @@ import requests
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-_BASE_URL = "https://health.api.nvidia.com/v1/biology/arc/evo2-40b"
+_ARC_BASE = "https://health.api.nvidia.com/v1/biology/arc"
+_DEFAULT_MODEL = "evo2-40b"
+_VALID_MODELS = {"evo2-40b", "evo2-7b"}
 _VALID_BASES = set("ACGTN")
 
 
@@ -55,8 +58,16 @@ class Evo2VariantEffectTool(BaseTool):
         super().__init__(tool_config)
         self.tool_config = tool_config or {}
         fields = self.tool_config.get("fields", {}) or {}
-        self.base_url = fields.get("base_url", _BASE_URL).rstrip("/")
+        # Base path up to (but not including) the model slug; the model is chosen
+        # per call so one tool can score with either hosted Evo 2 size.
+        self.arc_base = fields.get("base_url", _ARC_BASE).rstrip("/")
         self.timeout = int(fields.get("timeout", 120))
+
+    @staticmethod
+    def _resolve_model(model: Any) -> str:
+        """Pick a valid hosted Evo 2 model, defaulting to evo2-40b."""
+        candidate = str(model or _DEFAULT_MODEL).strip()
+        return candidate if candidate in _VALID_MODELS else _DEFAULT_MODEL
 
     # ------------------------------------------------------------------ run
     def run(self, arguments: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -71,10 +82,11 @@ class Evo2VariantEffectTool(BaseTool):
         if info is not None:  # error dict
             return info
 
-        ll_ref = self._sequence_log_likelihood(ref_seq, api_key)
+        model = self._resolve_model(args.get("model"))
+        ll_ref = self._sequence_log_likelihood(ref_seq, api_key, model)
         if isinstance(ll_ref, dict):
             return ll_ref
-        ll_alt = self._sequence_log_likelihood(alt_seq, api_key)
+        ll_alt = self._sequence_log_likelihood(alt_seq, api_key, model)
         if isinstance(ll_alt, dict):
             return ll_alt
 
@@ -92,7 +104,7 @@ class Evo2VariantEffectTool(BaseTool):
                 ),
             },
             "metadata": {
-                "model": "Evo 2 (arc/evo2-40b)",
+                "model": f"Evo 2 (arc/{model})",
                 "method": "forward-pass delta log-likelihood (zero-shot)",
                 "source": "NVIDIA NIM (hosted; requires NVIDIA_API_KEY)",
                 "note": (
@@ -176,9 +188,9 @@ class Evo2VariantEffectTool(BaseTool):
         return s if s and set(s) <= _VALID_BASES else ""
 
     # ------------------------------------------------------------- scoring
-    def _sequence_log_likelihood(self, seq: str, api_key: str):
+    def _sequence_log_likelihood(self, seq: str, api_key: str, model: str):
         """Forward pass -> autoregressive log-likelihood (or an error dict)."""
-        logits = self._forward(seq, api_key)
+        logits = self._forward(seq, api_key, model)
         if isinstance(logits, dict):
             return logits
         try:
@@ -204,16 +216,17 @@ class Evo2VariantEffectTool(BaseTool):
         chosen = arr[np.arange(n - 1), next_tokens]
         return float(np.sum(chosen - log_z))
 
-    def _forward(self, seq: str, api_key: str):
+    def _forward(self, seq: str, api_key: str, model: str):
         """POST to the Evo 2 forward endpoint and return the logits array (or error)."""
-        url = f"{self.base_url}/forward"
+        url = f"{self.arc_base}/{model}/forward"
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
         }
-        # The hosted arc/evo2-40b NIM is a StripedHyena model: the final logits
-        # layer is 'unembed' (returns 'unembed.output', shape (batch, L, 512)).
-        # ('output_layer' is the BioNeMo/Megatron name and 422s on this endpoint.)
+        # The hosted Evo 2 NIMs (both evo2-40b and evo2-7b) are StripedHyena
+        # models: the final logits layer is 'unembed' (returns 'unembed.output',
+        # shape (batch, L, 512)). ('output_layer' is the BioNeMo/Megatron name and
+        # 422s on this endpoint.)
         payload = {"sequence": seq, "output_layers": ["unembed"]}
         try:
             resp = requests.post(

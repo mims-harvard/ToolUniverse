@@ -784,7 +784,7 @@
   },
   {
     "name": "NvidiaNIM_evo2",
-    "description": "Generate DNA sequences using Evo2-40B via NVIDIA NIM. 40 billion parameter model trained on 9 trillion nucleotides. Input: DNA sequence (ACTG), num_tokens to generate. Output: generated sequence with optional per-nucleotide probabilities. Fast synchronous response.",
+    "description": "Generate DNA sequences using NVIDIA-hosted Evo 2 (Arc Institute genome foundation model, trained on 9 trillion nucleotides). Two hosted sizes are selectable via `model`: evo2-40b (default, most accurate) and evo2-7b (smaller, faster). Input: DNA sequence (ACTG), num_tokens to generate. Output: generated sequence with optional per-nucleotide probabilities. Fast synchronous response.",
     "type": "NvidiaNIMTool",
     "parameter": {
       "type": "object",
@@ -792,6 +792,15 @@
         "sequence": {
           "type": "string",
           "description": "Input DNA sequence (A, C, T, G characters only)"
+        },
+        "model": {
+          "type": "string",
+          "enum": [
+            "evo2-40b",
+            "evo2-7b"
+          ],
+          "description": "Hosted Evo 2 model size: evo2-40b (default, most accurate) or evo2-7b (smaller, faster).",
+          "default": "evo2-40b"
         },
         "num_tokens": {
           "type": "integer",
@@ -828,7 +837,10 @@
       ]
     },
     "fields": {
-      "endpoint": "arc/evo2-40b/generate",
+      "endpoint": "arc/{model}/generate",
+      "path_params": {
+        "model": "evo2-40b"
+      },
       "async_expected": false,
       "response_type": "json",
       "timeout": 120
@@ -844,6 +856,12 @@
     "test_examples": [
       {
         "sequence": "ACTGACTGACTGACTG",
+        "num_tokens": 8,
+        "top_k": 1
+      },
+      {
+        "sequence": "ACTGACTGACTGACTG",
+        "model": "evo2-7b",
         "num_tokens": 8,
         "top_k": 1
       }

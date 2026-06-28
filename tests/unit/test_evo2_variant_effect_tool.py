@@ -99,7 +99,7 @@ def test_run_delta_and_direction(monkeypatch):
     monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test")
     tool = _tool()
     lls = iter([-5.0, -8.0])  # ref, then alt
-    monkeypatch.setattr(tool, "_sequence_log_likelihood", lambda seq, key: next(lls))
+    monkeypatch.setattr(tool, "_sequence_log_likelihood", lambda seq, key, model: next(lls))
     out = tool.run({"ref_sequence": "ACGT", "alt_sequence": "ACTT"})
     assert out["status"] == "success"
     d = out["data"]
@@ -112,6 +112,51 @@ def test_run_propagates_forward_error(monkeypatch):
     monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test")
     tool = _tool()
     err = {"status": "error", "error": "Evo 2 HTTP 500", "source": "Evo2VariantEffectTool"}
-    monkeypatch.setattr(tool, "_sequence_log_likelihood", lambda seq, key: err)
+    monkeypatch.setattr(tool, "_sequence_log_likelihood", lambda seq, key, model: err)
     out = tool.run({"ref_sequence": "ACGT", "alt_sequence": "ACTT"})
     assert out["status"] == "error" and "HTTP 500" in out["error"]
+
+
+def test_resolve_model_defaults_and_validates():
+    assert Evo2VariantEffectTool._resolve_model(None) == "evo2-40b"
+    assert Evo2VariantEffectTool._resolve_model("evo2-7b") == "evo2-7b"
+    assert Evo2VariantEffectTool._resolve_model("evo2-40b") == "evo2-40b"
+    # unknown / unsafe values fall back to the default (no arbitrary path segment)
+    assert Evo2VariantEffectTool._resolve_model("evo2-999b") == "evo2-40b"
+    assert Evo2VariantEffectTool._resolve_model("../etc") == "evo2-40b"
+
+
+def test_run_selects_model_in_url_and_metadata(monkeypatch):
+    """The chosen model must drive both the forward URL and the reported metadata."""
+    monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test")
+    tool = _tool()
+    seen = {}
+
+    def fake_forward(seq, api_key, model):
+        seen["model"] = model
+        return np.zeros((4, VOCAB))  # uniform logits -> finite loglik
+
+    monkeypatch.setattr(tool, "_forward", fake_forward)
+    out = tool.run({"ref_sequence": "ACGT", "alt_sequence": "ACTT", "model": "evo2-7b"})
+    assert out["status"] == "success"
+    assert seen["model"] == "evo2-7b"
+    assert "evo2-7b" in out["metadata"]["model"]
+
+
+def test_forward_url_includes_model(monkeypatch):
+    """_forward must target arc/<model>/forward, not a hard-coded size."""
+    monkeypatch.setenv("NVIDIA_API_KEY", "nvapi-test")
+    tool = _tool()
+    captured = {}
+
+    class _Resp:
+        status_code = 500
+        text = "boom"
+
+    def fake_post(url, **kwargs):
+        captured["url"] = url
+        return _Resp()
+
+    monkeypatch.setattr("tooluniverse.evo2_variant_effect_tool.requests.post", fake_post)
+    tool._forward("ACGT", "nvapi-test", "evo2-7b")
+    assert captured["url"].endswith("/arc/evo2-7b/forward")

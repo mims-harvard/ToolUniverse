@@ -12,6 +12,7 @@ Rate limit: 40 requests per minute (enforced internally).
 """
 
 import os
+import re
 import time
 import requests
 from typing import Dict, Any, Optional, List
@@ -85,6 +86,9 @@ class NvidiaNIMTool(BaseTool):
         fields = tool_config.get("fields", {})
 
         self.endpoint = fields.get("endpoint", "")
+        # Optional {placeholder} -> default map for templated endpoints (e.g.
+        # selecting a hosted model variant like evo2-40b vs evo2-7b).
+        self.path_params = fields.get("path_params", {}) or {}
         self.base_url = fields.get("base_url", self.DEFAULT_BASE_URL)
         self.async_expected = fields.get("async_expected", False)
         self.poll_seconds = fields.get("poll_seconds", self.DEFAULT_POLL_SECONDS)
@@ -110,15 +114,28 @@ class NvidiaNIMTool(BaseTool):
 
         return headers
 
-    def _build_url(self) -> str:
-        """Build the full API URL."""
+    def _build_url(self, arguments: Optional[Dict[str, Any]] = None) -> str:
+        """Build the full API URL, filling any {placeholder} path params.
+
+        A templated endpoint (e.g. "arc/{model}/generate") lets one tool target
+        several hosted model variants. Each placeholder is filled from the request
+        argument of the same name, falling back to the per-field default in
+        ``path_params``; values are restricted to a safe slug charset.
+        """
+        endpoint = self.endpoint
+        for key, default in self.path_params.items():
+            value = (arguments or {}).get(key) or default
+            if not re.fullmatch(r"[A-Za-z0-9._-]+", str(value)):
+                value = default
+            endpoint = endpoint.replace("{" + key + "}", str(value))
+
         # Handle endpoints that include full path
-        if self.endpoint.startswith("http"):
-            return self.endpoint
+        if endpoint.startswith("http"):
+            return endpoint
 
         # Ensure proper URL construction
         base = self.base_url.rstrip("/")
-        endpoint = self.endpoint.lstrip("/")
+        endpoint = endpoint.lstrip("/")
         return f"{base}/{endpoint}"
 
     def _poll_for_result(self, req_id: str, headers: Dict[str, str]) -> Dict[str, Any]:
@@ -502,13 +519,16 @@ class NvidiaNIMTool(BaseTool):
                 "provided": list(arguments.keys()),
             }
 
-        # Build URL and headers
-        url = self._build_url()
+        # Build URL (filling any templated path params) and headers
+        url = self._build_url(arguments)
         headers = self._get_headers()
 
         # Handle DiffDock staged asset upload workflow
         asset_references = None
         request_arguments = arguments.copy()
+        # Path-param values select the model/variant in the URL, not body fields.
+        for key in self.path_params:
+            request_arguments.pop(key, None)
 
         is_diffdock = "diffdock" in self.endpoint.lower()
         is_staged = arguments.get("is_staged", False)

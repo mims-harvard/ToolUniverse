@@ -101,6 +101,56 @@ class TestNvidiaNIMToolUnit:
         """Test URL construction."""
         url = nvidia_nim_tool._build_url()
         assert url == "https://health.api.nvidia.com/v1/biology/test/endpoint"
+
+    def test_build_url_fills_templated_path_param(self):
+        """A {placeholder} endpoint is filled from args, default, and sanitized."""
+        from tooluniverse.nvidia_nim_tool import NvidiaNIMTool
+
+        cfg = {
+            "name": "evo2",
+            "fields": {"endpoint": "arc/{model}/generate",
+                       "path_params": {"model": "evo2-40b"}},
+            "parameter": {"type": "object",
+                          "properties": {"sequence": {"type": "string"}},
+                          "required": ["sequence"]},
+        }
+        with patch.dict(os.environ, {"NVIDIA_API_KEY": "k"}):
+            tool = NvidiaNIMTool(cfg)
+        base = "https://health.api.nvidia.com/v1/biology/arc"
+        # default when not provided
+        assert tool._build_url({}) == f"{base}/evo2-40b/generate"
+        # overridden by a valid arg
+        assert tool._build_url({"model": "evo2-7b"}) == f"{base}/evo2-7b/generate"
+        # unsafe value falls back to the default (no path injection)
+        assert tool._build_url({"model": "../../x"}) == f"{base}/evo2-40b/generate"
+
+    @patch("requests.post")
+    def test_path_param_not_sent_in_request_body(self, mock_post):
+        """The model path-param selects the URL; it must not leak into the body."""
+        from tooluniverse.nvidia_nim_tool import NvidiaNIMTool
+
+        cfg = {
+            "name": "evo2",
+            "fields": {"endpoint": "arc/{model}/generate",
+                       "path_params": {"model": "evo2-40b"}, "response_type": "json"},
+            "parameter": {"type": "object",
+                          "properties": {"sequence": {"type": "string"}},
+                          "required": ["sequence"]},
+        }
+        resp = MagicMock()
+        resp.status_code = 200
+        resp.headers = {"Content-Type": "application/json"}
+        resp.json.return_value = {"sequence": "ACGT"}
+        mock_post.return_value = resp
+
+        with patch.dict(os.environ, {"NVIDIA_API_KEY": "k"}):
+            NvidiaNIMTool(cfg).run({"sequence": "ACGT", "model": "evo2-7b"})
+
+        called_url = mock_post.call_args[0][0]
+        sent_body = mock_post.call_args[1]["json"]
+        assert called_url.endswith("/arc/evo2-7b/generate")
+        assert "model" not in sent_body
+        assert sent_body["sequence"] == "ACGT"
     
     def test_missing_api_key_error(self):
         """Test error when API key is missing."""
