@@ -34,6 +34,8 @@ Always run `Skill(skill="simplify")` after writing or modifying code.
 | Undisclosed normalization | Auto-transform hidden from user | [code-patterns.md](code-patterns.md) — Normalization Disclosure |
 | try/except indent | SyntaxError at runtime | [code-patterns.md](code-patterns.md) — try/except section |
 | Truncation buried | Data count hidden in notes | [code-patterns.md](code-patterns.md) — Truncation |
+| Hosted model API (NIM) | async 404 on poll, JSON-wrapped output, 200+inner-failure, "not found for account" | [code-patterns.md](code-patterns.md) — Hosted Model-API Tools |
+| R subprocess tool | `'\.' unrecognized escape` from `Rscript -e` | [code-patterns.md](code-patterns.md) — R-subprocess Tools |
 
 ## References
 
