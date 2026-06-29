@@ -146,9 +146,18 @@ PRS can stratify individuals for:
 ### Research Applications
 
 - **Gene discovery**: PRS-based phenome-wide association studies (PheWAS)
-- **Genetic correlation**: Compare PRS across traits
+- **Genetic correlation**: Compare PRS across traits — but for a rigorous, GWAS-summary-statistics estimate of cross-trait genetic correlation (rg), use `run_ldsc_genetic_correlation` (LD Score regression), which needs only summary stats (no individual genotypes) and corrects for sample overlap. Far more principled than correlating PRS values.
 - **Causal inference**: Mendelian randomization using PRS as instruments
 - **Simulation studies**: Model polygenic architecture
+
+### SNP-heritability and genetic correlation (LDSC)
+
+Before or alongside building a PRS, quantify how much of the trait is captured by common SNPs and how traits relate — directly from GWAS summary statistics:
+
+- `run_ldsc_heritability` — SNP-based heritability (h²_SNP) from one GWAS's summary stats; the intercept also flags confounding/inflation vs. true polygenicity. This sets the ceiling a PRS can reach (the "heritability gap" below is exactly h²_SNP minus PRS R²).
+- `run_ldsc_genetic_correlation` — genetic correlation (rg) between two GWAS, for shared-aetiology and cross-trait PRS questions.
+
+Both are remote tools (LD Score regression engine + reference LD-score panels). Use them to ground heritability/rg claims in data rather than citing literature point estimates.
 
 ### Personal Genomics
 
