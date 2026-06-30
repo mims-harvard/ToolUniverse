@@ -21,7 +21,7 @@ def OpenTargets_map_any_disease_id_to_all_other_ids(
     Parameters
     ----------
     inputId : str
-        Any known disease ID (e.g. OMIM:604302, UMLS:C0003873, ICD10:M05, EFO_0000685...
+        Any known disease ID (e.g. OMIM:604302, UMLS:C0003873, ICD10:M05, MONDO_0008383...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

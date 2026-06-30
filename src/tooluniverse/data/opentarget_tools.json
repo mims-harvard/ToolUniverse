@@ -3252,7 +3252,7 @@
                 "chemblId"
             ]
         },
-        "query_schema": "\n      query drugSynonyms($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          synonyms\n        }\n      }\n    ",
+        "query_schema": "\n      query drugSynonyms($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          synonyms { label source }\n        }\n      }\n    ",
         "label": [
             "OpenTarget",
             "Drug Information",
@@ -3283,7 +3283,15 @@
                                 "synonyms": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "label": {
+                                                "type": "string"
+                                            },
+                                            "source": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -3308,7 +3316,7 @@
                 "chemblId"
             ]
         },
-        "query_schema": "\n      query drugTradeNames($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          tradeNames\n        }\n      }\n    ",
+        "query_schema": "\n      query drugTradeNames($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          tradeNames { label source }\n        }\n      }\n    ",
         "label": [
             "Drug",
             "OpenTarget",
@@ -3339,7 +3347,15 @@
                                 "tradeNames": {
                                     "type": "array",
                                     "items": {
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "label": {
+                                                "type": "string"
+                                            },
+                                            "source": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -3364,7 +3380,7 @@
                 "chemblId"
             ]
         },
-        "query_schema": "\n      query drugNames($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          tradeNames\n          synonyms\n        }\n      }\n    ",
+        "query_schema": "\n      query drugNames($chemblId: String!) {\n        drug(chemblId: $chemblId) {\n          id\n          name\n          tradeNames { label source }\n          synonyms { label source }\n        }\n      }\n    ",
         "return_schema": {
             "type": "object",
             "description": "Drug name information including generic name, trade names, and synonyms",
@@ -3389,14 +3405,30 @@
                                     "type": "array",
                                     "description": "List of trade names (brand names) for the drug",
                                     "items": {
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "label": {
+                                                "type": "string"
+                                            },
+                                            "source": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 },
                                 "synonyms": {
                                     "type": "array",
                                     "description": "List of synonyms for the drug, which may include alternative generic names and other identifiers",
                                     "items": {
-                                        "type": "string"
+                                        "type": "object",
+                                        "properties": {
+                                            "label": {
+                                                "type": "string"
+                                            },
+                                            "source": {
+                                                "type": "string"
+                                            }
+                                        }
                                     }
                                 }
                             }

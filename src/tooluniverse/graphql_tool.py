@@ -88,6 +88,18 @@ class GraphQLTool(BaseTool):
         self.parameters = tool_config["parameter"]["properties"]
         self.default_size = 5
 
+    def _empty_result_error(self, arguments):
+        """Message when a query resolves but every top-level field is null/empty.
+
+        Subclasses override this to give API-specific guidance (e.g. an
+        EFO->MONDO hint for OpenTargets). The default names the arguments so the
+        caller can see which identifier failed to resolve.
+        """
+        return (
+            "The query returned no matching record — the requested entity was not "
+            f"found. Verify the identifier(s) are current and correct: {arguments}."
+        )
+
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
         if "size" in self.parameters and "size" not in arguments:
@@ -97,7 +109,15 @@ class GraphQLTool(BaseTool):
         )
         if result is None:
             return {"status": "error", "error": "No data returned from API"}
-        return {"status": "success", "data": result.get("data", result)}
+        data = result.get("data", result)
+        # remove_none_and_empty_values() strips a null/empty top-level entity, so
+        # data == {} means the requested record was not found. Report that
+        # explicitly rather than as a misleading empty success. A genuine empty
+        # *result set* (e.g. a 0-hit search) keeps its container key
+        # ({"search": {}}) and is therefore not caught here.
+        if not data:
+            return {"status": "error", "error": self._empty_result_error(arguments)}
+        return {"status": "success", "data": data}
 
 
 _OT_SEARCH_QUERY = """
@@ -161,6 +181,9 @@ class OpentargetTool(GraphQLTool):
     def __init__(self, tool_config):
         self.endpoint_url = "https://api.platform.opentargets.org/api/v4/graphql"
         super().__init__(tool_config, self.endpoint_url)
+
+    def _empty_result_error(self, arguments):
+        return _ot_entity_not_found_message(arguments)
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
@@ -226,8 +249,13 @@ class OpentargetTool(GraphQLTool):
                     "For non-oncology phenotypes, use OpenTargets_get_evidence_by_datasource instead."
                 )
 
-        # If no results, retry with '-' replaced by ' '
-        if result.get("status") != "success":
+        # If no results AND an argument contains '-', retry once with '-'
+        # replaced by ' ' (rescues hyphenated names). The hyphen guard keeps a
+        # genuine not-found (e.g. a stale efoId) from issuing a redundant
+        # identical query.
+        if result.get("status") != "success" and any(
+            isinstance(v, str) and "-" in v for v in arguments.values()
+        ):
             if "drugName" in arguments and isinstance(arguments["drugName"], str):
                 arguments["drugName"] = arguments["drugName"].split("-")[0]
             modified_arguments = copy.deepcopy(arguments)
@@ -235,16 +263,6 @@ class OpentargetTool(GraphQLTool):
                 if isinstance(arg_value, str) and "-" in arg_value:
                     modified_arguments[each_arg] = arg_value.replace("-", " ")
             result = super().run(modified_arguments)
-
-        # An unresolved disease/target ID makes OpenTargets return
-        # {"data": {"disease": null}}, which remove_none_and_empty_values()
-        # strips to {}. Report that as an explicit error rather than a
-        # misleading empty success (issue #264).
-        if result.get("status") == "success" and not result.get("data"):
-            return {
-                "status": "error",
-                "error": _ot_entity_not_found_message(arguments),
-            }
 
         return result
 
@@ -341,6 +359,9 @@ class DiseaseTargetScoreTool(GraphQLTool):
         self.datasource_id = datasource_id or tool_config.get("datasource_id")
         super().__init__(tool_config, endpoint_url)
 
+    def _empty_result_error(self, arguments):
+        return _ot_entity_not_found_message(arguments)
+
     def run(self, arguments):
         """
         Extract disease-target scores for a specific datasource
@@ -389,7 +410,7 @@ class DiseaseTargetScoreTool(GraphQLTool):
                 if disease_info is None:
                     return {
                         "status": "error",
-                        "error": _ot_entity_not_found_message(arguments),
+                        "error": self._empty_result_error(arguments),
                     }
                 break
 
