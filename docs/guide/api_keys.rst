@@ -452,7 +452,7 @@ Test your API key configuration:
    # Test OpenTargets (no API key needed - public API)
    result = tu.run({
        "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-       "arguments": {"efoId": "EFO_0000685"}
+       "arguments": {"efoId": "MONDO_0008383"}  # Rheumatoid arthritis
    })
    print("OpenTargets test:", "success" if len(result) > 0 else "failed")
 

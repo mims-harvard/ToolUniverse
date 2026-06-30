@@ -123,6 +123,39 @@ def _ot_resolve_id(endpoint_url: str, query_string: str, entity: str) -> str | N
     return None
 
 
+def _ot_entity_not_found_message(arguments):
+    """Build a helpful error when an OpenTargets ID does not resolve.
+
+    OpenTargets migrated most disease IDs from EFO to MONDO, so many legacy
+    EFO disease IDs (e.g. EFO_0000305 breast carcinoma) now resolve to null
+    and the API returns an empty entity. Surface that explicitly instead of a
+    misleading empty success (issue #264).
+    """
+    disease_id = arguments.get("efoId") or arguments.get("entityId")
+    if isinstance(arguments.get("diseaseIds"), list) and arguments["diseaseIds"]:
+        disease_id = arguments["diseaseIds"][0]
+    if disease_id is not None:
+        return (
+            f"OpenTargets returned no disease for ID '{disease_id}'. OpenTargets "
+            "migrated most disease IDs from EFO to MONDO, so many legacy EFO "
+            "disease IDs now resolve to null. Pass a current MONDO ID (e.g. "
+            "MONDO_0005011 for Crohn disease); look up a disease's current ID by "
+            "name with OpenTargets_multi_entity_search_by_query_string."
+        )
+    ensembl_id = arguments.get("ensemblId")
+    if ensembl_id is not None:
+        return (
+            f"OpenTargets returned no target for Ensembl ID '{ensembl_id}'. "
+            "Verify the ID (e.g. ENSG00000141510 for TP53) or pass gene_symbol "
+            "to auto-resolve it."
+        )
+    return (
+        "OpenTargets returned no entity for the provided identifier(s). Verify "
+        "the ID is current — OpenTargets periodically remaps disease IDs from "
+        "EFO to MONDO."
+    )
+
+
 @register_tool("OpenTarget")
 class OpentargetTool(GraphQLTool):
     def __init__(self, tool_config):
@@ -176,8 +209,8 @@ class OpentargetTool(GraphQLTool):
             else:
                 return {
                     "status": "error",
-                    "error": f"Could not resolve disease name to EFO ID. "
-                    "Try passing efoId directly (e.g. EFO_0000384 for Crohn's disease).",
+                    "error": "Could not resolve disease name to a disease ID. "
+                    "Try passing efoId directly (e.g. MONDO_0005011 for Crohn disease).",
                 }
 
         result = super().run(arguments)
@@ -202,6 +235,16 @@ class OpentargetTool(GraphQLTool):
                 if isinstance(arg_value, str) and "-" in arg_value:
                     modified_arguments[each_arg] = arg_value.replace("-", " ")
             result = super().run(modified_arguments)
+
+        # An unresolved disease/target ID makes OpenTargets return
+        # {"data": {"disease": null}}, which remove_none_and_empty_values()
+        # strips to {}. Report that as an explicit error rather than a
+        # misleading empty success (issue #264).
+        if result.get("status") == "success" and not result.get("data"):
+            return {
+                "status": "error",
+                "error": _ot_entity_not_found_message(arguments),
+            }
 
         return result
 
@@ -337,8 +380,17 @@ class DiseaseTargetScoreTool(GraphQLTool):
             if not response_data or "data" not in response_data:
                 break
 
-            disease_data = response_data["data"]["disease"]
+            # remove_none_and_empty_values() drops a null "disease" key, so use
+            # .get() rather than [] (a missing key would raise KeyError). When
+            # the ID does not resolve on the first page, report it explicitly
+            # instead of returning an empty success (issue #264).
+            disease_data = response_data["data"].get("disease")
             if not disease_data:
+                if disease_info is None:
+                    return {
+                        "status": "error",
+                        "error": _ot_entity_not_found_message(arguments),
+                    }
                 break
 
             if disease_info is None:

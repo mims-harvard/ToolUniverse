@@ -149,7 +149,7 @@ All tools follow a **consistent structure**:
          # Method 1: Dictionary API
          result = tu.run({
              "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-             "arguments": {"efoId": "EFO_0000537"}
+             "arguments": {"efoId": "MONDO_0005044"}  # hypertension
          })
 
    .. tab-item:: Direct Import
@@ -163,7 +163,7 @@ All tools follow a **consistent structure**:
          
          # Call directly
          result = OpenTargets_get_associated_targets_by_disease_efoId(
-             efoId="EFO_0000537"
+             efoId="MONDO_0005044"  # hypertension
          )
 
 Tool Finders
@@ -277,7 +277,7 @@ Common Examples
    # Find therapeutic targets
    result = tu.run({
        "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-       "arguments": {"efoId": "EFO_0000685"}  # Rheumatoid arthritis
+       "arguments": {"efoId": "MONDO_0008383"}  # Rheumatoid arthritis
    })
 
 **Literature Search**
@@ -342,7 +342,7 @@ Multi-Step Pipeline
    # Step 2: Get disease targets
    targets = tu.run({
        "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-       "arguments": {"efoId": "EFO_0000685"}
+       "arguments": {"efoId": "MONDO_0008383"}  # Rheumatoid arthritis
    })
 
    # Step 3: For each target, get protein info

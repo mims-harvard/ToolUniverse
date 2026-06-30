@@ -62,7 +62,7 @@ Use the ``run()`` method for maximum flexibility:
         },
         {
             "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-            "arguments": {"efoId": "EFO_0000249"}
+            "arguments": {"efoId": "MONDO_0004975"}  # Alzheimer disease
         }
     ])
     
