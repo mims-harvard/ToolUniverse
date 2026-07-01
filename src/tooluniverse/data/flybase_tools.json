@@ -534,11 +534,8 @@
     "type": "AllianceGenomeTool",
     "test_examples": [
       {
-        "description": "Expression annotations for dpp (decapentaplegic)",
-        "arguments": {
-          "gene_id": "FB:FBgn0000490",
-          "limit": 5
-        }
+        "gene_id": "FB:FBgn0000490",
+        "limit": 5
       }
     ],
     "return_schema": {

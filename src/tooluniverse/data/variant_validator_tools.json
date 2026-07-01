@@ -214,11 +214,29 @@
           "description": "VariantFormatter result. The top-level key is the submitted genomic variant; under it a nested key (the normalized g.HGVS) holds 'hgvs_t_and_p' (per-transcript projections keyed by RefSeq transcript accession), 'p_vcf', and 'selected_build'. A 'metadata' key carries VariantFormatter/VariantValidator versions.",
           "properties": {
             "metadata": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
-                "variantformatter_version": {"type": ["string", "null"]},
-                "variantvalidator_version": {"type": ["string", "null"]},
-                "vvdb_version": {"type": ["string", "null"]}
+                "variantformatter_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "variantvalidator_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "vvdb_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
               }
             }
           },
@@ -226,36 +244,115 @@
             "type": "object",
             "description": "Per-variant block. Inner key is the normalized g.HGVS.",
             "additionalProperties": {
-              "type": "object",
+              "type": [
+                "object",
+                "array",
+                "string",
+                "null"
+              ],
               "properties": {
-                "g_hgvs": {"type": ["string", "null"], "description": "Normalized genomic HGVS"},
-                "p_vcf": {"type": ["string", "null"], "description": "Pseudo-VCF chrom:pos:ref:alt"},
-                "selected_build": {"type": ["string", "null"]},
-                "genomic_variant_error": {"type": ["string", "null"]},
+                "g_hgvs": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Normalized genomic HGVS"
+                },
+                "p_vcf": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Pseudo-VCF chrom:pos:ref:alt"
+                },
+                "selected_build": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genomic_variant_error": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
                 "hgvs_t_and_p": {
-                  "type": ["object", "null"],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "description": "Per-transcript projections keyed by RefSeq transcript accession (e.g. NM_000088.4)",
                   "additionalProperties": {
                     "type": "object",
                     "properties": {
-                      "t_hgvs": {"type": ["string", "null"], "description": "Transcript coding HGVS (c.)"},
-                      "p_hgvs_tlc": {"type": ["string", "null"], "description": "Protein HGVS, three-letter code"},
-                      "p_hgvs_slc": {"type": ["string", "null"], "description": "Protein HGVS, single-letter code"},
+                      "t_hgvs": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Transcript coding HGVS (c.)"
+                      },
+                      "p_hgvs_tlc": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Protein HGVS, three-letter code"
+                      },
+                      "p_hgvs_slc": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Protein HGVS, single-letter code"
+                      },
                       "gene_info": {
-                        "type": ["object", "null"],
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
-                          "hgnc_id": {"type": ["string", "null"]},
-                          "symbol": {"type": ["string", "null"]}
+                          "hgnc_id": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "symbol": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
                         }
                       },
                       "select_status": {
-                        "type": ["object", "null"],
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
-                          "mane_select": {"type": ["boolean", "null"]},
-                          "refseq_select": {"type": ["boolean", "null"]}
+                          "mane_select": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "refseq_select": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          }
                         }
                       },
-                      "transcript_variant_error": {"type": ["string", "null"]}
+                      "transcript_variant_error": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
                     }
                   }
                 }
@@ -266,9 +363,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

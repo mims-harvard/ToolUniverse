@@ -86,10 +86,8 @@
     },
     "test_examples": [
       {
-        "arguments": {
-          "terms": "metformin",
-          "max_results": 5
-        }
+        "terms": "metformin",
+        "max_results": 5
       }
     ]
   },
@@ -175,10 +173,8 @@
     },
     "test_examples": [
       {
-        "arguments": {
-          "terms": "diabetes",
-          "max_results": 5
-        }
+        "terms": "diabetes",
+        "max_results": 5
       }
     ]
   },
@@ -255,10 +251,8 @@
     },
     "test_examples": [
       {
-        "arguments": {
-          "terms": "cystic fibrosis",
-          "max_results": 5
-        }
+        "terms": "cystic fibrosis",
+        "max_results": 5
       }
     ]
   }

@@ -29,10 +29,10 @@
                 "name": {"type": "string"},
                 "sequence": {"type": "string"},
                 "sequenceLength": {"type": "integer"},
-                "nTerminus": {"type": ["string", "null"]},
-                "cTerminus": {"type": ["string", "null"]},
-                "synthesisType": {"type": ["string", "null"]},
-                "complexity": {"type": ["string", "null"]},
+                "nTerminus": {"type": ["string", "object", "null"]},
+                "cTerminus": {"type": ["string", "object", "null"]},
+                "synthesisType": {"type": ["string", "object", "null"]},
+                "complexity": {"type": ["string", "object", "null"]},
                 "pdbs": {"type": "array"},
                 "structureModel": {"type": ["object", "null"]},
                 "targetGroups": {"type": "array"},
@@ -41,7 +41,7 @@
                 "antibiofilmActivities": {"type": "array"},
                 "uniprots": {"type": "array"},
                 "sourceGenes": {"type": "array"},
-                "smiles": {"type": ["string", "null"]},
+                "smiles": {"type": ["string", "array", "null"]},
                 "articles": {"type": "array"}
               }
             },
@@ -160,10 +160,10 @@
                   "name": {"type": ["string", "null"]},
                   "sequence": {"type": ["string", "null"]},
                   "sequenceLength": {"type": ["integer", "null"]},
-                  "nTerminus": {"type": ["string", "null"]},
-                  "cTerminus": {"type": ["string", "null"]},
-                  "complexity": {"type": ["string", "null"]},
-                  "synthesisType": {"type": ["string", "null"]},
+                  "nTerminus": {"type": ["string", "object", "null"]},
+                  "cTerminus": {"type": ["string", "object", "null"]},
+                  "complexity": {"type": ["string", "object", "null"]},
+                  "synthesisType": {"type": ["string", "object", "null"]},
                   "pdb": {"type": ["string", "null"]},
                   "pubchemCid": {"type": ["integer", "string", "null"]}
                 }
