@@ -213,7 +213,11 @@
                   "type": "boolean"
                 },
                 "distinct_databases": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "array",
+                    "null"
+                  ]
                 }
               }
             },
