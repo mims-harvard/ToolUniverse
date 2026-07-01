@@ -641,11 +641,8 @@
     "type": "AllianceGenomeTool",
     "test_examples": [
       {
-        "description": "Expression annotations for shha (sonic hedgehog a)",
-        "arguments": {
-          "gene_id": "ZFIN:ZDB-GENE-980526-166",
-          "limit": 5
-        }
+        "gene_id": "ZFIN:ZDB-GENE-980526-166",
+        "limit": 5
       }
     ],
     "return_schema": {

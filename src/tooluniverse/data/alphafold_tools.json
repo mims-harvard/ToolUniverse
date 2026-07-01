@@ -592,7 +592,10 @@
                       "type": "string"
                     },
                     "unit": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 }

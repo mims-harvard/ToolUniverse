@@ -195,44 +195,21 @@
       {"obo_id": "EFO:0001444", "size": 5}
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "total": {"type": ["integer", "null"]},
-            "descendants": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "iri": {"type": ["string", "null"]},
-                  "obo_id": {"type": ["string", "null"]},
-                  "short_form": {"type": ["string", "null"]},
-                  "label": {"type": ["string", "null"]}
-                },
-                "additionalProperties": true
-              }
-            }
-          },
-          "required": ["status", "descendants"],
-          "additionalProperties": true
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
         },
-        {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "error"},
-            "url": {"type": "string"},
-            "error": {"type": "string"},
-            "detail": {},
-            "status_code": {"type": "integer"}
-          },
-          "required": ["status", "error"],
-          "additionalProperties": true
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "error": {
+          "type": "string"
         }
-      ]
+      }
     },
     "fields": {"kind": "descendants", "ontology_id": "efo"}
   },

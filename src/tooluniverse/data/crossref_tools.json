@@ -394,54 +394,21 @@
       "method": "GET"
     },
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "array",
-          "description": "Array of Crossref member (publisher) objects.",
-          "items": {
-            "type": "object",
-            "additionalProperties": true,
-            "properties": {
-              "id": {
-                "type": "integer",
-                "description": "Numeric Crossref member id"
-              },
-              "primary-name": {
-                "type": "string"
-              },
-              "location": {
-                "type": "string"
-              },
-              "counts": {
-                "type": "object",
-                "description": "current-dois, backfile-dois, total-dois"
-              },
-              "breakdowns": {
-                "type": "object",
-                "description": "dois-by-issued-year"
-              },
-              "prefixes": {
-                "type": "array"
-              }
-            }
-          }
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
         },
-        {
-          "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
-          "properties": {
-            "status": {
-              "const": "error"
-            },
-            "error": {
-              "type": "string"
-            }
-          }
+        "data": {
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "error": {
+          "type": "string"
         }
-      ]
+      }
     },
     "test_examples": [
       {

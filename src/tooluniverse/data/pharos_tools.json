@@ -252,7 +252,7 @@
                             "properties": {
                                 "sym": {"type": "string"},
                                 "tdl": {"type": "string"},
-                                "fam": {"type": "string"},
+                                "fam": {"type": ["string", "null"]},
                                 "ligandCounts": {
                                     "type": "array",
                                     "items": {
@@ -352,7 +352,7 @@
                                                 "properties": {
                                                     "sym": {"type": "string"},
                                                     "tdl": {"type": "string"},
-                                                    "fam": {"type": "string"}
+                                                    "fam": {"type": ["string", "null"]}
                                                 }
                                             },
                                             "type": {"type": ["string", "null"]},
