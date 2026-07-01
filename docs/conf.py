@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath("../src"))
 project = "ToolUniverse"
 copyright = "2025, Shanghua Gao"
 author = "Shanghua Gao"
-release = "1.0.0"
+release = "1.3.1"
 
 # -- General configuration ---------------------------------------------------
 extensions = [
