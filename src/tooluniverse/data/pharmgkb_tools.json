@@ -731,7 +731,11 @@
                     "type": "string"
                   },
                   "significance": {
-                    "type": "string"
+                    "type": [
+                      "object",
+                      "string",
+                      "null"
+                    ]
                   },
                   "sentence": {
                     "type": "string"

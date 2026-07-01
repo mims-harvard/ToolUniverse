@@ -325,32 +325,20 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
         "error": {
           "type": "string"
         },
         "error_details": {
-          "type": "object",
-          "properties": {
-            "type": {
-              "type": "string"
-            },
-            "message": {
-              "type": "string"
-            },
-            "retriable": {
-              "type": "boolean"
-            },
-            "next_steps": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "details": {
-              "type": "object",
-              "properties": {}
-            }
-          }
+          "type": "object"
         }
       }
     }
@@ -698,42 +686,37 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "terms": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "iri": {
-                "type": "string"
-              },
-              "ontologyName": {
-                "type": "string"
-              },
-              "shortForm": {
-                "type": "string"
-              },
-              "label": {
-                "type": "string"
-              },
-              "oboId": {
-                "type": "null"
-              },
-              "isObsolete": {
-                "type": "boolean"
-              }
-            }
-          }
-        },
-        "total_items": {
-          "type": "integer"
-        },
-        "showing": {
-          "type": "integer"
+        "status": {
+          "type": "string"
         },
         "term_iri": {
           "type": "string"
         },
+        "source_label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "ontology": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "similar_terms": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "total": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
           "type": "string"
         }
       }

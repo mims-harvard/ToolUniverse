@@ -673,6 +673,7 @@
                     "type": [
                       "integer",
                       "number",
+                      "string",
                       "null"
                     ]
                   }

@@ -1057,7 +1057,11 @@
                                         "description": "Product presentation/strength"
                                     },
                                     "therapeutic_category": {
-                                        "type": "string",
+                                        "type": [
+                                            "array",
+                                            "string",
+                                            "null"
+                                        ],
                                         "description": "Therapeutic category"
                                     },
                                     "company_name": {
@@ -1394,7 +1398,10 @@
                                         "description": "Report creation date"
                                     },
                                     "date_started": {
-                                        "type": "string",
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ],
                                         "description": "Reaction onset date"
                                     },
                                     "outcomes": {
