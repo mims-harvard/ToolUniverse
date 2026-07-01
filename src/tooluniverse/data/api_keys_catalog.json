@@ -403,6 +403,18 @@
     ]
   },
   {
+    "name": "OPENALEX_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://openalex.org/settings/api",
+    "purpose": "Search scholarly works, authors, and sources via OpenAlex.",
+    "without": "OpenAlex requires a key since 2026-02-13; anonymous requests return HTTP 503.",
+    "used_by": [
+      "openalex_tools.json"
+    ]
+  },
+  {
     "name": "OPENGWAS_JWT",
     "requirement": "required",
     "type": "secret",

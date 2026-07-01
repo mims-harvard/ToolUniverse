@@ -4,6 +4,15 @@
     "optional_api_keys": [
       "OPENALEX_API_KEY"
     ],
+    "api_key_info": {
+      "OPENALEX_API_KEY": {
+        "domain": "Literature & Patents",
+        "type": "secret",
+        "register_url": "https://openalex.org/settings/api",
+        "purpose": "Search scholarly works, authors, and sources via OpenAlex.",
+        "without": "OpenAlex requires a key since 2026-02-13; anonymous requests return HTTP 503."
+      }
+    },
     "name": "openalex_literature_search",
     "description": "Search for academic literature using OpenAlex. Supports optional full-text-index filtering (has_fulltext + fulltext.search) when you need body-only term discovery, but note: OpenAlex full-text indexing is incomplete, and a work can be open-access elsewhere (e.g., PMC) while still having has_fulltext=false in OpenAlex. Returns paper metadata and (when available) OA links/content URLs.",
     "parameter": {
