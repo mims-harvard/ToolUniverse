@@ -249,6 +249,31 @@ class ThreeDBeaconsTool(BaseTool):
             params["provider"] = provider
 
         response = requests.get(url, params=params, timeout=self.timeout)
+        # The annotations endpoint returns 404 when the protein has no
+        # annotations of the requested type (e.g. P04637 has DOMAIN but no
+        # BINDING). That is a valid empty result, not an error — distinguish it
+        # from a genuine failure rather than reporting "no structures found".
+        if response.status_code == 404:
+            return {
+                "status": "success",
+                "data": {
+                    "accession": accession,
+                    "type_filter": annotation_type,
+                    "annotation_count": 0,
+                    "annotations": [],
+                    "note": (
+                        f"No {annotation_type or 'matching'} annotations for "
+                        f"{accession} in 3D Beacons (the accession may also be "
+                        "absent from the annotations index)."
+                    ),
+                },
+                "metadata": {
+                    "source": "3D Beacons Hub API",
+                    "accession": accession,
+                    "type_filter": annotation_type,
+                    "provider_filter": provider,
+                },
+            }
         response.raise_for_status()
         data = response.json()
 
