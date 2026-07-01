@@ -1,6 +1,9 @@
 [
   {
     "type": "OpenAlexTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_literature_search",
     "description": "Search for academic literature using OpenAlex. Supports optional full-text-index filtering (has_fulltext + fulltext.search) when you need body-only term discovery, but note: OpenAlex full-text indexing is incomplete, and a work can be open-access elsewhere (e.g., PMC) while still having has_fulltext=false in OpenAlex. Returns paper metadata and (when available) OA links/content URLs.",
     "parameter": {
@@ -185,6 +188,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_search_works",
     "description": "Search OpenAlex works (papers) via the /works endpoint. Supports both general search and optional full-text-index filtering: set require_has_fulltext=true and/or pass fulltext_terms to add OpenAlex filters (has_fulltext:true and fulltext.search:<term>). Important: has_fulltext/fulltext.search only match works where OpenAlex has indexed full text; this can miss papers whose full text is available elsewhere (e.g., PMC) but not indexed by OpenAlex. Use this to discover Work IDs (W...) and DOIs, then follow up with openalex_get_work/openalex_get_work_by_doi to retrieve OA links and (sometimes) content_urls.",
     "parameter": {
@@ -282,6 +288,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_get_work",
     "description": "Get a single OpenAlex work (paper) by OpenAlex Work ID (W...). You can pass either the short ID (e.g., \"W2626778328\") or the full URL (e.g., \"https://openalex.org/W2626778328\").",
     "parameter": {
@@ -319,6 +328,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_get_work_by_doi",
     "description": "Get a single OpenAlex work (paper) by DOI. Provide a DOI string like \"10.65215/2q58a426\" (you can also pass a DOI URL like \"https://doi.org/10.65215/2q58a426\").",
     "parameter": {
@@ -350,6 +362,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_search_authors",
     "description": "Search OpenAlex authors via the /authors endpoint. Use this to discover Author IDs (A...) and then fetch details with openalex_get_author.",
     "parameter": {
@@ -395,6 +410,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_get_author",
     "description": "Get a single OpenAlex author by Author ID (A...). You can pass either the short ID (e.g., \"A5001226970\") or the full URL (e.g., \"https://openalex.org/A5001226970\").",
     "parameter": {
@@ -426,6 +444,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_search_institutions",
     "description": "Search OpenAlex institutions via the /institutions endpoint. Use this to discover Institution IDs (I...) and then fetch details with openalex_get_institution.",
     "parameter": {
@@ -471,6 +492,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_get_institution",
     "description": "Get a single OpenAlex institution by Institution ID (I...). You can pass either the short ID (e.g., \"I136199984\") or the full URL (e.g., \"https://openalex.org/I136199984\").",
     "parameter": {
@@ -502,6 +526,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_search_sources",
     "description": "Search OpenAlex sources (journals, conferences, repositories) by name or ISSN and return JOURNAL-LEVEL BIBLIOMETRIC IMPACT METRICS for each match: the Source ID (S...), display name, ISSN-L and ISSNs, host organization (publisher), works_count, cited_by_count, open-access status (is_oa), and summary_stats containing h_index, i10_index, and 2yr_mean_citedness (an impact-factor-like 2-year mean citedness). Use this to look up the impact/standing of a journal by name (e.g. 'nature', 'lancet') or to resolve an ISSN to its OpenAlex Source ID, then optionally fetch the full record with openalex_get_source. Results are returned newest/most-relevant first; pass relevance_score sorting via OpenAlex defaults.",
     "parameter": {
@@ -550,6 +577,9 @@
   },
   {
     "type": "OpenAlexRESTTool",
+    "optional_api_keys": [
+      "OPENALEX_API_KEY"
+    ],
     "name": "openalex_get_source",
     "description": "Fetch the full OpenAlex source (journal) record by Source ID (S...) or by ISSN, returning journal-level bibliometric impact metrics: display name, ISSN-L and ISSNs, host organization (publisher), works_count, cited_by_count, is_oa / is_in_doaj open-access status, apc (article processing charges), and summary_stats with h_index, i10_index, and 2yr_mean_citedness (an impact-factor-like 2-year mean citedness). Resolve a journal name to its Source ID first using openalex_search_sources. You may also pass an ISSN directly as the source_id (OpenAlex accepts issn:0028-0836).",
     "parameter": {
