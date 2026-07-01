@@ -107,18 +107,6 @@ def _load_dataframe(timeout: int = 180):
         return _DF
 
 
-_RECORD_COLUMNS = [
-    "species",
-    "tissue_class",
-    "tissue_type",
-    "cell_type",
-    "cell_name",
-    "cell_marker",
-    "source",
-    "supports",
-]
-
-
 def _records(df, limit: int = 200) -> List[Dict[str, Any]]:
     """Convert a filtered DataFrame to the tool's record dict list."""
     out = []
