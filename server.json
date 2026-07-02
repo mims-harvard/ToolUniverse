@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.mims-harvard/tooluniverse",
-  "description": "1000+ scientific tools for AI scientists: life science, reserach, literature, and more.",
+  "description": "2,500+ scientific tools for AI scientists: life science, research, literature, and more.",
   "websiteUrl": "https://aiscientist.tools",
   "repository": {
     "url": "https://github.com/mims-harvard/ToolUniverse",
@@ -26,7 +26,7 @@
         {
           "type": "positional",
           "value": "--compact-mode",
-          "description": "Compact mode enabled by default: only exposes 4 core tools (tool finder, tool executor, etc.) to prevent context window overflow. All 1000+ tools remain accessible via the execute_tool function."
+          "description": "Compact mode enabled by default: only exposes 4 core tools (tool finder, tool executor, etc.) to prevent context window overflow. All 2,500+ tools remain accessible via the execute_tool function."
         },
         {
           "type": "named",
