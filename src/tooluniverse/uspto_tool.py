@@ -51,6 +51,45 @@ class USPTOOpenDataPortalTool(BaseTool):
         adapter = HTTPAdapter(max_retries=retry_strategy)
         self.session.mount("https://", adapter)
 
+    @staticmethod
+    def _http_error_hint(status_code):
+        """Return actionable guidance for common USPTO HTTP error responses.
+
+        USPTO checks the API key *before* parsing the query, so a bad key makes
+        every query return 403 regardless of query format. Distinguishing 401
+        (no key sent) from 403 (key sent but rejected) keeps users from chasing
+        query-syntax fixes for what is really a key problem. A 404 from the
+        search endpoint means the query ran but matched no records -- not a
+        broken tool or a bad key.
+        """
+        if status_code == 401:
+            return (
+                "USPTO returned 401 Unauthorized: no API key was sent with the request. "
+                "Set the USPTO_API_KEY environment variable to a valid key obtained from "
+                "https://data.uspto.gov/apis/getting-started and retry."
+            )
+        if status_code == 403:
+            return (
+                "USPTO returned 403 Forbidden: the API key was rejected. This is an "
+                "API-key authorization problem, NOT a query-format issue -- USPTO validates "
+                "the key before parsing the query, so every query returns 403 while the key "
+                "is invalid. The most common cause is a newly issued key that has not "
+                "finished activating (this can take a while), or a USPTO.gov account not yet "
+                "verified with ID.me. View or regenerate the key at "
+                "https://data.uspto.gov/myodp and confirm it is sent in the 'X-API-KEY' "
+                "header."
+            )
+        if status_code == 404:
+            return (
+                "USPTO returned 404: the query ran but matched no records (or the "
+                "identifier does not exist in the Patent File Wrapper dataset). This is "
+                "NOT a key or tool problem -- double-check the identifier. Note ODP "
+                "coverage has gaps: an individual patent number can be absent even when "
+                "adjacent numbers are present. Confirm the endpoint works with a known "
+                "patent, e.g. q='applicationMetaData.patentNumber:9022434'."
+            )
+        return None
+
     def get_by_path(self, d, keys):
         """Safely navigate nested dicts by a list of keys."""
         for k in keys:
@@ -235,17 +274,19 @@ class USPTOOpenDataPortalTool(BaseTool):
 
         except requests.exceptions.HTTPError as http_err:
             # Attempt to return the structured error from the API response body
+            status_code = http_err.response.status_code
             try:
                 error_details = http_err.response.json()
             except json.JSONDecodeError:
                 error_details = http_err.response.text
-            return {
-                "status": "error",
-                "data": {
-                    "error": f"HTTP Error: {http_err.response.status_code}",
-                    "details": error_details,
-                },
+            error_data = {
+                "error": f"HTTP Error: {status_code}",
+                "details": error_details,
             }
+            hint = self._http_error_hint(status_code)
+            if hint:
+                error_data["hint"] = hint
+            return {"status": "error", "data": error_data}
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",

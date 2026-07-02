@@ -500,6 +500,13 @@ def _render_run(d: dict) -> str:
         next_steps = details.get("next_steps") or []
         # Feature-25B-07: filter out Python SDK-specific tips not relevant to CLI users
         cli_steps = [s for s in next_steps if "tu.tools.refresh()" not in s]
+        # Surface a tool-provided hint (top-level or nested under data) so
+        # actionable auth/usage guidance reaches CLI users, not just JSON consumers.
+        hint = d.get("hint") or (
+            nested.get("hint") if isinstance(nested, dict) else None
+        )
+        if hint:
+            cli_steps = [*cli_steps, hint]
         if cli_steps:
             lines.append("Tips:")
             for step in cli_steps:

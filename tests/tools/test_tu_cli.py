@@ -1862,6 +1862,39 @@ class TestRenderFunctions:
         out = _render_run({"status": "error", "data": {}})
         assert "unknown error" in out
 
+    @pytest.mark.unit
+    def test_render_run_surfaces_nested_hint_as_tip(self):
+        """A tool hint nested under data.hint is surfaced under Tips for CLI users."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {
+                "status": "error",
+                "data": {"error": "HTTP Error: 403", "hint": "Regenerate your API key."},
+            }
+        )
+        assert "Tips:" in out
+        assert "Regenerate your API key." in out
+
+    @pytest.mark.unit
+    def test_render_run_surfaces_top_level_hint_as_tip(self):
+        """A top-level hint is also surfaced under Tips."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run(
+            {"status": "error", "error": "boom", "hint": "Do the thing."}
+        )
+        assert "Tips:" in out
+        assert "Do the thing." in out
+
+    @pytest.mark.unit
+    def test_render_run_no_hint_no_tips(self):
+        """Absent a hint or next_steps, no empty Tips block is emitted."""
+        from tooluniverse.cli import _render_run
+
+        out = _render_run({"status": "error", "data": {"error": "HTTP Error: 500"}})
+        assert "Tips:" not in out
+
 
 class TestResolveCategories:
     """Tests for _resolve_categories — case-insensitive category name mapping.
