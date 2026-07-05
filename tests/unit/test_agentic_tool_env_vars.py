@@ -364,6 +364,25 @@ class TestAgenticToolEnvironmentVariables:
             assert tool._api_type == "CHATGPT"  # Built-in default
             assert tool._temperature == 1.0     # Built-in default
 
+    def test_invalid_temperature_env_var_fails_fast(self):
+        """Invalid temperature env values should fail with a clear error."""
+        os.environ["TOOLUNIVERSE_LLM_TEMPERATURE"] = "not-a-number"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+        }
+
+        with patch.object(AgenticTool, '_try_initialize_api'):
+            with pytest.raises(ValueError, match="TOOLUNIVERSE_LLM_TEMPERATURE"):
+                AgenticTool(tool_config)
+
 
 if __name__ == "__main__":
     pytest.main([__file__])
