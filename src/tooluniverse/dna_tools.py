@@ -516,6 +516,57 @@ NEB_CUT_OFFSETS: Dict[str, int] = {
 }
 
 
+# IUPAC ambiguity codes → regex character classes, so recognition sites with
+# degenerate bases (N and any of R/Y/S/W/K/M/B/D/H/V) match correctly.
+_IUPAC_RE: Dict[str, str] = {
+    "A": "A", "C": "C", "G": "G", "T": "T",
+    "R": "[AG]", "Y": "[CT]", "S": "[GC]", "W": "[AT]", "K": "[GT]", "M": "[AC]",
+    "B": "[CGT]", "D": "[AGT]", "H": "[ACT]", "V": "[ACG]", "N": "[ACGT]",
+}
+
+
+def _site_to_regex(site: str) -> str:
+    """Convert an IUPAC DNA recognition sequence into a regex pattern."""
+    return "".join(_IUPAC_RE.get(c, c) for c in site.upper())
+
+
+def _resolve_enzyme(name: str):
+    """Resolve an enzyme name to (canonical_name, recognition_site, cut_offset).
+
+    Tries the built-in NEB table first, then falls back to Biopython's
+    Bio.Restriction library (~600 enzymes) so uncommon isoschizomers
+    (e.g. AluBI, MalI, XmiI, SmiMI) resolve instead of being skipped.
+    Returns None if the enzyme is unknown to both. For fragment counting the
+    exact cut offset is non-critical (it shifts boundaries, not the count).
+    """
+    if name in NEB_ENZYMES:
+        return name, NEB_ENZYMES[name], NEB_CUT_OFFSETS.get(
+            name, len(NEB_ENZYMES[name]) // 2
+        )
+    _lower = {n.lower(): n for n in NEB_ENZYMES}
+    if name.lower() in _lower:
+        c = _lower[name.lower()]
+        return c, NEB_ENZYMES[c], NEB_CUT_OFFSETS.get(c, len(NEB_ENZYMES[c]) // 2)
+    try:
+        from Bio import Restriction
+    except Exception:
+        return None
+    enz = getattr(Restriction, name, None)
+    if enz is None:
+        for a in Restriction.AllEnzymes:
+            if str(a).lower() == name.lower():
+                enz = a
+                break
+    site = getattr(enz, "site", None) if enz is not None else None
+    if not site:
+        return None
+    try:
+        off = max(0, int(enz.fst) - 1)
+    except Exception:
+        off = len(site) // 2
+    return str(enz), site.upper(), off
+
+
 @register_tool("DNATool")
 class DNATool(BaseTool):
     """
@@ -1307,8 +1358,9 @@ class DNATool(BaseTool):
         enzymes_requested = arguments.get("enzymes")
         circular = bool(arguments.get("circular", False))
 
-        # Use `is not None` instead of truthiness: an empty list [] must not
-        # silently fall through to using all NEB enzymes.
+        # Resolve each requested enzyme via the built-in NEB table, then fall
+        # back to Biopython's Bio.Restriction (~600 enzymes) so uncommon
+        # isoschizomers (AluBI, MalI, XmiI, ...) are handled, not skipped.
         if enzymes_requested is not None:
             if isinstance(enzymes_requested, str):
                 enzymes_requested = [enzymes_requested]
@@ -1317,63 +1369,44 @@ class DNATool(BaseTool):
                     "status": "error",
                     "error": (
                         "enzymes list is empty. Provide at least one enzyme name, "
-                        f"or omit the parameter to digest with all available enzymes: "
-                        f"{sorted(NEB_ENZYMES.keys())}"
+                        "or omit the parameter to digest with all available enzymes."
                     ),
                 }
-            # Case-insensitive normalization: "ecori" → "EcoRI", etc.
-            _neb_lower = {name.lower(): name for name in NEB_ENZYMES}
-            normalized_requested = []
+            enzyme_dict = {}
+            cut_offsets = {}
             unknown_enzymes = []
             for e in enzymes_requested:
-                if e in NEB_ENZYMES:
-                    normalized_requested.append(e)
-                elif e.lower() in _neb_lower:
-                    normalized_requested.append(_neb_lower[e.lower()])
-                else:
+                resolved = _resolve_enzyme(e)
+                if resolved is None:
                     unknown_enzymes.append(e)
-            # Same as _find_restriction_sites — proceed with valid enzymes.
-            if unknown_enzymes and not normalized_requested:
+                else:
+                    cname, site, off = resolved
+                    enzyme_dict[cname] = site
+                    cut_offsets[cname] = off
+            if unknown_enzymes and not enzyme_dict:
                 return {
                     "status": "error",
-                    "error": f"Unknown enzymes: {unknown_enzymes}. Available: {sorted(NEB_ENZYMES.keys())}",
+                    "error": f"Unknown enzymes: {unknown_enzymes}.",
                 }
-            enzyme_dict = {name: NEB_ENZYMES[name] for name in normalized_requested}
         else:
-            enzyme_dict = NEB_ENZYMES
+            enzyme_dict = dict(NEB_ENZYMES)
+            cut_offsets = dict(NEB_CUT_OFFSETS)
             unknown_enzymes = []
 
-        # Search a doubled sequence for circular DNA to detect recognition
-        # sites that straddle the origin.  This mirrors the logic in _find_restriction_sites.
-        # For linear DNA, search_seq == sequence and all positions are valid.
-        # For circular DNA, we search the doubled sequence but only keep positions
-        # where pos < seq_len (sites that START within the original sequence).  Cut
-        # positions ≥ seq_len are wrapped back into [0, seq_len) via modulo so that the
-        # fragment-building code (which always works in [0, seq_len]) remains correct.
-        seq_len = len(sequence)  # must be defined before search_seq loop below
+        # Search a doubled sequence for circular DNA to detect recognition sites
+        # that straddle the origin; keep only sites starting within [0, seq_len).
+        seq_len = len(sequence)
         search_seq = (sequence + sequence) if circular else sequence
         cut_sites_list = []
         enzymes_used = []
         for enzyme_name, recognition_seq in enzyme_dict.items():
-            if "N" in recognition_seq:
-                pattern = recognition_seq.replace("N", "[ATGC]")
-                positions = [
-                    m.start()
-                    for m in re.finditer(f"(?={pattern})", search_seq)
-                    if m.start() < seq_len
-                ]
-            else:
-                positions = []
-                start = 0
-                while True:
-                    pos = search_seq.find(recognition_seq, start)
-                    if pos == -1 or pos >= seq_len:
-                        break
-                    positions.append(pos)
-                    start = pos + 1
-
-            # Use enzyme-specific cut offset; default to midpoint if unknown
-            cut_offset = NEB_CUT_OFFSETS.get(enzyme_name, len(recognition_seq) // 2)
+            pattern = _site_to_regex(recognition_seq)
+            positions = [
+                m.start()
+                for m in re.finditer(f"(?={pattern})", search_seq)
+                if m.start() < seq_len
+            ]
+            cut_offset = cut_offsets.get(enzyme_name, len(recognition_seq) // 2)
             for pos in positions:
                 cut_pos = (pos + cut_offset) % seq_len  # wrap into [0, seq_len)
                 cut_sites_list.append({"enzyme": enzyme_name, "position": cut_pos})
