@@ -41,8 +41,45 @@ class ToolFinderEmbedding(BaseTool):
         self.tool_desc_embedding = None
         self.tool_name = None
         self.tool_embedding_path = None
-        toolfinder_model = tool_config["configs"].get("tool_finder_model")
+        _configs = tool_config.get("configs", {})
+        toolfinder_model = _configs.get("tool_finder_model")
         self.toolfinder_model = toolfinder_model
+
+        # Embedding backend selection. Default is UNCHANGED: a local SentenceTransformer model
+        # (``tool_finder_model``, e.g. ToolRAG-T1). Set ``embedding_backend: "openai"`` (or
+        # "azure") to embed with a hosted model via ToolUniverse's shared embedding stack
+        # (``tooluniverse.database_setup``). In that case ``tool_finder_model`` is the hosted
+        # model name (a single model, not two), e.g.:
+        #     {"tool_finder_model": "text-embedding-3-large", "embedding_backend": "openai"}
+        # The legacy key ``openai_embedding_model`` is still accepted. Provider (azure vs openai)
+        # and credentials are resolved by ``provider_resolver``; with no hosted credentials the
+        # tool falls back to the local model.
+        _backend = str(_configs.get("embedding_backend", "local")).lower()
+        _legacy = _configs.get("openai_embedding_model") or _configs.get("embedding_model_openai")
+        if _legacy:
+            self.openai_embedding_model, _want_hosted = _legacy, True
+        elif _backend in ("openai", "azure", "hosted"):
+            self.openai_embedding_model, _want_hosted = toolfinder_model, True
+        else:
+            self.openai_embedding_model, _want_hosted = None, False
+        self._embed_provider = None
+        self._embedder = None
+        if _want_hosted:
+            try:
+                from .database_setup.provider_resolver import resolve_provider
+
+                prov = resolve_provider(None)  # azure > openai > huggingface > local, by creds
+                if prov in ("azure", "openai"):
+                    self._embed_provider = prov
+            except Exception as e:  # noqa: BLE001
+                logger.warning("Could not resolve hosted embedding provider: %s", e)
+        self.use_openai_embedding = self._embed_provider is not None
+        if _want_hosted and not self.use_openai_embedding:
+            logger.warning(
+                "Hosted embedding requested (model=%s) but no Azure/OpenAI credentials found; "
+                "falling back to local model.",
+                self.openai_embedding_model,
+            )
         # Get exclude tools from config, with fallback to default list
         self.exclude_tools = tool_config.get(
             "exclude_tools",
@@ -142,6 +179,23 @@ class ToolFinderEmbedding(BaseTool):
         Raises:
             ImportError: If sentence-transformers is not installed.
         """
+        # Hosted embedding backend: use the shared Embedder; no local SentenceTransformer needed.
+        if self.use_openai_embedding:
+            from .database_setup.embedder import Embedder
+            from .database_setup.provider_resolver import resolve_model
+
+            model_id = resolve_model(self._embed_provider, self.openai_embedding_model)
+            self.openai_embedding_model = model_id
+            self._embedder = Embedder(
+                provider=self._embed_provider, model=model_id, batch_size=100, max_retries=5
+            )
+            self.rag_model = None
+            logger.info(
+                "ToolFinderEmbedding using hosted embedding backend (%s): %s",
+                self._embed_provider, model_id,
+            )
+            return
+
         try:
             from sentence_transformers import SentenceTransformer
             import torch
@@ -177,6 +231,35 @@ class ToolFinderEmbedding(BaseTool):
             )
         else:
             logger.warning("Tool_RAG model loaded on CPU (GPU not available)")
+
+    # ------------------------------------------------------------------ hosted embedding backend
+    def _embed_model_id(self):
+        """Short id used in the on-disk embedding cache filename (backend-aware)."""
+        name = self.openai_embedding_model if self.use_openai_embedding else self.toolfinder_model
+        return str(name).split("/")[-1]
+
+    def _embed_texts(self, texts):
+        """Encode texts with the active backend. The local path is byte-identical to the
+        original code; the hosted path delegates to ToolUniverse's shared ``Embedder``
+        (batching, retry/backoff, and Azure's one-string-at-a-time handling) and returns an
+        L2-normalized CPU tensor."""
+        if self.use_openai_embedding:
+            import numpy as np
+            import torch
+
+            vecs = self._embedder.embed(texts).astype("float32")
+            vecs /= np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-12
+            return torch.from_numpy(vecs)
+        return self.rag_model.encode(
+            texts, prompt="", normalize_embeddings=True, convert_to_tensor=True
+        )
+
+    def _similarity(self, query_embeddings, doc_embeddings):
+        """Cosine similarity. The local backend uses the SentenceTransformer helper (unchanged
+        behavior); the hosted backend uses a normalized dot product."""
+        if not self.use_openai_embedding:
+            return self.rag_model.similarity(query_embeddings, doc_embeddings)
+        return query_embeddings @ doc_embeddings.T
 
     def load_tool_desc_embedding(
         self,
@@ -228,7 +311,7 @@ class ToolFinderEmbedding(BaseTool):
         cache_dir = Path(get_user_cache_dir()) / "embeddings"
         cache_dir.mkdir(parents=True, exist_ok=True)
         embedding_filename = (
-            self.toolfinder_model.split("/")[-1] + "tool_embedding_" + md5_value + ".pt"
+            self._embed_model_id() + "tool_embedding_" + md5_value + ".pt"
         )
         self.tool_embedding_path = str(cache_dir / embedding_filename)
 
@@ -241,7 +324,9 @@ class ToolFinderEmbedding(BaseTool):
             ) from None
 
         # Determine target device for loading embeddings
-        if hasattr(self.rag_model, "device"):
+        if self.use_openai_embedding:
+            target_device = "cpu"  # hosted backend has no GPU model; keep vectors on CPU
+        elif hasattr(self.rag_model, "device"):
             target_device = self.rag_model.device
         else:
             target_device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -286,13 +371,8 @@ class ToolFinderEmbedding(BaseTool):
             self.tool_desc_embedding = None
             logger.info("Inferring tool description embeddings...")
 
-            # Generate embeddings
-            self.tool_desc_embedding = self.rag_model.encode(
-                all_tools_str,
-                prompt="",
-                normalize_embeddings=True,
-                convert_to_tensor=True,
-            )
+            # Generate embeddings (local SentenceTransformer or hosted OpenAI/Azure backend)
+            self.tool_desc_embedding = self._embed_texts(all_tools_str)
 
             # Save embeddings to disk
             torch.save(self.tool_desc_embedding, self.tool_embedding_path)
@@ -360,9 +440,7 @@ class ToolFinderEmbedding(BaseTool):
             )
 
         queries = [query]
-        query_embeddings = self.rag_model.encode(
-            queries, prompt="", normalize_embeddings=True, convert_to_tensor=True
-        )
+        query_embeddings = self._embed_texts(queries)
 
         # Ensure both embeddings are on the same device before similarity calculation
         # Query embeddings are created on the model's device (GPU if available)
@@ -385,7 +463,7 @@ class ToolFinderEmbedding(BaseTool):
                         target_device
                     )
 
-        scores = self.rag_model.similarity(query_embeddings, self.tool_desc_embedding)
+        scores = self._similarity(query_embeddings, self.tool_desc_embedding)
         top_k = min(top_k, len(self.tool_name))
         top_k_indices = torch.topk(scores, top_k).indices.tolist()[0]
         top_k_tool_names = [self.tool_name[i] for i in top_k_indices]

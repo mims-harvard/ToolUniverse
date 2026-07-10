@@ -121,6 +121,78 @@
     }
   },
   {
+    "type": "ToolFinderEmbedding",
+    "name": "Tool_Finder_OpenAI",
+    "description": "Same as Tool_Finder but embeds tools and queries with a hosted OpenAI/Azure embedding model (configured via 'embedding_backend' + 'tool_finder_model'). Requires OpenAI/Azure credentials; falls back to the local model if they are unavailable.",
+    "required_packages": [
+      "openai"
+    ],
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "The description of the tool capability required."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "The number of tools to retrieve (default: 10)"
+        },
+        "picked_tool_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Pre-selected tool names to process. If provided, tool selection will skip these tools."
+        },
+        "return_call_result": {
+          "type": "boolean",
+          "description": "Whether to return both prompts and tool names. If false, returns only tool prompts."
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional list of tool categories to filter by"
+        }
+      },
+      "required": [
+        "description"
+      ]
+    },
+    "required": [
+      "description"
+    ],
+    "configs": {
+      "tool_finder_model": "text-embedding-3-large",
+      "embedding_backend": "openai",
+      "exclude_tools": [
+        "Tool_RAG",
+        "Tool_Finder",
+        "Tool_Finder_OpenAI",
+        "Finish",
+        "CallAgent",
+        "Tool_Finder_LLM",
+        "Tool_Finder_Keyword"
+      ]
+    },
+    "test_examples": [
+      {
+        "description": "Find tools for analyzing gene expression data",
+        "limit": 1,
+        "picked_tool_names": [],
+        "return_call_result": true,
+        "categories": []
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  },
+  {
     "type": "ToolFinderLLM",
     "name": "Tool_Finder_LLM",
     "description": "LLM-based tool finder that uses natural language processing to intelligently select relevant tools based on user queries. This tool analyzes all available tool descriptions and uses an LLM to determine which tools would be most helpful for a given task or question.",
