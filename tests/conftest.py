@@ -32,15 +32,23 @@ def pytest_sessionfinish(session, exitstatus):
     # Force garbage collection to trigger __del__ methods
     gc.collect()
     
-    # Find and cleanup any remaining cache managers
+    # Find and cleanup any remaining cache managers.
+    # Note: some live objects (e.g. lazy proxies such as django.conf.settings, which a
+    # transitive dependency may import) raise when their ``__class__`` is accessed, so the
+    # isinstance() check itself can throw; guard it and skip such objects.
     for obj in gc.get_objects():
-        if isinstance(obj, ResultCacheManager):
-            try:
-                if hasattr(obj, '_worker_thread') and obj._worker_thread is not None:
-                    if obj._worker_thread.is_alive():
-                        obj.close()
-            except Exception:
-                pass
+        try:
+            is_manager = isinstance(obj, ResultCacheManager)
+        except Exception:
+            continue
+        if not is_manager:
+            continue
+        try:
+            worker = getattr(obj, '_worker_thread', None)
+            if worker is not None and worker.is_alive():
+                obj.close()
+        except Exception:
+            pass
 
 
 def pytest_configure(config):
