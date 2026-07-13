@@ -9,6 +9,37 @@ from .tool_registry import register_tool
 
 logger = logging.getLogger(__name__)
 
+# Retrieval instruction used by instruction-tuned encoders (applied to the query only).
+_ENCODER_INSTRUCTION = (
+    "Instruct: Given a natural-language request from a scientist, retrieve the software "
+    "tool that can fulfill it\nQuery: "
+)
+
+# Built-in alternative encoders selectable at call time via the ``embedding_model`` argument.
+# Each maps to the ``configs`` used to build a ToolFinderEmbedding with that encoder. This lets a
+# single embedding Tool Finder switch encoders on demand instead of registering a separate tool
+# per encoder. "default" (or an unset argument) uses the tool's configured model (e.g. ToolRAG-T1).
+KNOWN_ENCODERS = {
+    "gte-qwen2-7b": {
+        "tool_finder_model": "Alibaba-NLP/gte-Qwen2-7B-instruct",
+        "trust_remote_code": True,
+        "query_prompt": _ENCODER_INSTRUCTION,
+    },
+    "e5-mistral-7b": {
+        "tool_finder_model": "intfloat/e5-mistral-7b-instruct",
+        "trust_remote_code": True,
+        "query_prompt": _ENCODER_INSTRUCTION,
+    },
+    "openai-3-large": {
+        "tool_finder_model": "text-embedding-3-large",
+        "embedding_backend": "openai",
+    },
+    "openai-3-small": {
+        "tool_finder_model": "text-embedding-3-small",
+        "embedding_backend": "openai",
+    },
+}
+
 
 @register_tool("ToolFinderEmbedding")
 class ToolFinderEmbedding(BaseTool):
@@ -97,6 +128,8 @@ class ToolFinderEmbedding(BaseTool):
         )
         self._dependencies_available = False
         self._dependency_error = None
+        # Cache of alternative-encoder finders built on demand (see _resolve_finder).
+        self._sub_finders = {}
 
         try:
             self.load_rag_model()
@@ -548,6 +581,31 @@ class ToolFinderEmbedding(BaseTool):
             return picked_tools_prompt, picked_tool_names
         return picked_tools_prompt
 
+    def _resolve_finder(self, embedding_model):
+        """Return the finder to use for a request. Default (unset/"default") is this instance.
+        Otherwise pick a built-in alternative encoder (KNOWN_ENCODERS) and build/cache a finder
+        for it on demand, so one embedding Tool Finder can switch encoders per call rather than
+        exposing a separate registered tool per encoder."""
+        if not embedding_model or embedding_model in ("default", self.toolfinder_model):
+            return self
+        spec = KNOWN_ENCODERS.get(embedding_model)
+        if spec is None:
+            logger.warning(
+                "Unknown embedding_model %r; using the default encoder. Available options: %s",
+                embedding_model, ["default", *KNOWN_ENCODERS],
+            )
+            return self
+        if embedding_model not in self._sub_finders:
+            sub_config = {
+                "name": self.tool_config.get("name", self.__class__.__name__),
+                "type": "ToolFinderEmbedding",
+                "configs": {**spec, "exclude_tools": self.exclude_tools},
+            }
+            self._sub_finders[embedding_model] = ToolFinderEmbedding(
+                sub_config, self.tooluniverse
+            )
+        return self._sub_finders[embedding_model]
+
     def run(self, arguments):
         """
         Run the tool finder with given arguments following the standard tool interface.
@@ -562,14 +620,19 @@ class ToolFinderEmbedding(BaseTool):
                 - picked_tool_names (list, optional): Pre-selected tool names to process
                 - return_call_result (bool, optional): Whether to return both prompts and names. Defaults to False.
                 - categories (list, optional): List of tool categories to filter by
+                - embedding_model (str, optional): Select the embedding encoder for this search
+                  ('default', 'gte-qwen2-7b', 'e5-mistral-7b', 'openai-3-large', 'openai-3-small').
         """
         import copy
 
         arguments = copy.deepcopy(arguments)
 
+        # Optionally switch to an alternative encoder for this request.
+        finder = self._resolve_finder(arguments.get("embedding_model"))
+
         # Refresh embeddings if tool list has changed
         # This ensures Tool_RAG works correctly when tools are loaded after initialization
-        self._maybe_refresh_embeddings()
+        finder._maybe_refresh_embeddings()
 
         # Extract parameters from arguments with defaults
         message = arguments.get("description", None)
@@ -578,8 +641,8 @@ class ToolFinderEmbedding(BaseTool):
         return_call_result = arguments.get("return_call_result", False)
         categories = arguments.get("categories", None)
 
-        # Call the existing find_tools method
-        return self.find_tools(
+        # Call the existing find_tools method on the selected finder
+        return finder.find_tools(
             message=message,
             picked_tool_names=picked_tool_names,
             rag_num=rag_num,
