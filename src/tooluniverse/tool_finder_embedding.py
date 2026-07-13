@@ -62,6 +62,14 @@ class ToolFinderEmbedding(BaseTool):
             self.openai_embedding_model, _want_hosted = toolfinder_model, True
         else:
             self.openai_embedding_model, _want_hosted = None, False
+        # Optional per-encoder instruction prompts (default empty = original behavior).
+        # Instruction-tuned retrievers (e.g. gte-Qwen2, E5-mistral) expect a short task
+        # instruction on the query; some also prefix documents.
+        self.query_prompt = _configs.get("query_prompt", "")
+        self.document_prompt = _configs.get("document_prompt", "")
+        # Some encoders ship their architecture as repo code and require trust_remote_code.
+        # Default False keeps the deployed ToolRAG-T1 behavior byte-identical.
+        self.trust_remote_code = bool(_configs.get("trust_remote_code", False))
         self._embed_provider = None
         self._embedder = None
         if _want_hosted:
@@ -215,9 +223,15 @@ class ToolFinderEmbedding(BaseTool):
             device = "cpu"
             logger.warning("CUDA is not available. Using CPU.")
 
-        # Load model on the appropriate device
+        # Load model on the appropriate device. trust_remote_code (default False, so the
+        # deployed ToolRAG-T1 behavior is unchanged) is required by some encoders whose custom
+        # architecture ships as repo code (e.g. gte-large-en-v1.5, gte-Qwen2-*'s bidirectional
+        # variant); set the config ``trust_remote_code: true`` to use those as the encoder.
         logger.info(f"Loading SentenceTransformer model on device: {device}")
-        self.rag_model = SentenceTransformer(self.toolfinder_model, device=device)
+        self.rag_model = SentenceTransformer(
+            self.toolfinder_model, device=device,
+            trust_remote_code=self.trust_remote_code,
+        )
         self.rag_model.max_seq_length = 4096
         self.rag_model.tokenizer.padding_side = "right"
 
@@ -238,20 +252,23 @@ class ToolFinderEmbedding(BaseTool):
         name = self.openai_embedding_model if self.use_openai_embedding else self.toolfinder_model
         return str(name).split("/")[-1]
 
-    def _embed_texts(self, texts):
-        """Encode texts with the active backend. The local path is byte-identical to the
-        original code; the hosted path delegates to ToolUniverse's shared ``Embedder``
-        (batching, retry/backoff, and Azure's one-string-at-a-time handling) and returns an
-        L2-normalized CPU tensor."""
+    def _embed_texts(self, texts, prompt=""):
+        """Encode texts with the active backend. The local path defaults to the original
+        behavior (empty prompt); ``prompt`` lets instruction-tuned encoders receive their
+        recommended query/document instruction (configs ``query_prompt``/``document_prompt``).
+        The hosted path delegates to ToolUniverse's shared ``Embedder`` (batching,
+        retry/backoff, Azure's one-string-at-a-time handling) and returns an L2-normalized
+        CPU tensor; any prompt is prepended to each text since hosted APIs take no prompt arg."""
         if self.use_openai_embedding:
             import numpy as np
             import torch
 
-            vecs = self._embedder.embed(texts).astype("float32")
+            inputs = [prompt + t for t in texts] if prompt else texts
+            vecs = self._embedder.embed(inputs).astype("float32")
             vecs /= np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-12
             return torch.from_numpy(vecs)
         return self.rag_model.encode(
-            texts, prompt="", normalize_embeddings=True, convert_to_tensor=True
+            texts, prompt=prompt, normalize_embeddings=True, convert_to_tensor=True
         )
 
     def _similarity(self, query_embeddings, doc_embeddings):
@@ -304,8 +321,18 @@ class ToolFinderEmbedding(BaseTool):
             json.dumps(each)
             for each in tooluniverse.prepare_tool_prompts(filtered_tools)
         ]
-        md5_value = get_md5(str(all_tools_str))
-        logger.debug(f"MD5 hash of tools: {md5_value}")
+        # The cache key must include every setting that changes the DOCUMENT embeddings, not
+        # just the tool text: the backend, whether remote code is trusted (which can select a
+        # different model class for the same name), and any document prompt. Omitting these
+        # silently reuses mismatched vectors when the same model name is reloaded with different
+        # settings (e.g. gte-Qwen2 loaded with vs. without trust_remote_code).
+        cache_key = (
+            str(all_tools_str)
+            + f"|backend={self._embed_provider or 'local'}"
+            + f"|trc={self.trust_remote_code}|docprompt={self.document_prompt}"
+        )
+        md5_value = get_md5(cache_key)
+        logger.debug(f"MD5 hash of tools+config: {md5_value}")
 
         # Use ToolUniverse cache directory for embeddings
         cache_dir = Path(get_user_cache_dir()) / "embeddings"
@@ -372,7 +399,7 @@ class ToolFinderEmbedding(BaseTool):
             logger.info("Inferring tool description embeddings...")
 
             # Generate embeddings (local SentenceTransformer or hosted OpenAI/Azure backend)
-            self.tool_desc_embedding = self._embed_texts(all_tools_str)
+            self.tool_desc_embedding = self._embed_texts(all_tools_str, prompt=self.document_prompt)
 
             # Save embeddings to disk
             torch.save(self.tool_desc_embedding, self.tool_embedding_path)
@@ -440,7 +467,7 @@ class ToolFinderEmbedding(BaseTool):
             )
 
         queries = [query]
-        query_embeddings = self._embed_texts(queries)
+        query_embeddings = self._embed_texts(queries, prompt=self.query_prompt)
 
         # Ensure both embeddings are on the same device before similarity calculation
         # Query embeddings are created on the model's device (GPU if available)
