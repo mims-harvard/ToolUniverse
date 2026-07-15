@@ -15,7 +15,7 @@ uv --version      # must exist; if not:  curl -LsSf https://astral.sh/uv/install
 claude --version  # Claude Code CLI; if not: https://claude.com/claude-code
 ```
 
-## Install (two commands)
+## Install
 
 ```bash
 # 1. Register the ToolUniverse marketplace from GitHub
@@ -26,6 +26,29 @@ claude plugin install tooluniverse@tooluniverse
 ```
 
 That's it. Restart Claude Code. The MCP server auto-starts via `uvx tooluniverse` on first use (~30 s cold start, instant after).
+
+### Recommended: turn on auto-update
+
+Third-party marketplaces default to **no auto-update** — without this, new tools/skills only reach you when you remember to run `claude plugin update tooluniverse` (see Update below). Turn it on once:
+
+```bash
+python3 -c "
+import json, pathlib, sys
+p = pathlib.Path.home() / '.claude/plugins/known_marketplaces.json'
+d = json.loads(p.read_text())
+if 'tooluniverse' not in d:
+    sys.exit('Run the marketplace add command above first')
+d['tooluniverse']['autoUpdate'] = True
+p.write_text(json.dumps(d, indent=2))
+print('autoUpdate enabled for tooluniverse')
+"
+```
+
+Equivalent interactive path: `/plugin` → Marketplaces → `tooluniverse` → Enable auto-update.
+
+With this on, Claude Code checks for marketplace + plugin updates in the background after each session start (up to a ~10 min random delay) and updates the installed plugin on disk automatically. You'll get a `/reload-plugins` prompt when an update lands, or it applies on your next launch — no more manual `claude plugin update`.
+
+This is local, per-machine state — it can't be shipped as a default from the plugin's own manifest. `marketplace.json` has no `autoUpdate` field; Claude Code intentionally keeps this a per-installation trust boundary so a publisher can't force silent auto-updates onto a user's machine.
 
 ### Important: Remove global skills if previously installed
 
@@ -114,6 +137,10 @@ find ~/.claude/plugins -name '.mcp.json' -path '*tooluniverse*'
 Full API-key list: `setup-tooluniverse` skill → `API_KEYS_REFERENCE.md`.
 
 ## Update
+
+If you enabled auto-update above, this happens automatically in the background — no action needed.
+
+Otherwise, update manually:
 
 ```bash
 claude plugin update tooluniverse
