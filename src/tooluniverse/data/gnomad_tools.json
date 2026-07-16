@@ -33,95 +33,83 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
+            "gene": {
               "type": "object",
               "properties": {
-                "gene": {
+                "symbol": {
+                  "type": "string"
+                },
+                "gene_id": {
+                  "type": "string"
+                },
+                "exac_constraint": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "gnomad_constraint": {
                   "type": "object",
                   "properties": {
-                    "symbol": {
-                      "type": "string"
+                    "exp_lof": {
+                      "type": "number"
                     },
-                    "gene_id": {
-                      "type": "string"
+                    "obs_lof": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
                     },
-                    "exac_constraint": {
-                      "type": "null"
+                    "oe_lof": {
+                      "type": "number"
                     },
-                    "gnomad_constraint": {
-                      "type": "object",
-                      "properties": {
-                        "exp_lof": {
-                          "type": "number"
-                        },
-                        "obs_lof": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "oe_lof": {
-                          "type": "number"
-                        },
-                        "pLI": {
-                          "type": "number"
-                        },
-                        "exp_mis": {
-                          "type": "number"
-                        },
-                        "obs_mis": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "oe_mis": {
-                          "type": "number"
-                        },
-                        "exp_syn": {
-                          "type": "number"
-                        },
-                        "obs_syn": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "oe_syn": {
-                          "type": "number"
-                        }
-                      }
+                    "pLI": {
+                      "type": "number"
+                    },
+                    "exp_mis": {
+                      "type": "number"
+                    },
+                    "obs_mis": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "oe_mis": {
+                      "type": "number"
+                    },
+                    "exp_syn": {
+                      "type": "number"
+                    },
+                    "obs_syn": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "oe_syn": {
+                      "type": "number"
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "gene"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

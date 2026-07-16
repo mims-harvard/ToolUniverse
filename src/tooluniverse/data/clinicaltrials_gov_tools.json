@@ -1084,94 +1084,86 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "studies": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "nct_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "brief_title": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "status": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "study_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "phases": {
-                        "type": "array"
-                      },
-                      "enrollment": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "conditions": {
-                        "type": "array"
-                      },
-                      "interventions": {
-                        "type": "array"
-                      },
-                      "sponsor": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "start_date": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "completion_date": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "studies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "nct_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "brief_title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "study_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phases": {
+                    "type": "array"
+                  },
+                  "enrollment": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "conditions": {
+                    "type": "array"
+                  },
+                  "interventions": {
+                    "type": "array"
+                  },
+                  "sponsor": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "completion_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "next_page_token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "next_page_token": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [
-            "data"
+            "studies"
           ]
         },
         {
@@ -1572,35 +1564,27 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_studies": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "average_byte_size": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "largest_studies": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                }
-              }
+            "total_studies": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
-            "metadata": {
-              "type": "object"
+            "average_byte_size": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "largest_studies": {
+              "type": [
+                "array",
+                "null"
+              ]
             }
           },
           "required": [
-            "data"
+            "largest_studies"
           ]
         },
         {

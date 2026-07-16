@@ -44,130 +44,114 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdb_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "PDB entry ID"
-                },
-                "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Structure title"
-                },
-                "method": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Experimental method (X-RAY DIFFRACTION, ELECTRON MICROSCOPY, NMR, etc.)"
-                },
-                "resolution": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Resolution in Angstroms"
-                },
-                "deposit_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Deposition date"
-                },
-                "release_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Initial release date"
-                },
-                "revision_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Last revision date"
-                },
-                "polymer_entity_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of polymer entities (proteins, nucleic acids)"
-                },
-                "nonpolymer_entity_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of non-polymer entities (ligands, ions)"
-                },
-                "deposited_atom_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total deposited atom count"
-                },
-                "deposited_model_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Deposited modeled polymer monomer count"
-                },
-                "molecular_weight": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Total molecular weight in kDa"
-                },
-                "assembly_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of biological assemblies"
-                },
-                "space_group": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Crystal space group"
-                },
-                "unit_cell": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "description": "Unit cell dimensions (a, b, c, alpha, beta, gamma)"
-                }
-              }
+            "pdb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PDB entry ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "pdb_id": {
-                  "type": "string"
-                }
-              }
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Structure title"
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Experimental method (X-RAY DIFFRACTION, ELECTRON MICROSCOPY, NMR, etc.)"
+            },
+            "resolution": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Resolution in Angstroms"
+            },
+            "deposit_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Deposition date"
+            },
+            "release_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Initial release date"
+            },
+            "revision_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Last revision date"
+            },
+            "polymer_entity_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of polymer entities (proteins, nucleic acids)"
+            },
+            "nonpolymer_entity_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of non-polymer entities (ligands, ions)"
+            },
+            "deposited_atom_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total deposited atom count"
+            },
+            "deposited_model_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Deposited modeled polymer monomer count"
+            },
+            "molecular_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Total molecular weight in kDa"
+            },
+            "assembly_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of biological assemblies"
+            },
+            "space_group": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Crystal space group"
+            },
+            "unit_cell": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Unit cell dimensions (a, b, c, alpha, beta, gamma)"
             }
           },
           "required": [
-            "data"
+            "pdb_id"
           ]
         },
         {

@@ -172,246 +172,228 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tissueSiteDetailId": {
+                "type": "string"
+              },
+              "colorHex": {
+                "type": "string"
+              },
+              "colorRgb": {
+                "type": "string"
+              },
+              "datasetId": {
+                "type": "string"
+              },
+              "eGeneCount": {
+                "type": [
+                  "integer",
+                  "null",
+                  "number"
+                ]
+              },
+              "expressedGeneCount": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "hasEGenes": {
+                "type": "boolean"
+              },
+              "hasSGenes": {
+                "type": "boolean"
+              },
+              "mappedInHubmap": {
+                "type": "boolean"
+              },
+              "eqtlSampleSummary": {
                 "type": "object",
                 "properties": {
-                  "tissueSiteDetailId": {
-                    "type": "string"
-                  },
-                  "colorHex": {
-                    "type": "string"
-                  },
-                  "colorRgb": {
-                    "type": "string"
-                  },
-                  "datasetId": {
-                    "type": "string"
-                  },
-                  "eGeneCount": {
-                    "type": [
-                      "integer",
-                      "null",
-                      "number"
-                    ]
-                  },
-                  "expressedGeneCount": {
+                  "totalCount": {
                     "type": [
                       "integer",
                       "number"
                     ]
                   },
-                  "hasEGenes": {
-                    "type": "boolean"
-                  },
-                  "hasSGenes": {
-                    "type": "boolean"
-                  },
-                  "mappedInHubmap": {
-                    "type": "boolean"
-                  },
-                  "eqtlSampleSummary": {
+                  "female": {
                     "type": "object",
                     "properties": {
-                      "totalCount": {
+                      "ageMax": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMin": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMean": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "count": {
                         "type": [
                           "integer",
                           "number"
                         ]
-                      },
-                      "female": {
-                        "type": "object",
-                        "properties": {
-                          "ageMax": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMin": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMean": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "count": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          }
-                        }
-                      },
-                      "male": {
-                        "type": "object",
-                        "properties": {
-                          "ageMax": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMin": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMean": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "count": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          }
-                        }
                       }
                     }
                   },
-                  "rnaSeqSampleSummary": {
+                  "male": {
                     "type": "object",
                     "properties": {
-                      "totalCount": {
+                      "ageMax": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMin": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMean": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "count": {
                         "type": [
                           "integer",
                           "number"
                         ]
-                      },
-                      "female": {
-                        "type": "object",
-                        "properties": {
-                          "ageMax": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMin": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMean": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "count": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          }
-                        }
-                      },
-                      "male": {
-                        "type": "object",
-                        "properties": {
-                          "ageMax": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMin": {
-                            "type": [
-                              "integer",
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "ageMean": {
-                            "type": [
-                              "null",
-                              "number"
-                            ]
-                          },
-                          "count": {
-                            "type": [
-                              "integer",
-                              "number"
-                            ]
-                          }
-                        }
                       }
                     }
-                  },
-                  "sGeneCount": {
-                    "type": [
-                      "integer",
-                      "null",
-                      "number"
-                    ]
-                  },
-                  "samplingSite": {
-                    "type": "string"
-                  },
-                  "tissueSite": {
-                    "type": "string"
-                  },
-                  "tissueSiteDetail": {
-                    "type": "string"
-                  },
-                  "tissueSiteDetailAbbr": {
-                    "type": "string"
-                  },
-                  "ontologyId": {
-                    "type": "string"
-                  },
-                  "ontologyIri": {
-                    "type": "string"
                   }
                 }
+              },
+              "rnaSeqSampleSummary": {
+                "type": "object",
+                "properties": {
+                  "totalCount": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "female": {
+                    "type": "object",
+                    "properties": {
+                      "ageMax": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMin": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMean": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "count": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      }
+                    }
+                  },
+                  "male": {
+                    "type": "object",
+                    "properties": {
+                      "ageMax": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMin": {
+                        "type": [
+                          "integer",
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "ageMean": {
+                        "type": [
+                          "null",
+                          "number"
+                        ]
+                      },
+                      "count": {
+                        "type": [
+                          "integer",
+                          "number"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "sGeneCount": {
+                "type": [
+                  "integer",
+                  "null",
+                  "number"
+                ]
+              },
+              "samplingSite": {
+                "type": "string"
+              },
+              "tissueSite": {
+                "type": "string"
+              },
+              "tissueSiteDetail": {
+                "type": "string"
+              },
+              "tissueSiteDetailAbbr": {
+                "type": "string"
+              },
+              "ontologyId": {
+                "type": "string"
+              },
+              "ontologyIri": {
+                "type": "string"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

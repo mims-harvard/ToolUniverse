@@ -78,49 +78,41 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "histone_mark": {
-                        "type": "string"
-                      },
-                      "biosample_summary": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "lab": {
-                        "type": "string"
-                      },
-                      "date_released": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "histone_mark": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "lab": {
+                    "type": "string"
+                  },
+                  "date_released": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           },
           "required": [
-            "data"
+            "experiments"
           ]
         },
         {

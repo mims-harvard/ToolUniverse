@@ -34,197 +34,182 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "entryType": {
+              "type": "string"
             },
-            "data": {
+            "primaryAccession": {
+              "type": "string"
+            },
+            "uniProtkbId": {
+              "type": "string"
+            },
+            "protein_name": {
+              "type": "string"
+            },
+            "gene_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "organism": {
               "type": "object",
               "properties": {
-                "entryType": {
+                "scientificName": {
                   "type": "string"
                 },
-                "primaryAccession": {
+                "commonName": {
                   "type": "string"
                 },
-                "uniProtkbId": {
-                  "type": "string"
+                "taxonId": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
                 },
-                "protein_name": {
-                  "type": "string"
-                },
-                "gene_names": {
+                "lineage": {
                   "type": "array",
                   "items": {
                     "type": "string"
                   }
-                },
-                "organism": {
-                  "type": "object",
-                  "properties": {
-                    "scientificName": {
-                      "type": "string"
-                    },
-                    "commonName": {
-                      "type": "string"
-                    },
-                    "taxonId": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "lineage": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "sequence": {
-                  "type": "object",
-                  "properties": {
-                    "value": {
-                      "type": "string"
-                    },
-                    "length": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "molWeight": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    },
-                    "crc64": {
-                      "type": "string"
-                    },
-                    "md5": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "annotationScore": {
-                  "type": "number"
-                },
-                "proteinExistence": {
+                }
+              }
+            },
+            "sequence": {
+              "type": "object",
+              "properties": {
+                "value": {
                   "type": "string"
                 },
-                "keywords": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "category": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
+                "length": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "molWeight": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "crc64": {
+                  "type": "string"
+                },
+                "md5": {
+                  "type": "string"
+                }
+              }
+            },
+            "annotationScore": {
+              "type": "number"
+            },
+            "proteinExistence": {
+              "type": "string"
+            },
+            "keywords": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "comments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "commentType": {
+                    "type": "string"
+                  },
+                  "texts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
-                },
-                "comments": {
-                  "type": "array",
-                  "items": {
+                }
+              }
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "location": {
                     "type": "object",
                     "properties": {
-                      "commentType": {
-                        "type": "string"
-                      },
-                      "texts": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                },
-                "features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "location": {
+                      "start": {
                         "type": "object",
                         "properties": {
-                          "start": {
-                            "type": "object",
-                            "properties": {
-                              "value": {
-                                "type": [
-                                  "integer",
-                                  "number"
-                                ]
-                              },
-                              "modifier": {
-                                "type": "string"
-                              }
-                            }
+                          "value": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
                           },
-                          "end": {
-                            "type": "object",
-                            "properties": {
-                              "value": {
-                                "type": [
-                                  "integer",
-                                  "number"
-                                ]
-                              },
-                              "modifier": {
-                                "type": "string"
-                              }
-                            }
+                          "modifier": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "end": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": [
+                              "integer",
+                              "number"
+                            ]
+                          },
+                          "modifier": {
+                            "type": "string"
                           }
                         }
                       }
                     }
                   }
-                },
-                "xref_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "xref_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "primaryAccession"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
