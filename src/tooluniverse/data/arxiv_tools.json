@@ -8,7 +8,7 @@
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search query for arXiv papers. Unquoted, unprefixed space-separated keywords are ANDed together (every keyword must match) -- adding more keywords NARROWS results, it does not broaden them. To search multiple synonyms/phrases and broaden recall, join them with explicit OR, e.g. '\"AI Scientist\" OR \"autonomous research agent\" OR \"self-driving lab\"'. Supports field prefixes (au:, ti:, abs:, cat:, all:) and AND/OR/ANDNOT boolean operators, which are passed through as-is."
+          "description": "Search query for arXiv papers. Unquoted, unprefixed space-separated keywords are ANDed together (every keyword must match) -- adding more keywords NARROWS results, it does not broaden them. To search multiple synonyms/phrases and broaden recall, join them with explicit OR, e.g. '\"machine learning\" OR \"deep learning\" OR \"neural networks\"'. Supports field prefixes (au:, ti:, abs:, cat:, all:) and AND/OR/ANDNOT boolean operators, which are passed through as-is."
         },
         "limit": {
           "type": "integer",
@@ -110,7 +110,7 @@
         "limit": 3
       },
       {
-        "query": "\"AI Scientist\" OR \"autonomous research agent\" OR \"self-driving lab\"",
+        "query": "\"machine learning\" OR \"deep learning\" OR \"neural networks\"",
         "limit": 3,
         "sort_by": "relevance"
       }

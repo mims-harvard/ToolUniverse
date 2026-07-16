@@ -31,20 +31,18 @@ class TestBuildSearchQuery:
     def test_multi_keyword_is_anded(self, tool):
         """Space-separated keywords are ANDed (all must match) -- narrows,
         not broadens. More synonyms make the query stricter, not looser."""
-        query = tool._build_search_query("AI Scientist autonomous")
-        assert query == "all:AI AND all:Scientist AND all:autonomous"
+        query = tool._build_search_query("quantum computing hardware")
+        assert query == "all:quantum AND all:computing AND all:hardware"
 
     def test_quoted_phrase_kept_intact(self, tool):
-        query = tool._build_search_query('"self-driving lab" agentic')
-        assert query == 'all:"self-driving lab" AND all:agentic'
+        query = tool._build_search_query('"neural networks" transformers')
+        assert query == 'all:"neural networks" AND all:transformers'
 
     def test_explicit_or_passed_through(self, tool):
         """Callers who want broader recall across synonyms must write OR
         explicitly -- the tool does not add it automatically."""
-        query = tool._build_search_query(
-            '"AI Scientist" OR "autonomous research agent"'
-        )
-        assert query == '"AI Scientist" OR "autonomous research agent"'
+        query = tool._build_search_query('"machine learning" OR "deep learning"')
+        assert query == '"machine learning" OR "deep learning"'
 
     def test_field_prefix_passed_through(self, tool):
         assert tool._build_search_query("cat:cs.AI") == "cat:cs.AI"

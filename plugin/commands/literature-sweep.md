@@ -83,10 +83,9 @@ State which sources you chose (and why) in one line before searching.
 - `ArXiv_search_papers`: unprefixed, unquoted space-separated keywords are **ANDed**
   (every keyword must appear) — adding more synonyms NARROWS results, it does not
   broaden them like a typical search box. A query built from many synonyms (e.g.
-  `AI Scientist autonomous research agent automated research self-driving lab
-  agentic science`) can silently collapse to 0-2 hits. To search across
-  synonyms, join them with explicit `OR`, e.g.
-  `"AI Scientist" OR "autonomous research agent" OR "self-driving lab"`.
+  `KRAS G12C inhibitor resistance mechanism secondary mutation bypass rebound`)
+  can silently collapse to 0-2 hits. To search across synonyms, join them with
+  explicit `OR`, e.g. `"KRAS G12C" OR sotorasib OR adagrasib`.
   Also: `date_from`/`date_to` filter on `submittedDate`, the date of the paper's
   **first version** — a paper revised after `date_from` but originally submitted
   earlier is still excluded, so don't be surprised when a known-recent-looking
