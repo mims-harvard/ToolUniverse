@@ -1,204 +1,369 @@
 [
-    {
-        "name": "TheraSAbDab_search_therapeutics",
-        "description": "Search therapeutic antibodies by name in Thera-SAbDab. Returns WHO INN name, target antigen, format (IgG, bispecific, ADC), clinical phase, and PDB structures. Use for finding approved/clinical antibody drugs.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query - antibody name (e.g., 'trastuzumab', 'pembrolizumab', 'rituximab')"
-                }
-            },
-            "required": ["query"]
-        },
-        "fields": {
-            "operation": "search_therapeutics"
-        },
-        "type": "TheraSAbDabTool",
-        "test_examples": [
-            {"query": "trastuzumab"},
-            {"query": "pembrolizumab"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string"},
-                        "therapeutics": {"type": "array"},
-                        "count": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["TheraSAbDab", "Therapeutic", "Antibody"],
-        "metadata": {
-            "tags": ["therapeutic_antibody", "biologics", "inn"],
-            "estimated_execution_time": "< 5 seconds"
+  {
+    "name": "TheraSAbDab_search_therapeutics",
+    "description": "Search therapeutic antibodies by name in Thera-SAbDab. Returns WHO INN name, target antigen, format (IgG, bispecific, ADC), clinical phase, and PDB structures. Use for finding approved/clinical antibody drugs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query - antibody name (e.g., 'trastuzumab', 'pembrolizumab', 'rituximab')"
         }
+      },
+      "required": [
+        "query"
+      ]
     },
-    {
-        "name": "TheraSAbDab_get_all_therapeutics",
-        "description": "Get summary of all therapeutic antibodies in Thera-SAbDab database. Returns counts by format (IgG, bispecific, ADC) and clinical phase. Use for landscape analysis of antibody therapeutics.",
-        "parameter": {
-            "type": "object",
-            "properties": {}
-        },
-        "fields": {
-            "operation": "get_all_therapeutics"
-        },
-        "type": "TheraSAbDabTool",
-        "test_examples": [
-            {}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "total_count": {"type": "integer"},
-                        "by_format": {"type": "object"},
-                        "by_phase": {"type": "object"},
-                        "sample": {"type": "array"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["TheraSAbDab", "Summary", "Statistics"],
-        "metadata": {
-            "tags": ["summary", "statistics", "landscape"],
-            "estimated_execution_time": "< 10 seconds"
-        }
+    "fields": {
+      "operation": "search_therapeutics"
     },
-    {
-        "name": "TheraSAbDab_search_by_target",
-        "description": "Find therapeutic antibodies targeting a specific antigen. Returns all clinical/approved antibodies against the target (e.g., all anti-PD1 antibodies). Essential for competitive landscape analysis.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "target": {
-                    "type": "string",
-                    "description": "Target antigen name (e.g., 'PD-1', 'HER2', 'CD20', 'TNF-alpha', 'VEGF')"
-                }
+    "type": "TheraSAbDabTool",
+    "test_examples": [
+      {
+        "query": "trastuzumab"
+      },
+      {
+        "query": "pembrolizumab"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
             },
-            "required": ["target"]
-        },
-        "fields": {
-            "operation": "search_by_target"
-        },
-        "type": "TheraSAbDabTool",
-        "test_examples": [
-            {"target": "HER2"},
-            {"target": "PD-1"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "target": {"type": "string"},
-                        "therapeutics": {"type": "array"},
-                        "count": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
+            "therapeutics": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
             }
+          }
         },
-        "label": ["TheraSAbDab", "Target", "Search"],
-        "metadata": {
-            "tags": ["target", "competitive_analysis", "antibody"],
-            "estimated_execution_time": "< 5 seconds"
+        "error": {
+          "type": "string"
         }
+      }
     },
-    {
-        "name": "TheraSAbDab_get_therapeutic_sequences",
-        "description": "Get the full curated record for a clinical/approved therapeutic antibody from Thera-SAbDab by WHO INN name. Returns the VH/VL amino-acid sequences (heavy1/light1, plus heavy2/light2 for bispecifics), isotype, target antigen, PDB structural coverage at 100%/99%/95-98% sequence identity (struc100/struc99/struc95to98 as 'pdbid:chains'), originator companies, and approved/active/discontinued conditions. Use for antibody sequence retrieval and developability analysis. No authentication required.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "description": "WHO INN of the therapeutic antibody (e.g., 'adalimumab', 'abciximab', 'pembrolizumab'). Aliases: inn, query."
-                },
-                "inn": {
-                    "type": "string",
-                    "description": "Alias for name."
-                },
-                "query": {
-                    "type": "string",
-                    "description": "Alias for name."
-                }
-            },
-            "required": []
-        },
-        "fields": {
-            "operation": "get_therapeutic_sequences"
-        },
-        "type": "TheraSAbDabTool",
-        "test_examples": [
-            {"name": "abciximab"},
-            {"name": "adalimumab"}
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "const": "success"},
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "query": {"type": "string"},
-                                "matched": {"type": ["string", "null"]},
-                                "therapeutic": {
-                                    "type": "object",
-                                    "properties": {
-                                        "inn_name": {"type": ["string", "null"]},
-                                        "format": {"type": ["string", "null"]},
-                                        "isotype": {"type": ["string", "null"]},
-                                        "target": {"type": ["string", "null"]},
-                                        "heavy1": {"type": ["string", "null"]},
-                                        "light1": {"type": ["string", "null"]},
-                                        "heavy2": {"type": ["string", "null"]},
-                                        "light2": {"type": ["string", "null"]},
-                                        "struc100": {"type": ["string", "null"]},
-                                        "struc99": {"type": ["string", "null"]},
-                                        "struc95to98": {"type": ["string", "null"]},
-                                        "companies": {"type": ["string", "null"]},
-                                        "conditions_approved": {"type": ["string", "null"]}
-                                    }
-                                },
-                                "match_count": {"type": "integer"}
-                            },
-                            "required": ["query", "therapeutic"]
-                        },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["status", "data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "status": {"type": "string", "const": "error"},
-                        "error": {"type": "string"}
-                    },
-                    "required": ["status", "error"]
-                }
-            ]
-        },
-        "label": ["TheraSAbDab", "Sequence", "Antibody"],
-        "metadata": {
-            "tags": ["therapeutic_antibody", "sequence", "biologics", "inn"],
-            "estimated_execution_time": "< 10 seconds"
-        }
+    "label": [
+      "TheraSAbDab",
+      "Therapeutic",
+      "Antibody"
+    ],
+    "metadata": {
+      "tags": [
+        "therapeutic_antibody",
+        "biologics",
+        "inn"
+      ],
+      "estimated_execution_time": "< 5 seconds"
     }
+  },
+  {
+    "name": "TheraSAbDab_get_all_therapeutics",
+    "description": "Get summary of all therapeutic antibodies in Thera-SAbDab database. Returns counts by format (IgG, bispecific, ADC) and clinical phase. Use for landscape analysis of antibody therapeutics.",
+    "parameter": {
+      "type": "object",
+      "properties": {}
+    },
+    "fields": {
+      "operation": "get_all_therapeutics"
+    },
+    "type": "TheraSAbDabTool",
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "total_count": {
+              "type": "integer"
+            },
+            "by_format": {
+              "type": "object"
+            },
+            "by_phase": {
+              "type": "object"
+            },
+            "sample": {
+              "type": "array"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "TheraSAbDab",
+      "Summary",
+      "Statistics"
+    ],
+    "metadata": {
+      "tags": [
+        "summary",
+        "statistics",
+        "landscape"
+      ],
+      "estimated_execution_time": "< 10 seconds"
+    }
+  },
+  {
+    "name": "TheraSAbDab_search_by_target",
+    "description": "Find therapeutic antibodies targeting a specific antigen. Returns all clinical/approved antibodies against the target (e.g., all anti-PD1 antibodies). Essential for competitive landscape analysis.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Target antigen name (e.g., 'PD-1', 'HER2', 'CD20', 'TNF-alpha', 'VEGF')"
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "fields": {
+      "operation": "search_by_target"
+    },
+    "type": "TheraSAbDabTool",
+    "test_examples": [
+      {
+        "target": "HER2"
+      },
+      {
+        "target": "PD-1"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string"
+            },
+            "therapeutics": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "TheraSAbDab",
+      "Target",
+      "Search"
+    ],
+    "metadata": {
+      "tags": [
+        "target",
+        "competitive_analysis",
+        "antibody"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "TheraSAbDab_get_therapeutic_sequences",
+    "description": "Get the full curated record for a clinical/approved therapeutic antibody from Thera-SAbDab by WHO INN name. Returns the VH/VL amino-acid sequences (heavy1/light1, plus heavy2/light2 for bispecifics), isotype, target antigen, PDB structural coverage at 100%/99%/95-98% sequence identity (struc100/struc99/struc95to98 as 'pdbid:chains'), originator companies, and approved/active/discontinued conditions. Use for antibody sequence retrieval and developability analysis. No authentication required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "WHO INN of the therapeutic antibody (e.g., 'adalimumab', 'abciximab', 'pembrolizumab'). Aliases: inn, query."
+        },
+        "inn": {
+          "type": "string",
+          "description": "Alias for name."
+        },
+        "query": {
+          "type": "string",
+          "description": "Alias for name."
+        }
+      },
+      "required": []
+    },
+    "fields": {
+      "operation": "get_therapeutic_sequences"
+    },
+    "type": "TheraSAbDabTool",
+    "test_examples": [
+      {
+        "name": "abciximab"
+      },
+      {
+        "name": "adalimumab"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "matched": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "therapeutic": {
+              "type": "object",
+              "properties": {
+                "inn_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "format": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "isotype": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "target": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "heavy1": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "light1": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "heavy2": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "light2": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "struc100": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "struc99": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "struc95to98": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "companies": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "conditions_approved": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "match_count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "query",
+            "therapeutic"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "label": [
+      "TheraSAbDab",
+      "Sequence",
+      "Antibody"
+    ],
+    "metadata": {
+      "tags": [
+        "therapeutic_antibody",
+        "sequence",
+        "biologics",
+        "inn"
+      ],
+      "estimated_execution_time": "< 10 seconds"
+    }
+  }
 ]

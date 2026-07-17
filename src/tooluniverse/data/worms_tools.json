@@ -6,10 +6,19 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "query": {"type": "string", "description": "Species name or search term"},
-        "limit": {"type": "integer", "default": 20, "description": "Number of results"}
+        "query": {
+          "type": "string",
+          "description": "Species name or search term"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 20,
+          "description": "Number of results"
+        }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://www.marinespecies.org/rest/AphiaIDByName/{query}",
@@ -20,40 +29,135 @@
       "items": {
         "type": "object",
         "properties": {
-          "AphiaID": {"type": "integer"},
-          "url": {"type": "string"},
-          "scientificname": {"type": "string"},
-          "authority": {"type": ["string", "null"]},
-          "status": {"type": "string"},
-          "unacceptreason": {"type": ["string", "null"]},
-          "taxonRankID": {"type": "integer"},
-          "rank": {"type": "string"},
-          "valid_AphiaID": {"type": "integer"},
-          "valid_name": {"type": "string"},
-          "valid_authority": {"type": ["string", "null"]},
-          "parentNameUsageID": {"type": "integer"},
-          "originalNameUsageID": {"type": ["integer", "null"]},
-          "kingdom": {"type": "string"},
-          "phylum": {"type": "string"},
-          "class": {"type": "string"},
-          "order": {"type": "string"},
-          "family": {"type": ["string", "null"]},
-          "genus": {"type": ["string", "null"]},
-          "citation": {"type": "string"},
-          "lsid": {"type": "string"},
-          "isMarine": {"type": ["integer", "null"]},
-          "isBrackish": {"type": ["integer", "null"]},
-          "isFreshwater": {"type": ["integer", "null"]},
-          "isTerrestrial": {"type": ["integer", "null"]},
-          "isExtinct": {"type": ["integer", "null"]},
-          "match_type": {"type": "string"},
-          "modified": {"type": "string"}
+          "AphiaID": {
+            "type": "integer"
+          },
+          "url": {
+            "type": "string"
+          },
+          "scientificname": {
+            "type": "string"
+          },
+          "authority": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "unacceptreason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taxonRankID": {
+            "type": "integer"
+          },
+          "rank": {
+            "type": "string"
+          },
+          "valid_AphiaID": {
+            "type": "integer"
+          },
+          "valid_name": {
+            "type": "string"
+          },
+          "valid_authority": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "parentNameUsageID": {
+            "type": "integer"
+          },
+          "originalNameUsageID": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "kingdom": {
+            "type": "string"
+          },
+          "phylum": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
+          "order": {
+            "type": "string"
+          },
+          "family": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "genus": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "citation": {
+            "type": "string"
+          },
+          "lsid": {
+            "type": "string"
+          },
+          "isMarine": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "isBrackish": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "isFreshwater": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "isTerrestrial": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "isExtinct": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "match_type": {
+            "type": "string"
+          },
+          "modified": {
+            "type": "string"
+          }
         }
       }
     },
     "test_examples": [
-      {"query": "Actinia equina", "limit": 5},
-      {"query": "Scleractinia", "limit": 10}
+      {
+        "query": "Actinia equina",
+        "limit": 5
+      },
+      {
+        "query": "Scleractinia",
+        "limit": 10
+      }
     ]
   },
   {
@@ -63,9 +167,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea, common sole). Obtain from WoRMS_search_species."}
+        "AphiaID": {
+          "type": "integer",
+          "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea, common sole). Obtain from WoRMS_search_species."
+        }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "classification",
@@ -73,35 +182,49 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
-          "description": "Nested classification tree",
+          "description": "Recursive classification node",
           "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "object",
-              "description": "Recursive classification node",
-              "properties": {
-                "AphiaID": {"type": "integer"},
-                "rank": {"type": "string"},
-                "scientificname": {"type": "string"},
-                "child": {"type": ["object", "null"]}
-              }
+            "AphiaID": {
+              "type": "integer"
             },
-            "url": {"type": "string"},
-            "AphiaID": {"type": "integer"}
+            "rank": {
+              "type": "string"
+            },
+            "scientificname": {
+              "type": "string"
+            },
+            "child": {
+              "type": [
+                "object",
+                "null"
+              ]
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "AphiaID"
+          ]
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -113,9 +236,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+        "AphiaID": {
+          "type": "integer",
+          "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."
+        }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "vernaculars",
@@ -123,37 +251,48 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Vernacular (common) names with language codes",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "vernacular": {"type": "string"},
-                  "language_code": {"type": ["string", "null"]},
-                  "language": {"type": ["string", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "vernacular": {
+                "type": "string"
+              },
+              "language_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "language": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -165,9 +304,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+        "AphiaID": {
+          "type": "integer",
+          "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."
+        }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "distributions",
@@ -175,44 +319,93 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Marine distribution localities",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "locality": {"type": ["string", "null"]},
-                  "locationID": {"type": ["string", "null"]},
-                  "higherGeography": {"type": ["string", "null"]},
-                  "higherGeographyID": {"type": ["string", "null"]},
-                  "recordStatus": {"type": ["string", "null"]},
-                  "establishmentMeans": {"type": ["string", "null"]},
-                  "invasiveness": {"type": ["string", "null"]},
-                  "occurrence": {"type": ["string", "null"]},
-                  "decimalLatitude": {"type": ["number", "null"]},
-                  "decimalLongitude": {"type": ["number", "null"]}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "locality": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "locationID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "higherGeography": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "higherGeographyID": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "recordStatus": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "establishmentMeans": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "invasiveness": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "occurrence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "decimalLatitude": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "decimalLongitude": {
+                "type": [
+                  "number",
+                  "null"
+                ]
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -224,9 +417,14 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the accepted taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+        "AphiaID": {
+          "type": "integer",
+          "description": "WoRMS AphiaID of the accepted taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."
+        }
       },
-      "required": ["AphiaID"]
+      "required": [
+        "AphiaID"
+      ]
     },
     "fields": {
       "operation": "synonyms",
@@ -234,42 +432,63 @@
       "return_format": "JSON"
     },
     "test_examples": [
-      {"AphiaID": 127160},
-      {"AphiaID": 126436}
+      {
+        "AphiaID": 127160
+      },
+      {
+        "AphiaID": 126436
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "description": "Taxonomic synonyms",
-          "properties": {
-            "status": {"type": "string"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "AphiaID": {"type": "integer"},
-                  "scientificname": {"type": "string"},
-                  "authority": {"type": ["string", "null"]},
-                  "status": {"type": "string"},
-                  "unacceptreason": {"type": ["string", "null"]},
-                  "rank": {"type": "string"},
-                  "valid_AphiaID": {"type": "integer"},
-                  "valid_name": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "AphiaID": {
+                "type": "integer"
+              },
+              "scientificname": {
+                "type": "string"
+              },
+              "authority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "unacceptreason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": "string"
+              },
+              "valid_AphiaID": {
+                "type": "integer"
+              },
+              "valid_name": {
+                "type": "string"
               }
-            },
-            "url": {"type": "string"},
-            "count": {"type": "integer"},
-            "AphiaID": {"type": "integer"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

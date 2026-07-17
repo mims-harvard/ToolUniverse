@@ -78,22 +78,21 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "number_of_results"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -315,10 +314,6 @@
                 "type": "string"
               }
             },
-            "status": {
-              "type": "string",
-              "description": "Organization status (active, withdrawn, inactive)"
-            },
             "established": {
               "type": [
                 "integer",
@@ -363,7 +358,10 @@
                 "type": "string"
               }
             }
-          }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",

@@ -7,19 +7,31 @@
       "type": "object",
       "properties": {
         "drug_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Drug name to classify. Examples: 'metformin', 'aspirin', 'ibuprofen', 'metoprolol'."
         },
         "rxcui": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "RxNorm RXCUI identifier (alternative to drug_name). Examples: '6809' (metformin), '1191' (aspirin)."
         },
         "rela_source": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Classification source. Options: 'ATC' (WHO Anatomical Therapeutic Chemical, default), 'FDASPL' (FDA pharmacologic classes including EPC/MoA/PE), 'MESH', 'VA', 'DAILYMED', 'ALL'. Default: 'ATC'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum results to return (default 20)."
         }
       },
@@ -31,43 +43,63 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "classId": {"type": "string"},
-                  "className": {"type": "string"},
-                  "classType": {"type": "string"},
-                  "rxcui": {"type": "string"},
-                  "drugName": {"type": "string"},
-                  "tty": {"type": "string"},
-                  "rela": {"type": "string"},
-                  "relaSource": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "classId": {
+                "type": "string"
+              },
+              "className": {
+                "type": "string"
+              },
+              "classType": {
+                "type": "string"
+              },
+              "rxcui": {
+                "type": "string"
+              },
+              "drugName": {
+                "type": "string"
+              },
+              "tty": {
+                "type": "string"
+              },
+              "rela": {
+                "type": "string"
+              },
+              "relaSource": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"drug_name": "metformin", "rela_source": "ATC"},
-      {"drug_name": "ibuprofen", "rela_source": "FDASPL"},
-      {"rxcui": "1191", "rela_source": "ATC"}
+      {
+        "drug_name": "metformin",
+        "rela_source": "ATC"
+      },
+      {
+        "drug_name": "ibuprofen",
+        "rela_source": "FDASPL"
+      },
+      {
+        "rxcui": "1191",
+        "rela_source": "ATC"
+      }
     ]
   },
   {
@@ -82,19 +114,30 @@
           "description": "Drug class identifier. ATC class codes: 'M01AE' (propionic acid derivatives), 'N02BA' (salicylic acid derivatives), 'A10BA' (biguanides). FDA EPC IDs are long numeric strings."
         },
         "rela_source": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Classification source system. Options: 'ATC' (default), 'FDASPL', 'MESH', 'VA', 'DAILYMED'."
         },
         "ttys": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "RxNorm term types to include. Options: 'IN' (ingredients, default), 'PIN' (precise ingredients), 'MIN' (multi-ingredients), 'SCD' (semantic clinical drugs). Default: 'IN'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of drugs to return (default 50)."
         }
       },
-      "required": ["class_id"]
+      "required": [
+        "class_id"
+      ]
     },
     "fields": {
       "operation": "get_class_members"
@@ -102,37 +145,46 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rxcui": {"type": "string"},
-                  "name": {"type": "string"},
-                  "tty": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rxcui": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "tty": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"class_id": "M01AE", "rela_source": "ATC", "ttys": "IN"},
-      {"class_id": "N02BA", "rela_source": "ATC", "ttys": "IN"}
+      {
+        "class_id": "M01AE",
+        "rela_source": "ATC",
+        "ttys": "IN"
+      },
+      {
+        "class_id": "N02BA",
+        "rela_source": "ATC",
+        "ttys": "IN"
+      }
     ]
   },
   {
@@ -147,15 +199,23 @@
           "description": "Keyword to search in class names. Examples: 'analgesic', 'beta blocker', 'antidiabetic', 'statin', 'NSAID', 'ACE inhibitor'."
         },
         "class_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by class type. Options: 'ATC1-4' (ATC codes), 'EPC' (Established Pharmacologic Class), 'MOA' (Mechanism of Action), 'PE' (Physiologic Effect), 'DISEASE', 'VA', 'SCHEDULE'."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum results to return (default 20)."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "operation": "find_classes"
@@ -163,38 +223,46 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "classId": {"type": "string"},
-                  "className": {"type": "string"},
-                  "classType": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "classId": {
+                "type": "string"
+              },
+              "className": {
+                "type": "string"
+              },
+              "classType": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"query": "beta blocker"},
-      {"query": "statin", "class_type": "EPC"},
-      {"query": "propionic acid"}
+      {
+        "query": "beta blocker"
+      },
+      {
+        "query": "statin",
+        "class_type": "EPC"
+      },
+      {
+        "query": "propionic acid"
+      }
     ]
   },
   {
@@ -209,11 +277,16 @@
           "description": "Drug class identifier whose ancestor chain to traverse. ATC class codes: 'N02BA' (salicylic acid derivatives), 'M01AE' (propionic acid derivatives), 'A10BA' (biguanides), 'C09AA' (ACE inhibitors)."
         },
         "source": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional classification source/vocabulary for the graph. Default: ATC (the API default when omitted). Most ATC class IDs do not require this."
         }
       },
-      "required": ["class_id"]
+      "required": [
+        "class_id"
+      ]
     },
     "fields": {
       "operation": "get_class_hierarchy"
@@ -223,63 +296,85 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "nodes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "classId": {"type": "string"},
-                      "className": {"type": "string"},
-                      "classType": {"type": "string"}
-                    }
-                  }
-                },
-                "edges": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "child": {"type": "string"},
-                      "rela": {"type": "string"},
-                      "parent": {"type": "string"}
-                    }
-                  }
-                },
-                "ancestor_path": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "classId": {"type": "string"},
-                      "className": {"type": "string"},
-                      "classType": {"type": "string"}
-                    }
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classId": {
+                    "type": "string"
+                  },
+                  "className": {
+                    "type": "string"
+                  },
+                  "classType": {
+                    "type": "string"
                   }
                 }
               }
             },
-            "metadata": {"type": "object"}
+            "edges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "child": {
+                    "type": "string"
+                  },
+                  "rela": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "ancestor_path": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "classId": {
+                    "type": "string"
+                  },
+                  "className": {
+                    "type": "string"
+                  },
+                  "classType": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           },
-          "required": ["status", "data"]
+          "required": [
+            "nodes"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"class_id": "N02BA"},
-      {"class_id": "M01AE"},
-      {"class_id": "A10BA"}
+      {
+        "class_id": "N02BA"
+      },
+      {
+        "class_id": "M01AE"
+      },
+      {
+        "class_id": "A10BA"
+      }
     ]
   },
   {
@@ -290,23 +385,38 @@
       "type": "object",
       "properties": {
         "drug_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Forward lookup: drug name. Examples: 'albuterol', 'aspirin', 'metoprolol'. Provide this OR 'rxcui' OR 'class_id'."
         },
         "rxcui": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Forward lookup: RxNorm RXCUI (alternative to drug_name)."
         },
         "class_id": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Reverse lookup: MED-RT/MeSH disease class ID to find all related drugs for. Examples: 'D001249' (Asthma), 'D001986' (Bronchial Spasm), 'D003920' (Diabetes Mellitus)."
         },
         "rela": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "MED-RT relationship to filter on. Options: 'may_treat', 'may_prevent', 'CI_with' (contraindicated with), 'induces', 'has_PE' (has physiologic effect), 'has_MoA', 'has_EPC'. Default: all relations."
         },
         "ttys": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Reverse lookup only: RxNorm term types for returned drugs. Options: 'IN' (ingredients, default), 'PIN', 'MIN', 'SCD'. Default: 'IN'."
         }
       },
@@ -318,43 +428,63 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {"type": "string", "const": "success"},
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "classId": {"type": "string"},
-                  "className": {"type": "string"},
-                  "classType": {"type": "string"},
-                  "rela": {"type": "string"},
-                  "rxcui": {"type": "string"},
-                  "drugName": {"type": "string"},
-                  "name": {"type": "string"},
-                  "tty": {"type": "string"}
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "classId": {
+                "type": "string"
+              },
+              "className": {
+                "type": "string"
+              },
+              "classType": {
+                "type": "string"
+              },
+              "rela": {
+                "type": "string"
+              },
+              "rxcui": {
+                "type": "string"
+              },
+              "drugName": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "tty": {
+                "type": "string"
               }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["status", "data"]
+            }
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string", "const": "error"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"drug_name": "albuterol", "rela": "may_treat"},
-      {"class_id": "D001249", "rela": "may_treat", "ttys": "IN"},
-      {"drug_name": "aspirin"}
+      {
+        "drug_name": "albuterol",
+        "rela": "may_treat"
+      },
+      {
+        "class_id": "D001249",
+        "rela": "may_treat",
+        "ttys": "IN"
+      },
+      {
+        "drug_name": "aspirin"
+      }
     ]
   }
 ]

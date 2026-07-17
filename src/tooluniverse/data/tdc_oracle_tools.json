@@ -63,71 +63,59 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Successful oracle scoring. Mirrors the content of the 'data' field returned by the tool.",
           "properties": {
-            "status": {
-              "const": "success"
+            "oracle": {
+              "type": "string",
+              "description": "Canonical oracle name that was used."
             },
-            "data": {
-              "type": "object",
-              "description": "Successful oracle scoring. Mirrors the content of the 'data' field returned by the tool.",
-              "properties": {
-                "oracle": {
-                  "type": "string",
-                  "description": "Canonical oracle name that was used."
-                },
-                "oracle_description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Human-readable description of the oracle."
-                },
-                "results": {
-                  "type": "array",
-                  "description": "One entry per input SMILES, in input order.",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "smiles": {
-                        "type": "string",
-                        "description": "The input SMILES string."
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "The oracle score for this molecule, or null if scoring failed."
-                      },
-                      "error": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Error message if scoring this molecule failed, otherwise null."
-                      }
-                    },
-                    "required": [
-                      "smiles",
-                      "score",
-                      "error"
-                    ]
+            "oracle_description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Human-readable description of the oracle."
+            },
+            "results": {
+              "type": "array",
+              "description": "One entry per input SMILES, in input order.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "smiles": {
+                    "type": "string",
+                    "description": "The input SMILES string."
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "The oracle score for this molecule, or null if scoring failed."
+                  },
+                  "error": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Error message if scoring this molecule failed, otherwise null."
                   }
-                }
-              },
-              "required": [
-                "oracle",
-                "results"
-              ]
+                },
+                "required": [
+                  "smiles",
+                  "score",
+                  "error"
+                ]
+              }
             }
           },
           "required": [
-            "data"
+            "oracle",
+            "results"
           ]
         },
         {
           "type": "object",
-          "description": "Error response (e.g. PyTDC not installed, empty input, or unknown oracle).",
           "properties": {
             "error": {
               "type": "string",

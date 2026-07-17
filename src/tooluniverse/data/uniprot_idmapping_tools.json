@@ -52,66 +52,51 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "from_db": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "from_db": {
-                  "type": "string"
-                },
-                "to_db": {
-                  "type": "string"
-                },
-                "result_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "from": {
-                        "type": "string"
-                      },
-                      "to": {
-                        "type": "string"
-                      }
-                    }
+            "to_db": {
+              "type": "string"
+            },
+            "result_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
                   }
-                },
-                "failed_ids": {
-                  "type": "array"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "failed_ids": {
+              "type": "array"
             }
-          }
+          },
+          "required": [
+            "from_db"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -147,60 +132,45 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "query_ids": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "query_ids": {
-                  "type": "string"
-                },
-                "result_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "from": {
-                        "type": "string"
-                      },
-                      "to": {
-                        "type": "string"
-                      }
-                    }
+            "result_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "query_ids"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -251,66 +221,51 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_names": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_names": {
-                  "type": "string"
-                },
-                "species_taxid": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "result_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "from": {
-                        "type": "string"
-                      },
-                      "to": {
-                        "type": "string"
-                      }
-                    }
+            "species_taxid": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "result_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "gene_names"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -334,71 +289,56 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "group_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "group_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "groups": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "group_name": {
-                        "type": "string"
-                      },
-                      "databases": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string"
-                            },
-                            "display_name": {
-                              "type": "string"
-                            },
-                            "from_supported": {
-                              "type": "boolean"
-                            }
-                          }
+            "groups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "group_name": {
+                    "type": "string"
+                  },
+                  "databases": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "display_name": {
+                          "type": "string"
+                        },
+                        "from_supported": {
+                          "type": "boolean"
                         }
                       }
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          }
+          },
+          "required": [
+            "group_count"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

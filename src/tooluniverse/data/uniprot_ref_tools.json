@@ -34,79 +34,61 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "acronym": {
-                    "type": "string"
-                  },
-                  "definition": {
-                    "type": "string"
-                  },
-                  "alternative_names": {
-                    "type": "array",
-                    "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "acronym": {
+                "type": "string"
+              },
+              "definition": {
+                "type": "string"
+              },
+              "alternative_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "cross_references": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "database": {
+                      "type": "string"
+                    },
+                    "id": {
                       "type": "string"
                     }
-                  },
-                  "cross_references": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "database": {
-                          "type": "string"
-                        },
-                        "id": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "reviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
                   }
                 }
+              },
+              "reviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -142,87 +124,72 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "acronym": {
-                  "type": "string"
-                },
-                "definition": {
-                  "type": "string"
-                },
-                "alternative_names": {
-                  "type": "array",
-                  "items": {
+            "name": {
+              "type": "string"
+            },
+            "acronym": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            },
+            "alternative_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cross_references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
                     "type": "string"
-                  }
-                },
-                "cross_references": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "database": {
-                        "type": "string"
-                      },
-                      "id": {
-                        "type": "string"
-                      },
-                      "properties": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "properties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
-                },
-                "reviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "unreviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "reviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "unreviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -262,59 +229,41 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "category": {
-                    "type": "string"
-                  },
-                  "definition": {
-                    "type": "string"
-                  },
-                  "reviewed_protein_count": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              },
+              "definition": {
+                "type": "string"
+              },
+              "reviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -350,89 +299,74 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "category": {
-                  "type": "string"
-                },
-                "definition": {
-                  "type": "string"
-                },
-                "parents": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
+            "name": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "definition": {
+              "type": "string"
+            },
+            "parents": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
                   }
-                },
-                "go_mappings": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "go_id": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "reviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "unreviewed_protein_count": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "go_mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "reviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
+            },
+            "unreviewed_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -468,66 +402,26 @@
       "oneOf": [
         {
           "type": "object",
-          "required": [
-            "status"
-          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "id": {
+              "type": "string"
             },
-            "data": {
+            "description": {
+              "type": "string"
+            },
+            "organism": {
               "type": "object",
               "properties": {
-                "id": {
+                "scientific_name": {
                   "type": "string"
                 },
-                "description": {
-                  "type": "string"
+                "common_name": {
+                  "type": [
+                    "null",
+                    "string"
+                  ]
                 },
-                "organism": {
-                  "type": "object",
-                  "properties": {
-                    "scientific_name": {
-                      "type": "string"
-                    },
-                    "common_name": {
-                      "type": [
-                        "null",
-                        "string"
-                      ]
-                    },
-                    "taxon_id": {
-                      "type": [
-                        "integer",
-                        "number"
-                      ]
-                    }
-                  }
-                },
-                "proteome_type": {
-                  "type": "string"
-                },
-                "components": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "protein_count": {
-                        "type": [
-                          "integer",
-                          "number"
-                        ]
-                      },
-                      "genome_accession": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "total_protein_count": {
+                "taxon_id": {
                   "type": [
                     "integer",
                     "number"
@@ -535,25 +429,50 @@
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "proteome_type": {
+              "type": "string"
+            },
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "protein_count": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "genome_accession": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "total_protein_count": {
+              "type": [
+                "integer",
+                "number"
+              ]
             }
-          }
+          },
+          "required": [
+            "id"
+          ]
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -593,68 +512,50 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "organism": {
-                    "type": "string"
-                  },
-                  "common_name": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "taxon_id": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "proteome_type": {
-                    "type": "string"
-                  },
-                  "protein_count": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
+              },
+              "common_name": {
+                "type": [
+                  "null",
+                  "string"
+                ]
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
+              },
+              "proteome_type": {
+                "type": "string"
+              },
+              "protein_count": {
+                "type": [
+                  "integer",
+                  "number"
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

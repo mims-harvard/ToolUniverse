@@ -93,15 +93,14 @@
                 }
               }
             },
-            "status": {
-              "type": "string",
-              "description": "OK or error message"
-            },
             "tzid": {
               "type": "string",
               "description": "Timezone identifier"
             }
-          }
+          },
+          "required": [
+            "results"
+          ]
         },
         {
           "type": "object",

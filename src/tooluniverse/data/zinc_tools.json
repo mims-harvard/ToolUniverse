@@ -28,116 +28,97 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "zinc_id": {
               "type": "string",
-              "enum": [
-                "success"
-              ]
+              "description": "ZINC compound identifier"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "zinc_id": {
-                  "type": "string",
-                  "description": "ZINC compound identifier"
-                },
-                "smiles": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Canonical SMILES structure"
-                },
-                "formula": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Molecular formula"
-                },
-                "mwt": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Molecular weight (Da)"
-                },
-                "logp": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Calculated LogP (octanol-water partition)"
-                },
-                "heavy_atoms": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of heavy (non-hydrogen) atoms"
-                },
-                "hetero_atoms": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of heteroatoms"
-                },
-                "rings": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of rings"
-                },
-                "inchi": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "InChI string"
-                },
-                "inchikey": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "InChIKey hash"
-                },
-                "database": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Source database (zinc20 or zinc22)"
-                },
-                "n_catalogs": {
-                  "type": "integer",
-                  "description": "Number of vendor catalogs offering this compound"
-                }
-              }
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Canonical SMILES structure"
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula"
+            },
+            "mwt": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Molecular weight (Da)"
+            },
+            "logp": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Calculated LogP (octanol-water partition)"
+            },
+            "heavy_atoms": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of heavy (non-hydrogen) atoms"
+            },
+            "hetero_atoms": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of heteroatoms"
+            },
+            "rings": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of rings"
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI string"
+            },
+            "inchikey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey hash"
+            },
+            "database": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Source database (zinc20 or zinc22)"
+            },
+            "n_catalogs": {
+              "type": "integer",
+              "description": "Number of vendor catalogs offering this compound"
             }
           },
           "required": [
-            "status",
-            "data"
+            "zinc_id"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -179,115 +160,96 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "zinc_id": {
               "type": "string",
-              "enum": [
-                "success"
-              ]
+              "description": "ZINC compound identifier"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "zinc_id": {
-                  "type": "string",
-                  "description": "ZINC compound identifier"
-                },
-                "smiles": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Canonical SMILES structure"
-                },
-                "vendor_count": {
-                  "type": "integer",
-                  "description": "Number of vendor catalog entries"
-                },
-                "vendors": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "catalog_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Vendor/catalog name"
-                      },
-                      "supplier_code": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Vendor's internal product/supplier code"
-                      },
-                      "price": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "Quoted price"
-                      },
-                      "quantity": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "Quantity for the quoted price"
-                      },
-                      "unit": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Unit for the quantity (e.g., mg)"
-                      },
-                      "shipping": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Estimated shipping time"
-                      },
-                      "purchasable": {
-                        "type": "boolean",
-                        "description": "Whether this catalog entry is purchasable"
-                      },
-                      "url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Vendor order URL template (if available)"
-                      }
-                    }
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Canonical SMILES structure"
+            },
+            "vendor_count": {
+              "type": "integer",
+              "description": "Number of vendor catalog entries"
+            },
+            "vendors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "catalog_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Vendor/catalog name"
                   },
-                  "description": "List of vendor/catalog entries offering this compound"
+                  "supplier_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Vendor's internal product/supplier code"
+                  },
+                  "price": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Quoted price"
+                  },
+                  "quantity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Quantity for the quoted price"
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Unit for the quantity (e.g., mg)"
+                  },
+                  "shipping": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Estimated shipping time"
+                  },
+                  "purchasable": {
+                    "type": "boolean",
+                    "description": "Whether this catalog entry is purchasable"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Vendor order URL template (if available)"
+                  }
                 }
-              }
+              },
+              "description": "List of vendor/catalog entries offering this compound"
             }
           },
           "required": [
-            "status",
-            "data"
+            "zinc_id"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -353,107 +315,81 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "zinc_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "ZINC compound identifier"
-                  },
-                  "smiles": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Canonical SMILES of the hit"
-                  },
-                  "matched_smiles": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "The matched substructure/query SMILES"
-                  },
-                  "formula": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Molecular formula"
-                  },
-                  "mwt": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Molecular weight (Da)"
-                  },
-                  "logp": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Calculated LogP"
-                  },
-                  "inchikey": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "InChIKey hash"
-                  },
-                  "database": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source database (zinc20 or zinc22)"
-                  },
-                  "n_catalogs": {
-                    "type": "integer",
-                    "description": "Number of vendor catalogs offering this hit"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "zinc_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ZINC compound identifier"
+              },
+              "smiles": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Canonical SMILES of the hit"
+              },
+              "matched_smiles": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The matched substructure/query SMILES"
+              },
+              "formula": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Molecular formula"
+              },
+              "mwt": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Molecular weight (Da)"
+              },
+              "logp": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Calculated LogP"
+              },
+              "inchikey": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "InChIKey hash"
+              },
+              "database": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source database (zinc20 or zinc22)"
+              },
+              "n_catalogs": {
+                "type": "integer",
+                "description": "Number of vendor catalogs offering this hit"
               }
-            },
-            "count": {
-              "type": "integer",
-              "description": "Number of matches returned"
             }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -495,32 +431,11 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array"
-            }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          "type": "array"
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -529,7 +444,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }
@@ -587,32 +501,11 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
-            "data": {
-              "type": "array"
-            }
-          },
-          "required": [
-            "status",
-            "data"
-          ]
+          "type": "array"
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             },
@@ -621,7 +514,6 @@
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

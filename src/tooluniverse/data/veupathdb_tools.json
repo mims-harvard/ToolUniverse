@@ -239,92 +239,52 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "primary_key": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "product": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "organism": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "location_text": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "project": {
-                  "type": "string"
-                },
-                "organism": {
-                  "type": "string"
-                },
-                "total_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "operation": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "primary_key": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "product": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organism": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "location_text": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
@@ -397,90 +357,62 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
+            "primary_key": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "primary_key": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "product": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "organism": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "location_text": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "chromosome": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "transcript_count": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "source_id": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "project": {
-                  "type": "string"
-                },
-                "gene_id": {
-                  "type": "string"
-                },
-                "operation": {
-                  "type": "string"
-                }
-              }
+            "product": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organism": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gene_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "location_text": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "chromosome": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "transcript_count": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [
-            "data"
+            "primary_key"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

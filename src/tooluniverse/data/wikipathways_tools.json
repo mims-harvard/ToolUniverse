@@ -26,53 +26,35 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "status"
-          ],
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "wpid": {
-                    "type": "string"
-                  },
-                  "uri": {
-                    "type": "string"
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "organism": {
-                    "type": "string"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "wpid": {
+                "type": "string"
+              },
+              "uri": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
         {
           "type": "object",
-          "required": [
-            "status",
-            "error"
-          ],
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

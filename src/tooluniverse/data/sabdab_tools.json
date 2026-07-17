@@ -113,88 +113,128 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "success"
+            "pdb_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdb_id": {
-                  "type": "string"
-                },
-                "antigen_name": {
-                  "type": ["string", "null"]
-                },
-                "antigen_species": {
-                  "type": ["string", "null"]
-                },
-                "heavy_species": {
-                  "type": ["string", "null"]
-                },
-                "light_species": {
-                  "type": ["string", "null"]
-                },
-                "resolution": {
-                  "type": ["number", "string", "null"]
-                },
-                "method": {
-                  "type": ["string", "null"]
-                },
-                "r_free": {
-                  "type": ["number", "string", "null"]
-                },
-                "r_factor": {
-                  "type": ["number", "string", "null"]
-                },
-                "heavy_subclass": {
-                  "type": ["string", "null"]
-                },
-                "light_subclass": {
-                  "type": ["string", "null"]
-                },
-                "scfv": {
-                  "type": ["boolean", "null"]
-                },
-                "engineered": {
-                  "type": ["boolean", "null"]
-                },
-                "affinity": {
-                  "type": ["number", "string", "null"]
-                },
-                "delta_g": {
-                  "type": ["number", "string", "null"]
-                },
-                "pmid": {
-                  "type": ["integer", "string", "null"]
-                },
-                "chains": {
-                  "type": "array"
-                },
-                "count": {
-                  "type": "integer"
-                }
-              },
-              "required": ["pdb_id", "chains", "count"]
+            "antigen_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "metadata": {
-              "type": "object"
+            "antigen_species": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "heavy_species": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "light_species": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "resolution": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "r_free": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "r_factor": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "heavy_subclass": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "light_subclass": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "scfv": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "engineered": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "affinity": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "delta_g": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "pmid": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ]
+            },
+            "chains": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
             }
           },
-          "required": ["status", "data"]
+          "required": [
+            "pdb_id",
+            "chains",
+            "count"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
-          "required": ["status", "error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },

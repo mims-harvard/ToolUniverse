@@ -47,108 +47,96 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Successful dataset load. Mirrors the 'data' field returned by the tool.",
           "properties": {
-            "status": {
-              "const": "success"
+            "problem": {
+              "type": "string",
+              "description": "Canonical TDC problem name used."
             },
-            "data": {
-              "type": "object",
-              "description": "Successful dataset load. Mirrors the 'data' field returned by the tool.",
+            "name": {
+              "type": "string",
+              "description": "Dataset name that was loaded."
+            },
+            "n_rows": {
+              "type": "integer",
+              "description": "Total number of rows in the dataset."
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Column names of the dataset DataFrame (e.g. Drug_ID, Drug, Y)."
+            },
+            "label_summary": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Summary of the 'Y' label column, or null if there is no 'Y' column.",
               "properties": {
-                "problem": {
+                "label_type": {
                   "type": "string",
-                  "description": "Canonical TDC problem name used."
+                  "description": "One of 'categorical', 'continuous', or 'other'."
                 },
-                "name": {
-                  "type": "string",
-                  "description": "Dataset name that was loaded."
+                "n_unique": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of distinct label values."
                 },
-                "n_rows": {
-                  "type": "integer",
-                  "description": "Total number of rows in the dataset."
-                },
-                "columns": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Column names of the dataset DataFrame (e.g. Drug_ID, Drug, Y)."
-                },
-                "label_summary": {
+                "distribution": {
                   "type": [
                     "object",
                     "null"
                   ],
-                  "description": "Summary of the 'Y' label column, or null if there is no 'Y' column.",
-                  "properties": {
-                    "label_type": {
-                      "type": "string",
-                      "description": "One of 'categorical', 'continuous', or 'other'."
-                    },
-                    "n_unique": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ],
-                      "description": "Number of distinct label values."
-                    },
-                    "distribution": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
-                      "description": "Value-count distribution for categorical labels, otherwise null."
-                    },
-                    "statistics": {
-                      "type": [
-                        "object",
-                        "null"
-                      ],
-                      "description": "Summary statistics (count, mean, std, min, quartiles, max) for continuous labels, otherwise null."
-                    }
-                  },
-                  "required": [
-                    "label_type"
-                  ]
+                  "description": "Value-count distribution for categorical labels, otherwise null."
                 },
-                "split_sizes": {
+                "statistics": {
                   "type": [
                     "object",
                     "null"
                   ],
-                  "description": "Row counts per split (train/valid/test), or null if the split could not be computed.",
-                  "additionalProperties": {
-                    "type": "integer"
-                  }
-                },
-                "sample_rows": {
-                  "type": "integer",
-                  "description": "Number of rows included in the sample."
-                },
-                "sample": {
-                  "type": "array",
-                  "description": "A small head() sample of rows as JSON objects keyed by column name.",
-                  "items": {
-                    "type": "object"
-                  }
+                  "description": "Summary statistics (count, mean, std, min, quartiles, max) for continuous labels, otherwise null."
                 }
               },
               "required": [
-                "problem",
-                "name",
-                "n_rows",
-                "columns",
-                "sample"
+                "label_type"
               ]
+            },
+            "split_sizes": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Row counts per split (train/valid/test), or null if the split could not be computed.",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
+            "sample_rows": {
+              "type": "integer",
+              "description": "Number of rows included in the sample."
+            },
+            "sample": {
+              "type": "array",
+              "description": "A small head() sample of rows as JSON objects keyed by column name.",
+              "items": {
+                "type": "object"
+              }
             }
           },
           "required": [
-            "data"
+            "problem",
+            "name",
+            "n_rows",
+            "columns",
+            "sample"
           ]
         },
         {
           "type": "object",
-          "description": "Error response (e.g. PyTDC not installed, unknown problem/name, or a problem module that cannot be imported).",
           "properties": {
             "error": {
               "type": "string",
@@ -196,44 +184,32 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "Successful listing. Mirrors the 'data' field returned by the tool.",
           "properties": {
-            "status": {
-              "const": "success"
+            "problem": {
+              "type": "string",
+              "description": "Canonical TDC problem name used."
             },
-            "data": {
-              "type": "object",
-              "description": "Successful listing. Mirrors the 'data' field returned by the tool.",
-              "properties": {
-                "problem": {
-                  "type": "string",
-                  "description": "Canonical TDC problem name used."
-                },
-                "n_datasets": {
-                  "type": "integer",
-                  "description": "Number of available datasets for this problem."
-                },
-                "dataset_names": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Normalized (lowercase) dataset names accepted case-insensitively by TDC_load_dataset."
-                }
+            "n_datasets": {
+              "type": "integer",
+              "description": "Number of available datasets for this problem."
+            },
+            "dataset_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
               },
-              "required": [
-                "problem",
-                "n_datasets",
-                "dataset_names"
-              ]
+              "description": "Normalized (lowercase) dataset names accepted case-insensitively by TDC_load_dataset."
             }
           },
           "required": [
-            "data"
+            "problem",
+            "n_datasets",
+            "dataset_names"
           ]
         },
         {
           "type": "object",
-          "description": "Error response (e.g. PyTDC not installed or unknown problem).",
           "properties": {
             "error": {
               "type": "string",

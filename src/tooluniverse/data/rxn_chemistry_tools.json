@@ -11,7 +11,7 @@
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://rxn.app.accelerate.science",
-        "purpose": "IBM RXN for Chemistry API key — runs ML forward reaction prediction and retrosynthesis.",
+        "purpose": "IBM RXN for Chemistry API key \u2014 runs ML forward reaction prediction and retrosynthesis.",
         "without": "RXN tools return a clear missing-key error and cannot run predictions."
       }
     },
@@ -56,67 +56,55 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "reactants": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "reactants": {
-                  "type": "string"
-                },
-                "product_smiles": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "confidence": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "attempts": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "smiles": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "confidence": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "product_smiles": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "confidence": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "attempts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "confidence": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
-                },
-                "prediction_id": {
-                  "type": "string"
-                },
-                "ai_model": {
-                  "type": "string"
                 }
               }
+            },
+            "prediction_id": {
+              "type": "string"
+            },
+            "ai_model": {
+              "type": "string"
             }
           },
           "required": [
-            "status",
-            "data"
+            "reactants"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }
@@ -146,7 +134,7 @@
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://rxn.app.accelerate.science",
-        "purpose": "IBM RXN for Chemistry API key — runs ML forward reaction prediction and retrosynthesis.",
+        "purpose": "IBM RXN for Chemistry API key \u2014 runs ML forward reaction prediction and retrosynthesis.",
         "without": "RXN tools return a clear missing-key error and cannot run predictions."
       }
     },
@@ -195,64 +183,52 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "product": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "product": {
-                  "type": "string"
-                },
-                "routes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "smiles": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "confidence": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "routes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "confidence": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
-                },
-                "route_count": {
-                  "type": "integer"
-                },
-                "prediction_id": {
-                  "type": "string"
-                },
-                "ai_model": {
-                  "type": "string"
                 }
               }
+            },
+            "route_count": {
+              "type": "integer"
+            },
+            "prediction_id": {
+              "type": "string"
+            },
+            "ai_model": {
+              "type": "string"
             }
           },
           "required": [
-            "status",
-            "data"
+            "product"
           ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
             "error": {
               "type": "string"
             }

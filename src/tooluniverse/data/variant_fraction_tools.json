@@ -49,68 +49,54 @@
       "type": "object",
       "oneOf": [
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "total_variants": {
+              "type": "integer"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_variants": {
-                  "type": "integer"
-                },
-                "vaf_filtered": {
-                  "type": "integer"
-                },
-                "coding_variants_below_vaf": {
-                  "type": "integer"
-                },
-                "matching_annotation": {
-                  "type": "integer"
-                },
-                "fraction": {
-                  "type": "number"
-                },
-                "naive_fraction": {
-                  "type": "number"
-                },
-                "vaf_column": {
-                  "type": "string"
-                },
-                "so_column": {
-                  "type": "string"
-                },
-                "vaf_threshold": {
-                  "type": "number"
-                },
-                "annotation": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "total_variants",
-                "coding_variants_below_vaf",
-                "matching_annotation",
-                "fraction"
-              ]
+            "vaf_filtered": {
+              "type": "integer"
+            },
+            "coding_variants_below_vaf": {
+              "type": "integer"
+            },
+            "matching_annotation": {
+              "type": "integer"
+            },
+            "fraction": {
+              "type": "number"
+            },
+            "naive_fraction": {
+              "type": "number"
+            },
+            "vaf_column": {
+              "type": "string"
+            },
+            "so_column": {
+              "type": "string"
+            },
+            "vaf_threshold": {
+              "type": "number"
+            },
+            "annotation": {
+              "type": "string"
             }
           },
           "required": [
-            "status",
-            "data"
+            "total_variants",
+            "coding_variants_below_vaf",
+            "matching_annotation",
+            "fraction"
           ]
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

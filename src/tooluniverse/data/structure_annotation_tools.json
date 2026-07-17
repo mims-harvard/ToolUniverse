@@ -78,12 +78,6 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "success"
-              ]
-            },
             "pdb_id": {
               "type": [
                 "string",
@@ -169,7 +163,6 @@
             }
           },
           "required": [
-            "status",
             "target_chain",
             "n_residues",
             "annotations"
@@ -178,18 +171,11 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string",
-              "enum": [
-                "error"
-              ]
-            },
             "error": {
               "type": "string"
             }
           },
           "required": [
-            "status",
             "error"
           ]
         }

@@ -15,10 +15,12 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records per page (1–100)."
+          "description": "Number of records per page (1\u2013100)."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://rnacentral.org/api/v1/rna/",
@@ -28,35 +30,72 @@
       "type": "object",
       "description": "RNAcentral rna list response",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "data": {
           "type": "object",
           "properties": {
-            "count": {"type": "integer"},
+            "count": {
+              "type": "integer"
+            },
             "results": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "rnacentral_id": {"type": "string"},
-                  "description": {"type": "string"},
-                  "rna_type": {"type": "string"},
-                  "taxon": {"type": "object", "properties": {"scientific_name": {"type": "string"}, "taxid": {"type": "integer"}}}
+                  "rnacentral_id": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "rna_type": {
+                    "type": "string"
+                  },
+                  "taxon": {
+                    "type": "object",
+                    "properties": {
+                      "scientific_name": {
+                        "type": "string"
+                      },
+                      "taxid": {
+                        "type": "integer"
+                      }
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "url": {"type": "string"}
+        "url": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"query": "let-7", "page_size": 1},
-      {"query": "U6", "page_size": 1}
+      {
+        "query": "let-7",
+        "page_size": 1
+      },
+      {
+        "query": "U6",
+        "page_size": 1
+      }
     ],
-    "label": ["RNAcentral", "ncRNA", "Search"],
+    "label": [
+      "RNAcentral",
+      "ncRNA",
+      "Search"
+    ],
     "metadata": {
-      "tags": ["rna", "mirna", "lncrna", "annotation"],
+      "tags": [
+        "rna",
+        "mirna",
+        "lncrna",
+        "annotation"
+      ],
       "estimated_execution_time": "< 2 seconds"
     }
   },
@@ -72,7 +111,9 @@
           "description": "RNAcentral accession (e.g., 'URS000075C808')."
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://rnacentral.org/api/v1/rna/{accession}",
@@ -82,17 +123,33 @@
       "type": "object",
       "description": "RNAcentral accession response",
       "properties": {
-        "status": {"type": "string"},
-        "data": {"type": "object"},
-        "url": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        },
+        "url": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
-      {"accession": "URS000075C808"}
+      {
+        "accession": "URS000075C808"
+      }
     ],
-    "label": ["RNAcentral", "ncRNA", "Record"],
+    "label": [
+      "RNAcentral",
+      "ncRNA",
+      "Record"
+    ],
     "metadata": {
-      "tags": ["rna", "accession", "annotation"],
+      "tags": [
+        "rna",
+        "accession",
+        "annotation"
+      ],
       "estimated_execution_time": "< 2 seconds"
     }
   },
@@ -108,11 +165,16 @@
           "description": "RNAcentral URS identifier (e.g., 'URS000063A371', 'URS000075C808')."
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "fields": {
       "endpoint": "https://rnacentral.org/api/v1/rna/{accession}/[xrefs,publications]",
-      "sub_resources": ["xrefs", "publications"],
+      "sub_resources": [
+        "xrefs",
+        "publications"
+      ],
       "format": "json"
     },
     "return_schema": {
@@ -120,46 +182,69 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "accession": {"type": "string"},
-            "data": {
+            "xrefs": {
               "type": "object",
               "properties": {
-                "xrefs": {
-                  "type": "object",
-                  "properties": {
-                    "count": {"type": "integer"},
-                    "results": {"type": "array", "items": {"type": "object"}}
-                  }
+                "count": {
+                  "type": "integer"
                 },
-                "publications": {
-                  "type": "object",
-                  "properties": {
-                    "count": {"type": "integer"},
-                    "results": {"type": "array", "items": {"type": "object"}}
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "publications": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer"
+                },
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
                   }
                 }
               }
             }
           },
-          "required": ["data"]
+          "required": [
+            "xrefs"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"accession": "URS000063A371"}
+      {
+        "accession": "URS000063A371"
+      }
     ],
-    "label": ["RNAcentral", "ncRNA", "CrossReference"],
+    "label": [
+      "RNAcentral",
+      "ncRNA",
+      "CrossReference"
+    ],
     "metadata": {
-      "tags": ["rna", "xrefs", "publications", "annotation"],
+      "tags": [
+        "rna",
+        "xrefs",
+        "publications",
+        "annotation"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   },
@@ -171,23 +256,38 @@
       "type": "object",
       "properties": {
         "region": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Locus as 'chr:start-end' (1-based), e.g. '2:39745816-39826679'. Omit if giving chromosome/start/end."
         },
         "species": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Ensembl species slug (default 'homo_sapiens'). E.g. 'mus_musculus', 'danio_rerio'."
         },
         "chromosome": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Chromosome name without 'chr' prefix, e.g. '2'. Used with start/end when 'region' is omitted."
         },
         "start": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Region start (1-based). Used with chromosome/end when 'region' is omitted."
         },
         "end": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Region end (1-based). Used with chromosome/start when 'region' is omitted."
         }
       },
@@ -203,38 +303,67 @@
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "species": {"type": "string"},
-            "region": {"type": "string"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "features": {"type": "array", "items": {"type": "object"}},
-                "transcripts": {"type": "array", "items": {"type": "object"}},
-                "exons": {"type": "array", "items": {"type": "object"}},
-                "transcript_count": {"type": "integer"},
-                "exon_count": {"type": "integer"}
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "object"
               }
+            },
+            "transcripts": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "exons": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "transcript_count": {
+              "type": "integer"
+            },
+            "exon_count": {
+              "type": "integer"
             }
           },
-          "required": ["data"]
+          "required": [
+            "features"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "status": {"type": "string"},
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"region": "2:39745816-39826679", "species": "homo_sapiens"}
+      {
+        "region": "2:39745816-39826679",
+        "species": "homo_sapiens"
+      }
     ],
-    "label": ["RNAcentral", "ncRNA", "GenomeRegion"],
+    "label": [
+      "RNAcentral",
+      "ncRNA",
+      "GenomeRegion"
+    ],
     "metadata": {
-      "tags": ["rna", "ncrna", "genome", "region", "annotation"],
+      "tags": [
+        "rna",
+        "ncrna",
+        "genome",
+        "region",
+        "annotation"
+      ],
       "estimated_execution_time": "< 3 seconds"
     }
   }

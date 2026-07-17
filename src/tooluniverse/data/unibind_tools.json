@@ -78,59 +78,48 @@
       "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tf_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "total_peaks": {
-                    "type": [
-                      "string",
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "dataset_url": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "dataset_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tf_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "total_peaks": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ]
+              },
+              "dataset_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "dataset_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
-          "required": [
-            "error"
-          ],
           "properties": {
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -187,146 +176,135 @@
       "oneOf": [
         {
           "type": "object",
+          "required": [
+            "dataset_id",
+            "tf_name",
+            "tfbs_models"
+          ],
           "properties": {
-            "status": {
-              "const": "success"
+            "dataset_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "required": [
-                "dataset_id",
-                "tf_name",
-                "tfbs_models"
-              ],
-              "properties": {
-                "dataset_id": {
-                  "type": "string"
-                },
-                "tf_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "cell_line": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "biological_condition": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "identifier": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "jaspar_id": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "prediction_models": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "tfbs_models": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "prediction_model": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "jaspar_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "jaspar_version": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "total_tfbs": {
-                        "type": [
-                          "string",
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "score_threshold": {
-                        "type": [
-                          "string",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "distance_threshold": {
-                        "type": [
-                          "string",
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "adj_centrimo_pvalue": {
-                        "type": [
-                          "number",
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "bed_url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "fasta_url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "summary_plot_url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "tf_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cell_line": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "biological_condition": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "identifier": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "jaspar_id": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "prediction_models": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tfbs_models": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "prediction_model": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "jaspar_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "jaspar_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "total_tfbs": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "score_threshold": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "distance_threshold": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "adj_centrimo_pvalue": {
+                    "type": [
+                      "number",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "bed_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "fasta_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "summary_plot_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
-          "required": [
-            "error"
-          ],
           "properties": {
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -381,32 +359,21 @@
       "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         {
           "type": "object",
-          "required": [
-            "error"
-          ],
           "properties": {
             "error": {
               "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
