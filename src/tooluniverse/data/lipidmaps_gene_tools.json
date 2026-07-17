@@ -50,7 +50,6 @@
       }
     ],
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
           "type": "array",
@@ -201,7 +200,6 @@
       }
     ],
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
           "type": "array",
